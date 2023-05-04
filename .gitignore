@@ -1,0 +1,12 @@
+# IDE specific files
+.idea
+.vscode
+
+# Mac OS specific
+.DS_Store
+
+# Binaries for programs and plugins (just in case)
+*.exe
+*.dll
+*.so
+*.dylib
