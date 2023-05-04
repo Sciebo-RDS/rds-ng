@@ -1,0 +1,24 @@
+# Docker compose file to build/run the entire components stack
+services:
+    # Build-only Python py-base image
+    py-base:
+        image: rds-ng/py-base:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/py-base/Dockerfile
+        deploy:
+            mode: replicated
+            replicas: 0
+
+    # Gate service
+    gate:
+        image: rds-ng/gate:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/component/Dockerfile
+            args:
+                COMPONENT_NAME: "gate"
+        depends_on:
+            - py-base
+        ports:
+            - "4200:6969"
