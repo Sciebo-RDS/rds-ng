@@ -1,12 +1,11 @@
-# Component service Dockerfile
+# Component service Dockerfile (development mode)
 # --
-FROM    rds-ng/py-base:latest
+FROM    rds-ng/py-base:develop
 
 # Argument definitions; note that COMPONENT_NAME MUST always be specified externally!
 ARG     COMPONENT_NAME
 ARG     COMPONENT_APP="component:app"
 ARG     COMPONENT_PORT=6969
-ARG     COMPONENT_WORKERS=4
 
 # Copy the source code
 WORKDIR /component
@@ -22,5 +21,8 @@ ENV     COMPONENT_APP=${COMPONENT_APP}
 ENV     COMPONENT_PORT=${COMPONENT_PORT}
 ENV     COMPONENT_WORKERS=${COMPONENT_WORKERS}
 
+ENV     FLASK_ENV=development
+ENV     FLASK_DEBUG=1
+
 EXPOSE  ${COMPONENT_PORT}
-CMD     gunicorn --bind="0.0.0.0:$COMPONENT_PORT" --workers=$COMPONENT_WORKERS "$COMPONENT_APP"
+CMD     gunicorn --bind="0.0.0.0:$COMPONENT_PORT" --workers=1 --reload --log-level="debug" "$COMPONENT_APP"
