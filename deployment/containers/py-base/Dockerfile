@@ -1,6 +1,5 @@
 # Base image for all Python-based components
 # --
-
 FROM    python:3.10
 
 # Update the image first
