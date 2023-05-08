@@ -1,5 +1,6 @@
 # Networking
 flask >= 2.3, < 3.0
-gevent-websocket >= 0.10, < 1.0
-gunicorn >= 20.1, < 21.0
+flask-socketio >= 5.3, < 6.0
 requests >= 2.29, < 3.0
+gevent >= 22.10, < 23.0
+uwsgi >= 2.0, < 3.0
