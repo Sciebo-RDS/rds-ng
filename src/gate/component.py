@@ -1,8 +1,9 @@
-from flask import Flask
+from common.py.app import RDSApp
 
-app = Flask(__name__)
+app = RDSApp(module_name=__name__)
+flask = app.core.flask
 
     
-@app.route('/')
+@flask.route('/')
 def hello():
-    return 'Hello World!!!'
+    return str(app)

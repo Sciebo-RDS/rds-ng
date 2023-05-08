@@ -1,0 +1,7 @@
+{
+    "component": {
+        "id": "rds.gate",
+        "name": "Gate service",
+        "version": "0.0.1"
+    }
+}

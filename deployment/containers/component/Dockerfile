@@ -5,7 +5,7 @@ FROM    rds-ng/py-base:latest
 # Argument definitions; note that COMPONENT_NAME MUST always be specified externally!
 ARG     COMPONENT_NAME
 ARG     COMPONENT_FILE="component.py"
-ARG     COMPONENT_APP="app"
+ARG     COMPONENT_APP="flask"
 ARG     COMPONENT_PORT=6969
 ARG     COMPONENT_THREADS=9
 
@@ -14,6 +14,8 @@ WORKDIR /component
 
 COPY    /src/common ./common
 ADD     /src/${COMPONENT_NAME} ./${COMPONENT_NAME}
+
+ENV     PYTHONPATH="/component"
 
 # Run the container
 WORKDIR /component/${COMPONENT_NAME}
