@@ -3,44 +3,28 @@
 # Regular targets
 # --
 build:
-	docker compose down
 	docker compose build
 
-fresh-build:
-	docker compose down
+build-no-cache:
 	docker compose build --no-cache
 
 run:
-	docker compose up -d
-
-stop:
-	docker compose down
-
-go:
-	docker compose down
 	docker compose build
 	docker compose up
+	docker compose down
 
 # Development targets
 # --
 dev-build:
-	docker compose -f dev.docker-compose.yaml down
 	docker compose -f dev.docker-compose.yaml build
 
-dev-fresh-build:
-	docker compose -f dev.docker-compose.yaml down
+dev-build-no-cache:
 	docker compose -f dev.docker-compose.yaml build --no-cache
 
 dev-run:
-	docker compose -f dev.docker-compose.yaml up -d
-
-dev-stop:
-	docker compose -f dev.docker-compose.yaml down
-
-dev-go:
-	docker compose -f dev.docker-compose.yaml down
 	docker compose -f dev.docker-compose.yaml build
 	docker compose -f dev.docker-compose.yaml up
+	docker compose -f dev.docker-compose.yaml down
 
 # Helper targets
 # --
