@@ -25,4 +25,4 @@ ENV     FLASK_ENV=development
 ENV     FLASK_DEBUG=1
 
 EXPOSE  ${COMPONENT_PORT}
-CMD     gunicorn --bind="0.0.0.0:$COMPONENT_PORT" --workers=1 --reload --log-level="debug" "$COMPONENT_APP"
+CMD     gunicorn --bind="0.0.0.0:$COMPONENT_PORT" --workers=1 --worker-class="geventwebsocket.gunicorn.workers.GeventWebSocketWorker" --reload --log-level="debug" "$COMPONENT_APP"
