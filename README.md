@@ -18,8 +18,7 @@ For easy local deployment, we have provided a `docker-compose.yaml` found in `/d
 | `fresh-build`     | Builds all containers, ignoring previously cached steps |
 | `run`             | Starts all containers                                   |
 | `stop`            | Stops all running containers                            |
+| `go`              | Builds and starts all containers interactively          |
 | `logs`            | Shows all container logs                                |
 
 All commands (except for `logs`) are also available as a development-specific version: Simply put a `dev-` in front of the command, i.e. `dev-build`. 
-
-**Note**: Due to Docker's nature, all `make` commands need to be run as a superuser.
