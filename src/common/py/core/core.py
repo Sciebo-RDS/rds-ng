@@ -14,6 +14,9 @@ class Core:
         self._network_engine: NetworkEngine = self._create_network_engine()
         
     def _create_flask(self, module_name: str) -> flask.Flask:
+        if module_name == "":
+            raise ValueError("Invalid module name given")
+        
         flsk = flask.Flask(module_name)
         flsk.config["SECRET"] = generate_random_string(64, include_punctuation=True)
         return flsk

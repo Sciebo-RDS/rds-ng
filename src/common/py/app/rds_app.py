@@ -1,3 +1,5 @@
+import os.path
+
 from semantic_version import Version
 import json
 import socketio
@@ -13,6 +15,9 @@ class RDSApp:
         self._core = Core(module_name)
             
     def _load_definition(self, def_file: str) -> (str, str, Version):
+        if def_file == "" or not os.path.exists(def_file):
+            raise ValueError("Invalid component definition file given")
+        
         with open(def_file) as f:
             try:
                 data = json.load(f)
@@ -46,4 +51,3 @@ class RDSApp:
         
     def __str__(self) -> str:
         return f"{self._name} ({self._appid}), v{self._version}"
-    
