@@ -2,9 +2,10 @@
 # --
 FROM    python:3.10
 
-# Update the image first
+# Update the image first (and install some helpful tools)
 RUN     apt-get update \
-&&      apt-get -y upgrade
+&&      apt-get -y upgrade \
+&&      apt-get -y install nano
 
 # Install basic Python libraries
 WORKDIR /base

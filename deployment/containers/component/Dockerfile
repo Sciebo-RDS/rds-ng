@@ -13,7 +13,7 @@ ARG     COMPONENT_THREADS=9
 WORKDIR /component
 
 COPY    /src/common ./common
-ADD     /src/${COMPONENT_NAME} ./${COMPONENT_NAME}
+COPY    /src/${COMPONENT_NAME} ./${COMPONENT_NAME}
 
 ENV     PYTHONPATH="/component"
 
@@ -31,4 +31,4 @@ ENV     FLASK_DEBUG=0
 ENV     FLASK_ENV=production
 
 EXPOSE  ${COMPONENT_PORT}
-CMD     uwsgi --http=":$COMPONENT_PORT" --workers=1 --gevent=$COMPONENT_THREADS --http-websockets --master --wsgi-file "$COMPONENT_FILE" --callable "$COMPONENT_APP"
+CMD     uwsgi --http=":$COMPONENT_PORT" --workers=1 --gevent=$COMPONENT_THREADS --http-websockets --master --wsgi-file="$COMPONENT_FILE" --callable="$COMPONENT_APP"

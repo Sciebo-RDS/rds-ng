@@ -3,30 +3,30 @@
 # Regular targets
 # --
 build:
-	docker compose build
+	docker compose -p rds build
 
 build-no-cache:
-	docker compose build --no-cache
+	docker compose -p rds build --no-cache
 
 run:
-	docker compose build
-	docker compose up
-	docker compose down
+	docker compose -p rds build
+	docker compose -p rds up
+	docker compose -p rds down
 
 # Development targets
 # --
 dev-build:
-	docker compose -f dev.docker-compose.yaml build
+	docker compose -p rds -f dev.docker-compose.yaml build
 
 dev-build-no-cache:
-	docker compose -f dev.docker-compose.yaml build --no-cache
+	docker compose -p rds -f dev.docker-compose.yaml build --no-cache
 
 dev-run:
-	docker compose -f dev.docker-compose.yaml build
-	docker compose -f dev.docker-compose.yaml up
-	docker compose -f dev.docker-compose.yaml down
+	docker compose -p rds -f dev.docker-compose.yaml build
+	docker compose -p rds -f dev.docker-compose.yaml up
+	docker compose -p rds -f dev.docker-compose.yaml down
 
 # Helper targets
 # --
 logs:
-	docker compose logs
+	docker compose -p rds logs
