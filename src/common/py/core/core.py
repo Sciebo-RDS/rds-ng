@@ -1,25 +1,49 @@
-from flask import Flask
-from flask_socketio import SocketIO
+import os
+import flask
+import socketio
+
+from common.py.utils.random import generate_random_string
 
 
 class Core:
     """ The main portion of an RDS component. """
     def __init__(self, module_name: str):
-        self._flask = self._create_flask(module_name)
-        self._socketio = self._create_socketio()
-        print(str(self._socketio))
+        self._flask: flask.Flask = self._create_flask(module_name)
         
-    def _create_flask(self, module_name: str) -> Flask:
-        return Flask(module_name)
+        self._server: socketio.Server = self._create_server()
+        self._client: socketio.Client = self._create_client()
+        
+    def _create_flask(self, module_name: str) -> flask.Flask:
+        flsk = flask.Flask(module_name)
+        flsk.config["SECRET"] = generate_random_string(64, include_punctuation=True)
+        return flsk
     
-    def _create_socketio(self) -> SocketIO:
-        return SocketIO(self._flask, host="0.0.0.0", port="7070")
+    def _create_server(self) -> socketio.Server:
+        # TODO: Define proper CORS origins (nw-internal)
+        allowed_origins = None
+        if Core.is_debug_mode:
+            allowed_origins = "*"
+        
+        svr = socketio.Server(async_mode="gevent_uwsgi", cors_allowed_origins=allowed_origins)
+        return svr
+    
+    def _create_client(self) -> socketio.Client:
+        return socketio.Client()
     
     @property
-    def flask(self) -> Flask:
+    def flask(self) -> flask.Flask:
         return self._flask
     
     @property
-    def socketio(self) -> SocketIO:
-        return self._socketio
+    def server(self):
+        return self._server
+    
+    @property
+    def client(self):
+        return self._client
+
+    @property
+    @staticmethod
+    def is_debug_mode() -> bool:
+        return os.getenv("RDS_DEBUG", "0") == "1"
     

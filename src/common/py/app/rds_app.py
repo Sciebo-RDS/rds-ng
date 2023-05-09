@@ -1,6 +1,6 @@
-from flask import Flask
 from semantic_version import Version
 import json
+import socketio
 
 from common.py.core import Core
 
@@ -28,6 +28,9 @@ class RDSApp:
     @property
     def core(self) -> Core:
         return self._core
+    
+    def wsgi_app(self) -> socketio.WSGIApp:
+        return socketio.WSGIApp(self._core.server, self.core.flask)
     
     @property
     def app_id(self) -> str:
