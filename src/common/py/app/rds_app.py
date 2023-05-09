@@ -30,7 +30,7 @@ class RDSApp:
         return self._core
     
     def wsgi_app(self) -> socketio.WSGIApp:
-        return socketio.WSGIApp(self._core.server, self.core.flask)
+        return socketio.WSGIApp(self._core.network.server, self.core.flask)
     
     @property
     def app_id(self) -> str:

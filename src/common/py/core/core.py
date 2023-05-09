@@ -1,6 +1,7 @@
 import os
 import flask
-import socketio
+
+from .networking import NetworkEngine
 
 from common.py.utils.random import generate_random_string
 
@@ -10,40 +11,25 @@ class Core:
     def __init__(self, module_name: str):
         self._flask: flask.Flask = self._create_flask(module_name)
         
-        self._server: socketio.Server = self._create_server()
-        self._client: socketio.Client = self._create_client()
+        self._network_engine: NetworkEngine = self._create_network_engine()
         
     def _create_flask(self, module_name: str) -> flask.Flask:
         flsk = flask.Flask(module_name)
         flsk.config["SECRET"] = generate_random_string(64, include_punctuation=True)
         return flsk
     
-    def _create_server(self) -> socketio.Server:
-        # TODO: Define proper CORS origins (nw-internal)
-        allowed_origins = None
-        if Core.is_debug_mode:
-            allowed_origins = "*"
-        
-        svr = socketio.Server(async_mode="gevent_uwsgi", cors_allowed_origins=allowed_origins)
-        return svr
-    
-    def _create_client(self) -> socketio.Client:
-        return socketio.Client()
+    def _create_network_engine(self) -> NetworkEngine:
+        return NetworkEngine()
     
     @property
     def flask(self) -> flask.Flask:
         return self._flask
     
     @property
-    def server(self):
-        return self._server
+    def network(self) -> NetworkEngine:
+        return self._network_engine
     
-    @property
-    def client(self):
-        return self._client
-
     @property
     @staticmethod
     def is_debug_mode() -> bool:
         return os.getenv("RDS_DEBUG", "0") == "1"
-    
