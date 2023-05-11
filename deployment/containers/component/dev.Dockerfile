@@ -31,4 +31,4 @@ ENV     FLASK_DEBUG=1
 ENV     FLASK_ENV=development
 
 EXPOSE  ${COMPONENT_PORT}
-CMD     uwsgi --http=":$COMPONENT_PORT" --workers=1 --gevent=$COMPONENT_THREADS --http-websockets --master --wsgi-file="$COMPONENT_FILE" --callable="$COMPONENT_APP" --py-autoreload=1
+CMD     uwsgi --http=":$COMPONENT_PORT" --workers=1 --gevent=$COMPONENT_THREADS --http-websockets --master --py-autoreload=1 --wsgi-file="$COMPONENT_FILE" --callable="$COMPONENT_APP"

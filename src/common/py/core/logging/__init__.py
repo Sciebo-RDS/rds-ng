@@ -4,9 +4,20 @@ from .logger import Logger
 
 
 logging.setLoggerClass(Logger)
-logger = logging.getLogger("rds_logger")
+_logger: Logger = logging.getLogger("rds_logger")
 
-logger.info("WELL HI THERE!")
-logger.debug("DE...WHAT", scope="net", test=123)
-logger.warning("UHUHUHOHOHOHOHOH :smile:")
-logger.error("FUFUFU")
+
+def debug(msg: str, *, scope: str | None = None, **kwargs):
+    _logger.debug(msg, scope=scope, **kwargs)
+
+
+def info(msg: str, *, scope: str | None = None, **kwargs):
+    _logger.info(msg, scope=scope, **kwargs)
+
+
+def warning(msg: str, *, scope: str | None = None, **kwargs):
+    _logger.warning(msg, scope=scope, **kwargs)
+
+
+def error(msg: str, *, scope: str | None = None, **kwargs):
+    _logger.error(msg, scope=scope, **kwargs)

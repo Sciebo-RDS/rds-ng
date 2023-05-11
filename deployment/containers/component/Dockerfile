@@ -31,4 +31,4 @@ ENV     FLASK_DEBUG=0
 ENV     FLASK_ENV=production
 
 EXPOSE  ${COMPONENT_PORT}
-CMD     uwsgi --http=":$COMPONENT_PORT" --workers=1 --gevent=$COMPONENT_THREADS --http-websockets --master --wsgi-file="$COMPONENT_FILE" --callable="$COMPONENT_APP"
+CMD     uwsgi --http=":$COMPONENT_PORT" --workers=1 --gevent=$COMPONENT_THREADS --http-websockets --master --disable-logging --log-4xx --log-5xx --wsgi-file="$COMPONENT_FILE" --callable="$COMPONENT_APP"

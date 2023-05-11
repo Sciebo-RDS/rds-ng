@@ -4,7 +4,8 @@ from semantic_version import Version
 import json
 import socketio
 
-from common.py.core import Core
+from ..core import Core
+from ..core import logging
 
 
 class RDSApp:
@@ -13,6 +14,9 @@ class RDSApp:
         self._appid, self._name, self._version = self._load_definition(def_file)
         
         self._core = Core(module_name)
+        
+        logging.info(str(self))
+        logging.info("-- Starting component application...")
             
     def _load_definition(self, def_file: str) -> (str, str, Version):
         if def_file == "" or not os.path.exists(def_file):
