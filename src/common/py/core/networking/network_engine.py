@@ -8,10 +8,9 @@ class NetworkEngine:
         self._client = self._create_client()
         
     def _create_server(self) -> socketio.Server:
-        from common.py.core import Core
-        
         # TODO: Define proper CORS origins (nw-internal)
         allowed_origins: str | None = None
+        from common.py.core import Core
         if Core.is_debug_mode:
             allowed_origins = "*"
     

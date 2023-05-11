@@ -1,0 +1,13 @@
+{
+    "global": {
+        "title": "RDS-NG",
+        "version": "0.0.1"
+    },
+
+    "components": {
+        "rds.gate": {
+            "name": "Gate service",
+            "directory": "/gate"
+        }
+    }
+}

@@ -1,7 +1,7 @@
 from common.py.app import RDSApp
 
 
-rds = RDSApp(module_name=__name__)
+rds = RDSApp("rds.gate", module_name=__name__)
 app = rds.wsgi_app()
 
 
