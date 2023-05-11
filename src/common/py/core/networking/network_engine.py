@@ -4,14 +4,14 @@ import socketio
 class NetworkEngine:
     """ The main network management class, based on socket.io. """
     def __init__(self):
-        self._server: socketio.Server = self._create_server()
-        self._client: socketio.Client = self._create_client()
+        self._server = self._create_server()
+        self._client = self._create_client()
         
     def _create_server(self) -> socketio.Server:
         from common.py.core import Core
         
         # TODO: Define proper CORS origins (nw-internal)
-        allowed_origins = None
+        allowed_origins: str | None = None
         if Core.is_debug_mode:
             allowed_origins = "*"
     
@@ -22,9 +22,9 @@ class NetworkEngine:
         return socketio.Client()
 
     @property
-    def server(self):
+    def server(self) -> socketio.Server:
         return self._server
 
     @property
-    def client(self):
+    def client(self) -> socketio.Client:
         return self._client

@@ -4,7 +4,7 @@ import typing
 
 class Formatter(logging.Formatter):
     """ Handles unified formatting of log messages. """
-    _colors: typing.Dict[str, int | typing.Dict[int | str, int]] = {
+    _colors = {
         "time": 7,
         "scope": 28,
         "levels": {
@@ -20,9 +20,9 @@ class Formatter(logging.Formatter):
     }
     
     def format(self, record: logging.LogRecord) -> str:
-        scope: str = self._get_scope(record)
-        params: typing.List[str] = [f"{self._color_wrap(k, self._colors['params']['name'], italic=True)}={self._color_wrap(str(v), self._colors['params']['value'], italic=True)}" for k, v in self._get_extra_params(record).items()]
-        tokens: typing.List[str] = [
+        scope = self._get_scope(record)
+        params = [f"{self._color_wrap(k, self._colors['params']['name'], italic=True)}={self._color_wrap(str(v), self._colors['params']['value'], italic=True)}" for k, v in self._get_extra_params(record).items()]
+        tokens = [
             self._color_wrap(self.formatTime(record, "%Y-%m-%d %H:%M:%S"), self._colors["time"]),
             " [",
             self._color_wrap(record.levelname, self._get_level_color(record.levelno), bold=True),
@@ -43,11 +43,11 @@ class Formatter(logging.Formatter):
             s += f"\x1b[48;5;{bg_color}m"
         return s + text + "\x1b[0m"
     
-    def _get_level_color(self, level: int):
+    def _get_level_color(self, level: int) -> int:
         return self._colors["levels"][level] if level in self._colors["levels"] else 0
     
     def _get_scope(self, record: logging.LogRecord) -> str:
-        scope: str = ""
+        scope = ""
         if "scope" in record.__dict__ and record.scope is not None:
             scope = record.scope.lower()
         return scope

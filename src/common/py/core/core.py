@@ -2,16 +2,15 @@ import os
 import flask
 
 from .networking import NetworkEngine
-
-from common.py.utils.random import generate_random_string
+from ..utils.random import generate_random_string
 
 
 class Core:
     """ The main portion of an RDS component. """
     def __init__(self, module_name: str):
-        self._flask: flask.Flask = self._create_flask(module_name)
+        self._flask = self._create_flask(module_name)
         
-        self._network_engine: NetworkEngine = self._create_network_engine()
+        self._network_engine = self._create_network_engine()
         
     def _create_flask(self, module_name: str) -> flask.Flask:
         if module_name == "":

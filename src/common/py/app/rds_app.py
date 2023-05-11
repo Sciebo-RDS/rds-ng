@@ -26,8 +26,8 @@ class RDSApp:
             try:
                 data = json.load(f)
                 comp_info = data["component"]
-                appid = comp_info["id"]
-                name = comp_info["name"]
+                appid: str = comp_info["id"]
+                name: str = comp_info["name"]
                 version = Version(comp_info["version"])
             except Exception as e:
                 return "<invalid>", str(e), Version("0.0.0")
