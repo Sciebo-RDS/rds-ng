@@ -6,15 +6,23 @@
 
 import subprocess
 import sys
+import json
 
-# All Python components to be checked need to be listed in this array
-components = ["gate"]
 
-for component in components:
-    print(f"Type-checking component '{component}'...", flush=True)
+def get_components():
+    with open("./config/meta_info.json") as f:
+        data = json.load(f)
+        return data["components"]
+    return {}
 
-    retcode = subprocess.call(["python3", "-m", "pytype", "-n", f"./src/{component}"])
-    if retcode != 0:
-        sys.exit(retcode)
 
-    print("---", flush=True)
+if __name__ == "__main__":
+    for appid, info in get_components().items():
+        comp_dir = f"./src/{info['directory']}"
+        print(f"Type-checking component '{info['name']} ({appid})' in {comp_dir}...", flush=True)
+
+        retcode = subprocess.call(["python3", "-m", "pytype", "-n", comp_dir])
+        if retcode != 0:
+            sys.exit(retcode)
+
+        print("---", flush=True)

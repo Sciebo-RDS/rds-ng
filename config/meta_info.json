@@ -7,7 +7,7 @@
     "components": {
         "rds.gate": {
             "name": "Gate service",
-            "directory": "/gate"
+            "directory": "gate"
         }
     }
 }
