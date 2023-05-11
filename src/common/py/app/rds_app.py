@@ -11,15 +11,14 @@ class RDSApp:
         from .meta_information import MetaInformation
         meta_info = MetaInformation()
         comp_info = meta_info.get_component(appid)
-        
         self._appid = appid
         self._name = comp_info["name"]
         self._version = meta_info.version
         
-        self._core = Core(module_name)
-        
         logging.info(str(self))
         logging.info("-- Starting component application...")
+        
+        self._core = Core(module_name)
         
     @property
     def core(self) -> Core:
