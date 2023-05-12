@@ -8,7 +8,7 @@ from ..core import logging
 
 class MetaInformation:
     """ This class is used to access the project meta information stored in a JSON file. """
-    def __init__(self, info_file: str = "/config/meta_info.json"):
+    def __init__(self, info_file: str = "/config/meta-information.json"):
         if info_file == "" or not os.path.exists(info_file):
             raise ValueError("Invalid meta information file given")
         
@@ -17,7 +17,7 @@ class MetaInformation:
             self._title, self._version = self._read_global_info(data)
             self._components = self._read_component_definitions(data)
 
-    def _read_global_info(self, data: typing.Any) -> (str, Version):
+    def _read_global_info(self, data: typing.Any) -> tuple[str, Version]:
         try:
             global_info = data["global"]
             title: str = global_info["title"]

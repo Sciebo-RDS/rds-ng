@@ -10,7 +10,7 @@ import json
 
 
 def get_components():
-    with open("./config/meta_info.json") as f:
+    with open("./config/meta-information.json") as f:
         data = json.load(f)
         return data["components"]
     return {}

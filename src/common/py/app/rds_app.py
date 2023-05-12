@@ -12,6 +12,7 @@ class RDSApp:
         meta_info = MetaInformation()
         comp_info = meta_info.get_component(appid)
         self._appid = appid
+        self._title = meta_info.title
         self._name = comp_info["name"]
         self._version = meta_info.version
         
@@ -32,6 +33,10 @@ class RDSApp:
         return self._appid
     
     @property
+    def title(self) -> str:
+        return self._title
+    
+    @property
     def name(self) -> str:
         return self._name
     
@@ -40,4 +45,4 @@ class RDSApp:
         return self._version
         
     def __str__(self) -> str:
-        return f"{self._name} ({self._appid}), v{self._version}"
+        return f"{self._title} v{self._version}: {self._name} ({self._appid})"
