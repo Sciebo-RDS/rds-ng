@@ -7,3 +7,5 @@ uwsgi >= 2.0, < 3.0
 
 # Miscellaneous
 semantic-version >= 2.10, < 3.0
+tomli >= 2.0
+deepmerge >= 1.1

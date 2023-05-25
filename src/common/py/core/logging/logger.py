@@ -1,5 +1,4 @@
 import logging
-import sys
 import typing
 
 
@@ -13,6 +12,7 @@ class Logger(logging.Logger):
         self.addHandler(self._create_default_handler())
 
     def _create_default_handler(self) -> logging.Handler:
+        import sys
         from .formatter import Formatter
         
         handler = logging.StreamHandler(sys.stdout)

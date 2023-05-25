@@ -2,7 +2,6 @@ from semantic_version import Version
 import socketio
 
 from ..core import Core
-from ..core import logging
 
 
 class RDSApp:
@@ -16,6 +15,7 @@ class RDSApp:
         self._name = comp_info["name"]
         self._version = meta_info.version
         
+        from ..core import logging
         logging.info(str(self))
         logging.info("-- Starting component application...")
         
