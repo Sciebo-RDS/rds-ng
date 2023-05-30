@@ -5,7 +5,7 @@
     },
 
     "components": {
-        "rds.gate": {
+        "gate": {
             "name": "Gate service",
             "directory": "gate"
         }

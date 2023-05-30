@@ -1,9 +1,10 @@
-from common.py.app import RDSApp
+from common.py.component import Component, ComponentID
 
 
-rds = RDSApp("rds.gate", module_name=__name__)
-app = rds.wsgi_app()
+comp = Component(ComponentID("infra", "gate"), module_name=__name__)
+app = comp.wsgi_app()
 
-@rds.core.flask.route('/')
+
+@comp.core.flask.route('/')
 def hello():
-    return str(rds)
+    return str(comp)
