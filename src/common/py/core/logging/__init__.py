@@ -7,6 +7,10 @@ logging.setLoggerClass(Logger)
 _logger: Logger = logging.getLogger("rds_logger")
 
 
+def set_level(level: int) -> None:
+    _logger.setLevel(level)
+    
+    
 def debug(msg: str, *, scope: str | None = None, **kwargs):
     _logger.debug(msg, scope=scope, **kwargs)
 

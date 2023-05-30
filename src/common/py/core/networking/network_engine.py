@@ -1,19 +1,15 @@
+import typing
+
 import socketio
 
 
 class NetworkEngine:
     """ The main network management class, based on socket.io. """
-    def __init__(self):
-        self._server = self._create_server()
+    def __init__(self, allowed_origins: typing.List[str] | None):
+        self._server = self._create_server(allowed_origins)
         self._client = self._create_client()
         
-    def _create_server(self) -> socketio.Server:
-        # TODO: Define proper CORS origins (nw-internal)
-        allowed_origins: str | None = None
-        from common.py.core import Core
-        if Core.is_debug_mode:
-            allowed_origins = "*"
-    
+    def _create_server(self, allowed_origins: typing.List[str] | None) -> socketio.Server:
         svr = socketio.Server(async_mode="gevent_uwsgi", cors_allowed_origins=allowed_origins)
         return svr
 

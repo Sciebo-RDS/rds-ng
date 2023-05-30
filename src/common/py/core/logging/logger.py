@@ -4,10 +4,8 @@ import typing
 
 class Logger(logging.Logger):
     """ Customized logger offering advanced formatting and parameters listing. """
-    def __init__(self, name: str):
-        from ..core import Core
-        
-        super().__init__(name, logging.DEBUG if Core.is_debug_mode else logging.INFO)
+    def __init__(self, name: str, level: int = logging.INFO):
+        super().__init__(name, level)
         
         self.addHandler(self._create_default_handler())
 
@@ -19,6 +17,11 @@ class Logger(logging.Logger):
         handler.setLevel(self.level)
         handler.setFormatter(Formatter())
         return handler
+    
+    def setLevel(self, level: int) -> None:
+        super().setLevel(level)
+        for h in self.handlers:
+            h.setLevel(level)
 
     def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         super().debug(msg, extra=self._pack_extra_args(scope, **kwargs))
