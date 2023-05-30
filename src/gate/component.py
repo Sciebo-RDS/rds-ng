@@ -1,8 +1,9 @@
-from flask import Flask
+from common.py.app import RDSApp
 
-app = Flask(__name__)
 
-    
-@app.route('/')
+rds = RDSApp("rds.gate", module_name=__name__)
+app = rds.wsgi_app()
+
+@rds.core.flask.route('/')
 def hello():
-    return 'Hello World!!!'
+    return str(rds)

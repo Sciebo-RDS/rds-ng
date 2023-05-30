@@ -1,4 +1,11 @@
 # Networking
 flask >= 2.3, < 3.0
-gunicorn[gevent] >= 20.1, < 21.0
-requests >= 2.29, < 3.0
+python-socketio >= 5.8, < 6.0
+python-socketio[client] >= 5.8, < 6.0
+gevent >= 22.10, < 23.0
+uwsgi >= 2.0, < 3.0
+
+# Miscellaneous
+semantic-version >= 2.10, < 3.0
+tomli >= 2.0
+deepmerge >= 1.1
