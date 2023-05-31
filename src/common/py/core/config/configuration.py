@@ -45,9 +45,9 @@ class Configuration:
         if target_type == bool:
             if type(value) == str:
                 value = value.casefold()
-                return True if value == "1" or value == "yes".casefold() or value == "true".casefold() else False
+                return value == "1" or value == "yes".casefold() or value == "true".casefold()
             elif type(value) == int:
-                return True if value >= 1 else False
+                return value >= 1
 
         return target_type(value)
         

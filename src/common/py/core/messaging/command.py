@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from . import Message
+from .message import Message
 
 
 @dataclass(frozen=True, kw_only=True)

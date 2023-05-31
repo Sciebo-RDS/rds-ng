@@ -2,6 +2,7 @@ import typing
 import flask
 
 from .config import Configuration
+from .messaging import MessageBus
 from .networking import NetworkEngine
 
 
@@ -16,6 +17,9 @@ class Core:
         
         if self.is_debug_mode:
             self._enable_debug_mode()
+            
+        logging.debug("-- Creating message bus", scope="core")
+        self._message_bus = self._create_message_bus()
         
         logging.debug("-- Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
@@ -37,6 +41,9 @@ class Core:
             logging.warning("-- Component configuration could not be loaded", scope="core", error=str(e))
             
         return config
+    
+    def _create_message_bus(self) -> MessageBus:
+        return MessageBus()
     
     def _create_flask(self, module_name: str) -> flask.Flask:
         from ..utils.random import generate_random_string
@@ -64,6 +71,10 @@ class Core:
     @property
     def config(self) -> Configuration:
         return self._config
+    
+    @property
+    def message_bus(self) -> MessageBus:
+        return self._message_bus
     
     @property
     def flask(self) -> flask.Flask:
