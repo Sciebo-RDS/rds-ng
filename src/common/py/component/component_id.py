@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import Flag, auto
 
+import typing
+
 
 @dataclass(frozen=True)
 class ComponentID:
@@ -15,7 +17,7 @@ class ComponentID:
     component: str
     instance: str = 'default'
     
-    def partial_eq(self, other: 'ComponentID', tokens: Tokens = Tokens.ALL) -> bool:
+    def partial_eq(self, other: typing.Self, tokens: Tokens = Tokens.ALL) -> bool:
         if ComponentID.Tokens.TYPE in tokens and self.type != other.type:
             return False
         
@@ -27,15 +29,15 @@ class ComponentID:
         
         return True
     
-    @staticmethod
-    def from_string(s: str) -> 'ComponentID':
-        from pathlib import PurePosixPath
-        p = PurePosixPath(s).parts
-        if len(p) != 3:
-            raise ValueError(f"The component ID '{s}' is invalid")
-        return ComponentID(p[0], p[1], p[2])
-    
     def __str__(self) -> str:
         from pathlib import PurePosixPath
         p = PurePosixPath(self.type, self.component, self.instance)
         return str(p)
+
+
+def create_id_from_string(s: str) -> ComponentID:
+    from pathlib import PurePosixPath
+    p = PurePosixPath(s).parts
+    if len(p) != 3:
+        raise ValueError(f"The component ID '{s}' is invalid")
+    return ComponentID(p[0], p[1], p[2])
