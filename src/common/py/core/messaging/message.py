@@ -16,7 +16,7 @@ class Message(abc.ABC):
     
     origin: ComponentID
     sender: ComponentID
-    recipient: Channel
+    target: Channel
     
     hops: typing.List[ComponentID]
     

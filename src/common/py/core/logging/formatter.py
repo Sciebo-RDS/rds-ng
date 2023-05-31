@@ -14,8 +14,8 @@ class Formatter(logging.Formatter):
             logging.ERROR: 160,
         },
         "params": {
-            "name": 55,
-            "value": 124,
+            "name": 93,
+            "value": 126,
         },
     }
     
