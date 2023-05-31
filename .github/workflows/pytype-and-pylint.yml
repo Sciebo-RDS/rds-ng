@@ -1,4 +1,4 @@
-name: [py] Type Checks and Linting
+name: Python Type Checks and Linting
 
 on: [push]
 
@@ -7,7 +7,7 @@ env:
 
 jobs:
   type_check_python:
-    Name: [py] Type-checker
+    Name: Type-checker
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
         run: |
           python3 ${{ env.SCRIPTS_DIR }}/run-typechecks.py
   lint_python:
-    name: [py] Linter
+    name: Linter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
