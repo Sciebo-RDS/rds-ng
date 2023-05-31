@@ -2,6 +2,8 @@ name: Python Type Checks and Linting
 
 on: [pull_request, push]
 
+env:
+  SCRIPTS_DIR: scripts
 
 jobs:
   type_check_python:
@@ -19,4 +21,4 @@ jobs:
           if [ -f ./deployment/containers/py-base/requirements.txt ]; then pip install -r ./deployment/containers/py-base/requirements.txt; fi
       - name: Check Types with pytype
         run: |
-          python ./scripts/run-typechecks.py
+          python ${{ env.SCRIPTS_DIR }}/run-typechecks.py
