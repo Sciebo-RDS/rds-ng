@@ -7,7 +7,7 @@ env:
 
 jobs:
   type_check_python:
-    Name: Type-checker
+    name: Type-checker
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
