@@ -18,7 +18,11 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           pip3 install "pytype>=2023.5.24"
+          pip3 install "pylint"
           if [ -f ./deployment/containers/py-base/requirements.txt ]; then pip install -r ./deployment/containers/py-base/requirements.txt; fi
       - name: Check Types with pytype
         run: |
           python3 ${{ env.SCRIPTS_DIR }}/run-typechecks.py
+      - name: Lint with pylint
+        run: |
+          pylint --recursive=y .
