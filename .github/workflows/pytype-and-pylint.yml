@@ -1,0 +1,24 @@
+name: Python Type Checks and Linting
+
+on: [push]
+
+env:
+  SCRIPTS_DIR: scripts
+
+jobs:
+  type_check_python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install "pytype>=2023.5.24"
+          if [ -f ./deployment/containers/py-base/requirements.txt ]; then pip install -r ./deployment/containers/py-base/requirements.txt; fi
+      - name: Check Types with pytype
+        run: |
+          python3 ${{ env.SCRIPTS_DIR }}/run-typechecks.py
