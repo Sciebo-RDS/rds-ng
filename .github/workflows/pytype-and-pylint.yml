@@ -1,6 +1,6 @@
 name: Python Type Checks and Linting
 
-on: [pull-request, push]
+on: [pull_request, push]
 
 
 jobs:
