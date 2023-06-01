@@ -17,15 +17,15 @@ class Core:
         
         if self.is_debug_mode:
             self._enable_debug_mode()
-            
-        logging.debug("-- Creating message bus", scope="core")
-        self._message_bus = self._create_message_bus()
         
         logging.debug("-- Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
         
         logging.debug("-- Creating network engine", scope="core")
         self._network_engine = self._create_network_engine()
+        
+        logging.debug("-- Creating message bus", scope="core")
+        self._message_bus = self._create_message_bus()
         
     def _create_config(self, config_file: str) -> Configuration:
         from .config import GeneralSettings
@@ -43,7 +43,7 @@ class Core:
         return config
     
     def _create_message_bus(self) -> MessageBus:
-        return MessageBus()
+        return MessageBus(self._network_engine)
     
     def _create_flask(self, module_name: str) -> flask.Flask:
         from ..utils.random import generate_random_string
