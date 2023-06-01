@@ -3,7 +3,7 @@ import typing
 
 from ..message import Message
 
-MT = typing.TypeVar('MT', bound=Message)
+MT = typing.TypeVar("MT", bound=Message)
 
 
 class MessageDispatcher(abc.ABC, typing.Generic[MT]):

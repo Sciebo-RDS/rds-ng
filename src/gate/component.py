@@ -1,5 +1,6 @@
 from common.py.component import Component, ComponentID
 from common.py.core.messaging import MessageName, Event, CommandReply, Command, local_channel
+from common.py.core.messaging.message_bus import MessageBus
 
 comp = Component(ComponentID("infra", "gate"), module_name=__name__)
 app = comp.wsgi_app()
