@@ -1,3 +1,5 @@
+import json
+
 from semantic_version import Version
 import socketio
 
@@ -23,12 +25,14 @@ class Component:
         
         self._core = Core(module_name)
         
+        self._add_default_routes()
+        
+    def wsgi_app(self) -> socketio.WSGIApp:
+        return socketio.WSGIApp(self._core.network.server, self.core.flask)
+    
     @property
     def core(self) -> Core:
         return self._core
-    
-    def wsgi_app(self) -> socketio.WSGIApp:
-        return socketio.WSGIApp(self._core.network.server, self.core.flask)
     
     @property
     def comp_id(self) -> ComponentID:
@@ -48,3 +52,11 @@ class Component:
         
     def __str__(self) -> str:
         return f"{self._title} v{self._version}: {self._name} ({self._comp_id})"
+    
+    def _add_default_routes(self) -> None:
+        # The main entry point (/) returns basic component info as a JSON string
+        self._core.flask.add_url_rule("/", view_func=lambda: json.dumps({
+            "id": str(self._comp_id),
+            "name": self._name,
+            "version": str(self._version),
+        }))
