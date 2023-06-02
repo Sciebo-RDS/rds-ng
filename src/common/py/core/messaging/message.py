@@ -21,3 +21,6 @@ class Message(abc.ABC):
     hops: typing.List[ComponentID] = field(default_factory=list)
     
     trace: Trace = uuid.uuid4()
+
+
+MessageType = typing.TypeVar("MessageType", bound=Message)

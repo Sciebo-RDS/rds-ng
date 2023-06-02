@@ -1,16 +1,15 @@
 import abc
 import typing
 
-from ..message import Message
+from ..handlers import MessageHandlersList
+from ..message import MessageType
 
-MT = typing.TypeVar("MT", bound=Message)
 
-
-class MessageDispatcher(abc.ABC, typing.Generic[MT]):
+class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     """ The dispatcher sends message to registered handlers while also performing additional tasks like context management. """
     def __init__(self):
         pass
 
     @abc.abstractmethod
-    def dispatch(self, msg: MT) -> None:
+    def dispatch(self, msg: MessageType, handlers: MessageHandlersList) -> None:
         pass

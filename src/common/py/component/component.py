@@ -1,10 +1,12 @@
 import json
+import typing
 
 from semantic_version import Version
 import socketio
 
 from .component_id import ComponentID
 from ..core import Core
+from ..service import Service
 
 
 class Component:

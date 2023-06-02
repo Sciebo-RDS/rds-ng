@@ -34,10 +34,10 @@ class ComponentID:
         p = PurePosixPath(self.type, self.component, self.instance)
         return str(p)
 
-
-def create_id_from_string(s: str) -> ComponentID:
-    from pathlib import PurePosixPath
-    p = PurePosixPath(s).parts
-    if len(p) != 3:
-        raise ValueError(f"The component ID '{s}' is invalid")
-    return ComponentID(p[0], p[1], p[2])
+    @staticmethod
+    def from_string(s: str) -> 'ComponentID':
+        from pathlib import PurePosixPath
+        p = PurePosixPath(s).parts
+        if len(p) != 3:
+            raise ValueError(f"The component ID '{s}' is invalid")
+        return ComponentID(p[0], p[1], p[2])

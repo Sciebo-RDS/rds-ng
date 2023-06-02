@@ -4,6 +4,7 @@ import flask
 from .config import Configuration
 from .messaging import MessageBus
 from .networking import NetworkEngine
+from ..service import Service
 
 
 class Core:
@@ -67,6 +68,20 @@ class Core:
         import logging as log
         logging.set_level(log.DEBUG)
         logging.debug("-- Debug mode enabled", scope="core")
+    
+    def register_service(self, svc: Service) -> None:
+        from ..core import logging
+        if self._message_bus.add_service(svc):
+            logging.debug("Registered service", scope="core", service=svc)
+        else:
+            logging.debug("Service already registered", scope="core", service=svc)
+
+    def unregister_service(self, svc: Service) -> None:
+        from ..core import logging
+        if self._message_bus.remove_service(svc):
+            logging.debug("Unregistered service", scope="core", service=svc)
+        else:
+            logging.debug("Service not registered", scope="core", service=svc)
     
     @property
     def config(self) -> Configuration:
