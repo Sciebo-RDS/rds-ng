@@ -1,7 +1,7 @@
 import abc
 import typing
 
-from ..handlers import MessageHandlersList
+from ..handlers import MessageHandlerMappings
 from ..message import MessageType
 
 
@@ -11,5 +11,5 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
         pass
 
     @abc.abstractmethod
-    def dispatch(self, msg: MessageType, handlers: MessageHandlersList) -> None:
+    def dispatch(self, msg: MessageType, handlers: MessageHandlerMappings) -> None:
         pass

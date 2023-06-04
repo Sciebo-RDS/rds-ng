@@ -1,2 +1,2 @@
-from .message_handler import MessageHandler
-from .message_handlers import MessageHandlers, MessageHandlersList
+from .message_handler import MessageHandler, MessageHandlerMapping, MessageHandlerMappings
+from .message_handlers import MessageHandlers

@@ -1,7 +1,7 @@
 import typing
 
 from ..core.messaging import Message, MessageName, MessageType
-from ..core.messaging.handlers import MessageHandlers, MessageHandler, MessageHandlersList
+from ..core.messaging.handlers import MessageHandlers, MessageHandler, MessageHandlerMappings
 
 
 @typing.final
@@ -19,7 +19,7 @@ class Service:
         
         return decorator
     
-    def handlers(self, msg_name: MessageName) -> MessageHandlersList:
+    def message_handlers(self, msg_name: MessageName) -> MessageHandlerMappings:
         return self._message_handlers.find_handlers(msg_name)
 
     @property
@@ -27,4 +27,4 @@ class Service:
         return self._name
 
     def __str__(self) -> str:
-        return f"Service {self._name}: {str(self._message_handlers)}"
+        return f"Service '{self._name}': {str(self._message_handlers)}"

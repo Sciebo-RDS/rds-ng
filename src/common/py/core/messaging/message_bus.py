@@ -1,17 +1,16 @@
+import sys
 import threading
 import typing
 
 from .message import Message
 from .message_name import MessageName
-from .handlers import MessageHandlersList
+from .handlers import MessageHandlerMappings
 from ..networking.network_engine import NetworkEngine
 from ...service import Service
 
 
 class MessageBus:
     """ A thread-safe message bus for dispatching messages. """
-    # HINT: Thread-safety bei MO-Queue, Handler-Map-Zugriff; beim Callen selbst nicht
-    
     def __init__(self, nwe: NetworkEngine):
         from .dispatchers import MessageDispatcher, CommandDispatcher, CommandReplyDispatcher, EventDispatcher
         from .command import Command
@@ -53,13 +52,14 @@ class MessageBus:
                     # Dispatching should never raise an exception; they are to be handled by the dispatcher
                     dispatcher.dispatch(typing.cast(msg_type, msg), self._assemble_handlers(msg.name))
                 except Exception as e:
+                    import traceback
                     from ..logging import error
-                    error("Unhandled exception caught by the message bus", scope="bus", exception=repr(e))
+                    error("Unhandled exception caught by the message bus", scope="bus", exception=repr(e), traceback=traceback.format_exc())
                 finally:
                     break
         else:
             raise RuntimeError(f"The message type '{type(msg)}' is unknown")
 
-    def _assemble_handlers(self, msg_name: MessageName) -> MessageHandlersList:
+    def _assemble_handlers(self, msg_name: MessageName) -> MessageHandlerMappings:
         with self._lock:
-            return [handler for svc in self._services for handler in svc.handlers(msg_name)]
+            return [handler for svc in self._services for handler in svc.message_handlers(msg_name)]
