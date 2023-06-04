@@ -44,7 +44,7 @@ class Core:
         return config
     
     def _create_message_bus(self) -> MessageBus:
-        return MessageBus(self._network_engine)
+        return MessageBus(self._network_engine, print_tracebacks=self.is_debug_mode)
     
     def _create_flask(self, module_name: str) -> flask.Flask:
         from ..utils.random import generate_random_string

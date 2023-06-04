@@ -23,4 +23,5 @@ class Message(abc.ABC):
     trace: Trace = uuid.uuid4()
 
 
-MessageType = typing.TypeVar("MessageType", bound=Message)
+_MessageType_T = typing.TypeVar("_MessageType_T", bound=Message)
+MessageType = typing.Generic[_MessageType_T]

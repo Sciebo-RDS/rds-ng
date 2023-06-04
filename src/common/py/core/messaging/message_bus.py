@@ -11,13 +11,14 @@ from ...service import Service
 
 class MessageBus:
     """ A thread-safe message bus for dispatching messages. """
-    def __init__(self, nwe: NetworkEngine):
+    def __init__(self, nwe: NetworkEngine, *, print_tracebacks: bool = False):
         from .dispatchers import MessageDispatcher, CommandDispatcher, CommandReplyDispatcher, EventDispatcher
         from .command import Command
         from .command_reply import CommandReply
         from .event import Event
         
         self._network_engine = nwe
+        self._print_tracebacks = print_tracebacks
         
         self._services: typing.List[Service] = []
         self._dispatchers: typing.Dict[typing.Type, MessageDispatcher] = {
@@ -49,14 +50,16 @@ class MessageBus:
             # TODO: Check target and compare to "self"; send to dispatchers only if this matches, send through NWE otherwise
             if isinstance(msg, msg_type):
                 try:
-                    # Dispatching should never raise an exception; they are to be handled by the dispatcher
                     handlers = self._assemble_handlers(msg.name)
                     if len(handlers) > 0:
                         dispatcher.dispatch(typing.cast(msg_type, msg), handlers)
                 except Exception as e:
                     import traceback
                     from ..logging import error
-                    error("Unhandled exception caught by the message bus", scope="bus", exception=repr(e), traceback=traceback.format_exc())
+                    kwargs = {"message": str(msg), "exception": repr(e)}
+                    if self._print_tracebacks:
+                        kwargs["traceback"] = traceback.format_exc()
+                    error("An exception occurred while processing a message", scope="bus", **kwargs)
                 finally:
                     break
         else:

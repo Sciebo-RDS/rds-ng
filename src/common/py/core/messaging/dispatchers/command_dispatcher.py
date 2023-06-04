@@ -10,5 +10,4 @@ class CommandDispatcher(MessageDispatcher[Command]):
     def dispatch(self, command: Command, handlers: MessageHandlerMappings):
         if len(handlers) > 1:
             raise RuntimeError(f"Commands may only be handled by a single handler; got {len(handlers)} instead")
-        
-        raise RuntimeError("Too lazy to accept commands")
+        super().dispatch(command, handlers)

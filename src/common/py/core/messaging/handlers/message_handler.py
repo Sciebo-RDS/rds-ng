@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from ..message import MessageType
 
-MessageHandler = typing.Callable[[typing.Generic[MessageType]], None]  # TODO: Subject to change (UoW, etc.)
+MessageHandler = typing.Callable[[MessageType], None]  # TODO: Subject to change (UoW, etc.)
 
 
 @dataclass(frozen=True)

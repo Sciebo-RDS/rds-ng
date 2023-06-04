@@ -8,5 +8,4 @@ class EventDispatcher(MessageDispatcher[Event]):
         super().__init__()
         
     def dispatch(self, event: Event, handlers: MessageHandlerMappings):
-        for handler in handlers:
-            handler.handler(event)
+        super().dispatch(event, handlers)
