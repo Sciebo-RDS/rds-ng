@@ -50,7 +50,9 @@ class MessageBus:
             if isinstance(msg, msg_type):
                 try:
                     # Dispatching should never raise an exception; they are to be handled by the dispatcher
-                    dispatcher.dispatch(typing.cast(msg_type, msg), self._assemble_handlers(msg.name))
+                    handlers = self._assemble_handlers(msg.name)
+                    if len(handlers) > 0:
+                        dispatcher.dispatch(typing.cast(msg_type, msg), handlers)
                 except Exception as e:
                     import traceback
                     from ..logging import error
