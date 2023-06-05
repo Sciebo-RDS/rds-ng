@@ -1,0 +1,4 @@
+common/py/core/config/settings /component/.pytype/pyi/common/py/core/config/settings.pyi
+tomli/__init__ /component/.pytype/imports/default.pyi
+deepmerge/__init__ /component/.pytype/imports/default.pyi
+common/py/core/config/configuration /component/.pytype/pyi/common/py/core/config/configuration.pyi
