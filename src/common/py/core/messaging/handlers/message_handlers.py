@@ -12,9 +12,9 @@ class MessageHandlers:
         
         self._lock = threading.Lock()
         
-    def add_handler(self, fltr: str, handler: MessageHandler, message_type: typing.Type[MessageType] = Message) -> None:
+    def add_handler(self, fltr: str, handler: MessageHandler, message_type: typing.Type[MessageType] = Message, is_async: bool = False) -> None:
         with self._lock:
-            self._handlers.append(MessageHandlerMapping(fltr, handler, message_type))
+            self._handlers.append(MessageHandlerMapping(fltr, handler, message_type, is_async))
             
     def find_handlers(self, msg_name: MessageName) -> MessageHandlerMappings:
         handlers: MessageHandlerMappings = []

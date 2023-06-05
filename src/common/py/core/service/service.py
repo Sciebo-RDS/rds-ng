@@ -15,9 +15,9 @@ class Service:
         self._message_handlers = MessageHandlers()
         self._context_type = context_type
 
-    def message_handler(self, fltr: str, /, message_type: typing.Type[MessageType] = Message) -> typing.Callable[[MessageHandler], MessageHandler]:
+    def message_handler(self, fltr: str, /, message_type: typing.Type[MessageType] = Message, *, is_async: bool = False) -> typing.Callable[[MessageHandler], MessageHandler]:
         def decorator(handler: MessageHandler) -> MessageHandler:
-            self._message_handlers.add_handler(fltr, handler, message_type)
+            self._message_handlers.add_handler(fltr, handler, message_type, is_async)
             return handler
         
         return decorator

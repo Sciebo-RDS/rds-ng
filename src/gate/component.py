@@ -1,5 +1,3 @@
-import uuid
-
 from common.py.component import Component, ComponentID
 from common.py.core.messaging import Event, Command, MessageName, Channel
 from common.py.core.service import Service, ServiceContext
@@ -15,15 +13,15 @@ class EC(ServiceContext):
 s = Service("Test service", context_type=EC)
 
 
-@s.message_handler("msg/event", Event)
+@s.message_handler("msg/event", Event, is_async=True)
 def h(msg: Event, ctx: EC) -> None:
-    print(type(ctx), msg)
+    print(ctx.is_async, msg)
     ctx.logger.info("HIIIII")
     
     
-@s.message_handler("msg/command", Command)
+@s.message_handler("msg/command", Command, is_async=True)
 def h2(msg: Event, ctx: EC) -> None:
-    print("HI COMMAND!", msg)
+    print(ctx.is_async, msg)
     ctx.logger.info("OOOOOK")
     
 

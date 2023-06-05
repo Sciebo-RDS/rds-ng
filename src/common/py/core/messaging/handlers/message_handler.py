@@ -11,6 +11,7 @@ class MessageHandlerMapping:
     filter: str
     handler: MessageHandler
     message_type: typing.Type[MessageType]
+    is_async: bool = False
     
     def __str__(self) -> str:
         return f"{self.filter} -> {str(self.handler)} [{str(self.message_type)}]"
