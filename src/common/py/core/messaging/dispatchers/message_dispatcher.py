@@ -1,8 +1,9 @@
 import abc
 import typing
 
-from ..handlers import MessageHandlerMappings
+from ..handlers import MessageHandlerMapping
 from ..message import MessageType
+from ...service import ServiceContextType
 
 
 class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
@@ -11,9 +12,9 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
         pass
 
     @abc.abstractmethod
-    def dispatch(self, msg: MessageType, handlers: MessageHandlerMappings) -> None:
-        for handler in handlers:
+    def dispatch(self, msg: MessageType, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]) -> None:
+        with ctx:
             if isinstance(msg, handler.message_type):
-                handler.handler(typing.cast(handler.message_type, msg))
+                handler.handler(typing.cast(handler.message_type, msg), ctx)
             else:
                 raise RuntimeError(f"Handler {str(handler.handler)} requires messages of type {str(handler.message_type)}, but got {str(type(msg))}")

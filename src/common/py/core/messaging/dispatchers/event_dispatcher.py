@@ -1,11 +1,12 @@
+import typing
+
 from .message_dispatcher import MessageDispatcher
 from ..event import Event
-from ..handlers import MessageHandlerMappings
+from ..handlers import MessageHandlerMapping
+from ...service import ServiceContextType
 
 
 class EventDispatcher(MessageDispatcher[Event]):
-    def __init__(self):
-        super().__init__()
-        
-    def dispatch(self, event: Event, handlers: MessageHandlerMappings):
-        super().dispatch(event, handlers)
+    def dispatch(self, event: Event, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]):
+        print("RECV EVENT")
+        super().dispatch(event, handler, ctx)

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from ..message import MessageType
 
-MessageHandler = typing.Callable[[MessageType], None]  # TODO: Subject to change (UoW, etc.)
+MessageHandler = typing.Callable[[MessageType, 'ServiceContextType'], None]  # We can't import anything from Service here due to cyclic dependencies
 
 
 @dataclass(frozen=True)

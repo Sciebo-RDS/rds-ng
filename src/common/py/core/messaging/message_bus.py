@@ -1,22 +1,23 @@
-import sys
 import threading
 import typing
 
-from .message import MessageName, Message, MessageType
-from .handlers import MessageHandlerMappings
+from .dispatchers import MessageDispatcher
+from .message import Message, MessageType
+from ..config import Configuration
 from ..networking.network_engine import NetworkEngine
-from ...service import Service
+from ..service import Service
 
 
 class MessageBus:
     """ A thread-safe message bus for dispatching messages. """
-    def __init__(self, nwe: NetworkEngine, *, print_tracebacks: bool = False):
-        from .dispatchers import MessageDispatcher, CommandDispatcher, CommandReplyDispatcher, EventDispatcher
+    def __init__(self, nwe: NetworkEngine, config: Configuration, *, print_tracebacks: bool = False):
+        from .dispatchers import CommandDispatcher, CommandReplyDispatcher, EventDispatcher
         from .command import Command
         from .command_reply import CommandReply
         from .event import Event
         
         self._network_engine = nwe
+        self._config = config
         self._print_tracebacks = print_tracebacks
         
         self._services: typing.List[Service] = []
@@ -46,24 +47,23 @@ class MessageBus:
         
     def dispatch(self, msg: Message) -> None:
         for msg_type, dispatcher in self._dispatchers.items():
+            if not isinstance(msg, msg_type):
+                continue
+            
             # TODO: Check target and compare to "self"; send to dispatchers only if this matches, send through NWE otherwise
-            if isinstance(msg, msg_type):
-                try:
-                    handlers = self._assemble_handlers(msg.name)
-                    if len(handlers) > 0:
-                        dispatcher.dispatch(typing.cast(msg_type, msg), handlers)
-                except Exception as e:
-                    import traceback
-                    from ..logging import error
-                    kwargs = {"message": str(msg), "exception": repr(e)}
-                    if self._print_tracebacks:
-                        kwargs["traceback"] = traceback.format_exc()
-                    error("An exception occurred while processing a message", scope="bus", **kwargs)
-                finally:
-                    break
-        else:
-            raise RuntimeError(f"The message type '{type(msg)}' is unknown")
+            for svc in self._services:
+                self._dispatch_to_service(dispatcher, msg, msg_type, svc)
 
-    def _assemble_handlers(self, msg_name: MessageName) -> MessageHandlerMappings:
-        with self._lock:
-            return [handler for svc in self._services for handler in svc.message_handlers(msg_name)]
+    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], svc: Service) -> None:
+        for handler in svc.message_handlers(msg.name):
+            try:
+                act_msg = typing.cast(msg_type, msg)
+                ctx = svc.create_context(act_msg, self._config)
+                dispatcher.dispatch(act_msg, handler, ctx)
+            except Exception as e:
+                import traceback
+                from ..logging import error
+                kwargs = {"message": str(msg), "exception": repr(e)}
+                if self._print_tracebacks:
+                    kwargs["traceback"] = traceback.format_exc()
+                error("An exception occurred while processing a message", scope="bus", **kwargs)

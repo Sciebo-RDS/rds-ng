@@ -1,13 +1,12 @@
+import typing
+
 from .message_dispatcher import MessageDispatcher
 from ..command_reply import CommandReply
-from ..handlers import MessageHandlerMappings
+from ..handlers import MessageHandlerMapping
+from ...service import ServiceContextType
 
 
 class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
-    def __init__(self):
-        super().__init__()
-
-    def dispatch(self, reply: CommandReply, handlers: MessageHandlerMappings):
-        if len(handlers) > 1:
-            raise RuntimeError(f"Command replies may only be handled by a single handler; got {len(handlers)} instead")
-        super().dispatch(reply, handlers)
+    def dispatch(self, reply: CommandReply, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]):
+        print("RECV COMMAND REPLY")
+        super().dispatch(reply, handler, ctx)
