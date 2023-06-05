@@ -12,7 +12,7 @@ class Service:
         
         self._message_handlers = MessageHandlers()
 
-    def message_handler(self, fltr: str, /, message_type: MessageType = Message) -> typing.Callable[[MessageHandler], MessageHandler]:
+    def message_handler(self, fltr: str, /, message_type: typing.Type[MessageType] = Message) -> typing.Callable[[MessageHandler], MessageHandler]:
         def decorator(handler: MessageHandler) -> MessageHandler:
             self._message_handlers.add_handler(fltr, handler, message_type)
             return handler

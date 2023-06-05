@@ -1,8 +1,7 @@
 import threading
 import typing
 
-from ..message import Message, MessageType
-from ..message_name import MessageName
+from ..message import MessageName, Message, MessageType
 from .message_handler import MessageHandler, MessageHandlerMapping, MessageHandlerMappings
 
 
@@ -13,7 +12,7 @@ class MessageHandlers:
         
         self._lock = threading.Lock()
         
-    def add_handler(self, fltr: str, handler: MessageHandler, message_type: MessageType = Message) -> None:
+    def add_handler(self, fltr: str, handler: MessageHandler, message_type: typing.Type[MessageType] = Message) -> None:
         with self._lock:
             self._handlers.append(MessageHandlerMapping(fltr, handler, message_type))
             

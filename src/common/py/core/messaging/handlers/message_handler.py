@@ -10,7 +10,7 @@ MessageHandler = typing.Callable[[MessageType], None]  # TODO: Subject to change
 class MessageHandlerMapping:
     filter: str
     handler: MessageHandler
-    message_type: MessageType
+    message_type: typing.Type[MessageType]
     
     def __str__(self) -> str:
         return f"{self.filter} -> {str(self.handler)} [{str(self.message_type)}]"

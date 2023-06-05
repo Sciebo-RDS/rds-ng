@@ -6,7 +6,6 @@ from enum import StrEnum
 class Channel:
     class Type(StrEnum):
         LOCAL = "local"
-        ALL = "all"
         DIRECT = "direct"
         ROOM = "room"
         
@@ -19,11 +18,7 @@ class Channel:
     @staticmethod
     def local() -> 'Channel':
         return Channel(Channel.Type.LOCAL)
-    
-    @staticmethod
-    def all() -> 'Channel':
-        return Channel(Channel.Type.ALL)
-    
+        
     @staticmethod
     def direct(target: str) -> 'Channel':
         return Channel(Channel.Type.DIRECT, target)

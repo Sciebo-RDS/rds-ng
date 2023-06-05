@@ -5,5 +5,5 @@ from .message import Message
 
 @dataclass(frozen=True, kw_only=True)
 class CommandReply(Message):
-    success: bool
+    success: bool = True
     message: str = ""

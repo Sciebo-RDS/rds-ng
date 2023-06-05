@@ -2,8 +2,7 @@ import sys
 import threading
 import typing
 
-from .message import Message
-from .message_name import MessageName
+from .message import MessageName, Message, MessageType
 from .handlers import MessageHandlerMappings
 from ..networking.network_engine import NetworkEngine
 from ...service import Service
@@ -21,7 +20,7 @@ class MessageBus:
         self._print_tracebacks = print_tracebacks
         
         self._services: typing.List[Service] = []
-        self._dispatchers: typing.Dict[typing.Type, MessageDispatcher] = {
+        self._dispatchers: typing.Dict[typing.Type[MessageType], MessageDispatcher] = {
             Command: CommandDispatcher(),
             CommandReply: CommandReplyDispatcher(),
             Event: EventDispatcher(),

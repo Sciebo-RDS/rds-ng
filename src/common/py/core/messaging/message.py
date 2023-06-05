@@ -2,11 +2,12 @@ import abc
 import typing
 import uuid
 from dataclasses import dataclass, field
+from pathlib import PurePosixPath
 
 from .channel import Channel
-from .message_name import MessageName
 from ...component import ComponentID
 
+MessageName = PurePosixPath
 Trace = uuid.UUID
 
 
@@ -23,5 +24,4 @@ class Message(abc.ABC):
     trace: Trace = uuid.uuid4()
 
 
-_MessageType_T = typing.TypeVar("_MessageType_T", bound=Message)
-MessageType = typing.Generic[_MessageType_T]
+MessageType = typing.TypeVar("MessageType", bound=Message)
