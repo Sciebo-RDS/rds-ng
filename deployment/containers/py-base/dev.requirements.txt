@@ -1,2 +1,0 @@
-# Additional dependencies for development
-mypy >= 1.3

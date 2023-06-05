@@ -13,9 +13,6 @@ WORKDIR /base
 COPY    /deployment/containers/py-base/requirements.txt .
 RUN     pip install -r ./requirements.txt
 
-COPY    /deployment/containers/py-base/dev.requirements.txt .
-RUN     pip install -r ./dev.requirements.txt
-
 # Add project configuration
 WORKDIR /config
 COPY    /config .
