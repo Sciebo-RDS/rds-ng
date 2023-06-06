@@ -13,8 +13,8 @@ class Configuration:
     def load(self, filename: str) -> None:
         if os.path.exists(filename):
             with open(filename, "rb") as f:
-                import tomli
-                self._settings = tomli.load(f)
+                import tomllib
+                self._settings = tomllib.load(f)
         else:
             raise FileNotFoundError("Configuration file doesn't exist")
         
