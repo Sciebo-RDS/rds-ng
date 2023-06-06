@@ -2,6 +2,7 @@ import typing
 
 from .service_context import ServiceContextType, ServiceContext
 from ..config import Configuration
+from ..logging import Logger
 from ..messaging import Message, MessageName, MessageType
 from ..messaging.handlers import MessageHandlers, MessageHandler, MessageHandlerMappings
 
@@ -25,8 +26,8 @@ class Service:
     def message_handlers(self, msg_name: MessageName) -> MessageHandlerMappings:
         return self._message_handlers.find_handlers(msg_name)
     
-    def create_context(self, msg: Message, config: Configuration) -> ServiceContextType:
-        return self._context_type(msg, config)
+    def create_context(self, config: Configuration, logger: Logger) -> ServiceContextType:
+        return self._context_type(config, logger)
 
     @property
     def name(self) -> str:

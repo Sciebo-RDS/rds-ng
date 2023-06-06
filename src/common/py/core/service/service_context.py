@@ -1,25 +1,17 @@
 import typing
-from concurrent.futures import Future
 
 from ..config import Configuration
-from ..logging import LoggerProxy, default_logger
-from ..messaging import Message, Trace
+from ..logging import Logger
 
 
 class ServiceContext:
     """ An execution context for messages dispatched by the message bus. """
-    def __init__(self, msg: Message, config: Configuration):
-        self._message = msg
+    def __init__(self, config: Configuration, logger: Logger):
         self._config = config
-        self._logger_proxy = self._create_logger_proxy(msg.trace)
+        self._logger = logger
         
         self._is_async = False
         
-    def _create_logger_proxy(self, trace: Trace) -> LoggerProxy:
-        proxy = LoggerProxy(default_logger())
-        proxy.add_param("trace", str(trace))
-        return proxy
-    
     def __enter__(self) -> typing.Self:
         return self
     
@@ -36,8 +28,8 @@ class ServiceContext:
         return self._config
     
     @property
-    def logger(self) -> LoggerProxy:
-        return self._logger_proxy
+    def logger(self) -> Logger:
+        return self._logger
     
     @property
     def is_async(self) -> bool:

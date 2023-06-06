@@ -2,11 +2,12 @@ import logging
 import typing
 
 from .logger import Logger
+from .extended_logger import ExtendedLogger
 from .logger_proxy import LoggerProxy
 
 
-logging.setLoggerClass(Logger)
-_logger: Logger = logging.getLogger("rds_logger")
+logging.setLoggerClass(ExtendedLogger)
+_logger = typing.cast(ExtendedLogger, logging.getLogger("rds_logger"))
 
 
 def set_level(level: int) -> None:
@@ -29,5 +30,5 @@ def error(msg: str, *, scope: str | None = None, **kwargs):
     _logger.error(msg, scope=scope, **kwargs)
 
 
-def default_logger() -> Logger:
-    return typing.cast(Logger, _logger)
+def default_logger() -> ExtendedLogger:
+    return _logger

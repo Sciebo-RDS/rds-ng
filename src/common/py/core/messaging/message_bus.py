@@ -4,8 +4,9 @@ import typing
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
 from ..config import Configuration
+from ..logging import LoggerProxy, default_logger, error
 from ..networking.network_engine import NetworkEngine
-from ..service import Service
+from ..service import Service, ServiceContextType
 
 
 class MessageBus:
@@ -58,12 +59,16 @@ class MessageBus:
         for handler in svc.message_handlers(msg.name):
             try:
                 act_msg = typing.cast(msg_type, msg)
-                ctx = svc.create_context(act_msg, self._config)
+                ctx = self._create_context(msg, svc)
                 dispatcher.dispatch(act_msg, handler, ctx)
             except Exception as e:
                 import traceback
-                from ..logging import error
                 kwargs = {"message": str(msg), "exception": repr(e)}
                 if self._print_tracebacks:
                     kwargs["traceback"] = traceback.format_exc()
                 error("An exception occurred while processing a message", scope="bus", **kwargs)
+
+    def _create_context(self, msg: Message, svc: Service) -> ServiceContextType:
+        logger_proxy = LoggerProxy(default_logger())
+        logger_proxy.add_param("trace", str(msg.trace))
+        return svc.create_context(self._config, logger_proxy)

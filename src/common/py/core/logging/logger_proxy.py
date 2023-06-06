@@ -1,11 +1,12 @@
 import typing
 
 from .logger import Logger
+from .extended_logger import ExtendedLogger
 
 
-class LoggerProxy:
+class LoggerProxy(Logger):
     """ A proxy to automatically pass extra parameters to a logger. """
-    def __init__(self, logger: Logger):
+    def __init__(self, logger: ExtendedLogger):
         self._logger = logger
         
         self._auto_params: typing.Dict[str, typing.Any] = {}
