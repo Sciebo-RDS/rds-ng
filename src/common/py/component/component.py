@@ -1,10 +1,12 @@
 import json
+import typing
 
 from semantic_version import Version
 import socketio
 
 from .component_id import ComponentID
 from ..core import Core
+from ..core.service import Service, ServiceContext, ServiceContextType
 
 
 class Component:
@@ -29,6 +31,11 @@ class Component:
         
     def wsgi_app(self) -> socketio.WSGIApp:
         return socketio.WSGIApp(self._core.network.server, self.core.flask)
+    
+    def create_service(self, name: str, *, context_type: typing.Type[ServiceContextType] = ServiceContext) -> Service:
+        svc = Service(self._comp_id, name, context_type=context_type)
+        self._core.register_service(svc)
+        return svc
     
     @property
     def core(self) -> Core:

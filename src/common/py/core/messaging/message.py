@@ -1,4 +1,5 @@
 import abc
+import dataclasses
 import typing
 import uuid
 from dataclasses import dataclass, field
@@ -22,6 +23,6 @@ class Message(abc.ABC):
     hops: typing.List[ComponentID] = field(default_factory=list)
     
     trace: Trace = field(default_factory=uuid.uuid4)
-
+    
 
 MessageType = typing.TypeVar("MessageType", bound=Message)
