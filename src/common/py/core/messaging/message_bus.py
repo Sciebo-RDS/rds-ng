@@ -3,13 +3,14 @@ import typing
 
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
+from .message_bus_protocol import MessageBusProtocol
 from ..config import Configuration
 from ..logging import LoggerProxy, default_logger, error
 from ..networking.network_engine import NetworkEngine
 from ..service import Service, ServiceContextType
 
 
-class MessageBus:
+class MessageBus(MessageBusProtocol):
     """ A thread-safe message bus for dispatching messages. """
     def __init__(self, nwe: NetworkEngine, config: Configuration, *, print_tracebacks: bool = False):
         from .dispatchers import CommandDispatcher, CommandReplyDispatcher, EventDispatcher

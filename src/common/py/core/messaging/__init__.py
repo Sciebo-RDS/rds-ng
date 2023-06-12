@@ -3,4 +3,5 @@ from .message import MessageName, Trace, Message, MessageType
 from .command import Command
 from .command_reply import CommandReply
 from .event import Event
+from .message_bus_protocol import MessageBusProtocol
 from .message_bus import MessageBus

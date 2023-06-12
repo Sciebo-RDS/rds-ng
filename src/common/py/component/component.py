@@ -33,7 +33,7 @@ class Component:
         return socketio.WSGIApp(self._core.network.server, self.core.flask)
     
     def create_service(self, name: str, *, context_type: typing.Type[ServiceContextType] = ServiceContext) -> Service:
-        svc = Service(self._comp_id, name, context_type=context_type)
+        svc = Service(self._comp_id, name, message_bus=self._core.message_bus, context_type=context_type)
         self._core.register_service(svc)
         return svc
     
