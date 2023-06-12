@@ -5,8 +5,8 @@ from ...core.messaging.channel import Channel
 from ...component import ComponentID
 
 
-class MessageCreator:
-    """ A helper class to create messages; it basically stores senseful defaults for certain values and takes care of chaining and rerouting. """
+class MessageSender:
+    """ A helper class to create and send messages; it basically stores senseful defaults for certain values and takes care of chaining and rerouting. """
     def __init__(self, origin_id: ComponentID):
         self._origin_id = origin_id
         

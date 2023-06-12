@@ -28,5 +28,5 @@ def h(msg: MyEvent, ctx: MyServiceContext) -> None:
     
     
 mb = comp.core.message_bus
-ev = s.message_creator.create(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
+ev = s.message_sender.create(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
 mb.dispatch(ev)

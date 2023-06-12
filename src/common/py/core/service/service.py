@@ -1,6 +1,6 @@
 import typing
 
-from .message_creator import MessageCreator
+from .message_sender import MessageSender
 from .service_context import ServiceContextType, ServiceContext
 from ..config import Configuration
 from ..logging import Logger
@@ -17,7 +17,7 @@ class Service:
         self._name = name
         
         self._message_handlers = MessageHandlers()
-        self._message_creator = MessageCreator(comp_id)
+        self._message_sender = MessageSender(comp_id)
         self._context_type = context_type
 
     def message_handler(self, fltr: str, /, message_type: typing.Type[MessageType] = Message, *, is_async: bool = False) -> typing.Callable[[MessageHandler], MessageHandler]:
@@ -31,15 +31,15 @@ class Service:
         return self._message_handlers.find_handlers(msg_name)
     
     def create_context(self, config: Configuration, logger: Logger) -> ServiceContextType:
-        return self._context_type(self._message_creator, config, logger)
+        return self._context_type(self._message_sender, config, logger)
 
     @property
     def name(self) -> str:
         return self._name
     
     @property
-    def message_creator(self) -> MessageCreator:
-        return self._message_creator
+    def message_sender(self) -> MessageSender:
+        return self._message_sender
 
     def __str__(self) -> str:
         return f"Service '{self._name}': {str(self._message_handlers)}"
