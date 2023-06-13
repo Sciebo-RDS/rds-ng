@@ -28,4 +28,4 @@ def h(msg: MyEvent, ctx: MyServiceContext) -> None:
     
     
 mb = comp.core.message_bus
-s.message_sender.send(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
+s.message_sender.emit(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")

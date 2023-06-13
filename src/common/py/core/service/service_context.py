@@ -1,13 +1,13 @@
 import typing
 
-from .message_sender import MessageSender
+from .message_emitter import MessageEmitter
 from ..config import Configuration
 from ..logging import LoggerProtocol
 
 
 class ServiceContext:
     """ An execution context for messages dispatched by the message bus. """
-    def __init__(self, msg_creator: MessageSender, config: Configuration, logger: LoggerProtocol):
+    def __init__(self, msg_creator: MessageEmitter, config: Configuration, logger: LoggerProtocol):
         self._msg_creator = msg_creator
         
         self._config = config
@@ -27,7 +27,7 @@ class ServiceContext:
         return self
         
     @property
-    def message_sender(self) -> MessageSender:
+    def message_sender(self) -> MessageEmitter:
         return self._msg_creator
     
     @property
