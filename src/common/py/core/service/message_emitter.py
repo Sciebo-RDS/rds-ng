@@ -1,8 +1,6 @@
 import typing
 
-from ...core.messaging import MessageBusProtocol
-from ...core.messaging.message import MessageType
-from ...core.messaging.channel import Channel
+from ...core.messaging import MessageBusProtocol, Message, MessageType, Channel
 from ...component import ComponentID
 
 
@@ -12,13 +10,16 @@ class MessageEmitter:
         self._origin_id = origin_id
         self._message_bus = message_bus
         
-    def emit(self, msg_type: typing.Type[MessageType], target: Channel, **kwargs) -> MessageType:
-        return self._emit(msg_type, origin=self._origin_id, target=target, prev_hops=[], **kwargs)
+    def emit(self, msg_type: typing.Type[MessageType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
+        return self._emit(msg_type, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
-    def _emit(self, msg_type: typing.Type[MessageType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], **kwargs) -> MessageType:
-        msg = self._create(msg_type, origin=origin, target=target, prev_hops=prev_hops, **kwargs)
+    def _emit(self, msg_type: typing.Type[MessageType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
+        msg = self._create(msg_type, origin=origin, target=target, prev_hops=prev_hops, chain=chain, **kwargs)
         self._message_bus.dispatch(msg)
         return msg
 
-    def _create(self, msg_type: typing.Type[MessageType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], **kwargs) -> MessageType:
+    def _create(self, msg_type: typing.Type[MessageType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
+        if chain is not None:
+            kwargs["trace"] = chain.trace
+        
         return msg_type(origin=origin, sender=self._origin_id, target=target, hops=[*prev_hops, self._origin_id], **kwargs)

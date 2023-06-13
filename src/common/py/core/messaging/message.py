@@ -24,5 +24,19 @@ class Message(abc.ABC):
     
     trace: Trace = field(default_factory=uuid.uuid4)
     
+    @staticmethod
+    def define(name: str):
+        def decorator(cls):
+            cls = dataclasses.dataclass(frozen=True, kw_only=True)(cls)  # Wrap the class in a dataclass
+            __init__ = cls.__init__
+            
+            def __new_init__(self, *args, **kwargs):
+                __init__(self, *args, name=MessageName(name), **kwargs)
+            
+            setattr(cls, "__init__", __new_init__)
+            return cls
+        
+        return decorator
+
 
 MessageType = typing.TypeVar("MessageType", bound=Message)
