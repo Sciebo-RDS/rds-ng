@@ -51,10 +51,12 @@ class MessageBus(MessageBusProtocol):
         for msg_type, dispatcher in self._dispatchers.items():
             if not isinstance(msg, msg_type):
                 continue
+                
+            processed_msg = dispatcher.preprocess_message(msg)
             
             # TODO: Check target and compare to "self"; send to dispatchers only if this matches, send through NWE otherwise
             for svc in self._services:
-                self._dispatch_to_service(dispatcher, msg, msg_type, svc)
+                self._dispatch_to_service(dispatcher, processed_msg, msg_type, svc)
 
     def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], svc: Service) -> None:
         for handler in svc.message_handlers(msg.name):

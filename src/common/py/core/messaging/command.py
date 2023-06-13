@@ -1,12 +1,13 @@
 import typing
-from dataclasses import dataclass
+import uuid
+from dataclasses import dataclass, field
 
-from .message import Message
+from .message import Message, Trace
 
 
 @dataclass(frozen=True, kw_only=True)
 class Command(Message):
-    pass
+    unique: Trace = field(default_factory=uuid.uuid4)
 
 
 CommandType = typing.TypeVar("CommandType", bound=Command)

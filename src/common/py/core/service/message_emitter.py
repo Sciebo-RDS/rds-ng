@@ -1,6 +1,6 @@
 import typing
 
-from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply
+from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply, CommandReplyCallback
 from ...component import ComponentID
 
 
@@ -10,17 +10,21 @@ class MessageEmitter:
         self._origin_id = origin_id
         self._message_bus = message_bus
         
-    def emit_command(self, cmd_type: typing.Type[CommandType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
+    def emit_command(self, cmd_type: typing.Type[CommandType], target: Channel, done_callback: CommandReplyCallback | None = None, fail_callback: CommandReplyCallback | None = None, chain: Message | None = None, **kwargs) -> MessageType:
         if not issubclass(cmd_type, Command):
             raise RuntimeError(f"Tried to emit a command, but got a {cmd_type}")
         
-        return self._emit(cmd_type, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
+        # The actual command message is wrapped to temporarily pass the callbacks to the dispatcher
+        cmd = self._create_message(cmd_type, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
+        
+        from common.py.core.messaging import CommandWrapper
+        return self._emit(CommandWrapper, origin=self._origin_id, target=target, prev_hops=[], chain=chain, command=cmd, done_callback=done_callback, fail_callback=fail_callback)
     
-    def emit_reply(self, reply_type: typing.Type[CommandReplyType], command: typing.Type[CommandType], **kwargs):
+    def emit_reply(self, reply_type: typing.Type[CommandReplyType], command: CommandType, *, success: bool = True, message: str = "", **kwargs):
         if not issubclass(reply_type, CommandReply):
             raise RuntimeError(f"Tried to emit a command reply, but got a {reply_type}")
         
-        return self._emit(reply_type, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, **kwargs)
+        return self._emit(reply_type, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, **kwargs)
     
     def emit_event(self, msg_type: typing.Type[EventType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
         if not issubclass(msg_type, Event):

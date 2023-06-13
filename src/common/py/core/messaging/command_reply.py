@@ -14,3 +14,4 @@ class CommandReply(Message):
 
 
 CommandReplyType = typing.TypeVar("CommandReplyType", bound=CommandReply)
+CommandReplyCallback = typing.Callable[[CommandReplyType], None]  # TODO: Context

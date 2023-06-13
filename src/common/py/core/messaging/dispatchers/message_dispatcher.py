@@ -15,6 +15,9 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     def __init__(self):
         pass
 
+    def preprocess_message(self, msg: MessageType) -> MessageType:
+        return msg
+    
     @abc.abstractmethod
     def dispatch(self, msg: MessageType, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]) -> None:
         with ctx(is_async=handler.is_async):

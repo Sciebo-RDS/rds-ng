@@ -7,6 +7,6 @@ from ...service import ServiceContextType
 
 
 class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
-    def dispatch(self, reply: CommandReply, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]):
+    def dispatch(self, reply: CommandReply, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]) -> None:
         print("RECV COMMAND REPLY")
         super().dispatch(reply, handler, ctx)

@@ -7,6 +7,6 @@ from ...service import ServiceContextType
 
 
 class EventDispatcher(MessageDispatcher[Event]):
-    def dispatch(self, event: Event, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]):
+    def dispatch(self, event: Event, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]) -> None:
         print("RECV EVENT")
         super().dispatch(event, handler, ctx)
