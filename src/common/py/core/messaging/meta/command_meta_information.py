@@ -1,7 +1,7 @@
 import dataclasses
 
-from common.py.core.messaging.command_reply import CommandReplyCallback
 from .message_meta_information import MessageMetaInformation
+from ..command_reply import CommandReplyCallback
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
