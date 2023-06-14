@@ -17,7 +17,7 @@ class Service:
         self._name = name
         
         self._message_handlers = MessageHandlers()
-        self._message_sender = MessageEmitter(comp_id, message_bus)
+        self._message_emitter = MessageEmitter(comp_id, message_bus)
         self._context_type = context_type
 
     def message_handler(self, fltr: str, /, message_type: typing.Type[MessageType] = Message, *, is_async: bool = False) -> typing.Callable[[MessageHandler], MessageHandler]:
@@ -31,15 +31,15 @@ class Service:
         return self._message_handlers.find_handlers(msg_name)
     
     def create_context(self, config: Configuration, logger: LoggerProtocol) -> ServiceContextType:
-        return self._context_type(self._message_sender, config, logger)
+        return self._context_type(self._message_emitter, config, logger)
 
     @property
     def name(self) -> str:
         return self._name
     
     @property
-    def message_sender(self) -> MessageEmitter:
-        return self._message_sender
+    def message_emitter(self) -> MessageEmitter:
+        return self._message_emitter
 
     def __str__(self) -> str:
         return f"Service '{self._name}': {str(self._message_handlers)}"

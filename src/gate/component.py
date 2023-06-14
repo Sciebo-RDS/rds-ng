@@ -38,12 +38,12 @@ def h(msg: MyEvent, ctx: MyServiceContext) -> None:
 @s.message_handler("msg/command", MyCommand)
 def h2(msg: MyCommand, ctx: MyServiceContext) -> None:
     ctx.logger.info(f"COMMAND: {msg.some_number}")
-    ctx.message_sender.emit_reply(MyCommandReply, msg, success=True, message="THAT WENT WELL")
+    ctx.message_emitter.emit_reply(MyCommandReply, msg, success=True, message="THAT WENT WELL")
     
 
 def h2_done(reply: MyCommandReply) -> None:
     print("ME GOTZ REPLY!", reply.message)
     
     
-s.message_sender.emit_event(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
-s.message_sender.emit_command(MyCommand, Channel.local(), done_callback=h2_done, some_number=123)
+s.message_emitter.emit_event(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
+s.message_emitter.emit_command(MyCommand, Channel.local(), done_callback=h2_done, some_number=123)

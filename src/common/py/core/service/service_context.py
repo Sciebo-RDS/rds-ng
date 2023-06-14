@@ -7,8 +7,8 @@ from ..logging import LoggerProtocol
 
 class ServiceContext:
     """ An execution context for messages dispatched by the message bus. """
-    def __init__(self, msg_creator: MessageEmitter, config: Configuration, logger: LoggerProtocol):
-        self._msg_creator = msg_creator
+    def __init__(self, msg_emitter: MessageEmitter, config: Configuration, logger: LoggerProtocol):
+        self._msg_emitter = msg_emitter
         
         self._config = config
         self._logger = logger
@@ -27,8 +27,8 @@ class ServiceContext:
         return self
         
     @property
-    def message_sender(self) -> MessageEmitter:
-        return self._msg_creator
+    def message_emitter(self) -> MessageEmitter:
+        return self._msg_emitter
     
     @property
     def config(self) -> Configuration:
