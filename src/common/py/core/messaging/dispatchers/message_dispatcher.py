@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from ..handlers import MessageHandlerMapping
 from ..message import MessageType
+from ..meta import MessageMetaInformation, MessageMetaInformationType
 from ...service import ServiceContextType
 
 
@@ -12,14 +13,14 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     """ The dispatcher sends message to registered handlers while also performing additional tasks like context management. """
     _thread_pool = ThreadPoolExecutor()
     
-    def __init__(self):
-        pass
-
-    def preprocess_message(self, msg: MessageType) -> MessageType:
-        return msg
+    def __init__(self, meta_information_type: typing.Type[MessageMetaInformationType]):
+        self._meta_information_type = meta_information_type
     
+    def verify_meta_information(self, meta: typing.Generic[MessageMetaInformationType]) -> bool:
+        return isinstance(meta, self._meta_information_type)
+
     @abc.abstractmethod
-    def dispatch(self, msg: MessageType, handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]) -> None:
+    def dispatch(self, msg: typing.Generic[MessageType], _: typing.Generic[MessageMetaInformationType], handler: MessageHandlerMapping, ctx: typing.Generic[ServiceContextType]) -> None:
         with ctx(is_async=handler.is_async):
             if isinstance(msg, handler.message_type):
                 act_msg = typing.cast(handler.message_type, msg)

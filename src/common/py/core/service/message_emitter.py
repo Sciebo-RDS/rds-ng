@@ -1,6 +1,7 @@
 import typing
 
 from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply, CommandReplyCallback
+from ..messaging.meta import MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
 from ...component import ComponentID
 
 
@@ -14,27 +15,26 @@ class MessageEmitter:
         if not issubclass(cmd_type, Command):
             raise RuntimeError(f"Tried to emit a command, but got a {cmd_type}")
         
-        # The actual command message is wrapped to temporarily pass the callbacks to the dispatcher
-        cmd = self._create_message(cmd_type, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
-        
-        from common.py.core.messaging import CommandWrapper
-        return self._emit(CommandWrapper, origin=self._origin_id, target=target, prev_hops=[], chain=chain, command=cmd, done_callback=done_callback, fail_callback=fail_callback)
+        meta = CommandMetaInformation(done_callback=done_callback, fail_callback=fail_callback)
+        return self._emit(cmd_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
     def emit_reply(self, reply_type: typing.Type[CommandReplyType], command: CommandType, *, success: bool = True, message: str = "", **kwargs):
         if not issubclass(reply_type, CommandReply):
             raise RuntimeError(f"Tried to emit a command reply, but got a {reply_type}")
         
-        return self._emit(reply_type, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, **kwargs)
+        meta = CommandReplyMetaInformation()
+        return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, **kwargs)
     
     def emit_event(self, msg_type: typing.Type[EventType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
         if not issubclass(msg_type, Event):
             raise RuntimeError(f"Tried to emit an event, but got a {msg_type}")
         
-        return self._emit(msg_type, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
+        meta = EventMetaInformation()
+        return self._emit(msg_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
-    def _emit(self, msg_type: typing.Type[MessageType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
+    def _emit(self, msg_type: typing.Type[MessageType], msg_meta: typing.Generic[MessageMetaInformationType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
         msg = self._create_message(msg_type, origin=origin, target=target, prev_hops=prev_hops, chain=chain, **kwargs)
-        self._message_bus.dispatch(msg)
+        self._message_bus.dispatch(msg, msg_meta)
         return msg
 
     def _create_message(self, msg_type: typing.Type[MessageType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:

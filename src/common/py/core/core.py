@@ -88,7 +88,7 @@ class Core:
         return self._config
     
     @property
-    def message_bus(self) -> MessageBus:  # TODO: Remove this later (after initial testing of messaging)
+    def message_bus(self) -> MessageBus:
         return self._message_bus
     
     @property

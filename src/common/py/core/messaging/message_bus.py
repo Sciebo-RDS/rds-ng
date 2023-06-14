@@ -4,6 +4,7 @@ import typing
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
 from .message_bus_protocol import MessageBusProtocol
+from .meta import MessageMetaInformationType
 from ..config import Configuration
 from ..logging import LoggerProxy, default_logger, error
 from ..networking.network_engine import NetworkEngine
@@ -47,23 +48,24 @@ class MessageBus(MessageBusProtocol):
             self._services.remove(svc)
             return True
         
-    def dispatch(self, msg: Message) -> None:
+    def dispatch(self, msg: Message, msg_meta: typing.Generic[MessageMetaInformationType]) -> None:
         for msg_type, dispatcher in self._dispatchers.items():
             if not isinstance(msg, msg_type):
                 continue
                 
-            processed_msg = dispatcher.preprocess_message(msg)
+            if not dispatcher.verify_meta_information(msg_meta):
+                raise RuntimeError(f"The meta information for dispatcher {str(dispatcher)} is of the wrong type ({type(msg_meta)})")
             
             # TODO: Check target and compare to "self"; send to dispatchers only if this matches, send through NWE otherwise
             for svc in self._services:
-                self._dispatch_to_service(dispatcher, processed_msg, msg_type, svc)
+                self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
 
-    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], svc: Service) -> None:
+    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], msg_meta: typing.Generic[MessageMetaInformationType], svc: Service) -> None:
         for handler in svc.message_handlers(msg.name):
             try:
                 act_msg = typing.cast(msg_type, msg)
                 ctx = self._create_context(msg, svc)
-                dispatcher.dispatch(act_msg, handler, ctx)
+                dispatcher.dispatch(act_msg, msg_meta, handler, ctx)
             except Exception as e:
                 import traceback
                 kwargs = {"message": str(msg), "exception": repr(e)}
