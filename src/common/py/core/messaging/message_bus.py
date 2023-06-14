@@ -48,19 +48,20 @@ class MessageBus(MessageBusProtocol):
             self._services.remove(svc)
             return True
         
-    def dispatch(self, msg: Message, msg_meta: typing.Generic[MessageMetaInformationType]) -> None:
+    def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         for msg_type, dispatcher in self._dispatchers.items():
             if not isinstance(msg, msg_type):
                 continue
                 
-            if not dispatcher.verify_meta_information(msg_meta):
-                raise RuntimeError(f"The meta information for dispatcher {str(dispatcher)} is of the wrong type ({type(msg_meta)})")
+            dispatcher.pre_dispatch(msg, msg_meta)
             
             # TODO: Check target and compare to "self"; send to dispatchers only if this matches, send through NWE otherwise
             for svc in self._services:
                 self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
+            
+            dispatcher.post_dispatch(msg, msg_meta)
 
-    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], msg_meta: typing.Generic[MessageMetaInformationType], svc: Service) -> None:
+    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], msg_meta: MessageMetaInformationType, svc: Service) -> None:
         for handler in svc.message_handlers(msg.name):
             try:
                 act_msg = typing.cast(msg_type, msg)

@@ -23,7 +23,7 @@ class MessageEmitter:
             raise RuntimeError(f"Tried to emit a command reply, but got a {reply_type}")
         
         meta = CommandReplyMetaInformation()
-        return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, **kwargs)
+        return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, command=command, **kwargs)
     
     def emit_event(self, msg_type: typing.Type[EventType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
         if not issubclass(msg_type, Event):
@@ -32,7 +32,7 @@ class MessageEmitter:
         meta = EventMetaInformation()
         return self._emit(msg_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
-    def _emit(self, msg_type: typing.Type[MessageType], msg_meta: typing.Generic[MessageMetaInformationType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
+    def _emit(self, msg_type: typing.Type[MessageType], msg_meta: MessageMetaInformationType, *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
         msg = self._create_message(msg_type, origin=origin, target=target, prev_hops=prev_hops, chain=chain, **kwargs)
         self._message_bus.dispatch(msg, msg_meta)
         return msg
