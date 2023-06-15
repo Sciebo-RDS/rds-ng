@@ -1,7 +1,7 @@
 import typing
 
 from .message_dispatcher import MessageDispatcher
-from ..command_reply import CommandReply
+from ..command_reply import CommandReply, CommandReplyCallback
 from ..handlers import MessageHandlerMapping
 from ..meta import CommandReplyMetaInformation, CommandMetaInformation
 from ...service import ServiceContextType
@@ -25,7 +25,9 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
         super().dispatch(reply, reply_meta, handler, ctx)
 
     def _call_reply_callback(self, reply: CommandReply, command_meta: CommandMetaInformation) -> None:
-        if reply.success and command_meta.done_callback is not None:
-            command_meta.done_callback(reply)
-        elif not reply.success and command_meta.fail_callback is not None:
-            command_meta.fail_callback(reply)
+        callback: CommandReplyCallback | None = command_meta.done_callback if reply.success else command_meta.fail_callback
+        if callback is not None:
+            if command_meta.async_callbacks:
+                MessageDispatcher._thread_pool.submit(callback, reply)
+            else:
+                callback(reply)

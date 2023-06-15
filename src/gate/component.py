@@ -27,7 +27,7 @@ class MyCommand(Command):
 
 @Message.define("msg/command/reply")
 class MyCommandReply(CommandReply):
-    pass
+    ctx: MyServiceContext  # Just in case if the original context is needed in the callbacks
     
     
 @s.message_handler("msg/event", MyEvent)
@@ -38,12 +38,12 @@ def h(msg: MyEvent, ctx: MyServiceContext) -> None:
 @s.message_handler("msg/command", MyCommand)
 def h2(msg: MyCommand, ctx: MyServiceContext) -> None:
     ctx.logger.info(f"COMMAND: {msg.some_number}")
-    ctx.message_emitter.emit_reply(MyCommandReply, msg, success=True, message="THAT WENT WELL")
+    ctx.message_emitter.emit_reply(MyCommandReply, msg, success=True, message="THAT WENT WELL", ctx=ctx)
     
 
 def h2_done(reply: MyCommandReply) -> None:
-    print("ME GOTZ REPLY!", reply.message)
+    print("ME GOTZ REPLY!", reply.message, reply.ctx)
     
     
 s.message_emitter.emit_event(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
-s.message_emitter.emit_command(MyCommand, Channel.local(), done_callback=h2_done, some_number=123)
+s.message_emitter.emit_command(MyCommand, Channel.local(), done_callback=h2_done, async_callbacks=True, some_number=123)
