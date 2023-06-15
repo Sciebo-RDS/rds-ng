@@ -19,7 +19,11 @@ class ServiceContext:
         return self
     
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
-        # TODO: Exception handling
+        if exc_type is not None:
+            import traceback
+            self._logger.error(f"An exception of type {exc_type} occurred within a service context: {exc_val}", scope="service")
+            self._logger.debug(f"Traceback:\n{''.join(traceback.format_tb(exc_tb))}", scope="service")
+            
         return True
     
     def __call__(self, is_async: bool = True) -> typing.Self:
