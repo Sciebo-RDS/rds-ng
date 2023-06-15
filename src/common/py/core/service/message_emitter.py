@@ -15,6 +15,10 @@ class MessageEmitter:
         if not issubclass(cmd_type, Command):
             raise RuntimeError(f"Tried to emit a command, but got a {cmd_type}")
         
+        if timeout > 0.0 and fail_callback is None:
+            from .. import logging
+            logging.warning(f"Sending a command ({cmd_type}) with a timeout but no fail callback", scope="service")
+        
         meta = CommandMetaInformation(done_callback=done_callback, fail_callback=fail_callback, async_callbacks=async_callbacks, timeout=timeout)
         return self._emit(cmd_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
