@@ -14,7 +14,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
     def pre_dispatch(self, command: Command, command_meta: CommandMetaInformation) -> None:
         super().pre_dispatch(command, command_meta)
         
-        MessageDispatcher._meta_information_list.add(command.unique, command_meta)
+        MessageDispatcher._meta_information_list.add(command.unique, command_meta, command_meta.timeout)
 
     def dispatch(self, command: Command, command_meta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
         ctx.logger.debug(f"Dispatching command: {command}", scope="bus")

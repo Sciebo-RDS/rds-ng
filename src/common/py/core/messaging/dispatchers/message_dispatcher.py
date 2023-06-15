@@ -16,6 +16,9 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     
     def __init__(self, meta_information_type: typing.Type[MessageMetaInformationType]):
         self._meta_information_type = meta_information_type
+        
+    def process(self) -> None:
+        pass
     
     def pre_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
         if not isinstance(msg_meta, self._meta_information_type):

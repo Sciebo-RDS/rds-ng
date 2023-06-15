@@ -11,11 +11,11 @@ class MessageEmitter:
         self._origin_id = origin_id
         self._message_bus = message_bus
         
-    def emit_command(self, cmd_type: typing.Type[CommandType], target: Channel, done_callback: CommandReplyCallback | None = None, fail_callback: CommandReplyCallback | None = None, async_callbacks: bool = False, chain: Message | None = None, **kwargs) -> MessageType:
+    def emit_command(self, cmd_type: typing.Type[CommandType], target: Channel, done_callback: CommandReplyCallback | None = None, fail_callback: CommandReplyCallback | None = None, async_callbacks: bool = False, timeout: float = 0.0, chain: Message | None = None, **kwargs) -> MessageType:
         if not issubclass(cmd_type, Command):
             raise RuntimeError(f"Tried to emit a command, but got a {cmd_type}")
         
-        meta = CommandMetaInformation(done_callback=done_callback, fail_callback=fail_callback, async_callbacks=async_callbacks)
+        meta = CommandMetaInformation(done_callback=done_callback, fail_callback=fail_callback, async_callbacks=async_callbacks, timeout=timeout)
         return self._emit(cmd_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
     def emit_reply(self, reply_type: typing.Type[CommandReplyType], command: CommandType, *, success: bool = True, message: str = "", **kwargs):

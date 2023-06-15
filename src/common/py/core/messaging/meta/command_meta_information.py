@@ -8,4 +8,7 @@ from ..command_reply import CommandReplyCallback
 class CommandMetaInformation(MessageMetaInformation):
     done_callback: CommandReplyCallback | None = None
     fail_callback: CommandReplyCallback | None = None
+    
     async_callbacks: bool = False
+    
+    timeout: float = 0.0
