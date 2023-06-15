@@ -38,19 +38,22 @@ def h(msg: MyEvent, ctx: MyServiceContext) -> None:
 @s.message_handler("msg/command", MyCommand)
 def h2(msg: MyCommand, ctx: MyServiceContext) -> None:
     ctx.logger.info(f"COMMAND: {msg.some_number}")
-    ctx.message_emitter.emit_reply(MyCommandReply, msg, success=True, message="THAT WENT WELL", ctx=ctx)
+    ctx.message_emitter.emit_reply(MyCommandReply, msg, success=False, message="THAT WENT WELL", ctx=ctx)
     
 
 def h2_done(reply: MyCommandReply | None) -> None:
     print("ME GOTZ REPLY!", reply.message, reply.ctx)
     
 
-def h2_fail(reply: MyCommandReply | None) -> None:
-    print("I FAILED :(", reply)
+def h2_fail(reply: MyCommandReply | None, error: str | None) -> None:
+    if reply is None:
+        print("I FAILED :(", error)
+    else:
+        print("DOOOH SUMSIN WRONG", reply)
     
     
 s.message_emitter.emit_event(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
-s.message_emitter.emit_command(MyCommand, Channel.local(), done_callback=h2_done, fail_callback=h2_fail, async_callbacks=True, timeout=3.0, some_number=123)
+s.message_emitter.emit_command(MyCommand, Channel.local(), done_callback=h2_done, fail_callback=h2_fail, async_callbacks=True, some_number=123)
 
 # This will time out
 s.message_emitter.emit_command(Command, Channel.local(), done_callback=h2_done, fail_callback=h2_fail, async_callbacks=True, timeout=3.0, name=MessageName("just/a/message"))
