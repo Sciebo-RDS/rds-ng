@@ -35,7 +35,7 @@ def h(msg: MyEvent, ctx: MyServiceContext) -> None:
     ctx.logger.info(f"EVENT: {msg.some_cool_text}")
     
 
-@s.message_handler("msg/command", MyCommand)
+@s.message_handler("msg/command", MyCommand, is_async=True)
 def h2(msg: MyCommand, ctx: MyServiceContext) -> None:
     ctx.logger.info(f"COMMAND: {msg.some_number}")
     ctx.message_emitter.emit_reply(MyCommandReply, msg, success=False, message="THAT WENT WELL", ctx=ctx)

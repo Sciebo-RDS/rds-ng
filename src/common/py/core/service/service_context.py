@@ -13,8 +13,6 @@ class ServiceContext:
         self._config = config
         self._logger = logger
         
-        self._is_async = False
-        
     def __enter__(self) -> typing.Self:
         return self
     
@@ -27,10 +25,6 @@ class ServiceContext:
             
         return True
     
-    def __call__(self, is_async: bool = True) -> typing.Self:
-        self._is_async = is_async
-        return self
-        
     @property
     def message_emitter(self) -> MessageEmitter:
         return self._msg_emitter
@@ -42,10 +36,6 @@ class ServiceContext:
     @property
     def logger(self) -> LoggerProtocol:
         return self._logger
-    
-    @property
-    def is_async(self) -> bool:
-        return self._is_async
 
 
 ServiceContextType = typing.TypeVar("ServiceContextType", bound=ServiceContext)

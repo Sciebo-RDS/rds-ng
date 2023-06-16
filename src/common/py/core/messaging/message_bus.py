@@ -78,7 +78,7 @@ class MessageBus(MessageBusProtocol):
                 import traceback
                 from ..logging import error, debug
                 error(f"An exception occurred while processing a message: {str(e)}", scope="bus", message=str(msg), exception=type(e))
-                debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="service")
+                debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")
 
     def _create_context(self, msg: Message, svc: Service) -> ServiceContextType:
         logger_proxy = LoggerProxy(default_logger())

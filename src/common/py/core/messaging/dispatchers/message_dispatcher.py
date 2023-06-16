@@ -26,19 +26,26 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
 
     @abc.abstractmethod
     def dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
-        try:
-            with ctx(is_async=handler.is_async):  # The service context will not suppress exceptions so that the dispatcher can react to them
-                if isinstance(msg, handler.message_type):
+        # Callback wrapper for proper exception handling, even when used asynchronously
+        def _dispatch(msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
+            try:
+                with ctx:  # The service context will not suppress exceptions so that the dispatcher can react to them
                     act_msg = typing.cast(handler.message_type, msg)
-                    MessageDispatcher._thread_pool.submit(handler.handler, act_msg, ctx) if handler.is_async else handler.handler(act_msg, ctx)
-                else:
-                    raise RuntimeError(f"Handler {str(handler.handler)} requires messages of type {str(handler.message_type)}, but got {str(type(msg))}")
-        except Exception as e:
-            self._context_exception(e, msg, msg_meta, ctx)
-
+                    handler.handler(act_msg, ctx)
+            except Exception as e:
+                self._context_exception(e, msg, msg_meta, ctx)
+        
+        if isinstance(msg, handler.message_type):
+            if handler.is_async:
+                MessageDispatcher._thread_pool.submit(_dispatch, msg, msg_meta, handler, ctx)
+            else:
+                _dispatch(msg, msg_meta, handler, ctx)
+        else:
+            raise RuntimeError(f"Handler {str(handler.handler)} requires messages of type {str(handler.message_type)}, but got {str(type(msg))}")
+        
     def post_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
         pass
-    
+        
     def _context_exception(self, exc: Exception, msg: MessageType, msg_meta: MessageMetaInformationType, ctx: ServiceContextType) -> None:
         pass
     
