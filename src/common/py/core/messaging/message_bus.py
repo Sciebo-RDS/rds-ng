@@ -6,14 +6,14 @@ from .message import Message, MessageType
 from .message_bus_protocol import MessageBusProtocol
 from .meta import MessageMetaInformationType
 from ..config import Configuration
-from ..logging import LoggerProxy, default_logger, error
+from ..logging import LoggerProxy, default_logger
 from ..networking.network_engine import NetworkEngine
 from ..service import Service, ServiceContextType
 
 
 class MessageBus(MessageBusProtocol):
     """ A thread-safe message bus for dispatching messages. """
-    def __init__(self, nwe: NetworkEngine, config: Configuration, *, print_tracebacks: bool = False):
+    def __init__(self, nwe: NetworkEngine, config: Configuration):
         from .dispatchers import CommandDispatcher, CommandReplyDispatcher, EventDispatcher
         from .command import Command
         from .command_reply import CommandReply
@@ -21,7 +21,6 @@ class MessageBus(MessageBusProtocol):
         
         self._network_engine = nwe
         self._config = config
-        self._print_tracebacks = print_tracebacks
         
         self._services: typing.List[Service] = []
         self._dispatchers: typing.Dict[typing.Type[MessageType], MessageDispatcher] = {
@@ -77,10 +76,9 @@ class MessageBus(MessageBusProtocol):
                 dispatcher.dispatch(act_msg, msg_meta, handler, ctx)
             except Exception as e:
                 import traceback
-                kwargs = {"message": str(msg), "exception": repr(e)}
-                if self._print_tracebacks:
-                    kwargs["traceback"] = traceback.format_exc()
-                error("An exception occurred while processing a message", scope="bus", **kwargs)
+                from ..logging import error, debug
+                error(f"An exception occurred while processing a message: {str(e)}", scope="bus", message=str(msg), exception=type(e))
+                debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="service")
 
     def _create_context(self, msg: Message, svc: Service) -> ServiceContextType:
         logger_proxy = LoggerProxy(default_logger())

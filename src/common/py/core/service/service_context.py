@@ -21,7 +21,7 @@ class ServiceContext:
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         if exc_type is not None:
             import traceback
-            self._logger.error(f"An exception of type {exc_type} occurred within a service context: {exc_val}", scope="service")
+            self._logger.error(f"An exception occurred within a service context: {exc_val}", scope="service", exception=str(exc_type))
             self._logger.debug(f"Traceback:\n{''.join(traceback.format_tb(exc_tb))}", scope="service")
             return False
             

@@ -50,8 +50,9 @@ def h2_fail(reply: MyCommandReply | None, error: str | None) -> None:
         print("I FAILED :(", error)
     else:
         print("DOOOH SUMSIN WRONG", reply)
-    
-    
+
+# TODO: done-CB immer bei Reply, dann vlt mit success-Param; Fehler in fail-CB (ggf error), mit Message; unterschiedliche Typen
+
 s.message_emitter.emit_event(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
 s.message_emitter.emit_command(MyCommand, Channel.local(), done_callback=h2_done, fail_callback=h2_fail, async_callbacks=True, some_number=123)
 
