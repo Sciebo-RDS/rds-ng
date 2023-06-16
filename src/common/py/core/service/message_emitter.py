@@ -1,6 +1,6 @@
 import typing
 
-from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply, CommandReplyCallback
+from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply, CommandDoneCallback, CommandFailCallback
 from ..messaging.meta import MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
 from ...component import ComponentID
 
@@ -11,7 +11,7 @@ class MessageEmitter:
         self._origin_id = origin_id
         self._message_bus = message_bus
         
-    def emit_command(self, cmd_type: typing.Type[CommandType], target: Channel, done_callback: CommandReplyCallback | None = None, fail_callback: CommandReplyCallback | None = None, async_callbacks: bool = False, timeout: float = 0.0, chain: Message | None = None, **kwargs) -> MessageType:
+    def emit_command(self, cmd_type: typing.Type[CommandType], target: Channel, done_callback: CommandDoneCallback | None = None, fail_callback: CommandFailCallback | None = None, async_callbacks: bool = False, timeout: float = 0.0, chain: Message | None = None, **kwargs) -> MessageType:
         if not issubclass(cmd_type, Command):
             raise RuntimeError(f"Tried to emit a command, but got a {cmd_type}")
         

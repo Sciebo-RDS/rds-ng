@@ -30,10 +30,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
             with ctx(is_async=handler.is_async):  # The service context will not suppress exceptions so that the dispatcher can react to them
                 if isinstance(msg, handler.message_type):
                     act_msg = typing.cast(handler.message_type, msg)
-                    if handler.is_async:
-                        MessageDispatcher._thread_pool.submit(handler.handler, act_msg, ctx)
-                    else:
-                        handler.handler(act_msg, ctx)
+                    MessageDispatcher._thread_pool.submit(handler.handler, act_msg, ctx) if handler.is_async else handler.handler(act_msg, ctx)
                 else:
                     raise RuntimeError(f"Handler {str(handler.handler)} requires messages of type {str(handler.message_type)}, but got {str(type(msg))}")
         except Exception as e:

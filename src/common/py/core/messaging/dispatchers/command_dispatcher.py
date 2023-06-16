@@ -16,7 +16,8 @@ class CommandDispatcher(MessageDispatcher[Command]):
         super().process()
         
         for unique in MessageDispatcher._meta_information_list.find_timed_out_entries():
-            CommandDispatcher.invoke_reply_callback(unique, None, remove_entry=True, error="The command timed out")
+            CommandDispatcher.invoke_reply_callback(unique, fail_type=CommandReply.FailType.TIMEOUT, fail_msg="The command timed out")
+            MessageDispatcher._meta_information_list.remove(unique)
             
     def pre_dispatch(self, command: Command, command_meta: CommandMetaInformation) -> None:
         super().pre_dispatch(command, command_meta)
@@ -28,21 +29,20 @@ class CommandDispatcher(MessageDispatcher[Command]):
         super().dispatch(command, command_meta, handler, ctx)
 
     def _context_exception(self, exc: Exception, command: Command, msg_meta: CommandMetaInformation, ctx: ServiceContextType) -> None:
-        CommandDispatcher.invoke_reply_callback(command.unique, None, remove_entry=True, error=str(exc))
+        CommandDispatcher.invoke_reply_callback(command.unique, fail_type=CommandReply.FailType.EXCEPTION, fail_msg=str(exc))
+        MessageDispatcher._meta_information_list.remove(command.unique)
 
     @staticmethod
-    def invoke_reply_callback(unique: Trace, reply: CommandReply | None, *, remove_entry: bool, error: str | None = None) -> None:
-        from .. import CommandReplyCallback
-        
+    def invoke_reply_callback(unique: Trace, *, reply: CommandReply | None = None, fail_type: CommandReply.FailType = CommandReply.FailType.NONE, fail_msg: str = "") -> None:
         meta_information = MessageDispatcher._meta_information_list.find(unique)
         if meta_information is not None and isinstance(meta_information, CommandMetaInformation):
             command_meta = typing.cast(CommandMetaInformation, meta_information)
-            callback: CommandReplyCallback | None = command_meta.done_callback if reply is not None and reply.success else command_meta.fail_callback
-            if callback is not None:
-                if command_meta.async_callbacks:
-                    MessageDispatcher._thread_pool.submit(callback, reply, error)
-                else:
-                    callback(reply, error)
-
-        if remove_entry:
-            MessageDispatcher._meta_information_list.remove(unique)
+            
+            def _invoke(cb, is_async, *args):
+                if cb is not None:
+                    MessageDispatcher._thread_pool.submit(cb, *args) if is_async else cb(*args)
+            
+            if reply is not None:
+                _invoke(command_meta.done_callback, command_meta.async_callbacks, reply, reply.success, reply.message)
+            else:
+                _invoke(command_meta.fail_callback, command_meta.async_callbacks, fail_type, fail_msg)

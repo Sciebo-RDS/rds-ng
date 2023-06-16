@@ -41,17 +41,13 @@ def h2(msg: MyCommand, ctx: MyServiceContext) -> None:
     ctx.message_emitter.emit_reply(MyCommandReply, msg, success=False, message="THAT WENT WELL", ctx=ctx)
     
 
-def h2_done(reply: MyCommandReply | None) -> None:
-    print("ME GOTZ REPLY!", reply.message, reply.ctx)
+def h2_done(reply: MyCommandReply, success: bool, message: str) -> None:
+    print("ME GOTZ REPLY!", reply, success, message)
     
 
-def h2_fail(reply: MyCommandReply | None, error: str | None) -> None:
-    if reply is None:
-        print("I FAILED :(", error)
-    else:
-        print("DOOOH SUMSIN WRONG", reply)
+def h2_fail(reason: CommandReply.FailType, message: str) -> None:
+    print("I FAILED :(", reason, message)
 
-# TODO: done-CB immer bei Reply, dann vlt mit success-Param; Fehler in fail-CB (ggf error), mit Message; unterschiedliche Typen
 
 s.message_emitter.emit_event(MyEvent, Channel.local(), some_cool_text="OK SO NOICE!")
 s.message_emitter.emit_command(MyCommand, Channel.local(), done_callback=h2_done, fail_callback=h2_fail, async_callbacks=True, some_number=123)
