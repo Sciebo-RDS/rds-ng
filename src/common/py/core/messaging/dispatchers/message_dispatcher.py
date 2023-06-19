@@ -29,7 +29,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
         # Callback wrapper for proper exception handling, even when used asynchronously
         def _dispatch(msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
             try:
-                with ctx:  # The service context will not suppress exceptions so that the dispatcher can react to them
+                with ctx(requires_reply=msg_meta.requires_reply):  # The service context will not suppress exceptions so that the dispatcher can react to them
                     act_msg = typing.cast(handler.message_type, msg)
                     handler.handler(act_msg, ctx)
             except Exception as e:

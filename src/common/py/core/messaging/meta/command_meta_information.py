@@ -6,6 +6,8 @@ from ..command_reply import CommandDoneCallback, CommandFailCallback
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class CommandMetaInformation(MessageMetaInformation):
+    requires_reply: bool = True
+    
     done_callback: CommandDoneCallback | None = None
     fail_callback: CommandFailCallback | None = None
     
