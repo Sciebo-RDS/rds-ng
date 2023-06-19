@@ -2,6 +2,7 @@ import typing
 import flask
 
 from .config import Configuration
+from .logging import info, warning, debug, set_level
 from .messaging import MessageBus
 from .networking import NetworkEngine
 from .service import Service
@@ -10,7 +11,6 @@ from .service import Service
 class Core:
     """ The main portion of an RDS component. """
     def __init__(self, module_name: str, config_file: str = "./config.toml"):
-        from .logging import info, debug
         info("Initializing core...", scope="core")
         
         info("-- Loading configuration", scope="core", file=config_file)
@@ -38,7 +38,6 @@ class Core:
         try:
             config.load(config_file)
         except Exception as e:
-            from .logging import warning
             warning("-- Component configuration could not be loaded", scope="core", error=str(e))
             
         return config
@@ -64,20 +63,17 @@ class Core:
         return NetworkEngine(allowed_origins)
     
     def _enable_debug_mode(self) -> None:
-        from .logging import set_level, debug
         import logging as log
         set_level(log.DEBUG)
         debug("-- Debug mode enabled", scope="core")
     
     def register_service(self, svc: Service) -> None:
-        from .logging import debug
         if self._message_bus.add_service(svc):
             debug("Registered service", scope="core", service=svc)
         else:
             debug("Service already registered", scope="core", service=svc)
 
     def unregister_service(self, svc: Service) -> None:
-        from .logging import debug
         if self._message_bus.remove_service(svc):
             debug("Unregistered service", scope="core", service=svc)
         else:
