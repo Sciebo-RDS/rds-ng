@@ -12,7 +12,7 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
     def pre_dispatch(self, reply: CommandReply, reply_meta: CommandReplyMetaInformation) -> None:
         super().pre_dispatch(reply, reply_meta)
         
-        from common.py.core.messaging.dispatchers import CommandDispatcher
+        from .command_dispatcher import CommandDispatcher
         CommandDispatcher.invoke_reply_callback(reply.command.unique, reply=reply)
         MessageDispatcher._meta_information_list.remove(reply.command.unique)
     

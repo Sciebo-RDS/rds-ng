@@ -10,22 +10,22 @@ from .service import Service
 class Core:
     """ The main portion of an RDS component. """
     def __init__(self, module_name: str, config_file: str = "./config.toml"):
-        from ..core import logging
-        logging.info("Initializing core...", scope="core")
+        from .logging import info, debug
+        info("Initializing core...", scope="core")
         
-        logging.info("-- Loading configuration", scope="core", file=config_file)
+        info("-- Loading configuration", scope="core", file=config_file)
         self._config = self._create_config(config_file)
         
         if self.is_debug_mode:
             self._enable_debug_mode()
         
-        logging.debug("-- Creating Flask server", scope="core", module_name=module_name)
+        debug("-- Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
         
-        logging.debug("-- Creating network engine", scope="core")
+        debug("-- Creating network engine", scope="core")
         self._network_engine = self._create_network_engine()
         
-        logging.debug("-- Creating message bus", scope="core")
+        debug("-- Creating message bus", scope="core")
         self._message_bus = self._create_message_bus()
         
     def _create_config(self, config_file: str) -> Configuration:
@@ -38,8 +38,8 @@ class Core:
         try:
             config.load(config_file)
         except Exception as e:
-            from ..core import logging
-            logging.warning("-- Component configuration could not be loaded", scope="core", error=str(e))
+            from .logging import warning
+            warning("-- Component configuration could not be loaded", scope="core", error=str(e))
             
         return config
     
@@ -64,24 +64,24 @@ class Core:
         return NetworkEngine(allowed_origins)
     
     def _enable_debug_mode(self) -> None:
-        from ..core import logging
+        from .logging import set_level, debug
         import logging as log
-        logging.set_level(log.DEBUG)
-        logging.debug("-- Debug mode enabled", scope="core")
+        set_level(log.DEBUG)
+        debug("-- Debug mode enabled", scope="core")
     
     def register_service(self, svc: Service) -> None:
-        from ..core import logging
+        from .logging import debug
         if self._message_bus.add_service(svc):
-            logging.debug("Registered service", scope="core", service=svc)
+            debug("Registered service", scope="core", service=svc)
         else:
-            logging.debug("Service already registered", scope="core", service=svc)
+            debug("Service already registered", scope="core", service=svc)
 
     def unregister_service(self, svc: Service) -> None:
-        from ..core import logging
+        from .logging import debug
         if self._message_bus.remove_service(svc):
-            logging.debug("Unregistered service", scope="core", service=svc)
+            debug("Unregistered service", scope="core", service=svc)
         else:
-            logging.debug("Service not registered", scope="core", service=svc)
+            debug("Service not registered", scope="core", service=svc)
     
     @property
     def config(self) -> Configuration:
