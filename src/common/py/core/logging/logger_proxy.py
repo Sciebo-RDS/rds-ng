@@ -1,10 +1,9 @@
 import typing
 
-from .logger_protocol import LoggerProtocol
 from .logger import Logger
 
 
-class LoggerProxy(LoggerProtocol):
+class LoggerProxy:
     """ A proxy to automatically pass extra parameters to a logger. """
     def __init__(self, logger: Logger):
         self._logger = logger

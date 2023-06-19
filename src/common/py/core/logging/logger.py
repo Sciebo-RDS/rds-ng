@@ -1,10 +1,8 @@
 import logging
 import typing
 
-from .logger_protocol import LoggerProtocol
 
-
-class Logger(logging.Logger, LoggerProtocol):
+class Logger(logging.Logger):
     """ Customized logger offering advanced formatting and parameters listing. """
     def __init__(self, name: str, level: int = logging.INFO):
         super().__init__(name, level)
