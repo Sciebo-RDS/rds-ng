@@ -1,11 +1,11 @@
 import json
 import typing
-from enum import Flag, auto
 
 from semantic_version import Version
 import socketio
 
 from .component_id import ComponentID
+from .component_role import ComponentRole
 from ..config import Configuration
 from ..core import Core
 from ..core.service import Service, ServiceContext, ServiceContextType
@@ -14,12 +14,7 @@ from ..core.logging import info, warning
 
 class Component:
     """ Base application class for all RDS components. """
-    
-    class Role(Flag):
-        SERVER = auto()
-        CLIENT = auto()
-        
-    def __init__(self, comp_id: ComponentID, role:  Role, *, module_name: str, config_file: str = "./config.toml"):
+    def __init__(self, comp_id: ComponentID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
         self._config = self._create_config(config_file)
         self._comp_id = self._sanitize_component_id(comp_id)
         
@@ -35,7 +30,7 @@ class Component:
         info(str(self))
         info("-- Starting component...")
         
-        self._core = Core(module_name, self._config, enable_server=(Component.Role.SERVER in role), enable_client=(Component.Role.CLIENT in role))
+        self._core = Core(module_name, self._config, role)
         
         self._add_default_routes()
         
@@ -59,7 +54,7 @@ class Component:
         try:
             config.load(config_file)
         except Exception as e:
-            warning("-- Component configuration could not be loaded", scope="core", error=str(e))
+            warning("Component configuration could not be loaded", scope="core", error=str(e))
         
         return config
     
@@ -83,7 +78,7 @@ class Component:
         return self._comp_id
     
     @property
-    def role(self) -> Role:
+    def role(self) -> ComponentRole:
         return self._role
     
     @property

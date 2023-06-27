@@ -5,12 +5,13 @@ from .logging import info, debug, set_level
 from .messaging import MessageBus
 from .networking import NetworkEngine
 from .service import Service
+from ..component import ComponentRole
 from ..config import Configuration
 
 
 class Core:
     """ The main portion of an RDS component. """
-    def __init__(self, module_name: str, config: Configuration, *, enable_server: bool, enable_client: bool):
+    def __init__(self, module_name: str, config: Configuration, role: ComponentRole):
         info("Initializing core...", scope="core")
         
         self._config = config
@@ -23,8 +24,8 @@ class Core:
         debug("-- Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
         
-        debug("-- Creating network engine", scope="core", enable_server=enable_server, enable_client=enable_client)
-        self._network_engine = self._create_network_engine(enable_server=enable_server, enable_client=enable_client)
+        debug("-- Creating network engine", scope="core", role=role)
+        self._network_engine = self._create_network_engine(enable_server=(ComponentRole.SERVER in role), enable_client=(ComponentRole.CLIENT in role))
         
         debug("-- Creating message bus", scope="core")
         self._message_bus = self._create_message_bus()
