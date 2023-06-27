@@ -85,5 +85,5 @@ class Core:
     
     @property
     def is_debug_mode(self) -> bool:
-        from ..config import GeneralSettings
+        from ..config.settings import GeneralSettings
         return self.config.value(GeneralSettings.DEBUG)
