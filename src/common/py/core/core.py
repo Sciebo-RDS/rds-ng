@@ -5,7 +5,7 @@ from .logging import info, debug, set_level
 from .messaging import MessageBus
 from .networking import NetworkEngine
 from .service import Service
-from ..component.config import Configuration
+from ..config import Configuration
 
 
 class Core:
@@ -84,5 +84,5 @@ class Core:
     
     @property
     def is_debug_mode(self) -> bool:
-        from ..component.config import GeneralSettings
+        from ..config import GeneralSettings
         return self.config.value(GeneralSettings.DEBUG)

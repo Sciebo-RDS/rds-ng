@@ -6,7 +6,7 @@ from semantic_version import Version
 import socketio
 
 from .component_id import ComponentID
-from .config import Configuration
+from ..config import Configuration
 from ..core import Core
 from ..core.service import Service, ServiceContext, ServiceContextType
 from ..core.logging import info, warning
@@ -19,9 +19,9 @@ class Component:
         SERVER = auto()
         CLIENT = auto()
         
-    def __init__(self, base_id: ComponentID, role:  Role, *, module_name: str, config_file: str = "./config.toml"):
+    def __init__(self, comp_id: ComponentID, role:  Role, *, module_name: str, config_file: str = "./config.toml"):
         self._config = self._create_config(config_file)
-        self._comp_id = self._generate_comp_id(base_id)
+        self._comp_id = self._sanitize_component_id(comp_id)
         
         from .meta_information import MetaInformation
         meta_info = MetaInformation()
@@ -48,10 +48,12 @@ class Component:
         return svc
     
     def _create_config(self, config_file: str) -> Configuration:
-        from common.py.component.config import GeneralSettings
+        from ..config import GeneralSettings, ComponentSettings
         config = Configuration()
         config.add_defaults({
             GeneralSettings.DEBUG: False,
+            
+            ComponentSettings.INSTANCE: "default",
         })
         
         try:
@@ -61,11 +63,12 @@ class Component:
         
         return config
     
-    def _generate_comp_id(self, base_id: ComponentID) -> ComponentID:
-        if base_id.instance is None:
-            return ComponentID(base_id.type, base_id.component)
+    def _sanitize_component_id(self, comp_id: ComponentID) -> ComponentID:
+        if comp_id.instance is None:
+            from ..config import ComponentSettings
+            return ComponentID(comp_id.type, comp_id.component, self._config.value(ComponentSettings.INSTANCE))
         else:
-            return base_id
+            return comp_id
     
     @property
     def config(self) -> Configuration:

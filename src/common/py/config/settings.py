@@ -2,3 +2,9 @@
 
 class GeneralSettings:
     DEBUG = "debug"
+
+
+class ComponentSettings:
+    _PATH = "component"
+    
+    INSTANCE = f"{_PATH}.instance"

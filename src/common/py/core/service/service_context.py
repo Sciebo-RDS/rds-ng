@@ -2,7 +2,7 @@ import typing
 
 from .message_emitter import MessageEmitter
 from ..logging import LoggerProtocol
-from ...component.config import Configuration
+from ...config import Configuration
 
 
 class ServiceContext:

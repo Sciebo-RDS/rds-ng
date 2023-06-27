@@ -7,7 +7,7 @@ from .meta import MessageMetaInformationType
 from ..logging import LoggerProxy, default_logger
 from ..networking.network_engine import NetworkEngine
 from ..service import Service, ServiceContextType
-from ...component.config import Configuration
+from ...config import Configuration
 
 
 class MessageBus:

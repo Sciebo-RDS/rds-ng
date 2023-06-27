@@ -15,7 +15,7 @@ class ComponentID:
     
     type: str
     component: str
-    instance: str = "default"
+    instance: str | None = None
     
     def partial_eq(self, other: typing.Self, tokens: Tokens = Tokens.ALL) -> bool:
         if ComponentID.Tokens.TYPE in tokens and self.type != other.type:
@@ -31,13 +31,5 @@ class ComponentID:
     
     def __str__(self) -> str:
         from pathlib import PurePosixPath
-        p = PurePosixPath(self.type, self.component, self.instance)
+        p = PurePosixPath(self.type, self.component, self.instance) if self.instance is not None else PurePosixPath(self.type, self.component)
         return str(p)
-
-    @staticmethod
-    def from_string(s: str) -> 'ComponentID':
-        from pathlib import PurePosixPath
-        p = PurePosixPath(s).parts
-        if len(p) != 3:
-            raise ValueError(f"The component ID '{s}' is invalid")
-        return ComponentID(p[0], p[1], p[2])
