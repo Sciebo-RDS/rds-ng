@@ -5,12 +5,16 @@ import os
 class Configuration:
     """ A simple class for retrieving configuration settings. """
     def __init__(self, env_prefix: str = "RDS"):
+        self._settings_file = ""
+        
         self._settings = {}
         self._defaults = {}
         
         self._env_prefix = env_prefix
         
     def load(self, filename: str) -> None:
+        self._settings_file = filename
+        
         if os.path.exists(filename):
             with open(filename, "rb") as f:
                 import tomllib
@@ -51,3 +55,6 @@ class Configuration:
 
         return target_type(value)
         
+    @property
+    def settings_file(self) -> str:
+        return self._settings_file

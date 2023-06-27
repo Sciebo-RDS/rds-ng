@@ -2,11 +2,11 @@ import typing
 
 from .message_emitter import MessageEmitter
 from .service_context import ServiceContextType, ServiceContext
-from ..config import Configuration
 from ..logging import LoggerProtocol
 from ..messaging import Message, MessageName, MessageType, MessageBusProtocol
 from ..messaging.handlers import MessageHandlers, MessageHandler, MessageHandlerMappings
 from ...component import ComponentID
+from ...component.config import Configuration
 
 
 @typing.final

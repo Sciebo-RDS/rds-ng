@@ -4,10 +4,10 @@ import typing
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
 from .meta import MessageMetaInformationType
-from ..config import Configuration
 from ..logging import LoggerProxy, default_logger
 from ..networking.network_engine import NetworkEngine
 from ..service import Service, ServiceContextType
+from ...component.config import Configuration
 
 
 class MessageBus:

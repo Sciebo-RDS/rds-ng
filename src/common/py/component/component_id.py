@@ -15,7 +15,7 @@ class ComponentID:
     
     type: str
     component: str
-    instance: str = 'default'
+    instance: str = "default"
     
     def partial_eq(self, other: typing.Self, tokens: Tokens = Tokens.ALL) -> bool:
         if ComponentID.Tokens.TYPE in tokens and self.type != other.type:

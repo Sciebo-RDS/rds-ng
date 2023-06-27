@@ -1,48 +1,34 @@
 import typing
 import flask
 
-from .config import Configuration
-from .logging import info, warning, debug, set_level
+from .logging import info, debug, set_level
 from .messaging import MessageBus
 from .networking import NetworkEngine
 from .service import Service
-from ..component import ComponentRole
+from ..component.config import Configuration
 
 
 class Core:
     """ The main portion of an RDS component. """
-    def __init__(self, module_name: str, role: ComponentRole, config_file: str = "./config.toml"):
+    def __init__(self, module_name: str, config: Configuration, *, enable_server: bool, enable_client: bool):
         info("Initializing core...", scope="core")
         
-        info("-- Loading configuration", scope="core", file=config_file)
-        self._config = self._create_config(config_file)
+        self._config = config
         
         if self.is_debug_mode:
             self._enable_debug_mode()
         
+        debug(f"-- Settings file: {config.settings_file}", scope="core")
+        
         debug("-- Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
         
-        debug("-- Creating network engine", scope="core", role=role)
-        self._network_engine = self._create_network_engine(enable_server=(ComponentRole.SERVER in role), enable_client=(ComponentRole.CLIENT in role))
+        debug("-- Creating network engine", scope="core", enable_server=enable_server, enable_client=enable_client)
+        self._network_engine = self._create_network_engine(enable_server=enable_server, enable_client=enable_client)
         
         debug("-- Creating message bus", scope="core")
         self._message_bus = self._create_message_bus()
         
-    def _create_config(self, config_file: str) -> Configuration:
-        from .config import GeneralSettings
-        config = Configuration()
-        config.add_defaults({
-            GeneralSettings.DEBUG: False,
-        })
-        
-        try:
-            config.load(config_file)
-        except Exception as e:
-            warning("-- Component configuration could not be loaded", scope="core", error=str(e))
-            
-        return config
-    
     def _create_message_bus(self) -> MessageBus:
         return MessageBus(self._network_engine, self._config)
     
@@ -98,5 +84,5 @@ class Core:
     
     @property
     def is_debug_mode(self) -> bool:
-        from .config import GeneralSettings
+        from ..component.config import GeneralSettings
         return self.config.value(GeneralSettings.DEBUG)

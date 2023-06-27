@@ -1,10 +1,8 @@
-import dataclasses
-
-from common.py.component import Component, ComponentID, ComponentRole
+from common.py.component import Component, ComponentID
 from common.py.core.messaging import Event, Channel, Message, Command, CommandReply, MessageName
 from common.py.core.service import ServiceContext
 
-comp = Component(ComponentID("infra", "gate"), ComponentRole.SERVER | ComponentRole.CLIENT, module_name=__name__)
+comp = Component(ComponentID("infra", "gate"), Component.Role.SERVER | Component.Role.CLIENT, module_name=__name__)
 app = comp.wsgi_app()
 
 
