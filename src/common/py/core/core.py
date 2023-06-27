@@ -6,11 +6,12 @@ from .logging import info, warning, debug, set_level
 from .messaging import MessageBus
 from .networking import NetworkEngine
 from .service import Service
+from ..component import ComponentRole
 
 
 class Core:
     """ The main portion of an RDS component. """
-    def __init__(self, module_name: str, config_file: str = "./config.toml"):
+    def __init__(self, module_name: str, role: ComponentRole, config_file: str = "./config.toml"):
         info("Initializing core...", scope="core")
         
         info("-- Loading configuration", scope="core", file=config_file)
@@ -22,8 +23,8 @@ class Core:
         debug("-- Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
         
-        debug("-- Creating network engine", scope="core")
-        self._network_engine = self._create_network_engine()
+        debug("-- Creating network engine", scope="core", role=role)
+        self._network_engine = self._create_network_engine(enable_server=(ComponentRole.SERVER in role), enable_client=(ComponentRole.CLIENT in role))
         
         debug("-- Creating message bus", scope="core")
         self._message_bus = self._create_message_bus()
@@ -55,12 +56,12 @@ class Core:
         flsk.config["SECRET"] = generate_random_string(64)
         return flsk
     
-    def _create_network_engine(self) -> NetworkEngine:
+    def _create_network_engine(self, *, enable_server: bool, enable_client: bool) -> NetworkEngine:
         # TODO: Define proper CORS origins (nw-internal)
         allowed_origins: typing.List[str] | None = None
         if self.is_debug_mode:
             allowed_origins = ["*"]
-        return NetworkEngine(allowed_origins)
+        return NetworkEngine(enable_server=enable_server, enable_client=enable_client, allowed_origins=allowed_origins)
     
     def _enable_debug_mode(self) -> None:
         import logging as log
@@ -69,13 +70,13 @@ class Core:
     
     def register_service(self, svc: Service) -> None:
         if self._message_bus.add_service(svc):
-            debug("Registered service", scope="core", service=svc)
+            debug(f"Registered service: {svc}", scope="core")
         else:
             debug("Service already registered", scope="core", service=svc)
 
     def unregister_service(self, svc: Service) -> None:
         if self._message_bus.remove_service(svc):
-            debug("Unregistered service", scope="core", service=svc)
+            debug(f"Unregistered service: {svc}", scope="core")
         else:
             debug("Service not registered", scope="core", service=svc)
     

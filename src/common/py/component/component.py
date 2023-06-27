@@ -5,18 +5,20 @@ from semantic_version import Version
 import socketio
 
 from .component_id import ComponentID
+from .component_role import ComponentRole
 from ..core import Core
 from ..core.service import Service, ServiceContext, ServiceContextType
 
 
 class Component:
     """ Base application class for all RDS components. """
-    def __init__(self, comp_id: ComponentID, *, module_name: str):
+    def __init__(self, comp_id: ComponentID, role:  ComponentRole, *, module_name: str):
         from .meta_information import MetaInformation
         meta_info = MetaInformation()
         comp_info = meta_info.get_component(comp_id.component)
         
         self._comp_id = comp_id
+        self._role = role
         self._title = meta_info.title
         self._name = comp_info["name"]
         self._version = meta_info.version
@@ -25,7 +27,7 @@ class Component:
         logging.info(str(self))
         logging.info("-- Starting component...")
         
-        self._core = Core(module_name)
+        self._core = Core(module_name, self._role)
         
         self._add_default_routes()
         
@@ -44,6 +46,10 @@ class Component:
     @property
     def comp_id(self) -> ComponentID:
         return self._comp_id
+    
+    @property
+    def role(self) -> ComponentRole:
+        return self._role
     
     @property
     def title(self) -> str:

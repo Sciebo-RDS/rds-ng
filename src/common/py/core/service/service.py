@@ -45,4 +45,4 @@ class Service:
         return self.create_message_emitter()
 
     def __str__(self) -> str:
-        return f"Service '{self._name}': {str(self._message_handlers)}"
+        return self._name
