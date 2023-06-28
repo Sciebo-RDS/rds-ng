@@ -43,13 +43,9 @@ class Component:
         return svc
     
     def _create_config(self, config_file: str) -> Configuration:
-        from ..settings import GeneralSettingIDs, ComponentSettingIDs
+        from ..settings import get_default_settings
         config = Configuration()
-        config.add_defaults({
-            GeneralSettingIDs.DEBUG: False,
-            
-            ComponentSettingIDs.INSTANCE: "default",
-        })
+        config.add_defaults(get_default_settings())
         
         try:
             config.load(config_file)
