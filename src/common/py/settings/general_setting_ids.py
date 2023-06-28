@@ -1,5 +1,5 @@
 from ..utils.config import SettingID
 
 
-class GeneralSettings:
+class GeneralSettingIDs:
     DEBUG = SettingID(None, "debug")

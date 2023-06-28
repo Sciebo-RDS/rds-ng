@@ -43,12 +43,12 @@ class Component:
         return svc
     
     def _create_config(self, config_file: str) -> Configuration:
-        from ..settings import GeneralSettings, ComponentSettings
+        from ..settings import GeneralSettingIDs, ComponentSettingIDs
         config = Configuration()
         config.add_defaults({
-            GeneralSettings.DEBUG: False,
+            GeneralSettingIDs.DEBUG: False,
             
-            ComponentSettings.INSTANCE: "default",
+            ComponentSettingIDs.INSTANCE: "default",
         })
         
         try:
@@ -60,8 +60,8 @@ class Component:
     
     def _sanitize_component_id(self, comp_id: ComponentID) -> ComponentID:
         if comp_id.instance is None:
-            from ..settings import ComponentSettings
-            return ComponentID(comp_id.type, comp_id.component, self._config.value(ComponentSettings.INSTANCE))
+            from ..settings import ComponentSettingIDs
+            return ComponentID(comp_id.type, comp_id.component, self._config.value(ComponentSettingIDs.INSTANCE))
         else:
             return comp_id
     

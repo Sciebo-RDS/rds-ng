@@ -1,2 +1,2 @@
-from .general_settings import GeneralSettings
-from .component_settings import ComponentSettings
+from .general_setting_ids import GeneralSettingIDs
+from .component_setting_ids import ComponentSettingIDs

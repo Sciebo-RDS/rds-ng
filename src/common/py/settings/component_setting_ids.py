@@ -1,5 +1,5 @@
 from ..utils.config import SettingID
 
 
-class ComponentSettings:
+class ComponentSettingIDs:
     INSTANCE = SettingID("component", "instance")
