@@ -12,7 +12,7 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
         
         ComponentSettingIDs.INSTANCE: "default",
         
-        NetworkServerSettingIDs.ALLOWED_ORIGINS: None,
+        NetworkServerSettingIDs.ALLOWED_ORIGINS: "",
         
         NetworkClientSettingIDs.SERVER_ADDRESS: "",
     }

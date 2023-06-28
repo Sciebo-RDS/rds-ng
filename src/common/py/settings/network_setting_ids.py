@@ -2,7 +2,7 @@ from ..utils.config import SettingID
 
 
 class NetworkServerSettingIDs:
-    ALLOWED_ORIGINS = SettingID("network.server", "allowed_clients")
+    ALLOWED_ORIGINS = SettingID("network.server", "allowed_origins")
 
 
 class NetworkClientSettingIDs:

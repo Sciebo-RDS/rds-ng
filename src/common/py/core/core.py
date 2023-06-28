@@ -44,11 +44,12 @@ class Core:
         return flsk
     
     def _create_network_engine(self, *, enable_server: bool, enable_client: bool) -> NetworkEngine:
-        # TODO: Define proper CORS origins (nw-internal)
-        allowed_origins: typing.List[str] | None = None
-        if self.is_debug_mode:
-            allowed_origins = ["*"]
-        return NetworkEngine(enable_server=enable_server, enable_client=enable_client, allowed_origins=allowed_origins)
+        return NetworkEngine(enable_server=enable_server, enable_client=enable_client, allowed_origins=self._get_allowed_origins())
+    
+    def _get_allowed_origins(self) -> typing.List[str] | None:
+        from ..settings import NetworkServerSettingIDs
+        allowed_origins: str = self._config.value(NetworkServerSettingIDs.ALLOWED_ORIGINS)
+        return allowed_origins.split(",") if allowed_origins != "" else None
     
     def _enable_debug_mode(self) -> None:
         import logging as log
