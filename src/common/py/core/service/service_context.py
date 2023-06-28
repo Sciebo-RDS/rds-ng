@@ -2,7 +2,7 @@ import typing
 
 from .message_emitter import MessageEmitter
 from ..logging import LoggerProtocol
-from ...config import Configuration
+from ...utils.config import Configuration
 
 
 class ServiceContext:

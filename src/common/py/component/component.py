@@ -6,10 +6,10 @@ import socketio
 
 from .component_id import ComponentID
 from .component_role import ComponentRole
-from ..config import Configuration
 from ..core import Core
 from ..core.service import Service, ServiceContext, ServiceContextType
 from ..core.logging import info, warning
+from ..utils.config import Configuration
 
 
 class Component:
@@ -43,7 +43,7 @@ class Component:
         return svc
     
     def _create_config(self, config_file: str) -> Configuration:
-        from ..config.settings import GeneralSettings, ComponentSettings
+        from ..settings import GeneralSettings, ComponentSettings
         config = Configuration()
         config.add_defaults({
             GeneralSettings.DEBUG: False,
@@ -60,7 +60,7 @@ class Component:
     
     def _sanitize_component_id(self, comp_id: ComponentID) -> ComponentID:
         if comp_id.instance is None:
-            from ..config.settings import ComponentSettings
+            from ..settings import ComponentSettings
             return ComponentID(comp_id.type, comp_id.component, self._config.value(ComponentSettings.INSTANCE))
         else:
             return comp_id

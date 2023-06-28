@@ -6,7 +6,7 @@ from ..logging import LoggerProtocol
 from ..messaging import Message, MessageName, MessageType, MessageBusProtocol
 from ..messaging.handlers import MessageHandlers, MessageHandler, MessageHandlerMappings
 from ...component import ComponentID
-from ...config import Configuration
+from ...utils.config import Configuration
 
 
 @typing.final

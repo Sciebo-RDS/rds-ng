@@ -6,7 +6,7 @@ from .messaging import MessageBus
 from .networking import NetworkEngine
 from .service import Service
 from ..component import ComponentRole
-from ..config import Configuration
+from ..utils.config import Configuration
 
 
 class Core:
@@ -85,5 +85,5 @@ class Core:
     
     @property
     def is_debug_mode(self) -> bool:
-        from ..config.settings import GeneralSettings
+        from ..settings import GeneralSettings
         return self.config.value(GeneralSettings.DEBUG)

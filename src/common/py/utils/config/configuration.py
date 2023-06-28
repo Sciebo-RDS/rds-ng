@@ -1,6 +1,8 @@
 import typing
 import os
 
+from .setting_id import SettingID
+
 
 class Configuration:
     """ A simple class for retrieving configuration settings. """
@@ -22,25 +24,25 @@ class Configuration:
         else:
             raise FileNotFoundError("Configuration file doesn't exist")
         
-    def add_defaults(self, defaults: typing.Dict[str, typing.Any]) -> None:
+    def add_defaults(self, defaults: typing.Dict[SettingID, typing.Any]) -> None:
         from deepmerge import always_merger
         for key, value in defaults.items():
             d = {}
-            self._unfold_dict_item(key.split("."), d, value)
+            self._unfold_dict_item(key.split(), d, value)
             self._defaults = always_merger.merge(self._defaults, d)
 
-    def value(self, key: str) -> typing.Any:
+    def value(self, key: SettingID) -> typing.Any:
         """ The value is first looked up in the environment variables. If not found, the loaded settings are searched.
             If that also fails, the defaults are used. In case the key is missing everywhere, an exception is raised.
         """
-        default = self._traverse_dict(key.split("."), self._defaults)
+        default = self._traverse_dict(key.split(), self._defaults)
         
-        env_key = f"{self._env_prefix}_{key.replace('.', '_')}".upper()
+        env_key = key.env_name(self._env_prefix)
         if env_key in os.environ:
             return self._convert_env_type(os.environ.get(env_key), type(default))
         
         try:
-            return self._traverse_dict(key.split("."), self._settings)
+            return self._traverse_dict(key.split(), self._settings)
         except:
             return default
     
