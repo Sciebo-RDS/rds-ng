@@ -30,8 +30,6 @@ class MessageBus:
         
         self._lock = threading.Lock()
         
-        self._run()
-        
     def add_service(self, svc: Service) -> bool:
         with self._lock:
             if svc in self._services:
@@ -48,11 +46,11 @@ class MessageBus:
             self._services.remove(svc)
             return True
         
-    def _run(self) -> None:
+    def run(self) -> None:
         for _, dispatcher in self._dispatchers.items():
             dispatcher.process()
             
-        threading.Timer(1.0, self._run).start()
+        threading.Timer(1.0, self.run).start()
         
     def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         for msg_type, dispatcher in self._dispatchers.items():

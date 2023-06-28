@@ -42,6 +42,9 @@ class Component:
         self._core.register_service(svc)
         return svc
     
+    def run(self) -> None:
+        self._core.run()
+    
     def _create_config(self, config_file: str) -> Configuration:
         from ..settings import get_default_settings
         config = Configuration()

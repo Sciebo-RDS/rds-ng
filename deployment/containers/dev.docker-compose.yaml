@@ -27,8 +27,6 @@ services:
             - py-base
         ports:
             - "4200:6969"
-        environment:
-            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
     # Debug testing buddy
     testbuddy:
@@ -46,3 +44,5 @@ services:
             - py-base
         ports:
             - "4300:6969"
+        environment:
+            - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://rds-gate-1:6969

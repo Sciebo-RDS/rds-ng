@@ -44,12 +44,7 @@ class Core:
         return flsk
     
     def _create_network_engine(self, *, enable_server: bool, enable_client: bool) -> NetworkEngine:
-        return NetworkEngine(enable_server=enable_server, enable_client=enable_client, allowed_origins=self._get_allowed_origins())
-    
-    def _get_allowed_origins(self) -> typing.List[str] | None:
-        from ..settings import NetworkServerSettingIDs
-        allowed_origins: str = self._config.value(NetworkServerSettingIDs.ALLOWED_ORIGINS)
-        return allowed_origins.split(",") if allowed_origins != "" else None
+        return NetworkEngine(self._config, enable_server=enable_server, enable_client=enable_client)
     
     def _enable_debug_mode(self) -> None:
         import logging as log
@@ -67,6 +62,10 @@ class Core:
             debug(f"Unregistered service: {svc}", scope="core")
         else:
             debug("Service not registered", scope="core", service=svc)
+            
+    def run(self) -> None:
+        self._network_engine.run()
+        self._message_bus.run()
     
     @property
     def config(self) -> Configuration:
