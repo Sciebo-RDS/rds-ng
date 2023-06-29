@@ -1,18 +1,20 @@
 import threading
 import typing
 
+from .channel_resolver import ChannelResolver
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
 from .meta import MessageMetaInformationType
 from ..logging import LoggerProxy, default_logger
 from ..networking import NetworkEngine
 from ..service import Service, ServiceContextType
+from ...component import ComponentID
 from ...utils.config import Configuration
 
 
 class MessageBus:
     """ A thread-safe message bus for dispatching messages. """
-    def __init__(self, nwe: NetworkEngine, config: Configuration):
+    def __init__(self, channel_resolver: ChannelResolver, nwe: NetworkEngine, config: Configuration):
         from .dispatchers import CommandDispatcher, CommandReplyDispatcher, EventDispatcher
         from .command import Command
         from .command_reply import CommandReply
@@ -27,6 +29,7 @@ class MessageBus:
             CommandReply: CommandReplyDispatcher(),
             Event: EventDispatcher(),
         }
+        self._channel_resolver = channel_resolver
         
         self._lock = threading.Lock()
         
@@ -53,24 +56,26 @@ class MessageBus:
         threading.Timer(1.0, self.run).start()
         
     def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
+        transport_type = self._channel_resolver.resolve(msg.target)
+        
+        if ChannelResolver.TransportType.REMOTE in transport_type:
+            self._remote_dispatch(msg)
+        
+        if ChannelResolver.TransportType.LOCAL in transport_type:
+            self._local_dispatch(msg, msg_meta)
+            
+    def _local_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         for msg_type, dispatcher in self._dispatchers.items():
             if not isinstance(msg, msg_type):
                 continue
-            
-            # TODO: Check target and compare to "self"; send to dispatchers only if this matches, send through NWE otherwise
-            
-            self._local_dispatch(dispatcher, msg, msg_type, msg_meta)
-            self._remote_dispatch(msg)
-            
-    def _local_dispatch(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], msg_meta: MessageMetaInformationType) -> None:
-        dispatcher.pre_dispatch(msg, msg_meta)
-        for svc in self._services:
-            self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
-        dispatcher.post_dispatch(msg, msg_meta)
+                
+            dispatcher.pre_dispatch(msg, msg_meta)
+            for svc in self._services:
+                self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
+            dispatcher.post_dispatch(msg, msg_meta)
         
     def _remote_dispatch(self, msg: Message) -> None:
-        # TODO: !
-        pass
+        self._network_engine.send_message(msg)
 
     def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], msg_meta: MessageMetaInformationType, svc: Service) -> None:
         for handler in svc.message_handlers(msg.name):

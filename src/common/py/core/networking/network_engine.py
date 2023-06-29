@@ -2,6 +2,7 @@ import typing
 
 from .client import Client
 from .server import Server
+from ..messaging import Message
 from ...utils.config import Configuration
 
 
@@ -24,6 +25,12 @@ class NetworkEngine:
         if self.has_client:
             self._client.run()
             
+    def send_message(self, msg: Message) -> None:
+        # TODO: !
+        # Find out if client or server
+        # For server: Figure out correct room (for direct: Map CompID to SID)
+        pass
+        
     @property
     def has_server(self) -> bool:
         return self._server is not None

@@ -10,14 +10,17 @@ class Channel:
         ROOM = "room"
         
     type: Type
-    target: str = None
+    target: str | None = None
     
+    @property
     def is_local(self) -> bool:
         return self.type == Channel.Type.LOCAL
     
+    @property
     def is_direct(self) -> bool:
         return self.type == Channel.Type.DIRECT
     
+    @property
     def is_room(self) -> bool:
         return self.type == Channel.Type.ROOM
     

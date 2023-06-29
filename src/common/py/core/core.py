@@ -5,13 +5,13 @@ from .logging import info, debug, set_level
 from .messaging import MessageBus
 from .networking import NetworkEngine
 from .service import Service
-from ..component import ComponentRole
+from ..component import ComponentID, ComponentRole
 from ..utils.config import Configuration
 
 
 class Core:
     """ The main portion of an RDS component. """
-    def __init__(self, module_name: str, config: Configuration, role: ComponentRole):
+    def __init__(self, module_name: str, comp_id: ComponentID, config: Configuration, role: ComponentRole):
         info("Initializing core...", scope="core")
         
         self._config = config
@@ -28,10 +28,11 @@ class Core:
         self._network_engine = self._create_network_engine(enable_server=(ComponentRole.SERVER in role), enable_client=(ComponentRole.CLIENT in role))
         
         debug("-- Creating message bus", scope="core")
-        self._message_bus = self._create_message_bus()
+        self._message_bus = self._create_message_bus(comp_id)
         
-    def _create_message_bus(self) -> MessageBus:
-        return MessageBus(self._network_engine, self._config)
+    def _create_message_bus(self, comp_id: ComponentID) -> MessageBus:
+        from .messaging import ChannelResolver
+        return MessageBus(ChannelResolver(comp_id), self._network_engine, self._config)
     
     def _create_flask(self, module_name: str) -> flask.Flask:
         from ..utils.random import generate_random_string

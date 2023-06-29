@@ -7,27 +7,30 @@ import typing
 @dataclass(frozen=True)
 class ComponentID:
     """ A component ID consists of its overall type, the component name, and its running instance. """
-    class Tokens(Flag):
-        TYPE = auto()
-        COMPONENT = auto()
-        INSTANCE = auto()
-        ALL = TYPE | COMPONENT | INSTANCE
-    
     type: str
     component: str
     instance: str | None = None
     
-    def partial_eq(self, other: typing.Self, tokens: Tokens = Tokens.ALL) -> bool:
-        if ComponentID.Tokens.TYPE in tokens and self.type != other.type:
+    def equals(self, other: typing.Self) -> bool:
+        if self.type != other.type or self.component != other.component:
             return False
         
-        if ComponentID.Tokens.COMPONENT in tokens and self.component != other.component:
-            return False
-        
-        if ComponentID.Tokens.INSTANCE in tokens and self.instance != other.instance:
-            return False
+        if self.instance is not None and other.instance is not None:
+            if self.instance != other.instance:
+                return False
         
         return True
+    
+    @staticmethod
+    def from_string(s: str) -> 'ComponentID':
+        from pathlib import PurePosixPath
+        p = PurePosixPath(s).parts
+        if len(p) == 3:
+            return ComponentID(p[0], p[1], p[2])
+        elif len(p) == 2:
+            return ComponentID(p[0], p[1])
+        else:
+            raise ValueError(f"The component ID '{s}' is invalid")
     
     def __str__(self) -> str:
         from pathlib import PurePosixPath

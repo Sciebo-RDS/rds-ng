@@ -30,7 +30,7 @@ class Component:
         info(str(self))
         info("-- Starting component...")
         
-        self._core = Core(module_name, self._config, role)
+        self._core = Core(module_name, comp_id, self._config, role)
         
         self._add_default_routes()
         
