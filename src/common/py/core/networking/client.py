@@ -1,6 +1,6 @@
 import socketio
 
-from ..logging import info
+from ..logging import info, warning
 from ...utils.config import Configuration
 
 
@@ -12,6 +12,7 @@ class Client(socketio.Client):
         self._server_address = config.value(NetworkClientSettingIDs.SERVER_ADDRESS)
         
         self.on("connect", self._on_connect)
+        self.on("connect_error", self._on_connect_error)
         self.on("disconnect", self._on_disconnect)
 
     def run(self) -> None:
@@ -21,6 +22,9 @@ class Client(socketio.Client):
             
     def _on_connect(self) -> None:
         info("Connected to server", scope="client")
+        
+    def _on_connect_error(self, reason) -> None:
+        warning("Unable to connect to server", scope="client", reason=str(reason))
     
     def _on_disconnect(self) -> None:
         info("Disconnected from server", scope="client")

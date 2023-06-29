@@ -12,9 +12,18 @@ class Channel:
     type: Type
     target: str = None
     
+    def is_local(self) -> bool:
+        return self.type == Channel.Type.LOCAL
+    
+    def is_direct(self) -> bool:
+        return self.type == Channel.Type.DIRECT
+    
+    def is_room(self) -> bool:
+        return self.type == Channel.Type.ROOM
+    
     def __str__(self) -> str:
         return f"@{self.type}:{self.target}" if self.target is not None else f"@{self.type}"
-
+    
     @staticmethod
     def local() -> 'Channel':
         return Channel(Channel.Type.LOCAL)

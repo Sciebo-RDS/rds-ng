@@ -5,7 +5,7 @@ from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
 from .meta import MessageMetaInformationType
 from ..logging import LoggerProxy, default_logger
-from ..networking.network_engine import NetworkEngine
+from ..networking import NetworkEngine
 from ..service import Service, ServiceContextType
 from ...utils.config import Configuration
 
@@ -56,14 +56,21 @@ class MessageBus:
         for msg_type, dispatcher in self._dispatchers.items():
             if not isinstance(msg, msg_type):
                 continue
-                
-            dispatcher.pre_dispatch(msg, msg_meta)
             
             # TODO: Check target and compare to "self"; send to dispatchers only if this matches, send through NWE otherwise
-            for svc in self._services:
-                self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
             
-            dispatcher.post_dispatch(msg, msg_meta)
+            self._local_dispatch(dispatcher, msg, msg_type, msg_meta)
+            self._remote_dispatch(msg)
+            
+    def _local_dispatch(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], msg_meta: MessageMetaInformationType) -> None:
+        dispatcher.pre_dispatch(msg, msg_meta)
+        for svc in self._services:
+            self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
+        dispatcher.post_dispatch(msg, msg_meta)
+        
+    def _remote_dispatch(self, msg: Message) -> None:
+        # TODO: !
+        pass
 
     def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], msg_meta: MessageMetaInformationType, svc: Service) -> None:
         for handler in svc.message_handlers(msg.name):
