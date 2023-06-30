@@ -12,6 +12,7 @@ comp.run()
 @Message.define("msg/event")
 class MyEvent(Event):
     some_cool_text: str = ""
+    a_number: int = 12
 
     
-svc.message_emitter.emit_event(MyEvent, Channel.direct("infra/gate/default"), some_cool_text="Wheeeee")
+svc.message_emitter.emit_event(MyEvent, Channel.direct("infra/gate/default"), some_cool_text="Wheeeee", a_number=666)

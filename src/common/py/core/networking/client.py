@@ -33,7 +33,7 @@ class Client(socketio.Client):
     def send_message(self, msg: Message) -> None:
         debug(f"Sending message: {msg}", scope="client")
         with self._lock:
-            self.send(data=msg.data())
+            self.send(data=msg.to_json())
     
     def _on_connect(self) -> None:
         info("Connected to server", scope="client")

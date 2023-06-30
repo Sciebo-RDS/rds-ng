@@ -4,13 +4,16 @@ import typing
 import uuid
 from dataclasses import dataclass, field
 
+from dataclasses_json import dataclass_json
+
 from .channel import Channel
 from ...component import ComponentID
 
 MessageName = str
-Trace = str
+Trace = uuid.UUID
 
 
+@dataclass_json
 @dataclass(frozen=True, kw_only=True)
 class Message(abc.ABC):
     name: MessageName
@@ -21,10 +24,7 @@ class Message(abc.ABC):
     
     hops: typing.List[ComponentID] = field(default_factory=list)
     
-    trace: Trace = field(default_factory=lambda: str(uuid.uuid4()))
-    
-    def data(self) -> typing.Dict[typing.Any, typing.Any]:
-        return dataclasses.asdict(self)
+    trace: Trace = field(default_factory=uuid.uuid4)
     
     @staticmethod
     def define(name: str):
