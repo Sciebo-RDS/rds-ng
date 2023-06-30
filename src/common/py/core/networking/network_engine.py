@@ -1,7 +1,7 @@
 import typing
 
 from .client import Client
-from .network_route_resolver import NetworkRouteResolver
+from .route_resolver import RouteResolver
 from .server import Server
 from ..messaging import Message
 from ...utils.config import Configuration
@@ -9,7 +9,7 @@ from ...utils.config import Configuration
 
 class NetworkEngine:
     """ The main network management class, based on socket.io. """
-    def __init__(self, route_resolver: NetworkRouteResolver, config: Configuration, *, enable_client: bool, enable_server: bool):
+    def __init__(self, route_resolver: RouteResolver, config: Configuration, *, enable_client: bool, enable_server: bool):
         self._client = self._create_client(config) if enable_client else None
         self._server = self._create_server(config) if enable_server else None
         
@@ -31,10 +31,10 @@ class NetworkEngine:
     def send_message(self, msg: Message) -> None:
         route_type = self._route_resolver.resolve(msg)
         
-        if NetworkRouteResolver.RouteType.CLIENT in route_type and self.has_client:
+        if RouteResolver.Routing.CLIENT in route_type and self.has_client:
             self._client.send_message(msg)
             
-        if NetworkRouteResolver.RouteType.SERVER in route_type and self.has_server:
+        if RouteResolver.Routing.SERVER in route_type and self.has_server:
             self._server.send_message(msg)
         
     @property

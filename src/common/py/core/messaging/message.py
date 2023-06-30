@@ -36,6 +36,10 @@ class Message(abc.ABC):
                 __init__(self, *args, name=MessageName(name), **kwargs)
             
             setattr(cls, "__init__", __new_init__)
+            
+            from .message_types_catalog import MessageTypesCatalog
+            MessageTypesCatalog.register_type(name, cls)
+            
             return cls
         
         return decorator

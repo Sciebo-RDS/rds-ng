@@ -3,8 +3,8 @@ from enum import Flag, auto
 from ..messaging import Message
 
 
-class NetworkRouteResolver:
-    class RouteType(Flag):
+class RouteResolver:
+    class Routing(Flag):
         CLIENT = auto()
         SERVER = auto()
         
@@ -12,14 +12,14 @@ class NetworkRouteResolver:
         self._has_client = has_client
         self._has_server = has_server
         
-    def resolve(self, msg: Message) -> RouteType:
-        route_type = NetworkRouteResolver.RouteType(0)
+    def resolve(self, msg: Message) -> Routing:
+        route_type = RouteResolver.Routing(0)
         
         if self._check_send_through_client(msg):
-            route_type |= NetworkRouteResolver.RouteType.CLIENT
+            route_type |= RouteResolver.Routing.CLIENT
         
         if self._check_send_through_server(msg):
-            route_type |= NetworkRouteResolver.RouteType.SERVER
+            route_type |= RouteResolver.Routing.SERVER
         
         return route_type
     

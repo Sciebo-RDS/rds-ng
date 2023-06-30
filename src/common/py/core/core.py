@@ -41,8 +41,8 @@ class Core:
         return flsk
     
     def _create_network_engine(self, *, enable_client: bool, enable_server: bool) -> NetworkEngine:
-        from .networking import NetworkRouteResolver
-        route_resolver = NetworkRouteResolver(has_client=enable_client, has_server=enable_server)
+        from .networking import RouteResolver
+        route_resolver = RouteResolver(has_client=enable_client, has_server=enable_server)
         return NetworkEngine(route_resolver, self._config, enable_client=enable_client, enable_server=enable_server)
     
     def _create_message_bus(self, comp_id: ComponentID) -> MessageBus:
