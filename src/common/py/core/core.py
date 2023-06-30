@@ -25,14 +25,10 @@ class Core:
         self._flask = self._create_flask(module_name)
         
         debug("-- Creating network engine", scope="core", role=role)
-        self._network_engine = self._create_network_engine(enable_server=(ComponentRole.SERVER in role), enable_client=(ComponentRole.CLIENT in role))
+        self._network_engine = self._create_network_engine(enable_client=(ComponentRole.CLIENT in role), enable_server=(ComponentRole.SERVER in role))
         
         debug("-- Creating message bus", scope="core")
         self._message_bus = self._create_message_bus(comp_id)
-        
-    def _create_message_bus(self, comp_id: ComponentID) -> MessageBus:
-        from .messaging import ChannelResolver
-        return MessageBus(ChannelResolver(comp_id), self._network_engine, self._config)
     
     def _create_flask(self, module_name: str) -> flask.Flask:
         from ..utils.random import generate_random_string
@@ -44,8 +40,15 @@ class Core:
         flsk.config["SECRET"] = generate_random_string(64)
         return flsk
     
-    def _create_network_engine(self, *, enable_server: bool, enable_client: bool) -> NetworkEngine:
-        return NetworkEngine(self._config, enable_server=enable_server, enable_client=enable_client)
+    def _create_network_engine(self, *, enable_client: bool, enable_server: bool) -> NetworkEngine:
+        from .networking import NetworkRouteResolver
+        route_resolver = NetworkRouteResolver(has_client=enable_client, has_server=enable_server)
+        return NetworkEngine(route_resolver, self._config, enable_client=enable_client, enable_server=enable_server)
+    
+    def _create_message_bus(self, comp_id: ComponentID) -> MessageBus:
+        from .messaging import ChannelResolver
+        channel_resolver = ChannelResolver(comp_id)
+        return MessageBus(channel_resolver, self._network_engine, self._config)
     
     def _enable_debug_mode(self) -> None:
         import logging as log

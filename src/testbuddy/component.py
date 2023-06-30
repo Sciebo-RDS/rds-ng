@@ -1,6 +1,17 @@
 from common.py.component import Component, ComponentID, ComponentRole
+from common.py.core.messaging import Event, Channel, Message
 
 comp = Component(ComponentID("infra", "testbuddy"), ComponentRole.CLIENT, module_name=__name__)
-app = comp.wsgi_app()
+app = comp.app()
+
+svc = comp.create_service("Test buddy service")
 
 comp.run()
+
+
+@Message.define("msg/event")
+class MyEvent(Event):
+    some_cool_text: str = ""
+
+    
+svc.message_emitter.emit_event(MyEvent, Channel.direct("infra/gate/default"), some_cool_text="Wheeeee")

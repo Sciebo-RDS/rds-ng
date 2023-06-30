@@ -1,6 +1,7 @@
 import typing
 
 from .client import Client
+from .network_route_resolver import NetworkRouteResolver
 from .server import Server
 from ..messaging import Message
 from ...utils.config import Configuration
@@ -8,15 +9,17 @@ from ...utils.config import Configuration
 
 class NetworkEngine:
     """ The main network management class, based on socket.io. """
-    def __init__(self, config: Configuration, *, enable_server: bool, enable_client: bool):
-        self._server = self._create_server(config) if enable_server else None
+    def __init__(self, route_resolver: NetworkRouteResolver, config: Configuration, *, enable_client: bool, enable_server: bool):
         self._client = self._create_client(config) if enable_client else None
+        self._server = self._create_server(config) if enable_server else None
         
-    def _create_server(self, config: Configuration) -> Server:
-        return Server(config)
+        self._route_resolver = route_resolver
 
     def _create_client(self, config: Configuration) -> Client:
         return Client(config)
+    
+    def _create_server(self, config: Configuration) -> Server:
+        return Server(config)
     
     def run(self) -> None:
         if self.has_server:
@@ -26,10 +29,13 @@ class NetworkEngine:
             self._client.run()
             
     def send_message(self, msg: Message) -> None:
-        # TODO: !
-        # Find out if client or server
-        # For server: Figure out correct room (for direct: Map CompID to SID)
-        pass
+        route_type = self._route_resolver.resolve(msg)
+        
+        if NetworkRouteResolver.RouteType.CLIENT in route_type and self.has_client:
+            self._client.send_message(msg)
+            
+        if NetworkRouteResolver.RouteType.SERVER in route_type and self.has_server:
+            self._server.send_message(msg)
         
     @property
     def has_server(self) -> bool:

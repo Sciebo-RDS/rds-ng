@@ -39,8 +39,8 @@ class ChannelResolver:
         if target.is_local:
             return False
         elif target.is_direct:
-            # TODO !
-            pass
+            target_id = ComponentID.from_string(target.target)
+            return not target_id.equals(self._comp_id)
         elif target.is_room:
             # TODO: Rooms: List of subscribed rooms, check if match -> local as well (maybe remote)
             pass

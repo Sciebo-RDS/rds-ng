@@ -34,8 +34,9 @@ class Component:
         
         self._add_default_routes()
         
-    def wsgi_app(self) -> socketio.WSGIApp:
-        return socketio.WSGIApp(self._core.network.server, self.core.flask)
+    def app(self) -> typing.Any:
+        # Note: This is the only dependency on socket.io outside the network engine, as we need to use their app logic
+        return socketio.WSGIApp(self._core.network.server, self._core.flask)
     
     def create_service(self, name: str, *, context_type: typing.Type[ServiceContextType] = ServiceContext) -> Service:
         svc = Service(self._comp_id, name, message_bus=self._core.message_bus, context_type=context_type)

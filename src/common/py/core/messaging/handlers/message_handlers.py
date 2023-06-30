@@ -1,5 +1,6 @@
 import threading
 import typing
+from pathlib import PurePosixPath
 
 from ..message import MessageName, Message, MessageType
 from .message_handler import MessageHandler, MessageHandlerMapping, MessageHandlerMappings
@@ -20,7 +21,7 @@ class MessageHandlers:
         handlers: MessageHandlerMappings = []
         with self._lock:
             for mapping in self._handlers:
-                if msg_name.match(mapping.filter):
+                if PurePosixPath(msg_name).match(mapping.filter):
                     handlers.append(mapping)
         return handlers
 

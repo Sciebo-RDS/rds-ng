@@ -3,13 +3,12 @@ import dataclasses
 import typing
 import uuid
 from dataclasses import dataclass, field
-from pathlib import PurePosixPath
 
 from .channel import Channel
 from ...component import ComponentID
 
-MessageName = PurePosixPath
-Trace = uuid.UUID
+MessageName = str
+Trace = str
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -22,7 +21,10 @@ class Message(abc.ABC):
     
     hops: typing.List[ComponentID] = field(default_factory=list)
     
-    trace: Trace = field(default_factory=uuid.uuid4)
+    trace: Trace = field(default_factory=lambda: str(uuid.uuid4()))
+    
+    def data(self) -> typing.Dict[typing.Any, typing.Any]:
+        return dataclasses.asdict(self)
     
     @staticmethod
     def define(name: str):
