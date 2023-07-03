@@ -1,0 +1,2 @@
+class RouterException(RuntimeError):
+    pass

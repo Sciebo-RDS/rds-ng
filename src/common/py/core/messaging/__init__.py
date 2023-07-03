@@ -1,5 +1,4 @@
 from .channel import Channel
-from .channel_resolver import ChannelResolver
 from .message import MessageName, Trace, Message, MessageType
 from .command import Command, CommandType
 from .command_reply import CommandReply, CommandReplyType, CommandDoneCallback, CommandFailCallback

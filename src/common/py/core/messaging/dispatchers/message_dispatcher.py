@@ -14,7 +14,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     _thread_pool = ThreadPoolExecutor()
     _meta_information_list = MessageMetaInformationList()
     
-    def __init__(self, meta_information_type: typing.Type[MessageMetaInformationType]):
+    def __init__(self, meta_information_type: type[MessageMetaInformationType]):
         self._meta_information_type = meta_information_type
         
     def process(self) -> None:

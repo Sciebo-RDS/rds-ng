@@ -60,7 +60,7 @@ class Configuration:
             d = d[path[0]]
             self._unfold_dict_item(path[1:], d, v)
 
-    def _convert_env_type(self, value: typing.Any, target_type: typing.Type) -> typing.Any:
+    def _convert_env_type(self, value: typing.Any, target_type: type) -> typing.Any:
         if target_type == bool:
             if type(value) == str:
                 value = value.casefold()

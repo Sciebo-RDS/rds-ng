@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from ...component import ComponentID
+
 
 @dataclass(frozen=True)
 class Channel:
@@ -11,6 +13,10 @@ class Channel:
         
     type: Type
     target: str | None = None
+    
+    @property
+    def target_id(self) -> ComponentID | None:
+        return ComponentID.from_string(self.target) if self.target is not None else None
     
     @property
     def is_local(self) -> bool:

@@ -1,7 +1,6 @@
 import threading
 import typing
 
-from .channel_resolver import ChannelResolver
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
 from .meta import MessageMetaInformationType
@@ -23,12 +22,12 @@ class MessageBus:
         self._network_engine = nwe
         
         self._services: typing.List[Service] = []
-        self._dispatchers: typing.Dict[typing.Type[MessageType], MessageDispatcher] = {
+        self._dispatchers: typing.Dict[type[MessageType], MessageDispatcher] = {
             Command: CommandDispatcher(),
             CommandReply: CommandReplyDispatcher(),
             Event: EventDispatcher(),
         }
-        self._channel_resolver = ChannelResolver(self._comp_data.comp_id)  # TODO
+        self._router = self._comp_data.role.messaging_aspects.create_message_router(self._comp_data.comp_id)
         
         self._lock = threading.Lock()
         
@@ -55,13 +54,18 @@ class MessageBus:
         threading.Timer(1.0, self.run).start()
         
     def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
-        transport_type = self._channel_resolver.resolve(msg.target)
-        
-        if ChannelResolver.TransportType.REMOTE in transport_type:
-            self._remote_dispatch(msg)
-        
-        if ChannelResolver.TransportType.LOCAL in transport_type:
-            self._local_dispatch(msg, msg_meta)
+        from .routing import RouterException
+        try:
+            self._router.verify_message(msg)
+        except RouterException as e:
+            from ..logging import error
+            error(f"A routing mistake occurred: {str(e)}", scope="bus", message=str(msg))
+        else:
+            if self._router.check_remote_routing(msg):
+                self._remote_dispatch(msg)
+            
+            if self._router.check_local_routing(msg):
+                self._local_dispatch(msg, msg_meta)
             
     def _local_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         for msg_type, dispatcher in self._dispatchers.items():
@@ -76,7 +80,7 @@ class MessageBus:
     def _remote_dispatch(self, msg: Message) -> None:
         self._network_engine.send_message(msg)
 
-    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: typing.Type[MessageType], msg_meta: MessageMetaInformationType, svc: Service) -> None:
+    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, svc: Service) -> None:
         for handler in svc.message_handlers(msg.name):
             try:
                 act_msg = typing.cast(msg_type, msg)

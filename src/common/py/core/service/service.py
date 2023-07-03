@@ -12,7 +12,7 @@ from ...utils.config import Configuration
 @typing.final
 class Service:
     """ Base service class providing easy message handler mapping. This is the entrypoint into the actual component domain. """
-    def __init__(self, comp_id: ComponentID, name: str, *, message_bus: MessageBusProtocol, context_type: typing.Type[ServiceContextType] = ServiceContext):
+    def __init__(self, comp_id: ComponentID, name: str, *, message_bus: MessageBusProtocol, context_type: type[ServiceContextType] = ServiceContext):
         self._component_id = comp_id
         self._name = name
         
@@ -20,7 +20,7 @@ class Service:
         self._message_handlers = MessageHandlers()
         self._context_type = context_type
 
-    def message_handler(self, fltr: str, /, message_type: typing.Type[MessageType] = Message, *, is_async: bool = False) -> typing.Callable[[MessageHandler], MessageHandler]:
+    def message_handler(self, fltr: str, /, message_type: type[MessageType] = Message, *, is_async: bool = False) -> typing.Callable[[MessageHandler], MessageHandler]:
         def decorator(handler: MessageHandler) -> MessageHandler:
             self._message_handlers.add_handler(fltr, handler, message_type, is_async)
             return handler

@@ -10,7 +10,7 @@ MessageHandler = typing.Callable[[MessageType, 'ServiceContextType'], None]  # W
 class MessageHandlerMapping:
     filter: str
     handler: MessageHandler
-    message_type: typing.Type[MessageType]
+    message_type: type[MessageType]
     is_async: bool = False
     
     def __str__(self) -> str:
