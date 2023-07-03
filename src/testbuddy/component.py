@@ -1,7 +1,8 @@
-from common.py.component import Component, ComponentID, ComponentRole
+from common.py.component import Component, ComponentID
+from common.py.component.roles import LeafRole
 from common.py.core.messaging import Event, Channel, Message
 
-comp = Component(ComponentID("infra", "testbuddy"), ComponentRole.CLIENT, module_name=__name__)
+comp = Component(ComponentID("infra", "testbuddy"), LeafRole(), module_name=__name__)
 app = comp.app()
 
 svc = comp.create_service("Test buddy service")

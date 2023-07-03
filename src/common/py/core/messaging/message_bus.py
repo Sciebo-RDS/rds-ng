@@ -8,20 +8,19 @@ from .meta import MessageMetaInformationType
 from ..logging import LoggerProxy, default_logger
 from ..networking import NetworkEngine
 from ..service import Service, ServiceContextType
-from ...component import ComponentID
-from ...utils.config import Configuration
+from ...component import ComponentData
 
 
 class MessageBus:
     """ A thread-safe message bus for dispatching messages. """
-    def __init__(self, channel_resolver: ChannelResolver, nwe: NetworkEngine, config: Configuration):
+    def __init__(self, comp_data: ComponentData, nwe: NetworkEngine):
         from .dispatchers import CommandDispatcher, CommandReplyDispatcher, EventDispatcher
         from .command import Command
         from .command_reply import CommandReply
         from .event import Event
         
+        self._comp_data = comp_data
         self._network_engine = nwe
-        self._config = config
         
         self._services: typing.List[Service] = []
         self._dispatchers: typing.Dict[typing.Type[MessageType], MessageDispatcher] = {
@@ -29,7 +28,7 @@ class MessageBus:
             CommandReply: CommandReplyDispatcher(),
             Event: EventDispatcher(),
         }
-        self._channel_resolver = channel_resolver
+        self._channel_resolver = ChannelResolver(self._comp_data.comp_id)  # TODO
         
         self._lock = threading.Lock()
         
@@ -92,4 +91,4 @@ class MessageBus:
     def _create_context(self, msg: Message, svc: Service) -> ServiceContextType:
         logger_proxy = LoggerProxy(default_logger())
         logger_proxy.add_param("trace", str(msg.trace))
-        return svc.create_context(self._config, logger_proxy)
+        return svc.create_context(self._comp_data.config, logger_proxy)

@@ -1,11 +1,11 @@
 import json
 import typing
 
-from semantic_version import Version
 import socketio
 
+from .component_data import ComponentData
 from .component_id import ComponentID
-from .component_role import ComponentRole
+from .roles.component_role import ComponentRole
 from ..core import Core
 from ..core.service import Service, ServiceContext, ServiceContextType
 from ..core.logging import info, warning
@@ -15,22 +15,26 @@ from ..utils.config import Configuration
 class Component:
     """ Base application class for all RDS components. """
     def __init__(self, comp_id: ComponentID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
-        self._config = self._create_config(config_file)
-        self._comp_id = self._sanitize_component_id(comp_id)
+        config = self._create_config(config_file)
+        comp_id = self._sanitize_component_id(comp_id, config)
         
         from .meta_information import MetaInformation
         meta_info = MetaInformation()
-        comp_info = meta_info.get_component(self._comp_id.component)
+        comp_info = meta_info.get_component(comp_id.component)
         
-        self._role = role
-        self._title = meta_info.title
-        self._name = comp_info["name"]
-        self._version = meta_info.version
+        self._data = ComponentData(
+            comp_id=comp_id,
+            role=role,
+            config=config,
+            title=meta_info.title,
+            name=comp_info["name"],
+            version=meta_info.version,
+        )
         
-        info(str(self))
+        info(str(self), role=self._data.role.name)
         info("-- Starting component...")
         
-        self._core = Core(module_name, comp_id, self._config, role)
+        self._core = Core(module_name, self._data)
         
         self._add_default_routes()
         
@@ -39,7 +43,7 @@ class Component:
         return socketio.WSGIApp(self._core.network.server, self._core.flask)
     
     def create_service(self, name: str, *, context_type: typing.Type[ServiceContextType] = ServiceContext) -> Service:
-        svc = Service(self._comp_id, name, message_bus=self._core.message_bus, context_type=context_type)
+        svc = Service(self._data.comp_id, name, message_bus=self._core.message_bus, context_type=context_type)
         self._core.register_service(svc)
         return svc
     
@@ -58,48 +62,32 @@ class Component:
         
         return config
     
-    def _sanitize_component_id(self, comp_id: ComponentID) -> ComponentID:
+    def _sanitize_component_id(self, comp_id: ComponentID, config: Configuration) -> ComponentID:
         if comp_id.instance is None:
             from ..settings import ComponentSettingIDs
-            return ComponentID(comp_id.type, comp_id.component, self._config.value(ComponentSettingIDs.INSTANCE))
+            return ComponentID(comp_id.type, comp_id.component, config.value(ComponentSettingIDs.INSTANCE))
         else:
             return comp_id
     
     @property
     def config(self) -> Configuration:
-        return self._config
+        return self._data.config
 
     @property
     def core(self) -> Core:
         return self._core
     
     @property
-    def comp_id(self) -> ComponentID:
-        return self._comp_id
+    def data(self) -> ComponentData:
+        return self._data
     
-    @property
-    def role(self) -> ComponentRole:
-        return self._role
-    
-    @property
-    def title(self) -> str:
-        return self._title
-    
-    @property
-    def name(self) -> str:
-        return self._name
-    
-    @property
-    def version(self) -> Version:
-        return self._version
-        
     def __str__(self) -> str:
-        return f"{self._title} v{self._version}: {self._name} ({self._comp_id})"
+        return f"{self._data.title} v{self._data.version}: {self._data.name} ({self._data.comp_id})"
     
     def _add_default_routes(self) -> None:
         # The main entry point (/) returns basic component info as a JSON string
         self._core.flask.add_url_rule("/", view_func=lambda: json.dumps({
-            "id": str(self._comp_id),
-            "name": self._name,
-            "version": str(self._version),
+            "id": str(self._data.comp_id),
+            "name": self._data.name,
+            "version": str(self._data.version),
         }))

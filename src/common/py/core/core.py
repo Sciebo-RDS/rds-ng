@@ -1,34 +1,32 @@
-import typing
 import flask
 
 from .logging import info, debug, set_level
 from .messaging import MessageBus
 from .networking import NetworkEngine
 from .service import Service
-from ..component import ComponentID, ComponentRole
-from ..utils.config import Configuration
+from ..component import ComponentData
 
 
 class Core:
     """ The main portion of an RDS component. """
-    def __init__(self, module_name: str, comp_id: ComponentID, config: Configuration, role: ComponentRole):
+    def __init__(self, module_name: str, comp_data: ComponentData):
         info("Initializing core...", scope="core")
         
-        self._config = config
+        self._comp_data = comp_data
         
         if self.is_debug_mode:
             self._enable_debug_mode()
         
-        debug(f"-- Settings file: {config.settings_file}", scope="core")
+        debug(f"-- Settings file: {self._comp_data.config.settings_file}", scope="core")
         
         debug("-- Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
         
-        debug("-- Creating network engine", scope="core", role=role)
-        self._network_engine = self._create_network_engine(enable_client=(ComponentRole.CLIENT in role), enable_server=(ComponentRole.SERVER in role))
+        debug("-- Creating network engine", scope="core")
+        self._network_engine = self._create_network_engine()
         
         debug("-- Creating message bus", scope="core")
-        self._message_bus = self._create_message_bus(comp_id)
+        self._message_bus = self._create_message_bus()
     
     def _create_flask(self, module_name: str) -> flask.Flask:
         from ..utils.random import generate_random_string
@@ -40,15 +38,11 @@ class Core:
         flsk.config["SECRET"] = generate_random_string(64)
         return flsk
     
-    def _create_network_engine(self, *, enable_client: bool, enable_server: bool) -> NetworkEngine:
-        from .networking import RouteResolver
-        route_resolver = RouteResolver(has_client=enable_client, has_server=enable_server)
-        return NetworkEngine(route_resolver, self._config, enable_client=enable_client, enable_server=enable_server)
+    def _create_network_engine(self) -> NetworkEngine:
+        return NetworkEngine(self._comp_data)
     
-    def _create_message_bus(self, comp_id: ComponentID) -> MessageBus:
-        from .messaging import ChannelResolver
-        channel_resolver = ChannelResolver(comp_id)
-        return MessageBus(channel_resolver, self._network_engine, self._config)
+    def _create_message_bus(self) -> MessageBus:
+        return MessageBus(self._comp_data, self._network_engine)
     
     def _enable_debug_mode(self) -> None:
         import logging as log
@@ -70,11 +64,7 @@ class Core:
     def run(self) -> None:
         self._network_engine.run()
         self._message_bus.run()
-    
-    @property
-    def config(self) -> Configuration:
-        return self._config
-    
+        
     @property
     def message_bus(self) -> MessageBus:
         return self._message_bus
@@ -90,4 +80,4 @@ class Core:
     @property
     def is_debug_mode(self) -> bool:
         from ..settings import GeneralSettingIDs
-        return self.config.value(GeneralSettingIDs.DEBUG)
+        return self._comp_data.config.value(GeneralSettingIDs.DEBUG)

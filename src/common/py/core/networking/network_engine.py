@@ -4,22 +4,24 @@ from .client import Client
 from .route_resolver import RouteResolver
 from .server import Server
 from ..messaging import Message
-from ...utils.config import Configuration
+from ...component import ComponentData
 
 
 class NetworkEngine:
     """ The main network management class, based on socket.io. """
-    def __init__(self, route_resolver: RouteResolver, config: Configuration, *, enable_client: bool, enable_server: bool):
-        self._client = self._create_client(config) if enable_client else None
-        self._server = self._create_server(config) if enable_server else None
+    def __init__(self, comp_data: ComponentData):
+        self._comp_data = comp_data
         
-        self._route_resolver = route_resolver
+        self._client = self._create_client() if self._comp_data.role.networking_aspects.has_client else None
+        self._server = self._create_server() if self._comp_data.role.networking_aspects.has_server else None
+        
+        self._route_resolver = RouteResolver(has_client=self.has_client, has_server=self.has_server)  # TODO
 
-    def _create_client(self, config: Configuration) -> Client:
-        return Client(config)
+    def _create_client(self) -> Client:
+        return Client(self._comp_data.config)
     
-    def _create_server(self, config: Configuration) -> Server:
-        return Server(config)
+    def _create_server(self) -> Server:
+        return Server(self._comp_data.config)
     
     def run(self) -> None:
         if self.has_server:
