@@ -33,6 +33,9 @@ class Message(abc.ABC):
             __init__ = cls.__init__
             
             def __new_init__(self, *args, **kwargs):
+                if "name" in kwargs:
+                    del kwargs["name"]
+                
                 __init__(self, *args, name=MessageName(name), **kwargs)
             
             setattr(cls, "__init__", __new_init__)
