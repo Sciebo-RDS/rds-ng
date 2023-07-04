@@ -1,9 +1,11 @@
-from .router_exception import RouterException
-from .. import Message
-from ....component import ComponentID
+from .message import Message
+from ...component import ComponentID
 
 
 class MessageRouter:
+    class RoutingError(RuntimeError):
+        pass
+    
     def __init__(self, comp_id: ComponentID):
         self._comp_id = comp_id
         
@@ -37,10 +39,12 @@ class MessageRouter:
 
     def _verify_direct_message(self, msg: Message) -> None:
         if msg.target.target_id is None:
-            raise RouterException("Direct message without target received")
+            raise MessageRouter.RoutingError("Direct message without a target received")
         
         if msg.origin.equals(self._comp_id) and msg.target.target_id.equals(self._comp_id):
-            raise RouterException("Message coming from this component directed to self")
+            raise MessageRouter.RoutingError("Message coming from this component directed to self")
+        elif not msg.origin.equals(self._comp_id) and not msg.target.target_id.equals(self._comp_id):
+            raise MessageRouter.RoutingError("Message coming from another component not directed to this component")
 
     def _verify_room_message(self, msg: Message) -> None:
         # TODO: !

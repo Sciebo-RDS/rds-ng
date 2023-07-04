@@ -16,7 +16,10 @@ class Channel:
     
     @property
     def target_id(self) -> ComponentID | None:
-        return ComponentID.from_string(self.target) if self.target is not None else None
+        try:
+            return ComponentID.from_string(self.target) if self.target is not None else None
+        except:
+            return None
     
     @property
     def is_local(self) -> bool:

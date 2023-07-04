@@ -3,6 +3,7 @@ import typing
 
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
+from .message_router import MessageRouter
 from .meta import MessageMetaInformationType
 from ..logging import LoggerProxy, default_logger
 from ..networking import NetworkEngine
@@ -27,7 +28,7 @@ class MessageBus:
             CommandReply: CommandReplyDispatcher(),
             Event: EventDispatcher(),
         }
-        self._router = self._comp_data.role.messaging_aspects.create_message_router(self._comp_data.comp_id)
+        self._router = MessageRouter(comp_data.comp_id)
         
         self._lock = threading.Lock()
         
@@ -54,12 +55,11 @@ class MessageBus:
         threading.Timer(1.0, self.run).start()
         
     def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
-        from .routing import RouterException
         try:
             self._router.verify_message(msg)
-        except RouterException as e:
+        except MessageRouter.RoutingError as e:
             from ..logging import error
-            error(f"A routing mistake occurred: {str(e)}", scope="bus", message=str(msg))
+            error(f"A routing error occurred: {str(e)}", scope="bus", message=str(msg))
         else:
             if self._router.check_remote_routing(msg):
                 self._remote_dispatch(msg)
