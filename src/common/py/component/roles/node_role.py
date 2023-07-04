@@ -9,4 +9,3 @@ class NodeRole(ComponentRole):
             "Node",
             networking_aspects=NetworkingAspects(has_client=True, has_server=True)
         )
-

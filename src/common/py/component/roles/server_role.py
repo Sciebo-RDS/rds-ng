@@ -7,6 +7,6 @@ class ServerRole(ComponentRole):
         
         super().__init__(
             "Leaf",
-            networking_aspects=NetworkingAspects(has_client=True, has_server=True)
+            networking_aspects=NetworkingAspects(has_client=False, has_server=True)
         )
 
