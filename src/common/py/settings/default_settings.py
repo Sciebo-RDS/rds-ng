@@ -15,4 +15,5 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
         NetworkServerSettingIDs.ALLOWED_ORIGINS: "",
         
         NetworkClientSettingIDs.SERVER_ADDRESS: "",
+        NetworkClientSettingIDs.CONNECTION_TIMEOUT: 10,
     }

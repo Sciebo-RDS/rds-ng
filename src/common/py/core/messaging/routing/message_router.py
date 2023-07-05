@@ -41,7 +41,6 @@ class MessageRouter:
         elif msg.target.is_room:
             # Room messages are always dispatched remotely (but messages will never "bounce back" to their origin)
             # The actual logic of remote dispatching is handled by the NWE (which might result in not dispatching them remotely)
-            # TODO: Never bounce a room msg that comes through the client back through the client (NWE)
             return True
         
         return False

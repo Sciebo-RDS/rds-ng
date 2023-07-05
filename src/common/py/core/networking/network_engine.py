@@ -4,7 +4,7 @@ from .client import Client
 from .routing import NetworkRouter
 from .server import Server
 from ..messaging import Message
-from ...component import ComponentData
+from ...component import ComponentData, ComponentID
 
 
 class NetworkEngine:
@@ -20,10 +20,10 @@ class NetworkEngine:
             raise RuntimeError("An invalid router type was specified in the networking aspects")
 
     def _create_client(self) -> Client:
-        return Client(self._comp_data.config)
+        return Client(self._comp_data)
     
     def _create_server(self) -> Server:
-        return Server(self._comp_data.config)
+        return Server(self._comp_data)
     
     def run(self) -> None:
         if self.has_server:
@@ -39,8 +39,9 @@ class NetworkEngine:
             from ..logging import error
             error(f"A routing error occurred: {str(e)}", scope="network", message=str(msg))
         else:
-            if self._router.check_server_routing(msg):
-                self._server.send_message(msg)
+            route_to_server, skip_components = self._router.check_server_routing(msg)
+            if route_to_server:
+                self._server.send_message(msg, skip_components=skip_components)
                 
             if self._router.check_client_routing(msg):
                 self._client.send_message(msg)
