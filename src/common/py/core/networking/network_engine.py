@@ -12,8 +12,8 @@ class NetworkEngine:
     def __init__(self, comp_data: ComponentData):
         self._comp_data = comp_data
         
-        self._client = self._create_client() if self._comp_data.role.networking_aspects.has_client else None
-        self._server = self._create_server() if self._comp_data.role.networking_aspects.has_server else None
+        self._client = self._create_client() if self._comp_data.role.networking_aspect.has_client else None
+        self._server = self._create_server() if self._comp_data.role.networking_aspect.has_server else None
         
         self._route_resolver = RouteResolver(has_client=self.has_client, has_server=self.has_server)  # TODO
 
