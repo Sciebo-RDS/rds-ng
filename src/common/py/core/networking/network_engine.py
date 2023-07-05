@@ -1,7 +1,7 @@
 import typing
 
 from .client import Client
-from .route_resolver import RouteResolver
+from .routing import NetworkRouter
 from .server import Server
 from ..messaging import Message
 from ...component import ComponentData
@@ -12,10 +12,12 @@ class NetworkEngine:
     def __init__(self, comp_data: ComponentData):
         self._comp_data = comp_data
         
-        self._client = self._create_client() if self._comp_data.role.networking_aspect.has_client else None
-        self._server = self._create_server() if self._comp_data.role.networking_aspect.has_server else None
+        self._client = self._create_client() if self._comp_data.role.networking_aspects.has_client else None
+        self._server = self._create_server() if self._comp_data.role.networking_aspects.has_server else None
         
-        self._route_resolver = RouteResolver(has_client=self.has_client, has_server=self.has_server)  # TODO
+        self._router = typing.cast(NetworkRouter, self._comp_data.role.networking_aspects.router_type(comp_data.comp_id))
+        if not isinstance(self._router, NetworkRouter):
+            raise RuntimeError("An invalid router type was specified in the networking aspects")
 
     def _create_client(self) -> Client:
         return Client(self._comp_data.config)
@@ -31,13 +33,17 @@ class NetworkEngine:
             self._client.run()
             
     def send_message(self, msg: Message) -> None:
-        route_type = self._route_resolver.resolve(msg)
-        
-        if RouteResolver.Routing.CLIENT in route_type and self.has_client:
-            self._client.send_message(msg)
-            
-        if RouteResolver.Routing.SERVER in route_type and self.has_server:
-            self._server.send_message(msg)
+        try:
+            self._router.verify_message(msg)
+        except NetworkRouter.RoutingError as e:
+            from ..logging import error
+            error(f"A routing error occurred: {str(e)}", scope="network", message=str(msg))
+        else:
+            if self._router.check_server_routing(msg):
+                self._server.send_message(msg)
+                
+            if self._router.check_client_routing(msg):
+                self._client.send_message(msg)
         
     @property
     def has_server(self) -> bool:

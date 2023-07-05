@@ -1,5 +1,5 @@
-from .message import Message
-from ...component import ComponentID
+from .. import Message
+from ....component import ComponentID
 
 
 class MessageRouter:

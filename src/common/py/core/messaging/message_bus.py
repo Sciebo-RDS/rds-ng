@@ -3,8 +3,8 @@ import typing
 
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
-from .message_router import MessageRouter
 from .meta import MessageMetaInformationType
+from .routing import MessageRouter
 from ..logging import LoggerProxy, default_logger
 from ..networking import NetworkEngine
 from ..service import Service, ServiceContextType

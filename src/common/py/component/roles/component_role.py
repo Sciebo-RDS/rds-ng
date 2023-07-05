@@ -4,19 +4,21 @@ import dataclasses
 
 class ComponentRole(abc.ABC):
     @dataclasses.dataclass(frozen=True, kw_only=True)
-    class NetworkingAspect:
+    class NetworkingAspects:
         has_server: bool
         has_client: bool
         
-    def __init__(self, role_name: str, *, networking_aspect: NetworkingAspect):
+        router_type: type
+        
+    def __init__(self, role_name: str, *, networking_aspects: NetworkingAspects):
         self._name = role_name
         
-        self._networking_aspect = networking_aspect
+        self._networking_aspects = networking_aspects
         
     @property
     def name(self) -> str:
         return self._name
 
     @property
-    def networking_aspect(self) -> NetworkingAspect:
-        return self._networking_aspect
+    def networking_aspects(self) -> NetworkingAspects:
+        return self._networking_aspects
