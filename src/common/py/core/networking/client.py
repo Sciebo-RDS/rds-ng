@@ -27,7 +27,6 @@ class Client(socketio.Client):
         self.on("connect", self._on_connect)
         self.on("connect_error", self._on_connect_error)
         self.on("disconnect", self._on_disconnect)
-        self.on("message", self._on_message)
 
     def run(self) -> None:
         if self._server_address != "":
@@ -54,9 +53,5 @@ class Client(socketio.Client):
     def _on_disconnect(self) -> None:
         info("Disconnected from server", scope="client")
         
-    def _on_message(self, data: str) -> None:
-        # TODO: Turn data into msg; dispatch it (rebounce if needed)
-        print(data)
-
     def _get_authentication(self) -> typing.Dict[str, str]:
         return {"component_id": str(self._comp_data.comp_id)}

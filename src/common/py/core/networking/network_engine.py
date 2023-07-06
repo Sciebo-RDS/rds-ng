@@ -28,24 +28,49 @@ class NetworkEngine:
     
     def run(self) -> None:
         if self.has_server:
+            self._server.on("message", lambda sid, data: self._handle_received_message(MessageMetaInformation.Entrypoint.SERVER, sid, data))
             self._server.run()
             
         if self.has_client:
+            self._client.on("message", lambda data: self._handle_received_message(MessageMetaInformation.Entrypoint.CLIENT, None, data))
             self._client.run()
             
     def send_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         try:
-            self._router.verify_outgoing_message(msg, msg_meta)
+            self._router.verify_out_message(msg, msg_meta)
         except NetworkRouter.RoutingError as e:
-            from ..logging import error
-            error(f"A routing error occurred: {str(e)}", scope="network", message=str(msg))
+            self._routing_error(str(e), message=str(msg))
         else:
-            if self._router.check_server_routing(msg, msg_meta):
+            if self._router.check_server_out_routing(msg, msg_meta):
                 self._server.send_message(msg, skip_components=[self._comp_data.comp_id])
                 
-            if self._router.check_client_routing(msg, msg_meta):
+            if self._router.check_client_out_routing(msg, msg_meta):
                 self._client.send_message(msg)
+    
+    def _handle_received_message(self, entrypoint: MessageMetaInformation.Entrypoint, sid: str | None, data: str) -> None:
+        try:
+            msg = Message.from_json(data)
+            self._router.verify_in_message(msg)
+            
+            from common.py.component import ComponentID
+            comp_id: ComponentID | None = None
+            if sid is not None and self.has_server:
+                comp_id = self._server.lookup_client(sid)
+            print("XXX", msg, comp_id)
+            # 2. Check if the message needs to be dispatched locally
+            #   a. If so, lookup the message name in a (yet to come) message name -> class map
+            #   b. Create an instance of that class and fill the fields
+            #   c. Dispatch the message (target -> local)
+            # 3. Also check if it needs to be sent remotely
+            #   a. Directly use the NWE for this; do not use the message bus (we might not know the message type)
+            # Might need a channel resolver here as well; could be merged?
+        except Exception as e:
+            self._routing_error(str(e), data=data)
         
+    def _routing_error(self, msg: str, **kwargs) -> None:
+        from ..logging import error
+        error(f"A routing error occurred: {msg}", scope="network", **kwargs)
+    
     @property
     def has_server(self) -> bool:
         return self._server is not None
