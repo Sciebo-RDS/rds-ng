@@ -35,7 +35,7 @@ class NetworkEngine:
             
     def send_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         try:
-            self._router.verify_message(msg, msg_meta)
+            self._router.verify_outgoing_message(msg, msg_meta)
         except NetworkRouter.RoutingError as e:
             from ..logging import error
             error(f"A routing error occurred: {str(e)}", scope="network", message=str(msg))

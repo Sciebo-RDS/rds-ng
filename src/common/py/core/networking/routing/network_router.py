@@ -13,7 +13,7 @@ class NetworkRouter(abc.ABC):
     def __init__(self, comp_id: ComponentID):
         self._comp_id = comp_id
     
-    def verify_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
+    def verify_outgoing_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         if msg.target.is_local:
             self._verify_local_message(msg, msg_meta)
         if msg.target.is_direct:
@@ -34,10 +34,15 @@ class NetworkRouter(abc.ABC):
         raise NetworkRouter.RoutingError("A local message was sent through the network engine")
     
     def _verify_direct_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
+        # An outgoing direct message must be targeted to another component
         if msg.target.target_id is None:
             raise NetworkRouter.RoutingError("Direct message without a target sent")
+        elif msg.target.target_id.equals(self._comp_id):
+            raise NetworkRouter.RoutingError("Direct message to this component sent through the network engine")
     
     def _verify_room_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
-        # Room messages are just ignored if they are sent to us even though we aren't subscribed to the room
-        # So there's nothing to verify here
-        pass
+        # Room messages must be targeted to a room
+        if msg.target.target is None or msg.target.target == "":
+            raise NetworkRouter.RoutingError("Room message without a target room received")
+        
+        # Other than that, room messages are always sent through the network

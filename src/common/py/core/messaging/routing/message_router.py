@@ -60,6 +60,8 @@ class MessageRouter:
             raise MessageRouter.RoutingError("Message coming from another component not directed to this component")
 
     def _verify_room_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
-        # Room messages are just ignored if they are sent to us even though we aren't subscribed to the room
-        # So there's nothing to verify here
-        pass
+        # Room messages must be targeted to a room
+        if msg.target.target is None or msg.target.target == "":
+            raise MessageRouter.RoutingError("Room message without a target room received")
+        
+        # Other than that, room messages are just ignored if they are sent to us even though we aren't subscribed to the room
