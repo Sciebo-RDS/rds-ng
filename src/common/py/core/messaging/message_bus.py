@@ -56,15 +56,15 @@ class MessageBus:
         
     def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         try:
-            self._router.verify_message(msg)
+            self._router.verify_message(msg, msg_meta)
         except MessageRouter.RoutingError as e:
             from ..logging import error
             error(f"A routing error occurred: {str(e)}", scope="bus", message=str(msg))
         else:
-            if self._router.check_remote_routing(msg):
-                self._remote_dispatch(msg)
+            if self._router.check_remote_routing(msg, msg_meta):
+                self._remote_dispatch(msg, msg_meta)
             
-            if self._router.check_local_routing(msg):
+            if self._router.check_local_routing(msg, msg_meta):
                 self._local_dispatch(msg, msg_meta)
             
     def _local_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
@@ -77,8 +77,8 @@ class MessageBus:
                 self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
             dispatcher.post_dispatch(msg, msg_meta)
         
-    def _remote_dispatch(self, msg: Message) -> None:
-        self._network_engine.send_message(msg)
+    def _remote_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
+        self._network_engine.send_message(msg, msg_meta)
 
     def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, svc: Service) -> None:
         for handler in svc.message_handlers(msg.name):

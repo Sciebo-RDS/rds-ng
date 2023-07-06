@@ -4,7 +4,8 @@ from .client import Client
 from .routing import NetworkRouter
 from .server import Server
 from ..messaging import Message
-from ...component import ComponentData, ComponentID
+from ..messaging.meta import MessageMetaInformation
+from ...component import ComponentData
 
 
 class NetworkEngine:
@@ -32,7 +33,7 @@ class NetworkEngine:
         if self.has_client:
             self._client.run()
             
-    def send_message(self, msg: Message) -> None:
+    def send_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         try:
             self._router.verify_message(msg)
         except NetworkRouter.RoutingError as e:

@@ -1,7 +1,7 @@
 import typing
 
 from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply, CommandDoneCallback, CommandFailCallback
-from ..messaging.meta import MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
+from ..messaging.meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
 from ...component import ComponentID
 
 
@@ -27,7 +27,7 @@ class MessageEmitter:
         
         self._counters[CommandType] += 1
         
-        meta = CommandMetaInformation(done_callback=done_callback, fail_callback=fail_callback, async_callbacks=async_callbacks, timeout=timeout)
+        meta = CommandMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL, done_callback=done_callback, fail_callback=fail_callback, async_callbacks=async_callbacks, timeout=timeout)
         return self._emit(cmd_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
     def emit_reply(self, reply_type: type[CommandReplyType], command: CommandType, *, success: bool = True, message: str = "", **kwargs):
@@ -36,7 +36,7 @@ class MessageEmitter:
         
         self._counters[CommandReplyType] += 1
         
-        meta = CommandReplyMetaInformation()
+        meta = CommandReplyMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL)
         return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, command=command, **kwargs)
     
     def emit_event(self, msg_type: type[EventType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
@@ -45,7 +45,7 @@ class MessageEmitter:
         
         self._counters[EventType] += 1
         
-        meta = EventMetaInformation()
+        meta = EventMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL)
         return self._emit(msg_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
     def get_message_count(self, msg_type: MessageType) -> int:

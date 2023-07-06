@@ -1,4 +1,5 @@
 from .. import Message
+from ..meta import MessageMetaInformation
 from ....component import ComponentID
 
 
@@ -9,15 +10,15 @@ class MessageRouter:
     def __init__(self, comp_id: ComponentID):
         self._comp_id = comp_id
         
-    def verify_message(self, msg: Message) -> None:
+    def verify_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         if msg.target.is_local:
-            self._verify_local_message(msg)
+            self._verify_local_message(msg, msg_meta)
         if msg.target.is_direct:
-            self._verify_direct_message(msg)
+            self._verify_direct_message(msg, msg_meta)
         elif msg.target.is_room:
-            self._verify_room_message(msg)
+            self._verify_room_message(msg, msg_meta)
 
-    def check_local_routing(self, msg: Message) -> bool:
+    def check_local_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
         if msg.target.is_local:
             return True
         elif msg.target.is_direct:
@@ -31,7 +32,7 @@ class MessageRouter:
         
         return False
     
-    def check_remote_routing(self, msg: Message) -> bool:
+    def check_remote_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
         if msg.target.is_local:
             return False
         elif msg.target.is_direct:
@@ -45,20 +46,20 @@ class MessageRouter:
         
         return False
     
-    def _verify_local_message(self, msg: Message) -> None:
-        # Nothing to verify here
-        pass
+    def _verify_local_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
+        if msg_meta.entrypoint != MessageMetaInformation.Entrypoint.LOCAL:
+            raise MessageRouter.RoutingError("Local message entering from a non-local location received")
 
-    def _verify_direct_message(self, msg: Message) -> None:
+    def _verify_direct_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         if msg.target.target_id is None:
             raise MessageRouter.RoutingError("Direct message without a target received")
         
-        if msg.origin.equals(self._comp_id) and msg.target.target_id.equals(self._comp_id):
+        if msg_meta.entrypoint == MessageMetaInformation.Entrypoint.LOCAL and msg.target.target_id.equals(self._comp_id):
             raise MessageRouter.RoutingError("Message coming from this component directed to self")
-        elif not msg.origin.equals(self._comp_id) and not msg.target.target_id.equals(self._comp_id):
+        elif msg_meta.entrypoint != MessageMetaInformation.Entrypoint.LOCAL and not msg.target.target_id.equals(self._comp_id):
             raise MessageRouter.RoutingError("Message coming from another component not directed to this component")
 
-    def _verify_room_message(self, msg: Message) -> None:
+    def _verify_room_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         # Room messages are just ignored if they are sent to us even though we aren't subscribed to the room
         # So there's nothing to verify here
         pass
