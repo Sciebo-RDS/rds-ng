@@ -33,18 +33,7 @@ class MessageRouter:
         return False
     
     def check_remote_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
-        if msg.target.is_local:
-            return False
-        elif msg.target.is_direct:
-            # A direct message that has made it to the message bus either stems from this component or is targeted to it
-            # If it is not targeted to this component, it needs to be dispatched remotely
-            return not msg.target.target_id.equals(self._comp_id)
-        elif msg.target.is_room:
-            # Room messages are always dispatched remotely (but messages will never "bounce back" to their origin)
-            # The actual logic of remote dispatching is handled by the NWE (which might result in not dispatching them remotely)
-            return True
-        
-        return False
+        return not msg.target.is_local and msg_meta.entrypoint == MessageMetaInformation.Entrypoint.LOCAL
     
     def _verify_local_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         if msg_meta.entrypoint != MessageMetaInformation.Entrypoint.LOCAL:

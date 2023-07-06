@@ -9,8 +9,11 @@ class NetworkRouter(abc.ABC):
     class RoutingError(RuntimeError):
         pass
     
-    def __init__(self, comp_id: ComponentID):
+    def __init__(self, comp_id: ComponentID, *, has_client: bool, has_server: bool):
         self._comp_id = comp_id
+        
+        self._has_client = has_client
+        self._has_server = has_server
     
     def verify_outgoing_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         if msg.target.is_local:
@@ -20,13 +23,11 @@ class NetworkRouter(abc.ABC):
         elif msg.target.is_room:
             self._verify_room_message(msg, msg_meta)
             
-    @abc.abstractmethod
     def check_client_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
-        return False
+        return self._has_client
     
-    @abc.abstractmethod
     def check_server_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
-        return False
+        return self._has_server
  
     def _verify_local_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         # Local messages should never land here
