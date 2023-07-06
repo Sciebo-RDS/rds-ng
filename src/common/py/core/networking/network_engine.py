@@ -40,9 +40,8 @@ class NetworkEngine:
             from ..logging import error
             error(f"A routing error occurred: {str(e)}", scope="network", message=str(msg))
         else:
-            route_to_server, skip_components = self._router.check_server_routing(msg, msg_meta)
-            if route_to_server:
-                self._server.send_message(msg, skip_components=skip_components)
+            if self._router.check_server_routing(msg, msg_meta):
+                self._server.send_message(msg, skip_components=[self._comp_data.comp_id])
                 
             if self._router.check_client_routing(msg, msg_meta):
                 self._client.send_message(msg)

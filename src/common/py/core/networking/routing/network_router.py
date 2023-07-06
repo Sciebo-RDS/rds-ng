@@ -1,5 +1,4 @@
 import abc
-import typing
 
 from ...messaging import Message
 from ...messaging.meta import MessageMetaInformation
@@ -26,8 +25,8 @@ class NetworkRouter(abc.ABC):
         return False
     
     @abc.abstractmethod
-    def check_server_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> typing.Tuple[bool, typing.List[ComponentID]]:
-        return False, []
+    def check_server_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
+        return False
  
     def _verify_local_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         # Local messages should never land here
