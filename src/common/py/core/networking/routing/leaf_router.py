@@ -9,7 +9,7 @@ from ....component import ComponentID
 class LeafRouter(NetworkRouter):
     def check_client_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
         # Messages that stem from this component are always sent through the client
-        return msg.origin.equals(self._comp_id)
+        return msg_meta.entrypoint == MessageMetaInformation.Entrypoint.LOCAL
     
     def check_server_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> typing.Tuple[bool, typing.List[ComponentID]]:
         # We don't even run a server!
