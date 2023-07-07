@@ -18,16 +18,14 @@ class NetworkEngine:
         
         self._client = self._create_client() if self._comp_data.role.networking_aspects.has_client else None
         self._server = self._create_server() if self._comp_data.role.networking_aspects.has_server else None
-        
-        self._router = typing.cast(NetworkRouter, self._comp_data.role.networking_aspects.router_type(comp_data.comp_id))
-        if not isinstance(self._router, NetworkRouter):
-            raise RuntimeError("An invalid router type was specified in the networking aspects")
-        
         self._meta_information_types: typing.Dict[type[MessageType], type[MessageMetaInformationType]] = {
             Command: CommandMetaInformation,
             CommandReply: CommandReplyMetaInformation,
             Event: EventMetaInformation,
         }
+        self._router = typing.cast(NetworkRouter, self._comp_data.role.networking_aspects.router_type(comp_data.comp_id))
+        if not isinstance(self._router, NetworkRouter):
+            raise RuntimeError("An invalid router type was specified in the networking aspects")
 
     def _create_client(self) -> Client:
         return Client(self._comp_data)
