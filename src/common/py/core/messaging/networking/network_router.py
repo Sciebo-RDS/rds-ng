@@ -1,9 +1,9 @@
 import abc
 from enum import IntEnum, auto
 
-from ... import Message
-from ...meta import MessageMetaInformation
-from .....component import ComponentID
+from .. import Message
+from ..meta import MessageMetaInformation
+from ....component import ComponentID
 
 
 class NetworkRouter(abc.ABC):

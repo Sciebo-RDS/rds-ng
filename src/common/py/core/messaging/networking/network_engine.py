@@ -2,7 +2,7 @@ import dataclasses
 import typing
 
 from .client import Client
-from .routing import NetworkRouter
+from .network_router import NetworkRouter
 from .server import Server
 from .. import Message, MessageBusProtocol, MessageType, Command, CommandReply, Event
 from ..meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
@@ -23,7 +23,7 @@ class NetworkEngine:
             CommandReply: CommandReplyMetaInformation,
             Event: EventMetaInformation,
         }
-        self._router = typing.cast(NetworkRouter, self._comp_data.role.networking_aspects.router_type(comp_data.comp_id))
+        self._router = NetworkRouter(self._comp_data.comp_id, has_client=self.has_client, has_server=self.has_server)
         if not isinstance(self._router, NetworkRouter):
             raise RuntimeError("An invalid router type was specified in the networking aspects")
 

@@ -8,8 +8,6 @@ class ComponentRole(abc.ABC):
         has_server: bool
         has_client: bool
         
-        router_type: type
-        
     def __init__(self, role_name: str, *, networking_aspects: NetworkingAspects):
         self._name = role_name
         

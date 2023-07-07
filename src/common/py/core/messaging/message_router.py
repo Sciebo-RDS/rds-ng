@@ -1,6 +1,6 @@
-from .. import Message
-from ..meta import MessageMetaInformation
-from ....component import ComponentID
+from .message import Message
+from .meta import MessageMetaInformation
+from ...component import ComponentID
 
 
 class MessageRouter:
