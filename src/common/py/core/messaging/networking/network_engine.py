@@ -1,3 +1,4 @@
+import dataclasses
 import typing
 
 from .client import Client
@@ -30,11 +31,11 @@ class NetworkEngine:
     
     def run(self) -> None:
         if self.has_server:
-            self._server.on("message", lambda sid, data: self._handle_received_message(MessageMetaInformation.Entrypoint.SERVER, sid, data))
+            self._server.on("*", lambda msg_name, _, data: self._handle_received_message(MessageMetaInformation.Entrypoint.SERVER, msg_name, data))
             self._server.run()
             
         if self.has_client:
-            self._client.on("message", lambda data: self._handle_received_message(MessageMetaInformation.Entrypoint.CLIENT, None, data))
+            self._client.on("*", lambda msg_name, data: self._handle_received_message(MessageMetaInformation.Entrypoint.CLIENT, msg_name, data))
             self._client.run()
             
     def send_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
@@ -49,26 +50,44 @@ class NetworkEngine:
             if self._router.check_client_routing(NetworkRouter.Direction.OUT, msg, msg_meta):
                 self._client.send_message(msg)
     
-    def _handle_received_message(self, entrypoint: MessageMetaInformation.Entrypoint, sid: str | None, data: str) -> None:
+    def _handle_received_message(self, entrypoint: MessageMetaInformation.Entrypoint, msg_name: str, data: str) -> None:
         try:
-            msg = Message.from_json(data)  # TODO Real msg
-            self._router.verify_message(NetworkRouter.Direction.IN, msg)
-            
-            from common.py.component import ComponentID
-            comp_id: ComponentID | None = None
-            if sid is not None and self.has_server:
-                comp_id = self._server.lookup_client(sid)
-            print("XXX", msg, comp_id)
-            # 2. Check if the message needs to be dispatched locally
-            #   a. If so, lookup the message name in a (yet to come) message name -> class map
-            #   b. Create an instance of that class and fill the fields
-            #   c. Dispatch the message (target -> local)
-            # 3. Also check if it needs to be sent remotely
-            #   a. Directly use the NWE for this; do not use the message bus (we might not know the message type)
-            # Might need a channel resolver here as well; could be merged?
+            msg = self._unpack_message(msg_name, data)
+            msg_meta = self._create_message_meta_information(msg, entrypoint)
         except Exception as e:
             self._routing_error(str(e), data=data)
+        else:
+            if self._router.check_local_routing(NetworkRouter.Direction.IN, msg, msg_meta):
+                self._message_bus.dispatch(msg, msg_meta)
+                
+            # Perform rerouting if necessary
+            msg = dataclasses.replace(msg, sender=self._comp_data.comp_id)
+            
+            if self._router.check_server_routing(NetworkRouter.Direction.IN, msg, msg_meta):
+                self._server.send_message(msg, skip_components=[self._comp_data.comp_id, msg.sender])
+            
+            if self._router.check_client_routing(NetworkRouter.Direction.IN, msg, msg_meta):
+                self._client.send_message(msg)
+                
+    def _unpack_message(self, msg_name: str, data: str) -> Message:
+        # Look up the actual message via its name
+        from .. import MessageTypesCatalog
+        msg_type = MessageTypesCatalog.find_type(msg_name)
         
+        if msg_type is None:
+            raise RuntimeError(f"The message type '{msg_name}' is unknown")
+        
+        # Unpack the message into its actual type
+        msg = typing.cast(Message, msg_type.from_json(data))
+        self._router.verify_message(NetworkRouter.Direction.IN, msg)
+        
+        msg.hops.append(self._comp_data.comp_id)
+        return msg
+    
+    def _create_message_meta_information(self, msg: Message, entrypoint: MessageMetaInformation.Entrypoint, **kwargs) -> MessageMetaInformation:
+        from ..meta import MessageMetaInformationCreator
+        return MessageMetaInformationCreator.create_meta_information(msg, entrypoint, **kwargs)
+    
     def _routing_error(self, msg: str, **kwargs) -> None:
         from ...logging import error
         error(f"A routing error occurred: {msg}", scope="network", **kwargs)

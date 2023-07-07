@@ -41,7 +41,7 @@ class Client(socketio.Client):
         if self.connected:
             debug(f"Sending message: {msg}", scope="client")
             with self._lock:
-                self.send(data=msg.to_json())
+                self.emit(msg.name, data=msg.to_json())
     
     def _on_connect(self) -> None:
         info("Connected to server", scope="client")

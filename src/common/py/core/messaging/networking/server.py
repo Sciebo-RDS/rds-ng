@@ -36,7 +36,7 @@ class Server(socketio.Server):
     def send_message(self, msg: Message, skip_components: typing.List[ComponentID] | None = None) -> None:
         debug(f"Sending message: {msg}", scope="server")
         with self._lock:
-            self.send(data=msg.to_json(), to=msg.target.target, skip_sid=self._component_ids_to_clients(skip_components))
+            self.emit(msg.name, data=msg.to_json(), to=msg.target.target, skip_sid=self._component_ids_to_clients(skip_components))
     
     def _on_connect(self, sid: str, _, auth: typing.Dict[str, typing.Any]) -> None:
         try:

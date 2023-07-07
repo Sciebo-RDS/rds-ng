@@ -31,9 +31,14 @@ class NetworkRouter(abc.ABC):
     def check_local_routing(self, direction: Direction, msg: Message, msg_meta: MessageMetaInformation) -> bool:
         if direction == NetworkRouter.Direction.OUT:
             return False  # Outgoing messages are never routed back locally
-        else:
-            return True  # TODO
-    
+        elif direction == NetworkRouter.Direction.IN:
+            if msg.target.is_direct:
+                return msg.target.target_id.equals(self._comp_id)
+            elif msg.target.is_room:
+                return True
+            
+        return False
+        
     def check_client_routing(self, direction: Direction, msg: Message, msg_meta: MessageMetaInformation) -> bool:
         if direction == NetworkRouter.Direction.OUT:
             return self._has_client
