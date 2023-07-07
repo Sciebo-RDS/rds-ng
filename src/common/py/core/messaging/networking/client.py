@@ -1,19 +1,18 @@
-import dataclasses
 import threading
 import typing
 
 import socketio
 
-from ..logging import info, warning, error, debug
-from ..messaging import Message
-from ...component import ComponentData
+from .. import Message
+from ...logging import info, warning, error, debug
+from ....component import ComponentData
 
 
 class Client(socketio.Client):
     def __init__(self, comp_data: ComponentData):
         self._comp_data = comp_data
         
-        from ...settings import NetworkClientSettingIDs
+        from ....settings import NetworkClientSettingIDs
         self._server_address: str = self._comp_data.config.value(NetworkClientSettingIDs.SERVER_ADDRESS)
         self._connection_timeout: int = self._comp_data.config.value(NetworkClientSettingIDs.CONNECTION_TIMEOUT)
         

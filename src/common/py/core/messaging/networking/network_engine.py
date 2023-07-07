@@ -3,15 +3,17 @@ import typing
 from .client import Client
 from .routing import NetworkRouter
 from .server import Server
-from ..messaging import Message
-from ..messaging.meta import MessageMetaInformation
-from ...component import ComponentData
+from .. import Message, MessageBusProtocol
+from ..meta import MessageMetaInformation
+from ....component import ComponentData
 
 
 class NetworkEngine:
     """ The main network management class, based on socket.io. """
-    def __init__(self, comp_data: ComponentData):
+    def __init__(self, comp_data: ComponentData, message_bus: MessageBusProtocol):
         self._comp_data = comp_data
+        
+        self._message_bus = message_bus
         
         self._client = self._create_client() if self._comp_data.role.networking_aspects.has_client else None
         self._server = self._create_server() if self._comp_data.role.networking_aspects.has_server else None
@@ -37,20 +39,20 @@ class NetworkEngine:
             
     def send_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         try:
-            self._router.verify_out_message(msg, msg_meta)
+            self._router.verify_message(NetworkRouter.Direction.OUT, msg)
         except NetworkRouter.RoutingError as e:
             self._routing_error(str(e), message=str(msg))
         else:
-            if self._router.check_server_out_routing(msg, msg_meta):
+            if self._router.check_server_routing(NetworkRouter.Direction.OUT, msg, msg_meta):
                 self._server.send_message(msg, skip_components=[self._comp_data.comp_id])
                 
-            if self._router.check_client_out_routing(msg, msg_meta):
+            if self._router.check_client_routing(NetworkRouter.Direction.OUT, msg, msg_meta):
                 self._client.send_message(msg)
     
     def _handle_received_message(self, entrypoint: MessageMetaInformation.Entrypoint, sid: str | None, data: str) -> None:
         try:
-            msg = Message.from_json(data)
-            self._router.verify_in_message(msg)
+            msg = Message.from_json(data)  # TODO Real msg
+            self._router.verify_message(NetworkRouter.Direction.IN, msg)
             
             from common.py.component import ComponentID
             comp_id: ComponentID | None = None
@@ -68,7 +70,7 @@ class NetworkEngine:
             self._routing_error(str(e), data=data)
         
     def _routing_error(self, msg: str, **kwargs) -> None:
-        from ..logging import error
+        from ...logging import error
         error(f"A routing error occurred: {msg}", scope="network", **kwargs)
     
     @property

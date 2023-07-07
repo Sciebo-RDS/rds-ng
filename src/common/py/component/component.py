@@ -40,7 +40,7 @@ class Component:
         
     def app(self) -> typing.Any:
         # Note: This is the only dependency on socket.io outside the network engine, as we need to use their app logic
-        return socketio.WSGIApp(self._core.network.server, self._core.flask)
+        return socketio.WSGIApp(self._core.message_bus.network.server, self._core.flask)
     
     def create_service(self, name: str, *, context_type: type[ServiceContextType] = ServiceContext) -> Service:
         svc = Service(self._data.comp_id, name, message_bus=self._core.message_bus, context_type=context_type)

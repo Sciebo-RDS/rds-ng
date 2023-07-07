@@ -2,7 +2,6 @@ import flask
 
 from .logging import info, debug, set_level
 from .messaging import MessageBus
-from .networking import NetworkEngine
 from .service import Service
 from ..component import ComponentData
 
@@ -22,9 +21,6 @@ class Core:
         debug("-- Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
         
-        debug("-- Creating network engine", scope="core")
-        self._network_engine = self._create_network_engine()
-        
         debug("-- Creating message bus", scope="core")
         self._message_bus = self._create_message_bus()
     
@@ -38,11 +34,8 @@ class Core:
         flsk.config["SECRET"] = generate_random_string(64)
         return flsk
     
-    def _create_network_engine(self) -> NetworkEngine:
-        return NetworkEngine(self._comp_data)
-    
     def _create_message_bus(self) -> MessageBus:
-        return MessageBus(self._comp_data, self._network_engine)
+        return MessageBus(self._comp_data)
     
     def _enable_debug_mode(self) -> None:
         import logging as log
@@ -62,7 +55,6 @@ class Core:
             debug("Service not registered", scope="core", service=svc)
             
     def run(self) -> None:
-        self._network_engine.run()
         self._message_bus.run()
         
     @property
@@ -72,11 +64,7 @@ class Core:
     @property
     def flask(self) -> flask.Flask:
         return self._flask
-    
-    @property
-    def network(self) -> NetworkEngine:
-        return self._network_engine
-    
+        
     @property
     def is_debug_mode(self) -> bool:
         from ..settings import GeneralSettingIDs

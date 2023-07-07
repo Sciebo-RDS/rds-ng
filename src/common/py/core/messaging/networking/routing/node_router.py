@@ -1,5 +1,5 @@
 from .network_router import NetworkRouter
-from ....component import ComponentID
+from .....component import ComponentID
 
 
 class NodeRouter(NetworkRouter):

@@ -4,23 +4,25 @@ import typing
 from .dispatchers import MessageDispatcher
 from .message import Message, MessageType
 from .meta import MessageMetaInformationType
+from .networking import NetworkEngine
 from .routing import MessageRouter
-from ..logging import LoggerProxy, default_logger
-from ..networking import NetworkEngine
+from ..logging import LoggerProxy, default_logger, error, debug
 from ..service import Service, ServiceContextType
 from ...component import ComponentData
 
 
 class MessageBus:
     """ A thread-safe message bus for dispatching messages. """
-    def __init__(self, comp_data: ComponentData, nwe: NetworkEngine):
+    def __init__(self, comp_data: ComponentData):
         from .dispatchers import CommandDispatcher, CommandReplyDispatcher, EventDispatcher
         from .command import Command
         from .command_reply import CommandReply
         from .event import Event
         
         self._comp_data = comp_data
-        self._network_engine = nwe
+        
+        debug("-- Creating network engine", scope="bus")
+        self._network_engine = self._create_network_engine()
         
         self._services: typing.List[Service] = []
         self._dispatchers: typing.Dict[type[MessageType], MessageDispatcher] = {
@@ -31,6 +33,9 @@ class MessageBus:
         self._router = MessageRouter(comp_data.comp_id)
         
         self._lock = threading.Lock()
+        
+    def _create_network_engine(self) -> NetworkEngine:
+        return NetworkEngine(self._comp_data, self)
         
     def add_service(self, svc: Service) -> bool:
         with self._lock:
@@ -49,16 +54,13 @@ class MessageBus:
             return True
         
     def run(self) -> None:
-        for _, dispatcher in self._dispatchers.items():
-            dispatcher.process()
-            
-        threading.Timer(1.0, self.run).start()
+        self._network_engine.run()
+        self._process()
         
     def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         try:
             self._router.verify_message(msg, msg_meta)
         except MessageRouter.RoutingError as e:
-            from ..logging import error
             error(f"A routing error occurred: {str(e)}", scope="bus", message=str(msg))
         else:
             if self._router.check_remote_routing(msg, msg_meta):
@@ -66,7 +68,13 @@ class MessageBus:
             
             if self._router.check_local_routing(msg, msg_meta):
                 self._local_dispatch(msg, msg_meta)
-            
+    
+    def _process(self) -> None:
+        for _, dispatcher in self._dispatchers.items():
+            dispatcher.process()
+        
+        threading.Timer(1.0, self._process).start()
+        
     def _local_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         for msg_type, dispatcher in self._dispatchers.items():
             if not isinstance(msg, msg_type):
@@ -88,7 +96,6 @@ class MessageBus:
                 dispatcher.dispatch(act_msg, msg_meta, handler, ctx)
             except Exception as e:
                 import traceback
-                from ..logging import error, debug
                 error(f"An exception occurred while processing a message: {str(e)}", scope="bus", message=str(msg), exception=type(e))
                 debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")
 
@@ -96,3 +103,7 @@ class MessageBus:
         logger_proxy = LoggerProxy(default_logger())
         logger_proxy.add_param("trace", str(msg.trace))
         return svc.create_context(self._comp_data.config, logger_proxy)
+
+    @property
+    def network(self) -> NetworkEngine:
+        return self._network_engine

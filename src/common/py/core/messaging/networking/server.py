@@ -3,17 +3,16 @@ import typing
 
 import socketio
 
-from ..logging import info, warning, debug
-from ..messaging import Message
-from ...component import ComponentID, ComponentData
-from ...utils.config import Configuration
+from .. import Message
+from ...logging import info, warning, debug
+from ....component import ComponentID, ComponentData
 
 
 class Server(socketio.Server):
     def __init__(self, comp_data: ComponentData):
         self._comp_data = comp_data
         
-        super().__init__(async_mode="gevent_uwsgi", cors_allowed_origins=self._get_allowed_origins(self._comp_data.config), cors_credentials=True)
+        super().__init__(async_mode="gevent_uwsgi", cors_allowed_origins=self._get_allowed_origins(), cors_credentials=True)
         
         self._connected_components: typing.Dict[ComponentID, str] = {}
         
@@ -62,7 +61,7 @@ class Server(socketio.Server):
     def _component_ids_to_clients(self, comp_ids: typing.List[ComponentID]) -> typing.List[str] | None:
         return [client_id for comp_id, client_id in self._connected_components.items() if comp_id in comp_ids] if len(comp_ids) > 0 else None
 
-    def _get_allowed_origins(self, config: Configuration) -> typing.List[str] | None:
-        from ...settings import NetworkServerSettingIDs
-        allowed_origins: str = config.value(NetworkServerSettingIDs.ALLOWED_ORIGINS)
+    def _get_allowed_origins(self) -> typing.List[str] | None:
+        from ....settings import NetworkServerSettingIDs
+        allowed_origins: str = self._comp_data.config.value(NetworkServerSettingIDs.ALLOWED_ORIGINS)
         return allowed_origins.split(",") if allowed_origins != "" else None
