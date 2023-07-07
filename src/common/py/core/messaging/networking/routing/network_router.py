@@ -40,16 +40,28 @@ class NetworkRouter(abc.ABC):
         return False
         
     def check_client_routing(self, direction: Direction, msg: Message, msg_meta: MessageMetaInformation) -> bool:
-        if direction == NetworkRouter.Direction.OUT:
-            return self._has_client
-        else:
-            return False  # TODO
+        if self._has_client:
+            if direction == NetworkRouter.Direction.OUT:
+                return True  # Always sent outgoing messages through the network
+            elif direction == NetworkRouter.Direction.IN:
+                if msg.target.is_direct and msg.target.target_id.equals(self._comp_id):  # Skip messages targeted to us
+                    return False
+                else:
+                    return msg_meta.entrypoint == MessageMetaInformation.Entrypoint.SERVER  # Only rebounce to the client if the message came from the server
+            
+        return False
         
     def check_server_routing(self, direction: Direction, msg: Message, msg_meta: MessageMetaInformation) -> bool:
-        if direction == NetworkRouter.Direction.OUT:
-            return self._has_server
-        else:
-            return False  # TODO
+        if self._has_server:
+            if direction == NetworkRouter.Direction.OUT:
+                return True  # Always sent outgoing messages through the network
+            elif direction == NetworkRouter.Direction.IN:
+                if msg.target.is_direct and msg.target.target_id.equals(self._comp_id):  # Skip messages targeted to us
+                    return False
+                else:
+                    return True  # Always send messages back through the server (the server will skip the original sender)
+            
+        return False
     
     def _verify_local_message(self, direction: Direction, msg: Message) -> None:
         # Local messages should never land here

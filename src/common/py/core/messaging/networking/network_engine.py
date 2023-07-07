@@ -4,8 +4,8 @@ import typing
 from .client import Client
 from .routing import NetworkRouter
 from .server import Server
-from .. import Message, MessageBusProtocol
-from ..meta import MessageMetaInformation
+from .. import Message, MessageBusProtocol, MessageType, Command, CommandReply, Event
+from ..meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
 from ....component import ComponentData
 
 
@@ -22,6 +22,12 @@ class NetworkEngine:
         self._router = typing.cast(NetworkRouter, self._comp_data.role.networking_aspects.router_type(comp_data.comp_id))
         if not isinstance(self._router, NetworkRouter):
             raise RuntimeError("An invalid router type was specified in the networking aspects")
+        
+        self._meta_information_types: typing.Dict[type[MessageType], type[MessageMetaInformationType]] = {
+            Command: CommandMetaInformation,
+            CommandReply: CommandReplyMetaInformation,
+            Event: EventMetaInformation,
+        }
 
     def _create_client(self) -> Client:
         return Client(self._comp_data)
@@ -57,6 +63,9 @@ class NetworkEngine:
         except Exception as e:
             self._routing_error(str(e), data=data)
         else:
+            from ...logging import debug
+            debug(f"Received message: {msg}", scope="network", entrypoint=entrypoint.name)
+            
             if self._router.check_local_routing(NetworkRouter.Direction.IN, msg, msg_meta):
                 self._message_bus.dispatch(msg, msg_meta)
                 
@@ -85,8 +94,11 @@ class NetworkEngine:
         return msg
     
     def _create_message_meta_information(self, msg: Message, entrypoint: MessageMetaInformation.Entrypoint, **kwargs) -> MessageMetaInformation:
-        from ..meta import MessageMetaInformationCreator
-        return MessageMetaInformationCreator.create_meta_information(msg, entrypoint, **kwargs)
+        for msg_type, meta_type in self._meta_information_types.items():
+            if isinstance(msg, msg_type):
+                return meta_type(entrypoint=entrypoint, **kwargs)
+        else:
+            raise RuntimeError("No meta information type associated with message type")
     
     def _routing_error(self, msg: str, **kwargs) -> None:
         from ...logging import error
