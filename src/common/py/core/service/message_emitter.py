@@ -37,7 +37,7 @@ class MessageEmitter:
         self._counters[CommandReplyType] += 1
         
         meta = CommandReplyMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL)
-        return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, command=command, **kwargs)
+        return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, unique=command.unique, **kwargs)
     
     def emit_event(self, msg_type: type[EventType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
         if not issubclass(msg_type, Event):

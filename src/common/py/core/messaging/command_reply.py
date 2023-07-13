@@ -1,9 +1,9 @@
 import typing
-from dataclasses import dataclass
+import uuid
+from dataclasses import dataclass, field
 from enum import IntEnum, auto
 
-from .message import Message
-from .command import CommandType
+from .message import Message, Trace
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -17,7 +17,7 @@ class CommandReply(Message):
     success: bool = True
     message: str = ""
     
-    command: CommandType | None = None
+    unique: Trace = field(default_factory=uuid.uuid4)
 
 
 CommandReplyType = typing.TypeVar("CommandReplyType", bound=CommandReply)

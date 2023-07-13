@@ -66,8 +66,8 @@ class MessageBus:
             if self._router.check_remote_routing(msg, msg_meta):
                 self._remote_dispatch(msg, msg_meta)
             
-            if self._router.check_local_routing(msg, msg_meta):
-                self._local_dispatch(msg, msg_meta)
+            # The local dispatchers are always invoked for their pre- and post-steps
+            self._local_dispatch(msg, msg_meta)
     
     def _process(self) -> None:
         for _, dispatcher in self._dispatchers.items():
@@ -76,13 +76,15 @@ class MessageBus:
         threading.Timer(1.0, self._process).start()
         
     def _local_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
+        local_routing = self._router.check_local_routing(msg, msg_meta)
         for msg_type, dispatcher in self._dispatchers.items():
             if not isinstance(msg, msg_type):
                 continue
-                
+            
             dispatcher.pre_dispatch(msg, msg_meta)
-            for svc in self._services:
-                self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
+            if local_routing:
+                for svc in self._services:
+                    self._dispatch_to_service(dispatcher, msg, msg_type, msg_meta, svc)
             dispatcher.post_dispatch(msg, msg_meta)
         
     def _remote_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:

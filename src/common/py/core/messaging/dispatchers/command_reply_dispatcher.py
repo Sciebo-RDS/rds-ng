@@ -13,8 +13,8 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
         super().pre_dispatch(reply, reply_meta)
         
         from .command_dispatcher import CommandDispatcher
-        CommandDispatcher.invoke_reply_callback(reply.command.unique, reply=reply)
-        MessageDispatcher._meta_information_list.remove(reply.command.unique)
+        CommandDispatcher.invoke_reply_callback(reply.unique, reply=reply)
+        MessageDispatcher._meta_information_list.remove(reply.unique)
     
     def dispatch(self, reply: CommandReply, reply_meta: CommandReplyMetaInformation, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
         ctx.logger.debug(f"Dispatching command reply: {reply}", scope="bus")
