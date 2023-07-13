@@ -1,5 +1,6 @@
 import threading
 import typing
+from enum import IntEnum, auto
 
 import socketio
 
@@ -9,6 +10,10 @@ from ....component import ComponentID, ComponentData
 
 
 class Server(socketio.Server):
+    class SendTarget(IntEnum):
+        SPREAD = auto()
+        DIRECT = auto()
+    
     def __init__(self, comp_data: ComponentData):
         self._comp_data = comp_data
         
@@ -31,12 +36,15 @@ class Server(socketio.Server):
         for comp_id, client_id in self._connected_components.items():
             if client_id == sid:
                 return comp_id
-        return None
+        else:
+            return None
     
-    def send_message(self, msg: Message, skip_components: typing.List[ComponentID] | None = None) -> None:
+    def send_message(self, msg: Message, *, skip_components: typing.List[ComponentID] | None = None) -> SendTarget:
         debug(f"Sending message: {msg}", scope="server")
         with self._lock:
-            self.emit(msg.name, data=msg.to_json(), to=msg.target.target, skip_sid=self._component_ids_to_clients(skip_components))
+            to: str | None = self._get_message_recipient(msg)
+            self.emit(msg.name, data=msg.to_json(), to=to, skip_sid=self._component_ids_to_clients(skip_components))
+            return Server.SendTarget.DIRECT if msg.target.is_direct and to is not None else Server.SendTarget.SPREAD
     
     def _on_connect(self, sid: str, _, auth: typing.Dict[str, typing.Any]) -> None:
         try:
@@ -58,8 +66,19 @@ class Server(socketio.Server):
         
         info("Client disconnected", scope="server", session=sid)
         
+    def _component_id_to_client(self, comp_id: ComponentID) -> str | None:
+        return self._connected_components[comp_id] if comp_id in self._connected_components else None
+    
     def _component_ids_to_clients(self, comp_ids: typing.List[ComponentID]) -> typing.List[str] | None:
-        return [client_id for comp_id, client_id in self._connected_components.items() if comp_id in comp_ids] if len(comp_ids) > 0 else None
+        return [sid for sid in map(self._component_id_to_client, comp_ids) if sid is not None] if len(comp_ids) > 0 else None
+    
+    def _get_message_recipient(self, msg: Message) -> str | None:
+        if msg.target.is_direct:
+            return self._component_id_to_client(msg.target.target_id)
+        elif msg.target.is_room:
+            return msg.target.target
+        
+        return None
 
     def _get_allowed_origins(self) -> typing.List[str] | None:
         from ....settings import NetworkServerSettingIDs

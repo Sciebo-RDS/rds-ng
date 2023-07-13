@@ -6,7 +6,7 @@ from .network_router import NetworkRouter
 from .server import Server
 from .. import Message, MessageBusProtocol, MessageType, Command, CommandReply, Event
 from ..meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
-from ....component import ComponentData
+from ....component import ComponentData, ComponentID
 
 
 class NetworkEngine:
@@ -48,11 +48,7 @@ class NetworkEngine:
         except NetworkRouter.RoutingError as e:
             self._routing_error(str(e), message=str(msg))
         else:
-            if self._router.check_server_routing(NetworkRouter.Direction.OUT, msg, msg_meta):
-                self._server.send_message(msg, skip_components=[self._comp_data.comp_id])
-                
-            if self._router.check_client_routing(NetworkRouter.Direction.OUT, msg, msg_meta):
-                self._client.send_message(msg)
+            self._route_message(msg, msg_meta, NetworkRouter.Direction.OUT, skip_components=[self._comp_data.comp_id])
     
     def _handle_received_message(self, entrypoint: MessageMetaInformation.Entrypoint, msg_name: str, data: str) -> None:
         try:
@@ -67,15 +63,10 @@ class NetworkEngine:
             if self._router.check_local_routing(NetworkRouter.Direction.IN, msg, msg_meta):
                 self._message_bus.dispatch(msg, msg_meta)
                 
-            # Perform rerouting if necessary
+            # Perform rerouting
             msg = dataclasses.replace(msg, sender=self._comp_data.comp_id)
+            self._route_message(msg, msg_meta, NetworkRouter.Direction.IN, skip_components=[self._comp_data.comp_id, msg.sender])
             
-            if self._router.check_server_routing(NetworkRouter.Direction.IN, msg, msg_meta):
-                self._server.send_message(msg, skip_components=[self._comp_data.comp_id, msg.sender])
-            
-            if self._router.check_client_routing(NetworkRouter.Direction.IN, msg, msg_meta):
-                self._client.send_message(msg)
-                
     def _unpack_message(self, msg_name: str, data: str) -> Message:
         # Look up the actual message via its name
         from .. import MessageTypesCatalog
@@ -90,6 +81,15 @@ class NetworkEngine:
         
         msg.hops.append(self._comp_data.comp_id)
         return msg
+    
+    def _route_message(self, msg: Message, msg_meta: MessageMetaInformation, direction: NetworkRouter.Direction, *, skip_components: typing.List[ComponentID] | None = None):
+        send_to_client = True
+        
+        if self._router.check_server_routing(direction, msg, msg_meta):
+            send_to_client = (self._server.send_message(msg, skip_components=skip_components) == Server.SendTarget.SPREAD)
+        
+        if send_to_client and self._router.check_client_routing(direction, msg, msg_meta):
+            self._client.send_message(msg)
     
     def _create_message_meta_information(self, msg: Message, entrypoint: MessageMetaInformation.Entrypoint, **kwargs) -> MessageMetaInformation:
         for msg_type, meta_type in self._meta_information_types.items():
