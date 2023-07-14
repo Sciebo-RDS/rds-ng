@@ -28,7 +28,7 @@ class MessageRouter:
         elif msg.target.is_room:
             # A room message is always dispatched locally if the component is subscribed to that room
             # TODO: Rooms: List of subscribed rooms, check if match -> local
-            pass
+            return True
         
         return False
     
