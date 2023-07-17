@@ -6,7 +6,24 @@ from ...utils.config import Configuration
 
 
 class ServiceContext:
-    """ An execution context for messages dispatched by the message bus. """
+    """
+    An execution context for messages dispatched by the message bus.
+    
+    When a message handler gets executed (i.e., called by the message bus dispatchers), an instance of :class:`ServiceContext` (or a subclass)
+    is passed to the handler. This context can be seen as a 'unit of work' that exists during the execution of the handler. Its main task is to
+    hold data that is specific to this single execution.
+    
+    A service context is used as a context manager. In its :func:`__exit__` method, any exceptions will be catched, printed and passed on. This
+    makes tracing of errors that occur during message handling easier.
+    
+    It is also possible to have message handlers receive custom subtypes of this class. See :class:`Component` and its :func:`create_service`
+    method for details.
+    
+    Args:
+        msg_emitter: A :class:`MessageEmitter` to be assigned to this context.
+        config: The global component configuration.
+        logger: A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
+    """
     def __init__(self, msg_emitter: MessageEmitter, config: Configuration, logger: LoggerProtocol):
         self._msg_emitter = msg_emitter
         
@@ -39,14 +56,23 @@ class ServiceContext:
         
     @property
     def message_emitter(self) -> MessageEmitter:
+        """
+        The message emitter to be used within this context.
+        """
         return self._msg_emitter
     
     @property
     def config(self) -> Configuration:
+        """
+        The global component configuration.
+        """
         return self._config
     
     @property
     def logger(self) -> LoggerProtocol:
+        """
+        The logger to be used within this context.
+        """
         return self._logger
 
 

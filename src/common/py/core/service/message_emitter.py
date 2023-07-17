@@ -6,7 +6,15 @@ from ...component import ComponentID
 
 
 class MessageEmitter:
-    """ A helper class to create and emit messages; it basically stores senseful defaults for certain values and takes care of chaining and rerouting. """
+    """
+    A helper class to easily create and emit messages.
+    
+    This class stores a reference to the global message bus and offers methods to easily create new messages and send them through the bus.
+    
+    Args:
+        origin_id: The component identifier of the origin of newly created messages.
+        message_bus: The global message bus to use.
+    """
     def __init__(self, origin_id: ComponentID, message_bus: MessageBusProtocol):
         self._origin_id = origin_id
         self._message_bus = message_bus
@@ -18,6 +26,25 @@ class MessageEmitter:
         }
         
     def emit_command(self, cmd_type: type[CommandType], target: Channel, done_callback: CommandDoneCallback | None = None, fail_callback: CommandFailCallback | None = None, async_callbacks: bool = False, timeout: float = 0.0, chain: Message | None = None, **kwargs) -> MessageType:
+        """
+        Emits a new command.
+        
+        Args:
+            cmd_type: The command type (i.e., a subclass of :class:`Command`).
+            target: The destination of the message.
+            done_callback: Callback when a reply for the command was received.
+            fail_callback: Callback when no reply for the command was received.
+            async_callbacks: Whether to execute the callbacks asynchronously in their own thread.
+            timeout: The timeout (in seconds) until a command is deemed 'not answered'. Pass 0 to disable timeouts.
+            chain: A message that acts as the 'predecessor' of the new message. Used to keep the same trace for multiple messages.
+            **kwargs: Additional parameters.
+
+        Returns:
+            The newly created command.
+            
+        Raises:
+            RuntimeError: `cmd_type` is not a subclass of :class:`Command`.
+        """
         if not issubclass(cmd_type, Command):
             raise RuntimeError(f"Tried to emit a command, but got a {cmd_type}")
         
@@ -30,7 +57,25 @@ class MessageEmitter:
         meta = CommandMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL, done_callback=done_callback, fail_callback=fail_callback, async_callbacks=async_callbacks, timeout=timeout)
         return self._emit(cmd_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
-    def emit_reply(self, reply_type: type[CommandReplyType], command: CommandType, *, success: bool = True, message: str = "", **kwargs):
+    def emit_reply(self, reply_type: type[CommandReplyType], command: CommandType, *, success: bool = True, message: str = "", **kwargs) -> MessageType:
+        """
+        Emits a new command reply.
+        
+        Most parameters, like the proper target, are extracted from the originating command.
+
+        Args:
+            reply_type: The reply type (i.e., a subclass of :class:`CommandReply`).
+            command: The :class:`Command` this reply is based on.
+            success: Whether the command 'succeeded' or not (how this is interpreted depends on the command).
+            message: Additional message to include in the reply.
+            **kwargs: Additional parameters.
+
+        Returns:
+            The newly created command reply.
+            
+        Raises:
+            RuntimeError: `reply_type` is not a subclass of :class:`CommandReply`.
+        """
         if not issubclass(reply_type, CommandReply):
             raise RuntimeError(f"Tried to emit a command reply, but got a {reply_type}")
         
@@ -39,16 +84,44 @@ class MessageEmitter:
         meta = CommandReplyMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL)
         return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, unique=command.unique, **kwargs)
     
-    def emit_event(self, msg_type: type[EventType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
-        if not issubclass(msg_type, Event):
-            raise RuntimeError(f"Tried to emit an event, but got a {msg_type}")
+    def emit_event(self, event_type: type[EventType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
+        """
+        Emits a new event.
+
+        Args:
+            event_type: The event type (i.e., a subclass of :class:`Event`).
+            target: The destination of the message.
+            chain: A message that acts as the 'predecessor' of the new message. Used to keep the same trace for multiple messages.
+            **kwargs: Additional parameters.
+
+        Returns:
+            The newly created event.
+            
+        Raises:
+            RuntimeError: `event_type` is not a subclass of :class:`Event`.
+        """
+        if not issubclass(event_type, Event):
+            raise RuntimeError(f"Tried to emit an event, but got a {event_type}")
         
         self._counters[EventType] += 1
         
         meta = EventMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL)
-        return self._emit(msg_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
+        return self._emit(event_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
     def get_message_count(self, msg_type: MessageType) -> int:
+        """
+        Gets how many messages of specific message types have beeen emitted.
+        
+        The message emitter keeps track of how many messages of the three major types :class:`Command`, :class:`CommandReply` and
+        :class:`Event` have been emitted.
+        
+        Args:
+            msg_type: The message type to get the count of. Must be either :class:`Command`, :class:`CommandReply` or
+                :class:`Event`.
+
+        Returns:
+            The number of messages already emitted of the specified type.
+        """
         return self._counters[msg_type] if msg_type in self._counters else 0
     
     def _emit(self, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
