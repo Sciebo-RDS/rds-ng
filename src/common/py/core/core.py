@@ -7,7 +7,21 @@ from ..component import ComponentData
 
 
 class Core:
-    """ The main portion of an RDS component. """
+    """
+    The main 'underlying basis' of any component.
+    
+    The :class:`Core` brings together all portions and aspects that build the underlying foundation of every component,
+    including the :class:`MessageBus`.
+    
+    The core can be regarded as a facade to the 'inner structure' of a component. It only offers a small number of public
+    methods and is accessed from the outside very rarely.
+    
+    An instance of this class is always created when creating a :class:`Component`; it should never be instantiated otherwise.
+    
+    Args:
+        module_name: The module name used for `Flask` initialization.
+        comp_data: The component data used to access common component information.
+    """
     def __init__(self, module_name: str, comp_data: ComponentData):
         info("Initializing core...", scope="core")
         
@@ -43,29 +57,56 @@ class Core:
         debug("-- Debug mode enabled", scope="core")
     
     def register_service(self, svc: Service) -> None:
+        """
+        Registers a new service with the global message bus.
+        
+        Services are always created through :class:`Component`, so you should rarely (if ever)
+        need to call this method directly.
+        
+        Args:
+            svc: The service to register.
+        """
         if self._message_bus.add_service(svc):
             debug(f"Registered service: {svc}", scope="core")
         else:
             debug("Service already registered", scope="core", service=svc)
-
+            
     def unregister_service(self, svc: Service) -> None:
+        """
+        Removes a service from the global message bus.
+        
+        Args:
+            svc: The service to remove.
+        """
         if self._message_bus.remove_service(svc):
             debug(f"Unregistered service: {svc}", scope="core")
         else:
             debug("Service not registered", scope="core", service=svc)
             
     def run(self) -> None:
+        """
+        Starts periodic background tasks.
+        """
         self._message_bus.run()
         
     @property
     def message_bus(self) -> MessageBus:
+        """
+        The global :class:`MessageBus` instance.
+        """
         return self._message_bus
     
     @property
     def flask(self) -> flask.Flask:
+        """
+        The global :class:`Flask` instance.
+        """
         return self._flask
         
     @property
     def is_debug_mode(self) -> bool:
+        """
+        Whether we're running in Debug mode.
+        """
         from ..settings import GeneralSettingIDs
         return self._comp_data.config.value(GeneralSettingIDs.DEBUG)
