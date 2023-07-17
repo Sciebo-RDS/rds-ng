@@ -3,7 +3,11 @@ import typing
 
 
 class Formatter(logging.Formatter):
-    """ Handles unified formatting of log messages. """
+    """
+    Customized log formatter.
+    
+    This formatter mainly colorizes log records for better readability.
+    """
     _colors = {
         "time": 7,
         "scope": 28,
@@ -20,6 +24,13 @@ class Formatter(logging.Formatter):
     }
     
     def format(self, record: logging.LogRecord) -> str:
+        """
+        Colorizes the various portions of a log record.
+        
+        Returns:
+            The formatted text.
+
+        """
         scope = self._get_scope(record)
         params = [f"{self._color_wrap(k, self._colors['params']['name'], italic=True)}={self._color_wrap(str(v), self._colors['params']['value'], italic=True)}" for k, v in self._get_extra_params(record).items()]
         tokens = [
