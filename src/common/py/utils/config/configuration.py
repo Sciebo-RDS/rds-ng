@@ -5,7 +5,31 @@ from .setting_id import SettingID
 
 
 class Configuration:
-    """ A simple class for retrieving configuration settings. """
+    """
+    Encapsulates configuration settings and their fallback default values.
+    
+    Settings can be loaded from a configuration file (in `TOML` format) or provided as environment variables (see below).
+    
+    All settings are accessed by an identifier of type :class:`SettingID`, which represents settings in a path-like format;
+    `General.Debug`, for example, refers to a setting called `Debug` in the `General` section.
+    
+    A corresponding configuration file would look like this::
+    
+        [General]
+        Debug = True
+        
+    A setting identifier is translated to its corresponding environment variable name by replacing all dots (`.`) with underscores (`_`),
+    prepending a prefix (defaults to 'RDS'), as well as making everything uppercase::
+    
+        RDS_GENERAL_DEBUG
+        
+    Args:
+        env_prefix: The prefix to use when generating the environment variable name of a setting.
+       
+    Notes:
+        When accessing a setting value, a default value must `always` be present. This means that before a setting can be accessed,
+        a default value must be added using :func:`add_defaults`.
+    """
     def __init__(self, env_prefix: str = "RDS"):
         self._settings_file = ""
         
@@ -15,6 +39,15 @@ class Configuration:
         self._env_prefix = env_prefix
         
     def load(self, filename: str) -> None:
+        """
+        Loads settings from a TOML file.
+        
+        Args:
+            filename: The file to load.
+            
+        Raises:
+            FileNotFoundError: If the specified file doesn't exist or couldn't be opened.
+        """
         self._settings_file = filename
         
         if os.path.exists(filename):
@@ -25,6 +58,15 @@ class Configuration:
             raise FileNotFoundError("Configuration file doesn't exist")
         
     def add_defaults(self, defaults: typing.Dict[SettingID, typing.Any]) -> None:
+        """
+        Adds default values for settings, merging the new defaults into the existing ones.
+        
+        Args:
+            defaults: A dictionary containing the new default values.
+            
+        Notes:
+            It is always necessary to add a default value for a setting before accessing it.
+        """
         from deepmerge import always_merger
         for key, value in defaults.items():
             d = {}
@@ -32,8 +74,20 @@ class Configuration:
             self._defaults = always_merger.merge(self._defaults, d)
 
     def value(self, key: SettingID) -> typing.Any:
-        """ The value is first looked up in the environment variables. If not found, the loaded settings are searched.
-            If that also fails, the defaults are used. In case the key is missing everywhere, an exception is raised.
+        """
+        Gets the value of a setting.
+        
+        The value is first looked up in the environment variables. If not found, the loaded settings are searched.
+        If that also fails, the defaults are used.
+        
+        Args:
+            key: The identifier of the setting.
+
+        Returns:
+            The value of the setting.
+            
+        Raises:
+            KeyError: The setting identifier was not found in the defaults.
         """
         default = self._traverse_dict(key.split(), self._defaults)
         
@@ -72,4 +126,7 @@ class Configuration:
         
     @property
     def settings_file(self) -> str:
+        """
+        The name of the currently loaded settings file.
+        """
         return self._settings_file
