@@ -24,17 +24,16 @@ class Logger(logging.Logger):
             h.setLevel(level)
 
     def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
-        super().debug(msg, extra=self._pack_extra_args(scope, **kwargs))
+        super().debug(msg, extra=self._pack_extra_params(scope, **kwargs))
 
     def info(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
-        super().info(msg, extra=self._pack_extra_args(scope, **kwargs))
+        super().info(msg, extra=self._pack_extra_params(scope, **kwargs))
         
     def warning(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
-        super().warning(msg, extra=self._pack_extra_args(scope, **kwargs))
+        super().warning(msg, extra=self._pack_extra_params(scope, **kwargs))
         
     def error(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
-        super().error(msg, extra=self._pack_extra_args(scope, **kwargs))
+        super().error(msg, extra=self._pack_extra_params(scope, **kwargs))
 
-    def _pack_extra_args(self, scope: str | None, **kwargs) -> typing.Dict[str, typing.Any]:
+    def _pack_extra_params(self, scope: str | None, **kwargs) -> typing.Dict[str, typing.Any]:
         return {"scope": scope, "extra_params": kwargs}
-   

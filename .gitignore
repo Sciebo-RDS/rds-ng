@@ -13,3 +13,6 @@ __pycache__
 *.dll
 *.so
 *.dylib
+
+# Python virtual env
+venv

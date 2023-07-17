@@ -13,7 +13,6 @@ def get_components():
     with open("./config/meta-information.json") as f:
         data = json.load(f)
         return data["components"]
-    return {}
 
 
 if __name__ == "__main__":

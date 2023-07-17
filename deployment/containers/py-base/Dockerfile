@@ -1,6 +1,6 @@
 # Base image for all Python-based components
 # --
-FROM    python:3.10
+FROM    python:3.11
 
 # Update the image first
 RUN     apt-get update \

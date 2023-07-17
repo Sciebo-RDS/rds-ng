@@ -5,9 +5,14 @@
     },
 
     "components": {
-        "rds.gate": {
+        "gate": {
             "name": "Gate service",
             "directory": "gate"
+        },
+
+        "testbuddy": {
+            "name": "Debugging test buddy",
+            "directory": "testbuddy"
         }
     }
 }
