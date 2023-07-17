@@ -3,6 +3,33 @@ from semantic_version import Version
 
 
 class MetaInformation:
+    """
+    Accesses meta information about the entire project and its various component stored in a JSON file.
+    
+    The JSON file needs to be structured like this::
+    
+        {
+            "global": {
+                "title": "RDS-NG",
+                "version": "0.0.1"
+            },
+        
+            "components": {
+                "gate": {
+                    "name": "Gate service",
+                    "directory": "gate"
+                },
+                ...
+            }
+        }
+    
+    Args:
+        info_file: The JSON file to load the meta information from.
+        
+    Raises:
+        ValueError: If the information file couldn't be loaded.
+    """
+    
     """ This class is used to access the project meta information stored in a JSON file. """
     def __init__(self, info_file: str = "/config/meta-information.json"):
         import os.path
@@ -35,18 +62,41 @@ class MetaInformation:
         
     @property
     def title(self) -> str:
+        """
+        The project title.
+        """
         return self._title
     
     @property
     def version(self) -> Version:
+        """
+        The project version (see https://semver.org).
+        """
         return self._version
 
     def get_components(self) -> typing.List[str]:
+        """
+        A list of all component names.
+        
+        Returns:
+            The names of all components.
+        """
         return list(self._components.keys())
     
-    def get_component(self, appid: str) -> typing.Dict[str, typing.Any]:
-        if appid in self._components:
-            return self._components[appid]
+    def get_component(self, comp: str) -> typing.Dict[str, typing.Any]:
+        """
+        Retrieves the meta information stored for a specific component.
+        
+        This meta information includes the `name` of the component, as well as its `directory` within the code structure (rooted at ``/src``).
+        
+        Args:
+            comp: The name of the component.
+
+        Returns:
+            A dictionary containing the meta information.
+        """
+        if comp in self._components:
+            return self._components[comp]
         else:
             return {
                 "name": "<invalid>",
