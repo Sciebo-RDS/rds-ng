@@ -10,7 +10,15 @@ from ...service import ServiceContextType
 
 
 class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
-    """ The dispatcher sends message to registered handlers while also performing additional tasks like context management. """
+    """
+    Base message dispatcher responsible for sending messages to registered handlers.
+    
+    Dispatching a message (locally) is done by passing the message to one or more registered message handlers within a :class:`Service`.
+    The message dispatcher also performs pre- and post-dispatching tasks and takes care of catching errors raised in a handler.
+    
+    Args:
+        meta_information_type: The required type of the message meta information passed alongside the actual messages.
+    """
     _thread_pool = ThreadPoolExecutor()
     _meta_information_list = MessageMetaInformationList()
     
@@ -18,14 +26,43 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
         self._meta_information_type = meta_information_type
         
     def process(self) -> None:
+        """
+        Called to perform periodic tasks.
+        """
         pass
     
     def pre_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
+        """
+        Called to perform tasks `before` sending a message.
+        
+        This method is called before any service-registered message handler is invoked.
+        
+        Args:
+            msg: The message that is about to be dispatched.
+            msg_meta: The message meta information.
+        """
         if not isinstance(msg_meta, self._meta_information_type):
             raise RuntimeError(f"The meta information for dispatcher {str(self)} is of the wrong type ({type(msg_meta)})")
 
     @abc.abstractmethod
     def dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
+        """
+        Dispatches a message to locally registered message handlers.
+        
+        Handlers can be either called synchronously or asynchronously, depending on how the handler was registered.
+        
+        Notes:
+            Exceptions arising within a message handler will not interrupt the running program; instead, such errors will only be logged.
+            
+        Args:
+            msg: The message to be dispatched.
+            msg_meta: The message meta information.
+            handler: The handler to be invoked.
+            ctx: The service context.
+            
+        Raises:
+            RuntimeError: If the handler requires a different message type.
+        """
         # Callback wrapper for proper exception handling, even when used asynchronously
         def _dispatch(msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
             try:
@@ -44,6 +81,15 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
             raise RuntimeError(f"Handler {str(handler.handler)} requires messages of type {str(handler.message_type)}, but got {str(type(msg))}")
         
     def post_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
+        """
+        Called to perform tasks `after` sending a message.
+
+        This method is called after any service-registered message handler have been invoked.
+
+        Args:
+            msg: The message that has just been dispatched.
+            msg_meta: The message meta information.
+        """
         pass
         
     def _context_exception(self, exc: Exception, msg: MessageType, msg_meta: MessageMetaInformationType, ctx: ServiceContextType) -> None:
@@ -51,5 +97,5 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     
     @staticmethod
     @atexit.register
-    def terminate() -> None:
+    def _terminate() -> None:
         MessageDispatcher._thread_pool.shutdown(True, cancel_futures=True)
