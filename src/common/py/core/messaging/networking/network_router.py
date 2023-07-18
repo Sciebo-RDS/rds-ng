@@ -9,8 +9,8 @@ class NetworkRouter:
     """
     Network routing rules and logic.
     
-    When a class enters the network engine in order to be sent to remote targets, it is first checked for validity.
-    Afterwards, the router decides through which channels (local, client, server) it needs to be sent.
+    When a message enters the network engine in order to be sent to remote targets, it is first checked for its
+    validity. Afterwards, the router decides through which channels (local, client, server) it needs to be sent.
     
     Args:
         comp_id: The component id (required to decide whether we match a given direct target).

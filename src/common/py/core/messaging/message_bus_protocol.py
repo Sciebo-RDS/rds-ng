@@ -6,4 +6,7 @@ from .meta import MessageMetaInformationType
 
 
 class MessageBusProtocol(Protocol):
+    """
+    Defines the general interface for the :class:`MessageBus`.
+    """
     def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None: ...

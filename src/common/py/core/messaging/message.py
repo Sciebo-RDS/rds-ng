@@ -16,6 +16,25 @@ Trace = uuid.UUID
 @dataclass_json
 @dataclass(frozen=True, kw_only=True)
 class Message(abc.ABC):
+    """
+    Base class for all messages.
+    
+    A message, besides its actual data, consists mainly of information from where it came and where it should go.
+    
+    This class also offers a useful decorator to easily declare new messages, like in the following example::
+    
+        @Message.define("msg/command")
+        class MyCommand(Command):
+            some_number: int = 0
+            
+    Attributes:
+          name: The name of the message.
+          origin: The initial source component of the message.
+          sender: The component from where the message came from.
+          target: Where the message should go to.
+          hops: A list of components the message was sent through.
+          trace: A unique trace identifying messages that logically belong together.
+    """
     name: MessageName
     
     origin: ComponentID
@@ -28,6 +47,21 @@ class Message(abc.ABC):
     
     @staticmethod
     def define(name: str):
+        """
+        Defines a new message.
+        
+        The decorator takes care of wrapping the new class as a dataclass, passing the correct message
+        name to its constructor. It also registers the new message type in the global :class:`MessageTypesCatalog`.
+        
+        Examples::
+        
+            @Message.define("msg/command")
+            class MyCommand(Command):
+                some_number: int = 0
+        
+        Args:
+            name: The name of the message.
+        """
         def decorator(cls):
             cls = dataclasses.dataclass(frozen=True, kw_only=True)(cls)  # Wrap the class in a dataclass
             __init__ = cls.__init__

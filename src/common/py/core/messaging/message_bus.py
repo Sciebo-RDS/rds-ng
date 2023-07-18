@@ -12,6 +12,25 @@ from ...component import ComponentData
 
 
 class MessageBus:
+    """
+    Bus for dispatching messages.
+    
+    The message bus is probably the most central aspect of the system as a whole. It not only invokes local message handlers (which are basically callback functions),
+    it also sends messages across the network to other components if necessary. The message bus on the remote side will then decide what to do with the incoming message:
+    Dispatch it locally there, send it to yet another component, or just ignore it.
+    
+    Message handlers are always registered through a :class:`Service`. When a message gets dispatched locally by the bus, it will call any handlers associated with the
+    message (via its name). If a message needs to be sent to another component, the bus will invoke the :class:`NetworkEngine` to do so.
+    
+    To be error tolerant, any exceptions that arise during message handling will be logged but won't result in program termination.
+    
+    Args:
+        comp_data: The global component data.
+    
+    Notes:
+        The message bus is thread-safe.
+    """
+    
     """ A thread-safe message bus for dispatching messages. """
     def __init__(self, comp_data: ComponentData):
         from .dispatchers import CommandDispatcher, CommandReplyDispatcher, EventDispatcher
@@ -38,6 +57,15 @@ class MessageBus:
         return NetworkEngine(self._comp_data, self)
         
     def add_service(self, svc: Service) -> bool:
+        """
+        Adds a new service to the bus.
+        
+        Args:
+            svc: The service to add.
+
+        Returns:
+            Whether the service was added.
+        """
         with self._lock:
             if svc in self._services:
                 return False
@@ -46,6 +74,15 @@ class MessageBus:
             return True
     
     def remove_service(self, svc: Service) -> bool:
+        """
+        Removes a service from the bus.
+        
+        Args:
+            svc: The service to remove.
+
+        Returns:
+            Whether the service was removed.
+        """
         with self._lock:
             if svc not in self._services:
                 return False
@@ -54,10 +91,23 @@ class MessageBus:
             return True
         
     def run(self) -> None:
+        """
+        Initiates periodic tasks performed by the bus.
+        """
         self._network_engine.run()
         self._process()
         
     def dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
+        """
+        Dispatches a message.
+        
+        To do so, the message is first checked for validity (whether it actually `may` be dispatched). If it is valid,
+        the :class:`MessageRouter` will determine if it needs to be dispatched to another component or locally (or both).
+        
+        Args:
+            msg: The message to be dispatched.
+            msg_meta: The message meta information.
+        """
         try:
             self._router.verify_message(msg, msg_meta)
         except MessageRouter.RoutingError as e:
@@ -108,4 +158,7 @@ class MessageBus:
 
     @property
     def network(self) -> NetworkEngine:
+        """
+        The network engine instance.
+        """
         return self._network_engine

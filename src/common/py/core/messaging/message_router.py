@@ -4,13 +4,35 @@ from ...component import ComponentID
 
 
 class MessageRouter:
+    """
+    Message routing rules and logic.
+
+    When a message enters the message bus, it is first checked for its validity.
+    Afterwards, the router decides through which channels (local, remote) it needs to be sent.
+
+    Args:
+        comp_id: The component id (required to decide whether we match a given direct target).
+    """
     class RoutingError(RuntimeError):
+        """
+        Represents errors during routing validation.
+        """
         pass
     
     def __init__(self, comp_id: ComponentID):
         self._comp_id = comp_id
         
     def verify_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
+        """
+        Verifies whether a message may enter the message bus.
+
+        Args:
+            msg: The message that wants to enter the network engine.
+            msg_meta: The message meta information.
+
+        Raises:
+            RoutingError: In case the message is not valid to enter the network engine.
+        """
         if msg.target.is_local:
             self._verify_local_message(msg, msg_meta)
         if msg.target.is_direct:
@@ -19,6 +41,16 @@ class MessageRouter:
             self._verify_room_message(msg, msg_meta)
 
     def check_local_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
+        """
+        Checks if the message should be routed locally.
+
+        Args:
+            msg: The message.
+            msg_meta: The message meta information.
+
+        Returns:
+            Whether local routing should happen.
+        """
         if msg.target.is_local:
             return True
         elif msg.target.is_direct:
@@ -33,6 +65,16 @@ class MessageRouter:
         return False
     
     def check_remote_routing(self, msg: Message, msg_meta: MessageMetaInformation) -> bool:
+        """
+        Checks if the message should be routed remotely.
+
+        Args:
+            msg: The message.
+            msg_meta: The message meta information.
+
+        Returns:
+            Whether remote routing should happen.
+        """
         return not msg.target.is_local and msg_meta.entrypoint == MessageMetaInformation.Entrypoint.LOCAL
     
     def _verify_local_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:

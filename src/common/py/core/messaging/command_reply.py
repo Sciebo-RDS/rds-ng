@@ -8,7 +8,22 @@ from .message import Message, Trace
 
 @dataclass(frozen=True, kw_only=True)
 class CommandReply(Message):
+    """
+    A command reply message.
+
+    Every command needs to receive a reply in the form of a :class:`CommandReply` message. The reply contains
+    information about its `success`, as well as a text message which is usually used to describe reasons for
+    failures.
+
+    Attributes:
+        success: Whether the command succeeded.
+        message: Arbitrary text, usually used to describe reasons for failures.
+        unique: The unique identifier of its corresponding command.
+    """
     class FailType(IntEnum):
+        """
+        Used when a command failed.
+        """
         NONE = 0
         TIMEOUT = auto()
         EXCEPTION = auto()
