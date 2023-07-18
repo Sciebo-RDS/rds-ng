@@ -5,7 +5,16 @@ from enum import IntEnum, auto
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class MessageMetaInformation:
-    """ A helper class storing information necessary for dispatching and handling messages. """
+    """
+    Stores additional information necessary for message dispatching.
+    
+    When a message is emitted, additional information is required to be able to properly handle it.
+    This includes its entrypoint into the system, as well as whether the message type requires a reply.
+    
+    Attributes:
+        entrypoint: From where the message entered the system (locally or remotely).
+        requires_reply: Whether a reply is expected.
+    """
     class Entrypoint(IntEnum):
         LOCAL = auto()
         SERVER = auto()
