@@ -10,7 +10,16 @@ from ....component import ComponentData, ComponentID
 
 
 class NetworkEngine:
-    """ The main network management class, based on socket.io. """
+    """
+    Main network management class.
+    
+    Messages go out to other components through this class, and new messages come in from the outside world here as well.
+    The network engine takes care of listening to incoming messages, routing them properly, and sending new messages to other components.
+    
+    Args:
+         comp_data: The global component data.
+         message_bus: The global message bus.
+    """
     def __init__(self, comp_data: ComponentData, message_bus: MessageBusProtocol):
         self._comp_data = comp_data
         
@@ -34,6 +43,9 @@ class NetworkEngine:
         return Server(self._comp_data)
     
     def run(self) -> None:
+        """
+        Listens to incoming messages in order to properly route them.
+        """
         if self.has_server:
             self._server.on("*", lambda msg_name, _, data: self._handle_received_message(MessageMetaInformation.Entrypoint.SERVER, msg_name, data))
             self._server.run()
@@ -43,6 +55,16 @@ class NetworkEngine:
             self._client.run()
             
     def send_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
+        """
+        Sends a message across the network.
+        
+        To do so, the message is first checked for validity (whether it actually `may` be sent). If it is valid, it is routed through the
+        client and/or server (the logic of this can be found in the :class:`NetworkRouter`).
+        
+        Args:
+            msg: The message to be sent.
+            msg_meta: The message meta information.
+        """
         try:
             self._router.verify_message(NetworkRouter.Direction.OUT, msg)
         except NetworkRouter.RoutingError as e:
@@ -104,16 +126,28 @@ class NetworkEngine:
     
     @property
     def has_server(self) -> bool:
+        """
+        Whether the network runs a server.
+        """
         return self._server is not None
     
     @property
-    def server(self) -> Server:
+    def server(self) -> Server | None:
+        """
+        The server instance.
+        """
         return self._server
 
     @property
     def has_client(self) -> bool:
+        """
+        Whether the network runs a client.
+        """
         return self._client is not None
     
     @property
-    def client(self) -> Client:
+    def client(self) -> Client | None:
+        """
+        The client instance.
+        """
         return self._client

@@ -1,4 +1,3 @@
-import abc
 from enum import IntEnum, auto
 
 from .. import Message
@@ -6,12 +5,29 @@ from ..meta import MessageMetaInformation
 from ....component import ComponentID
 
 
-class NetworkRouter(abc.ABC):
+class NetworkRouter:
+    """
+    Network routing rules and logic.
+    
+    When a class enters the network engine in order to be sent to remote targets, it is first checked for validity.
+    Afterwards, the router decides through which channels (local, client, server) it needs to be sent.
+    
+    Args:
+        comp_id: The component id (required to decide whether we match a given direct target).
+        has_client: Whether the network has a client instance.
+        has_server: Whether the network has a server instance.
+    """
     class Direction(IntEnum):
+        """
+        Flag telling the direction (INcoming or OUTgoing) of a message.
+        """
         IN = auto()
         OUT = auto()
         
     class RoutingError(RuntimeError):
+        """
+        Represents errors during routing validation.
+        """
         pass
     
     def __init__(self, comp_id: ComponentID, *, has_client: bool, has_server: bool):
@@ -21,6 +37,16 @@ class NetworkRouter(abc.ABC):
         self._has_server = has_server
         
     def verify_message(self, direction: Direction, msg: Message) -> None:
+        """
+        Verifies whether a message may enter the network engine.
+        
+        Args:
+            direction: The direction (IN or OUT) of the message.
+            msg: The message that wants to enter the network engine.
+
+        Raises:
+            RoutingError: In case the message is not valid to enter the network engine.
+        """
         if msg.target.is_local:
             self._verify_local_message(direction, msg)
         if msg.target.is_direct:
@@ -29,6 +55,17 @@ class NetworkRouter(abc.ABC):
             self._verify_room_message(direction, msg)
             
     def check_local_routing(self, direction: Direction, msg: Message, msg_meta: MessageMetaInformation) -> bool:
+        """
+        Checks if the message should be routed locally (dispatched via the message bus).
+        
+        Args:
+            direction: The direction (IN or OUT) of the message.
+            msg: The actual message.
+            msg_meta: The message meta information.
+
+        Returns:
+            Whether local routing should happen.
+        """
         if direction == NetworkRouter.Direction.OUT:
             return False  # Outgoing messages are never routed back locally
         elif direction == NetworkRouter.Direction.IN:
@@ -40,6 +77,17 @@ class NetworkRouter(abc.ABC):
         return False
         
     def check_client_routing(self, direction: Direction, msg: Message, msg_meta: MessageMetaInformation) -> bool:
+        """
+        Checks if the message should be routed through the client.
+
+        Args:
+            direction: The direction (IN or OUT) of the message.
+            msg: The actual message.
+            msg_meta: The message meta information.
+
+        Returns:
+            Whether client routing should happen.
+        """
         if self._has_client:
             if direction == NetworkRouter.Direction.OUT:
                 return True  # Always sent outgoing messages through the network
@@ -52,6 +100,17 @@ class NetworkRouter(abc.ABC):
         return False
         
     def check_server_routing(self, direction: Direction, msg: Message, msg_meta: MessageMetaInformation) -> bool:
+        """
+        Checks if the message should be routed through the server.
+
+        Args:
+            direction: The direction (IN or OUT) of the message.
+            msg: The actual message.
+            msg_meta: The message meta information.
+
+        Returns:
+            Whether server routing should happen.
+        """
         if self._has_server:
             if direction == NetworkRouter.Direction.OUT:
                 return True  # Always sent outgoing messages through the network

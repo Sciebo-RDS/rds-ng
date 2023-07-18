@@ -9,6 +9,12 @@ from ....component import ComponentData
 
 
 class Client(socketio.Client):
+    """
+    The client connection, based on :class:`socketio.Client`.
+    
+    Args:
+        comp_data: The global component data.
+    """
     def __init__(self, comp_data: ComponentData):
         self._comp_data = comp_data
         
@@ -28,6 +34,9 @@ class Client(socketio.Client):
         self.on("disconnect", self._on_disconnect)
 
     def run(self) -> None:
+        """
+        Automatically connects to a server if one was configured.
+        """
         if self._server_address != "":
             info(f"Connecting to {self._server_address}...", scope="client")
             
@@ -38,6 +47,14 @@ class Client(socketio.Client):
                 error(f"Failed to connect to server: {str(e)}", scope="client")
             
     def send_message(self, msg: Message) -> None:
+        """
+        Sends a message to the server (if connected).
+        
+        For this, the message will be encoded as JSON first.
+        
+        Args:
+            msg: The message to send.
+        """
         if self.connected:
             debug(f"Sending message: {msg}", scope="client")
             with self._lock:

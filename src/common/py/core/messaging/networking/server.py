@@ -10,7 +10,16 @@ from ....component import ComponentID, ComponentData
 
 
 class Server(socketio.Server):
+    """
+    The server connection, based on :class:`socketio.Server`.
+
+    Args:
+        comp_data: The global component data.
+    """
     class SendTarget(IntEnum):
+        """
+        Flag telling whether an outgoing message is only sent to a single (direct) target or spread across all connected clients.
+        """
         SPREAD = auto()
         DIRECT = auto()
     
@@ -30,16 +39,21 @@ class Server(socketio.Server):
         self.on("disconnect", self._on_disconnect)
     
     def run(self) -> None:
+        """
+        So far, does exactly nothing.
+        """
         pass
-    
-    def lookup_client(self, sid: str) -> ComponentID | None:
-        for comp_id, client_id in self._connected_components.items():
-            if client_id == sid:
-                return comp_id
-        else:
-            return None
-    
+        
     def send_message(self, msg: Message, *, skip_components: typing.List[ComponentID] | None = None) -> SendTarget:
+        """
+        Sends a message to one or more clients.
+
+        For this, the message will be encoded as JSON first.
+
+        Args:
+            msg: The message to send.
+            skip_components: A list of components (clients) to be excluded from the targets.
+        """
         debug(f"Sending message: {msg}", scope="server")
         with self._lock:
             to: str | None = self._get_message_recipient(msg)
@@ -61,11 +75,18 @@ class Server(socketio.Server):
         info("Client connected", scope="server", session=sid, component=comp_id)
     
     def _on_disconnect(self, sid: str) -> None:
-        if (comp_id := self.lookup_client(sid)) is not None:
+        if (comp_id := self._lookup_client(sid)) is not None:
             self._connected_components.pop(comp_id)
         
         info("Client disconnected", scope="server", session=sid)
-        
+    
+    def _lookup_client(self, sid: str) -> ComponentID | None:
+        for comp_id, client_id in self._connected_components.items():
+            if client_id == sid:
+                return comp_id
+        else:
+            return None
+    
     def _component_id_to_client(self, comp_id: ComponentID) -> str | None:
         return self._connected_components[comp_id] if comp_id in self._connected_components else None
     
