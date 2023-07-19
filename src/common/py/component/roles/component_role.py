@@ -26,6 +26,11 @@ class ComponentRole(abc.ABC):
         has_client: bool
         
     def __init__(self, role_name: str, *, networking_aspects: NetworkingAspects):
+        """
+        Args:
+            role_name: The name of the role.
+            networking_aspects: The networking aspects to use.
+        """
         self._name = role_name
         
         self._networking_aspects = networking_aspects

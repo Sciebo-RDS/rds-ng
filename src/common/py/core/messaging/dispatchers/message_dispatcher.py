@@ -13,7 +13,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     """
     Base message dispatcher responsible for sending messages to registered handlers.
     
-    Dispatching a message (locally) is done by passing the message to one or more registered message handlers within a :class:`Service`.
+    Dispatching a message (locally) is done by passing the message to one or more registered message handlers within a ``Service``.
     The message dispatcher also performs pre- and post-dispatching tasks and takes care of catching errors raised in a handler.
     
     Args:
@@ -33,7 +33,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     
     def pre_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
         """
-        Called to perform tasks `before` sending a message.
+        Called to perform tasks *before* sending a message.
         
         This method is called before any service-registered message handler is invoked.
         
@@ -82,7 +82,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
         
     def post_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
         """
-        Called to perform tasks `after` sending a message.
+        Called to perform tasks *after* sending a message.
 
         This method is called after any service-registered message handler have been invoked.
 

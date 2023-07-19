@@ -16,6 +16,11 @@ class MessageEmitter:
         message_bus: The global message bus to use.
     """
     def __init__(self, origin_id: ComponentID, message_bus: MessageBusProtocol):
+        """
+        Args:
+            origin_id: The component identifier of the origin of newly created messages.
+            message_bus: The global message bus to use.
+        """
         self._origin_id = origin_id
         self._message_bus = message_bus
         
@@ -30,20 +35,20 @@ class MessageEmitter:
         Emits a new command.
         
         Args:
-            cmd_type: The command type (i.e., a subclass of :class:`Command`).
+            cmd_type: The command type (i.e., a subclass of ``Command``).
             target: The destination of the message.
             done_callback: Callback when a reply for the command was received.
             fail_callback: Callback when no reply for the command was received.
             async_callbacks: Whether to execute the callbacks asynchronously in their own thread.
-            timeout: The timeout (in seconds) until a command is deemed 'not answered'. Pass 0 to disable timeouts.
-            chain: A message that acts as the 'predecessor' of the new message. Used to keep the same trace for multiple messages.
+            timeout: The timeout (in seconds) until a command is deemed *not answered*. Pass ``0`` to disable timeouts.
+            chain: A message that acts as the *predecessor* of the new message. Used to keep the same trace for multiple messages.
             **kwargs: Additional parameters.
 
         Returns:
             The newly created command.
             
         Raises:
-            RuntimeError: `cmd_type` is not a subclass of :class:`Command`.
+            RuntimeError: ``cmd_type`` is not a subclass of ``Command``.
         """
         if not issubclass(cmd_type, Command):
             raise RuntimeError(f"Tried to emit a command, but got a {cmd_type}")
@@ -64,9 +69,9 @@ class MessageEmitter:
         Most parameters, like the proper target, are extracted from the originating command.
 
         Args:
-            reply_type: The reply type (i.e., a subclass of :class:`CommandReply`).
-            command: The :class:`Command` this reply is based on.
-            success: Whether the command 'succeeded' or not (how this is interpreted depends on the command).
+            reply_type: The reply type (i.e., a subclass of ``CommandReply``).
+            command: The ``Command`` this reply is based on.
+            success: Whether the command *succeeded* or not (how this is interpreted depends on the command).
             message: Additional message to include in the reply.
             **kwargs: Additional parameters.
 
@@ -74,7 +79,7 @@ class MessageEmitter:
             The newly created command reply.
             
         Raises:
-            RuntimeError: `reply_type` is not a subclass of :class:`CommandReply`.
+            RuntimeError: ``reply_type`` is not a subclass of ``CommandReply``.
         """
         if not issubclass(reply_type, CommandReply):
             raise RuntimeError(f"Tried to emit a command reply, but got a {reply_type}")
@@ -89,16 +94,16 @@ class MessageEmitter:
         Emits a new event.
 
         Args:
-            event_type: The event type (i.e., a subclass of :class:`Event`).
+            event_type: The event type (i.e., a subclass of ``Event``).
             target: The destination of the message.
-            chain: A message that acts as the 'predecessor' of the new message. Used to keep the same trace for multiple messages.
+            chain: A message that acts as the *predecessor* of the new message. Used to keep the same trace for multiple messages.
             **kwargs: Additional parameters.
 
         Returns:
             The newly created event.
             
         Raises:
-            RuntimeError: `event_type` is not a subclass of :class:`Event`.
+            RuntimeError: ``event_type`` is not a subclass of ``Event``.
         """
         if not issubclass(event_type, Event):
             raise RuntimeError(f"Tried to emit an event, but got a {event_type}")
@@ -112,12 +117,11 @@ class MessageEmitter:
         """
         Gets how many messages of specific message types have beeen emitted.
         
-        The message emitter keeps track of how many messages of the three major types :class:`Command`, :class:`CommandReply` and
-        :class:`Event` have been emitted.
+        The message emitter keeps track of how many messages of the three major types ``Command``, ``CommandReply`` and
+        ``Event`` have been emitted.
         
         Args:
-            msg_type: The message type to get the count of. Must be either :class:`Command`, :class:`CommandReply` or
-                :class:`Event`.
+            msg_type: The message type to get the count of. Must be either ``Command``, ``CommandReply`` or ``Event``.
 
         Returns:
             The number of messages already emitted of the specified type.

@@ -8,29 +8,33 @@ class Configuration:
     """
     Encapsulates configuration settings and their fallback default values.
     
-    Settings can be loaded from a configuration file (in `TOML` format) or provided as environment variables (see below).
+    Settings can be loaded from a configuration file (in *TOML* format) or provided as environment variables (see below).
     
-    All settings are accessed by an identifier of type :class:`SettingID`, which represents settings in a path-like format;
-    `General.Debug`, for example, refers to a setting called `Debug` in the `General` section.
+    All settings are accessed by an identifier of type ``SettingID``, which represents settings in a path-like format;
+    ``General.Debug``, for example, refers to a setting called ``Debug`` in the ``General` section.
     
     A corresponding configuration file would look like this::
     
         [General]
         Debug = True
         
-    A setting identifier is translated to its corresponding environment variable name by replacing all dots (`.`) with underscores (`_`),
-    prepending a prefix (defaults to 'RDS'), as well as making everything uppercase::
+    A setting identifier is translated to its corresponding environment variable name by replacing all dots (.) with underscores (_),
+    prepending a prefix (defaults to *'RDS'*), as well as making everything uppercase::
     
-        RDS_GENERAL_DEBUG
+        General.Debug -> RDS_GENERAL_DEBUG
+        
+    Notes:
+        When accessing a setting value, a default value must *always* be present. This means that before a setting can be accessed,
+        a default value must be added using ``add_defaults``.
         
     Args:
         env_prefix: The prefix to use when generating the environment variable name of a setting.
-       
-    Notes:
-        When accessing a setting value, a default value must `always` be present. This means that before a setting can be accessed,
-        a default value must be added using :func:`add_defaults`.
     """
     def __init__(self, env_prefix: str = "RDS"):
+        """
+        Args:
+            env_prefix: The prefix to use when generating the environment variable name of a setting.
+        """
         self._settings_file = ""
         
         self._settings = {}
@@ -40,7 +44,7 @@ class Configuration:
         
     def load(self, filename: str) -> None:
         """
-        Loads settings from a TOML file.
+        Loads settings from a *TOML* file.
         
         Args:
             filename: The file to load.

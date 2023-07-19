@@ -7,7 +7,7 @@ from ...service import ServiceContextType
 
 class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
     """
-    Message dispatcher specific to :class:`CommandReply`.
+    Message dispatcher specific to ``CommandReply``.
     """
     def __init__(self):
         super().__init__(CommandReplyMetaInformation)

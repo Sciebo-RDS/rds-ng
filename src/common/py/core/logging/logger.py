@@ -6,7 +6,7 @@ class Logger(logging.Logger):
     """
     A customized logger offering advanced formatting and parameters listing.
 
-    This logger and its corresponding :class:`Formatter` display the log level, scope, as well as a parameters listing
+    This logger and its corresponding ``Formatter`` display the log level, scope, as well as a parameters listing
     in a color-rich format for easy readability.
     
     Args:
@@ -14,6 +14,11 @@ class Logger(logging.Logger):
         level: The maximum level for log entries to be displayed.
     """
     def __init__(self, name: str, level: int = logging.INFO):
+        """
+        Args:
+            name: The name of the logger.
+            level: The maximum level for log entries to be displayed.
+        """
         super().__init__(name, level)
         
         self.addHandler(self._create_default_handler())

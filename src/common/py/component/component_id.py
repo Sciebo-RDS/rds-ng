@@ -8,8 +8,8 @@ class ComponentID:
     """
     A component identifier.
     
-    Component identifiers consist of three parts: The general `type` (e.g., 'infra' for components belonging to the overall infrastructure),
-    the `component` itself (e.g., 'gate' or 'server'), and an `instance` specifier (used to distinguish multiple instances of the same component).
+    Component identifiers consist of three parts: The general ``type`` (e.g., *'infra'* for components belonging to the overall infrastructure),
+    the ``component`` itself (e.g., *'gate'* or *'server'*), and an ``instance`` specifier (used to distinguish multiple instances of the same component).
     
     Attributes:
         type: The component type.
@@ -28,7 +28,7 @@ class ComponentID:
             other: The component identifier to compare this one to.
 
         Notes:
-            The `instance` specifiers are only compared if both are not ``None``.
+            The ``instance`` specifiers are only compared if both are not ``None``.
             
         Returns:
             Whether both identifiers are equal.
@@ -45,15 +45,15 @@ class ComponentID:
     @staticmethod
     def from_string(s: str) -> 'ComponentID':
         """
-        Creates a new :class:`ComponentID` from a string.
+        Creates a new ``ComponentID`` from a string.
         
-        The string must be of the form '<type>/<component>/<instance>' or '<type>/<component>'.
+        The string must be of the form ``<type>/<component>/<instance>`` or ``<type>/<component>``.
         
         Args:
             s: The component identifier string.
 
         Returns:
-            The newly created :class:`ComponentID`.
+            The newly created ``ComponentID``.
             
         Raises:
             ValueError: If the passed string is invalid.

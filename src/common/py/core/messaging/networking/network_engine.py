@@ -21,6 +21,11 @@ class NetworkEngine:
          message_bus: The global message bus.
     """
     def __init__(self, comp_data: ComponentData, message_bus: MessageBusProtocol):
+        """
+        Args:
+            comp_data: The global component data.
+            message_bus: The global message bus.
+        """
         self._comp_data = comp_data
         
         self._message_bus = message_bus
@@ -58,8 +63,8 @@ class NetworkEngine:
         """
         Sends a message across the network.
         
-        To do so, the message is first checked for validity (whether it actually `may` be sent). If it is valid, it is routed through the
-        client and/or server (the logic of this can be found in the :class:`NetworkRouter`).
+        To do so, the message is first checked for validity (whether it actually *may* be sent). If it is valid, it is routed through the
+        client and/or server (the logic of this can be found in ``NetworkRouter``).
         
         Args:
             msg: The message to be sent.

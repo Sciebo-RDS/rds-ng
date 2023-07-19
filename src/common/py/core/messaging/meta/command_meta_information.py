@@ -7,7 +7,7 @@ from ..command_reply import CommandDoneCallback, CommandFailCallback
 @dataclasses.dataclass(frozen=True, kw_only=True)
 class CommandMetaInformation(MessageMetaInformation):
     """
-    Message meta information specific to :class:`Command`.
+    Message meta information specific to ``Command``.
     
     Attributes:
         requires_reply: Commands always require a reply.

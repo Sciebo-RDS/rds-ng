@@ -4,7 +4,7 @@ from semantic_version import Version
 
 class MetaInformation:
     """
-    Accesses meta information about the entire project and its various component stored in a JSON file.
+    Accesses meta information about the entire project and its various component stored in a *JSON* file.
     
     The JSON file needs to be structured like this::
     
@@ -29,9 +29,11 @@ class MetaInformation:
     Raises:
         ValueError: If the information file couldn't be loaded.
     """
-    
-    """ This class is used to access the project meta information stored in a JSON file. """
     def __init__(self, info_file: str = "/config/meta-information.json"):
+        """
+        Args:
+            info_file: The JSON file to load the meta information from.
+        """
         import os.path
         if info_file == "" or not os.path.exists(info_file):
             raise ValueError("Invalid meta information file given")
@@ -87,7 +89,7 @@ class MetaInformation:
         """
         Retrieves the meta information stored for a specific component.
         
-        This meta information includes the `name` of the component, as well as its `directory` within the code structure (rooted at ``/src``).
+        This meta information includes the ``name`` of the component, as well as its ``directory`` within the code structure (rooted at ``/src``).
         
         Args:
             comp: The name of the component.

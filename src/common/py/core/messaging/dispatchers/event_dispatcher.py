@@ -9,7 +9,7 @@ from ...service import ServiceContextType
 
 class EventDispatcher(MessageDispatcher[Event]):
     """
-    Message dispatcher specific to :class:`Event`.
+    Message dispatcher specific to ``Event``.
     """
     def __init__(self):
         super().__init__(EventMetaInformation)

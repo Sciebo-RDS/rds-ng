@@ -16,21 +16,28 @@ class Component:
     """
     Base class for all project components.
     
-    Components are always based on this class. It mainly provides an instance of the :class:`Core`, but also stores general information
+    Components are always based on this class. It mainly provides an instance of the ``Core``, but also stores general information
     about the component itself and the entire project.
     
-    When writing a component, always create a new subclass that extends :class:`Component`. Pass all the necessary information to its
-    constructor (see ``Args``) and, after doing further setup steps, call its :func:`run` method.
+    When writing a component, always create a new subclass that extends ``Component``. Pass all the necessary information to its
+    constructor (see ``Args``) and, after doing further setup steps, call its ``run`` method.
     
     Args:
         comp_id: The identifier of this component.
         role: The role of this component.
-        module_name: The component module name; simply pass ``__name__`` here).
+        module_name: The component module name; simply pass ``__name__`` here.
         config_file: The configuration file to load.
     """
     
     """ Base application class for all RDS components. """
     def __init__(self, comp_id: ComponentID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
+        """
+        Args:
+            comp_id: The identifier of this component.
+            role: The role of this component.
+            module_name: The component module name; simply pass ``__name__`` here).
+            config_file: The configuration file to load.
+        """
         config = self._create_config(config_file)
         comp_id = self._sanitize_component_id(comp_id, config)
         
@@ -70,7 +77,7 @@ class Component:
         
         Args:
             name: The name of the service.
-            context_type: Can be used to override the default :class:`ServiceContext` type. All message handlers
+            context_type: Can be used to override the default ``ServiceContext`` type. All message handlers
                 associated with the new service will then receive instances of this type for their service context.
 
         Returns:
@@ -118,7 +125,7 @@ class Component:
     @property
     def core(self) -> Core:
         """
-        The :class:`Core` used by this component.
+        The global ``Core`` instance.
         """
         return self._core
     

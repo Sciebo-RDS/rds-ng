@@ -20,6 +20,10 @@ class MessageRouter:
         pass
     
     def __init__(self, comp_id: ComponentID):
+        """
+        Args:
+            comp_id: The component id (required to decide whether we match a given direct target).
+        """
         self._comp_id = comp_id
         
     def verify_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:

@@ -11,8 +11,8 @@ class CommandReply(Message):
     """
     A command reply message.
 
-    Every command needs to receive a reply in the form of a :class:`CommandReply` message. The reply contains
-    information about its `success`, as well as a text message which is usually used to describe reasons for
+    Every command needs to receive a reply in the form of a ``CommandReply`` message. The reply contains
+    information about its ``success``, as well as a text message which is usually used to describe reasons for
     failures.
 
     Attributes:

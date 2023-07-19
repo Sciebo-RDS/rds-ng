@@ -30,7 +30,7 @@ class MessageTypesCatalog:
     @staticmethod
     def find_type(name: MessageName) -> type[MessageType] | None:
         """
-        Finds the message type associated with the given `name`.
+        Finds the message type associated with the given ``name``.
         
         Args:
             name: The message name.

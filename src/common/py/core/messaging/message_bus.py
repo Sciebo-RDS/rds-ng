@@ -19,8 +19,8 @@ class MessageBus:
     it also sends messages across the network to other components if necessary. The message bus on the remote side will then decide what to do with the incoming message:
     Dispatch it locally there, send it to yet another component, or just ignore it.
     
-    Message handlers are always registered through a :class:`Service`. When a message gets dispatched locally by the bus, it will call any handlers associated with the
-    message (via its name). If a message needs to be sent to another component, the bus will invoke the :class:`NetworkEngine` to do so.
+    Message handlers are always registered through a ``Service``. When a message gets dispatched locally by the bus, it will call any handlers associated with the
+    message (via its name). If a message needs to be sent to another component, the bus will invoke the ``NetworkEngine`` to do so.
     
     To be error tolerant, any exceptions that arise during message handling will be logged but won't result in program termination.
     
@@ -30,9 +30,11 @@ class MessageBus:
     Notes:
         The message bus is thread-safe.
     """
-    
-    """ A thread-safe message bus for dispatching messages. """
     def __init__(self, comp_data: ComponentData):
+        """
+        Args:
+            comp_data: The global component data.
+        """
         from .dispatchers import CommandDispatcher, CommandReplyDispatcher, EventDispatcher
         from .command import Command
         from .command_reply import CommandReply
@@ -101,8 +103,8 @@ class MessageBus:
         """
         Dispatches a message.
         
-        To do so, the message is first checked for validity (whether it actually `may` be dispatched). If it is valid,
-        the :class:`MessageRouter` will determine if it needs to be dispatched to another component or locally (or both).
+        To do so, the message is first checked for validity (whether it actually *may* be dispatched). If it is valid,
+        the ``MessageRouter`` will determine if it needs to be dispatched to another component or locally (or both).
         
         Args:
             msg: The message to be dispatched.

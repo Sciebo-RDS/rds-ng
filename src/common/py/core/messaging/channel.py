@@ -9,9 +9,9 @@ class Channel:
     """
     The target of a message.
     
-    Message targets are represented by so-called `channels`. These can be 'local' for messages that will only
-    be dispatched locally and not across the network, 'direct' for specific (remote) targets, as well as general
-    'rooms' consisting of arbitrary participants (this is still WIP and may even be removed later).
+    Message targets are represented by so-called *channels*. These can be *local* for messages that will only
+    be dispatched locally and not across the network, *direct* for specific (remote) targets, as well as general
+    *rooms* consisting of arbitrary participants (this is still WIP and may even be removed later).
     
     Attributes:
         type: The channel type.
@@ -31,7 +31,7 @@ class Channel:
     @property
     def target_id(self) -> ComponentID | None:
         """
-        Generates a :class:`ComponentID` from the target of this channel.
+        Generates a ``ComponentID`` from the target of this channel.
         
         Returns:
             The component ID of the target, if any.

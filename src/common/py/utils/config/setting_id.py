@@ -9,11 +9,11 @@ class SettingID:
     
     Settings are specified by a category they belong to, as well as their actual name.
     
-    Categories support sub-categories by separating them using dots (`.`);
+    Categories support sub-categories by separating them using dots (.);
     when represented as a string, all component tokens are separated by dots.
     
     Attributes:
-        category: The category name. Sub-categories can be separated by dots (`.`).
+        category: The category name. Sub-categories can be separated by dots (.).
         name: The name of the setting.
     """
     category: str | None
@@ -32,8 +32,8 @@ class SettingID:
         """
         Generates an environment variable name for this identifier.
         
-        A setting identifier is translated to its corresponding environment variable name by replacing all dots (`.`) with underscores (`_`),
-        prepending a `prefix`, as well as making everything uppercase.
+        A setting identifier is translated to its corresponding environment variable name by replacing all dots (.) with underscores (_),
+        prepending a ``prefix``, as well as making everything uppercase.
     
         Args:
             prefix: The prefix to prepend.

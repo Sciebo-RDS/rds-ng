@@ -55,7 +55,7 @@ class MessageMetaInformationList:
                 
     def find(self, unique: Trace) -> MessageMetaInformation | None:
         """
-        Finds an entry associated with the given `unique`.
+        Finds an entry associated with the given ``unique``.
         
         Args:
             unique: The unique trace identifying the message.

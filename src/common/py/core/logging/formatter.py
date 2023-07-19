@@ -29,7 +29,6 @@ class Formatter(logging.Formatter):
         
         Returns:
             The formatted text.
-
         """
         scope = self._get_scope(record)
         params = [f"{self._color_wrap(k, self._colors['params']['name'], italic=True)}={self._color_wrap(str(v), self._colors['params']['value'], italic=True)}" for k, v in self._get_extra_params(record).items()]

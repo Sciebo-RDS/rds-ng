@@ -8,13 +8,17 @@ class LoggerProxy:
     A proxy to automatically pass extra parameters to a logger.
     
     This class allows us to store additional, fixed parameters passed to an existing logger, avoiding the need to use
-    a new logger instance. It offers the same public interface as an actual :class:`Logger` and can thus be used as a
-    'real' logger.
+    a new logger instance. It offers the same public interface as an actual ``Logger`` and can thus be used like a
+    *real* logger.
     
     Args:
         logger: The logger to use.
     """
     def __init__(self, logger: Logger):
+        """
+        Args:
+            logger: The logger to use.
+        """
         self._logger = logger
         
         self._auto_params: typing.Dict[str, typing.Any] = {}
@@ -31,7 +35,7 @@ class LoggerProxy:
         
     def remove_param(self, name: str) -> None:
         """
-        Removes a parameter that has been added previously via :func:`add_param`.
+        Removes a parameter that has been added previously.
         """
         try:
             self._auto_params.pop(name)

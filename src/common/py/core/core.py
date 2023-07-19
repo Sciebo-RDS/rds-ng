@@ -8,21 +8,26 @@ from ..component import ComponentData
 
 class Core:
     """
-    The main 'underlying basis' of any component.
+    The main *underlying basis* of any component.
     
-    The :class:`Core` brings together all portions and aspects that build the underlying foundation of every component,
-    including the :class:`MessageBus`.
+    The ``Core`` brings together all portions and aspects that build the underlying foundation of every component,
+    including the ``MessageBus``.
     
-    The core can be regarded as a facade to the 'inner structure' of a component. It only offers a small number of public
+    The core can be regarded as a facade to the *inner structure* of a component. It only offers a small number of public
     methods and is accessed from the outside very rarely.
     
-    An instance of this class is always created when creating a :class:`Component`; it should never be instantiated otherwise.
+    An instance of this class is always created when creating a ``Component``; it should never be instantiated otherwise.
     
     Args:
-        module_name: The module name used for `Flask` initialization.
+        module_name: The module name used for *Flask* initialization.
         comp_data: The component data used to access common component information.
     """
     def __init__(self, module_name: str, comp_data: ComponentData):
+        """
+        Args:
+            module_name: The module name used for *Flask* initialization.
+            comp_data: The component data used to access common component information.
+        """
         info("Initializing core...", scope="core")
         
         self._comp_data = comp_data
@@ -60,7 +65,7 @@ class Core:
         """
         Registers a new service with the global message bus.
         
-        Services are always created through :class:`Component`, so you should rarely (if ever)
+        Services are always created through ``Component``, so you should rarely (if ever)
         need to call this method directly.
         
         Args:
@@ -92,14 +97,14 @@ class Core:
     @property
     def message_bus(self) -> MessageBus:
         """
-        The global :class:`MessageBus` instance.
+        The global ``MessageBus`` instance.
         """
         return self._message_bus
     
     @property
     def flask(self) -> flask.Flask:
         """
-        The global :class:`Flask` instance.
+        The global ``Flask`` instance.
         """
         return self._flask
         

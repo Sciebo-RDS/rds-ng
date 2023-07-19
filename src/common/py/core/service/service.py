@@ -14,14 +14,14 @@ class Service:
     """
     Base service class providing easy message handler mapping.
     
-    A service can be seen as the bridge between the inner workings of a component (represented by :class:`Core`) and the
+    A service can be seen as the bridge between the inner workings of a component (represented by a ``Core``) and the
     outside component domain.
     
     Services register the various message handlers that are called when a certain message is received by the message bus and
-    dispatched locally. They also create instances of :class:`ServiceContext` (or a subclass) that represent a single 'unit of work'
+    dispatched locally. They also create instances of ``ServiceContext`` (or a subclass) that represent a single *unit of work*
     when executing a message handler.
     
-    Message handlers are defined using the :func:`message_handler` decorator, as can be seen in this example (`svc` being a :class:`Service` instance)::
+    Message handlers are defined using the ``message_handler`` decorator, as can be seen in this example (``svc`` being a ``Service`` instance)::
         
         @svc.message_handler("msg/event", Event)
         def h(msg: Event, ctx: ServiceContext) -> None:
@@ -34,6 +34,13 @@ class Service:
         context_type: The type to use when creating a service context.
     """
     def __init__(self, comp_id: ComponentID, name: str, *, message_bus: MessageBusProtocol, context_type: type[ServiceContextType] = ServiceContext):
+        """
+        Args:
+            comp_id: The global component identifier.
+            name: The service name.
+            message_bus: The global message bus.
+            context_type: The type to use when creating a service context.
+        """
         self._component_id = comp_id
         self._name = name
         
@@ -52,7 +59,7 @@ class Service:
                 ctx.logger.info(f"EVENT HANDLER CALLED")
         
         Args:
-            fltr: The message name filter to match against; wildcards (`*`) are supported for more generic handlers.
+            fltr: The message name filter to match against; wildcards (*) are supported for more generic handlers.
             message_type: The type of the message.
             is_async: Whether to execute the handler asynchronously in its own thread.
         """
@@ -67,7 +74,7 @@ class Service:
         Gets a list of all message handlers for the specified name.
         
         Args:
-            msg_name: The message name filter to match against; wildcards (`*`) are supported for more generic handlers.
+            msg_name: The message name filter to match against; wildcards (*) are supported for more generic handlers.
 
         Returns:
             A list of all matching message handlers.

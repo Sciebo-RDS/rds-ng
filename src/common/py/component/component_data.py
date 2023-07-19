@@ -18,9 +18,7 @@ class ComponentData:
     Attributes:
         comp_id: The component identifier.
         role: The component role.
-        
         config: The configuration.
-        
         title: The project title.
         name: The component name.
         version: The project version.

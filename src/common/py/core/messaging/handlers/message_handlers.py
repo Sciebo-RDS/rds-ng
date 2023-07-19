@@ -30,9 +30,9 @@ class MessageHandlers:
             
     def find_handlers(self, msg_name: MessageName) -> MessageHandlerMappings:
         """
-        Finds all handlers that fit the given `msg_name`.
+        Finds all handlers that fit the given ``msg_name``.
         
-        The message name filter can be a complete message name, or a wildcard pattern using asterisks (`*`).
+        The message name filter can be a complete message name, or a wildcard pattern using asterisks (*).
         
         Args:
             msg_name: The message name (pattern).

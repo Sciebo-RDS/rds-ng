@@ -31,6 +31,12 @@ class NetworkRouter:
         pass
     
     def __init__(self, comp_id: ComponentID, *, has_client: bool, has_server: bool):
+        """
+        Args:
+            comp_id: The component id (required to decide whether we match a given direct target).
+            has_client: Whether the network has a client instance.
+            has_server: Whether the network has a server instance.
+        """
         self._comp_id = comp_id
         
         self._has_client = has_client
@@ -41,7 +47,7 @@ class NetworkRouter:
         Verifies whether a message may enter the network engine.
         
         Args:
-            direction: The direction (IN or OUT) of the message.
+            direction: The direction (*IN* or *OUT*) of the message.
             msg: The message that wants to enter the network engine.
 
         Raises:
@@ -59,7 +65,7 @@ class NetworkRouter:
         Checks if the message should be routed locally (dispatched via the message bus).
         
         Args:
-            direction: The direction (IN or OUT) of the message.
+            direction: The direction (*IN* or *OUT*) of the message.
             msg: The actual message.
             msg_meta: The message meta information.
 
@@ -81,7 +87,7 @@ class NetworkRouter:
         Checks if the message should be routed through the client.
 
         Args:
-            direction: The direction (IN or OUT) of the message.
+            direction: The direction (*IN* or *OUT*) of the message.
             msg: The actual message.
             msg_meta: The message meta information.
 
@@ -104,7 +110,7 @@ class NetworkRouter:
         Checks if the message should be routed through the server.
 
         Args:
-            direction: The direction (IN or OUT) of the message.
+            direction: The direction (*IN* or *OUT*) of the message.
             msg: The actual message.
             msg_meta: The message meta information.
 

@@ -3,7 +3,7 @@ from typing import Protocol
 
 class LoggerProtocol(Protocol):
     """
-    Defines the general interface for our extended :class:`Logger`.
+    Defines the general interface for our extended ``Logger``.
     """
     def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None: ...
     def info(self, msg: str, *, scope: str | None = None, **kwargs) -> None: ...

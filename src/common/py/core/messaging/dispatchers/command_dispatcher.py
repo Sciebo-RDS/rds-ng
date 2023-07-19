@@ -10,7 +10,7 @@ from ...service import ServiceContextType
 
 class CommandDispatcher(MessageDispatcher[Command]):
     """
-    Message dispatcher specific to :class:`Command`.
+    Message dispatcher specific to ``Command``.
     """
     def __init__(self):
         super().__init__(CommandMetaInformation)

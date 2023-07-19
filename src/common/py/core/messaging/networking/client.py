@@ -10,12 +10,16 @@ from ....component import ComponentData
 
 class Client(socketio.Client):
     """
-    The client connection, based on :class:`socketio.Client`.
+    The client connection, based on ``socketio.Client``.
     
     Args:
         comp_data: The global component data.
     """
     def __init__(self, comp_data: ComponentData):
+        """
+        Args:
+            comp_data: The global component data.
+        """
         self._comp_data = comp_data
         
         from ....settings import NetworkClientSettingIDs
@@ -50,7 +54,7 @@ class Client(socketio.Client):
         """
         Sends a message to the server (if connected).
         
-        For this, the message will be encoded as JSON first.
+        For this, the message will be encoded as *JSON* first.
         
         Args:
             msg: The message to send.

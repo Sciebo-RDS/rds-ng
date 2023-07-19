@@ -51,7 +51,7 @@ class Message(abc.ABC):
         Defines a new message.
         
         The decorator takes care of wrapping the new class as a dataclass, passing the correct message
-        name to its constructor. It also registers the new message type in the global :class:`MessageTypesCatalog`.
+        name to its constructor. It also registers the new message type in the global ``MessageTypesCatalog``.
         
         Examples::
         

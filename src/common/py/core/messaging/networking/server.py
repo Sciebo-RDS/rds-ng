@@ -11,7 +11,7 @@ from ....component import ComponentID, ComponentData
 
 class Server(socketio.Server):
     """
-    The server connection, based on :class:`socketio.Server`.
+    The server connection, based on ``socketio.Server``.
 
     Args:
         comp_data: The global component data.
@@ -24,6 +24,10 @@ class Server(socketio.Server):
         DIRECT = auto()
     
     def __init__(self, comp_data: ComponentData):
+        """
+        Args:
+            comp_data: The global component data.
+        """
         self._comp_data = comp_data
         
         super().__init__(async_mode="gevent_uwsgi", cors_allowed_origins=self._get_allowed_origins(), cors_credentials=True)
@@ -48,7 +52,7 @@ class Server(socketio.Server):
         """
         Sends a message to one or more clients.
 
-        For this, the message will be encoded as JSON first.
+        For this, the message will be encoded as *JSON* first.
 
         Args:
             msg: The message to send.
