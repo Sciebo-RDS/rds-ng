@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
-from ...component.component_id import ComponentID  # Avoid weird cyclic imports by directly importing ComponentID from its module
+from ...component import ComponentID
 
 
 @dataclass(frozen=True)
