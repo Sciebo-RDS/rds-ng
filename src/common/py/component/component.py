@@ -6,9 +6,11 @@ import socketio
 from .component_data import ComponentData
 from .component_id import ComponentID
 from .roles.component_role import ComponentRole
-from ..core.service import Service, ServiceContext, ServiceContextType
 from ..core.logging import info, warning
 from ..utils.config import Configuration
+
+if typing.TYPE_CHECKING:
+    from ..core import Core  # We can't import this regularely due to cyclic imports
 
 
 class Component:
@@ -68,23 +70,7 @@ class Component:
         """
         # Note: This is the only dependency on socket.io outside the network engine, as we need to use their app logic
         return socketio.WSGIApp(self._core.message_bus.network.server, self._core.flask)
-    
-    def create_service(self, name: str, *, context_type: type[ServiceContextType] = ServiceContext) -> Service:
-        """
-        Creates a new service.
-        
-        Args:
-            name: The name of the service.
-            context_type: Can be used to override the default ``ServiceContext`` type. All message handlers
-                associated with the new service will then receive instances of this type for their service context.
-
-        Returns:
-            The newly created service.
-        """
-        svc = Service(self._data.comp_id, name, message_bus=self._core.message_bus, context_type=context_type)
-        self._core.register_service(svc)
-        return svc
-    
+   
     def run(self) -> None:
         """
         Starts the component's execution cycles.
@@ -112,6 +98,13 @@ class Component:
             return ComponentID(comp_id.type, comp_id.component, config.value(ComponentSettingIDs.INSTANCE))
         else:
             return comp_id
+    
+    @property
+    def core(self) -> 'Core':
+        """
+        The global ``Core`` instance.
+        """
+        return self._core
     
     @property
     def config(self) -> Configuration:

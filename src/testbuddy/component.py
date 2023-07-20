@@ -6,7 +6,7 @@ from common.py.core.service import ServiceContext
 comp = Component(ComponentID("infra", "testbuddy"), LeafRole(), module_name=__name__)
 app = comp.app()
 
-svc = comp.create_service("Test buddy service")
+s = comp.core.create_service("Test buddy service")
 
 comp.run()
 
@@ -26,9 +26,6 @@ class MyCommand(Command):
 class MyCommandReply(CommandReply):
     le_reply: str = ""
     
-    
-s = comp.create_service("Test service")
-
 
 @s.message_handler("msg/event", MyEvent)
 def h(msg: MyEvent, ctx: ServiceContext) -> None:
@@ -49,5 +46,5 @@ def h2_fail(reason: CommandReply.FailType, message: str) -> None:
     print("I FAILED :(", reason, message)
 
     
-svc.message_emitter.emit_event(MyEvent, Channel.direct("infra/gate/default"), some_cool_text="Wheeeee", a_number=666)
-# svc.message_emitter.emit_command(MyCommand, Channel.direct("infra/gate/default"), done_callback=h2_done, fail_callback=h2_fail, async_callbacks=True, timeout=3, le_befehl="ATTAAAACK!")
+s.message_emitter.emit_event(MyEvent, Channel.direct("infra/gate/default"), some_cool_text="Wheeeee", a_number=666)
+# s.message_emitter.emit_command(MyCommand, Channel.direct("infra/gate/default"), done_callback=h2_done, fail_callback=h2_fail, async_callbacks=True, timeout=3, le_befehl="ATTAAAACK!")
