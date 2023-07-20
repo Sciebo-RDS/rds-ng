@@ -3,7 +3,7 @@ import flask
 from .logging import info, debug, set_level
 from .messaging import MessageBus
 from .service import Service
-from ..component import ComponentData
+from ..component.data import ComponentData
 
 
 class Core:

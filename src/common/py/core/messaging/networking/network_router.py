@@ -2,7 +2,7 @@ from enum import IntEnum, auto
 
 from .. import Message
 from ..meta import MessageMetaInformation
-from ....component import ComponentID
+from ....component.data import ComponentID
 
 
 class NetworkRouter:

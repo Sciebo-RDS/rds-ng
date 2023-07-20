@@ -6,7 +6,7 @@ import socketio
 
 from .. import Message
 from ...logging import info, warning, debug
-from ....component import ComponentID, ComponentData
+from ....component.data import ComponentID, ComponentData
 
 
 class Server(socketio.Server):

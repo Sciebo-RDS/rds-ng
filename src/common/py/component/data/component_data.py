@@ -3,8 +3,8 @@ import dataclasses
 from semantic_version import Version
 
 from .component_id import ComponentID
-from .roles.component_role import ComponentRole
-from ..utils.config import Configuration
+from ..roles.component_role import ComponentRole
+from ...utils.config import Configuration
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)

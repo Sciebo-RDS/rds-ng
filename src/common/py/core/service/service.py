@@ -5,7 +5,7 @@ from .service_context import ServiceContextType, ServiceContext
 from ..logging import LoggerProtocol
 from ..messaging import Message, MessageName, MessageType, MessageBusProtocol
 from ..messaging.handlers import MessageHandlers, MessageHandler, MessageHandlerMappings
-from ...component import ComponentID
+from ...component.data import ComponentID
 from ...utils.config import Configuration
 
 

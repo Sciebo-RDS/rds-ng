@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
-from ...component import ComponentID
+from ...component.data import ComponentID
 
 
 @dataclass(frozen=True)

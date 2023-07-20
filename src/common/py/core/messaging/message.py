@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
 
 from .channel import Channel
-from ...component import ComponentID
+from ...component.data import ComponentID
 
 MessageName = str
 Trace = uuid.UUID
