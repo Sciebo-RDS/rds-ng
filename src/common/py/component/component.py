@@ -120,9 +120,6 @@ class Component:
         """
         return self._data
     
-    def __str__(self) -> str:
-        return f"{self._data.title} v{self._data.version}: {self._data.name} ({self._data.comp_id})"
-    
     def _add_default_routes(self) -> None:
         # The main entry point (/) returns basic component info as a JSON string
         self._core.flask.add_url_rule("/", view_func=lambda: json.dumps({
@@ -130,3 +127,6 @@ class Component:
             "name": self._data.name,
             "version": str(self._data.version),
         }))
+
+    def __str__(self) -> str:
+        return f"{self._data.title} v{self._data.version}: {self._data.name} ({self._data.comp_id})"

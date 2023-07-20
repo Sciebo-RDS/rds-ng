@@ -63,7 +63,7 @@ class Core:
     
     def create_service(self, name: str, *, context_type: type[ServiceContextType] = ServiceContext) -> Service:
         """
-        Creates a new service.
+        Creates and registers a new service.
 
         Args:
             name: The name of the service.
