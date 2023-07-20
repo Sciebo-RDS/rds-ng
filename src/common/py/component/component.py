@@ -6,7 +6,6 @@ import socketio
 from .component_data import ComponentData
 from .component_id import ComponentID
 from .roles.component_role import ComponentRole
-from ..core import Core
 from ..core.service import Service, ServiceContext, ServiceContextType
 from ..core.logging import info, warning
 from ..utils.config import Configuration
@@ -16,7 +15,7 @@ class Component:
     """
     Base class for all project components.
     
-    Components are always based on this class. It mainly provides an instance of the ``Core``, but also stores general information
+    Components are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
     about the component itself and the entire project.
     
     When writing a component, always create a new subclass that extends ``Component``. Pass all the necessary information to its
@@ -57,6 +56,7 @@ class Component:
         info(str(self), role=self._data.role.name)
         info("-- Starting component...")
         
+        from ..core import Core
         self._core = Core(module_name, self._data)
         
         self._add_default_routes()
@@ -122,13 +122,6 @@ class Component:
         """
         return self._data.config
 
-    @property
-    def core(self) -> Core:
-        """
-        The global ``Core`` instance.
-        """
-        return self._core
-    
     @property
     def data(self) -> ComponentData:
         """

@@ -1,4 +1,3 @@
-import typing
 from typing import Protocol
 
 from .message import Message
