@@ -2,7 +2,7 @@ import typing
 
 from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply, CommandDoneCallback, CommandFailCallback
 from ..messaging.meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
-from ...component.data import ComponentID
+from ...component import ComponentID
 
 
 class MessageEmitter:

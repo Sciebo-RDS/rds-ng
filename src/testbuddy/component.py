@@ -1,5 +1,4 @@
-from common.py.component import Component
-from common.py.component.data import ComponentID
+from common.py.component import Component, ComponentID
 from common.py.component.roles import LeafRole
 from common.py.core.messaging import Event, Channel, Message, Command, CommandReply
 from common.py.core.service import ServiceContext

@@ -6,7 +6,7 @@ from .network_router import NetworkRouter
 from .server import Server
 from .. import Message, MessageBusProtocol, MessageType, Command, CommandReply, Event
 from ..meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
-from ....component.data import ComponentData, ComponentID
+from ....component import ComponentData, ComponentID
 
 
 class NetworkEngine:

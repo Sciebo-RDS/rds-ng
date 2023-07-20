@@ -3,7 +3,8 @@ import typing
 
 import socketio
 
-from .data import ComponentID, ComponentData
+from .component_data import ComponentData
+from .component_id import ComponentID
 from .roles.component_role import ComponentRole
 from ..core.service import Service, ServiceContext, ServiceContextType
 from ..core.logging import info, warning
@@ -26,6 +27,8 @@ class Component:
         module_name: The component module name; simply pass ``__name__`` here.
         config_file: The configuration file to load.
     """
+    
+    """ Base application class for all RDS components. """
     def __init__(self, comp_id: ComponentID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
         """
         Args:
@@ -37,7 +40,7 @@ class Component:
         config = self._create_config(config_file)
         comp_id = self._sanitize_component_id(comp_id, config)
         
-        from .data.meta_information import MetaInformation
+        from .meta_information import MetaInformation
         meta_info = MetaInformation()
         comp_info = meta_info.get_component(comp_id.component)
         

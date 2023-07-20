@@ -8,7 +8,7 @@ from .meta import MessageMetaInformationType
 from .networking import NetworkEngine
 from ..logging import LoggerProxy, default_logger, error, debug
 from ..service import Service, ServiceContextType
-from ...component.data import ComponentData
+from ...component import ComponentData
 
 
 class MessageBus:

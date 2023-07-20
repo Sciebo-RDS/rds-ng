@@ -5,7 +5,7 @@ import socketio
 
 from .. import Message
 from ...logging import info, warning, error, debug
-from ....component.data import ComponentData
+from ....component import ComponentData
 
 
 class Client(socketio.Client):
