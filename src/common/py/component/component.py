@@ -27,8 +27,6 @@ class Component:
         module_name: The component module name; simply pass ``__name__`` here.
         config_file: The configuration file to load.
     """
-    
-    """ Base application class for all RDS components. """
     def __init__(self, comp_id: ComponentID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
         """
         Args:
