@@ -40,4 +40,4 @@ jobs:
       - name: Lint with pylint
       # FIXME: configure pylint and remove `--exit-zero`
         run: |
-          pylint --recursive=y --exit-zero .
+          pylint --recursive=y --disable=trailing-whitespace,import-outside-toplevel,line-too-long,too-many-arguments,too-few-public-methods .
