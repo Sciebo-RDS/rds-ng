@@ -24,6 +24,9 @@ class MessageBus:
     
     To be error tolerant, any exceptions that arise during message handling will be logged but won't result in program termination.
     
+    Args:
+        comp_data: The global component data.
+    
     Notes:
         The message bus is thread-safe.
     """
@@ -109,8 +112,8 @@ class MessageBus:
         """
         try:
             self._router.verify_message(msg, msg_meta)
-        except MessageRouter.RoutingError as exc:
-            error(f"A routing error occurred: {str(exc)}", scope="bus", message=str(msg))
+        except MessageRouter.RoutingError as e:
+            error(f"A routing error occurred: {str(e)}", scope="bus", message=str(msg))
         else:
             if self._router.check_remote_routing(msg, msg_meta):
                 self._remote_dispatch(msg, msg_meta)
@@ -145,9 +148,9 @@ class MessageBus:
                 act_msg = typing.cast(msg_type, msg)
                 ctx = self._create_context(msg, svc)
                 dispatcher.dispatch(act_msg, msg_meta, handler, ctx)
-            except Exception as exc:
+            except Exception as e:
                 import traceback
-                error(f"An exception occurred while processing a message: {str(exc)}", scope="bus", message=str(msg), exception=type(exc))
+                error(f"An exception occurred while processing a message: {str(e)}", scope="bus", message=str(msg), exception=type(e))
                 debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")
 
     def _create_context(self, msg: Message, svc: Service) -> ServiceContextType:

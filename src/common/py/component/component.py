@@ -1,8 +1,6 @@
 import json
 import typing
 
-import socketio
-
 from .component_data import ComponentData
 from .roles import ComponentRole
 from ..core.logging import info, warning
@@ -62,8 +60,7 @@ class Component:
         Returns:
             The WSGI application object.
         """
-        # Note: This is the only dependency on socket.io outside the network engine, as we need to use their app logic
-        return socketio.WSGIApp(self._core.message_bus.network.server, self._core.flask)
+        return self._data.role.runtime_aspects.runtime_app_type(self._core.message_bus.network.server, self._core.flask)
    
     def run(self) -> None:
         """
