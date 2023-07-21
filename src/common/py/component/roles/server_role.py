@@ -10,4 +10,3 @@ class ServerRole(ComponentRole):
             "Server",
             networking_aspects=ComponentRole.NetworkingAspects(has_client=False, has_server=True)
         )
-

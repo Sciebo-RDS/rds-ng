@@ -46,7 +46,6 @@ class Server(socketio.Server):
         """
         So far, does exactly nothing.
         """
-        pass
         
     def send_message(self, msg: Message, *, skip_components: typing.List[UnitID] | None = None) -> SendTarget:
         """
@@ -60,21 +59,21 @@ class Server(socketio.Server):
         """
         debug(f"Sending message: {msg}", scope="server")
         with self._lock:
-            to: str | None = self._get_message_recipient(msg)
-            self.emit(msg.name, data=msg.to_json(), to=to, skip_sid=self._component_ids_to_clients(skip_components))
-            return Server.SendTarget.DIRECT if msg.target.is_direct and to is not None else Server.SendTarget.SPREAD
+            send_to: str | None = self._get_message_recipient(msg)
+            self.emit(msg.name, data=msg.to_json(), to=send_to, skip_sid=self._component_ids_to_clients(skip_components))
+            return Server.SendTarget.DIRECT if msg.target.is_direct and send_to is not None else Server.SendTarget.SPREAD
     
     def _on_connect(self, sid: str, _, auth: typing.Dict[str, typing.Any]) -> None:
         try:
             comp_id = UnitID.from_string(auth["component_id"])
-        except:
+        except Exception as exc:
             from socketio.exceptions import ConnectionRefusedError
-            raise ConnectionRefusedError(f"The client {sid} did not provide proper authorization")
-        else:
-            if comp_id in self._connected_components:
-                warning(f"A component with the ID {comp_id} has already been connected to the server", scope="server")
-            
-            self._connected_components[comp_id] = sid
+            raise ConnectionRefusedError(f"The client {sid} did not provide proper authorization") from exc
+        
+        if comp_id in self._connected_components:
+            warning(f"A component with the ID {comp_id} has already been connected to the server", scope="server")
+        
+        self._connected_components[comp_id] = sid
         
         info("Client connected", scope="server", session=sid, component=comp_id)
     
@@ -88,8 +87,8 @@ class Server(socketio.Server):
         for comp_id, client_id in self._connected_components.items():
             if client_id == sid:
                 return comp_id
-        else:
-            return None
+        
+        return None
     
     def _component_id_to_client(self, comp_id: UnitID) -> str | None:
         return self._connected_components[comp_id] if comp_id in self._connected_components else None

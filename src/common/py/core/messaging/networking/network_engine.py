@@ -69,8 +69,8 @@ class NetworkEngine:
         """
         try:
             self._router.verify_message(NetworkRouter.Direction.OUT, msg)
-        except NetworkRouter.RoutingError as e:
-            self._routing_error(str(e), message=str(msg))
+        except NetworkRouter.RoutingError as exc:
+            self._routing_error(str(exc), message=str(msg))
         else:
             self._route_message(msg, msg_meta, NetworkRouter.Direction.OUT, skip_components=[self._comp_data.comp_id])
     
@@ -78,8 +78,8 @@ class NetworkEngine:
         try:
             msg = self._unpack_message(msg_name, data)
             msg_meta = self._create_message_meta_information(msg, entrypoint)
-        except Exception as e:
-            self._routing_error(str(e), data=data)
+        except Exception as exc:
+            self._routing_error(str(exc), data=data)
         else:
             from ...logging import debug
             debug(f"Received message: {msg}", scope="network", entrypoint=entrypoint.name)
@@ -110,7 +110,7 @@ class NetworkEngine:
         send_to_client = True
         
         if self._router.check_server_routing(direction, msg, msg_meta):
-            send_to_client = (self._server.send_message(msg, skip_components=skip_components) == Server.SendTarget.SPREAD)
+            send_to_client = self._server.send_message(msg, skip_components=skip_components) == Server.SendTarget.SPREAD
         
         if send_to_client and self._router.check_client_routing(direction, msg, msg_meta):
             self._client.send_message(msg)
@@ -119,8 +119,8 @@ class NetworkEngine:
         for msg_type, meta_type in self._meta_information_types.items():
             if isinstance(msg, msg_type):
                 return meta_type(entrypoint=entrypoint, **kwargs)
-        else:
-            raise RuntimeError("No meta information type associated with message type")
+        
+        raise RuntimeError("No meta information type associated with message type")
     
     def _routing_error(self, msg: str, **kwargs) -> None:
         from ...logging import error

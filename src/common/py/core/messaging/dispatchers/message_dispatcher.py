@@ -30,7 +30,6 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
         """
         Called to perform periodic tasks.
         """
-        pass
     
     def pre_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
         """
@@ -70,8 +69,8 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
                 with ctx(requires_reply=msg_meta.requires_reply):  # The service context will not suppress exceptions so that the dispatcher can react to them
                     act_msg = typing.cast(handler.message_type, msg)
                     handler.handler(act_msg, ctx)
-            except Exception as e:
-                self._context_exception(e, msg, msg_meta, ctx)
+            except Exception as exc:
+                self._context_exception(exc, msg, msg_meta, ctx)
         
         if isinstance(msg, handler.message_type):
             if handler.is_async:
@@ -91,7 +90,6 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
             msg: The message that has just been dispatched.
             msg_meta: The message meta information.
         """
-        pass
         
     def _context_exception(self, exc: Exception, msg: MessageType, msg_meta: MessageMetaInformationType, ctx: ServiceContextType) -> None:
         pass

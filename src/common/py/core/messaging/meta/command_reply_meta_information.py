@@ -8,4 +8,3 @@ class CommandReplyMetaInformation(MessageMetaInformation):
     """
     Message meta information specific to ``CommandReply``.
     """
-    pass

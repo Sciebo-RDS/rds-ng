@@ -35,9 +35,9 @@ class MetaInformation:
         if info_file == "" or not os.path.exists(info_file):
             raise ValueError("Invalid meta information file given")
         
-        with open(info_file) as f:
+        with open(info_file, encoding="utf-8") as file:
             import json
-            data = json.load(f)
+            data = json.load(file)
             self._title, self._version = self._read_global_info(data)
             self._components = self._read_component_definitions(data)
 
@@ -48,16 +48,16 @@ class MetaInformation:
             version = Version(global_info["version"])
         except Exception:
             return "<invalid>", Version("0.0.0")
-        else:
-            return title, version
+        
+        return title, version
         
     def _read_component_definitions(self, data: typing.Any) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
         try:
             comps_info: typing.Dict[str, typing.Dict[str, typing.Any]] = data["components"]
         except Exception:
             return {}
-        else:
-            return comps_info
+        
+        return comps_info
         
     @property
     def title(self) -> str:
@@ -96,8 +96,8 @@ class MetaInformation:
         """
         if comp in self._components:
             return self._components[comp]
-        else:
-            return {
-                "name": "<invalid>",
-                "directory": "",
-            }
+        
+        return {
+            "name": "<invalid>",
+            "directory": "",
+        }

@@ -28,7 +28,7 @@ class Component:
         Args:
             comp_id: The identifier of this component.
             role: The role of this component.
-            module_name: The component module name; simply pass ``__name__`` here).
+            module_name: The component module name; simply pass ``__name__`` here.
             config_file: The configuration file to load.
         """
         config = self._create_config(config_file)
@@ -81,8 +81,8 @@ class Component:
         
         try:
             config.load(config_file)
-        except Exception as e:
-            warning("Component configuration could not be loaded", scope="core", error=str(e))
+        except Exception as exc:
+            warning("Component configuration could not be loaded", scope="core", error=str(exc))
         
         return config
     
@@ -90,8 +90,8 @@ class Component:
         if comp_id.instance is None:
             from ..settings import ComponentSettingIDs
             return UnitID(comp_id.type, comp_id.unit, config.value(ComponentSettingIDs.INSTANCE))
-        else:
-            return comp_id
+        
+        return comp_id
     
     @property
     def core(self) -> 'Core':

@@ -16,6 +16,9 @@ class MessageMetaInformation:
         requires_reply: Whether a reply is expected.
     """
     class Entrypoint(IntEnum):
+        """
+        Defines from where a message has entered the system.
+        """
         LOCAL = auto()
         SERVER = auto()
         CLIENT = auto()

@@ -52,9 +52,9 @@ class Configuration:
         self._settings_file = filename
         
         if os.path.exists(filename):
-            with open(filename, "rb") as f:
+            with open(filename, "rb") as file:
                 import tomllib
-                self._settings = tomllib.load(f)
+                self._settings = tomllib.load(file)
         else:
             raise FileNotFoundError("Configuration file doesn't exist")
         
@@ -70,9 +70,9 @@ class Configuration:
         """
         from deepmerge import always_merger
         for key, value in defaults.items():
-            d = {}
-            self._unfold_dict_item(key.split(), d, value)
-            self._defaults = always_merger.merge(self._defaults, d)
+            values = {}
+            self._unfold_dict_item(key.split(), values, value)
+            self._defaults = always_merger.merge(self._defaults, values)
 
     def value(self, key: SettingID) -> typing.Any:
         """
@@ -101,26 +101,26 @@ class Configuration:
         except:
             return default
     
-    def _traverse_dict(self, path: typing.List[str], d: typing.Dict) -> typing.Any:
-        d = d[path[0]]
-        return d if len(path) == 1 else self._traverse_dict(path[1:], d)
+    def _traverse_dict(self, path: typing.List[str], dct: typing.Dict) -> typing.Any:
+        dct = dct[path[0]]
+        return dct if len(path) == 1 else self._traverse_dict(path[1:], dct)
     
-    def _unfold_dict_item(self, path: typing.List[str], d: typing.Dict, v: typing.Any) -> None:
+    def _unfold_dict_item(self, path: typing.List[str], dct: typing.Dict, value: typing.Any) -> None:
         if len(path) == 1:
-            d[path[0]] = v
+            dct[path[0]] = value
         else:
-            if not path[0] in d:
-                d[path[0]] = {}
+            if not path[0] in dct:
+                dct[path[0]] = {}
             
-            d = d[path[0]]
-            self._unfold_dict_item(path[1:], d, v)
+            dct = dct[path[0]]
+            self._unfold_dict_item(path[1:], dct, value)
 
     def _convert_env_type(self, value: typing.Any, target_type: type) -> typing.Any:
         if target_type == bool:
-            if type(value) == str:
+            if isinstance(value, str):
                 value = value.casefold()
                 return value == "1" or value == "yes".casefold() or value == "true".casefold()
-            elif type(value) == int:
+            elif isinstance(value, int):
                 return value >= 1
 
         return target_type(value)

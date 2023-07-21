@@ -44,14 +44,14 @@ class Formatter(logging.Formatter):
         return "".join(tokens)
     
     def _color_wrap(self, text: str, fg_color: int = 0, bg_color: int | None = None, bold: bool = False, italic: bool = False) -> str:
-        s: str = f"\x1b[38;5;{fg_color}m"
+        wrapped_text: str = f"\x1b[38;5;{fg_color}m"
         if bold:
-            s += "\x1b[1m"
+            wrapped_text += "\x1b[1m"
         if italic:
-            s += "\x1b[3m"
+            wrapped_text += "\x1b[3m"
         if bg_color is not None:
-            s += f"\x1b[48;5;{bg_color}m"
-        return s + text + "\x1b[0m"
+            wrapped_text += f"\x1b[48;5;{bg_color}m"
+        return wrapped_text + text + "\x1b[0m"
     
     def _get_level_color(self, level: int) -> int:
         return self._colors["levels"][level] if level in self._colors["levels"] else 0

@@ -53,7 +53,7 @@ class ServiceContext:
     def _check_command_reply(self) -> None:
         from ..messaging import CommandReplyType
         if self._requires_reply and self._msg_emitter.get_message_count(CommandReplyType) == 0:
-            self._logger.warning(f"A service context required a command reply, but none was sent", scope="service")
+            self._logger.warning("A service context required a command reply, but none was sent", scope="service")
         
     @property
     def message_emitter(self) -> MessageEmitter:

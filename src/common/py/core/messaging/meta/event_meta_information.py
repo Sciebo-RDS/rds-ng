@@ -8,4 +8,3 @@ class EventMetaInformation(MessageMetaInformation):
     """
     Message meta information specific to ``Event``.
     """
-    pass

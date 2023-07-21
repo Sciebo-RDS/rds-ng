@@ -47,8 +47,8 @@ class Client(socketio.Client):
             from socketio.exceptions import ConnectionError
             try:
                 self.connect(self._server_address, auth=self._get_authentication(), wait=True, wait_timeout=self._connection_timeout)
-            except ConnectionError as e:
-                error(f"Failed to connect to server: {str(e)}", scope="client")
+            except ConnectionError as exc:
+                error(f"Failed to connect to server: {str(exc)}", scope="client")
             
     def send_message(self, msg: Message) -> None:
         """

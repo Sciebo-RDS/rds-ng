@@ -36,8 +36,8 @@ class Logger(logging.Logger):
             level: The maximum level for entries to be logged.
         """
         super().setLevel(level)
-        for h in self.handlers:
-            h.setLevel(level)
+        for handler in self.handlers:
+            handler.setLevel(level)
 
     def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """

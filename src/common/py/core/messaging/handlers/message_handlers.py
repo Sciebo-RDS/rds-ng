@@ -1,5 +1,4 @@
 import threading
-import typing
 from pathlib import PurePosixPath
 
 from ..message import MessageName, Message, MessageType

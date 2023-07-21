@@ -23,7 +23,6 @@ class NetworkRouter:
         """
         Represents errors during routing validation.
         """
-        pass
     
     def __init__(self, comp_id: UnitID, *, has_client: bool, has_server: bool):
         """

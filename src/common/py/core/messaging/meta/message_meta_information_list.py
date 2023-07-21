@@ -22,6 +22,9 @@ class MessageMetaInformationList:
         timestamp: float = dataclasses.field(default_factory=time.time)
         
         def has_timed_out(self) -> bool:
+            """
+            Whether the message has timed out.
+            """
             return time.time() - self.timestamp > self.timeout if self.timeout > 0.0 else False
     
     def __init__(self):
