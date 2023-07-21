@@ -71,8 +71,8 @@ class NetworkRouter:
         if direction == NetworkRouter.Direction.IN:
             if msg.target.is_direct:
                 return msg.target.target_id.equals(self._comp_id)
-            elif msg.target.is_room:
-                return True
+            
+            return True
             
         return False
         
