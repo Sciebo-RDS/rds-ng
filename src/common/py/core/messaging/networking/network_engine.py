@@ -6,7 +6,8 @@ from .network_router import NetworkRouter
 from .server import Server
 from .. import Message, MessageBusProtocol, MessageType, Command, CommandReply, Event
 from ..meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
-from ....component import ComponentData, ComponentID
+from ....component import ComponentData
+from ....utils import UnitID
 
 
 class NetworkEngine:
@@ -42,10 +43,10 @@ class NetworkEngine:
             raise RuntimeError("An invalid router type was specified in the networking aspects")
 
     def _create_client(self) -> Client:
-        return Client(self._comp_data)
+        return Client(self._comp_data.comp_id, self._comp_data.config)
     
     def _create_server(self) -> Server:
-        return Server(self._comp_data)
+        return Server(self._comp_data.comp_id, self._comp_data.config)
     
     def run(self) -> None:
         """
@@ -109,7 +110,7 @@ class NetworkEngine:
         msg.hops.append(self._comp_data.comp_id)
         return msg
     
-    def _route_message(self, msg: Message, msg_meta: MessageMetaInformation, direction: NetworkRouter.Direction, *, skip_components: typing.List[ComponentID] | None = None):
+    def _route_message(self, msg: Message, msg_meta: MessageMetaInformation, direction: NetworkRouter.Direction, *, skip_components: typing.List[UnitID] | None = None):
         send_to_client = True
         
         if self._router.check_server_routing(direction, msg, msg_meta):

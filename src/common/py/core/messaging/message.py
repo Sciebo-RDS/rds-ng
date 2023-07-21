@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
 
 from .channel import Channel
-from ...component import ComponentID
+from ...utils import UnitID
 
 MessageName = str
 Trace = uuid.UUID
@@ -37,11 +37,11 @@ class Message(abc.ABC):
     """
     name: MessageName
     
-    origin: ComponentID
-    sender: ComponentID
+    origin: UnitID
+    sender: UnitID
     target: Channel
     
-    hops: typing.List[ComponentID] = field(default_factory=list)
+    hops: typing.List[UnitID] = field(default_factory=list)
     
     trace: Trace = field(default_factory=uuid.uuid4)
     

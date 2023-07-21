@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
-from ...component import ComponentID
+from ...utils import UnitID
 
 
 @dataclass(frozen=True)
@@ -29,15 +29,15 @@ class Channel:
     target: str | None = None
     
     @property
-    def target_id(self) -> ComponentID | None:
+    def target_id(self) -> UnitID | None:
         """
-        Generates a ``ComponentID`` from the target of this channel.
+        Generates a ``UnitID`` from the target of this channel.
         
         Returns:
             The component ID of the target, if any.
         """
         try:
-            return ComponentID.from_string(self.target) if self.target is not None else None
+            return UnitID.from_string(self.target) if self.target is not None else None
         except:
             return None
     

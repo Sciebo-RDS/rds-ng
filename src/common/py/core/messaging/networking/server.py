@@ -6,7 +6,8 @@ import socketio
 
 from .. import Message
 from ...logging import info, warning, debug
-from ....component import ComponentID, ComponentData
+from ....utils import UnitID
+from ....utils.config import Configuration
 
 
 class Server(socketio.Server):
@@ -14,7 +15,8 @@ class Server(socketio.Server):
     The server connection, based on ``socketio.Server``.
 
     Args:
-        comp_data: The global component data.
+        comp_id: The component identifier.
+        config: The global configuration.
     """
     class SendTarget(IntEnum):
         """
@@ -23,16 +25,18 @@ class Server(socketio.Server):
         SPREAD = auto()
         DIRECT = auto()
     
-    def __init__(self, comp_data: ComponentData):
+    def __init__(self, comp_id: UnitID, config: Configuration):
         """
         Args:
-            comp_data: The global component data.
+            comp_id: The component identifier.
+            config: The global configuration.
         """
-        self._comp_data = comp_data
+        self._comp_id = comp_id
+        self._config = config
         
         super().__init__(async_mode="gevent_uwsgi", cors_allowed_origins=self._get_allowed_origins(), cors_credentials=True)
         
-        self._connected_components: typing.Dict[ComponentID, str] = {}
+        self._connected_components: typing.Dict[UnitID, str] = {}
         
         self._lock = threading.Lock()
         
@@ -48,7 +52,7 @@ class Server(socketio.Server):
         """
         pass
         
-    def send_message(self, msg: Message, *, skip_components: typing.List[ComponentID] | None = None) -> SendTarget:
+    def send_message(self, msg: Message, *, skip_components: typing.List[UnitID] | None = None) -> SendTarget:
         """
         Sends a message to one or more clients.
 
@@ -66,7 +70,7 @@ class Server(socketio.Server):
     
     def _on_connect(self, sid: str, _, auth: typing.Dict[str, typing.Any]) -> None:
         try:
-            comp_id = ComponentID.from_string(auth["component_id"])
+            comp_id = UnitID.from_string(auth["component_id"])
         except:
             from socketio.exceptions import ConnectionRefusedError
             raise ConnectionRefusedError(f"The client {sid} did not provide proper authorization")
@@ -84,17 +88,17 @@ class Server(socketio.Server):
         
         info("Client disconnected", scope="server", session=sid)
     
-    def _lookup_client(self, sid: str) -> ComponentID | None:
+    def _lookup_client(self, sid: str) -> UnitID | None:
         for comp_id, client_id in self._connected_components.items():
             if client_id == sid:
                 return comp_id
         else:
             return None
     
-    def _component_id_to_client(self, comp_id: ComponentID) -> str | None:
+    def _component_id_to_client(self, comp_id: UnitID) -> str | None:
         return self._connected_components[comp_id] if comp_id in self._connected_components else None
     
-    def _component_ids_to_clients(self, comp_ids: typing.List[ComponentID]) -> typing.List[str] | None:
+    def _component_ids_to_clients(self, comp_ids: typing.List[UnitID]) -> typing.List[str] | None:
         return [sid for sid in map(self._component_id_to_client, comp_ids) if sid is not None] if len(comp_ids) > 0 else None
     
     def _get_message_recipient(self, msg: Message) -> str | None:
@@ -107,5 +111,5 @@ class Server(socketio.Server):
 
     def _get_allowed_origins(self) -> typing.List[str] | None:
         from ....settings import NetworkServerSettingIDs
-        allowed_origins: str = self._comp_data.config.value(NetworkServerSettingIDs.ALLOWED_ORIGINS)
+        allowed_origins: str = self._config.value(NetworkServerSettingIDs.ALLOWED_ORIGINS)
         return allowed_origins.split(",") if allowed_origins != "" else None

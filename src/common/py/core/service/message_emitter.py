@@ -2,7 +2,7 @@ import typing
 
 from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply, CommandDoneCallback, CommandFailCallback
 from ..messaging.meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
-from ...component import ComponentID
+from ...utils import UnitID
 
 
 class MessageEmitter:
@@ -15,7 +15,7 @@ class MessageEmitter:
         origin_id: The component identifier of the origin of newly created messages.
         message_bus: The global message bus to use.
     """
-    def __init__(self, origin_id: ComponentID, message_bus: MessageBusProtocol):
+    def __init__(self, origin_id: UnitID, message_bus: MessageBusProtocol):
         """
         Args:
             origin_id: The component identifier of the origin of newly created messages.
@@ -128,12 +128,12 @@ class MessageEmitter:
         """
         return self._counters[msg_type] if msg_type in self._counters else 0
     
-    def _emit(self, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
+    def _emit(self, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, *, origin: UnitID, target: Channel, prev_hops: typing.List[UnitID], chain: Message | None, **kwargs) -> MessageType:
         msg = self._create_message(msg_type, origin=origin, target=target, prev_hops=prev_hops, chain=chain, **kwargs)
         self._message_bus.dispatch(msg, msg_meta)
         return msg
 
-    def _create_message(self, msg_type: type[MessageType], *, origin: ComponentID, target: Channel, prev_hops: typing.List[ComponentID], chain: Message | None, **kwargs) -> MessageType:
+    def _create_message(self, msg_type: type[MessageType], *, origin: UnitID, target: Channel, prev_hops: typing.List[UnitID], chain: Message | None, **kwargs) -> MessageType:
         if chain is not None:
             kwargs["trace"] = chain.trace
         

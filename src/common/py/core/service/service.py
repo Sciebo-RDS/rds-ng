@@ -5,7 +5,7 @@ from .service_context import ServiceContextType, ServiceContext
 from ..logging import LoggerProtocol
 from ..messaging import Message, MessageName, MessageType, MessageBusProtocol
 from ..messaging.handlers import MessageHandlers, MessageHandler, MessageHandlerMappings
-from ...component import ComponentID
+from ...utils import UnitID
 from ...utils.config import Configuration
 
 
@@ -33,7 +33,7 @@ class Service:
         message_bus: The global message bus.
         context_type: The type to use when creating a service context.
     """
-    def __init__(self, comp_id: ComponentID, name: str, *, message_bus: MessageBusProtocol, context_type: type[ServiceContextType] = ServiceContext):
+    def __init__(self, comp_id: UnitID, name: str, *, message_bus: MessageBusProtocol, context_type: type[ServiceContextType] = ServiceContext):
         """
         Args:
             comp_id: The global component identifier.

@@ -2,9 +2,9 @@ import dataclasses
 
 from semantic_version import Version
 
-from .component_id import ComponentID
-from .roles.component_role import ComponentRole
-from ..utils.config import Configuration
+from common.py.component.roles.component_role import ComponentRole
+from common.py.utils import UnitID
+from common.py.utils.config import Configuration
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
@@ -23,7 +23,7 @@ class ComponentData:
         name: The component name.
         version: The project version.
     """
-    comp_id: ComponentID
+    comp_id: UnitID
     role: ComponentRole
     
     config: Configuration

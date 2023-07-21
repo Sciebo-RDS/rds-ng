@@ -2,7 +2,7 @@ from enum import IntEnum, auto
 
 from .. import Message
 from ..meta import MessageMetaInformation
-from ....component import ComponentID
+from ....utils import UnitID
 
 
 class NetworkRouter:
@@ -30,7 +30,7 @@ class NetworkRouter:
         """
         pass
     
-    def __init__(self, comp_id: ComponentID, *, has_client: bool, has_server: bool):
+    def __init__(self, comp_id: UnitID, *, has_client: bool, has_server: bool):
         """
         Args:
             comp_id: The component id (required to decide whether we match a given direct target).

@@ -1,6 +1,6 @@
 from .message import Message
 from .meta import MessageMetaInformation
-from ...component import ComponentID
+from ...utils import UnitID
 
 
 class MessageRouter:
@@ -19,7 +19,7 @@ class MessageRouter:
         """
         pass
     
-    def __init__(self, comp_id: ComponentID):
+    def __init__(self, comp_id: UnitID):
         """
         Args:
             comp_id: The component id (required to decide whether we match a given direct target).

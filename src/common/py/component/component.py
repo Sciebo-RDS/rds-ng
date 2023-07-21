@@ -4,9 +4,9 @@ import typing
 import socketio
 
 from .component_data import ComponentData
-from .component_id import ComponentID
 from .roles.component_role import ComponentRole
 from ..core.logging import info, warning
+from ..utils import UnitID
 from ..utils.config import Configuration
 
 if typing.TYPE_CHECKING:
@@ -29,7 +29,7 @@ class Component:
         module_name: The component module name; simply pass ``__name__`` here.
         config_file: The configuration file to load.
     """
-    def __init__(self, comp_id: ComponentID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
+    def __init__(self, comp_id: UnitID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
         """
         Args:
             comp_id: The identifier of this component.
@@ -42,7 +42,7 @@ class Component:
         
         from .meta_information import MetaInformation
         meta_info = MetaInformation()
-        comp_info = meta_info.get_component(comp_id.component)
+        comp_info = meta_info.get_component(comp_id.unit)
         
         self._data = ComponentData(
             comp_id=comp_id,
@@ -92,10 +92,10 @@ class Component:
         
         return config
     
-    def _sanitize_component_id(self, comp_id: ComponentID, config: Configuration) -> ComponentID:
+    def _sanitize_component_id(self, comp_id: UnitID, config: Configuration) -> UnitID:
         if comp_id.instance is None:
             from ..settings import ComponentSettingIDs
-            return ComponentID(comp_id.type, comp_id.component, config.value(ComponentSettingIDs.INSTANCE))
+            return UnitID(comp_id.type, comp_id.unit, config.value(ComponentSettingIDs.INSTANCE))
         else:
             return comp_id
     

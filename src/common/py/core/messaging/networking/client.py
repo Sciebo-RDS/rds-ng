@@ -5,7 +5,8 @@ import socketio
 
 from .. import Message
 from ...logging import info, warning, error, debug
-from ....component import ComponentData
+from ....utils import UnitID
+from ....utils.config import Configuration
 
 
 class Client(socketio.Client):
@@ -13,18 +14,21 @@ class Client(socketio.Client):
     The client connection, based on ``socketio.Client``.
     
     Args:
-        comp_data: The global component data.
+        comp_id: The component identifier.
+        config: The global configuration.
     """
-    def __init__(self, comp_data: ComponentData):
+    def __init__(self, comp_id: UnitID, config: Configuration):
         """
         Args:
-            comp_data: The global component data.
+            comp_id: The component identifier.
+            config: The global configuration.
         """
-        self._comp_data = comp_data
+        self._comp_id = comp_id
+        self._config = config
         
         from ....settings import NetworkClientSettingIDs
-        self._server_address: str = self._comp_data.config.value(NetworkClientSettingIDs.SERVER_ADDRESS)
-        self._connection_timeout: int = self._comp_data.config.value(NetworkClientSettingIDs.CONNECTION_TIMEOUT)
+        self._server_address: str = self._config.value(NetworkClientSettingIDs.SERVER_ADDRESS)
+        self._connection_timeout: int = self._config.value(NetworkClientSettingIDs.CONNECTION_TIMEOUT)
         
         super().__init__(reconnection_delay_max=self._connection_timeout)
         
@@ -74,4 +78,4 @@ class Client(socketio.Client):
         info("Disconnected from server", scope="client")
         
     def _get_authentication(self) -> typing.Dict[str, str]:
-        return {"component_id": str(self._comp_data.comp_id)}
+        return {"component_id": str(self._comp_id)}

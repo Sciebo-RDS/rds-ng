@@ -1,9 +1,10 @@
-from common.py.component import Component, ComponentID
+from common.py.component import Component
 from common.py.component.roles import NodeRole
 from common.py.core.messaging import Message, Event, Command, Channel, CommandReply
 from common.py.core.service import ServiceContext
+from common.py.utils import UnitID
 
-comp = Component(ComponentID("infra", "gate"), NodeRole(), module_name=__name__)
+comp = Component(UnitID("infra", "gate"), NodeRole(), module_name=__name__)
 app = comp.app()
 
 

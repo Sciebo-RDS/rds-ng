@@ -1,9 +1,10 @@
-from common.py.component import Component, ComponentID
+from common.py.component import Component
 from common.py.component.roles import LeafRole
 from common.py.core.messaging import Event, Channel, Message, Command, CommandReply
 from common.py.core.service import ServiceContext
+from common.py.utils import UnitID
 
-comp = Component(ComponentID("infra", "testbuddy"), LeafRole(), module_name=__name__)
+comp = Component(UnitID("infra", "testbuddy"), LeafRole(), module_name=__name__)
 app = comp.app()
 
 s = comp.core.create_service("Test buddy service")
