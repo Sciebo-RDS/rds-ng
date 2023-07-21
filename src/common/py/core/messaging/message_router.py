@@ -9,9 +9,6 @@ class MessageRouter:
 
     When a message enters the message bus, it is first checked for its validity.
     Afterwards, the router decides through which channels (local, remote) it needs to be sent.
-
-    Args:
-        comp_id: The component id (required to decide whether we match a given direct target).
     """
     class RoutingError(RuntimeError):
         """

@@ -18,11 +18,6 @@ class ServiceContext:
     
     It is also possible to have message handlers receive custom subtypes of this class. See ``Component`` and its ``create_service`` method for
     details.
-    
-    Args:
-        msg_emitter: A ``MessageEmitter`` to be assigned to this context.
-        config: The global component configuration.
-        logger: A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
     """
     def __init__(self, msg_emitter: MessageEmitter, config: Configuration, logger: LoggerProtocol):
         """

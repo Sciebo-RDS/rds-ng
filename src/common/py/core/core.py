@@ -17,10 +17,6 @@ class Core:
     methods and is accessed from the outside very rarely.
     
     An instance of this class is always created when creating a ``Component``; it should never be instantiated otherwise.
-    
-    Args:
-        module_name: The module name used for *Flask* initialization.
-        comp_data: The component data used to access common component information.
     """
     def __init__(self, module_name: str, comp_data: ComponentData):
         """

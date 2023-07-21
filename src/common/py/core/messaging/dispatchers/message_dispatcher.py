@@ -15,14 +15,15 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     
     Dispatching a message (locally) is done by passing the message to one or more registered message handlers within a ``Service``.
     The message dispatcher also performs pre- and post-dispatching tasks and takes care of catching errors raised in a handler.
-    
-    Args:
-        meta_information_type: The required type of the message meta information passed alongside the actual messages.
     """
     _thread_pool = ThreadPoolExecutor()
     _meta_information_list = MessageMetaInformationList()
     
     def __init__(self, meta_information_type: type[MessageMetaInformationType]):
+        """
+        Args:
+            meta_information_type: The required type of the message meta information passed alongside the actual messages.
+        """
         self._meta_information_type = meta_information_type
         
     def process(self) -> None:

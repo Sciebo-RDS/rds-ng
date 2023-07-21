@@ -16,10 +16,6 @@ class NetworkEngine:
     
     Messages go out to other components through this class, and new messages come in from the outside world here as well.
     The network engine takes care of listening to incoming messages, routing them properly, and sending new messages to other components.
-    
-    Args:
-         comp_data: The global component data.
-         message_bus: The global message bus.
     """
     def __init__(self, comp_data: ComponentData, message_bus: MessageBusProtocol):
         """

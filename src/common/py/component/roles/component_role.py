@@ -8,10 +8,6 @@ class ComponentRole(abc.ABC):
     
     A component role defines certain aspects of a component. This usually corresponds to having specific features
     enabled or overriding types that are used within the core.
-    
-    Args:
-        role_name: The name of the role.
-        networking_aspects: The networking aspects to use.
     """
     @dataclasses.dataclass(frozen=True, kw_only=True)
     class NetworkingAspects:

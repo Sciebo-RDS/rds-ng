@@ -22,17 +22,14 @@ class MetaInformation:
                 ...
             }
         }
-    
-    Args:
-        info_file: The JSON file to load the meta information from.
-        
-    Raises:
-        ValueError: If the information file couldn't be loaded.
     """
     def __init__(self, info_file: str = "/config/meta-information.json"):
         """
         Args:
             info_file: The JSON file to load the meta information from.
+            
+        Raises:
+            ValueError: If the information file couldn't be loaded.
         """
         import os.path
         if info_file == "" or not os.path.exists(info_file):

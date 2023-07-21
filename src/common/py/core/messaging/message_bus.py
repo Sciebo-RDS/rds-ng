@@ -24,9 +24,6 @@ class MessageBus:
     
     To be error tolerant, any exceptions that arise during message handling will be logged but won't result in program termination.
     
-    Args:
-        comp_data: The global component data.
-    
     Notes:
         The message bus is thread-safe.
     """

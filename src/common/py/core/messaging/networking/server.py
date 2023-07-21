@@ -13,10 +13,6 @@ from ....utils.config import Configuration
 class Server(socketio.Server):
     """
     The server connection, based on ``socketio.Server``.
-
-    Args:
-        comp_id: The component identifier.
-        config: The global configuration.
     """
     class SendTarget(IntEnum):
         """

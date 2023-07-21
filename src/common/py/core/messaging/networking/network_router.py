@@ -11,11 +11,6 @@ class NetworkRouter:
     
     When a message enters the network engine in order to be sent to remote targets, it is first checked for its
     validity. Afterwards, the router decides through which channels (local, client, server) it needs to be sent.
-    
-    Args:
-        comp_id: The component id (required to decide whether we match a given direct target).
-        has_client: Whether the network has a client instance.
-        has_server: Whether the network has a server instance.
     """
     class Direction(IntEnum):
         """

@@ -10,9 +10,6 @@ class LoggerProxy:
     This class allows us to store additional, fixed parameters passed to an existing logger, avoiding the need to use
     a new logger instance. It offers the same public interface as an actual ``Logger`` and can thus be used like a
     *real* logger.
-    
-    Args:
-        logger: The logger to use.
     """
     def __init__(self, logger: Logger):
         """

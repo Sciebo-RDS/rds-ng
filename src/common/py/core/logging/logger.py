@@ -8,10 +8,6 @@ class Logger(logging.Logger):
 
     This logger and its corresponding ``Formatter`` display the log level, scope, as well as a parameters listing
     in a color-rich format for easy readability.
-    
-    Args:
-        name: The name of the logger.
-        level: The maximum level for log entries to be displayed.
     """
     def __init__(self, name: str, level: int = logging.INFO):
         """

@@ -12,10 +12,6 @@ from ....utils.config import Configuration
 class Client(socketio.Client):
     """
     The client connection, based on ``socketio.Client``.
-    
-    Args:
-        comp_id: The component identifier.
-        config: The global configuration.
     """
     def __init__(self, comp_id: UnitID, config: Configuration):
         """

@@ -26,12 +26,6 @@ class Service:
         @svc.message_handler("msg/event", Event)
         def h(msg: Event, ctx: ServiceContext) -> None:
             ctx.logger.info(f"EVENT HANDLER CALLED")
-            
-    Args:
-        comp_id: The global component identifier.
-        name: The service name.
-        message_bus: The global message bus.
-        context_type: The type to use when creating a service context.
     """
     def __init__(self, comp_id: UnitID, name: str, *, message_bus: MessageBusProtocol, context_type: type[ServiceContextType] = ServiceContext):
         """

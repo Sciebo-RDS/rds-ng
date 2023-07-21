@@ -26,9 +26,6 @@ class Configuration:
     Notes:
         When accessing a setting value, a default value must *always* be present. This means that before a setting can be accessed,
         a default value must be added using ``add_defaults``.
-        
-    Args:
-        env_prefix: The prefix to use when generating the environment variable name of a setting.
     """
     def __init__(self, env_prefix: str = "RDS"):
         """

@@ -10,10 +10,6 @@ class MessageEmitter:
     A helper class to easily create and emit messages.
     
     This class stores a reference to the global message bus and offers methods to easily create new messages and send them through the bus.
-    
-    Args:
-        origin_id: The component identifier of the origin of newly created messages.
-        message_bus: The global message bus to use.
     """
     def __init__(self, origin_id: UnitID, message_bus: MessageBusProtocol):
         """

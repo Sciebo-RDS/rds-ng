@@ -4,7 +4,7 @@ import typing
 import socketio
 
 from .component_data import ComponentData
-from .roles.component_role import ComponentRole
+from .roles import ComponentRole
 from ..core.logging import info, warning
 from ..utils import UnitID
 from ..utils.config import Configuration
@@ -22,12 +22,6 @@ class Component:
     
     When writing a component, always create a new subclass that extends ``Component``. Pass all the necessary information to its
     constructor (see ``Args``) and, after doing further setup steps, call its ``run`` method.
-    
-    Args:
-        comp_id: The identifier of this component.
-        role: The role of this component.
-        module_name: The component module name; simply pass ``__name__`` here.
-        config_file: The configuration file to load.
     """
     def __init__(self, comp_id: UnitID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
         """
