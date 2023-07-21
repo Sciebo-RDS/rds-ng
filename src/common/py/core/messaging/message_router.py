@@ -53,11 +53,11 @@ class MessageRouter:
         """
         if msg.target.is_local:
             return True
-        elif msg.target.is_direct:
+        if msg.target.is_direct:
             # A direct message that has made it to the message bus either stems from this component or is targeted to it
             # If it is targeted to this component, it needs to be dispatched locally
             return msg.target.target_id.equals(self._comp_id)
-        elif msg.target.is_room:
+        if msg.target.is_room:
             # A room message is always dispatched locally if the component is subscribed to that room
             # TODO: Rooms: List of subscribed rooms, check if match -> local
             return True
@@ -87,7 +87,7 @@ class MessageRouter:
         
         if msg_meta.entrypoint == MessageMetaInformation.Entrypoint.LOCAL and msg.target.target_id.equals(self._comp_id):
             raise MessageRouter.RoutingError("Message coming from this component directed to self")
-        elif msg_meta.entrypoint != MessageMetaInformation.Entrypoint.LOCAL and not msg.target.target_id.equals(self._comp_id):
+        if msg_meta.entrypoint != MessageMetaInformation.Entrypoint.LOCAL and not msg.target.target_id.equals(self._comp_id):
             raise MessageRouter.RoutingError("Message coming from another component not directed to this component")
 
     def _verify_room_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:

@@ -49,7 +49,7 @@ class NetworkRouter:
         """
         if msg.target.is_local:
             self._verify_local_message(direction, msg)
-        if msg.target.is_direct:
+        elif msg.target.is_direct:
             self._verify_direct_message(direction, msg)
         elif msg.target.is_room:
             self._verify_room_message(direction, msg)
@@ -68,7 +68,7 @@ class NetworkRouter:
         """
         if direction == NetworkRouter.Direction.OUT:
             return False  # Outgoing messages are never routed back locally
-        elif direction == NetworkRouter.Direction.IN:
+        if direction == NetworkRouter.Direction.IN:
             if msg.target.is_direct:
                 return msg.target.target_id.equals(self._comp_id)
             elif msg.target.is_room:
@@ -91,11 +91,11 @@ class NetworkRouter:
         if self._has_client:
             if direction == NetworkRouter.Direction.OUT:
                 return True  # Always sent outgoing messages through the network
-            elif direction == NetworkRouter.Direction.IN:
+            if direction == NetworkRouter.Direction.IN:
                 if msg.target.is_direct and msg.target.target_id.equals(self._comp_id):  # Skip messages targeted to us
                     return False
-                else:
-                    return msg_meta.entrypoint == MessageMetaInformation.Entrypoint.SERVER  # Only rebounce to the client if the message came through the server
+                
+                return msg_meta.entrypoint == MessageMetaInformation.Entrypoint.SERVER  # Only rebounce to the client if the message came through the server
             
         return False
         
@@ -114,11 +114,11 @@ class NetworkRouter:
         if self._has_server:
             if direction == NetworkRouter.Direction.OUT:
                 return True  # Always sent outgoing messages through the network
-            elif direction == NetworkRouter.Direction.IN:
+            if direction == NetworkRouter.Direction.IN:
                 if msg.target.is_direct and msg.target.target_id.equals(self._comp_id):  # Skip messages targeted to us
                     return False
-                else:
-                    return True  # Always send messages back through the server (the server will skip the original sender)
+                
+                return True  # Always send messages back through the server (the server will skip the original sender)
             
         return False
     

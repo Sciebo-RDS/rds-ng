@@ -63,7 +63,7 @@ class UnitID:
         path = PurePosixPath(id_str).parts
         if len(path) == 3:
             return UnitID(path[0], path[1], path[2])
-        elif len(path) == 2:
+        if len(path) == 2:
             return UnitID(path[0], path[1])
             
         raise ValueError(f"The unit ID '{id_str}' is invalid")

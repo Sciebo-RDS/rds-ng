@@ -120,7 +120,7 @@ class Configuration:
             if isinstance(value, str):
                 value = value.casefold()
                 return value == "1" or value == "yes".casefold() or value == "true".casefold()
-            elif isinstance(value, int):
+            if isinstance(value, int):
                 return value >= 1
 
         return target_type(value)

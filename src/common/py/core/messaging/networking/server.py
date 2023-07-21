@@ -99,7 +99,7 @@ class Server(socketio.Server):
     def _get_message_recipient(self, msg: Message) -> str | None:
         if msg.target.is_direct:
             return self._component_id_to_client(msg.target.target_id)
-        elif msg.target.is_room:
+        if msg.target.is_room:
             return msg.target.target
         
         return None

@@ -11,6 +11,12 @@ _logger = typing.cast(Logger, logging.getLogger("rds_logger"))
 
 
 def set_level(level: int) -> None:
+    """
+    Sets the global logging level.
+    
+    Args:
+        level: The logging level.
+    """
     _logger.setLevel(level)
     
     
