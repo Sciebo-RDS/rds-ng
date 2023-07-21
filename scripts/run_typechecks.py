@@ -10,8 +10,11 @@ import json
 
 
 def get_components():
-    with open("./config/meta-information.json") as f:
-        data = json.load(f)
+    """
+    Gets a list of all components present (as listed in *meta-information.json*).
+    """
+    with open("./config/meta-information.json", encoding="utf-8") as file:
+        data = json.load(file)
         return data["components"]
 
 
@@ -20,8 +23,8 @@ if __name__ == "__main__":
         comp_dir = f"./src/{info['directory']}"
         print(f"Type-checking component '{info['name']} ({appid})' in {comp_dir}...", flush=True)
 
-        retcode = subprocess.call(["python3", "-m", "pytype", "-n", comp_dir])
-        if retcode != 0:
-            sys.exit(retcode)
+        ret_code = subprocess.call(["python3", "-m", "pytype", "-n", comp_dir])
+        if ret_code != 0:
+            sys.exit(ret_code)
 
         print("---", flush=True)
