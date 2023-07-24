@@ -1,8 +1,7 @@
 from .message_dispatcher import MessageDispatcher
 from ..event import Event
-from ..handlers import MessageHandlerMapping
+from ..handlers import MessageHandlerMapping, MessageContextType
 from ..meta import EventMetaInformation
-from ...service import ServiceContextType
 
 
 class EventDispatcher(MessageDispatcher[Event]):
@@ -12,7 +11,7 @@ class EventDispatcher(MessageDispatcher[Event]):
     def __init__(self):
         super().__init__(EventMetaInformation)
     
-    def dispatch(self, msg: Event, msg_meta: EventMetaInformation, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
+    def dispatch(self, msg: Event, msg_meta: EventMetaInformation, handler: MessageHandlerMapping, ctx: MessageContextType) -> None:
         """
         Dispatches a message to locally registered message handlers.
 
@@ -25,7 +24,7 @@ class EventDispatcher(MessageDispatcher[Event]):
             msg: The message to be dispatched.
             msg_meta: The message meta information.
             handler: The handler to be invoked.
-            ctx: The service context.
+            ctx: The message context.
 
         Raises:
             RuntimeError: If the handler requires a different message type.

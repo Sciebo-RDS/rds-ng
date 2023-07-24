@@ -7,7 +7,7 @@ from common.py.utils import UnitID
 comp = Component(UnitID("infra", "testbuddy"), LeafRole(), module_name=__name__)
 app = comp.app()
 
-s = comp.core.create_service("Test buddy service")
+s = comp.create_service("Test buddy service")
 
 comp.run()
 

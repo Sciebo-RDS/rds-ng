@@ -2,8 +2,9 @@ import typing
 from dataclasses import dataclass
 
 from ..message import MessageType
+from .message_context import MessageContextType
 
-MessageHandler = typing.Callable[[MessageType, 'ServiceContextType'], None]  # We can't import anything from Service here due to cyclic dependencies
+MessageHandler = typing.Callable[[MessageType, MessageContextType], None]
 
 
 @dataclass(frozen=True)

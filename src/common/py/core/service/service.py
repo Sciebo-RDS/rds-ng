@@ -1,16 +1,13 @@
 import typing
 
-from .message_emitter import MessageEmitter
 from .service_context import ServiceContextType, ServiceContext
-from ..logging import LoggerProtocol
-from ..messaging import Message, MessageName, MessageType, MessageBusProtocol
-from ..messaging.handlers import MessageHandlers, MessageHandler, MessageHandlerMappings
+from ..messaging import Message, MessageType, MessageBusProtocol
+from ..messaging.handlers import MessageHandler, MessageService, MessageEmitter
 from ...utils import UnitID
-from ...utils.config import Configuration
 
 
 @typing.final
-class Service:
+class Service(MessageService):
     """
     Base service class providing easy message handler mapping.
     
@@ -35,12 +32,9 @@ class Service:
             message_bus: The global message bus.
             context_type: The type to use when creating a service context.
         """
-        self._component_id = comp_id
-        self._name = name
+        super().__init__(comp_id, message_bus=message_bus, context_type=context_type)
         
-        self._message_bus = message_bus
-        self._message_handlers = MessageHandlers()
-        self._context_type = context_type
+        self._name = name
 
     def message_handler(self, fltr: str, /, message_type: type[MessageType] = Message, *, is_async: bool = False) -> typing.Callable[[MessageHandler], MessageHandler]:
         """
@@ -58,44 +52,10 @@ class Service:
             is_async: Whether to execute the handler asynchronously in its own thread.
         """
         def decorator(handler: MessageHandler) -> MessageHandler:
-            self._message_handlers.add_handler(fltr, handler, message_type, is_async)
+            self.message_handlers.add_handler(fltr, handler, message_type, is_async)
             return handler
         
         return decorator
-    
-    def message_handlers(self, msg_name: MessageName) -> MessageHandlerMappings:
-        """
-        Gets a list of all message handlers for the specified name.
-        
-        Args:
-            msg_name: The message name filter to match against; wildcards (*) are supported for more generic handlers.
-
-        Returns:
-            A list of all matching message handlers.
-        """
-        return self._message_handlers.find_handlers(msg_name)
-    
-    def create_context(self, config: Configuration, logger: LoggerProtocol) -> ServiceContextType:
-        """
-        Creates a new service context.
-        
-        Args:
-            config: The global component configuration.
-            logger: The logger to be used within the new context.
-
-        Returns:
-            The newly created service context.
-        """
-        return self._context_type(self.create_message_emitter(), config, logger)
-    
-    def create_message_emitter(self) -> MessageEmitter:
-        """
-        Creates a new message emitter.
-        
-        Returns:
-            The newly created message emitter.
-        """
-        return MessageEmitter(self._component_id, self._message_bus)
 
     @property
     def name(self) -> str:

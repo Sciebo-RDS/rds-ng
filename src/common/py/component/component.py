@@ -3,11 +3,9 @@ import typing
 
 from .component_data import ComponentData
 from .roles import ComponentRole
+from ..core.service import ServiceContextType, ServiceContext, Service
 from ..utils import UnitID
 from ..utils.config import Configuration
-
-if typing.TYPE_CHECKING:
-    from ..core import Core  # We can't import this regularely due to cyclic imports
 
 
 class Component:
@@ -70,6 +68,22 @@ class Component:
             It is mandatory to call this method after creating and setting up a component.
         """
         self._core.run()
+        
+    def create_service(self, name: str, *, context_type: type[ServiceContextType] = ServiceContext) -> Service:
+        """
+        Creates and registers a new service.
+
+        Args:
+            name: The name of the service.
+            context_type: Can be used to override the default ``ServiceContext`` type. All message handlers
+                associated with the new service will then receive instances of this type for their service context.
+
+        Returns:
+            The newly created service.
+        """
+        svc = Service(self._data.comp_id, name, message_bus=self._core.message_bus, context_type=context_type)
+        self._core.register_service(svc)
+        return svc
     
     def _create_config(self, config_file: str) -> Configuration:
         from ..settings import get_default_settings
@@ -90,13 +104,6 @@ class Component:
             return UnitID(comp_id.type, comp_id.unit, config.value(ComponentSettingIDs.INSTANCE))
         
         return comp_id
-    
-    @property
-    def core(self) -> 'Core':
-        """
-        The global ``Core`` instance.
-        """
-        return self._core
     
     @property
     def config(self) -> Configuration:

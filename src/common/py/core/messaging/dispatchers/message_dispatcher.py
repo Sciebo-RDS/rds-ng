@@ -3,10 +3,9 @@ import atexit
 import typing
 from concurrent.futures import ThreadPoolExecutor
 
-from ..handlers import MessageHandlerMapping
+from ..handlers import MessageHandlerMapping, MessageContextType
 from ..message import MessageType
 from ..meta import MessageMetaInformationType, MessageMetaInformationList
-from ...service import ServiceContextType
 
 
 class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
@@ -45,7 +44,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
             raise RuntimeError(f"The meta information for dispatcher {str(self)} is of the wrong type ({type(msg_meta)})")
 
     @abc.abstractmethod
-    def dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
+    def dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: MessageContextType) -> None:
         """
         Dispatches a message to locally registered message handlers.
         
@@ -58,13 +57,13 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
             msg: The message to be dispatched.
             msg_meta: The message meta information.
             handler: The handler to be invoked.
-            ctx: The service context.
+            ctx: The message context.
             
         Raises:
             RuntimeError: If the handler requires a different message type.
         """
         # Callback wrapper for proper exception handling, even when used asynchronously
-        def _dispatch(msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
+        def _dispatch(msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: MessageContextType) -> None:
             try:
                 with ctx(requires_reply=msg_meta.requires_reply):  # The service context will not suppress exceptions so that the dispatcher can react to them
                     act_msg = typing.cast(handler.message_type, msg)
@@ -91,7 +90,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
             msg_meta: The message meta information.
         """
         
-    def _context_exception(self, exc: Exception, msg: MessageType, msg_meta: MessageMetaInformationType, ctx: ServiceContextType) -> None:
+    def _context_exception(self, exc: Exception, msg: MessageType, msg_meta: MessageMetaInformationType, ctx: MessageContextType) -> None:
         pass
     
     @staticmethod

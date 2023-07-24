@@ -1,8 +1,7 @@
 from .message_dispatcher import MessageDispatcher
 from ..command_reply import CommandReply
-from ..handlers import MessageHandlerMapping
+from ..handlers import MessageHandlerMapping, MessageContextType
 from ..meta import CommandReplyMetaInformation
-from ...service import ServiceContextType
 
 
 class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
@@ -26,7 +25,7 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
         CommandDispatcher.invoke_reply_callback(msg.unique, reply=msg)
         MessageDispatcher._meta_information_list.remove(msg.unique)
     
-    def dispatch(self, msg: CommandReply, msg_meta: CommandReplyMetaInformation, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
+    def dispatch(self, msg: CommandReply, msg_meta: CommandReplyMetaInformation, handler: MessageHandlerMapping, ctx: MessageContextType) -> None:
         """
         Dispatches a message to locally registered message handlers.
 
@@ -39,7 +38,7 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
             msg: The message to be dispatched.
             msg_meta: The message meta information.
             handler: The handler to be invoked.
-            ctx: The service context.
+            ctx: The message context.
 
         Raises:
             RuntimeError: If the handler requires a different message type.

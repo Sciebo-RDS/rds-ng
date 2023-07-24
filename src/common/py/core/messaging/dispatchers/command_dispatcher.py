@@ -3,9 +3,8 @@ import typing
 from .message_dispatcher import MessageDispatcher
 from .. import Trace, CommandReply
 from ..command import Command
-from ..handlers import MessageHandlerMapping
+from ..handlers import MessageHandlerMapping, MessageContextType
 from ..meta import CommandMetaInformation
-from ...service import ServiceContextType
 
 
 class CommandDispatcher(MessageDispatcher[Command]):
@@ -37,7 +36,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
         
         MessageDispatcher._meta_information_list.add(msg.unique, msg_meta, msg_meta.timeout)
 
-    def dispatch(self, msg: Command, msg_meta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: ServiceContextType) -> None:
+    def dispatch(self, msg: Command, msg_meta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: MessageContextType) -> None:
         """
         Dispatches a message to locally registered message handlers.
 
@@ -50,7 +49,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
             msg: The message to be dispatched.
             msg_meta: The message meta information.
             handler: The handler to be invoked.
-            ctx: The service context.
+            ctx: The message context.
 
         Raises:
             RuntimeError: If the handler requires a different message type.
@@ -58,7 +57,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
         ctx.logger.debug(f"Dispatching command: {msg}", scope="bus")
         super().dispatch(msg, msg_meta, handler, ctx)
 
-    def _context_exception(self, exc: Exception, msg: Command, msg_meta: CommandMetaInformation, ctx: ServiceContextType) -> None:
+    def _context_exception(self, exc: Exception, msg: Command, msg_meta: CommandMetaInformation, ctx: MessageContextType) -> None:
         CommandDispatcher.invoke_reply_callback(msg.unique, fail_type=CommandReply.FailType.EXCEPTION, fail_msg=str(exc))
         MessageDispatcher._meta_information_list.remove(msg.unique)
 

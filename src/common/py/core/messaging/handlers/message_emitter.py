@@ -1,8 +1,8 @@
 import typing
 
-from ..messaging import MessageBusProtocol, Message, MessageType, Channel, CommandReplyType, CommandType, EventType, Event, Command, CommandReply, CommandDoneCallback, CommandFailCallback
-from ..messaging.meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
-from ...utils import UnitID
+from .. import Message, MessageType, MessageBusProtocol, Channel, Command, CommandType, CommandReply, CommandReplyType, CommandDoneCallback, CommandFailCallback, Event, EventType
+from ..meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
+from ....utils import UnitID
 
 
 class MessageEmitter:
@@ -50,8 +50,8 @@ class MessageEmitter:
             raise RuntimeError(f"Tried to emit a command, but got a {cmd_type}")
         
         if timeout > 0.0 and fail_callback is None:
-            from .. import logging
-            logging.warning(f"Sending a command ({cmd_type}) with a timeout but no fail callback", scope="service")
+            from ... import logging
+            logging.warning(f"Sending a command ({cmd_type}) with a timeout but no fail callback", scope="bus")
         
         self._counters[CommandType] += 1
         

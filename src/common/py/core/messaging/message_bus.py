@@ -2,12 +2,12 @@ import threading
 import typing
 
 from .dispatchers import MessageDispatcher
+from .handlers import MessageService, MessageContextType
 from .message import Message, MessageType
 from .message_router import MessageRouter
 from .meta import MessageMetaInformationType
 from .networking import NetworkEngine
 from ..logging import LoggerProxy, default_logger, error, debug
-from ..service import Service, ServiceContextType
 from ...component import ComponentData
 
 
@@ -19,7 +19,7 @@ class MessageBus:
     it also sends messages across the network to other components if necessary. The message bus on the remote side will then decide what to do with the incoming message:
     Dispatch it locally there, send it to yet another component, or just ignore it.
     
-    Message handlers are always registered through a ``Service``. When a message gets dispatched locally by the bus, it will call any handlers associated with the
+    Message handlers are always registered through a ``MessageService``. When a message gets dispatched locally by the bus, it will call any handlers associated with the
     message (via its name). If a message needs to be sent to another component, the bus will invoke the ``NetworkEngine`` to do so.
     
     To be error tolerant, any exceptions that arise during message handling will be logged but won't result in program termination.
@@ -42,7 +42,7 @@ class MessageBus:
         debug("-- Creating network engine", scope="bus")
         self._network_engine = self._create_network_engine()
         
-        self._services: typing.List[Service] = []
+        self._services: typing.List[MessageService] = []
         self._dispatchers: typing.Dict[type[MessageType], MessageDispatcher] = {
             Command: CommandDispatcher(),
             CommandReply: CommandReplyDispatcher(),
@@ -55,15 +55,15 @@ class MessageBus:
     def _create_network_engine(self) -> NetworkEngine:
         return NetworkEngine(self._comp_data, self)
         
-    def add_service(self, svc: Service) -> bool:
+    def add_service(self, svc: MessageService) -> bool:
         """
-        Adds a new service to the bus.
+        Adds a new message service to the bus.
         
         Args:
-            svc: The service to add.
+            svc: The message service to add.
 
         Returns:
-            Whether the service was added.
+            Whether the message service was added.
         """
         with self._lock:
             if svc in self._services:
@@ -72,15 +72,15 @@ class MessageBus:
             self._services.append(svc)
             return True
     
-    def remove_service(self, svc: Service) -> bool:
+    def remove_service(self, svc: MessageService) -> bool:
         """
-        Removes a service from the bus.
+        Removes a message service from the bus.
         
         Args:
-            svc: The service to remove.
+            svc: The message service to remove.
 
         Returns:
-            Whether the service was removed.
+            Whether the message service was removed.
         """
         with self._lock:
             if svc not in self._services:
@@ -139,8 +139,8 @@ class MessageBus:
     def _remote_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         self._network_engine.send_message(msg, msg_meta)
 
-    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, svc: Service) -> None:
-        for handler in svc.message_handlers(msg.name):
+    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, svc: MessageService) -> None:
+        for handler in svc.message_handlers.find_handlers(msg.name):
             try:
                 act_msg = typing.cast(msg_type, msg)
                 ctx = self._create_context(msg, svc)
@@ -150,7 +150,7 @@ class MessageBus:
                 error(f"An exception occurred while processing a message: {str(exc)}", scope="bus", message=str(msg), exception=type(exc))
                 debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")
 
-    def _create_context(self, msg: Message, svc: Service) -> ServiceContextType:
+    def _create_context(self, msg: Message, svc: MessageService) -> MessageContextType:
         logger_proxy = LoggerProxy(default_logger())
         logger_proxy.add_param("trace", str(msg.trace))
         return svc.create_context(self._comp_data.config, logger_proxy)

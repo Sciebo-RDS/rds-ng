@@ -24,7 +24,7 @@ class MyCommandReply(CommandReply):
     le_reply: str = ""
 
 
-s = comp.core.create_service("Test service")
+s = comp.create_service("Test service")
 
 
 def h2_done(reply: MyCommandReply, success: bool, message: str) -> None:
