@@ -2,7 +2,7 @@ import flask
 
 from .logging import info, debug, set_level
 from .messaging import MessageBus
-from .service import Service, ServiceContextType, ServiceContext
+from .messaging.handlers import MessageService
 from ..component import ComponentData
 
 
@@ -57,43 +57,27 @@ class Core:
         set_level(log.DEBUG)
         debug("-- Debug mode enabled", scope="core")
     
-    def create_service(self, name: str, *, context_type: type[ServiceContextType] = ServiceContext) -> Service:
+    def register_service(self, svc: MessageService) -> None:
         """
-        Creates and registers a new service.
-
-        Args:
-            name: The name of the service.
-            context_type: Can be used to override the default ``ServiceContext`` type. All message handlers
-                associated with the new service will then receive instances of this type for their service context.
-
-        Returns:
-            The newly created service.
-        """
-        svc = Service(self._comp_data.comp_id, name, message_bus=self._message_bus, context_type=context_type)
-        self.register_service(svc)
-        return svc
-    
-    def register_service(self, svc: Service) -> None:
-        """
-        Registers a new service.
+        Registers a message service.
         
-        Services are always created and registered using ``create_service``, so you should rarely (if ever)
-        need to call this method directly.
+        Services are always created and registered using ``create_service`` (in ``Component``),
+        so you should rarely (if ever) need to call this method directly.
         
         Args:
-            svc: The service to register.
+            svc: The message service to register.
         """
         if self._message_bus.add_service(svc):
             debug(f"Registered service: {svc}", scope="core")
         else:
             debug("Service already registered", scope="core", service=svc)
             
-    def unregister_service(self, svc: Service) -> None:
+    def unregister_service(self, svc: MessageService) -> None:
         """
-        Removes a service.
+        Removes a message service.
         
         Args:
-            svc: The service to remove.
+            svc: The message service to remove.
         """
         if self._message_bus.remove_service(svc):
             debug(f"Unregistered service: {svc}", scope="core")

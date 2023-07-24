@@ -1,8 +1,8 @@
 import typing
 
-from ..messaging.handlers import MessageContext, MessageEmitter
-from ..logging import LoggerProtocol
-from ...utils.config import Configuration
+from ..core.messaging.handlers import MessageContext, MessageEmitter
+from ..core.logging import LoggerProtocol
+from ..utils.config import Configuration
 
 
 class ServiceContext(MessageContext):

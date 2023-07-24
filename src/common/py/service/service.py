@@ -1,9 +1,9 @@
 import typing
 
 from .service_context import ServiceContextType, ServiceContext
-from ..messaging import Message, MessageType, MessageBusProtocol
-from ..messaging.handlers import MessageHandler, MessageService, MessageEmitter
-from ...utils import UnitID
+from ..core.messaging import Message, MessageType, MessageBusProtocol
+from ..core.messaging.handlers import MessageHandler, MessageService, MessageEmitter
+from ..utils import UnitID
 
 
 @typing.final

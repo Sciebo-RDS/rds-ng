@@ -3,7 +3,7 @@ import typing
 
 from .component_data import ComponentData
 from .roles import ComponentRole
-from ..core.service import ServiceContextType, ServiceContext, Service
+from ..service import ServiceContextType, ServiceContext, Service
 from ..utils import UnitID
 from ..utils.config import Configuration
 
