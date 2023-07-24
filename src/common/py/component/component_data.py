@@ -2,9 +2,9 @@ import dataclasses
 
 from semantic_version import Version
 
-from common.py.component.roles.component_role import ComponentRole
-from common.py.utils import UnitID
-from common.py.utils.config import Configuration
+from .roles.component_role import ComponentRole
+from ..utils import UnitID
+from ..utils.config import Configuration
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
