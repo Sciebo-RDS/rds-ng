@@ -22,7 +22,7 @@ jobs:
           if [ -f ./deployment/containers/py-base/requirements.txt ]; then pip install -r ./deployment/containers/py-base/requirements.txt; fi
       - name: Check Types with pytype
         run: |
-          python3 ${{ env.SCRIPTS_DIR }}/run-typechecks.py
+          python3 ${{ env.SCRIPTS_DIR }}/run_typechecks.py
   lint_python:
     name: Linter
     runs-on: ubuntu-latest
