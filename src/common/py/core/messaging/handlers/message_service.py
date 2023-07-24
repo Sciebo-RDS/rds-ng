@@ -1,8 +1,8 @@
 from .message_context import MessageContext, MessageContextType
 from .message_emitter import MessageEmitter
+from .message_handlers import MessageHandlers
 from .. import MessageBusProtocol
 from ...logging import LoggerProtocol
-from ..handlers import MessageHandlers
 from ....utils import UnitID
 from ....utils.config import Configuration
 
