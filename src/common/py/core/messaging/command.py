@@ -22,4 +22,4 @@ class Command(Message):
     unique: Trace = field(default_factory=uuid.uuid4)
 
 
-CommandType = typing.TypeVar("CommandType", bound=Command)
+CommandType = typing.TypeVar("CommandType", bound=Command)  # pylint: disable=invalid-name

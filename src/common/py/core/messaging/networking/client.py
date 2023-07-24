@@ -44,10 +44,10 @@ class Client(socketio.Client):
         if self._server_address != "":
             info(f"Connecting to {self._server_address}...", scope="client")
             
-            from socketio.exceptions import ConnectionError
+            import socketio.exceptions as sioexc
             try:
                 self.connect(self._server_address, auth=self._get_authentication(), wait=True, wait_timeout=self._connection_timeout)
-            except ConnectionError as exc:
+            except sioexc.ConnectionError as exc:
                 error(f"Failed to connect to server: {str(exc)}", scope="client")
             
     def send_message(self, msg: Message) -> None:

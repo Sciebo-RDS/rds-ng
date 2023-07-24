@@ -67,4 +67,4 @@ class MessageContext:
         return self._logger
 
 
-MessageContextType = typing.TypeVar("MessageContextType", bound=MessageContext)
+MessageContextType = typing.TypeVar("MessageContextType", bound=MessageContext)  # pylint: disable=invalid-name

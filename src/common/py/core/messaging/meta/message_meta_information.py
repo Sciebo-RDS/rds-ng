@@ -28,4 +28,4 @@ class MessageMetaInformation:
     requires_reply: bool = False
 
 
-MessageMetaInformationType = typing.TypeVar("MessageMetaInformationType", bound=MessageMetaInformation)
+MessageMetaInformationType = typing.TypeVar("MessageMetaInformationType", bound=MessageMetaInformation)  # pylint: disable=invalid-name

@@ -67,8 +67,8 @@ class Server(socketio.Server):
         try:
             comp_id = UnitID.from_string(auth["component_id"])
         except Exception as exc:
-            from socketio.exceptions import ConnectionRefusedError
-            raise ConnectionRefusedError(f"The client {sid} did not provide proper authorization") from exc
+            import socketio.exceptions as sioexc
+            raise sioexc.ConnectionRefusedError(f"The client {sid} did not provide proper authorization") from exc
         
         if comp_id in self._connected_components:
             warning(f"A component with the ID {comp_id} has already been connected to the server", scope="server")

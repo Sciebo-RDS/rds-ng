@@ -5,6 +5,7 @@ from .meta import MessageMetaInformationType
 
 
 class MessageBusProtocol(Protocol):
+    # pylint: disable=missing-function-docstring
     """
     Defines the general interface for the ``MessageBus``.
     """

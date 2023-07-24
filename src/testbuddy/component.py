@@ -1,3 +1,4 @@
+# pylint: disable=all
 from common.py.component import Component
 from common.py.component.roles import LeafRole
 from common.py.core.messaging import Event, Channel, Message, Command, CommandReply

@@ -8,6 +8,7 @@ from ..meta import CommandMetaInformation
 
 
 class CommandDispatcher(MessageDispatcher[Command]):
+    # pylint: disable=protected-access
     """
     Message dispatcher specific to ``Command``.
     """

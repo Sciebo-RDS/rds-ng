@@ -5,6 +5,7 @@ from ..meta import EventMetaInformation
 
 
 class EventDispatcher(MessageDispatcher[Event]):
+    # pylint: disable=protected-access
     """
     Message dispatcher specific to ``Event``.
     """

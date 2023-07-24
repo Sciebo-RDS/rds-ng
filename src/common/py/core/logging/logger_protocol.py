@@ -2,6 +2,7 @@ from typing import Protocol
 
 
 class LoggerProtocol(Protocol):
+    # pylint: disable=missing-function-docstring
     """
     Defines the general interface for our extended ``Logger``.
     """

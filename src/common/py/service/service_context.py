@@ -30,4 +30,4 @@ class ServiceContext(MessageContext):
         return self._config
 
 
-ServiceContextType = typing.TypeVar("ServiceContextType", bound=ServiceContext)
+ServiceContextType = typing.TypeVar("ServiceContextType", bound=ServiceContext)  # pylint: disable=invalid-name

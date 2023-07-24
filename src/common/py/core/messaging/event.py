@@ -13,4 +13,4 @@ class Event(Message):
     """
 
 
-EventType = typing.TypeVar("EventType", bound=Event)
+EventType = typing.TypeVar("EventType", bound=Event)  # pylint: disable=invalid-name

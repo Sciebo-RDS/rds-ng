@@ -5,6 +5,7 @@ from ..meta import CommandReplyMetaInformation
 
 
 class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
+    # pylint: disable=protected-access
     """
     Message dispatcher specific to ``CommandReply``.
     """

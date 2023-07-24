@@ -35,7 +35,7 @@ class CommandReply(Message):
     unique: Trace = field(default_factory=uuid.uuid4)
 
 
-CommandReplyType = typing.TypeVar("CommandReplyType", bound=CommandReply)
+CommandReplyType = typing.TypeVar("CommandReplyType", bound=CommandReply)  # pylint: disable=invalid-name
 
 CommandDoneCallback = typing.Callable[[CommandReplyType, bool, str], None]
 CommandFailCallback = typing.Callable[[CommandReply.FailType, str], None]

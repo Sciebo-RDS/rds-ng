@@ -39,7 +39,7 @@ class Logger(logging.Logger):
         for handler in self.handlers:
             handler.setLevel(level)
 
-    def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
+    def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:  # pylint: disable=arguments-differ
         """
         Logs a debugging message.
 
@@ -50,7 +50,7 @@ class Logger(logging.Logger):
         """
         super().debug(msg, extra=self._pack_extra_params(scope, **kwargs))
 
-    def info(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
+    def info(self, msg: str, *, scope: str | None = None, **kwargs) -> None:  # pylint: disable=arguments-differ
         """
         Logs an information message.
 
@@ -61,7 +61,7 @@ class Logger(logging.Logger):
         """
         super().info(msg, extra=self._pack_extra_params(scope, **kwargs))
         
-    def warning(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
+    def warning(self, msg: str, *, scope: str | None = None, **kwargs) -> None:  # pylint: disable=arguments-differ
         """
         Logs a warning message.
 
@@ -72,7 +72,7 @@ class Logger(logging.Logger):
         """
         super().warning(msg, extra=self._pack_extra_params(scope, **kwargs))
         
-    def error(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
+    def error(self, msg: str, *, scope: str | None = None, **kwargs) -> None:  # pylint: disable=arguments-differ
         """
         Logs an error message.
 
