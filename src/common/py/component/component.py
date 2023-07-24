@@ -3,7 +3,6 @@ import typing
 
 from .component_data import ComponentData
 from .roles import ComponentRole
-from ..core.logging import info, warning
 from ..utils import UnitID
 from ..utils.config import Configuration
 
@@ -45,6 +44,7 @@ class Component:
             version=meta_info.version,
         )
         
+        from ..core.logging import info
         info(str(self), role=self._data.role.name)
         info("-- Starting component...")
         
@@ -79,6 +79,7 @@ class Component:
         try:
             config.load(config_file)
         except Exception as exc:
+            from ..core.logging import warning
             warning("Component configuration could not be loaded", scope="core", error=str(exc))
         
         return config
