@@ -80,7 +80,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
         def _invoke_reply_callback(callback, *args) -> None:
             try:
                 callback(*args)
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 import traceback
                 from ...logging import error, debug
                 error(f"An exception occurred within a command reply callback: {str(exc)}", scope="bus", exception=type(exc))

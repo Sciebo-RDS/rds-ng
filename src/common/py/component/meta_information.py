@@ -46,7 +46,7 @@ class MetaInformation:
             global_info = data["global"]
             title: str = global_info["title"]
             version = Version(global_info["version"])
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             return "<invalid>", Version("0.0.0")
         
         return title, version
@@ -54,7 +54,7 @@ class MetaInformation:
     def _read_component_definitions(self, data: typing.Any) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
         try:
             comps_info: typing.Dict[str, typing.Dict[str, typing.Any]] = data["components"]
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             return {}
         
         return comps_info

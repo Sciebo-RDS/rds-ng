@@ -145,7 +145,7 @@ class MessageBus:
                 act_msg = typing.cast(msg_type, msg)
                 ctx = self._create_context(msg, svc)
                 dispatcher.dispatch(act_msg, msg_meta, handler, ctx)
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 import traceback
                 error(f"An exception occurred while processing a message: {str(exc)}", scope="bus", message=str(msg), exception=type(exc))
                 debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")

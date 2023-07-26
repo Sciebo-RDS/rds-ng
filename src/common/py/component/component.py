@@ -99,7 +99,7 @@ class Component:
         
         try:
             config.load(config_file)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             from ..core.logging import warning
             warning("Component configuration could not be loaded", scope="core", error=str(exc))
         

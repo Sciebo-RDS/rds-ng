@@ -78,7 +78,7 @@ class NetworkEngine:
         try:
             msg = self._unpack_message(msg_name, data)
             msg_meta = self._create_message_meta_information(msg, entrypoint)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._routing_error(str(exc), data=data)
         else:
             from ...logging import debug

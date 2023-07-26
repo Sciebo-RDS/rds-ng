@@ -38,7 +38,7 @@ class Channel:
         """
         try:
             return UnitID.from_string(self.target) if self.target is not None else None
-        except:
+        except:  # pylint: disable=bare-except
             return None
     
     @property
