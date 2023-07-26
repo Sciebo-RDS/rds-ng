@@ -5,7 +5,10 @@ FROM    python:3.11
 # Update the image first (and install some helpful tools)
 RUN     apt-get update \
 &&      apt-get -y upgrade \
-&&      apt-get -y install nano
+&&      apt-get -y install nano vim
+
+# Some useful macros
+RUN     echo 'alias ll="ls -la"' >> ~/.bashrc
 
 # Install basic Python libraries
 WORKDIR /base

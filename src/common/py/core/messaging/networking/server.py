@@ -66,7 +66,7 @@ class Server(socketio.Server):
     def _on_connect(self, sid: str, _, auth: typing.Dict[str, typing.Any]) -> None:
         try:
             comp_id = UnitID.from_string(auth["component_id"])
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             import socketio.exceptions as sioexc
             raise sioexc.ConnectionRefusedError(f"The client {sid} did not provide proper authorization") from exc
         

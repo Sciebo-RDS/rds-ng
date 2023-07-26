@@ -78,7 +78,7 @@ class NetworkEngine:
         try:
             msg = self._unpack_message(msg_name, data)
             msg_meta = self._create_message_meta_information(msg, entrypoint)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._routing_error(str(exc), data=data)
         else:
             from ...logging import debug
@@ -106,7 +106,8 @@ class NetworkEngine:
         msg.hops.append(self._comp_data.comp_id)
         return msg
     
-    def _route_message(self, msg: Message, msg_meta: MessageMetaInformation, direction: NetworkRouter.Direction, *, skip_components: typing.List[UnitID] | None = None):
+    def _route_message(self, msg: Message, msg_meta: MessageMetaInformation, direction: NetworkRouter.Direction, *,
+                       skip_components: typing.List[UnitID] | None = None):
         send_to_client = True
         
         if self._router.check_server_routing(direction, msg, msg_meta):

@@ -31,7 +31,10 @@ class Formatter(logging.Formatter):
             The formatted text.
         """
         scope = self._get_scope(record)
-        params = [f"{self._color_wrap(k, self._colors['params']['name'], italic=True)}={self._color_wrap(str(v), self._colors['params']['value'], italic=True)}" for k, v in self._get_extra_params(record).items()]
+        name_color = self._colors['params']['name']
+        val_color = self._colors['params']['value']
+        params = [f"{self._color_wrap(k, name_color, italic=True)}={self._color_wrap(str(v), val_color, italic=True)}"
+                  for k, v in self._get_extra_params(record).items()]
         tokens = [
             self._color_wrap(self.formatTime(record, "%Y-%m-%d %H:%M:%S"), self._colors["time"]),
             " [",

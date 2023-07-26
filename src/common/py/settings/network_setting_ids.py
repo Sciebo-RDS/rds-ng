@@ -2,6 +2,7 @@ from ..utils.config import SettingID
 
 
 class NetworkServerSettingIDs:
+    # pylint: disable=too-few-public-methods
     """
     Identifiers for server-specific networking settings.
 
@@ -12,6 +13,7 @@ class NetworkServerSettingIDs:
 
 
 class NetworkClientSettingIDs:
+    # pylint: disable=too-few-public-methods
     """
     Identifiers for client-specific networking settings.
 

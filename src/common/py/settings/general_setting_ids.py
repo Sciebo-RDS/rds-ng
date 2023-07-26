@@ -2,6 +2,7 @@ from ..utils.config import SettingID
 
 
 class GeneralSettingIDs:
+    # pylint: disable=too-few-public-methods
     """
     Identifiers for general settings.
 

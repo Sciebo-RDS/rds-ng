@@ -15,12 +15,13 @@ class MessageBus:
     """
     Bus for dispatching messages.
     
-    The message bus is probably the most central aspect of the system as a whole. It not only invokes local message handlers (which are basically callback functions),
-    it also sends messages across the network to other components if necessary. The message bus on the remote side will then decide what to do with the incoming message:
-    Dispatch it locally there, send it to yet another component, or just ignore it.
+    The message bus is probably the most central aspect of the system as a whole. It not only invokes local message handlers (which are basically
+    callback functions), it also sends messages across the network to other components if necessary. The message bus on the remote side will then
+    decide what to do with the incoming message: Dispatch it locally there, send it to yet another component, or just ignore it.
     
-    Message handlers are always registered through a ``MessageService``. When a message gets dispatched locally by the bus, it will call any handlers associated with the
-    message (via its name). If a message needs to be sent to another component, the bus will invoke the ``NetworkEngine`` to do so.
+    Message handlers are always registered through a ``MessageService``. When a message gets dispatched locally by the bus, it will call any handlers
+    associated with the message (via its name). If a message needs to be sent to another component, the bus will invoke the ``NetworkEngine`` to do
+    so.
     
     To be error tolerant, any exceptions that arise during message handling will be logged but won't result in program termination.
     
@@ -139,13 +140,14 @@ class MessageBus:
     def _remote_dispatch(self, msg: Message, msg_meta: MessageMetaInformationType) -> None:
         self._network_engine.send_message(msg, msg_meta)
 
-    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, svc: MessageService) -> None:
+    def _dispatch_to_service(self, dispatcher: MessageDispatcher, msg: Message, msg_type: type[MessageType], msg_meta: MessageMetaInformationType,
+                             svc: MessageService) -> None:
         for handler in svc.message_handlers.find_handlers(msg.name):
             try:
                 act_msg = typing.cast(msg_type, msg)
                 ctx = self._create_context(msg, svc)
                 dispatcher.dispatch(act_msg, msg_meta, handler, ctx)
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 import traceback
                 error(f"An exception occurred while processing a message: {str(exc)}", scope="bus", message=str(msg), exception=type(exc))
                 debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")

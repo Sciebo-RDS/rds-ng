@@ -7,6 +7,7 @@ from ..utils.config import SettingID
 
 
 def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
+    # pylint: disable=too-few-public-methods
     """
     Gets default values for all settings.
     

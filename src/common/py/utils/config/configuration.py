@@ -98,7 +98,7 @@ class Configuration:
         
         try:
             return self._traverse_dict(key.split(), self._settings)
-        except:
+        except:  # pylint: disable=bare-except
             return default
     
     def _traverse_dict(self, path: typing.List[str], dct: typing.Dict) -> typing.Any:

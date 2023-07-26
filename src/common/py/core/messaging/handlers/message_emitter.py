@@ -1,6 +1,7 @@
 import typing
 
-from .. import Message, MessageType, MessageBusProtocol, Channel, Command, CommandType, CommandReply, CommandReplyType, CommandDoneCallback, CommandFailCallback, Event, EventType
+from .. import Message, MessageType, MessageBusProtocol, Channel, Command, CommandType, CommandReply, CommandReplyType, CommandDoneCallback,\
+    CommandFailCallback, Event, EventType
 from ..meta import MessageMetaInformation, MessageMetaInformationType, CommandMetaInformation, CommandReplyMetaInformation, EventMetaInformation
 from ....utils import UnitID
 
@@ -26,7 +27,9 @@ class MessageEmitter:
             EventType: 0,
         }
         
-    def emit_command(self, cmd_type: type[CommandType], target: Channel, done_callback: CommandDoneCallback | None = None, fail_callback: CommandFailCallback | None = None, async_callbacks: bool = False, timeout: float = 0.0, chain: Message | None = None, **kwargs) -> MessageType:
+    def emit_command(self, cmd_type: type[CommandType], target: Channel, done_callback: CommandDoneCallback | None = None,
+                     fail_callback: CommandFailCallback | None = None, async_callbacks: bool = False, timeout: float = 0.0,
+                     chain: Message | None = None, **kwargs) -> MessageType:
         """
         Emits a new command.
         
@@ -55,10 +58,12 @@ class MessageEmitter:
         
         self._counters[CommandType] += 1
         
-        meta = CommandMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL, done_callback=done_callback, fail_callback=fail_callback, async_callbacks=async_callbacks, timeout=timeout)
+        meta = CommandMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL, done_callback=done_callback, fail_callback=fail_callback,
+                                      async_callbacks=async_callbacks, timeout=timeout)
         return self._emit(cmd_type, meta, origin=self._origin_id, target=target, prev_hops=[], chain=chain, **kwargs)
     
-    def emit_reply(self, reply_type: type[CommandReplyType], command: CommandType, *, success: bool = True, message: str = "", **kwargs) -> MessageType:
+    def emit_reply(self, reply_type: type[CommandReplyType], command: CommandType, *, success: bool = True, message: str = "",
+                   **kwargs) -> MessageType:
         """
         Emits a new command reply.
         
@@ -83,7 +88,8 @@ class MessageEmitter:
         self._counters[CommandReplyType] += 1
         
         meta = CommandReplyMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL)
-        return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command, success=success, message=message, unique=command.unique, **kwargs)
+        return self._emit(reply_type, meta, origin=self._origin_id, target=Channel.direct(str(command.origin)), prev_hops=[], chain=command,
+                          success=success, message=message, unique=command.unique, **kwargs)
     
     def emit_event(self, event_type: type[EventType], target: Channel, chain: Message | None = None, **kwargs) -> MessageType:
         """
@@ -124,12 +130,14 @@ class MessageEmitter:
         """
         return self._counters[msg_type] if msg_type in self._counters else 0
     
-    def _emit(self, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, *, origin: UnitID, target: Channel, prev_hops: typing.List[UnitID], chain: Message | None, **kwargs) -> MessageType:
+    def _emit(self, msg_type: type[MessageType], msg_meta: MessageMetaInformationType, *, origin: UnitID, target: Channel,
+              prev_hops: typing.List[UnitID], chain: Message | None, **kwargs) -> MessageType:
         msg = self._create_message(msg_type, origin=origin, target=target, prev_hops=prev_hops, chain=chain, **kwargs)
         self._message_bus.dispatch(msg, msg_meta)
         return msg
 
-    def _create_message(self, msg_type: type[MessageType], *, origin: UnitID, target: Channel, prev_hops: typing.List[UnitID], chain: Message | None, **kwargs) -> MessageType:
+    def _create_message(self, msg_type: type[MessageType], *, origin: UnitID, target: Channel, prev_hops: typing.List[UnitID], chain: Message | None,
+                        **kwargs) -> MessageType:
         if chain is not None:
             kwargs["trace"] = chain.trace
         

@@ -63,12 +63,13 @@ class CommandDispatcher(MessageDispatcher[Command]):
         MessageDispatcher._meta_information_list.remove(msg.unique)
 
     @staticmethod
-    def invoke_reply_callback(unique: Trace, *, reply: CommandReply | None = None, fail_type: CommandReply.FailType = CommandReply.FailType.NONE, fail_msg: str = "") -> None:
+    def invoke_reply_callback(unique: Trace, *, reply: CommandReply | None = None, fail_type: CommandReply.FailType = CommandReply.FailType.NONE,
+                              fail_msg: str = "") -> None:
         """
         Invokes command reply handlers.
         
-        When emitting a command, it is possible to specify reply callbacks that are invoked beside message handlers. This method will call the correct callback
-        and take care of intercepting exceptions.
+        When emitting a command, it is possible to specify reply callbacks that are invoked beside message handlers. This method will call the correct
+        callback and take care of intercepting exceptions.
         
         Args:
             unique: The unique trace of the command.
@@ -80,7 +81,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
         def _invoke_reply_callback(callback, *args) -> None:
             try:
                 callback(*args)
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 import traceback
                 from ...logging import error, debug
                 error(f"An exception occurred within a command reply callback: {str(exc)}", scope="bus", exception=type(exc))
