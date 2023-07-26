@@ -106,7 +106,8 @@ class NetworkEngine:
         msg.hops.append(self._comp_data.comp_id)
         return msg
     
-    def _route_message(self, msg: Message, msg_meta: MessageMetaInformation, direction: NetworkRouter.Direction, *, skip_components: typing.List[UnitID] | None = None):
+    def _route_message(self, msg: Message, msg_meta: MessageMetaInformation, direction: NetworkRouter.Direction, *,
+                       skip_components: typing.List[UnitID] | None = None):
         send_to_client = True
         
         if self._router.check_server_routing(direction, msg, msg_meta):

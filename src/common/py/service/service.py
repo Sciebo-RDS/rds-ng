@@ -36,7 +36,8 @@ class Service(MessageService):
         
         self._name = name
 
-    def message_handler(self, fltr: str, /, message_type: type[MessageType] = Message, *, is_async: bool = False) -> typing.Callable[[MessageHandler], MessageHandler]:
+    def message_handler(self, fltr: str, /, message_type: type[MessageType] = Message, *,
+                        is_async: bool = False) -> typing.Callable[[MessageHandler], MessageHandler]:
         """
         A decorator to declare a message handler.
         

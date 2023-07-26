@@ -2,7 +2,7 @@
 disable=trailing-whitespace,import-outside-toplevel,missing-module-docstring,unused-argument
 
 [FORMAT]
-max-line-length=160
+max-line-length=150
 
 [DESIGN]
 max-args=8
