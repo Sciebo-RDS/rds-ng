@@ -95,7 +95,8 @@ class NetworkRouter:
                 if msg.target.is_direct and msg.target.target_id.equals(self._comp_id):  # Skip messages targeted to us
                     return False
                 
-                return msg_meta.entrypoint == MessageMetaInformation.Entrypoint.SERVER  # Only rebounce to the client if the message came through the server
+                # Only rebounce to the client if the message came through the server
+                return msg_meta.entrypoint == MessageMetaInformation.Entrypoint.SERVER
             
         return False
         
