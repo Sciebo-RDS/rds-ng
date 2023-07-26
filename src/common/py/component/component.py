@@ -3,9 +3,11 @@ import typing
 
 from .component_data import ComponentData
 from .roles import ComponentRole
-from ..service import ServiceContextType, ServiceContext, Service
 from ..utils import UnitID
 from ..utils.config import Configuration
+
+if typing.TYPE_CHECKING:
+    from ..service import ServiceContextType, Service
 
 
 class Component:
@@ -69,7 +71,7 @@ class Component:
         """
         self._core.run()
         
-    def create_service(self, name: str, *, context_type: type[ServiceContextType] = ServiceContext) -> Service:
+    def create_service(self, name: str, *, context_type: type['ServiceContextType'] | None = None) -> 'Service':
         """
         Creates and registers a new service.
 
@@ -81,6 +83,11 @@ class Component:
         Returns:
             The newly created service.
         """
+        from ..service import Service, ServiceContext
+        
+        if context_type is None:
+            context_type = ServiceContext
+        
         svc = Service(self._data.comp_id, name, message_bus=self._core.message_bus, context_type=context_type)
         self._core.register_service(svc)
         return svc
