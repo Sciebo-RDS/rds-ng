@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "items": [
+        "reference/component/roles/component_role",
+        "reference/component/roles/leaf_role",
+        "reference/component/roles/node_role",
+        "reference/component/roles/server_role"
+      ],
+      "label": "component.roles",
+      "type": "category"
+    },
+    "reference/component/component",
+    "reference/component/component_data",
+    "reference/component/meta_information"
+  ],
+  "label": "component",
+  "type": "category"
+}

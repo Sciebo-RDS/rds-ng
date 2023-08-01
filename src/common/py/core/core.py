@@ -15,7 +15,7 @@ class Core:
     
     The core can be regarded as a facade to the *inner structure* of a component. It only offers a small number of public
     methods and is accessed from the outside very rarely.
-    
+
     An instance of this class is always created when creating a ``Component``; it should never be instantiated otherwise.
     """
     def __init__(self, module_name: str, comp_data: ComponentData):
