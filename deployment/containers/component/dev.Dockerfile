@@ -12,7 +12,8 @@ ARG     COMPONENT_THREADS=9
 # Copy the source code
 WORKDIR /component
 
-COPY    /src/common ./common
+COPY    /src/common/py ./common/py
+RUN     touch ./common/py/__init__.py
 COPY    /src/${COMPONENT_NAME} ./${COMPONENT_NAME}
 
 ENV     PYTHONPATH="/component"

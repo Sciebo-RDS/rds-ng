@@ -10,7 +10,7 @@ ARG     WEB_PORT=6969
 # Copy the source code
 WORKDIR /app
 
-COPY    /src/common ./src/common
+COPY    /src/common/ts ./src/common/ts
 COPY    /src/web/${WEB_NAME} .
 
 # Install Node dependencies
