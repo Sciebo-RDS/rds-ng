@@ -63,10 +63,10 @@ services:
         volumes:
             -   type: bind
                 source: ../../src/web/frontend/src
-                target: /app/src
+                target: /app/web/frontend/src
             -   type: bind
-                source: ../../src/common
-                target: /app/src/common
+                source: ../../src/common/web
+                target: /app/common/web
         build:
             context: ../../
             dockerfile: deployment/containers/web/dev.Dockerfile

@@ -10,10 +10,12 @@ ARG     WEB_PORT=6969
 # Copy the source code
 WORKDIR /app
 
-COPY    /src/common/ts ./src/common/ts
-COPY    /src/web/${WEB_NAME} .
+COPY    /src/common/web ./common/web
+COPY    /src/web/${WEB_NAME} ./web/${WEB_NAME}
 
 # Install Node dependencies
+WORKDIR /app/web/${WEB_NAME}
+
 RUN     npm install
 
 # Run the container

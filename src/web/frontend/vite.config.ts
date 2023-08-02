@@ -10,10 +10,11 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+            '@common': fileURLToPath(new URL('../../common/web', import.meta.url)),
         }
     },
     build: {
-        minify: false // Set to 'esbuild' to enable minification
+        minify: false  // Set to 'esbuild' to enable minification
     }
 })
