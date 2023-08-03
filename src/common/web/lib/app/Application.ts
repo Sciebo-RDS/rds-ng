@@ -1,4 +1,5 @@
-import { App, Component, createApp } from "vue"
+import type { App, Component } from "vue"
+import { createApp } from "vue"
 import { createPinia } from "pinia"
 
 import PrimeVue from "primevue/config"
