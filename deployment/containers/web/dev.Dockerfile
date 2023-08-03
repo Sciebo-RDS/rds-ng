@@ -13,10 +13,14 @@ WORKDIR /app
 COPY    /src/common/web ./web-common
 COPY    /src/web/${WEB_NAME} ./web-${WEB_NAME}
 
-# Inject the 'web-common' dependency
-COPY    /deployment/scripts/inject-web-common.sh .
-RUN     ./inject-web-common.sh ./web-${WEB_NAME} \
-&&      rm -f ./inject-web-common.sh
+# Install the local 'web-common' package
+RUN     cd web-${WEB_NAME} \
+&&      npm install "../web-common"
+
+# Update some module paths
+COPY    /deployment/scripts/update-module-paths.sh .
+RUN     ./update-module-paths.sh ./web-${WEB_NAME} \
+&&      rm -f ./update-module-paths.sh
 
 # Create the workspace package.json file and install Node dependencies
 RUN     echo "{ \"private\": true, \"workspaces\": [\"web-${WEB_NAME}\", \"web-common\"] }" > package.json \
