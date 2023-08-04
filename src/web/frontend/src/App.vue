@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import Button from "primevue/button"
+import { useApplicationStore } from "@common/lib/app/ApplicationStore";
+
+const app = useApplicationStore();
 </script>
 
 <template>
@@ -10,4 +13,5 @@ import Button from "primevue/button"
     <h1 class="text-3xl font-bold underline bg-amber-200">
         Hello world!
     </h1>
+    <div class="text-4xl">{{ app.test }}</div>
 </template>

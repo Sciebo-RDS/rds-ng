@@ -1,4 +1,6 @@
-import App from "./App.vue"
-import createApplication from "@common/lib/app/Application";
+import "primevue/resources/themes/lara-light-indigo/theme.css"
 
-const app = createApplication(App);
+import App from "./App.vue"
+import bootstrap from "@common/lib/bootstrap";
+
+bootstrap(App);
