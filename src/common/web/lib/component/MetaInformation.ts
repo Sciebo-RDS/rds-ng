@@ -33,7 +33,7 @@ export class MetaInformation {
         this._components = this.readComponentDefinitions(metaData);
     }
 
-    private readGlobalInfo(data: any): [string, SemVer] {
+    private readGlobalInfo(data: object): [string, SemVer] {
         try {
             let globalInfo = data["global"];
             let title = globalInfo["title"];
@@ -44,7 +44,7 @@ export class MetaInformation {
         }
     }
 
-    private readComponentDefinitions(data: any): object {
+    private readComponentDefinitions(data: object) {
         try {
             return data["components"];
         } catch {
