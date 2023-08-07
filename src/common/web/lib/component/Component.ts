@@ -20,9 +20,9 @@ import { UnitID } from "../utils/UnitID";
 export class Component {
     private static _instance: Component | null = null;
 
-    private readonly _data: ComponentData | null = null;
+    private readonly _data: ComponentData;
 
-    private readonly _vueApp: App<HostElement> | null = null;
+    private readonly _vueApp: App<HostElement>;
 
     private constructor(compID: UnitID, appRoot: Component, appElement: string) {
         Component._instance = this;
@@ -38,7 +38,6 @@ export class Component {
             compInfo["name"],
             metaInfo.version
         );
-        console.log(this.toString());
 
         this._vueApp = this.createVueApp(appRoot, appElement);
     }
