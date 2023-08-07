@@ -1,6 +1,8 @@
+// Always start by importing the desired PrimeVue theme
 import "primevue/resources/themes/lara-light-indigo/theme.css"
 
 import App from "./App.vue"
-import bootstrap from "@common/lib/bootstrap";
+import { Application } from "@common/lib/app/Application";
 
-bootstrap(App);
+// Create a new application and mount the main Vue App component
+Application.create(App);

@@ -15,6 +15,6 @@ export default defineConfig({
         }
     },
     build: {
-        minify: false  // Set to 'esbuild' to enable minification
+        minify: false,  // Set to 'esbuild' to enable minification
     }
 })

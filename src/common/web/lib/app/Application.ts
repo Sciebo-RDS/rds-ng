@@ -1,3 +1,5 @@
+import "../../assets/styles/tailwind-init.css"
+
 import { Component, createApp } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
@@ -12,19 +14,17 @@ import PrimeVue from "primevue/config";
  * tasks.
  */
 export class Application {
+    private static _instance: Application | null = null;
+
     private readonly _vueApp: App<HostElement> | null = null;
 
-    /**
-     * Creates a new web application.
-     *
-     * @param appRoot - The Vue root component.
-     * @param appElement - The HTML element ID used for mounting the root component.
-     */
-    public constructor(appRoot: Component, appElement: string) {
+    private constructor(appRoot: Component, appElement: string) {
+        Application._instance = this;
+
         this._vueApp = this.createVueApp(appRoot, appElement);
     }
 
-    private createVueApp(appRoot: Component, appElement: string): App<HostElement> {
+    private createVueApp(appRoot: Component, appElement: string) {
         let app = createApp(appRoot);
 
         app.use(createPinia());
@@ -38,7 +38,36 @@ export class Application {
     /**
      * The global Vue application instance.
      */
-    public get vue(): App<HostElement> {
+    public get vue() {
         return this._vueApp;
+    }
+
+    /**
+     * Creates a new web application.
+     *
+     * If an instance already exists, an error is thrown.
+     *
+     * @param appRoot - The Vue root component.
+     * @param appElement - The HTML element ID used for mounting the root component.
+     *
+     * @throws Error - If an application instance has already been created.
+     */
+    public static create(appRoot: Component, appElement: string = "#app") {
+        if (Application._instance !== null) {
+            throw new Error("An application instance has already been created");
+        }
+
+        return new Application(appRoot, appElement);
+    }
+
+    /**
+     * The global ``Application`` instance.
+     */
+    public static get instance() {
+        if (Application._instance === null) {
+            throw new Error("No application instance has been created yet");
+        }
+
+        return Application._instance;
     }
 }
