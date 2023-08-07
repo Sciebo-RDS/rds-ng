@@ -16,7 +16,7 @@
         },
         "web-frontend": {
             "name": "Web Frontend",
-            "directory": "web/frontend",
+            "directory": "frontend",
             "tech": "web"
         }
     }
