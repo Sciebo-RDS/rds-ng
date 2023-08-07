@@ -1,6 +1,9 @@
-import { Application } from "./app/Application";
+import { Component } from "./component/Component";
 
+/**
+ * Composable for easy access of commonly used global instances.
+ */
 export const useCommon = () => {
-    const app = Application.instance;
+    const app = Component.instance;
     return { app, };
 };

@@ -11,7 +11,7 @@ ARG     WEB_PORT=6969
 WORKDIR /app
 
 COPY    /src/common/web/package.json ./web-common/
-COPY    /src/web/${WEB_NAME}/package.json ./web-${WEB_NAME}/
+COPY    /src/${WEB_NAME}/package.json ./web-${WEB_NAME}/
 
 # Create the workspace package.json file and install all Node dependencies
 RUN     echo "{ \"private\": true, \"workspaces\": [\"web-${WEB_NAME}\", \"web-common\"] }" > package.json \
@@ -21,7 +21,7 @@ RUN     echo "{ \"private\": true, \"workspaces\": [\"web-${WEB_NAME}\", \"web-c
 
 # Finally, copy the entire source code
 COPY    /src/common/web ./web-common
-COPY    /src/web/${WEB_NAME} ./web-${WEB_NAME}
+COPY    /src/${WEB_NAME} ./web-${WEB_NAME}
 
 # Run the container
 WORKDIR /app/web-${WEB_NAME}

@@ -62,7 +62,7 @@ services:
         image: rds-ng/frontend:develop
         volumes:
             -   type: bind
-                source: ../../src/web/frontend/src
+                source: ../../src/frontend/src
                 target: /app/web-frontend/src
             -   type: bind
                 source: ../../src/common/web

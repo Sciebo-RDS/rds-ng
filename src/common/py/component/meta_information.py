@@ -5,19 +5,20 @@ from semantic_version import Version
 class MetaInformation:
     """
     Accesses meta information about the entire project and its various component stored in a *JSON* file.
-    
+
     The JSON file needs to be structured like this::
-    
+
         {
             "global": {
                 "title": "RDS-NG",
                 "version": "0.0.1"
             },
-        
+
             "components": {
                 "gate": {
                     "name": "Gate service",
-                    "directory": "gate"
+                    "directory": "gate",
+                    "tech": "py"
                 },
                 ...
             }
@@ -27,14 +28,14 @@ class MetaInformation:
         """
         Args:
             info_file: The JSON file to load the meta information from.
-            
+
         Raises:
             ValueError: If the information file couldn't be loaded.
         """
         import os.path
         if info_file == "" or not os.path.exists(info_file):
             raise ValueError("Invalid meta information file given")
-        
+
         with open(info_file, encoding="utf-8") as file:
             import json
             data = json.load(file)
@@ -48,24 +49,24 @@ class MetaInformation:
             version = Version(global_info["version"])
         except Exception:  # pylint: disable=broad-exception-caught
             return "<invalid>", Version("0.0.0")
-        
+
         return title, version
-        
+
     def _read_component_definitions(self, data: typing.Any) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
         try:
             comps_info: typing.Dict[str, typing.Dict[str, typing.Any]] = data["components"]
         except Exception:  # pylint: disable=broad-exception-caught
             return {}
-        
+
         return comps_info
-        
+
     @property
     def title(self) -> str:
         """
         The project title.
         """
         return self._title
-    
+
     @property
     def version(self) -> Version:
         """
@@ -76,18 +77,18 @@ class MetaInformation:
     def get_components(self) -> typing.List[str]:
         """
         A list of all component names.
-        
+
         Returns:
             The names of all components.
         """
         return list(self._components.keys())
-    
+
     def get_component(self, comp: str) -> typing.Dict[str, typing.Any]:
         """
         Retrieves the meta information stored for a specific component.
-        
+
         This meta information includes the ``name`` of the component, as well as its ``directory`` within the code structure (rooted at ``/src``).
-        
+
         Args:
             comp: The name of the component.
 
@@ -96,8 +97,9 @@ class MetaInformation:
         """
         if comp in self._components:
             return self._components[comp]
-        
+
         return {
             "name": "<invalid>",
             "directory": "",
+            "tech": "",
         }

@@ -3,16 +3,21 @@
         "title": "RDS-NG",
         "version": "0.0.1"
     },
-
     "components": {
         "gate": {
             "name": "Gate service",
-            "directory": "gate"
+            "directory": "gate",
+            "tech": "py"
         },
-
         "testbuddy": {
             "name": "Debugging test buddy",
-            "directory": "testbuddy"
+            "directory": "testbuddy",
+            "tech": "py"
+        },
+        "web-frontend": {
+            "name": "Web Frontend",
+            "directory": "web/frontend",
+            "tech": "web"
         }
     }
 }
