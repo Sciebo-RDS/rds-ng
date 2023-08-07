@@ -1,13 +1,12 @@
-import "../../assets/styles/tailwind-init.css"
+import "../../assets/styles/tailwind-init.css";
 
 import { App, createApp } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
-import { SemVer } from "semver";
 
 import { ComponentData } from "./ComponentData";
-import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
+import { UnitID } from "../utils/UnitID";
 
 /**
  * Base class for all web components.
@@ -31,8 +30,15 @@ export class Component {
         compID = this.sanitizeComponentID(compID);
 
         let metaInfo = new MetaInformation();
+        let compInfo = metaInfo.getComponent(compID.unit);
 
-        this._data = new ComponentData(compID, "Title", "Name", new SemVer("0.0.1"));
+        this._data = new ComponentData(
+            compID,
+            metaInfo.title,
+            compInfo["name"],
+            metaInfo.version
+        );
+        console.log(this.toString());
 
         this._vueApp = this.createVueApp(appRoot, appElement);
     }
