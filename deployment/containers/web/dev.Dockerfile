@@ -7,19 +7,21 @@ ARG     WEB_NAME
 ARG     WEB_COMMAND="dev"
 ARG     WEB_PORT=6969
 
-# Copy the source code
+# Copy/create all necessary package.json files so we can install dependencies early (before copying the actual sources)
 WORKDIR /app
 
+COPY    /src/common/web/package.json ./web-common/
+COPY    /src/web/${WEB_NAME}/package.json ./web-${WEB_NAME}/
+
+# Create the workspace package.json file and install all Node dependencies
+RUN     echo "{ \"private\": true, \"workspaces\": [\"web-${WEB_NAME}\", \"web-common\"] }" > package.json \
+&&      npm install \
+&&      cd web-${WEB_NAME} \
+&&      npm install "../web-common"
+
+# Finally, copy the entire source code
 COPY    /src/common/web ./web-common
 COPY    /src/web/${WEB_NAME} ./web-${WEB_NAME}
-
-# Create the workspace package.json file and install Node dependencies
-RUN     echo "{ \"private\": true, \"workspaces\": [\"web-${WEB_NAME}\", \"web-common\"] }" > package.json \
-&&      npm install
-
-# Install the local 'web-common' package
-RUN     cd web-${WEB_NAME} \
-&&      npm install "../web-common"
 
 # Run the container
 WORKDIR /app/web-${WEB_NAME}
