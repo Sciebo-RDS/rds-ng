@@ -17,7 +17,7 @@
             ],
             "@common/*": [
                 "../web-common/*",
-                "../../common/web/*"
+                "../common/web/*"
             ]
         }
     }
