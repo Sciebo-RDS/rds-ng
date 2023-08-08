@@ -3,6 +3,7 @@
 **/.github
 **/__pycache__
 **/node_modules
+**/dist
 
 # Node-specific files
 package-lock.json

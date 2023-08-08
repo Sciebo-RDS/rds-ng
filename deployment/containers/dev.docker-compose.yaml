@@ -63,15 +63,15 @@ services:
         volumes:
             -   type: bind
                 source: ../../src/frontend/src
-                target: /app/web-frontend/src
+                target: /app/frontend/src
             -   type: bind
-                source: ../../src/common/web
-                target: /app/web-common
+                source: ../../src/common
+                target: /app/common
         build:
             context: ../../
             dockerfile: deployment/containers/web/dev.Dockerfile
             args:
-                WEB_NAME: "frontend"
+                COMPONENT_NAME: "frontend"
         depends_on:
             - node-base
         ports:

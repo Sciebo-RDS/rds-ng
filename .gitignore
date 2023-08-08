@@ -1,5 +1,12 @@
-# Python cache
+# Python specifics
 __pycache__
+
+# Node specifics
+node_modules
+package-lock.json
+
+# Distribution files
+dist
 
 # IDE specific files
 .idea

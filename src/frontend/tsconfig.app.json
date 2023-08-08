@@ -16,8 +16,10 @@
                 "./src/*"
             ],
             "@common/*": [
-                "../web-common/*",
                 "../common/web/*"
+            ],
+            "@assets/*": [
+                "../common/assets/*"
             ]
         }
     }

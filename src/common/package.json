@@ -1,5 +1,5 @@
 {
-    "name": "web-common",
+    "name": "common",
     "private": true,
     "dependencies": {
         "autoprefixer": "^10.4.14",
