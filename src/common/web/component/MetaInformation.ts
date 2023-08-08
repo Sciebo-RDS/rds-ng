@@ -35,18 +35,18 @@ export class MetaInformation {
 
     private readGlobalInfo(data: object): [string, SemVer] {
         try {
-            let globalInfo = data["global"];
-            let title = globalInfo["title"];
-            let version = globalInfo["version"];
+            let globalInfo = data.global;
+            let title = globalInfo.title;
+            let version = globalInfo.version;
             return [title, new SemVer(version)];
         } catch {
             return ["<invalid>", new SemVer("0.0.0")]
         }
     }
 
-    private readComponentDefinitions(data: object) {
+    private readComponentDefinitions(data: object): object {
         try {
-            return data["components"];
+            return data.components;
         } catch {
             return {};
         }
@@ -55,14 +55,14 @@ export class MetaInformation {
     /**
      * The project title.
      */
-    public get title() {
+    public get title(): string {
         return this._title;
     }
 
     /**
      * The project version (see https://semver.org).
      */
-    public get version() {
+    public get version(): SemVer {
         return this._version;
     }
 
@@ -71,7 +71,7 @@ export class MetaInformation {
      *
      * @returns - The names of all components.
      */
-    public getComponents() {
+    public getComponents(): string[] {
         return Object.keys(this._components);
     }
 
@@ -84,7 +84,7 @@ export class MetaInformation {
      *
      * @returns - A dictionary containing the meta information.
      */
-    public getComponent(comp: string) {
+    public getComponent(comp: string): object {
         if (comp in this._components) {
             return this._components[comp];
         }

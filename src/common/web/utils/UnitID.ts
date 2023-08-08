@@ -26,7 +26,7 @@ export class UnitID {
      *
      * @returns - Whether both identifiers are equal.
      */
-    public equals(other: this) {
+    public equals(other: this): boolean {
         if (this.type !== other.type || this.unit !== other.unit) {
             return false;
         }
@@ -51,7 +51,7 @@ export class UnitID {
      *
      * @throws Error - If the passed string is invalid.
      */
-    public static fromString(str: string) {
+    public static fromString(str: string): UnitID {
         let path = str.split(UnitID._delimiter);
         if (path.length == 2 || path.length == 3) {
             return new UnitID(...path);
@@ -65,7 +65,7 @@ export class UnitID {
      *
      * @returns - The string representation of this unit ID.
      */
-    public toString() {
+    public toString(): string {
         return this.instance !== undefined ? [this.type, this.unit, this.instance].join(UnitID._delimiter) : [this.type, this.unit].join(UnitID._delimiter);
     }
 }

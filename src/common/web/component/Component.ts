@@ -6,6 +6,7 @@ import PrimeVue from "primevue/config";
 
 import { ComponentData } from "./ComponentData";
 import { MetaInformation } from "./MetaInformation";
+import logging from "../core/logging/Logging"
 import { UnitID } from "../utils/UnitID";
 
 /**
@@ -39,10 +40,13 @@ export class Component {
             metaInfo.version
         );
 
+        logging.info(this.toString());
+        logging.info("-- Starting component...");
+
         this._vueApp = this.createVueApp(appRoot, appElement);
     }
 
-    private createVueApp(appRoot: Component, appElement: string) {
+    private createVueApp(appRoot: Component, appElement: string): App {
         let app = createApp(appRoot);
 
         app.use(createPinia());
@@ -56,14 +60,14 @@ export class Component {
     /**
      * A data helper object that stores useful component data and information.
      */
-    public get data() {
+    public get data(): ComponentData {
         return this._data;
     }
 
     /**
      * The global Vue application instance.
      */
-    public get vue() {
+    public get vue(): App {
         return this._vueApp;
     }
 
@@ -78,7 +82,7 @@ export class Component {
      *
      * @throws Error - If an application instance has already been created.
      */
-    public static create(compID: UnitID, appRoot: Component, appElement: string = "#app") {
+    public static create(compID: UnitID, appRoot: Component, appElement: string = "#app"): Component {
         if (Component._instance !== null) {
             throw new Error("An application instance has already been created");
         }
@@ -88,8 +92,10 @@ export class Component {
 
     /**
      * The global ``Component`` instance.
+     *
+     * @throws Error - If no application instance has been created yet.
      */
-    public static get instance() {
+    public static get instance(): Component {
         if (Component._instance === null) {
             throw new Error("No application instance has been created yet");
         }
@@ -97,7 +103,7 @@ export class Component {
         return Component._instance;
     }
 
-    private sanitizeComponentID(compID: UnitID) {
+    private sanitizeComponentID(compID: UnitID): UnitID {
         if (compID.instance === undefined) {
             // TODO: Get from config
             return new UnitID(compID.type, compID.unit, "default");
@@ -109,7 +115,7 @@ export class Component {
     /**
      * @returns - The string representation of this component.
      */
-    public toString() {
+    public toString(): string {
         return `${this._data.title} v${this._data.version}: ${this._data.name} (${this._data.compID})`;
     }
 }

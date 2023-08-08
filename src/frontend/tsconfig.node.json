@@ -8,6 +8,7 @@
         "playwright.config.*"
     ],
     "compilerOptions": {
+        "target": "ES2020",
         "composite": true,
         "module": "ESNext",
         "moduleResolution": "Bundler",

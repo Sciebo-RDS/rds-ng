@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import Button from "primevue/button"
-import { useCommon } from "@common/common";
-
-const { app, } = useCommon();
 </script>
 
 <template>

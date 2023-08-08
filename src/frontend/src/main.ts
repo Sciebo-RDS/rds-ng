@@ -6,4 +6,4 @@ import { Component } from "@common/component/Component";
 import { UnitID } from "@common/utils/UnitID";
 
 // Create a new web component and mount the main Vue App component
-Component.create(new UnitID("client", "web-frontend"), App);
+Component.create(new UnitID("client", "frontend"), App);

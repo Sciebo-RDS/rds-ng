@@ -14,7 +14,7 @@
             "directory": "testbuddy",
             "tech": "py"
         },
-        "web-frontend": {
+        "frontend": {
             "name": "Web Frontend",
             "directory": "frontend",
             "tech": "web"
