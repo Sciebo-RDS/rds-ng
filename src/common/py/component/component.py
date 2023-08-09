@@ -20,7 +20,7 @@ class Component:
     When writing a component, always create a new subclass that extends ``Component``. Pass all the necessary information to its
     constructor and, after doing further setup steps, call its ``run`` method.
     """
-    def __init__(self, comp_id: UnitID, role: ComponentRole, *, module_name: str, config_file: str = "./config.toml"):
+    def __init__(self, comp_id: UnitID, role: ComponentRole, *, module_name: str, config_file: str = "./config/config.toml"):
         """
         Args:
             comp_id: The identifier of this component.

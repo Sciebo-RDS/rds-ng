@@ -1,0 +1,3 @@
+[network.client]
+server_address = "rds-gate-1:6969"
+connection_timeout = 10
