@@ -53,11 +53,16 @@ export class UnitID {
      */
     public static fromString(str: string): UnitID {
         let path = str.split(UnitID._delimiter);
-        if (path.length == 2 || path.length == 3) {
-            return new UnitID(...path);
-        }
+        switch (path.length) {
+            case 2:
+                return new UnitID(path[0], path[1]);
 
-        throw new Error(`The unit ID '${str}' is invalid`);
+            case 3:
+                return new UnitID(path[0], path[1], path[2]);
+
+            default:
+                throw new Error(`The unit ID '${str}' is invalid`);
+        }
     }
 
     /**

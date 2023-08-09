@@ -1,6 +1,6 @@
 import "../../assets/styles/tailwind-init.css";
 
-import { App, createApp } from "vue";
+import { type App, createApp, type Component as VueComponent } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 
@@ -23,9 +23,9 @@ export class Component {
 
     private readonly _data: ComponentData;
 
-    private readonly _vueApp: App<HostElement>;
+    private readonly _vueApp: App;
 
-    private constructor(compID: UnitID, appRoot: Component, appElement: string) {
+    private constructor(compID: UnitID, appRoot: VueComponent, appElement: string) {
         Component._instance = this;
 
         compID = this.sanitizeComponentID(compID);
@@ -36,7 +36,7 @@ export class Component {
         this._data = new ComponentData(
             compID,
             metaInfo.title,
-            compInfo["name"],
+            compInfo.name,
             metaInfo.version
         );
 
@@ -46,7 +46,7 @@ export class Component {
         this._vueApp = this.createVueApp(appRoot, appElement);
     }
 
-    private createVueApp(appRoot: Component, appElement: string): App {
+    private createVueApp(appRoot: VueComponent, appElement: string): App {
         let app = createApp(appRoot);
 
         app.use(createPinia());
@@ -82,7 +82,7 @@ export class Component {
      *
      * @throws Error - If an application instance has already been created.
      */
-    public static create(compID: UnitID, appRoot: Component, appElement: string = "#app"): Component {
+    public static create(compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): Component {
         if (Component._instance !== null) {
             throw new Error("An application instance has already been created");
         }

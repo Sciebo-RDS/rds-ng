@@ -1,5 +1,5 @@
 import { Logger } from "./Logger";
-import { LogLevel, LogRecordParameters } from "./LogRecord";
+import { LogLevel, type LogRecordParameters } from "./LogRecord";
 
 const defaultLogger = new Logger();
 

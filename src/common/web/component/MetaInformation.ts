@@ -1,6 +1,22 @@
 import { SemVer } from "semver";
 
-import metaData from "/config/meta-information.json";
+import metaData from "/config/meta-information.json"
+
+type ComponentInformationType = {
+    name: string;
+    directory: string;
+    tech: string;
+}
+
+type MetaInformationType = {
+    global: {
+        title: string;
+        version: string;
+    };
+    components: {
+        [key: string]: ComponentInformationType;
+    };
+}
 
 /**
  * Accesses meta information about the entire project and its various component stored in a *JSON* file.
@@ -23,47 +39,22 @@ import metaData from "/config/meta-information.json";
  * }
  * ```
  */
+
 export class MetaInformation {
-    private readonly _title: string;
-    private readonly _version: SemVer;
-    private readonly _components: object;
-
-    public constructor() {
-        [this._title, this._version] = this.readGlobalInfo(metaData);
-        this._components = this.readComponentDefinitions(metaData);
-    }
-
-    private readGlobalInfo(data: object): [string, SemVer] {
-        try {
-            let globalInfo = data.global;
-            let title = globalInfo.title;
-            let version = globalInfo.version;
-            return [title, new SemVer(version)];
-        } catch {
-            return ["<invalid>", new SemVer("0.0.0")]
-        }
-    }
-
-    private readComponentDefinitions(data: object): object {
-        try {
-            return data.components;
-        } catch {
-            return {};
-        }
-    }
+    private readonly _data = metaData as MetaInformationType;
 
     /**
      * The project title.
      */
     public get title(): string {
-        return this._title;
+        return this._data.global.title;
     }
 
     /**
      * The project version (see https://semver.org).
      */
     public get version(): SemVer {
-        return this._version;
+        return new SemVer(this._data.global.version);
     }
 
     /**
@@ -72,7 +63,7 @@ export class MetaInformation {
      * @returns - The names of all components.
      */
     public getComponents(): string[] {
-        return Object.keys(this._components);
+        return Object.keys(metaData.components);
     }
 
     /**
@@ -84,9 +75,9 @@ export class MetaInformation {
      *
      * @returns - A dictionary containing the meta information.
      */
-    public getComponent(comp: string): object {
-        if (comp in this._components) {
-            return this._components[comp];
+    public getComponent(comp: string): ComponentInformationType {
+        if (comp in this._data.components) {
+            return this._data.components[comp];
         }
 
         return {

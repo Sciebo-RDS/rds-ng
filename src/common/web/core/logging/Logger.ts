@@ -1,5 +1,5 @@
 import { Formatter } from "./Formatter";
-import { LogLevel, LogRecord, LogRecordParameters } from "./LogRecord";
+import { LogLevel, LogRecord, type LogRecordParameters } from "./LogRecord";
 
 /**
  * A customized logger offering advanced formatting and parameters listing.
@@ -14,7 +14,7 @@ export class Logger {
      * @param level - The maximum level for log entries to be displayed.
      */
     public constructor(level: LogLevel = LogLevel.Info) {
-        this.setLevel(level);
+        this._level = level;
     }
 
     /**

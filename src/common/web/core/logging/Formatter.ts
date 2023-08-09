@@ -65,7 +65,7 @@ export class Formatter {
 
     private getLevelColor(levelName: string): string {
         if (levelName in Formatter._colors.levels) {
-            return Formatter._colors.levels[levelName];
+            return Formatter._colors.levels[levelName as (keyof typeof Formatter._colors.levels)];
         }
         return Formatter._colors.default;
     }
