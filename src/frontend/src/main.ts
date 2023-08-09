@@ -11,3 +11,4 @@ import configData from "/config/config.toml?url&raw"
 Component.create(new UnitID("client", "frontend"), App);
 
 console.log(configData);
+console.log(import.meta.env);

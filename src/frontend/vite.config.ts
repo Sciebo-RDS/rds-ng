@@ -18,5 +18,6 @@ export default defineConfig({
     },
     build: {
         minify: false,  // Set to "esbuild" to enable minification
-    }
+    },
+    envPrefix: "RDS_",
 });
