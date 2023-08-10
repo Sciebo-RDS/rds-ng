@@ -3,7 +3,7 @@ import "../../assets/styles/tailwind-init.css";
 import { type App, type Component as VueComponent, createApp } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
-
+import { v4 as uuidv4 } from "uuid";
 import { ComponentData } from "./ComponentData";
 import { MetaInformation } from "./MetaInformation";
 import logging from "../core/logging/Logging"
@@ -121,12 +121,10 @@ export class Component {
     }
 
     private sanitizeComponentID(compID: UnitID): UnitID {
-        if (compID.instance === undefined) {
-            // TODO: Use random instance for each client
-            return new UnitID(compID.type, compID.unit, "default");
-        }
+        let instance: string = compID.instance !== undefined ? compID.instance : "default";
+        let uniqueID = uuidv4();
 
-        return compID;
+        return new UnitID(compID.type, compID.unit, `${instance}::${uniqueID}`);
     }
 
     /**
