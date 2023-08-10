@@ -1,7 +1,7 @@
 import { LogRecord } from "./LogRecord";
 
 export class Formatter {
-    private static _colors = {
+    private static _colors: Record<string, any> = {
         "default": "#000000",
         "time": "#808080",
         "scope": "#008700",
@@ -65,7 +65,7 @@ export class Formatter {
 
     private getLevelColor(levelName: string): string {
         if (levelName in Formatter._colors.levels) {
-            return Formatter._colors.levels[levelName as (keyof typeof Formatter._colors.levels)];
+            return Formatter._colors.levels[levelName];
         }
         return Formatter._colors.default;
     }

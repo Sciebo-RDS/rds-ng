@@ -5,13 +5,9 @@ export enum LogLevel {
     Error = 40
 }
 
-export interface LogRecordParameters {
-    [Key: string]: any;
-}
-
 export class LogRecord {
     public constructor(readonly msg: string, readonly timestamp: Date, readonly level: LogLevel, readonly scope: string,
-                       readonly params: LogRecordParameters) {
+                       readonly params: Record<string, any>) {
     }
 
     public get levelName(): string {

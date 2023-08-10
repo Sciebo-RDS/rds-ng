@@ -1,12 +1,14 @@
 import "../../assets/styles/tailwind-init.css";
 
-import { type App, createApp, type Component as VueComponent } from "vue";
+import { type App, type Component as VueComponent, createApp } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 
 import { ComponentData } from "./ComponentData";
 import { MetaInformation } from "./MetaInformation";
 import logging from "../core/logging/Logging"
+import { getDefaultSettings } from "../settings/DefaultSettings";
+import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { UnitID } from "../utils/UnitID";
 
 /**
@@ -25,7 +27,7 @@ export class Component {
 
     private readonly _vueApp: App;
 
-    private constructor(compID: UnitID, appRoot: VueComponent, appElement: string) {
+    private constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
         Component._instance = this;
 
         compID = this.sanitizeComponentID(compID);
@@ -35,6 +37,7 @@ export class Component {
 
         this._data = new ComponentData(
             compID,
+            this.createConfig(env),
             metaInfo.title,
             compInfo.name,
             metaInfo.version
@@ -44,6 +47,19 @@ export class Component {
         logging.info("-- Starting component...");
 
         this._vueApp = this.createVueApp(appRoot, appElement);
+    }
+
+    private createConfig(env: SettingsContainer): Configuration {
+        let config = new Configuration(env);
+        config.addDefaults(getDefaultSettings());
+
+        try {
+            config.load();
+        } catch (exc) {
+            logging.warning("Component configuration could not be loaded", "core", { error: exc });
+        }
+
+        return config;
     }
 
     private createVueApp(appRoot: VueComponent, appElement: string): App {
@@ -76,18 +92,19 @@ export class Component {
      *
      * If an instance already exists, an error is thrown.
      *
+     * @param env - The global environment variables.
      * @param compID - The identifier of this component.
      * @param appRoot - The Vue root component.
      * @param appElement - The HTML element ID used for mounting the root component.
      *
      * @throws Error - If an application instance has already been created.
      */
-    public static create(compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): Component {
+    public static create(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): Component {
         if (Component._instance !== null) {
             throw new Error("An application instance has already been created");
         }
 
-        return new Component(compID, appRoot, appElement);
+        return new Component(env, compID, appRoot, appElement);
     }
 
     /**
@@ -105,7 +122,7 @@ export class Component {
 
     private sanitizeComponentID(compID: UnitID): UnitID {
         if (compID.instance === undefined) {
-            // TODO: Get from config
+            // TODO: Use random instance for each client
             return new UnitID(compID.type, compID.unit, "default");
         }
 

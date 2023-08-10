@@ -1,5 +1,6 @@
 import { SemVer } from "semver";
 
+// @ts-ignore
 import metaData from "/config/meta-information.json"
 
 type ComponentInformationType = {
@@ -13,9 +14,7 @@ type MetaInformationType = {
         title: string;
         version: string;
     };
-    components: {
-        [key: string]: ComponentInformationType;
-    };
+    components: Record<string, ComponentInformationType>;
 }
 
 /**

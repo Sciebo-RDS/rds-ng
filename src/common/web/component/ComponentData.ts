@@ -1,5 +1,6 @@
 import { SemVer } from "semver";
 
+import { Configuration } from "../utils/config/Configuration";
 import { UnitID } from "../utils/UnitID";
 
 /**
@@ -11,10 +12,12 @@ import { UnitID } from "../utils/UnitID";
 export class ComponentData {
     /**
      * @param compID - The component identifier.
+     * @param config - The configuration.
      * @param title - The project title.
      * @param name - The component name.
      * @param version - The project version.
      */
-    public constructor(readonly compID: UnitID, readonly title: string, readonly name: string, readonly version: SemVer) {
+    public constructor(readonly compID: UnitID, readonly config: Configuration,
+                       readonly title: string, readonly name: string, readonly version: SemVer) {
     }
 }

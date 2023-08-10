@@ -1,5 +1,5 @@
 import { Logger } from "./Logger";
-import { LogLevel, type LogRecordParameters } from "./LogRecord";
+import { LogLevel } from "./LogRecord";
 
 const defaultLogger = new Logger();
 
@@ -19,7 +19,7 @@ export function setLevel(level: LogLevel): void {
  * @param scope - The scope of the entry.
  * @param params - Any additional parameters.
  */
-export function debug(msg: string, scope: string = "", params: LogRecordParameters = {}): void {
+export function debug(msg: string, scope: string = "", params: Record<string, any> = {}): void {
     defaultLogger.debug(msg, scope, params);
 }
 
@@ -30,7 +30,7 @@ export function debug(msg: string, scope: string = "", params: LogRecordParamete
  * @param scope - The scope of the entry.
  * @param params - Any additional parameters.
  */
-export function info(msg: string, scope: string = "", params: LogRecordParameters = {}): void {
+export function info(msg: string, scope: string = "", params: Record<string, any> = {}): void {
     defaultLogger.info(msg, scope, params);
 }
 
@@ -41,7 +41,7 @@ export function info(msg: string, scope: string = "", params: LogRecordParameter
  * @param scope - The scope of the entry.
  * @param params - Any additional parameters.
  */
-export function warning(msg: string, scope: string = "", params: LogRecordParameters = {}): void {
+export function warning(msg: string, scope: string = "", params: Record<string, any> = {}): void {
     defaultLogger.warning(msg, scope, params);
 }
 
@@ -52,7 +52,7 @@ export function warning(msg: string, scope: string = "", params: LogRecordParame
  * @param scope - The scope of the entry.
  * @param params - Any additional parameters.
  */
-export function error(msg: string, scope: string = "", params: LogRecordParameters = {}): void {
+export function error(msg: string, scope: string = "", params: Record<string, any> = {}): void {
     defaultLogger.error(msg, scope, params);
 }
 

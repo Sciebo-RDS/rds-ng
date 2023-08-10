@@ -1,5 +1,5 @@
 import { Formatter } from "./Formatter";
-import { LogLevel, LogRecord, type LogRecordParameters } from "./LogRecord";
+import { LogLevel, LogRecord } from "./LogRecord";
 
 /**
  * A customized logger offering advanced formatting and parameters listing.
@@ -33,7 +33,7 @@ export class Logger {
      * @param scope - The scope of the entry.
      * @param params - Any additional parameters.
      */
-    public debug(msg: string, scope: string = "", params: LogRecordParameters = {}): void {
+    public debug(msg: string, scope: string = "", params: Record<string, any> = {}): void {
         let record = this.createLogRecord(LogLevel.Debug, msg, scope, params);
         this.log(record);
     }
@@ -45,7 +45,7 @@ export class Logger {
      * @param scope - The scope of the entry.
      * @param params - Any additional parameters.
      */
-    public info(msg: string, scope: string = "", params: LogRecordParameters = {}): void {
+    public info(msg: string, scope: string = "", params: Record<string, any> = {}): void {
         let record = this.createLogRecord(LogLevel.Info, msg, scope, params);
         this.log(record);
     }
@@ -57,7 +57,7 @@ export class Logger {
      * @param scope - The scope of the entry.
      * @param params - Any additional parameters.
      */
-    public warning(msg: string, scope: string = "", params: LogRecordParameters = {}): void {
+    public warning(msg: string, scope: string = "", params: Record<string, any> = {}): void {
         let record = this.createLogRecord(LogLevel.Warning, msg, scope, params);
         this.log(record);
     }
@@ -69,12 +69,12 @@ export class Logger {
      * @param scope - The scope of the entry.
      * @param params - Any additional parameters.
      */
-    public error(msg: string, scope: string = "", params: LogRecordParameters = {}): void {
+    public error(msg: string, scope: string = "", params: Record<string, any> = {}): void {
         let record = this.createLogRecord(LogLevel.Error, msg, scope, params);
         this.log(record);
     }
 
-    private createLogRecord(level: LogLevel, msg: string, scope: string, params: LogRecordParameters): LogRecord {
+    private createLogRecord(level: LogLevel, msg: string, scope: string, params: Record<string, any>): LogRecord {
         return new LogRecord(msg, new Date(), level, scope, params);
     }
 
