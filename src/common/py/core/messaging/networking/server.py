@@ -1,4 +1,6 @@
+import dataclasses
 import threading
+import time
 import typing
 from enum import IntEnum, auto
 
@@ -8,6 +10,8 @@ from .. import Message
 from ...logging import info, warning, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
+
+ServerMessageHandler = typing.Callable[[str, str], None]
 
 
 class Server(socketio.Server):
@@ -22,6 +26,23 @@ class Server(socketio.Server):
 
         SPREAD = auto()
         DIRECT = auto()
+
+    @dataclasses.dataclass()
+    class _ComponentEntry:
+        sid: str
+
+        timeout: float = 0.0
+        last_activity: float = dataclasses.field(default_factory=time.time)
+
+        def has_timed_out(self) -> bool:
+            """
+            Whether the connected component has timed out.
+            """
+            return (
+                time.time() - self.last_activity > self.timeout
+                if self.timeout > 0.0
+                else False
+            )
 
     def __init__(self, comp_id: UnitID, config: Configuration):
         """
@@ -38,7 +59,10 @@ class Server(socketio.Server):
             cors_credentials=True,
         )
 
-        self._connected_components: typing.Dict[UnitID, str] = {}
+        self._connected_components: typing.Dict[UnitID, Server._ComponentEntry] = {}
+        self.test = {"hi": "there"}
+
+        self._message_handler: ServerMessageHandler | None = None
 
         self._lock = threading.Lock()
 
@@ -47,12 +71,34 @@ class Server(socketio.Server):
     def _connect_events(self) -> None:
         self.on("connect", self._on_connect)
         self.on("disconnect", self._on_disconnect)
+        self.on("*", self._on_message)
+
+    def set_message_handler(self, msg_handler: ServerMessageHandler) -> None:
+        """
+        Sets a handler that gets called when a message arrives.
+
+        Args:
+            msg_handler: The message handler to be called.
+        """
+        self._message_handler = msg_handler
 
     def run(self) -> None:
         """
         So far, does exactly nothing.
         """
-        # TODO: Periodically purge obsolete frontends
+
+    def process(self) -> None:
+        """
+        Periodically purges timed out clients.
+        """
+        print(self._connected_components)
+        print(self.test)
+        with self._lock:
+            for timed_out_component in self._find_timed_out_components():
+                print("XXX: " + str(timed_out_component))
+                if timed_out_component in self._connected_components:
+                    print("TIME OUT: " + str(timed_out_component))
+                    # self._connected_components.pop(timed_out_component)
 
     def send_message(
         self, msg: Message, *, skip_components: typing.List[UnitID] | None = None
@@ -68,7 +114,10 @@ class Server(socketio.Server):
         """
         debug(f"Sending message: {msg}", scope="server")
         with self._lock:
-            send_to: str | None = self._get_message_recipient(msg)
+            if msg.target.is_direct and msg.target.target_id is not None:
+                self._timestamp_component(msg.target.target_id)
+
+            send_to = self._get_message_recipient(msg)
             self.emit(
                 msg.name,
                 data=msg.to_json(),
@@ -91,33 +140,73 @@ class Server(socketio.Server):
                 f"The client {sid} did not provide proper authorization"
             ) from exc
 
-        # TODO: Purge components with the same sid
         if comp_id in self._connected_components:
             warning(
                 f"A component with the ID {comp_id} has already been connected to the server",
                 scope="server",
             )
 
-        self._connected_components[comp_id] = sid
+        if self._purge_client(sid):
+            warning(
+                f"A client with the SID {sid} has already been connected to the server",
+                scope="server",
+            )
+
+        self._connected_components[comp_id] = Server._ComponentEntry(
+            sid, timeout=3
+        )  # TODO: Timeout based on client type from auth
+        print("FIRST: " + str(self.test))
+        self.test[3325] = 8787878
+        print("THEN: " + str(self.test))
 
         info("Client connected", scope="server", session=sid, component=comp_id)
 
     def _on_disconnect(self, sid: str) -> None:
-        if (comp_id := self._lookup_client(sid)) is not None:
-            self._connected_components.pop(comp_id)
-
+        self._purge_client(sid)
         info("Client disconnected", scope="server", session=sid)
 
+    def _on_message(self, msg_name: str, sid: str, data: str) -> None:
+        print("XXX: " + str(self.test))
+        if (comp_id := self._lookup_client(sid)) is not None:
+            self._timestamp_component(comp_id)
+
+        if self._message_handler is not None:
+            self._message_handler(msg_name, data)
+
+    def _timestamp_component(self, comp_id: UnitID) -> None:
+        if comp_id in self._connected_components:
+            self._connected_components[comp_id].last_activity = time.time()
+
+    def _find_timed_out_components(self) -> typing.List[UnitID]:
+        """
+        Finds all components that have timed out already.
+
+        Returns:
+            A list of all timed out components.
+        """
+        return [
+            comp_id
+            for comp_id, entry in self._connected_components.items()
+            if entry.has_timed_out()
+        ]
+
+    def _purge_client(self, sid: str) -> bool:
+        if (comp_id := self._lookup_client(sid)) is not None:
+            self._connected_components.pop(comp_id)
+            return True
+
+        return False
+
     def _lookup_client(self, sid: str) -> UnitID | None:
-        for comp_id, client_id in self._connected_components.items():
-            if client_id == sid:
+        for comp_id, client_entry in self._connected_components.items():
+            if client_entry.sid == sid:
                 return comp_id
 
         return None
 
     def _component_id_to_client(self, comp_id: UnitID) -> str | None:
         return (
-            self._connected_components[comp_id]
+            self._connected_components[comp_id].sid
             if comp_id in self._connected_components
             else None
         )
