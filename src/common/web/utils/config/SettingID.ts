@@ -30,7 +30,7 @@ export class SettingID {
      * @returns - The corresponding environment variable name.
      */
     public envName(prefix: string): string {
-        return `${prefix}_${this.toString().replace(".", "_")}`.toUpperCase();
+        return `${prefix}_${this.toString()}`.replaceAll(".", "_").toUpperCase();
     }
 
     /**

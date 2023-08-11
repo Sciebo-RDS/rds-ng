@@ -14,10 +14,12 @@ class Server(socketio.Server):
     """
     The server connection, based on ``socketio.Server``.
     """
+
     class SendTarget(IntEnum):
         """
         Flag telling whether an outgoing message is only sent to a single (direct) target or spread across all connected clients.
         """
+
         SPREAD = auto()
         DIRECT = auto()
 
@@ -30,7 +32,11 @@ class Server(socketio.Server):
         self._comp_id = comp_id
         self._config = config
 
-        super().__init__(async_mode="gevent_uwsgi", cors_allowed_origins=self._get_allowed_origins(), cors_credentials=True)
+        super().__init__(
+            async_mode="gevent_uwsgi",
+            cors_allowed_origins=self._get_allowed_origins(),
+            cors_credentials=True,
+        )
 
         self._connected_components: typing.Dict[UnitID, str] = {}
 
@@ -48,7 +54,9 @@ class Server(socketio.Server):
         """
         # TODO: Periodically purge obsolete frontends
 
-    def send_message(self, msg: Message, *, skip_components: typing.List[UnitID] | None = None) -> SendTarget:
+    def send_message(
+        self, msg: Message, *, skip_components: typing.List[UnitID] | None = None
+    ) -> SendTarget:
         """
         Sends a message to one or more clients.
 
@@ -61,19 +69,34 @@ class Server(socketio.Server):
         debug(f"Sending message: {msg}", scope="server")
         with self._lock:
             send_to: str | None = self._get_message_recipient(msg)
-            self.emit(msg.name, data=msg.to_json(), to=send_to, skip_sid=self._component_ids_to_clients(skip_components))
-            return Server.SendTarget.DIRECT if msg.target.is_direct and send_to is not None else Server.SendTarget.SPREAD
+            self.emit(
+                msg.name,
+                data=msg.to_json(),
+                to=send_to,
+                skip_sid=self._component_ids_to_clients(skip_components),
+            )
+            return (
+                Server.SendTarget.DIRECT
+                if msg.target.is_direct and send_to is not None
+                else Server.SendTarget.SPREAD
+            )
 
     def _on_connect(self, sid: str, _, auth: typing.Dict[str, typing.Any]) -> None:
         try:
             comp_id = UnitID.from_string(auth["component_id"])
         except Exception as exc:  # pylint: disable=broad-exception-caught
             import socketio.exceptions as sioexc
-            raise sioexc.ConnectionRefusedError(f"The client {sid} did not provide proper authorization") from exc
+
+            raise sioexc.ConnectionRefusedError(
+                f"The client {sid} did not provide proper authorization"
+            ) from exc
 
         # TODO: Purge components with the same sid
         if comp_id in self._connected_components:
-            warning(f"A component with the ID {comp_id} has already been connected to the server", scope="server")
+            warning(
+                f"A component with the ID {comp_id} has already been connected to the server",
+                scope="server",
+            )
 
         self._connected_components[comp_id] = sid
 
@@ -93,10 +116,24 @@ class Server(socketio.Server):
         return None
 
     def _component_id_to_client(self, comp_id: UnitID) -> str | None:
-        return self._connected_components[comp_id] if comp_id in self._connected_components else None
+        return (
+            self._connected_components[comp_id]
+            if comp_id in self._connected_components
+            else None
+        )
 
-    def _component_ids_to_clients(self, comp_ids: typing.List[UnitID]) -> typing.List[str] | None:
-        return [sid for sid in map(self._component_id_to_client, comp_ids) if sid is not None] if len(comp_ids) > 0 else None
+    def _component_ids_to_clients(
+        self, comp_ids: typing.List[UnitID]
+    ) -> typing.List[str] | None:
+        return (
+            [
+                sid
+                for sid in map(self._component_id_to_client, comp_ids)
+                if sid is not None
+            ]
+            if len(comp_ids) > 0
+            else None
+        )
 
     def _get_message_recipient(self, msg: Message) -> str | None:
         if msg.target.is_direct:
@@ -106,7 +143,13 @@ class Server(socketio.Server):
 
         return None
 
-    def _get_allowed_origins(self) -> typing.List[str] | None:
+    def _get_allowed_origins(self) -> str | typing.List[str] | None:
         from ....settings import NetworkServerSettingIDs
-        allowed_origins: str = self._config.value(NetworkServerSettingIDs.ALLOWED_ORIGINS)
-        return allowed_origins.split(",") if allowed_origins != "" else None
+
+        allowed_origins: str = self._config.value(
+            NetworkServerSettingIDs.ALLOWED_ORIGINS
+        )
+        if allowed_origins != "":
+            return "*" if allowed_origins == "*" else allowed_origins.split(",")
+
+        return None
