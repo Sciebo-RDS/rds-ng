@@ -11,8 +11,6 @@ import logging from "../core/logging/Logging"
 import { getDefaultSettings } from "../settings/DefaultSettings";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { UnitID } from "../utils/UnitID";
-import { io } from "socket.io-client";
-import { NetworkSettingIDs } from "../settings/NetworkSettingIDs";
 
 /**
  * Base class for all web components.
@@ -50,13 +48,6 @@ export class Component {
         logging.info("-- Starting component...");
 
         this._vueApp = this.createVueApp(appRoot, appElement);
-
-        console.log(this._data.config.value(NetworkSettingIDs.ServerAddress));
-        const socket = io(this._data.config.value(NetworkSettingIDs.ServerAddress), {
-            auth: { "component_id": compID },
-            timeout: this._data.config.value(NetworkSettingIDs.ConnectionTimeout)
-        });
-        console.log(socket.connected);
     }
 
     private createConfig(env: SettingsContainer): Configuration {
