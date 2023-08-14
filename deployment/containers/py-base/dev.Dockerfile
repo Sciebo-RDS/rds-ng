@@ -19,3 +19,6 @@ RUN     pip install -r ./requirements.txt
 # Add project configuration
 WORKDIR /config
 COPY    /config .
+
+# Make print() to always flush immediately
+ENV     PYTHONUNBUFFERED=1

@@ -44,14 +44,6 @@ def h2(msg: MyCommand, ctx: ServiceContext) -> None:
     )
 
 
-def h2_done(reply: MyCommandReply, success: bool, message: str) -> None:
-    print("ME GOTZ REPLY!", reply, success, message)
-
-
-def h2_fail(reason: CommandReply.FailType, message: str) -> None:
-    print("I FAILED :(", reason, message)
-
-
 s.message_emitter.emit_event(
     MyEvent,
     Channel.direct("infra/gate/default"),

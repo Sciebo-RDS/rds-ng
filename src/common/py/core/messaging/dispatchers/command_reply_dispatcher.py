@@ -9,10 +9,13 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
     """
     Message dispatcher specific to ``CommandReply``.
     """
+
     def __init__(self):
         super().__init__(CommandReplyMetaInformation)
-        
-    def pre_dispatch(self, msg: CommandReply, msg_meta: CommandReplyMetaInformation) -> None:
+
+    def pre_dispatch(
+        self, msg: CommandReply, msg_meta: CommandReplyMetaInformation
+    ) -> None:
         """
         Invokes reply callbacks associated with the replied command.
 
@@ -21,12 +24,18 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
             msg_meta: The command reply meta information.
         """
         super().pre_dispatch(msg, msg_meta)
-        
         from .command_dispatcher import CommandDispatcher
+
         CommandDispatcher.invoke_reply_callback(msg.unique, reply=msg)
         MessageDispatcher._meta_information_list.remove(msg.unique)
-    
-    def dispatch(self, msg: CommandReply, msg_meta: CommandReplyMetaInformation, handler: MessageHandlerMapping, ctx: MessageContextType) -> None:
+
+    def dispatch(
+        self,
+        msg: CommandReply,
+        msg_meta: CommandReplyMetaInformation,
+        handler: MessageHandlerMapping,
+        ctx: MessageContextType,
+    ) -> None:
         """
         Dispatches a message to locally registered message handlers.
 
