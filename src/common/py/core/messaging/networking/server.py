@@ -63,7 +63,7 @@ class Server(socketio.Server):
 
         self._message_handler: ServerMessageHandler | None = None
 
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
         self._connect_events()
 
@@ -109,8 +109,9 @@ class Server(socketio.Server):
             msg: The message to send.
             skip_components: A list of components (clients) to be excluded from the targets.
         """
-        debug(f"Sending message: {msg}", scope="server")
         with self._lock:
+            debug(f"Sending message: {msg}", scope="server")
+
             if msg.target.is_direct and msg.target.target_id is not None:
                 self._timestamp_component(msg.target.target_id)
 
@@ -128,43 +129,47 @@ class Server(socketio.Server):
             )
 
     def _on_connect(self, sid: str, _, auth: typing.Dict[str, typing.Any]) -> None:
-        try:
-            comp_id = UnitID.from_string(auth["component_id"])
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            import socketio.exceptions as sioexc
+        with self._lock:
+            try:
+                comp_id = UnitID.from_string(auth["component_id"])
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                import socketio.exceptions as sioexc
 
-            raise sioexc.ConnectionRefusedError(
-                f"The client {sid} did not provide proper authorization"
-            ) from exc
+                raise sioexc.ConnectionRefusedError(
+                    f"The client {sid} did not provide proper authorization"
+                ) from exc
 
-        if comp_id in self._connected_components:
-            warning(
-                f"A component with the ID {comp_id} has already been connected to the server",
-                scope="server",
-            )
+            if comp_id in self._connected_components:
+                warning(
+                    f"A component with the ID {comp_id} has already been connected to the server",
+                    scope="server",
+                )
 
-        if self._purge_client(sid):
-            warning(
-                f"A client with the SID {sid} has already been connected to the server",
-                scope="server",
-            )
+            if self._purge_client(sid):
+                warning(
+                    f"A client with the SID {sid} has already been connected to the server",
+                    scope="server",
+                )
 
-        self._connected_components[comp_id] = Server._ComponentEntry(
-            sid, timeout=3
-        )  # TODO: Timeout based on client type from auth
+            self._connected_components[comp_id] = Server._ComponentEntry(
+                sid, timeout=3
+            )  # TODO: Timeout based on client type from auth
 
         info("Client connected", scope="server", session=sid, component=comp_id)
 
     def _on_disconnect(self, sid: str) -> None:
-        self._purge_client(sid)
+        with self._lock:
+            self._purge_client(sid)
+
         info("Client disconnected", scope="server", session=sid)
 
     def _on_message(self, msg_name: str, sid: str, data: str) -> None:
-        if (comp_id := self._lookup_client(sid)) is not None:
-            self._timestamp_component(comp_id)
+        with self._lock:
+            if (comp_id := self._lookup_client(sid)) is not None:
+                self._timestamp_component(comp_id)
 
-        if self._message_handler is not None:
-            self._message_handler(msg_name, data)
+            if self._message_handler is not None:
+                self._message_handler(msg_name, data)
 
     def _timestamp_component(self, comp_id: UnitID) -> None:
         if comp_id in self._connected_components:
