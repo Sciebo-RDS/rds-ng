@@ -1,11 +1,19 @@
 # pylint: disable=all
-from common.py.component import Component
+from common.py.component import (
+    Component,
+    COMPONENT_TYPE_INFRASTRUCTURE,
+    COMPONENT_UNIT_GATE,
+)
 from common.py.component.roles import NodeRole
 from common.py.core.messaging import Message, Event, Command, Channel, CommandReply
 from common.py.service import ServiceContext
 from common.py.utils import UnitID
 
-comp = Component(UnitID("infra", "gate"), NodeRole(), module_name=__name__)
+comp = Component(
+    UnitID(COMPONENT_TYPE_INFRASTRUCTURE, COMPONENT_UNIT_GATE),
+    NodeRole(),
+    module_name=__name__,
+)
 app = comp.app()
 
 

@@ -151,9 +151,15 @@ class Server(socketio.Server):
                     scope="server",
                 )
 
+            from ....settings import NetworkServerSettingIDs
+            from ....component import COMPONENT_TYPE_WEB
+
             self._connected_components[comp_id] = Server._ComponentEntry(
-                sid, timeout=3
-            )  # TODO: Timeout based on client type from auth
+                sid,
+                timeout=self._config.value(NetworkServerSettingIDs.IDLE_TIMEOUT)
+                if comp_id.type == COMPONENT_TYPE_WEB
+                else 0.0,
+            )
 
         info("Client connected", scope="server", session=sid, component=comp_id)
 
