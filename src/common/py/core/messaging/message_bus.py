@@ -1,5 +1,4 @@
 import threading
-import time
 import typing
 
 from .dispatchers import MessageDispatcher
@@ -128,30 +127,12 @@ class MessageBus:
             self._local_dispatch(msg, msg_meta)
 
     def _process(self) -> None:
-        if self._network_engine.has_server:
-            print("WELL GO")
-            self._network_engine.server.test["first"] = 1
-
-            def txx():
-                while True:
-                    print("XXX " + str(self._network_engine.server.test))
-                    print("ZZZ " + str(id(self._network_engine.server.test)))
-                    time.sleep(1)
-
-            t = threading.Thread(target=txx)
-            t.start()
-            time.sleep(3)
-            self._network_engine.server.test["second"] = 2
-            print("WWW " + str(id(self._network_engine.server.test)))
-
-        # if self._network_engine.has_server:
-        #   print("XXX " + str(self._network_engine.server.test))
         self._network_engine.process()
 
         for _, dispatcher in self._dispatchers.items():
             dispatcher.process()
 
-        # threading.Timer(1.0, self._process).start()
+        threading.Timer(1.0, self._process).start()
 
     def _local_dispatch(
         self, msg: Message, msg_meta: MessageMetaInformationType

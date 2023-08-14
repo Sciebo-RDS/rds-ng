@@ -54,13 +54,12 @@ class Server(socketio.Server):
         self._config = config
 
         super().__init__(
-            async_mode="gevent_uwsgi",
+            async_mode="gevent",
             cors_allowed_origins=self._get_allowed_origins(),
             cors_credentials=True,
         )
 
         self._connected_components: typing.Dict[UnitID, Server._ComponentEntry] = {}
-        self.test = {"hi": "there"}
 
         self._message_handler: ServerMessageHandler | None = None
 
@@ -91,14 +90,12 @@ class Server(socketio.Server):
         """
         Periodically purges timed out clients.
         """
-        print(self._connected_components)
-        print(self.test)
         with self._lock:
             for timed_out_component in self._find_timed_out_components():
-                print("XXX: " + str(timed_out_component))
                 if timed_out_component in self._connected_components:
-                    print("TIME OUT: " + str(timed_out_component))
-                    # self._connected_components.pop(timed_out_component)
+                    self.disconnect(
+                        self._connected_components[timed_out_component].sid
+                    )  # This will trigger _on_disconnect, removing the client from the connected components
 
     def send_message(
         self, msg: Message, *, skip_components: typing.List[UnitID] | None = None
@@ -155,9 +152,6 @@ class Server(socketio.Server):
         self._connected_components[comp_id] = Server._ComponentEntry(
             sid, timeout=3
         )  # TODO: Timeout based on client type from auth
-        print("FIRST: " + str(self.test))
-        self.test[3325] = 8787878
-        print("THEN: " + str(self.test))
 
         info("Client connected", scope="server", session=sid, component=comp_id)
 
@@ -166,7 +160,6 @@ class Server(socketio.Server):
         info("Client disconnected", scope="server", session=sid)
 
     def _on_message(self, msg_name: str, sid: str, data: str) -> None:
-        print("XXX: " + str(self.test))
         if (comp_id := self._lookup_client(sid)) is not None:
             self._timestamp_component(comp_id)
 

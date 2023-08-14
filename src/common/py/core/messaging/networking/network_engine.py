@@ -123,8 +123,6 @@ class NetworkEngine:
     def _handle_received_message(
         self, entrypoint: MessageMetaInformation.Entrypoint, msg_name: str, data: str
     ) -> None:
-        if self.has_server:
-            print("YYY " + str(self.server.test))
         try:
             msg = self._unpack_message(msg_name, data)
             msg_meta = self._create_message_meta_information(msg, entrypoint)

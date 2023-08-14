@@ -20,7 +20,15 @@ class Component:
     When writing a component, always create a new subclass that extends ``Component``. Pass all the necessary information to its
     constructor and, after doing further setup steps, call its ``run`` method.
     """
-    def __init__(self, comp_id: UnitID, role: ComponentRole, *, module_name: str, config_file: str = "./config/config.toml"):
+
+    def __init__(
+        self,
+        comp_id: UnitID,
+        role: ComponentRole,
+        *,
+        module_name: str,
+        config_file: str = "./config/config.toml",
+    ):
         """
         Args:
             comp_id: The identifier of this component.
@@ -32,6 +40,7 @@ class Component:
         comp_id = self._sanitize_component_id(comp_id, config)
 
         from .meta_information import MetaInformation
+
         meta_info = MetaInformation()
         comp_info = meta_info.get_component(comp_id.unit)
 
@@ -45,10 +54,12 @@ class Component:
         )
 
         from ..core.logging import info
+
         info(str(self), role=self._data.role.name)
         info("-- Starting component...")
 
         from ..core import Core
+
         self._core = Core(module_name, self._data)
 
         self._add_default_routes()
@@ -60,7 +71,9 @@ class Component:
         Returns:
             The WSGI application object.
         """
-        return self._data.role.runtime_aspects.runtime_app_type(self._core.message_bus.network.server, self._core.flask)
+        return self._data.role.runtime_aspects.runtime_app_type(
+            self._core.message_bus.network.server, self._core.flask
+        )
 
     def run(self) -> None:
         """
@@ -71,7 +84,9 @@ class Component:
         """
         self._core.run()
 
-    def create_service(self, name: str, *, context_type: type['ServiceContextType'] | None = None) -> 'Service':
+    def create_service(
+        self, name: str, *, context_type: type["ServiceContextType"] | None = None
+    ) -> "Service":
         """
         Creates and registers a new service.
 
@@ -88,12 +103,18 @@ class Component:
         if context_type is None:
             context_type = ServiceContext
 
-        svc = Service(self._data.comp_id, name, message_bus=self._core.message_bus, context_type=context_type)
+        svc = Service(
+            self._data.comp_id,
+            name,
+            message_bus=self._core.message_bus,
+            context_type=context_type,
+        )
         self._core.register_service(svc)
         return svc
 
     def _create_config(self, config_file: str) -> Configuration:
         from ..settings import get_default_settings
+
         config = Configuration()
         config.add_defaults(get_default_settings())
 
@@ -101,14 +122,22 @@ class Component:
             config.load(config_file)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             from ..core.logging import warning
-            warning("Component configuration could not be loaded", scope="core", error=str(exc))
+
+            warning(
+                "Component configuration could not be loaded",
+                scope="core",
+                error=str(exc),
+            )
 
         return config
 
     def _sanitize_component_id(self, comp_id: UnitID, config: Configuration) -> UnitID:
         if comp_id.instance is None:
             from ..settings import ComponentSettingIDs
-            return UnitID(comp_id.type, comp_id.unit, config.value(ComponentSettingIDs.INSTANCE))
+
+            return UnitID(
+                comp_id.type, comp_id.unit, config.value(ComponentSettingIDs.INSTANCE)
+            )
 
         return comp_id
 
@@ -128,11 +157,16 @@ class Component:
 
     def _add_default_routes(self) -> None:
         # The main entry point (/) returns basic component info as a JSON string
-        self._core.flask.add_url_rule("/", view_func=lambda: json.dumps({
-            "id": str(self._data.comp_id),
-            "name": self._data.name,
-            "version": str(self._data.version),
-        }))
+        self._core.flask.add_url_rule(
+            "/",
+            view_func=lambda: json.dumps(
+                {
+                    "id": str(self._data.comp_id),
+                    "name": self._data.name,
+                    "version": str(self._data.version),
+                }
+            ),
+        )
 
     def __str__(self) -> str:
         return f"{self._data.title} v{self._data.version}: {self._data.name} ({self._data.comp_id})"
