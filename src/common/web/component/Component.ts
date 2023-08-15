@@ -6,6 +6,7 @@ import PrimeVue from "primevue/config";
 import { v4 as uuidv4 } from "uuid";
 
 import { ComponentData } from "./ComponentData";
+import { Core } from "../core/Core";
 import { MetaInformation } from "./MetaInformation";
 import logging from "../core/logging/Logging"
 import { getDefaultSettings } from "../settings/DefaultSettings";
@@ -26,6 +27,7 @@ export class Component {
 
     private readonly _data: ComponentData;
 
+    private readonly _core: Core;
     private readonly _vueApp: App;
 
     private constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
@@ -47,6 +49,7 @@ export class Component {
         logging.info(this.toString());
         logging.info("-- Starting component...");
 
+        this._core = new Core(this._data);
         this._vueApp = this.createVueApp(appRoot, appElement);
     }
 
