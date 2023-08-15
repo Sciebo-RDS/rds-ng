@@ -61,7 +61,15 @@ class Client(socketio.Client):
         """
         Automatically connects to a server if one was configured.
         """
-        if self._server_address != "":
+        self.connect_to_server()
+
+    def process(self) -> None:
+        """
+        Periodically performs certain tasks.
+        """
+
+    def connect_to_server(self) -> None:
+        if self._server_address != "" and not self.connected:
             info(f"Connecting to {self._server_address}...", scope="client")
 
             import socketio.exceptions as sioexc
@@ -75,11 +83,6 @@ class Client(socketio.Client):
                 )
             except sioexc.ConnectionError as exc:
                 error(f"Failed to connect to server: {str(exc)}", scope="client")
-
-    def process(self) -> None:
-        """
-        Periodically performs certain tasks.
-        """
 
     def send_message(self, msg: Message) -> None:
         """
