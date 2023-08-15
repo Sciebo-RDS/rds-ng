@@ -22,7 +22,8 @@ The JSON file needs to be structured like this::
         &quot;components&quot;: {
             &quot;gate&quot;: {
                 &quot;name&quot;: &quot;Gate service&quot;,
-                &quot;directory&quot;: &quot;gate&quot;
+                &quot;directory&quot;: &quot;gate&quot;,
+                &quot;tech&quot;: &quot;py&quot;
             },
             ...
         }

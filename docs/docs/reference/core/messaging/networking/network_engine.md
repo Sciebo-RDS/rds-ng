@@ -33,6 +33,14 @@ def run() -> None
 
 Listens to incoming messages in order to properly route them.
 
+#### process
+
+```python
+def process() -> None
+```
+
+Called to perform periodic tasks.
+
 #### send\_message
 
 ```python

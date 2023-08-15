@@ -11,12 +11,13 @@ class MessageBus()
 
 Bus for dispatching messages.
 
-The message bus is probably the most central aspect of the system as a whole. It not only invokes local message handlers (which are basically callback functions),
-it also sends messages across the network to other components if necessary. The message bus on the remote side will then decide what to do with the incoming message:
-Dispatch it locally there, send it to yet another component, or just ignore it.
+The message bus is probably the most central aspect of the system as a whole. It not only invokes local message handlers (which are basically
+callback functions), it also sends messages across the network to other components if necessary. The message bus on the remote side will then
+decide what to do with the incoming message: Dispatch it locally there, send it to yet another component, or just ignore it.
 
-Message handlers are always registered through a ``MessageService``. When a message gets dispatched locally by the bus, it will call any handlers associated with the
-message (via its name). If a message needs to be sent to another component, the bus will invoke the ``NetworkEngine`` to do so.
+Message handlers are always registered through a ``MessageService``. When a message gets dispatched locally by the bus, it will call any handlers
+associated with the message (via its name). If a message needs to be sent to another component, the bus will invoke the ``NetworkEngine`` to do
+so.
 
 To be error tolerant, any exceptions that arise during message handling will be logged but won&#x27;t result in program termination.
 
