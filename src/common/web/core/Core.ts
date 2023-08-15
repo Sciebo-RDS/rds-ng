@@ -2,6 +2,16 @@ import { ComponentData } from "../component/ComponentData";
 import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import logging from "../core/logging/Logging"
 import { LogLevel } from "./logging/LogRecord";
+import { Message } from "./messaging/Message";
+import { UnitID } from "../utils/UnitID";
+import { Channel } from "./messaging/Channel";
+import { MessageTypesCatalog } from "./messaging/MessageTypesCatalog";
+
+
+@Message.define("msg/test")
+class X extends Message {
+}
+
 
 /**
  * The main *underlying basis* of any component.
@@ -29,6 +39,14 @@ export class Core {
         if (this.isDebugMode) {
             this.enableDebugMode();
         }
+
+        let x = new X(new UnitID("me", "unit"), new UnitID("me", "unit"), Channel.local());
+        console.log(x.name);
+
+        let t = MessageTypesCatalog.findType("msg/test");
+        console.log(t);
+        let x2 = t(new UnitID("me", "unit"), new UnitID("me", "unit"), Channel.local());
+        console.log(x2.name);
     }
 
     private enableDebugMode(): void {
