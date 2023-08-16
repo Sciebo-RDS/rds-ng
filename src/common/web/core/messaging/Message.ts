@@ -27,6 +27,15 @@ export class Message {
     }
 
     /**
+     * Converts this message into its JSON representation.
+     *
+     * @returns - The JSON string representing this message.
+     */
+    public convertToJSON(): string {
+        return JSON.stringify(this);
+    }
+
+    /**
      * Defines a new message.
      *
      * The decorator takes care of wrapping the new class as a dataclass, passing the correct message

@@ -67,8 +67,6 @@ export class UnitID {
 
     /**
      * Converts the unit ID to a string of the form ``<type>/<unit>/<instance>`` or ``<type>/<unit>``.
-     *
-     * @returns - The string representation of this unit ID.
      */
     public toString(): string {
         return this.instance !== undefined ? [this.type, this.unit, this.instance].join(UnitID._delimiter) : [this.type, this.unit].join(UnitID._delimiter);
