@@ -1,5 +1,6 @@
 import { UnitID } from "../../utils/UnitID";
 import { MessageTypesCatalog } from "./MessageTypesCatalog";
+import { Channel } from "./Channel";
 import { type Constructable } from "../../utils/Types";
 
 // @ts-ignore

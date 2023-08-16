@@ -32,7 +32,7 @@ class MessageRouter:
             msg_meta: The message meta information.
 
         Raises:
-            RoutingError: In case the message is not valid to enter the network engine.
+            RoutingError: In case the message is not valid to enter the message bus.
         """
         if msg.target.is_local:
             self._verify_local_message(msg, msg_meta)
