@@ -22,6 +22,14 @@ export type Trace = string;
  * ```
  */
 export class Message {
+    /**
+     * @param name - The name of the message.
+     * @param origin - The initial source component of the message.
+     * @param sender - The component from where the message came from.
+     * @param target - Where the message should go to.
+     * @param hops - A list of components the message was sent through.
+     * @param trace - A unique trace identifying messages that logically belong together.
+     */
     public constructor(readonly name: string, readonly origin: UnitID, readonly sender: UnitID, readonly target: Channel,
                        readonly hops: UnitID[] = [], readonly trace: Trace = uuidv4()) {
     }
@@ -65,5 +73,3 @@ export class Message {
         }
     }
 }
-
-export type MessageType = Constructable;

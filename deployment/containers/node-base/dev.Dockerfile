@@ -8,7 +8,8 @@ RUN     apt-get update \
 &&      apt-get -y install nano vim
 
 # Some useful macros
-RUN     echo 'alias ll="ls -la"' >> ~/.bashrc
+RUN     echo 'alias ll="ls -la"' >> ~/.bashrc \
+&&      echo 'alias build="npm run build"' >> ~/.bashrc
 
 # Add project configuration
 WORKDIR /config

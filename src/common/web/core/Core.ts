@@ -3,6 +3,14 @@ import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import logging from "../core/logging/Logging"
 import { LogLevel } from "./logging/LogRecord";
 
+/*
+@Message.define("sum/tssst")
+class X extends Command {
+    public value: int = 12;
+}
+
+ */
+
 /**
  * The main *underlying basis* of any component.
  *
@@ -29,6 +37,12 @@ export class Core {
         if (this.isDebugMode) {
             this.enableDebugMode();
         }
+        /*
+                let x = new X(new UnitID("me", "unit"), new UnitID("me", "unit"), Channel.direct("hans/kanns/nicht"),
+                    [new UnitID("hoop", "de", "loop")]);
+                console.log(x.name);
+                console.log(x.convertToJSON())
+         */
     }
 
     private enableDebugMode(): void {

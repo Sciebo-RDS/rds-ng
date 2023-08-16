@@ -1,4 +1,5 @@
-import { type MessageName, type MessageType } from "./Message";
+import { type MessageName } from "./Message";
+import { type Constructable } from "../../utils/Types";
 
 /**
  * Global catalog of all registered message types.
@@ -7,7 +8,7 @@ import { type MessageName, type MessageType } from "./Message";
  * It's mainly used to create proper message objects from incoming network messages.
  */
 export class MessageTypesCatalog {
-    private static _messageTypes: Record<MessageName, MessageType> = {};
+    private static _messageTypes: Record<MessageName, Constructable> = {};
 
     /**
      * Registers a new message type.
@@ -15,7 +16,7 @@ export class MessageTypesCatalog {
      * @param name - The message name.
      * @param msgType - The message type.
      */
-    public static registerType(name: MessageName, msgType: MessageType): void {
+    public static registerType(name: MessageName, msgType: Constructable): void {
         if (name in this._messageTypes) {
             if (this._messageTypes[name] != msgType) {
                 throw new Error(`A message with the name '${name}' has already been registered to a different message type`);
@@ -32,7 +33,7 @@ export class MessageTypesCatalog {
      *
      * @returns - The associated message type, if any.
      */
-    public static findType(name: MessageName): MessageType | undefined {
+    public static findType(name: MessageName): Constructable | undefined {
         return name in this._messageTypes ? this._messageTypes[name] : undefined;
     }
 }
