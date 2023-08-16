@@ -1,4 +1,4 @@
-import { MessageName, MessageType } from "./Message";
+import { type MessageName, type MessageType } from "./Message";
 
 /**
  * Global catalog of all registered message types.

@@ -8,6 +8,10 @@
         "playwright.config.*"
     ],
     "compilerOptions": {
+        "lib": [
+            "ES2021",
+            "DOM"
+        ],
         "composite": true,
         "module": "ESNext",
         "moduleResolution": "Bundler",

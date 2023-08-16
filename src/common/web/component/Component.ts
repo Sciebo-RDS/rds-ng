@@ -3,6 +3,8 @@ import "../../assets/styles/tailwind-init.css";
 import { type App, type Component as VueComponent, createApp } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
+
+// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 
 import { ComponentData } from "./ComponentData";

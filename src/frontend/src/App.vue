@@ -4,7 +4,8 @@ import { io } from "socket.io-client"
 import { ref } from "vue"
 
 const connected = ref(false);
-function clickme(event) {
+
+function clickme(event: any): void {
     console.log("LETS TRY THIS");
 
     const socket = io("http://localhost:4200", {

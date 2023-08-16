@@ -9,6 +9,10 @@
         "src/**/__tests__/*"
     ],
     "compilerOptions": {
+        "lib": [
+            "ES2021",
+            "DOM"
+        ],
         "composite": true,
         "baseUrl": ".",
         "paths": {

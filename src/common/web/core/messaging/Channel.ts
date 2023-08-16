@@ -19,7 +19,7 @@ export class Channel {
      * @param type - The channel type.
      * @param target - The actual target in case of a direct channel.
      */
-    public constructor(readonly type: string, readonly target: string | undefined) {
+    public constructor(readonly type: string, readonly target: string | undefined = undefined) {
     }
 
     /**
