@@ -1,4 +1,4 @@
-import { wildcardMatch } from "wildcard-match";
+import wildcardMatch from "wildcard-match";
 
 import { type MessageHandler, MessageHandlerMapping, type MessageHandlerMappings } from "./MessageHandler";
 import { Message, type MessageType } from "../Message";
