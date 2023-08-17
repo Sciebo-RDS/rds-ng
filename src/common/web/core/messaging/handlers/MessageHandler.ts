@@ -1,6 +1,7 @@
 import { Message, type MessageType } from "../Message";
+import { MessageContext } from "./MessageContext";
 
-export type MessageHandler = (msg: Message, ctx: Message) => void; // TODO! Ctx
+export type MessageHandler = (msg: Message, ctx: MessageContext) => void;
 
 /**
  * Mapping from a message name filter to a message handler.

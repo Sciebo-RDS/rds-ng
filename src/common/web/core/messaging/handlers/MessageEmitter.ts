@@ -11,8 +11,6 @@ import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
 import { EventMetaInformation } from "../meta/EventMetaInformation";
 
-export type MessageValues = Record<string, any>;
-
 export enum MessageEmitterCounter {
     Command = "command",
     CommandReply = "commandreply",
@@ -56,7 +54,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitCommand<T extends Command>(cmdType: Constructable<T>, target: Channel, values: MessageValues,
+    public emitCommand<T extends Command>(cmdType: Constructable<T>, target: Channel, values: Record<string, any>,
                                           doneCallback: CommandDoneCallback | undefined = undefined,
                                           failCallback: CommandFailCallback | undefined = undefined,
                                           timeout: number = 0.0,
@@ -86,7 +84,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitReply<T extends CommandReply>(replyType: Constructable<T>, command: Command, values: MessageValues,
+    public emitReply<T extends CommandReply>(replyType: Constructable<T>, command: Command, values: Record<string, any>,
                                              success: boolean = true, message: string = ""): T {
         this._counters[MessageEmitterCounter.CommandReply] += 1;
 
@@ -110,7 +108,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitEvent<T extends Event>(eventType: Constructable<T>, target: Channel, values: MessageValues, chain: Message | null = null): T {
+    public emitEvent<T extends Event>(eventType: Constructable<T>, target: Channel, values: Record<string, any>, chain: Message | null = null): T {
         this._counters[MessageEmitterCounter.Event] += 1;
 
         let meta = new EventMetaInformation(MessageEntrypoint.Local);
@@ -122,7 +120,7 @@ export class MessageEmitter {
     }
 
     private emit<T extends Message>(msgCtor: Constructable<T>, msgMeta: MessageMetaInformation,
-                                    origin: UnitID, target: Channel, prevHops: UnitID[], chain: Message | null, values: MessageValues): T {
+                                    origin: UnitID, target: Channel, prevHops: UnitID[], chain: Message | null, values: Record<string, any>): T {
         let msg = this.createMessage<T>(msgCtor, origin, target, prevHops, chain, values);
         // TODO
         // this._messageBus.dispatch(msg, msgMeta);
@@ -130,7 +128,7 @@ export class MessageEmitter {
     }
 
     private createMessage<T extends Message>(msgCtor: Constructable<T>, origin: UnitID, target: Channel, prevHops: UnitID[], chain: Message | null,
-                                             values: MessageValues): T {
+                                             values: Record<string, any>): T {
         let msg = chain != null ?
             new msgCtor(origin, this._originID, target, [...prevHops, this._originID], chain.trace) as T :
             new msgCtor(origin, this._originID, target, [...prevHops, this._originID]) as T;
