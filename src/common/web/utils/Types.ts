@@ -1,6 +1,6 @@
 /**
  * An interface describing constructable objects.
  */
-export interface Constructable {
-    new(...args: any[]): object;
+export interface Constructable<T = object> {
+    new(...args: any[]): T;
 }

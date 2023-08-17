@@ -13,6 +13,7 @@
             "ES2021",
             "DOM"
         ],
+        "strictFunctionTypes": false,
         "composite": true,
         "baseUrl": ".",
         "paths": {

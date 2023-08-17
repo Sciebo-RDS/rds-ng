@@ -2,14 +2,21 @@ import { ComponentData } from "../component/ComponentData";
 import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import logging from "../core/logging/Logging"
 import { LogLevel } from "./logging/LogRecord";
+import { MessageEmitter } from "./messaging/handlers/MessageEmitter";
 
-/*
+import { Command } from "./messaging/Command";
+import { Message } from "./messaging/Message";
+import { Channel } from "./messaging/Channel";
+
 @Message.define("sum/tssst")
 class X extends Command {
-    public value: int = 12;
+    public value: number = 12;
 }
 
- */
+@Message.define("another/test")
+class Y extends Command {
+    public value: string = "TEST!";
+}
 
 /**
  * The main *underlying basis* of any component.
@@ -43,6 +50,9 @@ export class Core {
                 console.log(x.name);
                 console.log(x.convertToJSON())
          */
+        let m = new MessageEmitter(this._compData.compID);
+        let msg = m.emitCommand(X, Channel.direct("hans/kanns/nicht"), { value: 666 });
+        console.log(msg);
     }
 
     private enableDebugMode(): void {

@@ -12,7 +12,8 @@
         "toml": "^3.0.0",
         "uuid": "^9.0.0",
         "vue": "^3.3.4",
-        "vue-router": "^4.2.4"
+        "vue-router": "^4.2.4",
+        "wildcard-match": "^5.1.2"
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.3.2",

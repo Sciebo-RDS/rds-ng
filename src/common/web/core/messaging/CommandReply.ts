@@ -1,4 +1,5 @@
-import { Message, Trace } from "./Message";
+import { Command } from "./Command";
+import { Message, type Trace } from "./Message";
 
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
@@ -27,5 +28,5 @@ export class CommandReply extends Message {
     public readonly unique: Trace = uuidv4();
 }
 
-export type CommandDoneCallback = (Command, boolean, string) => void;
-export type CommandFailCallback = (CommandFailType, string) => void;
+export type CommandDoneCallback = (cmd: Command, success: boolean, msg: string) => void;
+export type CommandFailCallback = (failType: CommandFailType, msg: string) => void;
