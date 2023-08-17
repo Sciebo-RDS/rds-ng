@@ -1,5 +1,5 @@
 import { MessageEmitter, MessageEmitterCounter } from "./MessageEmitter";
-import { type LoggerProtocol } from "../../logging/LoggerProtocol";
+import { LoggerProxy } from "../../logging/LoggerProxy";
 
 /**
  * An execution context for messages dispatched by the message bus.
@@ -17,7 +17,7 @@ import { type LoggerProtocol } from "../../logging/LoggerProtocol";
 export class MessageContext {
     private readonly _msgEmitter: MessageEmitter;
 
-    private readonly _logger: LoggerProtocol;
+    private readonly _logger: LoggerProxy;
 
     private _requiresReply: boolean = false;
 
@@ -25,7 +25,7 @@ export class MessageContext {
      * @param msgEmitter - A ``MessageEmitter`` to be assigned to this context.
      * @param logger - A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
      */
-    public constructor(msgEmitter: MessageEmitter, logger: LoggerProtocol) {
+    public constructor(msgEmitter: MessageEmitter, logger: LoggerProxy) {
         this._msgEmitter = msgEmitter;
 
         this._logger = logger;
@@ -72,7 +72,7 @@ export class MessageContext {
     /**
      * The logger to be used within this context.
      */
-    public get loggger(): LoggerProtocol {
+    public get loggger(): LoggerProxy {
         return this._logger;
     }
 }

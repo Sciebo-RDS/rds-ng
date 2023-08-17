@@ -1,9 +1,9 @@
 import { UnitID } from "../../../utils/UnitID";
 import { MessageHandlers } from "./MessageHandlers";
-import { Constructable } from "../../../utils/Types";
+import { type Constructable } from "../../../utils/Types";
 import { MessageContext } from "./MessageContext";
-import { LoggerProtocol } from "../../logging/LoggerProtocol";
 import { MessageEmitter } from "./MessageEmitter";
+import { LoggerProxy } from "../../logging/LoggerProxy";
 
 /**
  * Base class for all message services.
@@ -11,18 +11,18 @@ import { MessageEmitter } from "./MessageEmitter";
  * A *message service* wraps message handlers and proper message context creation (i.e., using a flexible context type). It
  * is used by the message bus as an encapsulated layer for message dispatching.
  */
-export class MessageService<T extends MessageContext = MessageContext> {
+export class MessageService<CtxType extends MessageContext = MessageContext> {
     private readonly _compID: UnitID;
 
     // TODO: MsgBus
     private readonly _msgHandlers: MessageHandlers;
-    private readonly _contextType: Constructable<T>;
+    private readonly _contextType: Constructable<CtxType>;
 
     /**
      * @param compID - The global component identifier.
      * @param contextType - The type to use when creating a message context.
      */
-    public constructor(compID: UnitID, /*bus*/ contextType: Constructable<T> = MessageContext) {
+    public constructor(compID: UnitID, /*bus*/ contextType: Constructable<CtxType> = MessageContext as Constructable<CtxType>) {
         this._compID = compID;
 
         this._msgHandlers = new MessageHandlers();
@@ -37,7 +37,7 @@ export class MessageService<T extends MessageContext = MessageContext> {
      *
      * @returns - The newly created message context.
      */
-    public createContext(logger: LoggerProtocol, ...args: any[]): MessageContext {
+    public createContext(logger: LoggerProxy, ...args: any[]): MessageContext {
         return new this._contextType(this.createMessageEmitter(), logger, ...args);
     }
 

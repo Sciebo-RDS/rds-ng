@@ -21,7 +21,7 @@ export enum CommandFailType {
  * information about its ``success``, as well as a text message which is usually used to describe reasons for
  * failures.
  */
-export class CommandReply extends Message {
+export abstract class CommandReply extends Message {
     public readonly success: boolean = true;
     public readonly message: string = "";
 

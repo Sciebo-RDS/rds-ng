@@ -5,5 +5,5 @@ import { Message } from "./Message";
  *
  * Events are simple notifications that do not require a reply nor will *execute* anything.
  */
-export class Event extends Message {
+export abstract class Event extends Message {
 }

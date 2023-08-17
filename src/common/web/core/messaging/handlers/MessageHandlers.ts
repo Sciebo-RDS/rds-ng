@@ -1,7 +1,8 @@
-import wildcardMatch from "wildcard-match";
-
 import { type MessageHandler, MessageHandlerMapping, type MessageHandlerMappings } from "./MessageHandler";
 import { Message, type MessageType } from "../Message";
+
+// @ts-ignore
+import wildcardMatch from "wildcard-match";
 
 /**
  * Holds mappings for message handlers.

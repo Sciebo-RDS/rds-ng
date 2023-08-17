@@ -12,6 +12,6 @@ import { v4 as uuidv4 } from "uuid";
  *     Commands need to *always* be replied by emitting a corresponding ``CommandReply``.
  *     This reply is then automatically sent back to the original sender.
  */
-export class Command extends Message {
+export abstract class Command extends Message {
     public readonly unique: Trace = uuidv4();
 }

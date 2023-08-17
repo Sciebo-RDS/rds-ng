@@ -22,7 +22,7 @@ export type Trace = string;
  *     }
  * ```
  */
-export class Message {
+export abstract class Message {
     /**
      * @param name - The name of the message.
      * @param origin - The initial source component of the message.
