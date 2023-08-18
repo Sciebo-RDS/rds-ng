@@ -123,7 +123,6 @@ export class MessageBus {
     private process(): void {
         // TODO:
         // self._network_engine.process()
-
         for (const [_, dispatcher] of Object.entries(this._dispatchers)) {
             dispatcher.process();
         }

@@ -8,8 +8,11 @@ import { type App, type Component as VueComponent, createApp } from "vue";
 import "../../assets/styles/tailwind-init.css";
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
+import { Service } from "../service/Service";
+import { ServiceContext } from "../service/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
+import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 
 import { ComponentData } from "./ComponentData";
@@ -88,8 +91,22 @@ export class Component {
      *     It is mandatory to call this method after creating and setting up a component.
      */
     public run(): void {
-        logging.info("Running component...");
+        logging.info("Running component");
         this._core.run();
+    }
+
+    /**
+     * Creates and registers a new service.
+     *
+     * @param name - The name of the service.
+     * @param contextType - Can be used to override the default ``ServiceContext`` type. All message handlers
+     *      associated with the new service will then receive instances of this type for their service context.
+     */
+    public createService<CtxType extends ServiceContext>(name: string,
+                                                         contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>): Service {
+        let svc = new Service<CtxType>(this._data.compID, name, this._core.messageBus, contextType);
+        this._core.registerService(svc);
+        return svc;
     }
 
     /**

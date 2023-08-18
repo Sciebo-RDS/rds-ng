@@ -1,10 +1,9 @@
-import { UnitID } from "../../utils/UnitID";
-import { MessageTypesCatalog } from "./MessageTypesCatalog";
-import { Channel } from "./Channel";
-import { type Constructable } from "../../utils/Types";
-
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
+import { type Constructable } from "../../utils/Types";
+import { UnitID } from "../../utils/UnitID";
+import { Channel } from "./Channel";
+import { MessageTypesCatalog } from "./MessageTypesCatalog";
 
 export type MessageCategory = string;
 export type MessageName = string;
@@ -74,7 +73,7 @@ export abstract class Message {
             MessageTypesCatalog.registerType(name, newClass);
 
             return newClass;
-        }
+        };
     }
 
     /**
