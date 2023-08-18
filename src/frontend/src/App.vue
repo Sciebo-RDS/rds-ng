@@ -1,9 +1,22 @@
 <script setup lang="ts">
+import type { Component } from "@common/component/Component";
+import { Channel } from "@common/core/messaging/Channel";
+import { Event } from "@common/core/messaging/Event";
+import { Message } from "@common/core/messaging/Message"
+import { ServiceContext } from "@common/service/ServiceContext"
 import Button from "primevue/button"
 import { io } from "socket.io-client"
-import { ref } from "vue"
+import { inject, ref } from "vue"
 
 const connected = ref(false);
+
+const comp = inject("comp");
+
+@Message.define("msg/event")
+class MyEvent extends Event {
+    public some_cool_text: string = "";
+    public a_number: int = 0;
+}
 
 function clickme(event: any): void {
     console.log("LETS TRY THIS");
@@ -13,6 +26,18 @@ function clickme(event: any): void {
     });
 
     socket.on("connect", () => {
+        let c = comp as Component;
+        let s = c.createService("TEST=!=");
+
+        s.messageHandler("msg/event", MyEvent,
+            (msg: MyEvent, ctx: ServiceContext): void => {
+                console.log(msg);
+                console.log(ctx);
+            }
+        );
+
+        s.messageEmitter.emitEvent(MyEvent, Channel.local(), {});
+
         connected.value = true;
     });
     socket.on("disconnect", () => {

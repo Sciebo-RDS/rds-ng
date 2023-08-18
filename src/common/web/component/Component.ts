@@ -79,6 +79,8 @@ export class Component {
         app.use(createPinia());
         app.use(PrimeVue);
 
+        app.provide("comp", this); // TODO
+
         app.mount(appElement);
 
         return app;

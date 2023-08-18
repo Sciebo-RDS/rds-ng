@@ -41,24 +41,23 @@ export class Service<CtxType extends ServiceContext = ServiceContext> extends Me
     }
 
     /**
-     * A decorator to declare a message handler.
+     * Declares a message handler.
      *
      * To define a new message handler, use the following pattern:
      * ```
-     *     @svc.messageHandler("msg/event", Event)
-     *     function h(msg: Event, ctx: ServiceContext): void {
-     *         ctx.logger.info("EVENT HANDLER CALLED");
-     *     }
+     *     svc.messageHandler("msg/event", Event,
+     *         (msg: Event, ctx: ServiceContext): void => {
+     *              ctx.logger.info("EVENT HANDLER CALLED");
+     *         }
+     *     );
      * ```
      *
      * @param filter - The message name filter to match against; wildcards (*) are supported for more generic handlers.
      * @param messageType - The type of the message.
+     * @param handler - The message handler callback.
      */
-    public messageHandler(filter: string, messageType: Constructable): Function {
-        return (handler: MessageHandler): MessageHandler => {
-            this.messageHandlers.addHandler(filter, handler, messageType);
-            return handler;
-        };
+    public messageHandler(filter: string, messageType: Constructable, handler: MessageHandler): void {
+        this.messageHandlers.addHandler(filter, handler, messageType);
     }
 
     /**
