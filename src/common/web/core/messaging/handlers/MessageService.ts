@@ -1,9 +1,10 @@
-import { UnitID } from "../../../utils/UnitID";
-import { MessageHandlers } from "./MessageHandlers";
 import { type Constructable } from "../../../utils/Types";
+import { UnitID } from "../../../utils/UnitID";
+import { LoggerProxy } from "../../logging/LoggerProxy";
+import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { MessageContext } from "./MessageContext";
 import { MessageEmitter } from "./MessageEmitter";
-import { LoggerProxy } from "../../logging/LoggerProxy";
+import { MessageHandlers } from "./MessageHandlers";
 
 /**
  * Base class for all message services.
@@ -14,18 +15,20 @@ import { LoggerProxy } from "../../logging/LoggerProxy";
 export class MessageService<CtxType extends MessageContext = MessageContext> {
     private readonly _compID: UnitID;
 
-    // TODO: MsgBus
-    private readonly _msgHandlers: MessageHandlers;
+    private readonly _messageBus: MessageBusProtocol;
+    private readonly _messageHandlers: MessageHandlers;
     private readonly _contextType: Constructable<CtxType>;
 
     /**
      * @param compID - The global component identifier.
+     * @param messageBus - The global message bus.
      * @param contextType - The type to use when creating a message context.
      */
-    public constructor(compID: UnitID, /*bus*/ contextType: Constructable<CtxType> = MessageContext as Constructable<CtxType>) {
+    public constructor(compID: UnitID, messageBus: MessageBusProtocol, contextType: Constructable<CtxType> = MessageContext as Constructable<CtxType>) {
         this._compID = compID;
 
-        this._msgHandlers = new MessageHandlers();
+        this._messageBus = messageBus;
+        this._messageHandlers = new MessageHandlers();
         this._contextType = contextType;
     }
 
@@ -47,13 +50,13 @@ export class MessageService<CtxType extends MessageContext = MessageContext> {
      * @returns - The newly created message emitter.
      */
     public createMessageEmitter(): MessageEmitter {
-        return new MessageEmitter(this._compID);  // TODO: MsgBus
+        return new MessageEmitter(this._compID, this._messageBus);
     }
 
     /**
      * The message handlers maintained by this message service.
      */
     public get messageHandlers(): MessageHandlers {
-        return this._msgHandlers;
+        return this._messageHandlers;
     }
 }

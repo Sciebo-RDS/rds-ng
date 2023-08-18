@@ -5,20 +5,20 @@ import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { Command } from "../Command";
 import { CommandFailType, CommandReply } from "../CommandReply";
 import { type Trace } from "../Message";
-import logging, { error } from "../../logging/Logging";
+import logging from "../../logging/Logging";
 
 /**
  * Message dispatcher specific to ``Command``.
  */
-export class CommandDispatcher extends MessageDispatcher<CommandMetaInformation> {
+export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInformation> {
     /**
      * Takes care of checking whether issued commands have already timed out.
      */
     public process(): void {
         super.process();
 
-        for (unique of MessageDispatcher._metaInformationList.findTimedOutEntries()) {
-            CommandDispatcher.invokeReplyCallback(unique, CommandFailType.Timeout, "The command timed out");
+        for (const unique of MessageDispatcher._metaInformationList.findTimedOutEntries()) {
+            CommandDispatcher.invokeReplyCallback(unique, null, CommandFailType.Timeout, "The command timed out");
             MessageDispatcher._metaInformationList.remove(unique);
         }
     }
@@ -33,10 +33,10 @@ export class CommandDispatcher extends MessageDispatcher<CommandMetaInformation>
      *
      * @throws Error - If the meta information type is invalid.
      */
-    public preDispatch<M extends Command>(msg: M, msgMeta: CommandMetaInformation): void {
+    public preDispatch(msg: Command, msgMeta: CommandMetaInformation): void {
         super.preDispatch(msg, msgMeta);
 
-        MessageDispatcher._metaInformationList.add(unique, msgMeta, msgMeta.timeout);
+        MessageDispatcher._metaInformationList.add(msg.unique, msgMeta, msgMeta.timeout);
     }
 
     /**
@@ -52,13 +52,13 @@ export class CommandDispatcher extends MessageDispatcher<CommandMetaInformation>
      *
      * @throws Error - If the handler requires a different message type.
      */
-    public dispatch<M extends Command, C extends MessageContext>(msg: M, msgMeta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: C): void {
+    public dispatch<C extends MessageContext>(msg: Command, msgMeta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: C): void {
         ctx.logger.debug(`Dispatching command: ${String(msg)}`, "bus");
         super.dispatch(msg, msgMeta, handler, ctx);
     }
 
-    protected contextError<M extends Message>(err: any, msg: M, msgMeta: CommandMetaInformation): void {
-        CommandDispatcher.invokeReplyCallback(msg.unique, CommandFailType.Exception, String(err));
+    protected contextError(err: any, msg: Command, msgMeta: CommandMetaInformation): void {
+        CommandDispatcher.invokeReplyCallback(msg.unique, null, CommandFailType.Exception, String(err));
         MessageDispatcher._metaInformationList.remove(msg.unique);
     }
 
@@ -75,11 +75,13 @@ export class CommandDispatcher extends MessageDispatcher<CommandMetaInformation>
      */
     public static invokeReplyCallback(unique: Trace, reply: CommandReply | null = null,
                                       failType: CommandFailType = CommandFailType.None, failMsg: string = ""): void {
-        let invoke = (callback: Function, ...args: any[]): void => {
-            try {
-                callback(...args);
-            } catch (err) {
-                logging.error(`An error occurred within a command reply callback: ${String(err)}`, "bus", { error = typeof err });
+        let invoke = (callback?: Function, ...args: any[]): void => {
+            if (callback) {
+                try {
+                    callback(...args);
+                } catch (err) {
+                    logging.error(`An error occurred within a command reply callback: ${String(err)}`, "bus", { error: typeof err });
+                }
             }
         }
 

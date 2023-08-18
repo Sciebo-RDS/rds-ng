@@ -1,5 +1,6 @@
-import { MessageEmitter, MessageEmitterCounter } from "./MessageEmitter";
+import { MessageEmitter } from "./MessageEmitter";
 import { LoggerProxy } from "../../logging/LoggerProxy";
+import { CommandReply } from "../CommandReply";
 
 /**
  * An execution context for messages dispatched by the message bus.
@@ -57,7 +58,7 @@ export class MessageContext {
     }
 
     private checkCommandReply(): void {
-        if (this._requiresReply && this._msgEmitter.getMessageCount(MessageEmitterCounter.CommandReply) == 0) {
+        if (this._requiresReply && this._msgEmitter.getMessageCount(CommandReply.Category) == 0) {
             this._logger.warning("A message context required a command reply, but none was sent", "bus");
         }
     }
@@ -72,7 +73,7 @@ export class MessageContext {
     /**
      * The logger to be used within this context.
      */
-    public get loggger(): LoggerProxy {
+    public get logger(): LoggerProxy {
         return this._logger;
     }
 }

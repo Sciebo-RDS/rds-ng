@@ -82,6 +82,10 @@ class Component:
         Notes:
             It is mandatory to call this method after creating and setting up a component.
         """
+        from ..core.logging import info
+
+        info("Running component...")
+
         self._core.run()
 
     def create_service(

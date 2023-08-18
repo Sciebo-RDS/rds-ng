@@ -8,7 +8,7 @@ import { CommandDispatcher } from "./CommandDispatcher";
 /**
  * Message dispatcher specific to ``CommandReply``.
  */
-export class CommandReplyDispatcher extends MessageDispatcher<CommandReplyMetaInformation> {
+export class CommandReplyDispatcher extends MessageDispatcher<CommandReply, CommandReplyMetaInformation> {
     /**
      * Called to perform tasks *before* sending a message.
      *
@@ -39,7 +39,7 @@ export class CommandReplyDispatcher extends MessageDispatcher<CommandReplyMetaIn
      *
      * @throws Error - If the handler requires a different message type.
      */
-    public dispatch<M extends CommandReply, C extends MessageContext>(msg: M, msgMeta: CommandReplyMetaInformation, handler: MessageHandlerMapping, ctx: C): void {
+    public dispatch<C extends MessageContext>(msg: CommandReply, msgMeta: CommandReplyMetaInformation, handler: MessageHandlerMapping, ctx: C): void {
         ctx.logger.debug(`Dispatching command reply: ${String(msg)}`, "bus");
         super.dispatch(msg, msgMeta, handler, ctx);
     }

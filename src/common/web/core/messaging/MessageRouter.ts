@@ -45,7 +45,7 @@ export class MessageRouter {
         if (msg.target.isLocal) {
             return true;
         }
-        if (msg.target.isDirect) {
+        if (msg.target.isDirect && msg.target.targetID != null) {
             // A direct message that has made it to the message bus either stems from this component or is targeted to it
             // If it is targeted to this component, it needs to be dispatched locally
             return msg.target.targetID.equals(this._compID);
@@ -70,7 +70,7 @@ export class MessageRouter {
         }
     }
 
-    private verifyRemoteMessage(msg: Message, msgMeta: MessageMetaInformation): void {
+    private verifyDirectMessage(msg: Message, msgMeta: MessageMetaInformation): void {
         if (msg.target.targetID == null) {
             throw new Error("Direct message without a target received");
         }

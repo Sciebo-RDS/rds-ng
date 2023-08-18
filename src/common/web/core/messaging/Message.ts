@@ -6,6 +6,7 @@ import { type Constructable } from "../../utils/Types";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 
+export type MessageCategory = string;
 export type MessageName = string;
 export type Trace = string;
 
@@ -23,6 +24,8 @@ export type Trace = string;
  * ```
  */
 export abstract class Message {
+    public static readonly Category: MessageCategory = "Message";
+
     /**
      * @param name - The name of the message.
      * @param origin - The initial source component of the message.
@@ -72,6 +75,13 @@ export abstract class Message {
 
             return newClass;
         }
+    }
+
+    /**
+     * Gets the global message category.
+     */
+    public get category(): MessageCategory {
+        return Message.Category;
     }
 }
 

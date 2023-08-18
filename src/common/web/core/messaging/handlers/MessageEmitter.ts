@@ -2,7 +2,7 @@ import { UnitID } from "../../../utils/UnitID";
 import { Command } from "../Command";
 import { type CommandDoneCallback, type CommandFailCallback, CommandReply } from "../CommandReply";
 import { Event } from "../Event";
-import { Message } from "../Message";
+import { Message, type MessageCategory } from "../Message";
 import { Channel } from "../Channel";
 import logging from "../../logging/Logging";
 import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaInformation";
@@ -10,12 +10,7 @@ import { type Constructable } from "../../../utils/Types";
 import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
 import { EventMetaInformation } from "../meta/EventMetaInformation";
-
-export enum MessageEmitterCounter {
-    Command = "command",
-    CommandReply = "commandreply",
-    Event = "event"
-}
+import { type MessageBusProtocol } from "../MessageBusProtocol";
 
 /**
  * A helper class to easily create and emit messages.
@@ -24,19 +19,21 @@ export enum MessageEmitterCounter {
  */
 export class MessageEmitter {
     private readonly _originID: UnitID;
-    private readonly _counters: Record<string, number> = {};
+    private readonly _messageBus: MessageBusProtocol;
 
-    // TODO: MsgBus
+    private readonly _counters: Record<MessageCategory, number> = {};
 
     /**
      * @param originID - The component identifier of the origin of newly created messages.
+     * @param messageBus - The global message bus to use.
      */
-    public constructor(originID: UnitID) {
+    public constructor(originID: UnitID, messageBus: MessageBusProtocol) {
         this._originID = originID;
+        this._messageBus = messageBus;
 
-        this._counters[MessageEmitterCounter.Command] = 0;
-        this._counters[MessageEmitterCounter.CommandReply] = 0;
-        this._counters[MessageEmitterCounter.Event] = 0;
+        this._counters[Command.Category] = 0;
+        this._counters[CommandReply.Category] = 0;
+        this._counters[Event.Category] = 0;
     }
 
     /**
@@ -63,7 +60,7 @@ export class MessageEmitter {
             logging.info(`Sending a command (${cmdType}) with a timeout but no fail callback`, "bus");
         }
 
-        this._counters[MessageEmitterCounter.Command] += 1;
+        this._counters[Command.Category] += 1;
 
         let meta = new CommandMetaInformation(MessageEntrypoint.Local, doneCallback, failCallback, timeout);
         return this.emit(cmdType, meta, this._originID, target, [], chain, values);
@@ -86,7 +83,7 @@ export class MessageEmitter {
      */
     public emitReply<T extends CommandReply>(replyType: Constructable<T>, command: Command, values: Record<string, any>,
                                              success: boolean = true, message: string = ""): T {
-        this._counters[MessageEmitterCounter.CommandReply] += 1;
+        this._counters[CommandReply.Category] += 1;
 
         values.success = success;
         values.message = message;
@@ -109,21 +106,20 @@ export class MessageEmitter {
      * @throws - If an unknown value was provided in ``values`.
      */
     public emitEvent<T extends Event>(eventType: Constructable<T>, target: Channel, values: Record<string, any>, chain: Message | null = null): T {
-        this._counters[MessageEmitterCounter.Event] += 1;
+        this._counters[Event.Category] += 1;
 
         let meta = new EventMetaInformation(MessageEntrypoint.Local);
         return this.emit(eventType, meta, this._originID, target, [], chain, values);
     }
 
-    public getMessageCount(counter: MessageEmitterCounter): number {
+    public getMessageCount(counter: MessageCategory): number {
         return counter in this._counters ? this._counters[counter] : 0;
     }
 
     private emit<T extends Message>(msgCtor: Constructable<T>, msgMeta: MessageMetaInformation,
                                     origin: UnitID, target: Channel, prevHops: UnitID[], chain: Message | null, values: Record<string, any>): T {
         let msg = this.createMessage<T>(msgCtor, origin, target, prevHops, chain, values);
-        // TODO
-        // this._messageBus.dispatch(msg, msgMeta);
+        this._messageBus.dispatch(msg, msgMeta);
         return msg;
     }
 

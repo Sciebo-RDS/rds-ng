@@ -1,19 +1,19 @@
-import "../../assets/styles/tailwind-init.css";
-
-import { type App, type Component as VueComponent, createApp } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 
-import { ComponentData } from "./ComponentData";
+import { type App, type Component as VueComponent, createApp } from "vue";
+import "../../assets/styles/tailwind-init.css";
 import { Core } from "../core/Core";
-import { MetaInformation } from "./MetaInformation";
 import logging from "../core/logging/Logging"
 import { getDefaultSettings } from "../settings/DefaultSettings";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { UnitID } from "../utils/UnitID";
+
+import { ComponentData } from "./ComponentData";
+import { MetaInformation } from "./MetaInformation";
 
 /**
  * Base class for all web components.
@@ -69,6 +69,8 @@ export class Component {
     }
 
     private createVueApp(appRoot: VueComponent, appElement: string): App {
+        logging.info("-- Creating Vue application...");
+
         let app = createApp(appRoot);
 
         app.use(createPinia());
@@ -77,6 +79,17 @@ export class Component {
         app.mount(appElement);
 
         return app;
+    }
+
+    /**
+     * Starts the component's execution cycles.
+     *
+     * Notes:
+     *     It is mandatory to call this method after creating and setting up a component.
+     */
+    public run(): void {
+        logging.info("Running component...");
+        this._core.run();
     }
 
     /**

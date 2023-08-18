@@ -1,5 +1,5 @@
 import { Command } from "./Command";
-import { Message, type Trace } from "./Message";
+import { Message, type MessageCategory, type Trace } from "./Message";
 
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
@@ -22,10 +22,19 @@ export enum CommandFailType {
  * failures.
  */
 export abstract class CommandReply extends Message {
+    public static readonly Category: MessageCategory = "CommandReply";
+
     public readonly success: boolean = true;
     public readonly message: string = "";
 
     public readonly unique: Trace = uuidv4();
+
+    /**
+     * Gets the global message category.
+     */
+    public get category(): MessageCategory {
+        return CommandReply.Category;
+    }
 }
 
 export type CommandDoneCallback = (cmd: Command, success: boolean, msg: string) => void;

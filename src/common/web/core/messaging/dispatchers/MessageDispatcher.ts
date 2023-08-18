@@ -10,7 +10,7 @@ import { MessageContext } from "../handlers/MessageContext";
  * Dispatching a message (locally) is done by passing the message to one or more registered message handlers within a ``Service``.
  * The message dispatcher also performs pre- and post-dispatching tasks and takes care of catching errors raised in a handler.
  */
-export abstract class MessageDispatcher<MetaInfoType extends MessageMetaInformation> {
+export abstract class MessageDispatcher<MessageType extends Message, MetaInfoType extends MessageMetaInformation> {
     protected static _metaInformationList: MessageMetaInformationList = new MessageMetaInformationList();
 
     /**
@@ -26,13 +26,8 @@ export abstract class MessageDispatcher<MetaInfoType extends MessageMetaInformat
      *
      * @param msg - The message that is about to be dispatched.
      * @param msgMeta - The message meta information.
-     *
-     * @throws Error - If the meta information type is invalid.
      */
-    public preDispatch<M extends Message>(msg: M, msgMeta: MetaInfoType): void {
-        if (!(msgMeta instanceof T)) {
-            throw new Error(`The meta information for dispatcher ${String(this)} is of the wrong type (${typeof msgMeta})`);
-        }
+    public preDispatch(msg: MessageType, msgMeta: MetaInfoType): void {
     }
 
     /**
@@ -48,7 +43,7 @@ export abstract class MessageDispatcher<MetaInfoType extends MessageMetaInformat
      *
      * @throws Error - If the handler requires a different message type.
      */
-    public dispatch<M extends Message, C extends MessageContext>(msg: M, msgMeta: MetaInfoType, handler: MessageHandlerMapping, ctx: C): void {
+    public dispatch<C extends MessageContext>(msg: MessageType, msgMeta: MetaInfoType, handler: MessageHandlerMapping, ctx: C): void {
         if (msg instanceof handler.messageType) {
             try {
                 ctx.begin(msgMeta.requiresReply);
@@ -58,7 +53,7 @@ export abstract class MessageDispatcher<MetaInfoType extends MessageMetaInformat
 
                 ctx.end();
             } catch (err) {
-                ctx.reportError(e);
+                ctx.reportError(err);
                 this.contextError(err, msg, msgMeta);
             }
         } else {
@@ -74,9 +69,9 @@ export abstract class MessageDispatcher<MetaInfoType extends MessageMetaInformat
      * @param msg - The message that is about to be dispatched.
      * @param msgMeta - The message meta information.
      */
-    public postDispatch<M extends Message>(msg: M, msgMeta: MetaInfoType): void {
+    public postDispatch(msg: MessageType, msgMeta: MetaInfoType): void {
     }
 
-    protected contextError<M extends Message>(err: any, msg: M, msgMeta: MetaInfoType): void {
+    protected contextError(err: any, msg: MessageType, msgMeta: MetaInfoType): void {
     }
 }

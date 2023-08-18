@@ -1,20 +1,10 @@
 import { ComponentData } from "../component/ComponentData";
-import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import logging from "../core/logging/Logging"
+import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import { LogLevel } from "./logging/LogRecord";
 import { MessageService } from "./messaging/handlers/MessageService";
+import { MessageBus } from "./messaging/MessageBus";
 
-/*
-@Message.define("sum/tssst")
-class X extends Command {
-    public value: number = 12;
-}
-
-@Message.define("another/test")
-class Y extends Command {
-    public value: string = "TEST!";
-}
-*/
 /**
  * The main *underlying basis* of any component.
  *
@@ -29,6 +19,8 @@ class Y extends Command {
 export class Core {
     private readonly _compData: ComponentData;
 
+    private readonly _messageBus: MessageBus;
+
     /**
      *
      * @param compData - The component data used to access common component information.
@@ -41,23 +33,61 @@ export class Core {
         if (this.isDebugMode) {
             this.enableDebugMode();
         }
-        /*
-                let x = new X(new UnitID("me", "unit"), new UnitID("me", "unit"), Channel.direct("hans/kanns/nicht"),
-                    [new UnitID("hoop", "de", "loop")]);
-                console.log(x.name);
-                console.log(x.convertToJSON())
 
-        let m = new MessageEmitter(this._compData.compID);
-        let msg = m.emitCommand(X, Channel.direct("hans/kanns/nicht"), { value: 666 });
-        console.log(msg);
-
-         */
-        let m = new MessageService(this._compData.compID);
+        logging.debug("-- Creating message bus", "core");
+        this._messageBus = this.createMessageBus();
     }
 
     private enableDebugMode(): void {
         logging.setLevel(LogLevel.Debug);
         logging.debug("-- Debug mode enabled", "core")
+    }
+
+    private createMessageBus(): MessageBus {
+        return new MessageBus(this._compData);
+    }
+
+    /**
+     * Registers a message service.
+     *
+     * Services are always created and registered using ``create_service`` (in ``Component``),
+     * so you should rarely (if ever) need to call this method directly.
+     *
+     * @param svc - The message service to register.
+     */
+    public registerService(svc: MessageService): void {
+        if (this._messageBus.addService(svc)) {
+            logging.debug(`Registered service: ${svc}`, "core");
+        } else {
+            logging.debug(`Service already registered: ${svc}`, "core", { service: svc });
+        }
+    }
+
+    /**
+     * Removes a message service.
+     *
+     * @param svc - The message service to remove.
+     */
+    public unregisterService(svc: MessageService): void {
+        if (this._messageBus.removeService(svc)) {
+            logging.debug(`Unregistered service: ${svc}`, "core");
+        } else {
+            logging.debug(`Service not registered: ${svc}`, "core", { service: svc });
+        }
+    }
+
+    /**
+     * Starts periodic background tasks.
+     */
+    public run(): void {
+        this._messageBus.run();
+    }
+
+    /**
+     * The global ``MessageBus`` instance.
+     */
+    public get messageBus(): MessageBus {
+        return this._messageBus;
     }
 
     /**
