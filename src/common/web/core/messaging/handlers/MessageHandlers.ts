@@ -1,8 +1,7 @@
-import { type MessageHandler, MessageHandlerMapping, type MessageHandlerMappings } from "./MessageHandler";
-import { Message, type MessageType } from "../Message";
-
 // @ts-ignore
 import wildcardMatch from "wildcard-match";
+import { type Constructable } from "../../../utils/Types";
+import { type MessageHandler, MessageHandlerMapping, type MessageHandlerMappings } from "./MessageHandler";
 
 /**
  * Holds mappings for message handlers.
@@ -17,7 +16,7 @@ export class MessageHandlers {
      * @param handler - The message handler.
      * @param messageType - The message type the handler expects.
      */
-    public addHandler(filter: string, handler: MessageHandler, messageType: MessageType = Message): void {
+    public addHandler(filter: string, handler: MessageHandler, messageType: Constructable): void {
         this._mappings.push(new MessageHandlerMapping(filter, handler, messageType));
     }
 

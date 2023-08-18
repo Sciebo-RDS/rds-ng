@@ -1,16 +1,16 @@
+import { type Constructable } from "../../../utils/Types";
 import { UnitID } from "../../../utils/UnitID";
+import logging from "../../logging/Logging";
+import { Channel } from "../Channel";
 import { Command } from "../Command";
 import { type CommandDoneCallback, type CommandFailCallback, CommandReply } from "../CommandReply";
 import { Event } from "../Event";
 import { Message, type MessageCategory } from "../Message";
-import { Channel } from "../Channel";
-import logging from "../../logging/Logging";
-import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaInformation";
-import { type Constructable } from "../../../utils/Types";
+import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
 import { EventMetaInformation } from "../meta/EventMetaInformation";
-import { type MessageBusProtocol } from "../MessageBusProtocol";
+import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaInformation";
 
 /**
  * A helper class to easily create and emit messages.
@@ -51,12 +51,12 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitCommand<T extends Command>(cmdType: Constructable<T>, target: Channel, values: Record<string, any>,
-                                          doneCallback: CommandDoneCallback | undefined = undefined,
-                                          failCallback: CommandFailCallback | undefined = undefined,
-                                          timeout: number = 0.0,
-                                          chain: Message | null = null): T {
-        if (timeout > 0.0 && failCallback == undefined) {
+    public emitCommand<MsgType extends Command>(cmdType: Constructable<MsgType>, target: Channel, values: Record<string, any>,
+                                                doneCallback: CommandDoneCallback | undefined = undefined,
+                                                failCallback: CommandFailCallback | undefined = undefined,
+                                                timeout: number = 0.0,
+                                                chain: Message | null = null): MsgType {
+        if (timeout > 0.0 && failCallback === undefined) {
             logging.info(`Sending a command (${cmdType}) with a timeout but no fail callback`, "bus");
         }
 
@@ -81,8 +81,8 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitReply<T extends CommandReply>(replyType: Constructable<T>, command: Command, values: Record<string, any>,
-                                             success: boolean = true, message: string = ""): T {
+    public emitReply<MsgType extends CommandReply>(replyType: Constructable<MsgType>, command: Command, values: Record<string, any>,
+                                                   success: boolean = true, message: string = ""): MsgType {
         this._counters[CommandReply.Category] += 1;
 
         values.success = success;
@@ -105,7 +105,8 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitEvent<T extends Event>(eventType: Constructable<T>, target: Channel, values: Record<string, any>, chain: Message | null = null): T {
+    public emitEvent<MsgType extends Event>(eventType: Constructable<MsgType>, target: Channel, values: Record<string, any>,
+                                            chain: Message | null = null): MsgType {
         this._counters[Event.Category] += 1;
 
         let meta = new EventMetaInformation(MessageEntrypoint.Local);
@@ -116,22 +117,23 @@ export class MessageEmitter {
         return counter in this._counters ? this._counters[counter] : 0;
     }
 
-    private emit<T extends Message>(msgCtor: Constructable<T>, msgMeta: MessageMetaInformation,
-                                    origin: UnitID, target: Channel, prevHops: UnitID[], chain: Message | null, values: Record<string, any>): T {
-        let msg = this.createMessage<T>(msgCtor, origin, target, prevHops, chain, values);
+    private emit<MsgType extends Message>(msgCtor: Constructable<MsgType>, msgMeta: MessageMetaInformation,
+                                          origin: UnitID, target: Channel, prevHops: UnitID[], chain: Message | null,
+                                          values: Record<string, any>): MsgType {
+        let msg = this.createMessage<MsgType>(msgCtor, origin, target, prevHops, chain, values);
         this._messageBus.dispatch(msg, msgMeta);
         return msg;
     }
 
-    private createMessage<T extends Message>(msgCtor: Constructable<T>, origin: UnitID, target: Channel, prevHops: UnitID[], chain: Message | null,
-                                             values: Record<string, any>): T {
+    private createMessage<MsgType extends Message>(msgCtor: Constructable<MsgType>, origin: UnitID, target: Channel, prevHops: UnitID[],
+                                                   chain: Message | null, values: Record<string, any>): MsgType {
         let msg = chain != null ?
-            new msgCtor(origin, this._originID, target, [...prevHops, this._originID], chain.trace) as T :
-            new msgCtor(origin, this._originID, target, [...prevHops, this._originID]) as T;
+            new msgCtor(origin, this._originID, target, [...prevHops, this._originID], chain.trace) :
+            new msgCtor(origin, this._originID, target, [...prevHops, this._originID]);
 
         for (const [key, value] of Object.entries(values)) {
             if (key in msg) {
-                msg[key as keyof T] = value;
+                msg[key as keyof MsgType] = value;
             } else {
                 throw new Error(`Provided unknown value '${key}' for message type ${msg.name}`);
             }

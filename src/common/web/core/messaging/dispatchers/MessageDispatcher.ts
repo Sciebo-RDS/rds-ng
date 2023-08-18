@@ -1,8 +1,8 @@
-import { MessageMetaInformationList } from "../meta/MessageMetaInformationList";
-import { MessageMetaInformation } from "../meta/MessageMetaInformation";
-import { Message } from "../Message";
-import { MessageHandlerMapping } from "../handlers/MessageHandler";
 import { MessageContext } from "../handlers/MessageContext";
+import { MessageHandlerMapping } from "../handlers/MessageHandler";
+import { Message } from "../Message";
+import { MessageMetaInformation } from "../meta/MessageMetaInformation";
+import { MessageMetaInformationList } from "../meta/MessageMetaInformationList";
 
 /**
  * Base message dispatcher responsible for sending messages to registered handlers.
@@ -10,7 +10,7 @@ import { MessageContext } from "../handlers/MessageContext";
  * Dispatching a message (locally) is done by passing the message to one or more registered message handlers within a ``Service``.
  * The message dispatcher also performs pre- and post-dispatching tasks and takes care of catching errors raised in a handler.
  */
-export abstract class MessageDispatcher<MessageType extends Message, MetaInfoType extends MessageMetaInformation> {
+export abstract class MessageDispatcher<MsgType extends Message, MetaInfoType extends MessageMetaInformation> {
     protected static _metaInformationList: MessageMetaInformationList = new MessageMetaInformationList();
 
     /**
@@ -27,7 +27,7 @@ export abstract class MessageDispatcher<MessageType extends Message, MetaInfoTyp
      * @param msg - The message that is about to be dispatched.
      * @param msgMeta - The message meta information.
      */
-    public preDispatch(msg: MessageType, msgMeta: MetaInfoType): void {
+    public preDispatch(msg: MsgType, msgMeta: MetaInfoType): void {
     }
 
     /**
@@ -43,7 +43,7 @@ export abstract class MessageDispatcher<MessageType extends Message, MetaInfoTyp
      *
      * @throws Error - If the handler requires a different message type.
      */
-    public dispatch<C extends MessageContext>(msg: MessageType, msgMeta: MetaInfoType, handler: MessageHandlerMapping, ctx: C): void {
+    public dispatch<CtxType extends MessageContext>(msg: MsgType, msgMeta: MetaInfoType, handler: MessageHandlerMapping, ctx: CtxType): void {
         if (msg instanceof handler.messageType) {
             try {
                 ctx.begin(msgMeta.requiresReply);
@@ -69,9 +69,9 @@ export abstract class MessageDispatcher<MessageType extends Message, MetaInfoTyp
      * @param msg - The message that is about to be dispatched.
      * @param msgMeta - The message meta information.
      */
-    public postDispatch(msg: MessageType, msgMeta: MetaInfoType): void {
+    public postDispatch(msg: MsgType, msgMeta: MetaInfoType): void {
     }
 
-    protected contextError(err: any, msg: MessageType, msgMeta: MetaInfoType): void {
+    protected contextError(err: any, msg: MsgType, msgMeta: MetaInfoType): void {
     }
 }

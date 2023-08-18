@@ -1,8 +1,7 @@
-import { Command } from "./Command";
-import { Message, type MessageCategory, type Trace } from "./Message";
-
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
+import { Command } from "./Command";
+import { Message, type MessageCategory, type Trace } from "./Message";
 
 /**
  * Used when a command failed.
@@ -21,7 +20,7 @@ export enum CommandFailType {
  * information about its ``success``, as well as a text message which is usually used to describe reasons for
  * failures.
  */
-export abstract class CommandReply extends Message {
+export class CommandReply extends Message {
     public static readonly Category: MessageCategory = "CommandReply";
 
     public readonly success: boolean = true;

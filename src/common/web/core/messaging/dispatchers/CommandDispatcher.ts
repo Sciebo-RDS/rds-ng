@@ -1,11 +1,11 @@
-import { MessageDispatcher } from "./MessageDispatcher";
-import { MessageContext } from "../handlers/MessageContext";
-import { MessageHandlerMapping } from "../handlers/MessageHandler";
-import { CommandMetaInformation } from "../meta/CommandMetaInformation";
+import logging from "../../logging/Logging";
 import { Command } from "../Command";
 import { CommandFailType, CommandReply } from "../CommandReply";
+import { MessageContext } from "../handlers/MessageContext";
+import { MessageHandlerMapping } from "../handlers/MessageHandler";
 import { type Trace } from "../Message";
-import logging from "../../logging/Logging";
+import { CommandMetaInformation } from "../meta/CommandMetaInformation";
+import { MessageDispatcher } from "./MessageDispatcher";
 
 /**
  * Message dispatcher specific to ``Command``.
@@ -52,7 +52,7 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
      *
      * @throws Error - If the handler requires a different message type.
      */
-    public dispatch<C extends MessageContext>(msg: Command, msgMeta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: C): void {
+    public dispatch<CtxType extends MessageContext>(msg: Command, msgMeta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: CtxType): void {
         ctx.logger.debug(`Dispatching command: ${String(msg)}`, "bus");
         super.dispatch(msg, msgMeta, handler, ctx);
     }
@@ -86,8 +86,8 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
         }
 
         let metaInfo = MessageDispatcher._metaInformationList.find(unique);
-        if (metaInfo != null && metaInfo instanceof CommandMetaInformation) {
-            if (reply != null) {
+        if (metaInfo !== null && metaInfo instanceof CommandMetaInformation) {
+            if (reply !== null) {
                 invoke(metaInfo.doneCallback, reply, reply.success, reply.message);
             } else {
                 invoke(metaInfo.failCallback, reply, failType, failMsg);

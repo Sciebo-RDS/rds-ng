@@ -5,7 +5,6 @@
  * belonging to the overall infrastructure), the ``unit`` name itself (e.g., *'gate'* or *'server'*), and an ``instance`` specifier (used to
  * distinguish multiple instances of the same unit).
  */
-
 export class UnitID {
     private static readonly _delimiter = "/";
 
@@ -14,7 +13,7 @@ export class UnitID {
      * @param unit - The unit name.
      * @param instance - The instance specifier.
      */
-    public constructor(readonly type: string, readonly unit: string, readonly instance: string | undefined = undefined) {
+    public constructor(readonly type: string, readonly unit: string, readonly instance?: string) {
     }
 
     /**

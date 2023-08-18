@@ -1,9 +1,9 @@
-import { MessageDispatcher } from "./MessageDispatcher";
+import { CommandReply } from "../CommandReply";
 import { MessageContext } from "../handlers/MessageContext";
 import { MessageHandlerMapping } from "../handlers/MessageHandler";
 import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
-import { CommandReply } from "../CommandReply";
 import { CommandDispatcher } from "./CommandDispatcher";
+import { MessageDispatcher } from "./MessageDispatcher";
 
 /**
  * Message dispatcher specific to ``CommandReply``.
@@ -19,7 +19,7 @@ export class CommandReplyDispatcher extends MessageDispatcher<CommandReply, Comm
      *
      * @throws Error - If the meta information type is invalid.
      */
-    public preDispatch<M extends CommandReply>(msg: M, msgMeta: CommandReplyMetaInformation): void {
+    public preDispatch<MsgType extends CommandReply>(msg: MsgType, msgMeta: CommandReplyMetaInformation): void {
         super.preDispatch(msg, msgMeta);
 
         CommandDispatcher.invokeReplyCallback(msg.unique, msg);
@@ -39,7 +39,8 @@ export class CommandReplyDispatcher extends MessageDispatcher<CommandReply, Comm
      *
      * @throws Error - If the handler requires a different message type.
      */
-    public dispatch<C extends MessageContext>(msg: CommandReply, msgMeta: CommandReplyMetaInformation, handler: MessageHandlerMapping, ctx: C): void {
+    public dispatch<CtxType extends MessageContext>(msg: CommandReply, msgMeta: CommandReplyMetaInformation, handler: MessageHandlerMapping,
+                                                    ctx: CtxType): void {
         ctx.logger.debug(`Dispatching command reply: ${String(msg)}`, "bus");
         super.dispatch(msg, msgMeta, handler, ctx);
     }

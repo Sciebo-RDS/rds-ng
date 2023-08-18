@@ -5,7 +5,7 @@ import { Message, type MessageCategory } from "./Message";
  *
  * Events are simple notifications that do not require a reply nor will *execute* anything.
  */
-export abstract class Event extends Message {
+export class Event extends Message {
     public static readonly Category: MessageCategory = "Event";
 
     /**

@@ -1,4 +1,5 @@
-import { Message, type MessageType } from "../Message";
+import { type Constructable } from "../../../utils/Types";
+import { Message } from "../Message";
 import { MessageContext } from "./MessageContext";
 
 export type MessageHandler = (msg: Message, ctx: MessageContext) => void;
@@ -12,7 +13,7 @@ export class MessageHandlerMapping {
      * @param handler - The message handler.
      * @param messageType - The message type the handler expects.
      */
-    public constructor(readonly filter: string, readonly handler: MessageHandler, readonly messageType: MessageType) {
+    public constructor(readonly filter: string, readonly handler: MessageHandler, readonly messageType: Constructable) {
     }
 
     /**

@@ -1,8 +1,8 @@
-import { MessageDispatcher } from "./MessageDispatcher";
-import { EventMetaInformation } from "../meta/EventMetaInformation";
+import { Event } from "../Event";
 import { MessageContext } from "../handlers/MessageContext";
 import { MessageHandlerMapping } from "../handlers/MessageHandler";
-import { Event } from "../Event";
+import { EventMetaInformation } from "../meta/EventMetaInformation";
+import { MessageDispatcher } from "./MessageDispatcher";
 
 /**
  * Message dispatcher specific to ``Event``.
@@ -21,7 +21,7 @@ export class EventDispatcher extends MessageDispatcher<Event, EventMetaInformati
      *
      * @throws Error - If the handler requires a different message type.
      */
-    public dispatch<C extends MessageContext>(msg: Event, msgMeta: EventMetaInformation, handler: MessageHandlerMapping, ctx: C): void {
+    public dispatch<CtxType extends MessageContext>(msg: Event, msgMeta: EventMetaInformation, handler: MessageHandlerMapping, ctx: CtxType): void {
         ctx.logger.debug(`Dispatching event: ${String(msg)}`, "bus");
         super.dispatch(msg, msgMeta, handler, ctx);
     }

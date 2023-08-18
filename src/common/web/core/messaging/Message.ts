@@ -83,5 +83,3 @@ export abstract class Message {
         return Message.Category;
     }
 }
-
-export type MessageType = Function;  // Class types are actually represented by their constructor function

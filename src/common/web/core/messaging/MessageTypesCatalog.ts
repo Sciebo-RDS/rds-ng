@@ -1,5 +1,5 @@
-import { type MessageName } from "./Message";
 import { type Constructable } from "../../utils/Types";
+import { type MessageName } from "./Message";
 
 /**
  * Global catalog of all registered message types.

@@ -30,7 +30,7 @@ import { MessageMetaInformation } from "./meta/MessageMetaInformation";
 export class MessageBus {
     private readonly _compData: ComponentData;
 
-    private readonly _services: MessageService[] = [];
+    private readonly _services: MessageService<any>[] = [];
     private readonly _dispatchers: Record<MessageCategory, MessageDispatcher<any, any>> = {};
     private readonly _router: MessageRouter;
 
@@ -59,7 +59,7 @@ export class MessageBus {
      *
      * @returns - Whether the message service was added.
      */
-    public addService(svc: MessageService): boolean {
+    public addService<CtxType extends MessageContext>(svc: MessageService<CtxType>): boolean {
         if (this._services.indexOf(svc) != -1) {
             return false;
         }
@@ -75,7 +75,7 @@ export class MessageBus {
      *
      * @returns - Whether the message service was removed.
      */
-    public removeService(svc: MessageService): boolean {
+    public removeService<CtxType extends MessageContext>(svc: MessageService<CtxType>): boolean {
         let index = this._services.indexOf(svc);
         if (index == -1) {
             return false;
@@ -150,12 +150,13 @@ export class MessageBus {
         // self._network_engine.send_message(msg, msg_meta)
     }
 
-    private dispatchToService<DispatcherType extends MessageDispatcher<any, any>>(dispatcher: DispatcherType,
-                                                                                  msg: Message, msgMeta: MessageMetaInformation,
-                                                                                  svc: MessageService): void {
+    private dispatchToService<DispatcherType extends MessageDispatcher<any, any>,
+        CtxType extends MessageContext>(dispatcher: DispatcherType,
+                                        msg: Message, msgMeta: MessageMetaInformation,
+                                        svc: MessageService<CtxType>): void {
         for (const handler of svc.messageHandlers.findHandlers(msg.name)) {
             try {
-                let ctx = this.createContext(msg, svc);
+                let ctx = this.createContext<CtxType>(msg, svc);
                 dispatcher.dispatch(msg, msgMeta, handler, ctx);
             } catch (err) {
                 logging.error(`An error occurred while processing a message: ${String(err)}`, "bus",
@@ -164,7 +165,7 @@ export class MessageBus {
         }
     }
 
-    private createContext(msg: Message, svc: MessageService): MessageContext {
+    private createContext<CtxType extends MessageContext>(msg: Message, svc: MessageService<CtxType>): MessageContext {
         let logger = new LoggerProxy(logging.getDefaultLogger());
         logger.addParam("trace", String(msg.trace));
         return svc.createContext(logger, this._compData.config);

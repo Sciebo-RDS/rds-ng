@@ -1,7 +1,6 @@
-import { Message, type MessageCategory, type Trace } from "./Message";
-
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
+import { Message, type MessageCategory, type Trace } from "./Message";
 
 /**
  * A command message.
@@ -12,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
  *     Commands need to *always* be replied by emitting a corresponding ``CommandReply``.
  *     This reply is then automatically sent back to the original sender.
  */
-export abstract class Command extends Message {
+export class Command extends Message {
     public static readonly Category: MessageCategory = "Command";
 
     public readonly unique: Trace = uuidv4();

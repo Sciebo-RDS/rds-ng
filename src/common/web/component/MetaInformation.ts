@@ -1,7 +1,6 @@
-import { SemVer } from "semver";
-
 // @ts-ignore
 import metaData from "/config/meta-information.json"
+import { SemVer } from "semver";
 
 type ComponentInformationType = {
     name: string;
@@ -54,15 +53,6 @@ export class MetaInformation {
      */
     public get version(): SemVer {
         return new SemVer(this._data.global.version);
-    }
-
-    /**
-     * A list of all component names.
-     *
-     * @returns - The names of all components.
-     */
-    public getComponents(): string[] {
-        return Object.keys(metaData.components);
     }
 
     /**

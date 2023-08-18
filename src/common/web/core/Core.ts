@@ -22,7 +22,6 @@ export class Core {
     private readonly _messageBus: MessageBus;
 
     /**
-     *
      * @param compData - The component data used to access common component information.
      */
     public constructor(compData: ComponentData) {
