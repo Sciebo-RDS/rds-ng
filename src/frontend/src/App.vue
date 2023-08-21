@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Component } from "@common/component/Component";
+import { Component } from "@common/component/Component";
 import { Channel } from "@common/core/messaging/Channel";
-import { Event } from "@common/core/messaging/Event";
+import { Command } from "@common/core/messaging/Command";
+import { CommandFailType, CommandReply } from "@common/core/messaging/CommandReply";
 import { Message } from "@common/core/messaging/Message"
 import { ServiceContext } from "@common/service/ServiceContext"
 import Button from "primevue/button"
@@ -10,12 +11,20 @@ import { inject, ref } from "vue"
 
 const connected = ref(false);
 
-const comp = inject("comp");
+const comp = inject(Component.InjectionKey);
 
-@Message.define("msg/event")
-class MyEvent extends Event {
+@Message.define("msg/command")
+class MyCommand extends Command {
     public some_cool_text: string = "";
     public a_number: int = 0;
+}
+
+@Message.define("msg/command/reply")
+class MyCommandReply extends CommandReply {
+}
+
+class MyContext extends ServiceContext {
+    public someStuff: string = "Stuff";
 }
 
 function clickme(event: any): void {
@@ -27,23 +36,45 @@ function clickme(event: any): void {
 
     socket.on("connect", () => {
         let c = comp as Component;
-        let s = c.createService("TEST=!=");
+        let s = c.createService("TEST=!=", MyContext);
 
-        s.messageHandler("msg/event", MyEvent,
-            (msg: MyEvent, ctx: ServiceContext): void => {
+        s.messageHandler("msg/command", MyCommand,
+            (msg: MyCommand, ctx: MyContext): void => {
+                console.log("GOT COMMAND AYE");
                 console.log(msg);
                 console.log(ctx);
+                //ctx.messageEmitter.emitReply(MyCommandReply, msg, {}, false, "Nah no good");
             }
         );
 
-        s.messageEmitter.emitEvent(MyEvent, Channel.local(), {});
+        /*
+                s.messageHandler("msg/command/reply", MyCommandReply, (msg: MyCommandReply, ctx: MyContext) => {
+                        console.log("GOT REPLY!!!");
+                        console.log(msg);
+                        console.log(ctx);
+                    }
+                );
+        */
+        function h(cmd: Command, success: boolean, msg: string): void {
+            console.log("DONE CALLBACK");
+            console.log(success);
+            console.log(cmd);
+            console.log(msg);
+        }
+
+        function h2(failType: CommandFailType, msg: string): void {
+            console.log("FAIL CALLBACK");
+            console.log(msg);
+        }
+
+        s.messageEmitter.emitCommand(MyCommand, Channel.local(), {}, h, h2, 3);
 
         connected.value = true;
     });
     socket.on("disconnect", () => {
         connected.value = false;
     });
-};
+}
 
 </script>
 

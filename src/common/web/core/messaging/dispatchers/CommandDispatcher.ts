@@ -90,7 +90,7 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
             if (reply !== null) {
                 invoke(metaInfo.doneCallback, reply, reply.success, reply.message);
             } else {
-                invoke(metaInfo.failCallback, reply, failType, failMsg);
+                invoke(metaInfo.failCallback, failType, failMsg);
             }
         }
     }

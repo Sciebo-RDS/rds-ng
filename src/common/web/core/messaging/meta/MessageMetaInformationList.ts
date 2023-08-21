@@ -1,5 +1,5 @@
-import { MessageMetaInformation } from "./MessageMetaInformation";
 import { type Trace } from "../Message";
+import { MessageMetaInformation } from "./MessageMetaInformation";
 
 class MessageMetaInformationListEntry {
     public constructor(readonly metaInformation: MessageMetaInformation,

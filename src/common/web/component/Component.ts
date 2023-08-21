@@ -28,6 +28,8 @@ import { MetaInformation } from "./MetaInformation";
  * tasks.
  */
 export class Component {
+    public static readonly InjectionKey = Symbol();
+
     private static _instance: Component | null = null;
 
     private readonly _data: ComponentData;
@@ -79,7 +81,7 @@ export class Component {
         app.use(createPinia());
         app.use(PrimeVue);
 
-        app.provide("comp", this); // TODO
+        app.provide(Component.InjectionKey, this);
 
         app.mount(appElement);
 

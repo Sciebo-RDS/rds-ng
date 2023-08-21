@@ -57,7 +57,7 @@ export abstract class MessageDispatcher<MsgType extends Message, MetaInfoType ex
                 this.contextError(err, msg, msgMeta);
             }
         } else {
-            throw new Error(`Handler ${String(handler.handler)} requires messages of type ${String(handler.messageType)}, but got ${String(typeof msg)}`);
+            throw new Error(`Invalid handler for messages of type '${String(handler.filter)}' called (message types do not match}`);
         }
     }
 

@@ -85,12 +85,14 @@ export class MessageEmitter {
                                                    success: boolean = true, message: string = ""): MsgType {
         this._counters[CommandReply.Category] += 1;
 
+        let target = command.origin.equals(this._originID) ? Channel.local() : Channel.direct(command.origin.toString());
+
         values.success = success;
         values.message = message;
         values.unique = command.unique;
 
         let meta = new CommandReplyMetaInformation(MessageEntrypoint.Local);
-        return this.emit(replyType, meta, this._originID, Channel.direct(command.origin.toString()), [], command, values);
+        return this.emit(replyType, meta, this._originID, target, [], command, values);
     }
 
     /**

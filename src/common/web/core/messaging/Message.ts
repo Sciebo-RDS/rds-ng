@@ -82,4 +82,11 @@ export abstract class Message {
     public get category(): MessageCategory {
         return Message.Category;
     }
+
+    /**
+     * Gets the string representation of this message.
+     */
+    public toString(): string {
+        return this.convertToJSON();
+    }
 }
