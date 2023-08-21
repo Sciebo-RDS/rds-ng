@@ -56,10 +56,6 @@ class NetworkEngine:
             has_client=self.has_client,
             has_server=self.has_server,
         )
-        if not isinstance(self._router, NetworkRouter):
-            raise RuntimeError(
-                "An invalid router type was specified in the networking aspects"
-            )
 
     def _create_client(self) -> Client:
         return Client(self._comp_data.comp_id, self._comp_data.config)
@@ -154,7 +150,6 @@ class NetworkEngine:
         from .. import MessageTypesCatalog
 
         msg_type = MessageTypesCatalog.find_type(msg_name)
-
         if msg_type is None:
             raise RuntimeError(f"The message type '{msg_name}' is unknown")
 

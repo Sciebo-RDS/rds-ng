@@ -4,7 +4,7 @@ import PrimeVue from "primevue/config";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 
-import { type App, type Component as VueComponent, createApp } from "vue";
+import { type App, type Component as VueComponent, createApp, inject } from "vue";
 import "../../assets/styles/tailwind-init.css";
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
@@ -14,7 +14,6 @@ import { getDefaultSettings } from "../settings/DefaultSettings";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
-
 import { ComponentData } from "./ComponentData";
 import { MetaInformation } from "./MetaInformation";
 
@@ -30,16 +29,12 @@ import { MetaInformation } from "./MetaInformation";
 export class Component {
     public static readonly InjectionKey = Symbol();
 
-    private static _instance: Component | null = null;
-
     private readonly _data: ComponentData;
 
     private readonly _core: Core;
     private readonly _vueApp: App;
 
     private constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
-        Component._instance = this;
-
         compID = this.sanitizeComponentID(compID);
 
         let metaInfo = new MetaInformation();
@@ -121,6 +116,13 @@ export class Component {
     }
 
     /**
+     * The global ``Core`` instance.
+     */
+    public get core(): Core {
+        return this._core;
+    }
+
+    /**
      * The global Vue application instance.
      */
     public get vue(): App {
@@ -136,28 +138,16 @@ export class Component {
      * @param compID - The identifier of this component.
      * @param appRoot - The Vue root component.
      * @param appElement - The HTML element ID used for mounting the root component.
-     *
-     * @throws Error - If an application instance has already been created.
      */
     public static create(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): Component {
-        if (Component._instance !== null) {
-            throw new Error("An application instance has already been created");
-        }
-
         return new Component(env, compID, appRoot, appElement);
     }
 
     /**
      * The global ``Component`` instance.
-     *
-     * @throws Error - If no application instance has been created yet.
      */
     public static get instance(): Component {
-        if (Component._instance === null) {
-            throw new Error("No application instance has been created yet");
-        }
-
-        return Component._instance;
+        return inject(Component.InjectionKey) as Component;
     }
 
     private sanitizeComponentID(compID: UnitID): UnitID {

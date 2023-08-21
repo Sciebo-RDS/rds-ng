@@ -40,25 +40,6 @@ services:
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
-    # Debug testing buddy
-    testbuddy:
-        image: rds-ng/testbuddy:develop
-        volumes:
-            -   type: bind
-                source: ../../src
-                target: /component
-        build:
-            context: ../../
-            dockerfile: deployment/containers/component/dev.Dockerfile
-            args:
-                COMPONENT_NAME: "testbuddy"
-        depends_on:
-            - py-base
-        ports:
-            - "4300:6969"
-        environment:
-            - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://rds-gate-1:6969
-
     # Web frontend
     frontend:
         image: rds-ng/frontend:develop

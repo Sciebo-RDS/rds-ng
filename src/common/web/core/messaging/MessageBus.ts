@@ -13,6 +13,7 @@ import { MessageService } from "./handlers/MessageService";
 import { Message, type MessageCategory } from "./Message";
 import { MessageRouter } from "./MessageRouter";
 import { MessageMetaInformation } from "./meta/MessageMetaInformation";
+import { NetworkEngine } from "./networking/NetworkEngine";
 
 /**
  * Bus for dispatching messages.
@@ -30,6 +31,7 @@ import { MessageMetaInformation } from "./meta/MessageMetaInformation";
 export class MessageBus {
     private readonly _compData: ComponentData;
 
+    private readonly _networkEngine: NetworkEngine;
     private readonly _services: MessageService<any>[] = [];
     private readonly _dispatchers: Record<MessageCategory, MessageDispatcher<any, any>> = {};
     private readonly _router: MessageRouter;
@@ -40,16 +42,18 @@ export class MessageBus {
     public constructor(compData: ComponentData) {
         this._compData = compData;
 
-        /*
-        debug("-- Creating network engine", scope="bus")
-        self._network_engine = self._create_network_engine()
-         */
+        logging.debug("-- Creating network engine", "bus")
+        this._networkEngine = this.createNetworkEngine();
 
         this._dispatchers[Command.Category] = new CommandDispatcher();
         this._dispatchers[CommandReply.Category] = new CommandReplyDispatcher();
         this._dispatchers[Event.Category] = new EventDispatcher();
 
         this._router = new MessageRouter(compData.compID);
+    }
+
+    private createNetworkEngine(): NetworkEngine {
+        return new NetworkEngine(this._compData, this);
     }
 
     /**
@@ -89,8 +93,7 @@ export class MessageBus {
      * Initiates periodic tasks performed by the bus.
      */
     public run(): void {
-        // TODO:
-        //self._network_engine.run()
+        this._networkEngine.run();
 
         setInterval(() => this.process(), 1000);
     }
@@ -121,8 +124,8 @@ export class MessageBus {
     }
 
     private process(): void {
-        // TODO:
-        // self._network_engine.process()
+        this._networkEngine.process();
+
         for (const [_, dispatcher] of Object.entries(this._dispatchers)) {
             dispatcher.process();
         }
@@ -146,8 +149,7 @@ export class MessageBus {
     }
 
     private remoteDispatch(msg: Message, msgMeta: MessageMetaInformation): void {
-        // TODO
-        // self._network_engine.send_message(msg, msg_meta)
+        this._networkEngine.sendMessage(msg, msgMeta);
     }
 
     private dispatchToService<DispatcherType extends MessageDispatcher<any, any>,
@@ -169,5 +171,12 @@ export class MessageBus {
         let logger = new LoggerProxy(logging.getDefaultLogger());
         logger.addParam("trace", String(msg.trace));
         return svc.createContext(logger, this._compData.config);
+    }
+
+    /**
+     * The global network engine.
+     */
+    public get network(): NetworkEngine {
+        return this._networkEngine;
     }
 }

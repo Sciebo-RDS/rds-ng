@@ -9,11 +9,6 @@
             "directory": "gate",
             "tech": "py"
         },
-        "testbuddy": {
-            "name": "Debugging test buddy",
-            "directory": "testbuddy",
-            "tech": "py"
-        },
         "frontend": {
             "name": "Web Frontend",
             "directory": "frontend",

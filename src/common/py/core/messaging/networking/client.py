@@ -69,6 +69,9 @@ class Client(socketio.Client):
         """
 
     def connect_to_server(self) -> None:
+        """
+        Establishes the connection to the server.
+        """
         if self._server_address != "" and not self.connected:
             info(f"Connecting to {self._server_address}...", scope="client")
 

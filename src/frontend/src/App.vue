@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { Component } from "@common/component/Component";
-import { Channel } from "@common/core/messaging/Channel";
 import { Command } from "@common/core/messaging/Command";
-import { CommandFailType, CommandReply } from "@common/core/messaging/CommandReply";
+import { CommandReply } from "@common/core/messaging/CommandReply";
 import { Message } from "@common/core/messaging/Message"
 import { ServiceContext } from "@common/service/ServiceContext"
 import Button from "primevue/button"
-import { io } from "socket.io-client"
-import { inject, ref } from "vue"
+import { ref } from "vue"
 
 const connected = ref(false);
 
-const comp = inject(Component.InjectionKey);
+const comp = Component.instance;
 
 @Message.define("msg/command")
 class MyCommand extends Command {
@@ -29,7 +27,9 @@ class MyContext extends ServiceContext {
 
 function clickme(event: any): void {
     console.log("LETS TRY THIS");
+    comp.core.messageBus.network.client.connectToServer();
 
+    /*
     const socket = io("http://localhost:4200", {
         auth: { "component_id": "web/frontend/default" }
     });
@@ -47,14 +47,13 @@ function clickme(event: any): void {
             }
         );
 
-        /*
                 s.messageHandler("msg/command/reply", MyCommandReply, (msg: MyCommandReply, ctx: MyContext) => {
                         console.log("GOT REPLY!!!");
                         console.log(msg);
                         console.log(ctx);
                     }
                 );
-        */
+
         function h(cmd: Command, success: boolean, msg: string): void {
             console.log("DONE CALLBACK");
             console.log(success);
@@ -68,12 +67,8 @@ function clickme(event: any): void {
         }
 
         s.messageEmitter.emitCommand(MyCommand, Channel.local(), {}, h, h2, 3);
-
         connected.value = true;
-    });
-    socket.on("disconnect", () => {
-        connected.value = false;
-    });
+*/
 }
 
 </script>

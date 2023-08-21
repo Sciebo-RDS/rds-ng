@@ -6,7 +6,7 @@ import { SettingID } from "../utils/config/SettingID";
  * @property ServerAddress - The address of the server the client should automatically connect to (value type: ``string``).
  * @property ConnectionTimeout - The maximum time (in seconds) for connection attempts (value type: ``float``).
  */
-export class NetworkSettingIDs {
+export class NetworkClientSettingIDs {
     public static readonly ServerAddress = new SettingID("network.client", "server_address");
     public static readonly ConnectionTimeout = new SettingID("network.client", "connection_timeout");
 }
