@@ -3,16 +3,20 @@ import { Component } from "@common/component/Component";
 import { Command } from "@common/core/messaging/Command";
 import { CommandReply } from "@common/core/messaging/CommandReply";
 import { Message } from "@common/core/messaging/Message"
-import { ServiceContext } from "@common/service/ServiceContext"
+import { networkStore } from "@common/stores/NetworkStore";
 import Button from "primevue/button"
-import { onMounted, ref } from "vue"
-
-const connected = ref(false);
+import { onMounted, watch } from "vue"
 
 const comp = Component.instance;
 
 onMounted(() => {
     comp.run();
+});
+
+const nwStore = networkStore();
+
+watch(() => nwStore.connected, (connected, prevConnected) => {
+    console.log("Connected? IS: " + String(connected) + "; WAS: " + String(prevConnected));
 });
 
 @Message.define("msg/command")
@@ -23,10 +27,6 @@ class MyCommand extends Command {
 
 @Message.define("msg/command/reply")
 class MyCommandReply extends CommandReply {
-}
-
-class MyContext extends ServiceContext {
-    public someStuff: string = "Stuff";
 }
 
 function clickme(event: any): void {
@@ -81,7 +81,7 @@ function clickme(event: any): void {
         <img alt="Vue logo" class="logo" src="@assets/img/rds-octopus-bl.svg" width="250" height="250"/>
     </header>
     <Button label="Connect" class="bg-red-500 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded" @click="clickme" unstyled/>
-    <div>Connected={{ connected }}</div>
+    <div>Connected={{ nwStore.connected }}</div>
     <h1 class="text-3xl font-bold underline bg-amber-200">
         Hello world!
     </h1>

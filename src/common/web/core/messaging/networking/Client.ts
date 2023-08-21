@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { NetworkClientSettingIDs } from "../../../settings/NetworkSettingIDs";
+import { networkStore } from "../../../stores/NetworkStore";
 import { Configuration } from "../../../utils/config/Configuration";
 import { UnitID } from "../../../utils/UnitID";
 import logging from "../../logging/Logging";
@@ -73,12 +74,14 @@ export class Client {
      * Establishes the connection to the server.
      */
     public connectToServer(): void {
-        logging.info(`Connecting to ${this._serverAddress}...`, "client");
+        if (!this._socket.connected) {
+            logging.info(`Connecting to ${this._serverAddress}...`, "client");
 
-        try {
-            this._socket.connect();
-        } catch (err) {
-            logging.error(`Failed to connect to server: ${String(err)}`, "client");
+            try {
+                this._socket.connect();
+            } catch (err) {
+                logging.error(`Failed to connect to server: ${String(err)}`, "client");
+            }
         }
     }
 
@@ -107,14 +110,20 @@ export class Client {
 
     private onConnect(): void {
         logging.info("Connected to server", "client");
+
+        networkStore().connected = true;
     }
 
     private onConnectError(reason: any): void {
         logging.warning("Unable to connect to server", "client", { reason: String(reason) });
+
+        networkStore().connected = false;
     }
 
     private onDisconnect(): void {
         logging.info("Disconnected from server", "client");
+
+        networkStore().connected = false;
     }
 
     private onMessage(msgName: string, data: string): void {
