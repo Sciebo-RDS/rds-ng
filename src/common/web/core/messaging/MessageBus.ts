@@ -172,11 +172,4 @@ export class MessageBus {
         logger.addParam("trace", String(msg.trace));
         return svc.createContext(logger, this._compData.config);
     }
-
-    /**
-     * The global network engine.
-     */
-    public get network(): NetworkEngine {
-        return this._networkEngine;
-    }
 }

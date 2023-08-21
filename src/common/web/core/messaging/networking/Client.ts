@@ -45,7 +45,7 @@ export class Client {
         return io(this._serverAddress, {
             auth: this.getAuthentication(),
             autoConnect: false,
-            timeout: this._connectionTimeout
+            timeout: this._connectionTimeout * 1000
         });
     }
 
@@ -57,9 +57,10 @@ export class Client {
     }
 
     /**
-     * Performs initial tasks.
+     * Automatically connects to a server.
      */
     public run(): void {
+        this.connectToServer();
     }
 
     /**

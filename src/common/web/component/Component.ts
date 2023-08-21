@@ -27,7 +27,7 @@ import { MetaInformation } from "./MetaInformation";
  * tasks.
  */
 export class Component {
-    public static readonly InjectionKey = Symbol();
+    private static readonly _injectionKey = Symbol();
 
     private readonly _data: ComponentData;
 
@@ -76,7 +76,7 @@ export class Component {
         app.use(createPinia());
         app.use(PrimeVue);
 
-        app.provide(Component.InjectionKey, this);
+        app.provide(Component._injectionKey, this);
 
         app.mount(appElement);
 
@@ -90,7 +90,7 @@ export class Component {
      *     It is mandatory to call this method after creating and setting up a component.
      */
     public run(): void {
-        logging.info("Running component");
+        logging.info("Running component...");
         this._core.run();
     }
 
@@ -113,13 +113,6 @@ export class Component {
      */
     public get data(): ComponentData {
         return this._data;
-    }
-
-    /**
-     * The global ``Core`` instance.
-     */
-    public get core(): Core {
-        return this._core;
     }
 
     /**
@@ -147,7 +140,7 @@ export class Component {
      * The global ``Component`` instance.
      */
     public static get instance(): Component {
-        return inject(Component.InjectionKey) as Component;
+        return inject(Component._injectionKey) as Component;
     }
 
     private sanitizeComponentID(compID: UnitID): UnitID {

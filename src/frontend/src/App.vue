@@ -5,11 +5,15 @@ import { CommandReply } from "@common/core/messaging/CommandReply";
 import { Message } from "@common/core/messaging/Message"
 import { ServiceContext } from "@common/service/ServiceContext"
 import Button from "primevue/button"
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 
 const connected = ref(false);
 
 const comp = Component.instance;
+
+onMounted(() => {
+    comp.run();
+});
 
 @Message.define("msg/command")
 class MyCommand extends Command {
@@ -27,7 +31,6 @@ class MyContext extends ServiceContext {
 
 function clickme(event: any): void {
     console.log("LETS TRY THIS");
-    comp.core.messageBus.network.client.connectToServer();
 
     /*
     const socket = io("http://localhost:4200", {

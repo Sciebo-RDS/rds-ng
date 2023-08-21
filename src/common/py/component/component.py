@@ -84,7 +84,7 @@ class Component:
         """
         from ..core.logging import info
 
-        info("Running component")
+        info("Running component...")
 
         self._core.run()
 
