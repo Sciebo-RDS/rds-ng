@@ -27,12 +27,16 @@ export abstract class Message {
     public static readonly Category: MessageCategory = "Message";
 
     public readonly name: string;
+    // @ts-ignore
     @Type(() => UnitID)
     public readonly origin: UnitID;
+    // @ts-ignore
     @Type(() => UnitID)
     public readonly sender: UnitID;
+    // @ts-ignore
     @Type(() => Channel)
     public readonly target: Channel;
+    // @ts-ignore
     @Type(() => UnitID)
     public readonly hops: UnitID[];
     public readonly trace: Trace;

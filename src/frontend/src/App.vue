@@ -11,7 +11,7 @@ import { onMounted, watch } from "vue"
 @Message.define("msg/event")
 class MyEvent extends Event {
     public some_cool_text: string = "";
-    public a_number: int = 0;
+    public a_number: number = 0;
 }
 
 const comp = Component.instance;
