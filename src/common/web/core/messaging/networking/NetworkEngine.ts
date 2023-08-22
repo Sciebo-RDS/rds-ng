@@ -112,9 +112,7 @@ export class NetworkEngine {
             throw new Error(`The message type '${msgName}' is unknown`);
         }
 
-        // TODO: Fix types
-        let objData = JSON.parse(data);
-        let msg = Object.assign(new msgType, objData) as Message;
+        let msg = Message.convertFromJSON(msgType, data);
         this._router.verifyMessage(NetworkRouterDirection.In, msg);
 
         msg.hops.push(this._compData.compID);

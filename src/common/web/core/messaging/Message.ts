@@ -1,3 +1,4 @@
+import { plainToInstance, Type } from "class-transformer";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { type Constructable } from "../../utils/Types";
@@ -25,6 +26,17 @@ export type Trace = string;
 export abstract class Message {
     public static readonly Category: MessageCategory = "Message";
 
+    public readonly name: string;
+    @Type(() => UnitID)
+    public readonly origin: UnitID;
+    @Type(() => UnitID)
+    public readonly sender: UnitID;
+    @Type(() => Channel)
+    public readonly target: Channel;
+    @Type(() => UnitID)
+    public readonly hops: UnitID[];
+    public readonly trace: Trace;
+
     /**
      * @param name - The name of the message.
      * @param origin - The initial source component of the message.
@@ -33,8 +45,13 @@ export abstract class Message {
      * @param hops - A list of components the message was sent through.
      * @param trace - A unique trace identifying messages that logically belong together.
      */
-    public constructor(readonly name: string, readonly origin: UnitID, readonly sender: UnitID, readonly target: Channel,
-                       readonly hops: UnitID[] = [], readonly trace: Trace = uuidv4()) {
+    public constructor(name: string, origin: UnitID, sender: UnitID, target: Channel, hops: UnitID[] = [], trace: Trace = uuidv4()) {
+        this.name = name;
+        this.origin = origin;
+        this.sender = sender;
+        this.target = target;
+        this.hops = hops;
+        this.trace = trace;
     }
 
     /**
@@ -42,6 +59,19 @@ export abstract class Message {
      */
     public convertToJSON(): string {
         return JSON.stringify(this);
+    }
+
+    /**
+     * Creates a message from JSON data.
+     *
+     * @param msgType - The message type to construct.
+     * @param data - The JSON data string.
+     *
+     * @returns - The created message.
+     */
+    public static convertFromJSON(msgType: Constructable, data: string): Message {
+        let objData = JSON.parse(data);
+        return plainToInstance(msgType, objData) as Message;
     }
 
     /**

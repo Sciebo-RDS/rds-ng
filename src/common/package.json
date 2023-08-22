@@ -3,9 +3,11 @@
     "private": true,
     "dependencies": {
         "autoprefixer": "^10.4.14",
+        "class-transformer": "^0.5.1",
         "pinia": "^2.1.4",
         "postcss": "^8.4.27",
         "primevue": "^3.31.0",
+        "reflect-metadata": "^0.1.13",
         "semver": "^7.5.4",
         "socket.io-client": "^4.7.2",
         "tailwindcss": "^3.3.3",
