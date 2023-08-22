@@ -51,10 +51,10 @@ export class Client {
     }
 
     private connectEvents(): void {
-        this._socket.on("connect", this.onConnect);
-        this._socket.on("connect_error", this.onConnectError);
-        this._socket.on("disconnect", this.onDisconnect);
-        this._socket.on("*", this.onMessage);
+        this._socket.on("connect", () => this.onConnect());
+        this._socket.on("connect_error", (reason: any) => this.onConnectError(reason));
+        this._socket.on("disconnect", () => this.onDisconnect());
+        this._socket.onAny((msgName: string, data: string) => this.onMessage(msgName, data));
     }
 
     /**
@@ -104,7 +104,7 @@ export class Client {
     public sendMessage(msg: Message): void {
         if (this._socket.connected) {
             logging.debug(`Sending message: ${String(msg)}`, "client");
-            this._socket.emit(msg.name, msg);
+            this._socket.emit(msg.name, msg.convertToJSON());
         }
     }
 

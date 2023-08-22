@@ -110,17 +110,16 @@ export class MessageBus {
     public dispatch(msg: Message, msgMeta: MessageMetaInformation): void {
         try {
             this._router.verifyMessage(msg, msgMeta);
+
+            if (this._router.checkRemoteRouting(msg, msgMeta)) {
+                this.remoteDispatch(msg, msgMeta);
+            }
+
+            // The local dispatchers are always invoked for their pre- and post-steps
+            this.localDispatch(msg, msgMeta);
         } catch (err) {
             logging.error(`A routing error occurred: ${String(err)}`, "bus", { message: msg });
-            return;
         }
-
-        if (this._router.checkRemoteRouting(msg, msgMeta)) {
-            this.remoteDispatch(msg, msgMeta);
-        }
-
-        // The local dispatchers are always invoked for their pre- and post-steps
-        this.localDispatch(msg, msgMeta);
     }
 
     private process(): void {

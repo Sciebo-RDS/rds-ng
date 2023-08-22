@@ -38,6 +38,13 @@ export abstract class Message {
     }
 
     /**
+     * Converts this message to JSON.
+     */
+    public convertToJSON(): string {
+        return JSON.stringify(this);
+    }
+
+    /**
      * Defines a new message.
      *
      * The decorator takes care of wrapping the new class as a dataclass, passing the correct message
@@ -78,6 +85,6 @@ export abstract class Message {
      * Gets the string representation of this message.
      */
     public toString(): string {
-        return JSON.stringify(this);
+        return this.convertToJSON();
     }
 }

@@ -3,6 +3,7 @@ import { type Constructable } from "../../../utils/Types";
 import logging from "../../logging/Logging";
 import { Command } from "../Command";
 import { CommandReply } from "../CommandReply";
+import { Event } from "../Event";
 import { Message, type MessageCategory } from "../Message";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { MessageTypesCatalog } from "../MessageTypesCatalog";
@@ -111,15 +112,14 @@ export class NetworkEngine {
             throw new Error(`The message type '${msgName}' is unknown`);
         }
 
-        // Unpack the message into its actual type
-        // TODO: Unpack
-        /*
-        msg = typing.cast(Message, msg_type.from_json(data))
-        self._router.verify_message(NetworkRouter.Direction.IN, msg)
+        // TODO: Fix types
+        let objData = JSON.parse(data);
+        let msg = Object.assign(new msgType, objData) as Message;
+        this._router.verifyMessage(NetworkRouterDirection.In, msg);
 
-        msg.hops.append(self._comp_data.comp_id)
-        return msg
-         */
+        msg.hops.push(this._compData.compID);
+
+        return msg;
     }
 
     private createMessageMetaInformation(msg: Message, entrypoint: MessageEntrypoint, ...args: any[]): MessageMetaInformation {
