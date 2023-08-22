@@ -19,6 +19,21 @@ class SendTarget(IntEnum)
 
 Flag telling whether an outgoing message is only sent to a single (direct) target or spread across all connected clients.
 
+## \_ComponentEntry Objects
+
+```python
+@dataclasses.dataclass()
+class _ComponentEntry()
+```
+
+#### has\_timed\_out
+
+```python
+def has_timed_out() -> bool
+```
+
+Whether the connected component has timed out.
+
 #### \_\_init\_\_
 
 ```python
@@ -30,6 +45,18 @@ def __init__(comp_id: UnitID, config: Configuration)
 - `comp_id` - The component identifier.
 - `config` - The global configuration.
 
+#### set\_message\_handler
+
+```python
+def set_message_handler(msg_handler: ServerMessageHandler) -> None
+```
+
+Sets a handler that gets called when a message arrives.
+
+**Arguments**:
+
+- `msg_handler` - The message handler to be called.
+
 #### run
 
 ```python
@@ -37,6 +64,14 @@ def run() -> None
 ```
 
 So far, does exactly nothing.
+
+#### process
+
+```python
+def process() -> None
+```
+
+Periodically purges timed out clients.
 
 #### send\_message
 

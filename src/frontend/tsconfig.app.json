@@ -1,0 +1,31 @@
+{
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
+    "include": [
+        "env.d.ts",
+        "src/**/*",
+        "src/**/*.vue"
+    ],
+    "exclude": [
+        "src/**/__tests__/*"
+    ],
+    "compilerOptions": {
+        "lib": [
+            "ES2021",
+            "DOM"
+        ],
+        "strictFunctionTypes": false,
+        "composite": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@common/*": [
+                "../common/web/*"
+            ],
+            "@assets/*": [
+                "../common/assets/*"
+            ]
+        }
+    }
+}

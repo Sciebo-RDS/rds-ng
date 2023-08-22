@@ -10,6 +10,16 @@ services:
             mode: replicated
             replicas: 0
 
+    # Build-only Node base image
+    node-base:
+        image: rds-ng/node-base:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/node-base/Dockerfile
+        deploy:
+            mode: replicated
+            replicas: 0
+
     # Gate service
     gate:
         image: rds-ng/gate:latest
@@ -22,3 +32,16 @@ services:
             - py-base
         ports:
             - "4200:6969"
+
+    # Web frontend
+    frontend:
+        image: rds-ng/frontend:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/web/Dockerfile
+            args:
+                WEB_NAME: "frontend"
+        depends_on:
+            - node-base
+        ports:
+            - "8000:6969"

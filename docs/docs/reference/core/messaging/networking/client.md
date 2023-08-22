@@ -22,6 +22,18 @@ def __init__(comp_id: UnitID, config: Configuration)
 - `comp_id` - The component identifier.
 - `config` - The global configuration.
 
+#### set\_message\_handler
+
+```python
+def set_message_handler(msg_handler: ClientMessageHandler) -> None
+```
+
+Sets a handler that gets called when a message arrives.
+
+**Arguments**:
+
+- `msg_handler` - The message handler to be called.
+
 #### run
 
 ```python
@@ -29,6 +41,14 @@ def run() -> None
 ```
 
 Automatically connects to a server if one was configured.
+
+#### process
+
+```python
+def process() -> None
+```
+
+Periodically performs certain tasks.
 
 #### send\_message
 

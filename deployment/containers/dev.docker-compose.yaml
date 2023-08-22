@@ -1,7 +1,7 @@
 # Docker compose file to build/run the entire components stack in development mode
 # Note that the local source tree is mounted into the containers so that changes are applied automagically
 services:
-    # Build-only Python py-base image
+    # Build-only Python base image
     py-base:
         image: rds-ng/py-base:develop
         build:
@@ -11,13 +11,23 @@ services:
             mode: replicated
             replicas: 0
 
+    # Build-only Node base image
+    node-base:
+        image: rds-ng/node-base:develop
+        build:
+            context: ../../
+            dockerfile: deployment/containers/node-base/dev.Dockerfile
+        deploy:
+            mode: replicated
+            replicas: 0
+
     # Gate service
     gate:
         image: rds-ng/gate:develop
         volumes:
-            - type: bind
-              source: ../../src
-              target: /component
+            -   type: bind
+                source: ../../src
+                target: /component
         build:
             context: ../../
             dockerfile: deployment/containers/component/dev.Dockerfile
@@ -27,22 +37,27 @@ services:
             - py-base
         ports:
             - "4200:6969"
+        environment:
+            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
-    # Debug testing buddy
-    testbuddy:
-        image: rds-ng/testbuddy:develop
+    # Web frontend
+    frontend:
+        image: rds-ng/frontend:develop
         volumes:
             -   type: bind
-                source: ../../src
-                target: /component
+                source: ../../src/frontend/src
+                target: /app/frontend/src
+            -   type: bind
+                source: ../../src/common
+                target: /app/common
         build:
             context: ../../
-            dockerfile: deployment/containers/component/dev.Dockerfile
+            dockerfile: deployment/containers/web/dev.Dockerfile
             args:
-                COMPONENT_NAME: "testbuddy"
+                COMPONENT_NAME: "frontend"
         depends_on:
-            - py-base
+            - node-base
         ports:
-            - "4300:6969"
+            - "8000:6969"
         environment:
-            - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://rds-gate-1:6969
+            - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200

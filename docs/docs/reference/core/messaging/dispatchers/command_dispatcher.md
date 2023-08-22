@@ -74,8 +74,8 @@ def invoke_reply_callback(
 
 Invokes command reply handlers.
 
-When emitting a command, it is possible to specify reply callbacks that are invoked beside message handlers. This method will call the correct callback
-and take care of intercepting exceptions.
+When emitting a command, it is possible to specify reply callbacks that are invoked beside message handlers. This method will call the correct
+callback and take care of intercepting exceptions.
 
 **Arguments**:
 

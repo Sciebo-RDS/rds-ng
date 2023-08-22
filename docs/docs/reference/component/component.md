@@ -15,7 +15,7 @@ Components are always based on this class. It mainly maintains an instance of th
 about the component itself and the entire project.
 
 When writing a component, always create a new subclass that extends ``Component``. Pass all the necessary information to its
-constructor (see ``Args``) and, after doing further setup steps, call its ``run`` method.
+constructor and, after doing further setup steps, call its ``run`` method.
 
 #### \_\_init\_\_
 
@@ -24,7 +24,7 @@ def __init__(comp_id: UnitID,
              role: ComponentRole,
              *,
              module_name: str,
-             config_file: str = "./config.toml")
+             config_file: str = "./config/config.toml")
 ```
 
 **Arguments**:
@@ -64,7 +64,7 @@ Starts the component&#x27;s execution cycles.
 def create_service(
         name: str,
         *,
-        context_type: type[ServiceContextType] = ServiceContext) -> Service
+        context_type: type["ServiceContextType"] | None = None) -> "Service"
 ```
 
 Creates and registers a new service.

@@ -1,10 +1,9 @@
 import logging
 import typing
 
-from .logger_protocol import LoggerProtocol
 from .logger import Logger
+from .logger_protocol import LoggerProtocol
 from .logger_proxy import LoggerProxy
-
 
 logging.setLoggerClass(Logger)
 _logger = typing.cast(Logger, logging.getLogger("rds_logger"))
@@ -13,13 +12,13 @@ _logger = typing.cast(Logger, logging.getLogger("rds_logger"))
 def set_level(level: int) -> None:
     """
     Sets the global logging level.
-    
+
     Args:
         level: The logging level.
     """
     _logger.setLevel(level)
-    
-    
+
+
 def debug(msg: str, *, scope: str | None = None, **kwargs):
     """
     Logs a debugging message.
