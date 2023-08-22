@@ -29,7 +29,7 @@ export class Channel {
      */
     public get targetID(): UnitID | null {
         try {
-            return this.target !== undefined ? UnitID.fromString(this.target) : null;
+            return this.target ? UnitID.fromString(this.target) : null;
         } catch {
             return null;
         }
@@ -53,7 +53,7 @@ export class Channel {
      * Gets the string representation of this channel.
      */
     public toString(): string {
-        return this.target !== undefined ? `@${this.type}:${this.target}` : `@${this.type}`;
+        return this.target ? `@${this.type}:${this.target}` : `@${this.type}`;
     }
 
     /**

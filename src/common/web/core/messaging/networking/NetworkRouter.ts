@@ -3,7 +3,7 @@ import { Message } from "../Message";
 import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 
 /**
- * Flag telling the direction (INcoming or OUTgoing) of a message.
+ * Enum telling the direction (INcoming or OUTgoing) of a message.
  */
 export enum NetworkRouterDirection {
     In,
@@ -37,8 +37,7 @@ export class NetworkRouter {
     public verifyMessage(direction: NetworkRouterDirection, msg: Message): void {
         if (msg.target.isLocal) {
             this.verifyLocalMessage(direction, msg);
-        }
-        if (msg.target.isDirect) {
+        } else if (msg.target.isDirect) {
             this.verifyDirectMessage(direction, msg);
         }
     }
@@ -55,9 +54,8 @@ export class NetworkRouter {
     public checkLocalRouting(direction: NetworkRouterDirection, msg: Message, msgMeta: MessageMetaInformation): boolean {
         if (direction == NetworkRouterDirection.Out) {
             return false;  // Outgoing messages are never routed back locally
-        }
-        if (direction == NetworkRouterDirection.In) {
-            if (msg.target.isDirect && msg.target.targetID !== null) {
+        } else if (direction == NetworkRouterDirection.In) {
+            if (msg.target.isDirect && msg.target.targetID) {
                 return msg.target.targetID.equals(this._compID);
             }
         }
@@ -86,7 +84,7 @@ export class NetworkRouter {
 
     private verifyDirectMessage(direction: NetworkRouterDirection, msg: Message): void {
         // An incoming direct message must be targeted to a component
-        if (msg.target.targetID === null) {
+        if (!msg.target.targetID) {
             throw new Error("Direct message without a target received");
         }
 

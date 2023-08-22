@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+
 import { NetworkClientSettingIDs } from "../../../settings/NetworkSettingIDs";
 import { networkStore } from "../../../stores/NetworkStore";
 import { Configuration } from "../../../utils/config/Configuration";
@@ -127,7 +128,7 @@ export class Client {
     }
 
     private onMessage(msgName: string, data: string): void {
-        if (this._messageHandler !== null) {
+        if (this._messageHandler) {
             this._messageHandler(msgName, data);
         }
     }

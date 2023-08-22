@@ -161,14 +161,14 @@ export class MessageBus {
                 dispatcher.dispatch(msg, msgMeta, handler, ctx);
             } catch (err) {
                 logging.error(`An error occurred while processing a message: ${String(err)}`, "bus",
-                    { message: String(msg), error: err });
+                    { message: msg, error: err });
             }
         }
     }
 
     private createContext<CtxType extends MessageContext>(msg: Message, svc: MessageService<CtxType>): MessageContext {
         let logger = new LoggerProxy(logging.getDefaultLogger());
-        logger.addParam("trace", String(msg.trace));
+        logger.addParam("trace", msg.trace);
         return svc.createContext(logger, this._compData.config);
     }
 }

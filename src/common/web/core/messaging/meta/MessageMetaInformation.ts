@@ -3,7 +3,7 @@
  */
 export enum MessageEntrypoint {
     Local,
-    Server,  // These two are effectively never used, as the web frontend always only runs a client
+    Server,  // This is effectively never used, as the web frontend always only runs a client
     Client
 }
 

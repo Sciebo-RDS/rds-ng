@@ -108,7 +108,7 @@ export class NetworkEngine {
     private unpackMessage(msgName: string, data: string): Message {
         // Look up the actual message via its name
         let msgType = MessageTypesCatalog.findType(msgName);
-        if (msgType === undefined) {
+        if (!msgType) {
             throw new Error(`The message type '${msgName}' is unknown`);
         }
 

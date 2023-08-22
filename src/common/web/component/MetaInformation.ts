@@ -37,7 +37,6 @@ type MetaInformationType = {
  * }
  * ```
  */
-
 export class MetaInformation {
     private readonly _data = metaData as MetaInformationType;
 

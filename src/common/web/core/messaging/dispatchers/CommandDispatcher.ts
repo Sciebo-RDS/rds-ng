@@ -86,8 +86,8 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
         }
 
         let metaInfo = MessageDispatcher._metaInformationList.find(unique);
-        if (metaInfo !== null && metaInfo instanceof CommandMetaInformation) {
-            if (reply !== null) {
+        if (metaInfo && metaInfo instanceof CommandMetaInformation) {
+            if (reply) {
                 invoke(metaInfo.doneCallback, reply, reply.success, reply.message);
             } else {
                 invoke(metaInfo.failCallback, failType, failMsg);

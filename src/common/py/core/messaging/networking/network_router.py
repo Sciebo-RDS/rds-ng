@@ -15,7 +15,7 @@ class NetworkRouter:
 
     class Direction(IntEnum):
         """
-        Flag telling the direction (INcoming or OUTgoing) of a message.
+        Enum telling the direction (INcoming or OUTgoing) of a message.
         """
 
         IN = auto()

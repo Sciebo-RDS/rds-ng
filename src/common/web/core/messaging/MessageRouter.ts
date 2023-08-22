@@ -29,8 +29,7 @@ export class MessageRouter {
     public verifyMessage(msg: Message, msgMeta: MessageMetaInformation): void {
         if (msg.target.isLocal) {
             this.verifyLocalMessage(msg, msgMeta);
-        }
-        if (msg.target.isDirect) {
+        } else if (msg.target.isDirect) {
             this.verifyDirectMessage(msg, msgMeta);
         }
     }
@@ -44,8 +43,7 @@ export class MessageRouter {
     public checkLocalRouting(msg: Message, msgMeta: MessageMetaInformation): boolean {
         if (msg.target.isLocal) {
             return true;
-        }
-        if (msg.target.isDirect && msg.target.targetID !== null) {
+        } else if (msg.target.isDirect && msg.target.targetID) {
             // A direct message that has made it to the message bus either stems from this component or is targeted to it
             // If it is targeted to this component, it needs to be dispatched locally
             return msg.target.targetID.equals(this._compID);
@@ -71,14 +69,13 @@ export class MessageRouter {
     }
 
     private verifyDirectMessage(msg: Message, msgMeta: MessageMetaInformation): void {
-        if (msg.target.targetID === null) {
+        if (!msg.target.targetID) {
             throw new Error("Direct message without a target received");
         }
 
         if (msgMeta.entrypoint == MessageEntrypoint.Local && msg.target.targetID.equals(this._compID)) {
             throw new Error("Message coming from this component directed to self");
-        }
-        if (msgMeta.entrypoint != MessageEntrypoint.Local && !msg.target.targetID.equals(this._compID)) {
+        } else if (msgMeta.entrypoint != MessageEntrypoint.Local && !msg.target.targetID.equals(this._compID)) {
             throw new Error("Message coming from another component not directed to this component");
         }
     }

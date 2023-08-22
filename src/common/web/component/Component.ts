@@ -1,11 +1,11 @@
+import "../../assets/styles/tailwind-init.css";
+
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
-
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-
 import { type App, type Component as VueComponent, createApp, inject } from "vue";
-import "../../assets/styles/tailwind-init.css";
+
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
 import { Service } from "../service/Service";
@@ -140,7 +140,11 @@ export class Component {
      * The global ``Component`` instance.
      */
     public static get instance(): Component {
-        return inject(Component._injectionKey) as Component;
+        let inst = inject<Component>(Component._injectionKey);
+        if (!inst) {
+            throw new Error("No component instance has been created");
+        }
+        return inst;
     }
 
     private sanitizeComponentID(compID: UnitID): UnitID {

@@ -1,5 +1,6 @@
 // @ts-ignore
 import wildcardMatch from "wildcard-match";
+
 import { type Constructable } from "../../../utils/Types";
 import { type MessageHandler, MessageHandlerMapping, type MessageHandlerMappings } from "./MessageHandler";
 

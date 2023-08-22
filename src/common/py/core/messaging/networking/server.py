@@ -21,7 +21,7 @@ class Server(socketio.Server):
 
     class SendTarget(IntEnum):
         """
-        Flag telling whether an outgoing message is only sent to a single (direct) target or spread across all connected clients.
+        Enum telling whether an outgoing message is only sent to a single (direct) target or spread across all connected clients.
         """
 
         SPREAD = auto()

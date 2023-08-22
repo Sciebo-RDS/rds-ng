@@ -7,6 +7,11 @@ import { deepMerge } from "../DeepMerge";
 import configData from "/config/config.toml?url&raw"
 
 /**
+ * A general record-like object.
+ */
+export type SettingsContainer = Record<string, any>;
+
+/**
  * Encapsulates configuration settings and their fallback default values.
  *
  * Settings can be loaded from a configuration file (in *TOML* format) or provided as environment variables (see below).
@@ -21,17 +26,15 @@ import configData from "/config/config.toml?url&raw"
  * ```
  *
  * A setting identifier is translated to its corresponding environment variable name by replacing all dots (.) with underscores (_),
- * prepending a prefix (defaults to *'RDS'*), as well as making everything uppercase::
- *
+ * prepending a prefix (defaults to *'RDS'*), as well as making everything uppercase:
+ * ```
  *     General.Debug -> RDS_GENERAL_DEBUG
+ * ```
  *
  * Notes:
  *     When accessing a setting value, a default value must *always* be present. This means that before a setting can be accessed,
  *     a default value must be added using ``add_defaults``.
  */
-
-export type SettingsContainer = Record<string, any>;
-
 export class Configuration {
     private _settings: SettingsContainer = {};
     private _defaults: SettingsContainer = {};

@@ -56,7 +56,7 @@ export class MessageEmitter {
                                                 failCallback: CommandFailCallback | undefined = undefined,
                                                 timeout: number = 0.0,
                                                 chain: Message | null = null): MsgType {
-        if (timeout > 0.0 && failCallback === undefined) {
+        if (timeout > 0.0 && !failCallback) {
             logging.info(`Sending a command (${cmdType}) with a timeout but no fail callback`, "bus");
         }
 
