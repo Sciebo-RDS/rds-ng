@@ -3,7 +3,7 @@ import flask
 from .logging import info, debug, set_level
 from .messaging import MessageBus
 from .messaging.handlers import MessageService
-from ..component import ComponentData
+from ..component import BackendComponentData
 
 
 class Core:
@@ -18,7 +18,7 @@ class Core:
 
     An instance of this class is always created when creating a ``Component``; it should never be instantiated otherwise.
     """
-    def __init__(self, module_name: str, comp_data: ComponentData):
+    def __init__(self, module_name: str, comp_data: BackendComponentData):
         """
         Args:
             module_name: The module name used for *Flask* initialization.

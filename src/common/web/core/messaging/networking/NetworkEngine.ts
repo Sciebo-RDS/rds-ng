@@ -1,4 +1,4 @@
-import { ComponentData } from "../../../component/ComponentData";
+import { WebComponentData } from "../../../component/WebComponentData";
 import { type Constructable } from "../../../utils/Types";
 import logging from "../../logging/Logging";
 import { Command } from "../Command";
@@ -21,7 +21,7 @@ import { NetworkRouter, NetworkRouterDirection } from "./NetworkRouter";
  * The network engine takes care of listening to incoming messages, routing them properly, and sending new messages to other components.
  */
 export class NetworkEngine {
-    private readonly _compData: ComponentData;
+    private readonly _compData: WebComponentData;
 
     private readonly _messageBus: MessageBusProtocol;
 
@@ -34,7 +34,7 @@ export class NetworkEngine {
      * @param compData - The global component data.
      * @param messageBus - The global message bus.
      */
-    public constructor(compData: ComponentData, messageBus: MessageBusProtocol) {
+    public constructor(compData: WebComponentData, messageBus: MessageBusProtocol) {
         this._compData = compData;
 
         this._messageBus = messageBus;

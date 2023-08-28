@@ -12,7 +12,7 @@ import { CommandReply } from "../CommandReply";
  * A message context is used as a context manager. In its ``__exit__`` method, any exceptions will be catched, printed and passed on. This
  * makes tracing of errors that occur during message handling easier.
  *
- * It is also possible to have message handlers receive custom subtypes of this class. See ``Component`` and its ``create_service`` method for
+ * It is also possible to have message handlers receive custom subtypes of this class. See ``WebComponent`` and its ``create_service`` method for
  * details.
  */
 export class MessageContext {

@@ -1,4 +1,4 @@
-import { ComponentData } from "../../component/ComponentData";
+import { WebComponentData } from "../../component/WebComponentData";
 import { LoggerProxy } from "../logging/LoggerProxy";
 import logging from "../logging/Logging";
 import { Command } from "./Command";
@@ -29,7 +29,7 @@ import { NetworkEngine } from "./networking/NetworkEngine";
  * To be error tolerant, any exceptions that arise during message handling will be logged but won't result in program termination.
  */
 export class MessageBus {
-    private readonly _compData: ComponentData;
+    private readonly _compData: WebComponentData;
 
     private readonly _networkEngine: NetworkEngine;
     private readonly _services: MessageService<any>[] = [];
@@ -39,7 +39,7 @@ export class MessageBus {
     /**
      * @param compData - The global component data.
      */
-    public constructor(compData: ComponentData) {
+    public constructor(compData: WebComponentData) {
         this._compData = compData;
 
         logging.debug("-- Creating network engine", "bus")

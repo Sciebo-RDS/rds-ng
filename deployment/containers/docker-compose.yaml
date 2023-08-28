@@ -1,5 +1,6 @@
 # Docker compose file to build/run the entire components stack
 services:
+    # -- Base images --
     # Build-only Python py-base image
     py-base:
         image: rds-ng/py-base:latest
@@ -20,12 +21,13 @@ services:
             mode: replicated
             replicas: 0
 
+    # -- Component images --
     # Gate service
     gate:
         image: rds-ng/gate:latest
         build:
             context: ../../
-            dockerfile: deployment/containers/component/Dockerfile
+            dockerfile: deployment/containers/backend-component/Dockerfile
             args:
                 COMPONENT_NAME: "gate"
         depends_on:
@@ -38,7 +40,7 @@ services:
         image: rds-ng/frontend:latest
         build:
             context: ../../
-            dockerfile: deployment/containers/web/Dockerfile
+            dockerfile: deployment/containers/web-frontend/Dockerfile
             args:
                 WEB_NAME: "frontend"
         depends_on:

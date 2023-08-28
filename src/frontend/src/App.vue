@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Component } from "@common/component/Component";
+import { WebComponent } from "@common/component/WebComponent";
 import { Channel } from "@common/core/messaging/Channel";
 import { Event } from "@common/core/messaging/Event";
 import type { MessageContext } from "@common/core/messaging/handlers/MessageContext";
@@ -14,7 +14,7 @@ class MyEvent extends Event {
     public a_number: number = 0;
 }
 
-const comp = Component.instance;
+const comp = WebComponent.instance;
 
 onMounted(() => {
     comp.run();

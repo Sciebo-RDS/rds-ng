@@ -1,4 +1,4 @@
-import { ComponentData } from "../component/ComponentData";
+import { WebComponentData } from "../component/WebComponentData";
 import logging from "../core/logging/Logging"
 import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import { LogLevel } from "./logging/LogRecord";
@@ -14,17 +14,17 @@ import { MessageBus } from "./messaging/MessageBus";
  * The core can be regarded as a facade to the *inner structure* of a component. It only offers a small number of public
  * methods and is accessed from the outside very rarely.
  *
- * An instance of this class is always created when creating a ``Component``; it should never be instantiated otherwise.
+ * An instance of this class is always created when creating a ``WebComponent``; it should never be instantiated otherwise.
  */
 export class Core {
-    private readonly _compData: ComponentData;
+    private readonly _compData: WebComponentData;
 
     private readonly _messageBus: MessageBus;
 
     /**
      * @param compData - The component data used to access common component information.
      */
-    public constructor(compData: ComponentData) {
+    public constructor(compData: WebComponentData) {
         logging.info("Initializing core...", "core")
 
         this._compData = compData;
@@ -49,7 +49,7 @@ export class Core {
     /**
      * Registers a message service.
      *
-     * Services are always created and registered using ``create_service`` (in ``Component``),
+     * Services are always created and registered using ``create_service`` (in ``WebComponent``),
      * so you should rarely (if ever) need to call this method directly.
      *
      * @param svc - The message service to register.
