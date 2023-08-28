@@ -1,7 +1,7 @@
 import json
 import typing
 
-from .component_data import ComponentData
+from .backend_component_data import BackendComponentData
 from .roles import ComponentRole
 from ..utils import UnitID
 from ..utils.config import Configuration
@@ -10,14 +10,14 @@ if typing.TYPE_CHECKING:
     from ..service import ServiceContextType, Service
 
 
-class Component:
+class BackendComponent:
     """
     Base class for all project components.
 
     Components are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
     about the component itself and the entire project.
 
-    When writing a component, always create a new subclass that extends ``Component``. Pass all the necessary information to its
+    When writing a component, always create a new subclass that extends ``BackendComponent``. Pass all the necessary information to its
     constructor and, after doing further setup steps, call its ``run`` method.
     """
 
@@ -44,7 +44,7 @@ class Component:
         meta_info = MetaInformation()
         comp_info = meta_info.get_component(comp_id.unit)
 
-        self._data = ComponentData(
+        self._data = BackendComponentData(
             comp_id=comp_id,
             role=role,
             config=config,
@@ -153,7 +153,7 @@ class Component:
         return self._data.config
 
     @property
-    def data(self) -> ComponentData:
+    def data(self) -> BackendComponentData:
         """
         A data helper object that stores useful component data and information.
         """

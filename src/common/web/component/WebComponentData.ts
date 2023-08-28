@@ -9,7 +9,7 @@ import { UnitID } from "../utils/UnitID";
  * Objects of this class are passed to certain parts of the core for easy access to frequently
  * used component information and data.
  */
-export class ComponentData {
+export class WebComponentData {
     /**
      * @param compID - The component identifier.
      * @param config - The configuration.

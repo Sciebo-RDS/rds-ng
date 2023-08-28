@@ -75,7 +75,7 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
      */
     public static invokeReplyCallback(unique: Trace, reply: CommandReply | null = null,
                                       failType: CommandFailType = CommandFailType.None, failMsg: string = ""): void {
-        let invoke = (callback?: Function, ...args: any[]): void => {
+        let invoke = (callback: Function | null, ...args: any[]): void => {
             if (callback) {
                 try {
                     callback(...args);

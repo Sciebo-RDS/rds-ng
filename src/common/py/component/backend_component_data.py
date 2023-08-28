@@ -8,7 +8,7 @@ from ..utils.config import Configuration
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class ComponentData:
+class BackendComponentData:
     """
     Holds general data and information about the component.
     

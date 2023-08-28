@@ -14,7 +14,7 @@ import { getDefaultSettings } from "../settings/DefaultSettings";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
-import { ComponentData } from "./ComponentData";
+import { WebComponentData } from "./WebComponentData";
 import { MetaInformation } from "./MetaInformation";
 
 /**
@@ -26,10 +26,10 @@ import { MetaInformation } from "./MetaInformation";
  * Instances of this class are never created directly. Instead, always use the ``create`` method which performs all necessary initialization
  * tasks.
  */
-export class Component {
+export class WebComponent {
     private static readonly _injectionKey = Symbol();
 
-    private readonly _data: ComponentData;
+    private readonly _data: WebComponentData;
 
     private readonly _core: Core;
     private readonly _vueApp: App;
@@ -40,7 +40,7 @@ export class Component {
         let metaInfo = new MetaInformation();
         let compInfo = metaInfo.getComponent(compID.unit);
 
-        this._data = new ComponentData(
+        this._data = new WebComponentData(
             compID,
             this.createConfig(env),
             metaInfo.title,
@@ -76,7 +76,7 @@ export class Component {
         app.use(createPinia());
         app.use(PrimeVue);
 
-        app.provide(Component._injectionKey, this);
+        app.provide(WebComponent._injectionKey, this);
 
         app.mount(appElement);
 
@@ -111,7 +111,7 @@ export class Component {
     /**
      * A data helper object that stores useful component data and information.
      */
-    public get data(): ComponentData {
+    public get data(): WebComponentData {
         return this._data;
     }
 
@@ -132,15 +132,15 @@ export class Component {
      * @param appRoot - The Vue root component.
      * @param appElement - The HTML element ID used for mounting the root component.
      */
-    public static create(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): Component {
-        return new Component(env, compID, appRoot, appElement);
+    public static create(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): WebComponent {
+        return new WebComponent(env, compID, appRoot, appElement);
     }
 
     /**
-     * The global ``Component`` instance.
+     * The global ``WebComponent`` instance.
      */
-    public static get instance(): Component {
-        let inst = inject<Component>(Component._injectionKey);
+    public static get instance(): WebComponent {
+        let inst = inject<WebComponent>(WebComponent._injectionKey);
         if (!inst) {
             throw new Error("No component instance has been created");
         }
@@ -148,7 +148,7 @@ export class Component {
     }
 
     private sanitizeComponentID(compID: UnitID): UnitID {
-        let instance: string = compID.instance !== undefined ? compID.instance : "default";
+        let instance: string = compID.instance ? compID.instance : "default";
         let uniqueID = uuidv4();
 
         return new UnitID(compID.type, compID.unit, `${instance}::${uniqueID}`);

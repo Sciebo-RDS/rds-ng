@@ -1,8 +1,8 @@
-# Web service Dockerfile (development mode)
+# Web component Dockerfile (development mode)
 # --
 FROM    rds-ng/node-base:develop
 
-# Argument definitions; note that WEB_NAME MUST always be specified externally!
+# Argument definitions; note that COMPONENT_NAME MUST always be specified externally!
 ARG     COMPONENT_NAME
 ARG     COMPONENT_COMMAND="dev"
 ARG     COMPONENT_PORT=6969

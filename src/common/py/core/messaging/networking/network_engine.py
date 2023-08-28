@@ -12,7 +12,7 @@ from ..meta import (
     CommandReplyMetaInformation,
     EventMetaInformation,
 )
-from ....component import ComponentData
+from ....component import BackendComponentData
 from ....utils import UnitID
 
 
@@ -24,7 +24,9 @@ class NetworkEngine:
     The network engine takes care of listening to incoming messages, routing them properly, and sending new messages to other components.
     """
 
-    def __init__(self, comp_data: ComponentData, message_bus: MessageBusProtocol):
+    def __init__(
+        self, comp_data: BackendComponentData, message_bus: MessageBusProtocol
+    ):
         """
         Args:
             comp_data: The global component data.

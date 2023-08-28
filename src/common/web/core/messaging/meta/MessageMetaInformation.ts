@@ -1,7 +1,7 @@
 /**
  * Defines from where a message has entered the system.
  */
-export enum MessageEntrypoint {
+export const enum MessageEntrypoint {
     Local,
     Server,  // This is effectively never used, as the web frontend always only runs a client
     Client

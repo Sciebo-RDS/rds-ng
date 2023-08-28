@@ -5,7 +5,7 @@ import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 /**
  * Enum telling the direction (INcoming or OUTgoing) of a message.
  */
-export enum NetworkRouterDirection {
+export const enum NetworkRouterDirection {
     In,
     Out
 }

@@ -8,7 +8,7 @@ from .message_router import MessageRouter
 from .meta import MessageMetaInformationType
 from .networking import NetworkEngine
 from ..logging import LoggerProxy, default_logger, error, debug
-from ...component import ComponentData
+from ...component import BackendComponentData
 
 
 class MessageBus:
@@ -29,7 +29,7 @@ class MessageBus:
         The message bus is thread-safe.
     """
 
-    def __init__(self, comp_data: ComponentData):
+    def __init__(self, comp_data: BackendComponentData):
         """
         Args:
             comp_data: The global component data.

@@ -12,8 +12,8 @@ export class CommandMetaInformation extends MessageMetaInformation {
      * @param timeout - The timeout (in seconds) before a command is deemed not replied.
      */
     public constructor(readonly entrypoint: MessageEntrypoint,
-                       readonly doneCallback: CommandDoneCallback | undefined = undefined,
-                       readonly failCallback: CommandFailCallback | undefined = undefined,
+                       readonly doneCallback: CommandDoneCallback | null = null,
+                       readonly failCallback: CommandFailCallback | null = null,
                        readonly timeout: number = 0.0) {
         super(entrypoint, true);
     }

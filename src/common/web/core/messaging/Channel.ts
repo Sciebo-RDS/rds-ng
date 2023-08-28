@@ -3,7 +3,7 @@ import { UnitID } from "../../utils/UnitID";
 /**
  * The different channel types.
  */
-export enum ChannelType {
+export const enum ChannelType {
     Local = "local",
     Direct = "direct"
 }

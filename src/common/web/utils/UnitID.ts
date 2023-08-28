@@ -30,7 +30,7 @@ export class UnitID {
             return false;
         }
 
-        if (this.instance !== undefined && other.instance !== undefined) {
+        if (this.instance && other.instance) {
             if (this.instance !== other.instance) {
                 return false;
             }
@@ -68,6 +68,6 @@ export class UnitID {
      * Converts the unit ID to a string of the form ``<type>/<unit>/<instance>`` or ``<type>/<unit>``.
      */
     public toString(): string {
-        return this.instance !== undefined ? [this.type, this.unit, this.instance].join(UnitID._delimiter) : [this.type, this.unit].join(UnitID._delimiter);
+        return this.instance ? [this.type, this.unit, this.instance].join(UnitID._delimiter) : [this.type, this.unit].join(UnitID._delimiter);
     }
 }

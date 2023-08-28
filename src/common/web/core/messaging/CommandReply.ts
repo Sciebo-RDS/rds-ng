@@ -1,12 +1,13 @@
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
+
 import { Command } from "./Command";
 import { Message, type MessageCategory, type Trace } from "./Message";
 
 /**
  * Used when a command failed.
  */
-export enum CommandFailType {
+export const enum CommandFailType {
     None = 0,
     Timeout,
     Exception,
