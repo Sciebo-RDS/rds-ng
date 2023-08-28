@@ -112,9 +112,7 @@ export abstract class Message {
     /**
      * Gets the global message category.
      */
-    public get category(): MessageCategory {
-        return Message.Category;
-    }
+    public abstract get category(): MessageCategory;
 
     /**
      * Gets the string representation of this message.

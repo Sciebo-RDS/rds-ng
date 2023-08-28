@@ -12,7 +12,10 @@
             "ES2021",
             "DOM"
         ],
+        "target": "ES2021",
+        "strict": true,
         "strictFunctionTypes": false,
+        "noUnusedParameters": false,
         "composite": true,
         "module": "ESNext",
         "moduleResolution": "Bundler",

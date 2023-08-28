@@ -148,7 +148,7 @@ export class Component {
     }
 
     private sanitizeComponentID(compID: UnitID): UnitID {
-        let instance: string = compID.instance !== undefined ? compID.instance : "default";
+        let instance: string = compID.instance ? compID.instance : "default";
         let uniqueID = uuidv4();
 
         return new UnitID(compID.type, compID.unit, `${instance}::${uniqueID}`);

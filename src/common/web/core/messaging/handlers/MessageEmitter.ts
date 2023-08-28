@@ -52,12 +52,12 @@ export class MessageEmitter {
      * @throws - If an unknown value was provided in ``values`.
      */
     public emitCommand<MsgType extends Command>(cmdType: Constructable<MsgType>, target: Channel, values: Record<string, any>,
-                                                doneCallback: CommandDoneCallback | undefined = undefined,
-                                                failCallback: CommandFailCallback | undefined = undefined,
+                                                doneCallback: CommandDoneCallback | null = null,
+                                                failCallback: CommandFailCallback | null = null,
                                                 timeout: number = 0.0,
                                                 chain: Message | null = null): MsgType {
         if (timeout > 0.0 && !failCallback) {
-            logging.info(`Sending a command (${cmdType}) with a timeout but no fail callback`, "bus");
+            logging.warning(`Sending a command (${cmdType}) with a timeout but no fail callback`, "bus");
         }
 
         this._counters[Command.Category] += 1;
