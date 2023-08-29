@@ -99,6 +99,13 @@ class Server(socketio.Server):
         with self._lock:
             for timed_out_component in self._find_timed_out_components():
                 if timed_out_component in self._connected_components:
+                    debug(
+                        "Component timed out, disconnecting",
+                        scope="server",
+                        component=str(timed_out_component),
+                        timeout=self._connected_components[timed_out_component].timeout,
+                    )
+
                     self.disconnect(
                         self._connected_components[timed_out_component].sid
                     )  # This will trigger _on_disconnect, removing the client from the connected components

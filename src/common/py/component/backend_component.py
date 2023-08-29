@@ -83,12 +83,15 @@ class BackendComponent:
 
         info("Running component...")
 
+        from .services import create_common_service
+
+        create_common_service(self)
+
         self._core.run()
 
     def create_service(
         self,
         name: str,
-        initializer: typing.Callable[["Service"], None] | None = None,
         *,
         context_type: type["ServiceContextType"] | None = None,
     ) -> "Service":
@@ -97,7 +100,6 @@ class BackendComponent:
 
         Args:
             name: The name of the service.
-            initializer: A function called to registered message handlers etc. after the service has been created.
             context_type: Can be used to override the default ``ServiceContext`` type. All message handlers
                 associated with the new service will then receive instances of this type for their service context.
 
@@ -116,8 +118,6 @@ class BackendComponent:
             context_type=context_type,
         )
         self._core.register_service(svc)
-        if initializer is not None:
-            initializer(svc)
         return svc
 
     def _create_config(self, config_file: str) -> Configuration:

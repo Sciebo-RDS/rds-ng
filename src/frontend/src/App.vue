@@ -2,25 +2,26 @@
 import initNetworkService from "@/services/NetworkService";
 
 import { networkStore } from "@/stores/NetworkStore";
+import { PingCommand } from "@common/api/PingCommand";
 import { WebComponent } from "@common/component/WebComponent";
+import { Channel } from "@common/core/messaging/Channel";
 import Button from "primevue/button"
 import { onMounted, watch } from "vue"
 
 const comp = WebComponent.instance;
+const svc = initNetworkService(comp);
+const nwStore = networkStore();
 
 onMounted(() => {
     comp.run();
-    initNetworkService(comp);
 });
-
-const nwStore = networkStore();
 
 watch(() => nwStore.connected, (connected, prevConnected) => {
     console.log("Connected? IS: " + String(connected) + "; WAS: " + String(prevConnected));
 });
 
 function clickButton(event: any): void {
-    console.log("CLICKED BUTTON");
+    svc.messageEmitter.emitCommand(PingCommand, Channel.direct("infra/gate/default"));
 }
 </script>
 

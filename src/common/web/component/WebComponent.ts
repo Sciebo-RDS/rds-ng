@@ -17,6 +17,8 @@ import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
 import { WebComponentData } from "./WebComponentData";
 
+import createCommonService from "./services/CommonService";
+
 /**
  * Base class for all web components.
  *
@@ -91,6 +93,9 @@ export class WebComponent {
      */
     public run(): void {
         logging.info("Running component...");
+
+        createCommonService(this);
+
         this._core.run();
     }
 

@@ -13,6 +13,4 @@ comp = BackendComponent(
 )
 app = comp.app()
 
-svc = comp.create_service("Gate service")
-
 comp.run()
