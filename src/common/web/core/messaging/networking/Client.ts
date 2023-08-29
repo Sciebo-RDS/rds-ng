@@ -2,7 +2,6 @@ import { io, Socket } from "socket.io-client";
 
 import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../../../api/NetworkEvents";
 import { NetworkClientSettingIDs } from "../../../settings/NetworkSettingIDs";
-import { networkStore } from "../../../stores/NetworkStore";
 import { Configuration } from "../../../utils/config/Configuration";
 import { UnitID } from "../../../utils/UnitID";
 import logging from "../../logging/Logging";
@@ -116,24 +115,21 @@ export class Client {
     }
 
     private onConnect(): void {
-        logging.info("Connected to server", "client");
-
-        networkStore().connected = true;
         this._messageEmitter.emitEvent(ClientConnectedEvent, Channel.local());
+
+        logging.info("Connected to server", "client");
     }
 
     private onConnectError(reason: any): void {
-        logging.warning("Unable to connect to server", "client", { reason: String(reason) });
-
-        networkStore().connected = false;
         this._messageEmitter.emitEvent(ClientConnectionErrorEvent, Channel.local(), { reason: String(reason) });
+
+        logging.warning("Unable to connect to server", "client", { reason: String(reason) });
     }
 
     private onDisconnect(): void {
-        logging.info("Disconnected from server", "client");
-
-        networkStore().connected = false;
         this._messageEmitter.emitEvent(ClientDisconnectedEvent, Channel.local());
+
+        logging.info("Disconnected from server", "client");
     }
 
     private onMessage(msgName: string, data: string): void {

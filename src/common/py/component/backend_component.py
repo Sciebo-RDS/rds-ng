@@ -16,9 +16,6 @@ class BackendComponent:
 
     Components are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
     about the component itself and the entire project.
-
-    When writing a component, always create a new subclass that extends ``BackendComponent``. Pass all the necessary information to its
-    constructor and, after doing further setup steps, call its ``run`` method.
     """
 
     def __init__(
@@ -89,13 +86,18 @@ class BackendComponent:
         self._core.run()
 
     def create_service(
-        self, name: str, *, context_type: type["ServiceContextType"] | None = None
+        self,
+        name: str,
+        initializer: typing.Callable[["Service"], None] | None = None,
+        *,
+        context_type: type["ServiceContextType"] | None = None,
     ) -> "Service":
         """
         Creates and registers a new service.
 
         Args:
             name: The name of the service.
+            initializer: A function called to registered message handlers etc. after the service has been created.
             context_type: Can be used to override the default ``ServiceContext`` type. All message handlers
                 associated with the new service will then receive instances of this type for their service context.
 
@@ -114,6 +116,8 @@ class BackendComponent:
             context_type=context_type,
         )
         self._core.register_service(svc)
+        if initializer is not None:
+            initializer(svc)
         return svc
 
     def _create_config(self, config_file: str) -> Configuration:
