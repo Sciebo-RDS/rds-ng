@@ -58,8 +58,8 @@ export class MessageContext {
     }
 
     private checkCommandReply(): void {
-        if (this._requiresReply && this._msgEmitter.getMessageCount(CommandReply.Category) == 0) {
-            this._logger.warning("A message context required a command reply, but none was sent", "bus");
+        if (this._requiresReply && this._msgEmitter.getMessageCount(CommandReply.Category) != 1) {
+            this._logger.warning("A message context required exactly one command reply, but either none or more than one was sent", "bus");
         }
     }
 
