@@ -4,6 +4,7 @@ import typing
 import socketio
 
 from .. import Message
+from ..handlers import MessageEmitter
 from ...logging import info, warning, error, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
@@ -16,14 +17,19 @@ class Client(socketio.Client):
     The client connection, based on ``socketio.Client``.
     """
 
-    def __init__(self, comp_id: UnitID, config: Configuration):
+    def __init__(
+        self, comp_id: UnitID, config: Configuration, message_emitter: MessageEmitter
+    ):
         """
         Args:
             comp_id: The component identifier.
             config: The global configuration.
+            message_emitter: A message emitter instance.
         """
         self._comp_id = comp_id
         self._config = config
+
+        self._message_emitter = message_emitter
 
         from ....settings import NetworkClientSettingIDs
 
@@ -103,14 +109,31 @@ class Client(socketio.Client):
 
     def _on_connect(self) -> None:
         with self._lock:
+            from .. import Channel
+            from ....api import ClientConnectedEvent
+
+            self._message_emitter.emit_event(ClientConnectedEvent, Channel.local())
+            
             info("Connected to server", scope="client")
 
     def _on_connect_error(self, reason: typing.Any) -> None:
         with self._lock:
+            from .. import Channel
+            from ....api import ClientConnectionErrorEvent
+
+            self._message_emitter.emit_event(
+                ClientConnectionErrorEvent, Channel.local(), reason=str(reason)
+            )
+            
             warning("Unable to connect to server", scope="client", reason=str(reason))
 
     def _on_disconnect(self) -> None:
         with self._lock:
+            from .. import Channel
+            from ....api import ClientDisconnectedEvent
+
+            self._message_emitter.emit_event(ClientDisconnectedEvent, Channel.local())
+            
             info("Disconnected from server", scope="client")
 
     def _on_message(self, msg_name: str, data: str) -> None:

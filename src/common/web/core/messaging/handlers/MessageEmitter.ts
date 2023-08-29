@@ -51,7 +51,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitCommand<MsgType extends Command>(cmdType: Constructable<MsgType>, target: Channel, values: Record<string, any>,
+    public emitCommand<MsgType extends Command>(cmdType: Constructable<MsgType>, target: Channel, values: Record<string, any> = {},
                                                 doneCallback: CommandDoneCallback | null = null,
                                                 failCallback: CommandFailCallback | null = null,
                                                 timeout: number = 0.0,
@@ -81,7 +81,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitReply<MsgType extends CommandReply>(replyType: Constructable<MsgType>, command: Command, values: Record<string, any>,
+    public emitReply<MsgType extends CommandReply>(replyType: Constructable<MsgType>, command: Command, values: Record<string, any> = {},
                                                    success: boolean = true, message: string = ""): MsgType {
         this._counters[CommandReply.Category] += 1;
 
@@ -107,7 +107,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitEvent<MsgType extends Event>(eventType: Constructable<MsgType>, target: Channel, values: Record<string, any>,
+    public emitEvent<MsgType extends Event>(eventType: Constructable<MsgType>, target: Channel, values: Record<string, any> = {},
                                             chain: Message | null = null): MsgType {
         this._counters[Event.Category] += 1;
 

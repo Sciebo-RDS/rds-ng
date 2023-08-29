@@ -4,6 +4,7 @@ import logging from "../../logging/Logging";
 import { Command } from "../Command";
 import { CommandReply } from "../CommandReply";
 import { Event } from "../Event";
+import { MessageEmitter } from "../handlers/MessageEmitter";
 import { Message, type MessageCategory } from "../Message";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { MessageTypesCatalog } from "../MessageTypesCatalog";
@@ -48,7 +49,7 @@ export class NetworkEngine {
     }
 
     private createClient(): Client {
-        return new Client(this._compData.compID, this._compData.config);
+        return new Client(this._compData.compID, this._compData.config, new MessageEmitter(this._compData.compID, this._messageBus));
     }
 
     /**

@@ -1,10 +1,13 @@
 import { io, Socket } from "socket.io-client";
 
+import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../../../api/NetworkEvents";
 import { NetworkClientSettingIDs } from "../../../settings/NetworkSettingIDs";
 import { networkStore } from "../../../stores/NetworkStore";
 import { Configuration } from "../../../utils/config/Configuration";
 import { UnitID } from "../../../utils/UnitID";
 import logging from "../../logging/Logging";
+import { Channel } from "../Channel";
+import { MessageEmitter } from "../handlers/MessageEmitter";
 import { Message } from "../Message";
 
 type ClientMessageHandler = (msgName: string, data: string) => void;
@@ -17,6 +20,7 @@ export class Client {
     private readonly _config: Configuration;
 
     private readonly _socket: Socket;
+    private readonly _messageEmitter: MessageEmitter;
 
     private readonly _serverAddress: string;
     private readonly _connectionTimeout: number;
@@ -26,8 +30,9 @@ export class Client {
     /**
      * @param compID - The component identifier.
      * @param config - The global configuration.
+     * @param messageEmitter - A message emitter instance.
      */
-    public constructor(compID: UnitID, config: Configuration) {
+    public constructor(compID: UnitID, config: Configuration, messageEmitter: MessageEmitter) {
         this._compID = compID;
         this._config = config;
 
@@ -35,6 +40,7 @@ export class Client {
         this._connectionTimeout = this._config.value(NetworkClientSettingIDs.ConnectionTimeout);
 
         this._socket = this.createSocket();
+        this._messageEmitter = messageEmitter;
 
         this.connectEvents();
     }
@@ -113,18 +119,21 @@ export class Client {
         logging.info("Connected to server", "client");
 
         networkStore().connected = true;
+        this._messageEmitter.emitEvent(ClientConnectedEvent, Channel.local());
     }
 
     private onConnectError(reason: any): void {
         logging.warning("Unable to connect to server", "client", { reason: String(reason) });
 
         networkStore().connected = false;
+        this._messageEmitter.emitEvent(ClientConnectionErrorEvent, Channel.local(), { reason: String(reason) });
     }
 
     private onDisconnect(): void {
         logging.info("Disconnected from server", "client");
 
         networkStore().connected = false;
+        this._messageEmitter.emitEvent(ClientDisconnectedEvent, Channel.local());
     }
 
     private onMessage(msgName: string, data: string): void {

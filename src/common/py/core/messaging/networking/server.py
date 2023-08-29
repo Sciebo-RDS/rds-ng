@@ -7,6 +7,7 @@ from enum import IntEnum, auto
 import socketio
 
 from .. import Message
+from ..handlers import MessageEmitter
 from ...logging import info, warning, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
@@ -44,14 +45,19 @@ class Server(socketio.Server):
                 else False
             )
 
-    def __init__(self, comp_id: UnitID, config: Configuration):
+    def __init__(
+        self, comp_id: UnitID, config: Configuration, message_emitter: MessageEmitter
+    ):
         """
         Args:
             comp_id: The component identifier.
             config: The global configuration.
+            message_emitter: A message emitter to use.
         """
         self._comp_id = comp_id
         self._config = config
+
+        self._message_emitter = message_emitter
 
         super().__init__(
             async_mode="gevent",
@@ -161,13 +167,27 @@ class Server(socketio.Server):
                 else 0.0,
             )
 
-        info("Client connected", scope="server", session=sid, component=comp_id)
+            from .. import Channel
+            from ....api import ServerConnectedEvent
+
+            self._message_emitter.emit_event(
+                ServerConnectedEvent, Channel.local(), client_id=sid
+            )
+
+            info("Client connected", scope="server", session=sid, component=comp_id)
 
     def _on_disconnect(self, sid: str) -> None:
         with self._lock:
             self._purge_client(sid)
 
-        info("Client disconnected", scope="server", session=sid)
+            from .. import Channel
+            from ....api import ServerDisconnectedEvent
+
+            self._message_emitter.emit_event(
+                ServerDisconnectedEvent, Channel.local(), client_id=sid
+            )
+
+            info("Client disconnected", scope="server", session=sid)
 
     def _on_message(self, msg_name: str, sid: str, data: str) -> None:
         with self._lock:

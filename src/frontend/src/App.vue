@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ClientConnectedEvent } from "@common/api/NetworkEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Channel } from "@common/core/messaging/Channel";
 import { Event } from "@common/core/messaging/Event";
@@ -35,6 +36,10 @@ function clickme(event: any): void {
 
 svc.messageHandler("msg/event", MyEvent, (msg: MyEvent, ctx: MessageContext) => {
     console.log("GOT EVENT! " + String(msg));
+});
+
+svc.messageHandler(ClientConnectedEvent.Name, ClientConnectedEvent, (msg: ClientConnectedEvent, ctx: MessageContext) => {
+    console.log(ClientConnectedEvent.Name);
 });
 
 </script>

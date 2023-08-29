@@ -26,6 +26,7 @@ export type Trace = string;
  */
 export abstract class Message {
     public static readonly Category: MessageCategory = "Message";
+    public static readonly Name: MessageName = "";
 
     public readonly name: string;
     // @ts-ignore
@@ -98,6 +99,8 @@ export abstract class Message {
     public static define(name: string): Function {
         return (ctor: Constructable): Constructable => {
             let newClass = class extends ctor {
+                public static readonly Name: MessageName = name;
+
                 public constructor(...args: any[]) {
                     super(name, ...args);
                 }
