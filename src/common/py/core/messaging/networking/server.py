@@ -158,12 +158,12 @@ class Server(socketio.Server):
                 )
 
             from ....settings import NetworkServerSettingIDs
-            from ....component import COMPONENT_TYPE_WEB
+            from ....component import ComponentType
 
             self._connected_components[comp_id] = Server._ComponentEntry(
                 sid,
                 timeout=self._config.value(NetworkServerSettingIDs.IDLE_TIMEOUT)
-                if comp_id.type == COMPONENT_TYPE_WEB
+                if comp_id.type == ComponentType.WEB
                 else 0.0,
             )
 

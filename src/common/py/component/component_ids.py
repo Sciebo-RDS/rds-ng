@@ -1,5 +1,23 @@
-COMPONENT_TYPE_INFRASTRUCTURE = "infra"
-COMPONENT_TYPE_WEB = "web"
+from enum import StrEnum
 
-COMPONENT_UNIT_SERVER = "server"
-COMPONENT_UNIT_GATE = "gate"
+
+class ComponentType(StrEnum):
+    """
+    All known component types.
+    """
+
+    INFRASTRUCTURE = "infra"
+    WEB = "web"
+
+
+class ComponentUnit(StrEnum):
+    """
+    All known component units.
+    """
+
+    # Infrastructure
+    SERVER = "server"
+    GATE = "gate"
+
+    # Web
+    FRONTEND = "frontend"
