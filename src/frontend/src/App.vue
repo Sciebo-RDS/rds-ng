@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import initNetworkService from "@/services/NetworkService";
+import createNetworkService from "@/services/NetworkService";
 
 import { networkStore } from "@/stores/NetworkStore";
 import { PingCommand } from "@common/api/PingCommand";
@@ -9,7 +9,7 @@ import Button from "primevue/button"
 import { onMounted, watch } from "vue"
 
 const comp = WebComponent.instance;
-const svc = initNetworkService(comp);
+const svc = createNetworkService(comp);
 const nwStore = networkStore();
 
 onMounted(() => {

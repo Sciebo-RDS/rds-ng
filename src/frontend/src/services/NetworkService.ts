@@ -8,19 +8,16 @@ export default function (comp: WebComponent): Service {
     let nwStore = networkStore();
 
     return comp.createService("Network service", (svc: Service) => {
-        svc.messageHandler(ClientConnectedEvent.Name, ClientConnectedEvent,
-            (msg: ClientConnectedEvent, ctx: MessageContext) => {
-                nwStore.connected = true;
-            });
+        svc.messageHandler(ClientConnectedEvent, (msg: ClientConnectedEvent, ctx: MessageContext) => {
+            nwStore.connected = true;
+        });
 
-        svc.messageHandler(ClientDisconnectedEvent.Name, ClientDisconnectedEvent,
-            (msg: ClientDisconnectedEvent, ctx: MessageContext) => {
-                nwStore.connected = false;
-            });
+        svc.messageHandler(ClientDisconnectedEvent, (msg: ClientDisconnectedEvent, ctx: MessageContext) => {
+            nwStore.connected = false;
+        });
 
-        svc.messageHandler(ClientConnectionErrorEvent.Name, ClientConnectionErrorEvent,
-            (msg: ClientConnectionErrorEvent, ctx: MessageContext) => {
-                nwStore.connected = false;
-            });
+        svc.messageHandler(ClientConnectionErrorEvent, (msg: ClientConnectionErrorEvent, ctx: MessageContext) => {
+            nwStore.connected = false;
+        });
     });
 }

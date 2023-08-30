@@ -17,6 +17,8 @@ export class ClientDisconnectedEvent extends Event {
 
 /**
  * Emitted whenever the ``Client`` is unable to establish a connection.
+ *
+ * @param reason - The connection error reason.
  */
 @Message.define("event/network/client-connection-error")
 export class ClientConnectionErrorEvent extends Event {

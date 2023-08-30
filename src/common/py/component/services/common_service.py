@@ -8,13 +8,13 @@ def create_common_service(comp: BackendComponent) -> Service:
 
     svc = comp.create_service("Common service")
 
-    @svc.message_handler(PingCommand.Name, PingCommand)
+    @svc.message_handler(PingCommand)
     def ping_command(msg: PingCommand, ctx: MessageContext) -> None:
         ctx.logger.debug("Received PING", scope="component", payload=msg.payload)
 
         ctx.message_emitter.emit_reply(PingReply, msg)
 
-    @svc.message_handler(PingReply.Name, PingReply)
+    @svc.message_handler(PingReply)
     def ping_reply(msg: PingReply, ctx: MessageContext) -> None:
         ctx.logger.debug("Received PING reply", scope="component", payload=msg.payload)
 

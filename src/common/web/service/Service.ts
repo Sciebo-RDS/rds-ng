@@ -1,6 +1,7 @@
 import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
 import { type MessageHandler } from "../core/messaging/handlers/MessageHandler";
 import { MessageService } from "../core/messaging/handlers/MessageService";
+import { type ConstructableMessage, Message } from "../core/messaging/Message";
 import { type MessageBusProtocol } from "../core/messaging/MessageBusProtocol";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
@@ -52,12 +53,16 @@ export class Service<CtxType extends ServiceContext = ServiceContext> extends Me
      *     );
      * ```
      *
-     * @param filter - The message name filter to match against; wildcards (*) are supported for more generic handlers.
      * @param messageType - The type of the message.
      * @param handler - The message handler callback.
+     * @param nameFilter - A more generic message name filter to match against; wildcards (*) are supported as well.
      */
-    public messageHandler(filter: string, messageType: Constructable, handler: MessageHandler): void {
-        this.messageHandlers.addHandler(filter, handler, messageType);
+    public messageHandler<MsgType extends Message>(messageType: ConstructableMessage<MsgType>, handler: MessageHandler,
+                                                   nameFilter: string = ""): void {
+        if (!nameFilter) {
+            nameFilter = messageType.messageName();
+        }
+        this.messageHandlers.addHandler(nameFilter, handler, messageType);
     }
 
     /**

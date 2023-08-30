@@ -1,11 +1,10 @@
-import { type Constructable } from "../../../utils/Types";
 import { UnitID } from "../../../utils/UnitID";
 import logging from "../../logging/Logging";
 import { Channel } from "../Channel";
 import { Command } from "../Command";
 import { type CommandDoneCallback, type CommandFailCallback, CommandReply } from "../CommandReply";
 import { Event } from "../Event";
-import { Message, type MessageCategory } from "../Message";
+import { type ConstructableMessage, Message, type MessageCategory } from "../Message";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
@@ -51,7 +50,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitCommand<MsgType extends Command>(cmdType: Constructable<MsgType>, target: Channel, values: Record<string, any> = {},
+    public emitCommand<MsgType extends Command>(cmdType: ConstructableMessage<MsgType>, target: Channel, values: Record<string, any> = {},
                                                 doneCallback: CommandDoneCallback | null = null,
                                                 failCallback: CommandFailCallback | null = null,
                                                 timeout: number = 0.0,
@@ -81,7 +80,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitReply<MsgType extends CommandReply>(replyType: Constructable<MsgType>, command: Command, values: Record<string, any> = {},
+    public emitReply<MsgType extends CommandReply>(replyType: ConstructableMessage<MsgType>, command: Command, values: Record<string, any> = {},
                                                    success: boolean = true, message: string = ""): MsgType {
         this._counters[CommandReply.Category] += 1;
 
@@ -107,7 +106,7 @@ export class MessageEmitter {
      *
      * @throws - If an unknown value was provided in ``values`.
      */
-    public emitEvent<MsgType extends Event>(eventType: Constructable<MsgType>, target: Channel, values: Record<string, any> = {},
+    public emitEvent<MsgType extends Event>(eventType: ConstructableMessage<MsgType>, target: Channel, values: Record<string, any> = {},
                                             chain: Message | null = null): MsgType {
         this._counters[Event.Category] += 1;
 
@@ -119,7 +118,7 @@ export class MessageEmitter {
         return counter in this._counters ? this._counters[counter] : 0;
     }
 
-    private emit<MsgType extends Message>(msgCtor: Constructable<MsgType>, msgMeta: MessageMetaInformation,
+    private emit<MsgType extends Message>(msgCtor: ConstructableMessage<MsgType>, msgMeta: MessageMetaInformation,
                                           origin: UnitID, target: Channel, prevHops: UnitID[], chain: Message | null,
                                           values: Record<string, any>): MsgType {
         let msg = this.createMessage<MsgType>(msgCtor, origin, target, prevHops, chain, values);
@@ -127,7 +126,7 @@ export class MessageEmitter {
         return msg;
     }
 
-    private createMessage<MsgType extends Message>(msgCtor: Constructable<MsgType>, origin: UnitID, target: Channel, prevHops: UnitID[],
+    private createMessage<MsgType extends Message>(msgCtor: ConstructableMessage<MsgType>, origin: UnitID, target: Channel, prevHops: UnitID[],
                                                    chain: Message | null, values: Record<string, any>): MsgType {
         let msg = chain != null ?
             new msgCtor(origin, this._originID, target, [...prevHops, this._originID], chain.trace) :

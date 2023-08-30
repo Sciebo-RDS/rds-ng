@@ -26,7 +26,6 @@ export type Trace = string;
  */
 export abstract class Message {
     public static readonly Category: MessageCategory = "Message";
-    public static readonly Name: MessageName = "";
 
     public readonly name: string;
     // @ts-ignore
@@ -81,6 +80,13 @@ export abstract class Message {
     }
 
     /**
+     * Retrieves the name of the message type on a message class basis.
+     */
+    public static messageName(): MessageName {
+        return "";
+    }
+
+    /**
      * Defines a new message.
      *
      * The decorator takes care of wrapping the new class as a dataclass, passing the correct message
@@ -99,10 +105,12 @@ export abstract class Message {
     public static define(name: string): Function {
         return (ctor: Constructable): Constructable => {
             let newClass = class extends ctor {
-                public static readonly Name: MessageName = name;
-
                 public constructor(...args: any[]) {
                     super(name, ...args);
+                }
+
+                public static messageName(): MessageName {
+                    return name;
                 }
             };
 
@@ -123,4 +131,10 @@ export abstract class Message {
     public toString(): string {
         return this.convertToJSON();
     }
+}
+
+export interface ConstructableMessage<T extends Message> {
+    new(...args: any[]): T;
+
+    messageName(): MessageName;
 }

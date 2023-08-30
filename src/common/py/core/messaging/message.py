@@ -36,8 +36,6 @@ class Message(abc.ABC):
           trace: A unique trace identifying messages that logically belong together.
     """
 
-    Name: typing.ClassVar[MessageName]
-
     name: MessageName
 
     origin: UnitID
@@ -47,6 +45,13 @@ class Message(abc.ABC):
     hops: typing.List[UnitID] = field(default_factory=list)
 
     trace: Trace = field(default_factory=uuid.uuid4)
+
+    @staticmethod
+    def message_name() -> MessageName:
+        """
+        Retrieves the name of the message type on a message class basis.
+        """
+        return ""
 
     @staticmethod
     def define(name: str):
@@ -79,7 +84,7 @@ class Message(abc.ABC):
                 __init__(self, *args, name=MessageName(name), **kwargs)
 
             setattr(cls, "__init__", __new_init__)
-            setattr(cls, "Name", name)
+            setattr(cls, "message_name", lambda: name)
 
             from .message_types_catalog import MessageTypesCatalog
 

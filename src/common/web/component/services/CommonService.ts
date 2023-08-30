@@ -5,16 +5,14 @@ import { WebComponent } from "../WebComponent";
 
 export default function (comp: WebComponent): Service {
     return comp.createService("Common service", (svc: Service) => {
-        svc.messageHandler(PingCommand.Name, PingCommand,
-            (msg: PingCommand, ctx: MessageContext) => {
-                ctx.logger.debug("Received PING", "component", { payload: msg.payload });
+        svc.messageHandler(PingCommand, (msg: PingCommand, ctx: MessageContext) => {
+            ctx.logger.debug("Received PING", "component", { payload: msg.payload });
 
-                ctx.messageEmitter.emitReply(PingReply, msg);
-            });
+            ctx.messageEmitter.emitReply(PingReply, msg);
+        });
 
-        svc.messageHandler(PingReply.Name, PingReply,
-            (msg: PingReply, ctx: MessageContext) => {
-                ctx.logger.debug("Received PING reply", "component", { payload: msg.payload });
-            });
+        svc.messageHandler(PingReply, (msg: PingReply, ctx: MessageContext) => {
+            ctx.logger.debug("Received PING reply", "component", { payload: msg.payload });
+        });
     });
 }

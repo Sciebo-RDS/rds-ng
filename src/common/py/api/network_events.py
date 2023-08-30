@@ -19,6 +19,9 @@ class ClientDisconnectedEvent(Event):
 class ClientConnectionErrorEvent(Event):
     """
     Emitted whenever the ``Client`` is unable to establish a connection.
+
+    Attributes:
+        reason: The connection error reason.
     """
 
     reason: str = ""
@@ -28,6 +31,9 @@ class ClientConnectionErrorEvent(Event):
 class ServerConnectedEvent(Event):
     """
     Emitted whenever the ``Server`` established a connection to a client.
+
+    Attributes:
+        client_id: The internal client ID.
     """
 
     client_id: str = ""
@@ -37,6 +43,9 @@ class ServerConnectedEvent(Event):
 class ServerDisconnectedEvent(Event):
     """
     Emitted whenever the ``Server`` cuts a connection from a client.
+
+    Attributes:
+        client_id: The internal client ID.
     """
 
     client_id: str = ""
