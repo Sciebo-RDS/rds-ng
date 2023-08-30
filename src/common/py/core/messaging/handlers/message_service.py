@@ -2,6 +2,7 @@ from .message_context import MessageContext, MessageContextType
 from .message_emitter import MessageEmitter
 from .message_handlers import MessageHandlers
 from .. import MessageBusProtocol
+from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
 from ....utils import UnitID
 
@@ -33,18 +34,23 @@ class MessageService:
         self._message_handlers = MessageHandlers()
         self._context_type = context_type
 
-    def create_context(self, logger: LoggerProtocol, **kwargs) -> MessageContext:
+    def create_context(
+        self, msg_meta: MessageMetaInformation, logger: LoggerProtocol, **kwargs
+    ) -> MessageContext:
         """
         Creates a new service context.
 
         Args:
+            msg_meta: The meta information of the message.
             logger: The logger to be used within the new context.
             **kwargs: Any additional parameters.
 
         Returns:
             The newly created message context.
         """
-        return self._context_type(self.create_message_emitter(), logger, **kwargs)
+        return self._context_type(
+            msg_meta, self.create_message_emitter(), logger, **kwargs
+        )
 
     def create_message_emitter(self) -> MessageEmitter:
         """

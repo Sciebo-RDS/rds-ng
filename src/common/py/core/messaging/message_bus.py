@@ -5,7 +5,7 @@ from .dispatchers import MessageDispatcher
 from .handlers import MessageService, MessageContextType
 from .message import Message, MessageType
 from .message_router import MessageRouter
-from .meta import MessageMetaInformationType
+from .meta import MessageMetaInformationType, MessageMetaInformation
 from .networking import NetworkEngine
 from ..logging import LoggerProxy, default_logger, error, debug
 from ...component import BackendComponentData
@@ -164,7 +164,7 @@ class MessageBus:
         for handler in svc.message_handlers.find_handlers(msg.name):
             try:
                 act_msg = typing.cast(msg_type, msg)
-                ctx = self._create_context(msg, svc)
+                ctx = self._create_context(msg, msg_meta, svc)
                 dispatcher.dispatch(act_msg, msg_meta, handler, ctx)
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 import traceback
@@ -177,10 +177,12 @@ class MessageBus:
                 )
                 debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")
 
-    def _create_context(self, msg: Message, svc: MessageService) -> MessageContextType:
+    def _create_context(
+        self, msg: Message, msg_meta: MessageMetaInformation, svc: MessageService
+    ) -> MessageContextType:
         logger_proxy = LoggerProxy(default_logger())
         logger_proxy.add_param("trace", str(msg.trace))
-        return svc.create_context(logger_proxy, config=self._comp_data.config)
+        return svc.create_context(msg_meta, logger_proxy, config=self._comp_data.config)
 
     @property
     def network(self) -> NetworkEngine:

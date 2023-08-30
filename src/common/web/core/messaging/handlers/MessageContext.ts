@@ -1,3 +1,4 @@
+import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 import { MessageEmitter } from "./MessageEmitter";
 import { LoggerProxy } from "../../logging/LoggerProxy";
 import { CommandReply } from "../CommandReply";
@@ -16,6 +17,7 @@ import { CommandReply } from "../CommandReply";
  * details.
  */
 export class MessageContext {
+    private readonly _msgMeta: MessageMetaInformation;
     private readonly _msgEmitter: MessageEmitter;
 
     private readonly _logger: LoggerProxy;
@@ -23,10 +25,12 @@ export class MessageContext {
     private _requiresReply: boolean = false;
 
     /**
+     * @param msgMeta - The meta information of the message.
      * @param msgEmitter - A ``MessageEmitter`` to be assigned to this context.
      * @param logger - A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
      */
-    public constructor(msgEmitter: MessageEmitter, logger: LoggerProxy) {
+    public constructor(msgMeta: MessageMetaInformation, msgEmitter: MessageEmitter, logger: LoggerProxy) {
+        this._msgMeta = msgMeta;
         this._msgEmitter = msgEmitter;
 
         this._logger = logger;
@@ -61,6 +65,13 @@ export class MessageContext {
         if (this._requiresReply && this._msgEmitter.getMessageCount(CommandReply.Category) != 1) {
             this._logger.warning("A message context required exactly one command reply, but either none or more than one was sent", "bus");
         }
+    }
+
+    /**
+     * The meta information of the message.
+     */
+    public get metaInformation(): MessageMetaInformation {
+        return this._msgMeta;
     }
 
     /**

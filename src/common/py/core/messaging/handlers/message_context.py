@@ -1,6 +1,7 @@
 import typing
 
 from .message_emitter import MessageEmitter
+from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
 
 
@@ -19,12 +20,19 @@ class MessageContext:
     details.
     """
 
-    def __init__(self, msg_emitter: MessageEmitter, logger: LoggerProtocol):
+    def __init__(
+        self,
+        msg_meta: MessageMetaInformation,
+        msg_emitter: MessageEmitter,
+        logger: LoggerProtocol,
+    ):
         """
         Args:
             msg_emitter: A ``MessageEmitter`` to be assigned to this context.
+            msg_meta: The meta information of the message.
             logger: A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
         """
+        self._msg_meta = msg_meta
         self._msg_emitter = msg_emitter
 
         self._logger = logger
@@ -66,6 +74,13 @@ class MessageContext:
                 "A message context required exactly one command reply, but either none or more than one was sent",
                 scope="bus",
             )
+
+    @property
+    def meta_information(self) -> MessageMetaInformation:
+        """
+        The meta information of the message.
+        """
+        return self._msg_meta
 
     @property
     def message_emitter(self) -> MessageEmitter:

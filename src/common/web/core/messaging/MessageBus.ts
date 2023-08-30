@@ -157,7 +157,7 @@ export class MessageBus {
                                         svc: MessageService<CtxType>): void {
         for (const handler of svc.messageHandlers.findHandlers(msg.name)) {
             try {
-                let ctx = this.createContext<CtxType>(msg, svc);
+                let ctx = this.createContext<CtxType>(msg, msgMeta, svc);
                 dispatcher.dispatch(msg, msgMeta, handler, ctx);
             } catch (err) {
                 logging.error(`An error occurred while processing a message: ${String(err)}`, "bus",
@@ -166,9 +166,9 @@ export class MessageBus {
         }
     }
 
-    private createContext<CtxType extends MessageContext>(msg: Message, svc: MessageService<CtxType>): MessageContext {
+    private createContext<CtxType extends MessageContext>(msg: Message, msgMeta: MessageMetaInformation, svc: MessageService<CtxType>): MessageContext {
         let logger = new LoggerProxy(logging.getDefaultLogger());
         logger.addParam("trace", msg.trace);
-        return svc.createContext(logger, this._compData.config);
+        return svc.createContext(msgMeta, logger, this._compData.config);
     }
 }

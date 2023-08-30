@@ -2,6 +2,7 @@ import { type Constructable } from "../../../utils/Types";
 import { UnitID } from "../../../utils/UnitID";
 import { LoggerProxy } from "../../logging/LoggerProxy";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
+import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 import { MessageContext } from "./MessageContext";
 import { MessageEmitter } from "./MessageEmitter";
 import { MessageHandlers } from "./MessageHandlers";
@@ -35,13 +36,14 @@ export class MessageService<CtxType extends MessageContext = MessageContext> {
     /**
      * Creates a new service context.
      *
+     * @param msgMeta - The meta information of the message.
      * @param logger - The logger to be used within the new context.
      * @param args - Any additional parameters.
      *
      * @returns - The newly created message context.
      */
-    public createContext(logger: LoggerProxy, ...args: any[]): MessageContext {
-        return new this._contextType(this.createMessageEmitter(), logger, ...args);
+    public createContext(msgMeta: MessageMetaInformation, logger: LoggerProxy, ...args: any[]): MessageContext {
+        return new this._contextType(msgMeta, this.createMessageEmitter(), logger, ...args);
     }
 
     /**
