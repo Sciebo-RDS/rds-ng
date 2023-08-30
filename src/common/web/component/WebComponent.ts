@@ -19,6 +19,9 @@ import { WebComponentData } from "./WebComponentData";
 
 import createCommonService from "./services/CommonService";
 
+// Necessary to make the entire API known
+import "../api/API";
+
 /**
  * Base class for all web components.
  *

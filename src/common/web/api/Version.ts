@@ -1,1 +1,1 @@
-export const API_PROTOCOL_VERSION: Number = 1;
+export const API_PROTOCOL_VERSION: number = 1;

@@ -1,7 +1,10 @@
+import { Type } from "class-transformer";
+
 import { Channel } from "../core/messaging/Channel";
 import { Event } from "../core/messaging/Event";
 import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
 import { Message } from "../core/messaging/Message";
+import { UnitID } from "../utils/UnitID";
 
 /**
  * Emitted whenever the ``Client`` established a connection to a server.
@@ -51,13 +54,15 @@ export class ClientConnectionErrorEvent extends Event {
  */
 @Message.define("event/network/server-connected")
 class ServerConnectedEvent extends Event {
+    @Type(() => UnitID)
+    public readonly comp_id: UnitID = new UnitID("", "");
     public readonly client_id: string = "";
 
     /**
      * Helper function to easily emit this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel, clientID: string, chain: Message | null = null): void {
-        messageEmitter.emitEvent(ServerConnectedEvent, target, { client_id: clientID }, chain);
+    public static emit(messageEmitter: MessageEmitter, target: Channel, compID: UnitID, clientID: string, chain: Message | null = null): void {
+        messageEmitter.emitEvent(ServerConnectedEvent, target, { comp_id: compID, client_id: clientID }, chain);
     }
 }
 
@@ -66,12 +71,13 @@ class ServerConnectedEvent extends Event {
  */
 @Message.define("event/network/server-disconnected")
 export class ServerDisconnectedEvent extends Event {
+    public readonly comp_id: UnitID = new UnitID("", "");
     public readonly client_id: string = "";
 
     /**
      * Helper function to easily emit this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel, clientID: string, chain: Message | null = null): void {
-        messageEmitter.emitEvent(ServerDisconnectedEvent, target, { client_id: clientID }, chain);
+    public static emit(messageEmitter: MessageEmitter, target: Channel, compID: UnitID, clientID: string, chain: Message | null = null): void {
+        messageEmitter.emitEvent(ServerDisconnectedEvent, target, { comp_id: compID, client_id: clientID }, chain);
     }
 }

@@ -66,7 +66,7 @@ export class Channel {
     /**
      * Creates a new direct channel.
      */
-    public static direct(target: string) {
-        return new Channel(ChannelType.Direct, target);
+    public static direct(target: string | UnitID) {
+        return new Channel(ChannelType.Direct, String(target));
     }
 }

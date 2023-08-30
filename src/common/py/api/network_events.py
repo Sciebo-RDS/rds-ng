@@ -1,5 +1,8 @@
+import dataclasses
+
 from ..core.messaging import Event, Message, Channel
 from ..core.messaging.handlers import MessageEmitter
+from ..utils import UnitID
 
 
 @Message.define("event/network/client-connected")
@@ -76,6 +79,7 @@ class ServerConnectedEvent(Event):
         client_id: The internal client ID.
     """
 
+    comp_id: UnitID = dataclasses.field(default_factory=UnitID)
     client_id: str = ""
 
     @staticmethod
@@ -83,6 +87,7 @@ class ServerConnectedEvent(Event):
         message_emitter: MessageEmitter,
         target: Channel,
         *,
+        comp_id: UnitID,
         client_id: str,
         chain: Message | None = None
     ) -> None:
@@ -90,7 +95,11 @@ class ServerConnectedEvent(Event):
         Helper function to easily emit this message.
         """
         message_emitter.emit_event(
-            ServerConnectedEvent, target, chain=chain, client_id=client_id
+            ServerConnectedEvent,
+            target,
+            chain=chain,
+            comp_id=comp_id,
+            client_id=client_id,
         )
 
 
@@ -103,6 +112,7 @@ class ServerDisconnectedEvent(Event):
         client_id: The internal client ID.
     """
 
+    comp_id: UnitID = dataclasses.field(default_factory=UnitID)
     client_id: str = ""
 
     @staticmethod
@@ -110,6 +120,7 @@ class ServerDisconnectedEvent(Event):
         message_emitter: MessageEmitter,
         target: Channel,
         *,
+        comp_id: UnitID,
         client_id: str,
         chain: Message | None = None
     ) -> None:
@@ -117,5 +128,9 @@ class ServerDisconnectedEvent(Event):
         Helper function to easily emit this message.
         """
         message_emitter.emit_event(
-            ServerDisconnectedEvent, target, chain=chain, client_id=client_id
+            ServerDisconnectedEvent,
+            target,
+            chain=chain,
+            comp_id=comp_id,
+            client_id=client_id,
         )

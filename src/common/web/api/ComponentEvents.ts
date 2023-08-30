@@ -1,3 +1,5 @@
+import { Type } from "class-transformer";
+
 import { Channel } from "../core/messaging/Channel";
 import { Event } from "../core/messaging/Event";
 import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
@@ -15,7 +17,8 @@ import { API_PROTOCOL_VERSION } from "./Version";
  */
 @Message.define("event/component/information")
 export class ComponentInformationEvent extends Event {
-    public readonly comp_id: UnitID = new UnitID();
+    @Type(() => UnitID)
+    public readonly comp_id: UnitID = new UnitID("", "");
 
     public readonly comp_name: string = "";
     public readonly comp_version: string = "";

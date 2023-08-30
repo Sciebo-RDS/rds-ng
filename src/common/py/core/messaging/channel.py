@@ -70,8 +70,8 @@ class Channel:
         return Channel(Channel.Type.LOCAL)
 
     @staticmethod
-    def direct(target: str) -> "Channel":
+    def direct(target: str | UnitID) -> "Channel":
         """
         Creates a new direct channel.
         """
-        return Channel(Channel.Type.DIRECT, target)
+        return Channel(Channel.Type.DIRECT, str(target))

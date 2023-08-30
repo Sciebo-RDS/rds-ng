@@ -2,7 +2,7 @@
 import createNetworkService from "@/services/NetworkService";
 
 import { networkStore } from "@/stores/NetworkStore";
-import { PingCommand } from "@common/api/PingCommand";
+import { PingCommand } from "@common/api/NetworkCommands";
 import { WebComponent } from "@common/component/WebComponent";
 import { Channel } from "@common/core/messaging/Channel";
 import Button from "primevue/button"

@@ -1,6 +1,6 @@
 import { Channel } from "../core/messaging/Channel";
 import { Command } from "../core/messaging/Command";
-import { CommandDoneCallback, CommandFailCallback, CommandReply } from "../core/messaging/CommandReply";
+import { type CommandDoneCallback, type CommandFailCallback, CommandReply } from "../core/messaging/CommandReply";
 import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
 import { Message } from "../core/messaging/Message";
 

@@ -178,20 +178,22 @@ class Server(socketio.Server):
             from ....api import ServerConnectedEvent
 
             ServerConnectedEvent.emit(
-                self._message_emitter, Channel.local(), client_id=sid
+                self._message_emitter, Channel.local(), comp_id=comp_id, client_id=sid
             )
 
             info("Client connected", scope="server", session=sid, component=comp_id)
 
     def _on_disconnect(self, sid: str) -> None:
         with self._lock:
+            comp_id = self._lookup_client(sid)
+
             self._purge_client(sid)
 
             from .. import Channel
             from ....api import ServerDisconnectedEvent
 
             ServerDisconnectedEvent.emit(
-                self._message_emitter, Channel.local(), client_id=sid
+                self._message_emitter, Channel.local(), comp_id=comp_id, client_id=sid
             )
 
             info("Client disconnected", scope="server", session=sid)

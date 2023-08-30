@@ -142,7 +142,7 @@ class MessageEmitter:
         target = (
             Channel.local()
             if command.origin.equals(self._origin_id)
-            else Channel.direct(str(command.origin))
+            else Channel.direct(command.origin)
         )
 
         meta = CommandReplyMetaInformation(
