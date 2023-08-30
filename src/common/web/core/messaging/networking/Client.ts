@@ -115,19 +115,19 @@ export class Client {
     }
 
     private onConnect(): void {
-        this._messageEmitter.emitEvent(ClientConnectedEvent, Channel.local());
+        ClientConnectedEvent.emit(this._messageEmitter, Channel.local());
 
         logging.info("Connected to server", "client");
     }
 
     private onConnectError(reason: any): void {
-        this._messageEmitter.emitEvent(ClientConnectionErrorEvent, Channel.local(), { reason: String(reason) });
+        ClientConnectionErrorEvent.emit(this._messageEmitter, Channel.local(), String(reason));
 
         logging.warning("Unable to connect to server", "client", { reason: String(reason) });
     }
 
     private onDisconnect(): void {
-        this._messageEmitter.emitEvent(ClientDisconnectedEvent, Channel.local());
+        ClientDisconnectedEvent.emit(this._messageEmitter, Channel.local());
 
         logging.info("Disconnected from server", "client");
     }

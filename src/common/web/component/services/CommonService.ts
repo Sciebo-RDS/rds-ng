@@ -8,7 +8,7 @@ export default function (comp: WebComponent): Service {
         svc.messageHandler(PingCommand, (msg: PingCommand, ctx: MessageContext) => {
             ctx.logger.debug("Received PING", "component", { payload: msg.payload });
 
-            ctx.messageEmitter.emitReply(PingReply, msg);
+            PingReply.emit(ctx.messageEmitter, msg);
         });
 
         svc.messageHandler(PingReply, (msg: PingReply, ctx: MessageContext) => {

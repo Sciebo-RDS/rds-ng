@@ -177,8 +177,8 @@ class Server(socketio.Server):
             from .. import Channel
             from ....api import ServerConnectedEvent
 
-            self._message_emitter.emit_event(
-                ServerConnectedEvent, Channel.local(), client_id=sid
+            ServerConnectedEvent.emit(
+                self._message_emitter, Channel.local(), client_id=sid
             )
 
             info("Client connected", scope="server", session=sid, component=comp_id)
@@ -190,8 +190,8 @@ class Server(socketio.Server):
             from .. import Channel
             from ....api import ServerDisconnectedEvent
 
-            self._message_emitter.emit_event(
-                ServerDisconnectedEvent, Channel.local(), client_id=sid
+            ServerDisconnectedEvent.emit(
+                self._message_emitter, Channel.local(), client_id=sid
             )
 
             info("Client disconnected", scope="server", session=sid)

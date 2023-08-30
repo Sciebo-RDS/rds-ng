@@ -1,4 +1,6 @@
+import { Channel } from "../core/messaging/Channel";
 import { Event } from "../core/messaging/Event";
+import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
 import { Message } from "../core/messaging/Message";
 import { UnitID } from "../utils/UnitID";
 import { API_PROTOCOL_VERSION } from "./Version";
@@ -19,4 +21,18 @@ export class ComponentInformationEvent extends Event {
     public readonly comp_version: string = "";
 
     public readonly api_protocol: number = API_PROTOCOL_VERSION;
+
+    /**
+     * Helper function to easily emit this message.
+     */
+    public static emit(messageEmitter: MessageEmitter, target: Channel, compID: UnitID, compName: string, compVersion: string,
+                       chain: Message | null = null): void {
+        messageEmitter.emitEvent(ComponentInformationEvent, target,
+            {
+                comp_id: compID,
+                comp_name: compName,
+                comp_version: compVersion
+            },
+            chain);
+    }
 }

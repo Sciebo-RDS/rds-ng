@@ -1,4 +1,5 @@
-from ..core.messaging import Event, Message
+from ..core.messaging import Event, Message, Channel
+from ..core.messaging.handlers import MessageEmitter
 
 
 @Message.define("event/network/client-connected")
@@ -7,12 +8,36 @@ class ClientConnectedEvent(Event):
     Emitted whenever the ``Client`` established a connection to the server.
     """
 
+    @staticmethod
+    def emit(
+        message_emitter: MessageEmitter,
+        target: Channel,
+        *,
+        chain: Message | None = None
+    ) -> None:
+        """
+        Helper function to easily emit this message.
+        """
+        message_emitter.emit_event(ClientConnectedEvent, target, chain=chain)
+
 
 @Message.define("event/network/client-disconnected")
 class ClientDisconnectedEvent(Event):
     """
     Emitted whenever the ``Client`` cuts its connection from the server.
     """
+
+    @staticmethod
+    def emit(
+        message_emitter: MessageEmitter,
+        target: Channel,
+        *,
+        chain: Message | None = None
+    ) -> None:
+        """
+        Helper function to easily emit this message.
+        """
+        message_emitter.emit_event(ClientDisconnectedEvent, target, chain=chain)
 
 
 @Message.define("event/network/client-connection-error")
@@ -26,6 +51,21 @@ class ClientConnectionErrorEvent(Event):
 
     reason: str = ""
 
+    @staticmethod
+    def emit(
+        message_emitter: MessageEmitter,
+        target: Channel,
+        *,
+        reason: str,
+        chain: Message | None = None
+    ) -> None:
+        """
+        Helper function to easily emit this message.
+        """
+        message_emitter.emit_event(
+            ClientConnectionErrorEvent, target, chain=chain, reason=reason
+        )
+
 
 @Message.define("event/network/server-connected")
 class ServerConnectedEvent(Event):
@@ -38,6 +78,21 @@ class ServerConnectedEvent(Event):
 
     client_id: str = ""
 
+    @staticmethod
+    def emit(
+        message_emitter: MessageEmitter,
+        target: Channel,
+        *,
+        client_id: str,
+        chain: Message | None = None
+    ) -> None:
+        """
+        Helper function to easily emit this message.
+        """
+        message_emitter.emit_event(
+            ServerConnectedEvent, target, chain=chain, client_id=client_id
+        )
+
 
 @Message.define("event/network/server-disconnected")
 class ServerDisconnectedEvent(Event):
@@ -49,3 +104,18 @@ class ServerDisconnectedEvent(Event):
     """
 
     client_id: str = ""
+
+    @staticmethod
+    def emit(
+        message_emitter: MessageEmitter,
+        target: Channel,
+        *,
+        client_id: str,
+        chain: Message | None = None
+    ) -> None:
+        """
+        Helper function to easily emit this message.
+        """
+        message_emitter.emit_event(
+            ServerDisconnectedEvent, target, chain=chain, client_id=client_id
+        )

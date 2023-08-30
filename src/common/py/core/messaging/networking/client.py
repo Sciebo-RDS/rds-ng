@@ -112,8 +112,8 @@ class Client(socketio.Client):
             from .. import Channel
             from ....api import ClientConnectedEvent
 
-            self._message_emitter.emit_event(ClientConnectedEvent, Channel.local())
-            
+            ClientConnectedEvent.emit(self._message_emitter, Channel.local())
+
             info("Connected to server", scope="client")
 
     def _on_connect_error(self, reason: typing.Any) -> None:
@@ -121,10 +121,10 @@ class Client(socketio.Client):
             from .. import Channel
             from ....api import ClientConnectionErrorEvent
 
-            self._message_emitter.emit_event(
-                ClientConnectionErrorEvent, Channel.local(), reason=str(reason)
+            ClientConnectionErrorEvent.emit(
+                self._message_emitter, Channel.local(), reason=str(reason)
             )
-            
+
             warning("Unable to connect to server", scope="client", reason=str(reason))
 
     def _on_disconnect(self) -> None:
@@ -132,8 +132,8 @@ class Client(socketio.Client):
             from .. import Channel
             from ....api import ClientDisconnectedEvent
 
-            self._message_emitter.emit_event(ClientDisconnectedEvent, Channel.local())
-            
+            ClientDisconnectedEvent.emit(self._message_emitter, Channel.local())
+
             info("Disconnected from server", scope="client")
 
     def _on_message(self, msg_name: str, data: str) -> None:
