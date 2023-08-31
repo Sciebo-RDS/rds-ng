@@ -6,7 +6,7 @@ from common.py.component import (
 from common.py.component.roles import NodeRole
 from common.py.utils import UnitID
 
-comp = BackendComponent(
+comp = BackendComponent.create(
     UnitID(ComponentType.INFRASTRUCTURE, ComponentUnit.GATE),
     NodeRole(),
     module_name=__name__,

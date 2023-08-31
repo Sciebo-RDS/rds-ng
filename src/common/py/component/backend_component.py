@@ -16,7 +16,12 @@ class BackendComponent:
 
     Components are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
     about the component itself and the entire project.
+
+    Instances of this class are never created directly. Instead, always use the ``create`` method which performs all necessary initialization
+    tasks.
     """
+
+    _instance: typing.Self | None = None
 
     def __init__(
         self,
@@ -33,6 +38,10 @@ class BackendComponent:
             module_name: The component module name; simply pass ``__name__`` here.
             config_file: The configuration file to load.
         """
+        if BackendComponent._instance is not None:
+            raise RuntimeError("A component instance has already been created")
+        BackendComponent._instance = self
+
         config = self._create_config(config_file)
         comp_id = self._sanitize_component_id(comp_id, config)
 
@@ -175,6 +184,46 @@ class BackendComponent:
                 }
             ),
         )
+
+    @staticmethod
+    def create(
+        comp_id: UnitID,
+        role: ComponentRole,
+        *,
+        module_name: str,
+        config_file: str = "./config/config.toml",
+    ) -> "BackendComponent":
+        """
+        Creates a new backend component.
+
+        If an instance already exists, an error is thrown.
+        Args:
+            comp_id: The identifier of this component.
+            role: The role of this component.
+            module_name: The component module name; simply pass ``__name__`` here.
+            config_file: The configuration file to load.
+
+        Returns:
+            The newly created component.
+
+        Raises:
+            RuntimeError: If a component instance has already been created.
+        """
+        return BackendComponent(
+            comp_id, role, module_name=module_name, config_file=config_file
+        )
+
+    @staticmethod
+    def instance() -> "BackendComponent":
+        """
+        The global ``BackendComponent`` instance.
+
+        Raises:
+            RuntimeError: If no instance has been created.
+        """
+        if BackendComponent._instance is None:
+            raise RuntimeError("No component instance has been created")
+        return BackendComponent._instance
 
     def __str__(self) -> str:
         return f"{self._data.title} v{self._data.version}: {self._data.name} ({self._data.comp_id})"

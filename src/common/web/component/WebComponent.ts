@@ -32,6 +32,7 @@ import "../api/API";
  * tasks.
  */
 export class WebComponent {
+    private static _instance: WebComponent | null = null;
     private static readonly _injectionKey = Symbol();
 
     private readonly _data: WebComponentData;
@@ -40,6 +41,11 @@ export class WebComponent {
     private readonly _vueApp: App;
 
     private constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
+        if (WebComponent._instance) {
+            throw new Error("A component instance has already been created")
+        }
+        WebComponent._instance = this;
+
         compID = this.sanitizeComponentID(compID);
 
         let metaInfo = new MetaInformation();
@@ -144,20 +150,36 @@ export class WebComponent {
      * @param compID - The identifier of this component.
      * @param appRoot - The Vue root component.
      * @param appElement - The HTML element ID used for mounting the root component.
+     *
+     * @returns - The newly created component.
      */
     public static create(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): WebComponent {
         return new WebComponent(env, compID, appRoot, appElement);
     }
 
     /**
-     * The global ``WebComponent`` instance.
+     * The global ``WebComponent`` instance via Vue's injection mechanism.
+     *
+     * @throws Error - If no instance has been created.
      */
-    public static get instance(): WebComponent {
+    public static inject(): WebComponent {
         let inst = inject<WebComponent>(WebComponent._injectionKey);
         if (!inst) {
             throw new Error("No component instance has been created");
         }
         return inst;
+    }
+
+    /**
+     * The global ``WebComponent`` instance.
+     *
+     * @throws Error - If no instance has been created.
+     */
+    public static get instance(): WebComponent {
+        if (!WebComponent._instance) {
+            throw new Error("No component instance has been created");
+        }
+        return WebComponent._instance;
     }
 
     private sanitizeComponentID(compID: UnitID): UnitID {

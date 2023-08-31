@@ -8,7 +8,7 @@ import { Channel } from "@common/core/messaging/Channel";
 import Button from "primevue/button"
 import { onMounted, watch } from "vue"
 
-const comp = WebComponent.instance;
+const comp = WebComponent.inject();
 const svc = createNetworkService(comp);
 const nwStore = networkStore();
 

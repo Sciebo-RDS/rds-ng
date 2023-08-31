@@ -3,18 +3,6 @@ from ...service import Service, ServiceContext
 from ...utils import UnitID
 
 
-class CommonServiceContext(ServiceContext):
-    """
-    Context type for the common service.
-    """
-
-    comp_info = {
-        "comp_id": UnitID("", ""),
-        "name": "",
-        "version": "",
-    }
-
-
 def create_common_service(comp: BackendComponent) -> Service:
     """
     Creates the common service that handles various basic messaging tasks.
@@ -26,11 +14,6 @@ def create_common_service(comp: BackendComponent) -> Service:
         The newly created service.
 
     """
-
-    CommonServiceContext.comp_info["comp_id"] = comp.data.comp_id
-    CommonServiceContext.comp_info["name"] = comp.data.name
-    CommonServiceContext.comp_info["version"] = str(comp.data.version)
-
     from ...core.messaging import Channel
     from ...api import (
         PingCommand,
@@ -39,26 +22,26 @@ def create_common_service(comp: BackendComponent) -> Service:
         ComponentInformationEvent,
     )
 
-    svc = comp.create_service("Common service", context_type=CommonServiceContext)
+    svc = comp.create_service("Common service")
 
     @svc.message_handler(PingCommand)
-    def ping_command(msg: PingCommand, ctx: CommonServiceContext) -> None:
+    def ping_command(msg: PingCommand, ctx: ServiceContext) -> None:
         ctx.logger.debug("Received PING", scope="component", payload=msg.payload)
 
         PingReply.emit(ctx.message_emitter, msg)
 
     @svc.message_handler(PingReply)
-    def ping_reply(msg: PingReply, ctx: CommonServiceContext) -> None:
+    def ping_reply(msg: PingReply, ctx: ServiceContext) -> None:
         ctx.logger.debug("Received PING reply", scope="component", payload=msg.payload)
 
     @svc.message_handler(ServerConnectedEvent)
-    def server_connected(msg: ServerConnectedEvent, ctx: CommonServiceContext) -> None:
+    def server_connected(msg: ServerConnectedEvent, ctx: ServiceContext) -> None:
         # Whenever a client connects to our server, automatically send the server's component information
         _emit_comp_info(msg.comp_id, ctx)
 
     @svc.message_handler(ComponentInformationEvent)
     def component_information(
-        msg: ComponentInformationEvent, ctx: CommonServiceContext
+        msg: ComponentInformationEvent, ctx: ServiceContext
     ) -> None:
         from ...core.messaging.meta import MessageMetaInformation
 
@@ -66,13 +49,15 @@ def create_common_service(comp: BackendComponent) -> Service:
         if ctx.meta_information.entrypoint == MessageMetaInformation.Entrypoint.CLIENT:
             _emit_comp_info(msg.comp_id, ctx)
 
-    def _emit_comp_info(comp_id: UnitID, ctx: CommonServiceContext) -> None:
+    def _emit_comp_info(comp_id: UnitID, ctx: ServiceContext) -> None:
+        data = BackendComponent.instance().data
+
         ComponentInformationEvent.emit(
             ctx.message_emitter,
             Channel.direct(comp_id),
-            comp_id=ctx.comp_info["comp_id"],
-            comp_name=ctx.comp_info["name"],
-            comp_version=ctx.comp_info["version"],
+            comp_id=data.comp_id,
+            comp_name=data.name,
+            comp_version=str(data.version),
         )
 
     return svc
