@@ -24,7 +24,7 @@ export class ComponentInformationEvent extends Event {
     public readonly comp_name: string = "";
     public readonly comp_version: string = "";
 
-    public readonly api_protocol: number = API_PROTOCOL_VERSION;
+    public readonly api_protocol: string = String(API_PROTOCOL_VERSION);
 
     /**
      * Helper function to easily build this message.

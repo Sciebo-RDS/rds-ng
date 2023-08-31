@@ -23,7 +23,7 @@ class ComponentInformationEvent(Event):
     comp_name: str = ""
     comp_version: str = ""
 
-    api_protocol: int = API_PROTOCOL_VERSION
+    api_protocol: str = str(API_PROTOCOL_VERSION)
 
     @staticmethod
     def build(
