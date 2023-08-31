@@ -43,10 +43,8 @@ def create_common_service(comp: BackendComponent) -> Service:
     def component_information(
         msg: ComponentInformationEvent, ctx: ServiceContext
     ) -> None:
-        from ...core.messaging.meta import MessageMetaInformation
-
         # If this message is received through the client, we need to send our information in return
-        if ctx.meta_information.entrypoint == MessageMetaInformation.Entrypoint.CLIENT:
+        if ctx.is_entrypoint_client:
             _emit_comp_info(msg.comp_id, ctx)
 
     def _emit_comp_info(comp_id: UnitID, ctx: ServiceContext) -> None:

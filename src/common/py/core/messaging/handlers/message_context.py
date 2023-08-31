@@ -76,11 +76,25 @@ class MessageContext:
             )
 
     @property
-    def meta_information(self) -> MessageMetaInformation:
+    def is_entrypoint_local(self) -> bool:
         """
-        The meta information of the message.
+        Whether the message entered locally.
         """
-        return self._msg_meta
+        return self._msg_meta.entrypoint == MessageMetaInformation.Entrypoint.LOCAL
+
+    @property
+    def is_entrypoint_server(self) -> bool:
+        """
+        Whether the message entered through the server.
+        """
+        return self._msg_meta.entrypoint == MessageMetaInformation.Entrypoint.SERVER
+
+    @property
+    def is_entrypoint_client(self) -> bool:
+        """
+        Whether the message entered through the client.
+        """
+        return self._msg_meta.entrypoint == MessageMetaInformation.Entrypoint.CLIENT
 
     @property
     def message_emitter(self) -> MessageEmitter:

@@ -1,7 +1,7 @@
-import { MessageMetaInformation } from "../meta/MessageMetaInformation";
-import { MessageEmitter } from "./MessageEmitter";
 import { LoggerProxy } from "../../logging/LoggerProxy";
 import { CommandReply } from "../CommandReply";
+import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaInformation";
+import { MessageEmitter } from "./MessageEmitter";
 
 /**
  * An execution context for messages dispatched by the message bus.
@@ -68,10 +68,24 @@ export class MessageContext {
     }
 
     /**
-     * The meta information of the message.
+     * Whether the message entered locally.
      */
-    public get metaInformation(): MessageMetaInformation {
-        return this._msgMeta;
+    public get isEntrypointLocal(): boolean {
+        return this._msgMeta.entrypoint == MessageEntrypoint.Local;
+    }
+
+    /**
+     * Whether the message entered through the server.
+     */
+    public get isEntrypointServer(): boolean {
+        return this._msgMeta.entrypoint == MessageEntrypoint.Server;
+    }
+
+    /**
+     * Whether the message entered through the client.
+     */
+    public get isEntrypointClient(): boolean {
+        return this._msgMeta.entrypoint == MessageEntrypoint.Client;
     }
 
     /**
