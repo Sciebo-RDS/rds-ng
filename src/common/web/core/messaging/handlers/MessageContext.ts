@@ -1,7 +1,7 @@
 import { LoggerProxy } from "../../logging/LoggerProxy";
+import { MessageBuilder } from "../builders/MessageBuilder";
 import { CommandReply } from "../CommandReply";
 import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaInformation";
-import { MessageEmitter } from "./MessageEmitter";
 
 /**
  * An execution context for messages dispatched by the message bus.
@@ -18,7 +18,7 @@ import { MessageEmitter } from "./MessageEmitter";
  */
 export class MessageContext {
     private readonly _msgMeta: MessageMetaInformation;
-    private readonly _msgEmitter: MessageEmitter;
+    private readonly _msgBuilder: MessageBuilder;
 
     private readonly _logger: LoggerProxy;
 
@@ -26,12 +26,12 @@ export class MessageContext {
 
     /**
      * @param msgMeta - The meta information of the message.
-     * @param msgEmitter - A ``MessageEmitter`` to be assigned to this context.
+     * @param msgBuilder - A ``MessageBuilder`` to be assigned to this context.
      * @param logger - A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
      */
-    public constructor(msgMeta: MessageMetaInformation, msgEmitter: MessageEmitter, logger: LoggerProxy) {
+    public constructor(msgMeta: MessageMetaInformation, msgBuilder: MessageBuilder, logger: LoggerProxy) {
         this._msgMeta = msgMeta;
-        this._msgEmitter = msgEmitter;
+        this._msgBuilder = msgBuilder;
 
         this._logger = logger;
     }
@@ -62,7 +62,7 @@ export class MessageContext {
     }
 
     private checkCommandReply(): void {
-        if (this._requiresReply && this._msgEmitter.getMessageCount(CommandReply.Category) != 1) {
+        if (this._requiresReply && this._msgBuilder.getMessageCount(CommandReply.Category) != 1) {
             this._logger.warning("A message context required exactly one command reply, but either none or more than one was sent", "bus");
         }
     }
@@ -89,10 +89,10 @@ export class MessageContext {
     }
 
     /**
-     * The message emitter to be used within this context.
+     * The message builder to be used within this context.
      */
-    public get messageEmitter(): MessageEmitter {
-        return this._msgEmitter;
+    public get messageBuilder(): MessageBuilder {
+        return this._msgBuilder;
     }
 
     /**

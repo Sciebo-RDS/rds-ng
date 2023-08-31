@@ -133,7 +133,7 @@ export abstract class Message {
     }
 }
 
-export interface ConstructableMessage<T extends Message> {
+export interface ConstructableMessage<T extends Message = Message> {
     new(...args: any[]): T;
 
     messageName(): MessageName;

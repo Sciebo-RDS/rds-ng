@@ -30,6 +30,9 @@ class CommandReplyComposer(MessageComposer):
         self._command = command
 
     def emit(self) -> None:
+        """
+        Sends the built message through the message bus.
+        """
         target = (
             Channel.local()
             if self._command.origin.equals(self._origin_id)

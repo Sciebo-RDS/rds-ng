@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
 
-import { Channel } from "../core/messaging/Channel";
+import { EventComposer } from "../core/messaging/builders/EventComposer";
+import { MessageBuilder } from "../core/messaging/builders/MessageBuilder";
 import { Event } from "../core/messaging/Event";
-import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
 import { Message } from "../core/messaging/Message";
 import { UnitID } from "../utils/UnitID";
 import { API_PROTOCOL_VERSION } from "./Version";
@@ -27,16 +27,15 @@ export class ComponentInformationEvent extends Event {
     public readonly api_protocol: number = API_PROTOCOL_VERSION;
 
     /**
-     * Helper function to easily emit this message.
+     * Helper function to easily build this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel, compID: UnitID, compName: string, compVersion: string,
-                       chain: Message | null = null): void {
-        messageEmitter.emitEvent(ComponentInformationEvent, target,
+    public static build(messageBuilder: MessageBuilder, compID: UnitID, compName: string, compVersion: string,
+                        chain: Message | null = null): EventComposer<ComponentInformationEvent> {
+        return messageBuilder.buildEvent(ComponentInformationEvent,
             {
                 comp_id: compID,
                 comp_name: compName,
                 comp_version: compVersion
-            },
-            chain);
+            }, chain);
     }
 }

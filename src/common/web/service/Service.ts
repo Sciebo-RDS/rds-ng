@@ -1,4 +1,4 @@
-import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
+import { MessageBuilder } from "../core/messaging/builders/MessageBuilder";
 import { type MessageHandler } from "../core/messaging/handlers/MessageHandler";
 import { MessageService } from "../core/messaging/handlers/MessageService";
 import { type ConstructableMessage, Message } from "../core/messaging/Message";
@@ -73,10 +73,10 @@ export class Service<CtxType extends ServiceContext = ServiceContext> extends Me
     }
 
     /**
-     * The service's message emitter.
+     * The service's message builder.
      */
-    public get messageEmitter(): MessageEmitter {
-        return this.createMessageEmitter();
+    public get messageBuilder(): MessageBuilder {
+        return this.createMessageBuilder();
     }
 
     /**

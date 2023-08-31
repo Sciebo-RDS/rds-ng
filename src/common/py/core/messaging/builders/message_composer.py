@@ -41,6 +41,12 @@ class MessageComposer(abc.ABC):
         self._params = kwargs
 
     def emit(self, target: Channel) -> None:
+        """
+        Sends the built message through the message bus.
+
+        Args:
+            target: The target of the message.
+        """
         self._verify()
         self._compose()
 

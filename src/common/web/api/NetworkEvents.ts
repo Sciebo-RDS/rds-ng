@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
 
-import { Channel } from "../core/messaging/Channel";
+import { EventComposer } from "../core/messaging/builders/EventComposer";
+import { MessageBuilder } from "../core/messaging/builders/MessageBuilder";
 import { Event } from "../core/messaging/Event";
-import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
 import { Message } from "../core/messaging/Message";
 import { UnitID } from "../utils/UnitID";
 
@@ -12,10 +12,10 @@ import { UnitID } from "../utils/UnitID";
 @Message.define("event/network/client-connected")
 export class ClientConnectedEvent extends Event {
     /**
-     * Helper function to easily emit this message.
+     * Helper function to easily build this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel, chain: Message | null = null): void {
-        messageEmitter.emitEvent(ClientConnectedEvent, target, {}, chain);
+    public static build(messageBuilder: MessageBuilder, chain: Message | null = null): EventComposer<ClientConnectedEvent> {
+        return messageBuilder.buildEvent(ClientConnectedEvent, {}, chain);
     }
 }
 
@@ -25,10 +25,10 @@ export class ClientConnectedEvent extends Event {
 @Message.define("event/network/client-disconnected")
 export class ClientDisconnectedEvent extends Event {
     /**
-     * Helper function to easily emit this message.
+     * Helper function to easily build this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel, chain: Message | null = null): void {
-        messageEmitter.emitEvent(ClientDisconnectedEvent, target, {}, chain);
+    public static build(messageBuilder: MessageBuilder, chain: Message | null = null): EventComposer<ClientDisconnectedEvent> {
+        return messageBuilder.buildEvent(ClientDisconnectedEvent, {}, chain);
     }
 }
 
@@ -42,10 +42,10 @@ export class ClientConnectionErrorEvent extends Event {
     public readonly reason: string = "";
 
     /**
-     * Helper function to easily emit this message.
+     * Helper function to easily build this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel, reason: string, chain: Message | null = null): void {
-        messageEmitter.emitEvent(ClientConnectionErrorEvent, target, { reason: reason }, chain);
+    public static build(messageBuilder: MessageBuilder, reason: string, chain: Message | null = null): EventComposer<ClientConnectionErrorEvent> {
+        return messageBuilder.buildEvent(ClientConnectionErrorEvent, { reason: reason }, chain);
     }
 }
 
@@ -60,10 +60,11 @@ class ServerConnectedEvent extends Event {
     public readonly client_id: string = "";
 
     /**
-     * Helper function to easily emit this message.
+     * Helper function to easily build this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel, compID: UnitID, clientID: string, chain: Message | null = null): void {
-        messageEmitter.emitEvent(ServerConnectedEvent, target, { comp_id: compID, client_id: clientID }, chain);
+    public static build(messageBuilder: MessageBuilder, compID: UnitID, clientID: string, chain: Message | null = null):
+        EventComposer<ServerConnectedEvent> {
+        return messageBuilder.buildEvent(ServerConnectedEvent, { comp_id: compID, client_id: clientID }, chain);
     }
 }
 
@@ -76,9 +77,10 @@ export class ServerDisconnectedEvent extends Event {
     public readonly client_id: string = "";
 
     /**
-     * Helper function to easily emit this message.
+     * Helper function to easily build this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel, compID: UnitID, clientID: string, chain: Message | null = null): void {
-        messageEmitter.emitEvent(ServerDisconnectedEvent, target, { comp_id: compID, client_id: clientID }, chain);
+    public static build(messageBuilder: MessageBuilder, compID: UnitID, clientID: string, chain: Message | null = null):
+        EventComposer<ServerDisconnectedEvent> {
+        return messageBuilder.buildEvent(ServerDisconnectedEvent, { comp_id: compID, client_id: clientID }, chain);
     }
 }

@@ -40,7 +40,7 @@ class CommandComposer(MessageComposer):
         self._async_callbacks = False
         self._timeout = 0.0
 
-    def done_callback(self, cb: CommandDoneCallback | None) -> typing.Self:
+    def done(self, cb: CommandDoneCallback | None) -> typing.Self:
         """
         Assigns a *Done* callback.
 
@@ -53,7 +53,7 @@ class CommandComposer(MessageComposer):
         self._done_callback = cb
         return self
 
-    def fail_callback(self, cb: CommandFailCallback | None) -> typing.Self:
+    def failed(self, cb: CommandFailCallback | None) -> typing.Self:
         """
         Assigns a *Fail* callback.
 

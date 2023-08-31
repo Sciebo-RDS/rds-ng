@@ -1,7 +1,8 @@
-import { Channel } from "../core/messaging/Channel";
+import { CommandComposer } from "../core/messaging/builders/CommandComposer";
+import { CommandReplyComposer } from "../core/messaging/builders/CommandReplyComposer";
+import { MessageBuilder } from "../core/messaging/builders/MessageBuilder";
 import { Command } from "../core/messaging/Command";
-import { type CommandDoneCallback, type CommandFailCallback, CommandReply } from "../core/messaging/CommandReply";
-import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
+import { CommandReply } from "../core/messaging/CommandReply";
 import { Message } from "../core/messaging/Message";
 
 /**
@@ -12,14 +13,10 @@ export class PingCommand extends Command {
     public readonly payload: string = "PING";
 
     /**
-     * Helper function to easily emit this message.
+     * Helper function to easily build this message.
      */
-    public static emit(messageEmitter: MessageEmitter, target: Channel,
-                       doneCallback: CommandDoneCallback | null = null,
-                       failCallback: CommandFailCallback | null = null,
-                       timeout: number = 0.0,
-                       chain: Message | null = null): void {
-        messageEmitter.emitCommand(PingCommand, target, {}, doneCallback, failCallback, timeout, chain);
+    public static build(messageBuilder: MessageBuilder, chain: Message | null = null): CommandComposer<PingCommand> {
+        return messageBuilder.buildCommand(PingCommand, {}, chain);
     }
 }
 
@@ -31,9 +28,10 @@ export class PingReply extends CommandReply {
     public readonly payload: string = "PONG";
 
     /**
-     * Helper function to easily emit this message.
+     * Helper function to easily build this message.
      */
-    public static emit(messageEmitter: MessageEmitter, cmd: PingCommand, success: boolean = true, message: string = ""): void {
-        messageEmitter.emitReply(PingReply, cmd, {}, success, message);
+    public static build(messageBuilder: MessageBuilder, cmd: PingCommand, success: boolean = true, message: string = ""):
+        CommandReplyComposer<PingReply> {
+        return messageBuilder.buildCommandReply(PingReply, cmd, success, message);
     }
 }

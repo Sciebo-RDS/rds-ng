@@ -1,6 +1,6 @@
 import { LoggerProxy } from "../core/logging/LoggerProxy";
+import { MessageBuilder } from "../core/messaging/builders/MessageBuilder";
 import { MessageContext } from "../core/messaging/handlers/MessageContext";
-import { MessageEmitter } from "../core/messaging/handlers/MessageEmitter";
 import { MessageMetaInformation } from "../core/messaging/meta/MessageMetaInformation";
 import { Configuration } from "../utils/config/Configuration";
 
@@ -14,12 +14,12 @@ export class ServiceContext extends MessageContext {
 
     /**
      * @param msgMeta - The meta information of the message.
-     * @param msgEmitter - A ``MessageEmitter`` to be assigned to this context.
+     * @param msgBuilder - A ``MessageBuilder`` to be assigned to this context.
      * @param logger - A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
      * @param config - The global component configuration.
      */
-    public constructor(msgMeta: MessageMetaInformation, msgEmitter: MessageEmitter, logger: LoggerProxy, config: Configuration) {
-        super(msgMeta, msgEmitter, logger);
+    public constructor(msgMeta: MessageMetaInformation, msgBuilder: MessageBuilder, logger: LoggerProxy, config: Configuration) {
+        super(msgMeta, msgBuilder, logger);
 
         this._config = config;
     }

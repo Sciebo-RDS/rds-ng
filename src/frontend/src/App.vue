@@ -21,7 +21,7 @@ watch(() => nwStore.connected, (connected, prevConnected) => {
 });
 
 function clickButton(event: any): void {
-    svc.messageEmitter.emitCommand(PingCommand, Channel.direct("infra/gate/default"));
+    svc.messageBuilder.buildCommand(PingCommand).emit(Channel.direct("infra/gate/default"));
 }
 </script>
 

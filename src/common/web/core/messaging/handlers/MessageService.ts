@@ -1,10 +1,10 @@
 import { type Constructable } from "../../../utils/Types";
 import { UnitID } from "../../../utils/UnitID";
 import { LoggerProxy } from "../../logging/LoggerProxy";
+import { MessageBuilder } from "../builders/MessageBuilder";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 import { MessageContext } from "./MessageContext";
-import { MessageEmitter } from "./MessageEmitter";
 import { MessageHandlers } from "./MessageHandlers";
 
 /**
@@ -43,16 +43,16 @@ export class MessageService<CtxType extends MessageContext = MessageContext> {
      * @returns - The newly created message context.
      */
     public createContext(msgMeta: MessageMetaInformation, logger: LoggerProxy, ...args: any[]): MessageContext {
-        return new this._contextType(msgMeta, this.createMessageEmitter(), logger, ...args);
+        return new this._contextType(msgMeta, this.createMessageBuilder(), logger, ...args);
     }
 
     /**
-     * Creates a new message emitter.
+     * Creates a new message builder.
      *
-     * @returns - The newly created message emitter.
+     * @returns - The newly created message builder.
      */
-    public createMessageEmitter(): MessageEmitter {
-        return new MessageEmitter(this._compID, this._messageBus);
+    public createMessageBuilder(): MessageBuilder {
+        return new MessageBuilder(this._compID, this._messageBus);
     }
 
     /**
