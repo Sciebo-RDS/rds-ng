@@ -28,7 +28,7 @@ def create_common_service(comp: BackendComponent) -> Service:
     def ping_command(msg: PingCommand, ctx: ServiceContext) -> None:
         ctx.logger.debug("Received PING", scope="component", payload=msg.payload)
 
-        PingReply.emit(ctx.message_emitter, msg)
+        PingReply.build(ctx.message_builder, msg).emit()
 
     @svc.message_handler(PingReply)
     def ping_reply(msg: PingReply, ctx: ServiceContext) -> None:
@@ -50,12 +50,11 @@ def create_common_service(comp: BackendComponent) -> Service:
     def _emit_comp_info(comp_id: UnitID, ctx: ServiceContext) -> None:
         data = BackendComponent.instance().data
 
-        ComponentInformationEvent.emit(
-            ctx.message_emitter,
-            Channel.direct(comp_id),
+        ComponentInformationEvent.build(
+            ctx.message_builder,
             comp_id=data.comp_id,
             comp_name=data.name,
             comp_version=str(data.version),
-        )
+        ).emit(Channel.direct(comp_id))
 
     return svc

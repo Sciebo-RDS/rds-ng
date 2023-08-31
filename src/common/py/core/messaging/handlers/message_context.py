@@ -1,6 +1,6 @@
 import typing
 
-from .message_emitter import MessageEmitter
+from ..builders import MessageBuilder
 from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
 
@@ -23,17 +23,17 @@ class MessageContext:
     def __init__(
         self,
         msg_meta: MessageMetaInformation,
-        msg_emitter: MessageEmitter,
+        msg_builder: MessageBuilder,
         logger: LoggerProtocol,
     ):
         """
         Args:
-            msg_emitter: A ``MessageEmitter`` to be assigned to this context.
+            msg_builder: A ``MessageBuilder`` to be assigned to this context.
             msg_meta: The meta information of the message.
             logger: A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
         """
         self._msg_meta = msg_meta
-        self._msg_emitter = msg_emitter
+        self._msg_builder = msg_builder
 
         self._logger = logger
 
@@ -68,7 +68,7 @@ class MessageContext:
 
         if (
             self._requires_reply
-            and self._msg_emitter.get_message_count(CommandReplyType) != 1
+            and self._msg_builder.get_message_count(CommandReplyType) != 1
         ):
             self._logger.warning(
                 "A message context required exactly one command reply, but either none or more than one was sent",
@@ -97,11 +97,11 @@ class MessageContext:
         return self._msg_meta.entrypoint == MessageMetaInformation.Entrypoint.CLIENT
 
     @property
-    def message_emitter(self) -> MessageEmitter:
+    def message_builder(self) -> MessageBuilder:
         """
-        The message emitter to be used within this context.
+        The message builder to be used within this context.
         """
-        return self._msg_emitter
+        return self._msg_builder
 
     @property
     def logger(self) -> LoggerProtocol:

@@ -1,7 +1,8 @@
 import typing
 
 from ..core.logging import LoggerProtocol
-from ..core.messaging.handlers import MessageContext, MessageEmitter
+from ..core.messaging.builders import MessageBuilder
+from ..core.messaging.handlers import MessageContext
 from ..core.messaging.meta import MessageMetaInformation
 from ..utils.config import Configuration
 
@@ -16,7 +17,7 @@ class ServiceContext(MessageContext):
     def __init__(
         self,
         msg_meta: MessageMetaInformation,
-        msg_emitter: MessageEmitter,
+        msg_builder: MessageBuilder,
         logger: LoggerProtocol,
         *,
         config: Configuration
@@ -24,11 +25,11 @@ class ServiceContext(MessageContext):
         """
         Args:
             msg_meta: The meta information of the message.
-            msg_emitter: A ``MessageEmitter`` to be assigned to this context.
+            msg_builder: A ``MessageBuilder`` to be assigned to this context.
             logger: A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
             config: The global component configuration.
         """
-        super().__init__(msg_meta, msg_emitter, logger)
+        super().__init__(msg_meta, msg_builder, logger)
 
         self._config = config
 

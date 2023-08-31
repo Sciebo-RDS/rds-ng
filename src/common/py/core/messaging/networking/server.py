@@ -7,7 +7,7 @@ from enum import IntEnum, auto
 import socketio
 
 from .. import Message
-from ..handlers import MessageEmitter
+from ..builders import MessageBuilder
 from ...logging import info, warning, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
@@ -46,18 +46,18 @@ class Server(socketio.Server):
             )
 
     def __init__(
-        self, comp_id: UnitID, config: Configuration, message_emitter: MessageEmitter
+        self, comp_id: UnitID, config: Configuration, message_builder: MessageBuilder
     ):
         """
         Args:
             comp_id: The component identifier.
             config: The global configuration.
-            message_emitter: A message emitter to use.
+            message_builder: A message builder to use.
         """
         self._comp_id = comp_id
         self._config = config
 
-        self._message_emitter = message_emitter
+        self._message_builder = message_builder
 
         super().__init__(
             async_mode="gevent",
@@ -177,9 +177,9 @@ class Server(socketio.Server):
             from .. import Channel
             from ....api import ServerConnectedEvent
 
-            ServerConnectedEvent.emit(
-                self._message_emitter, Channel.local(), comp_id=comp_id, client_id=sid
-            )
+            ServerConnectedEvent.build(
+                self._message_builder, comp_id=comp_id, client_id=sid
+            ).emit(Channel.local())
 
             info("Client connected", scope="server", session=sid, component=comp_id)
 
@@ -192,9 +192,9 @@ class Server(socketio.Server):
             from .. import Channel
             from ....api import ServerDisconnectedEvent
 
-            ServerDisconnectedEvent.emit(
-                self._message_emitter, Channel.local(), comp_id=comp_id, client_id=sid
-            )
+            ServerDisconnectedEvent.build(
+                self._message_builder, comp_id=comp_id, client_id=sid
+            ).emit(Channel.local())
 
             info("Client disconnected", scope="server", session=sid)
 

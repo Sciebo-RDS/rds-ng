@@ -1,7 +1,7 @@
 from .message_context import MessageContext, MessageContextType
-from .message_emitter import MessageEmitter
 from .message_handlers import MessageHandlers
 from .. import MessageBusProtocol
+from ..builders import MessageBuilder
 from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
 from ....utils import UnitID
@@ -49,17 +49,17 @@ class MessageService:
             The newly created message context.
         """
         return self._context_type(
-            msg_meta, self.create_message_emitter(), logger, **kwargs
+            msg_meta, self.create_message_builder(), logger, **kwargs
         )
 
-    def create_message_emitter(self) -> MessageEmitter:
+    def create_message_builder(self) -> MessageBuilder:
         """
-        Creates a new message emitter.
+        Creates a new message builder.
 
         Returns:
-            The newly created message emitter.
+            The newly created message builder.
         """
-        return MessageEmitter(self._component_id, self._message_bus)
+        return MessageBuilder(self._component_id, self._message_bus)
 
     @property
     def message_handlers(self) -> MessageHandlers:

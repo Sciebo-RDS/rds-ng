@@ -60,21 +60,21 @@ class NetworkEngine:
         )
 
     def _create_client(self) -> Client:
-        from ..handlers import MessageEmitter
+        from ..builders import MessageBuilder
 
         return Client(
             self._comp_data.comp_id,
             self._comp_data.config,
-            MessageEmitter(self._comp_data.comp_id, self._message_bus),
+            MessageBuilder(self._comp_data.comp_id, self._message_bus),
         )
 
     def _create_server(self) -> Server:
-        from ..handlers import MessageEmitter
+        from ..builders import MessageBuilder
 
         return Server(
             self._comp_data.comp_id,
             self._comp_data.config,
-            MessageEmitter(self._comp_data.comp_id, self._message_bus),
+            MessageBuilder(self._comp_data.comp_id, self._message_bus),
         )
 
     def run(self) -> None:

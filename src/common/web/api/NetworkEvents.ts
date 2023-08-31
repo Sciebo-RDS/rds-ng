@@ -54,6 +54,7 @@ export class ClientConnectionErrorEvent extends Event {
  */
 @Message.define("event/network/server-connected")
 class ServerConnectedEvent extends Event {
+    // @ts-ignore
     @Type(() => UnitID)
     public readonly comp_id: UnitID = new UnitID("", "");
     public readonly client_id: string = "";

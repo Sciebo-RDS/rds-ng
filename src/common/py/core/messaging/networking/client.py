@@ -4,7 +4,7 @@ import typing
 import socketio
 
 from .. import Message
-from ..handlers import MessageEmitter
+from ..builders import MessageBuilder
 from ...logging import info, warning, error, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
@@ -18,18 +18,18 @@ class Client(socketio.Client):
     """
 
     def __init__(
-        self, comp_id: UnitID, config: Configuration, message_emitter: MessageEmitter
+        self, comp_id: UnitID, config: Configuration, message_builder: MessageBuilder
     ):
         """
         Args:
             comp_id: The component identifier.
             config: The global configuration.
-            message_emitter: A message emitter instance.
+            message_builder: A message builder instance.
         """
         self._comp_id = comp_id
         self._config = config
 
-        self._message_emitter = message_emitter
+        self._message_builder = message_builder
 
         from ....settings import NetworkClientSettingIDs
 
@@ -112,7 +112,7 @@ class Client(socketio.Client):
             from .. import Channel
             from ....api import ClientConnectedEvent
 
-            ClientConnectedEvent.emit(self._message_emitter, Channel.local())
+            ClientConnectedEvent.build(self._message_builder).emit(Channel.local())
 
             info("Connected to server", scope="client")
 
@@ -121,9 +121,9 @@ class Client(socketio.Client):
             from .. import Channel
             from ....api import ClientConnectionErrorEvent
 
-            ClientConnectionErrorEvent.emit(
-                self._message_emitter, Channel.local(), reason=str(reason)
-            )
+            ClientConnectionErrorEvent.build(
+                self._message_builder, reason=str(reason)
+            ).emit(Channel.local())
 
             warning("Unable to connect to server", scope="client", reason=str(reason))
 
@@ -132,7 +132,7 @@ class Client(socketio.Client):
             from .. import Channel
             from ....api import ClientDisconnectedEvent
 
-            ClientDisconnectedEvent.emit(self._message_emitter, Channel.local())
+            ClientDisconnectedEvent.build(self._message_builder).emit(Channel.local())
 
             info("Disconnected from server", scope="client")
 

@@ -2,11 +2,12 @@ from ..core.messaging import (
     Command,
     CommandReply,
     Message,
-    Channel,
-    CommandDoneCallback,
-    CommandFailCallback,
 )
-from ..core.messaging.handlers import MessageEmitter
+from ..core.messaging.builders import (
+    MessageBuilder,
+    CommandComposer,
+    CommandReplyComposer,
+)
 
 
 @Message.define("command/general/ping")
@@ -21,28 +22,13 @@ class PingCommand(Command):
     payload: str = "PING"
 
     @staticmethod
-    def emit(
-        message_emitter: MessageEmitter,
-        target: Channel,
-        *,
-        done_callback: CommandDoneCallback | None = None,
-        fail_callback: CommandFailCallback | None = None,
-        async_callbacks: bool = False,
-        timeout: float = 0.0,
-        chain: Message | None = None
-    ) -> None:
+    def build(
+        message_builder: MessageBuilder, *, chain: Message | None = None
+    ) -> CommandComposer:
         """
-        Helper function to easily emit this message.
+        Helper function to easily build this message.
         """
-        message_emitter.emit_command(
-            PingCommand,
-            target,
-            done_callback=done_callback,
-            fail_callback=fail_callback,
-            async_callbacks=async_callbacks,
-            timeout=timeout,
-            chain=chain,
-        )
+        return message_builder.build_command(PingCommand, chain)
 
 
 @Message.define("command/general/ping/reply")
@@ -54,13 +40,14 @@ class PingReply(CommandReply):
     payload: str = "PONG"
 
     @staticmethod
-    def emit(
-        message_emitter: MessageEmitter,
+    def build(
+        message_builder: MessageBuilder,
         cmd: PingCommand,
+        *,
         success: bool = True,
         message: str = "",
-    ):
+    ) -> CommandReplyComposer:
         """
-        Helper function to easily emit this message.
+        Helper function to easily build this message.
         """
-        message_emitter.emit_reply(PingReply, cmd, success=success, message=message)
+        return message_builder.build_command_reply(PingReply, cmd, success, message)

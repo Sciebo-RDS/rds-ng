@@ -1,7 +1,7 @@
 import dataclasses
 
-from ..core.messaging import Event, Message, Channel
-from ..core.messaging.handlers import MessageEmitter
+from ..core.messaging import Event, Message
+from ..core.messaging.builders import MessageBuilder, EventComposer
 from ..utils import UnitID
 
 
@@ -12,16 +12,13 @@ class ClientConnectedEvent(Event):
     """
 
     @staticmethod
-    def emit(
-        message_emitter: MessageEmitter,
-        target: Channel,
-        *,
-        chain: Message | None = None
-    ) -> None:
+    def build(
+        message_builder: MessageBuilder, *, chain: Message | None = None
+    ) -> EventComposer:
         """
-        Helper function to easily emit this message.
+        Helper function to easily build this message.
         """
-        message_emitter.emit_event(ClientConnectedEvent, target, chain=chain)
+        return message_builder.build_event(ClientConnectedEvent, chain)
 
 
 @Message.define("event/network/client-disconnected")
@@ -31,16 +28,13 @@ class ClientDisconnectedEvent(Event):
     """
 
     @staticmethod
-    def emit(
-        message_emitter: MessageEmitter,
-        target: Channel,
-        *,
-        chain: Message | None = None
-    ) -> None:
+    def build(
+        message_builder: MessageBuilder, *, chain: Message | None = None
+    ) -> EventComposer:
         """
-        Helper function to easily emit this message.
+        Helper function to easily build this message.
         """
-        message_emitter.emit_event(ClientDisconnectedEvent, target, chain=chain)
+        return message_builder.build_event(ClientDisconnectedEvent, chain)
 
 
 @Message.define("event/network/client-connection-error")
@@ -55,18 +49,14 @@ class ClientConnectionErrorEvent(Event):
     reason: str = ""
 
     @staticmethod
-    def emit(
-        message_emitter: MessageEmitter,
-        target: Channel,
-        *,
-        reason: str,
-        chain: Message | None = None
-    ) -> None:
+    def build(
+        message_builder: MessageBuilder, *, reason: str, chain: Message | None = None
+    ) -> EventComposer:
         """
-        Helper function to easily emit this message.
+        Helper function to easily build this message.
         """
-        message_emitter.emit_event(
-            ClientConnectionErrorEvent, target, chain=chain, reason=reason
+        return message_builder.build_event(
+            ClientConnectionErrorEvent, chain, reason=reason
         )
 
 
@@ -83,23 +73,18 @@ class ServerConnectedEvent(Event):
     client_id: str = ""
 
     @staticmethod
-    def emit(
-        message_emitter: MessageEmitter,
-        target: Channel,
+    def build(
+        message_builder: MessageBuilder,
         *,
         comp_id: UnitID,
         client_id: str,
         chain: Message | None = None
-    ) -> None:
+    ) -> EventComposer:
         """
-        Helper function to easily emit this message.
+        Helper function to easily build this message.
         """
-        message_emitter.emit_event(
-            ServerConnectedEvent,
-            target,
-            chain=chain,
-            comp_id=comp_id,
-            client_id=client_id,
+        return message_builder.build_event(
+            ServerConnectedEvent, chain, comp_id=comp_id, client_id=client_id
         )
 
 
@@ -116,21 +101,16 @@ class ServerDisconnectedEvent(Event):
     client_id: str = ""
 
     @staticmethod
-    def emit(
-        message_emitter: MessageEmitter,
-        target: Channel,
+    def build(
+        message_builder: MessageBuilder,
         *,
         comp_id: UnitID,
         client_id: str,
         chain: Message | None = None
-    ) -> None:
+    ) -> EventComposer:
         """
-        Helper function to easily emit this message.
+        Helper function to easily build this message.
         """
-        message_emitter.emit_event(
-            ServerDisconnectedEvent,
-            target,
-            chain=chain,
-            comp_id=comp_id,
-            client_id=client_id,
+        return message_builder.build_event(
+            ServerConnectedEvent, chain, comp_id=comp_id, client_id=client_id
         )

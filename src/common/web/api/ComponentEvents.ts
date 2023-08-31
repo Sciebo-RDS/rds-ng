@@ -17,6 +17,7 @@ import { API_PROTOCOL_VERSION } from "./Version";
  */
 @Message.define("event/component/information")
 export class ComponentInformationEvent extends Event {
+    // @ts-ignore
     @Type(() => UnitID)
     public readonly comp_id: UnitID = new UnitID("", "");
 

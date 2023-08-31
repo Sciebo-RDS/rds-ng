@@ -2,7 +2,8 @@ import typing
 
 from .service_context import ServiceContextType, ServiceContext
 from ..core.messaging import Message, MessageType, MessageBusProtocol
-from ..core.messaging.handlers import MessageHandler, MessageService, MessageEmitter
+from ..core.messaging.builders import MessageBuilder
+from ..core.messaging.handlers import MessageHandler, MessageService
 from ..utils import UnitID
 
 
@@ -86,11 +87,11 @@ class Service(MessageService):
         return self._name
 
     @property
-    def message_emitter(self) -> MessageEmitter:
+    def message_builder(self) -> MessageBuilder:
         """
-        The service's message emitter.
+        The service's message builder.
         """
-        return self.create_message_emitter()
+        return self.create_message_builder()
 
     def __str__(self) -> str:
         return self._name
