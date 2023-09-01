@@ -1,6 +1,6 @@
-from .. import BackendComponent
-from ...service import Service, ServiceContext
-from ...utils import UnitID
+from .service import Service, ServiceContext
+from ..component import BackendComponent
+from ..utils import UnitID
 
 
 def create_common_service(comp: BackendComponent) -> Service:
@@ -14,8 +14,8 @@ def create_common_service(comp: BackendComponent) -> Service:
         The newly created service.
 
     """
-    from ...core.messaging import Message, Channel
-    from ...api import (
+    from ..core.messaging import Message, Channel
+    from ..api import (
         PingCommand,
         PingReply,
         ServerConnectedEvent,

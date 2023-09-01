@@ -8,8 +8,8 @@ import { type App, type Component as VueComponent, createApp, inject } from "vue
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
-import { Service } from "../service/Service";
-import { ServiceContext } from "../service/ServiceContext";
+import { Service } from "../services/Service";
+import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
@@ -17,7 +17,8 @@ import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
 import { WebComponentData } from "./WebComponentData";
 
-import createCommonService from "./services/CommonService";
+import createCommonService from "../services/CommonService";
+import createNetworkService from "../services/NetworkService";
 
 // Necessary to make the entire API known
 import "../api/API";
@@ -103,7 +104,9 @@ export class WebComponent {
     public run(): void {
         logging.info("Running component...");
 
+        // Create all basic services
         createCommonService(this);
+        createNetworkService(this);
 
         this._core.run();
     }

@@ -7,7 +7,7 @@ from ..utils import UnitID
 from ..utils.config import Configuration
 
 if typing.TYPE_CHECKING:
-    from ..service import ServiceContextType, Service
+    from ..services import ServiceContextType, Service
 
 
 class BackendComponent:
@@ -92,7 +92,7 @@ class BackendComponent:
 
         info("Running component...")
 
-        from .services import create_common_service
+        from ..services import create_common_service
 
         create_common_service(self)
 
@@ -115,7 +115,7 @@ class BackendComponent:
         Returns:
             The newly created service.
         """
-        from ..service import Service, ServiceContext
+        from ..services import Service, ServiceContext
 
         if context_type is None:
             context_type = ServiceContext
