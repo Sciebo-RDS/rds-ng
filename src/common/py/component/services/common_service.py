@@ -14,7 +14,7 @@ def create_common_service(comp: BackendComponent) -> Service:
         The newly created service.
 
     """
-    from ...core.messaging import Channel
+    from ...core.messaging import Message, Channel
     from ...api import (
         PingCommand,
         PingReply,
@@ -45,9 +45,11 @@ def create_common_service(comp: BackendComponent) -> Service:
     ) -> None:
         # If this message is received through the client, we need to send our information in return
         if ctx.is_entrypoint_client:
-            _emit_comp_info(msg.comp_id, ctx)
+            _emit_comp_info(msg.comp_id, ctx, msg)
 
-    def _emit_comp_info(comp_id: UnitID, ctx: ServiceContext) -> None:
+    def _emit_comp_info(
+        comp_id: UnitID, ctx: ServiceContext, msg: Message | None = None
+    ) -> None:
         data = BackendComponent.instance().data
 
         ComponentInformationEvent.build(
@@ -55,6 +57,7 @@ def create_common_service(comp: BackendComponent) -> Service:
             comp_id=data.comp_id,
             comp_name=data.name,
             comp_version=str(data.version),
+            chain=msg,
         ).emit(Channel.direct(comp_id))
 
     return svc

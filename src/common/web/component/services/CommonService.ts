@@ -29,7 +29,8 @@ export default function (comp: WebComponent): Service {
                 ctx.messageBuilder,
                 data.compID,
                 data.name,
-                data.version.toString()
+                data.version.toString(),
+                msg
             ).emit(Channel.direct(msg.comp_id));
         });
     });
