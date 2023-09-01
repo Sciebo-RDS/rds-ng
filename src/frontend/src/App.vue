@@ -23,7 +23,6 @@ onMounted(() => {
 
 function clickButton(event: any): void {
     svc.messageBuilder.buildCommand(PingCommand).emit(nwStore.serverChannel);
-    nwStore.reset();
 }
 </script>
 
