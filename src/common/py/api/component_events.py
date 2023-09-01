@@ -6,6 +6,17 @@ from ..core.messaging.composers import MessageBuilder, EventComposer
 from ..utils import UnitID
 
 
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class ComponentInformation:
+    """
+    Component information as an object.
+    """
+
+    comp_id: UnitID
+    comp_name: str
+    comp_version: str
+
+
 @Message.define("event/component/information")
 class ComponentInformationEvent(Event):
     """
@@ -24,6 +35,19 @@ class ComponentInformationEvent(Event):
     comp_version: str = ""
 
     api_protocol: str = str(API_PROTOCOL_VERSION)
+
+    def component_information(self) -> ComponentInformation:
+        """
+        The component information bundled as an object.
+
+        Returns:
+            The component information stored in a ``ComponentInformation`` object.
+        """
+        return ComponentInformation(
+            comp_id=self.comp_id,
+            comp_name=self.comp_name,
+            comp_version=self.comp_version,
+        )
 
     @staticmethod
     def build(

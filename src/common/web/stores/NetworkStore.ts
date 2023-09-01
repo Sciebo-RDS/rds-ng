@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { type ComponentInformation } from "../api/ComponentEvents";
 
 /**
  * The state of the connection to the server:
@@ -21,5 +22,17 @@ export const enum ConnectionState {
 export const networkStore = defineStore("networkStore", () => {
     const connectionState = ref(ConnectionState.Disconnected);
 
-    return { connectionState };
+    const serverInfo = ref({} as ComponentInformation);
+
+    function reset() {
+        connectionState.value = ConnectionState.Disconnected;
+
+        serverInfo.value = {} as ComponentInformation;
+    }
+
+    return {
+        connectionState,
+        serverInfo,
+        reset
+    };
 });

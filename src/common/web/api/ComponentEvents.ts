@@ -8,6 +8,15 @@ import { UnitID } from "../utils/UnitID";
 import { API_PROTOCOL_VERSION } from "./Version";
 
 /**
+ * Layout of component information objects.
+ */
+export interface ComponentInformation {
+    id: UnitID;
+    name: string;
+    version: string;
+}
+
+/**
  * Contains information about a connected component; this is automatically sent whenever a connection is established (bilaterally).
  *
  * @param comp_id - The component ID.
@@ -25,6 +34,19 @@ export class ComponentInformationEvent extends Event {
     public readonly comp_version: string = "";
 
     public readonly api_protocol: string = String(API_PROTOCOL_VERSION);
+
+    /**
+     * The component information bundled as an object.
+     *
+     * @returns - The component information stored in a ``ComponentInformation`` object.
+     */
+    public componentInformation(): ComponentInformation {
+        let info = {} as ComponentInformation;
+        info.id = this.comp_id;
+        info.name = this.comp_name;
+        info.version = this.comp_version;
+        return info;
+    }
 
     /**
      * Helper function to easily build this message.

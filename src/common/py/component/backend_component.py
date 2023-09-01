@@ -92,9 +92,11 @@ class BackendComponent:
 
         info("Running component...")
 
-        from ..services import create_common_service
+        # Create all basic services
+        from ..services import create_component_service, create_network_service
 
-        create_common_service(self)
+        create_component_service(self)
+        create_network_service(self)
 
         self._core.run()
 

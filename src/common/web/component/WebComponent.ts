@@ -17,7 +17,7 @@ import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
 import { WebComponentData } from "./WebComponentData";
 
-import createCommonService from "../services/CommonService";
+import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
 
 // Necessary to make the entire API known
@@ -105,7 +105,7 @@ export class WebComponent {
         logging.info("Running component...");
 
         // Create all basic services
-        createCommonService(this);
+        createComponentService(this);
         createNetworkService(this);
 
         this._core.run();

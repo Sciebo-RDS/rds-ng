@@ -3,9 +3,9 @@ from ..component import BackendComponent
 from ..utils import UnitID
 
 
-def create_common_service(comp: BackendComponent) -> Service:
+def create_network_service(comp: BackendComponent) -> Service:
     """
-    Creates the common service that handles various basic messaging tasks.
+    Creates the network service that reacts to general networking-related messages.
 
     Args:
         comp: The main component instance.
@@ -14,7 +14,7 @@ def create_common_service(comp: BackendComponent) -> Service:
         The newly created service.
 
     """
-    from ..core.messaging import Message, Channel
+    from ..core.messaging import Channel
     from ..api import (
         PingCommand,
         PingReply,
@@ -22,7 +22,7 @@ def create_common_service(comp: BackendComponent) -> Service:
         ComponentInformationEvent,
     )
 
-    svc = comp.create_service("Common service")
+    svc = comp.create_service("Network service")
 
     @svc.message_handler(PingCommand)
     def ping_command(msg: PingCommand, ctx: ServiceContext) -> None:
@@ -37,19 +37,6 @@ def create_common_service(comp: BackendComponent) -> Service:
     @svc.message_handler(ServerConnectedEvent)
     def server_connected(msg: ServerConnectedEvent, ctx: ServiceContext) -> None:
         # Whenever a client connects to our server, automatically send the server's component information
-        _emit_comp_info(msg.comp_id, ctx)
-
-    @svc.message_handler(ComponentInformationEvent)
-    def component_information(
-        msg: ComponentInformationEvent, ctx: ServiceContext
-    ) -> None:
-        # If this message is received through the client, we need to send our information in return
-        if ctx.is_entrypoint_client:
-            _emit_comp_info(msg.comp_id, ctx, msg)
-
-    def _emit_comp_info(
-        comp_id: UnitID, ctx: ServiceContext, msg: Message | None = None
-    ) -> None:
         data = BackendComponent.instance().data
 
         ComponentInformationEvent.build(
@@ -58,6 +45,6 @@ def create_common_service(comp: BackendComponent) -> Service:
             comp_name=data.name,
             comp_version=str(data.version),
             chain=msg,
-        ).emit(Channel.direct(comp_id))
+        ).emit(Channel.direct(msg.comp_id))
 
     return svc

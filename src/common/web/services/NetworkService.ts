@@ -1,4 +1,3 @@
-import { ComponentInformationEvent } from "../api/ComponentEvents";
 import { PingCommand, PingReply } from "../api/NetworkCommands";
 import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/NetworkEvents";
 import { WebComponent } from "../component/WebComponent";
@@ -14,9 +13,9 @@ import { ServiceContext } from "./ServiceContext";
  * @returns - The newly created service.
  */
 export default function (comp: WebComponent): Service {
-    let nwStore = networkStore();
-
     return comp.createService("Network service", (svc: Service) => {
+        const nwStore = networkStore();
+
         svc.messageHandler(PingCommand, (msg: PingCommand, ctx: ServiceContext) => {
             ctx.logger.debug("Received PING", "component", { payload: msg.payload });
 
@@ -35,17 +34,11 @@ export default function (comp: WebComponent): Service {
         });
 
         svc.messageHandler(ClientDisconnectedEvent, (msg: ClientDisconnectedEvent, ctx: ServiceContext) => {
-            nwStore.connectionState = ConnectionState.Disconnected;
+            nwStore.reset();
         });
 
         svc.messageHandler(ClientConnectionErrorEvent, (msg: ClientConnectionErrorEvent, ctx: ServiceContext) => {
-            nwStore.connectionState = ConnectionState.Disconnected;
-        });
-
-        svc.messageHandler(ComponentInformationEvent, (msg: ComponentInformationEvent, ctx: ServiceContext) => {
-            // When this message is received from the server side, our connection is ready to be used
-            nwStore.connectionState = ConnectionState.Ready;
-            // TODO: Store info
+            nwStore.reset();
         });
     });
 }
