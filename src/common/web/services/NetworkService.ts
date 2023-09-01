@@ -1,8 +1,10 @@
 import { ComponentInformationEvent } from "../api/ComponentEvents";
 import { PingCommand, PingReply } from "../api/NetworkCommands";
 import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/NetworkEvents";
+import { WebComponent } from "../component/WebComponent";
 import { ConnectionState, networkStore } from "../stores/NetworkStore";
 import { Service } from "./Service";
+import { ServiceContext } from "./ServiceContext";
 
 /**
  * Creates the network service that reacts to general networking-related messages.

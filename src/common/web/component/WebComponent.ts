@@ -120,7 +120,7 @@ export class WebComponent {
      *      associated with the new service will then receive instances of this type for their service context.
      */
     public createService<CtxType extends ServiceContext>(name: string,
-                                                         initializer: (svc: Service) => void | null,
+                                                         initializer: ((svc: Service) => void) | null = null,
                                                          contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>): Service {
         let svc = new Service<CtxType>(this._data.compID, name, this._core.messageBus, contextType);
         this._core.registerService(svc);

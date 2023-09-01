@@ -32,7 +32,7 @@ export class CommandComposer<MsgType extends Command> extends MessageComposer<Ms
      *
      * @returns - This composer instance to allow call chaining.
      */
-    public failed(cb: CommandDoneCallback | null): this {
+    public failed(cb: CommandFailCallback | null): this {
         this._failCallback = cb;
         return this;
     }

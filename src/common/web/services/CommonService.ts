@@ -1,6 +1,8 @@
 import { ComponentInformationEvent } from "../api/ComponentEvents";
 import { WebComponent } from "../component/WebComponent";
+import { Channel } from "../core/messaging/Channel";
 import { Service } from "./Service";
+import { ServiceContext } from "./ServiceContext";
 
 /**
  * Creates the common service that reacts to basic messages.

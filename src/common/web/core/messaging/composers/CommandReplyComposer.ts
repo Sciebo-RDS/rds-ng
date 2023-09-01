@@ -14,7 +14,7 @@ import { MessageComposer } from "./MessageComposer";
 export class CommandReplyComposer<MsgType extends CommandReply> extends MessageComposer<MsgType> {
     private readonly _command: Command;
 
-    public constructor(originID: UnitID, messageBus: MessageBusProtocol, msgType: ConstructableMessage, cmd: Command,
+    public constructor(originID: UnitID, messageBus: MessageBusProtocol, msgType: ConstructableMessage<MsgType>, cmd: Command,
                        params: Record<string, any> = {}) {
         super(originID, messageBus, msgType, params, cmd);
 

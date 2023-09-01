@@ -1,7 +1,6 @@
 import { UnitID } from "../../../utils/UnitID";
 import { Channel } from "../Channel";
 import { type ConstructableMessage, Message } from "../Message";
-import { MessageBus } from "../MessageBus";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 
@@ -10,7 +9,7 @@ import { MessageMetaInformation } from "../meta/MessageMetaInformation";
  */
 export abstract class MessageComposer<MsgType extends Message> {
     protected _originID: UnitID;
-    protected _messageBus: MessageBus;
+    protected _messageBus: MessageBusProtocol;
 
     protected _msgType: ConstructableMessage<MsgType>;
     protected _params: Record<string, any>;
@@ -23,7 +22,7 @@ export abstract class MessageComposer<MsgType extends Message> {
      * @param params - Additional message parameters.
      * @param chain - A message that acts as the *predecessor* of the new message. Used to keep the same trace for multiple messages.
      */
-    public constructor(originID: UnitID, messageBus: MessageBusProtocol, msgType: ConstructableMessage,
+    public constructor(originID: UnitID, messageBus: MessageBusProtocol, msgType: ConstructableMessage<MsgType>,
                        params: Record<string, any> = {}, chain: Message | null = null) {
         this._originID = originID;
         this._messageBus = messageBus;
