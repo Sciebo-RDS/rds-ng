@@ -1,7 +1,7 @@
 from .message_context import MessageContext, MessageContextType
 from .message_handlers import MessageHandlers
 from .. import MessageBusProtocol
-from ..builders import MessageBuilder
+from ..composers import MessageBuilder
 from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
 from ....utils import UnitID

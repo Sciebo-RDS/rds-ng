@@ -7,7 +7,7 @@ from enum import IntEnum, auto
 import socketio
 
 from .. import Message
-from ..builders import MessageBuilder
+from ..composers import MessageBuilder
 from ...logging import info, warning, debug
 from ....utils import UnitID
 from ....utils.config import Configuration

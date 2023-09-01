@@ -1,7 +1,7 @@
 import typing
 
 from ..core.logging import LoggerProtocol
-from ..core.messaging.builders import MessageBuilder
+from ..core.messaging.composers import MessageBuilder
 from ..core.messaging.handlers import MessageContext
 from ..core.messaging.meta import MessageMetaInformation
 from ..utils.config import Configuration

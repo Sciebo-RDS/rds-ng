@@ -1,5 +1,5 @@
 import { LoggerProxy } from "../core/logging/LoggerProxy";
-import { MessageBuilder } from "../core/messaging/builders/MessageBuilder";
+import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { MessageContext } from "../core/messaging/handlers/MessageContext";
 import { MessageMetaInformation } from "../core/messaging/meta/MessageMetaInformation";
 import { Configuration } from "../utils/config/Configuration";

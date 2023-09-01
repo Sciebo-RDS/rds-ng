@@ -1,6 +1,6 @@
 import typing
 
-from ..builders import MessageBuilder
+from ..composers import MessageBuilder
 from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
 

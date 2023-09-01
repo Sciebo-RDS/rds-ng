@@ -1,5 +1,5 @@
 import { LoggerProxy } from "../../logging/LoggerProxy";
-import { MessageBuilder } from "../builders/MessageBuilder";
+import { MessageBuilder } from "../composers/MessageBuilder";
 import { CommandReply } from "../CommandReply";
 import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaInformation";
 

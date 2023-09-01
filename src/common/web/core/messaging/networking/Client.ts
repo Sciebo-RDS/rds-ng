@@ -5,7 +5,7 @@ import { NetworkClientSettingIDs } from "../../../settings/NetworkSettingIDs";
 import { Configuration } from "../../../utils/config/Configuration";
 import { UnitID } from "../../../utils/UnitID";
 import logging from "../../logging/Logging";
-import { MessageBuilder } from "../builders/MessageBuilder";
+import { MessageBuilder } from "../composers/MessageBuilder";
 import { Channel } from "../Channel";
 import { Message } from "../Message";
 

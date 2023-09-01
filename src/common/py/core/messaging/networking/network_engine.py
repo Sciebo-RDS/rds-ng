@@ -60,7 +60,7 @@ class NetworkEngine:
         )
 
     def _create_client(self) -> Client:
-        from ..builders import MessageBuilder
+        from ..composers import MessageBuilder
 
         return Client(
             self._comp_data.comp_id,
@@ -69,7 +69,7 @@ class NetworkEngine:
         )
 
     def _create_server(self) -> Server:
-        from ..builders import MessageBuilder
+        from ..composers import MessageBuilder
 
         return Server(
             self._comp_data.comp_id,

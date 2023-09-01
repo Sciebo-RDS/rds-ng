@@ -4,7 +4,7 @@ import typing
 import socketio
 
 from .. import Message
-from ..builders import MessageBuilder
+from ..composers import MessageBuilder
 from ...logging import info, warning, error, debug
 from ....utils import UnitID
 from ....utils.config import Configuration

@@ -1,4 +1,4 @@
-import { MessageBuilder } from "../core/messaging/builders/MessageBuilder";
+import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { type MessageHandler } from "../core/messaging/handlers/MessageHandler";
 import { MessageService } from "../core/messaging/handlers/MessageService";
 import { type ConstructableMessage, Message } from "../core/messaging/Message";

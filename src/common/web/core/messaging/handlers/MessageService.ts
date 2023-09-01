@@ -1,7 +1,7 @@
 import { type Constructable } from "../../../utils/Types";
 import { UnitID } from "../../../utils/UnitID";
 import { LoggerProxy } from "../../logging/LoggerProxy";
-import { MessageBuilder } from "../builders/MessageBuilder";
+import { MessageBuilder } from "../composers/MessageBuilder";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 import { MessageContext } from "./MessageContext";

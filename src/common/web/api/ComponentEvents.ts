@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 
-import { EventComposer } from "../core/messaging/builders/EventComposer";
-import { MessageBuilder } from "../core/messaging/builders/MessageBuilder";
+import { EventComposer } from "../core/messaging/composers/EventComposer";
+import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { Event } from "../core/messaging/Event";
 import { Message } from "../core/messaging/Message";
 import { UnitID } from "../utils/UnitID";

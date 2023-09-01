@@ -3,7 +3,7 @@ from ..core.messaging import (
     CommandReply,
     Message,
 )
-from ..core.messaging.builders import (
+from ..core.messaging.composers import (
     MessageBuilder,
     CommandComposer,
     CommandReplyComposer,

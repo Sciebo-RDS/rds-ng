@@ -2,7 +2,7 @@ import dataclasses
 
 from .version import API_PROTOCOL_VERSION
 from ..core.messaging import Event, Message
-from ..core.messaging.builders import MessageBuilder, EventComposer
+from ..core.messaging.composers import MessageBuilder, EventComposer
 from ..utils import UnitID
 
 

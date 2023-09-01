@@ -1,7 +1,7 @@
 import { WebComponentData } from "../../../component/WebComponentData";
 import { type Constructable } from "../../../utils/Types";
 import logging from "../../logging/Logging";
-import { MessageBuilder } from "../builders/MessageBuilder";
+import { MessageBuilder } from "../composers/MessageBuilder";
 import { Command } from "../Command";
 import { CommandReply } from "../CommandReply";
 import { Event } from "../Event";

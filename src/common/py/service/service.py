@@ -2,7 +2,7 @@ import typing
 
 from .service_context import ServiceContextType, ServiceContext
 from ..core.messaging import Message, MessageType, MessageBusProtocol
-from ..core.messaging.builders import MessageBuilder
+from ..core.messaging.composers import MessageBuilder
 from ..core.messaging.handlers import MessageHandler, MessageService
 from ..utils import UnitID
 
