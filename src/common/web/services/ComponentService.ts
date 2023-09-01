@@ -29,7 +29,9 @@ export default function (comp: WebComponent): Service {
 
             // Our connection to the server is now ready to be used
             nwStore.connectionState = ConnectionState.Ready;
+
             nwStore.serverInfo = msg.componentInformation();
+            nwStore.serverChannel = Channel.direct(msg.comp_id);
         });
     });
 }

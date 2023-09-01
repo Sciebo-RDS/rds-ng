@@ -41,7 +41,7 @@ export class MessageBuilder {
      *
      * @returns - The newly created command.
      *
-     * @throws - If an unknown value was provided in ``values`.
+     * @throws Error - If an unknown value was provided in ``values`.
      */
     public buildCommand<MsgType extends Command>(cmdType: ConstructableMessage<MsgType>,
                                                  values: Record<string, any> = {}, chain: Message | null = null): CommandComposer<MsgType> {
@@ -61,7 +61,7 @@ export class MessageBuilder {
      *
      * @returns - The newly created command reply.
      *
-     * @throws - If an unknown value was provided in ``values`.
+     * @throws Error - If an unknown value was provided in ``values`.
      */
     public buildCommandReply<MsgType extends CommandReply>(replyType: ConstructableMessage<MsgType>,
                                                            command: Command, success: boolean = true, message: string = "",
@@ -84,7 +84,7 @@ export class MessageBuilder {
      *
      * @returns - The newly created event.
      *
-     * @throws - If an unknown value was provided in ``values`.
+     * @throws Error - If an unknown value was provided in ``values`.
      */
     public buildEvent<MsgType extends Event>(eventType: ConstructableMessage<MsgType>,
                                              values: Record<string, any> = {}, chain: Message | null = null): EventComposer<MsgType> {

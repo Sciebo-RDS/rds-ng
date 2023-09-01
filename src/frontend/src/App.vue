@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { PingCommand } from "@common/api/NetworkCommands";
 import { WebComponent } from "@common/component/WebComponent";
-import { Channel } from "@common/core/messaging/Channel";
 import { ConnectionState, networkStore } from "@common/stores/NetworkStore";
 import Button from "primevue/button"
 import { onMounted, watch } from "vue"
@@ -15,7 +14,7 @@ watch(() => nwStore.connectionState, (state, prevState) => {
 });
 
 watch(() => nwStore.serverInfo, (info, prevInfo) => {
-    console.log(info.id.toString());
+    console.log(info);
 });
 
 onMounted(() => {
@@ -23,7 +22,8 @@ onMounted(() => {
 });
 
 function clickButton(event: any): void {
-    svc.messageBuilder.buildCommand(PingCommand).emit(Channel.direct("infra/gate/default"));
+    svc.messageBuilder.buildCommand(PingCommand).emit(nwStore.serverChannel);
+    nwStore.reset();
 }
 </script>
 
