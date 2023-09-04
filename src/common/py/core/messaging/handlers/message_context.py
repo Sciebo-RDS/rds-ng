@@ -1,5 +1,6 @@
 import typing
 
+from common.py.utils.config import Configuration
 from ..composers import MessageBuilder
 from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
@@ -24,18 +25,22 @@ class MessageContext:
         self,
         msg_meta: MessageMetaInformation,
         msg_builder: MessageBuilder,
+        *,
         logger: LoggerProtocol,
+        config: Configuration,
     ):
         """
         Args:
             msg_builder: A ``MessageBuilder`` to be assigned to this context.
             msg_meta: The meta information of the message.
             logger: A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
+            config: The global component configuration.
         """
         self._msg_meta = msg_meta
         self._msg_builder = msg_builder
 
         self._logger = logger
+        self._config = config
 
         self._requires_reply = False
 
@@ -109,6 +114,13 @@ class MessageContext:
         The logger to be used within this context.
         """
         return self._logger
+
+    @property
+    def config(self) -> Configuration:
+        """
+        The global component configuration.
+        """
+        return self._config
 
 
 MessageContextType = typing.TypeVar(

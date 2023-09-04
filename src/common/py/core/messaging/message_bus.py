@@ -182,7 +182,9 @@ class MessageBus:
     ) -> MessageContextType:
         logger_proxy = LoggerProxy(default_logger())
         logger_proxy.add_param("trace", str(msg.trace))
-        return svc.create_context(msg_meta, logger_proxy, config=self._comp_data.config)
+        return svc.create_context(
+            msg_meta, logger=logger_proxy, config=self._comp_data.config
+        )
 
     @property
     def network(self) -> NetworkEngine:

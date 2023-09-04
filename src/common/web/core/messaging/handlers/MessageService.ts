@@ -1,3 +1,4 @@
+import { Configuration } from "../../../utils/config/Configuration";
 import { type Constructable } from "../../../utils/Types";
 import { UnitID } from "../../../utils/UnitID";
 import { LoggerProxy } from "../../logging/LoggerProxy";
@@ -38,12 +39,12 @@ export class MessageService<CtxType extends MessageContext = MessageContext> {
      *
      * @param msgMeta - The meta information of the message.
      * @param logger - The logger to be used within the new context.
-     * @param args - Any additional parameters.
+     * @param config - The global component configuration.
      *
      * @returns - The newly created message context.
      */
-    public createContext(msgMeta: MessageMetaInformation, logger: LoggerProxy, ...args: any[]): MessageContext {
-        return new this._contextType(msgMeta, this.createMessageBuilder(), logger, ...args);
+    public createContext(msgMeta: MessageMetaInformation, logger: LoggerProxy, config: Configuration): MessageContext {
+        return new this._contextType(msgMeta, this.createMessageBuilder(), logger, config);
     }
 
     /**

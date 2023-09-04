@@ -5,6 +5,7 @@ from ..composers import MessageBuilder
 from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
 from ....utils import UnitID
+from ....utils.config import Configuration
 
 
 class MessageService:
@@ -20,7 +21,7 @@ class MessageService:
         comp_id: UnitID,
         *,
         message_bus: MessageBusProtocol,
-        context_type: type[MessageContextType] = MessageContext
+        context_type: type[MessageContextType] = MessageContext,
     ):
         """
         Args:
@@ -35,7 +36,11 @@ class MessageService:
         self._context_type = context_type
 
     def create_context(
-        self, msg_meta: MessageMetaInformation, logger: LoggerProtocol, **kwargs
+        self,
+        msg_meta: MessageMetaInformation,
+        *,
+        logger: LoggerProtocol,
+        config: Configuration,
     ) -> MessageContext:
         """
         Creates a new service context.
@@ -43,13 +48,16 @@ class MessageService:
         Args:
             msg_meta: The meta information of the message.
             logger: The logger to be used within the new context.
-            **kwargs: Any additional parameters.
+            config: The global component configuration.
 
         Returns:
             The newly created message context.
         """
         return self._context_type(
-            msg_meta, self.create_message_builder(), logger, **kwargs
+            msg_meta,
+            self.create_message_builder(),
+            logger=logger,
+            config=config,
         )
 
     def create_message_builder(self) -> MessageBuilder:

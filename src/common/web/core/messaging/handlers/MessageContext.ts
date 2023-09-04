@@ -1,3 +1,4 @@
+import { Configuration } from "../../../utils/config/Configuration";
 import { LoggerProxy } from "../../logging/LoggerProxy";
 import { MessageBuilder } from "../composers/MessageBuilder";
 import { CommandReply } from "../CommandReply";
@@ -17,23 +18,26 @@ import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaIn
  * details.
  */
 export class MessageContext {
-    private readonly _msgMeta: MessageMetaInformation;
-    private readonly _msgBuilder: MessageBuilder;
+    protected readonly _msgMeta: MessageMetaInformation;
+    protected readonly _msgBuilder: MessageBuilder;
 
-    private readonly _logger: LoggerProxy;
+    protected readonly _logger: LoggerProxy;
+    protected readonly _config: Configuration;
 
-    private _requiresReply: boolean = false;
+    protected _requiresReply: boolean = false;
 
     /**
      * @param msgMeta - The meta information of the message.
      * @param msgBuilder - A ``MessageBuilder`` to be assigned to this context.
      * @param logger - A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
+     * @param config - The global component configuration.
      */
-    public constructor(msgMeta: MessageMetaInformation, msgBuilder: MessageBuilder, logger: LoggerProxy) {
+    public constructor(msgMeta: MessageMetaInformation, msgBuilder: MessageBuilder, logger: LoggerProxy, config: Configuration) {
         this._msgMeta = msgMeta;
         this._msgBuilder = msgBuilder;
 
         this._logger = logger;
+        this._config = config;
     }
 
     /**
@@ -100,5 +104,12 @@ export class MessageContext {
      */
     public get logger(): LoggerProxy {
         return this._logger;
+    }
+
+    /**
+     * The global component configuration.
+     */
+    public get config(): Configuration {
+        return this._config;
     }
 }
