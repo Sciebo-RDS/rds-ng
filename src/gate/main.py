@@ -12,6 +12,10 @@ def run_gate(comp: BackendComponent) -> None:
     from .settings import BackendSettingIDs
 
     try:
+        from .filters.gate_filter import GateFilter
+
+        comp.core.message_bus.network.filters.install(GateFilter(comp.data.comp_id))
+
         mount_backend(comp.data.config.value(BackendSettingIDs.DRIVER), comp)
     except Exception as exc:  # pylint: disable=broad-exception-caught
         from common.py.core.logging import error

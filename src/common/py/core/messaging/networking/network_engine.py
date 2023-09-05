@@ -2,6 +2,7 @@ import dataclasses
 import typing
 
 from .client import Client
+from .network_filters import NetworkFilters
 from .network_router import NetworkRouter
 from .server import Server
 from .. import Message, MessageBusProtocol, MessageType, Command, CommandReply, Event
@@ -46,6 +47,7 @@ class NetworkEngine:
             if self._comp_data.role.networking_aspects.has_server
             else None
         )
+
         self._meta_information_types: typing.Dict[
             type[MessageType], type[MessageMetaInformationType]
         ] = {
@@ -53,11 +55,14 @@ class NetworkEngine:
             CommandReply: CommandReplyMetaInformation,
             Event: EventMetaInformation,
         }
+
         self._router = NetworkRouter(
             self._comp_data.comp_id,
             has_client=self.has_client,
             has_server=self.has_server,
         )
+
+        self._filters = NetworkFilters()
 
     def _create_client(self) -> Client:
         from ..composers import MessageBuilder
@@ -145,19 +150,20 @@ class NetworkEngine:
                 f"Received message: {msg}", scope="network", entrypoint=entrypoint.name
             )
 
-            if self._router.check_local_routing(
-                NetworkRouter.Direction.IN, msg, msg_meta
-            ):
-                self._message_bus.dispatch(msg, msg_meta)
+            if not self._filters.filter_incoming_message(msg, msg_meta):
+                if self._router.check_local_routing(
+                    NetworkRouter.Direction.IN, msg, msg_meta
+                ):
+                    self._message_bus.dispatch(msg, msg_meta)
 
-            # Perform rerouting
-            msg = dataclasses.replace(msg, sender=self._comp_data.comp_id)
-            self._route_message(
-                msg,
-                msg_meta,
-                NetworkRouter.Direction.IN,
-                skip_components=[self._comp_data.comp_id, msg.sender],
-            )
+                # Perform rerouting
+                msg = dataclasses.replace(msg, sender=self._comp_data.comp_id)
+                self._route_message(
+                    msg,
+                    msg_meta,
+                    NetworkRouter.Direction.IN,
+                    skip_components=[self._comp_data.comp_id, msg.sender],
+                )
 
     def _unpack_message(self, msg_name: str, data: str) -> Message:
         # Look up the actual message via its name
@@ -181,19 +187,31 @@ class NetworkEngine:
         direction: NetworkRouter.Direction,
         *,
         skip_components: typing.List[UnitID] | None = None,
-    ):
+    ) -> None:
         send_to_client = True
 
         if self._router.check_server_routing(direction, msg, msg_meta):
-            send_to_client = (
-                self._server.send_message(msg, skip_components=skip_components)
-                == Server.SendTarget.SPREAD
-            )
+            if (
+                direction != NetworkRouter.Direction.OUT
+                or not self._filters.filter_outgoing_message(
+                    msg, msg_meta, MessageMetaInformation.Entrypoint.SERVER
+                )
+            ):
+                send_to_client = (
+                    self._server.send_message(msg, skip_components=skip_components)
+                    == Server.SendTarget.SPREAD
+                )
 
         if send_to_client and self._router.check_client_routing(
             direction, msg, msg_meta
         ):
-            self._client.send_message(msg)
+            if (
+                direction != NetworkRouter.Direction.OUT
+                or not self._filters.filter_outgoing_message(
+                    msg, msg_meta, MessageMetaInformation.Entrypoint.CLIENT
+                )
+            ):
+                self._client.send_message(msg)
 
     def _create_message_meta_information(
         self, msg: Message, entrypoint: MessageMetaInformation.Entrypoint, **kwargs
@@ -236,3 +254,10 @@ class NetworkEngine:
         The client instance.
         """
         return self._client
+
+    @property
+    def filters(self) -> NetworkFilters:
+        """
+        The network filters.
+        """
+        return self._filters

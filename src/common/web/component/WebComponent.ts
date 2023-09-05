@@ -131,6 +131,13 @@ export class WebComponent {
     }
 
     /**
+     * The main ``Core`` instance.
+     */
+    public get core(): Core {
+        return this._core;
+    }
+
+    /**
      * A data helper object that stores useful component data and information.
      */
     public get data(): WebComponentData {

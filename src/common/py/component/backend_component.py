@@ -7,6 +7,7 @@ from ..utils import UnitID
 from ..utils.config import Configuration
 
 if typing.TYPE_CHECKING:
+    from ..core import Core
     from ..services import ServiceContextType, Service
 
 
@@ -169,11 +170,11 @@ class BackendComponent:
         return comp_id
 
     @property
-    def config(self) -> Configuration:
+    def core(self) -> "Core":
         """
-        The configuration used by the component.
+        The main ``Core`` instance.
         """
-        return self._data.config
+        return self._core
 
     @property
     def data(self) -> BackendComponentData:
