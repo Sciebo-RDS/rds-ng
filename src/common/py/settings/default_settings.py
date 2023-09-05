@@ -1,8 +1,5 @@
 import typing
 
-from .component_setting_ids import ComponentSettingIDs
-from .general_setting_ids import GeneralSettingIDs
-from .network_setting_ids import NetworkServerSettingIDs, NetworkClientSettingIDs
 from ..utils.config import SettingID
 
 
@@ -14,6 +11,10 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
     Returns:
         A dictionary mapping the setting identifiers to their default values.
     """
+    from .component_setting_ids import ComponentSettingIDs
+    from .general_setting_ids import GeneralSettingIDs
+    from .network_setting_ids import NetworkServerSettingIDs, NetworkClientSettingIDs
+
     return {
         GeneralSettingIDs.DEBUG: False,
         ComponentSettingIDs.INSTANCE: "default",

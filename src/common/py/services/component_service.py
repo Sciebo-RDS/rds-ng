@@ -11,7 +11,6 @@ def create_component_service(comp: BackendComponent) -> Service:
 
     Returns:
         The newly created service.
-
     """
     from ..core.messaging import Channel
     from ..api import ComponentInformationEvent

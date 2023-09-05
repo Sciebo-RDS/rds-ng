@@ -81,9 +81,14 @@ class BackendComponent:
             self._core.message_bus.network.server, self._core.flask
         )
 
-    def run(self) -> None:
+    def run(
+        self, runner: typing.Callable[["BackendComponent"], None] | None = None
+    ) -> None:
         """
         Starts the component's execution cycles.
+
+        Args:
+            runner: An optional callback used to run the actual component.
 
         Notes:
             It is mandatory to call this method after creating and setting up a component.
@@ -99,6 +104,9 @@ class BackendComponent:
         create_network_service(self)
 
         self._core.run()
+
+        if runner is not None:
+            runner(self)
 
     def create_service(
         self,
