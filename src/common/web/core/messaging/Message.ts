@@ -114,7 +114,7 @@ export abstract class Message {
                 }
             };
 
-            MessageTypesCatalog.registerType(name, newClass);
+            MessageTypesCatalog.registerItem(name, newClass);
 
             return newClass;
         };

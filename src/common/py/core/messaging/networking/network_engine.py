@@ -163,7 +163,7 @@ class NetworkEngine:
         # Look up the actual message via its name
         from .. import MessageTypesCatalog
 
-        msg_type = MessageTypesCatalog.find_type(msg_name)
+        msg_type = MessageTypesCatalog.find_item(msg_name)
         if msg_type is None:
             raise RuntimeError(f"The message type '{msg_name}' is unknown")
 

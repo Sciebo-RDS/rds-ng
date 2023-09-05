@@ -88,7 +88,7 @@ class Message(abc.ABC):
 
             from .message_types_catalog import MessageTypesCatalog
 
-            MessageTypesCatalog.register_type(name, cls)
+            MessageTypesCatalog.register_item(name, cls)
 
             return cls
 
