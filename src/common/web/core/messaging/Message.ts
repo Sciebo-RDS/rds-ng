@@ -1,8 +1,8 @@
 import { plainToInstance, Type } from "class-transformer";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
+import { Constructable } from "../../utils/Types";
 
-import { type Constructable } from "../../utils/Types";
 import { UnitID } from "../../utils/UnitID";
 import { Channel } from "./Channel";
 import { MessageTypesCatalog } from "./MessageTypesCatalog";
@@ -74,7 +74,7 @@ export abstract class Message {
      *
      * @returns - The created message.
      */
-    public static convertFromJSON(msgType: Constructable, data: string): Message {
+    public static convertFromJSON(msgType: ConstructableMessage, data: string): Message {
         let objData = JSON.parse(data);
         return plainToInstance(msgType, objData) as Message;
     }
