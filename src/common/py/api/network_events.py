@@ -69,7 +69,7 @@ class ServerConnectedEvent(Event):
         client_id: The internal client ID.
     """
 
-    comp_id: UnitID = dataclasses.field(default_factory=UnitID)
+    comp_id: UnitID = dataclasses.field(default_factory=lambda: UnitID("", ""))
     client_id: str = ""
 
     @staticmethod
@@ -97,7 +97,7 @@ class ServerDisconnectedEvent(Event):
         client_id: The internal client ID.
     """
 
-    comp_id: UnitID = dataclasses.field(default_factory=UnitID)
+    comp_id: UnitID = dataclasses.field(default_factory=lambda: UnitID("", ""))
     client_id: str = ""
 
     @staticmethod

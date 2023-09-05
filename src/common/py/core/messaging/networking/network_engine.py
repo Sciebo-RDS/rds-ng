@@ -168,7 +168,7 @@ class NetworkEngine:
             raise RuntimeError(f"The message type '{msg_name}' is unknown")
 
         # Unpack the message into its actual type
-        msg = typing.cast(Message, msg_type.from_json(data))
+        msg = typing.cast(Message, msg_type.schema().loads(data))
         self._router.verify_message(NetworkRouter.Direction.IN, msg)
 
         msg.hops.append(self._comp_data.comp_id)

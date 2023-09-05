@@ -1,8 +1,10 @@
+import typing
 from dataclasses import dataclass
 
-import typing
+from dataclasses_json import dataclass_json
 
 
+@dataclass_json
 @dataclass(frozen=True)
 class UnitID:
     """

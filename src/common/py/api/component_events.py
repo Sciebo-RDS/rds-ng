@@ -29,7 +29,7 @@ class ComponentInformationEvent(Event):
         api_protocol: The API protocol version.
     """
 
-    comp_id: UnitID = dataclasses.field(default_factory=UnitID)
+    comp_id: UnitID = dataclasses.field(default_factory=lambda: UnitID("", ""))
 
     comp_name: str = ""
     comp_version: str = ""

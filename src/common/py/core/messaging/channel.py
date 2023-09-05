@@ -1,9 +1,12 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from dataclasses_json import dataclass_json
+
 from ...utils import UnitID
 
 
+@dataclass_json
 @dataclass(frozen=True)
 class Channel:
     """
