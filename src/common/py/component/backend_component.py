@@ -17,9 +17,6 @@ class BackendComponent:
 
     Components are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
     about the component itself and the entire project.
-
-    Instances of this class are never created directly. Instead, always use the ``create`` method which performs all necessary initialization
-    tasks.
     """
 
     _instance: typing.Self | None = None
@@ -30,7 +27,7 @@ class BackendComponent:
         role: ComponentRole,
         *,
         module_name: str,
-        config_file: str,
+        config_file: str = "./.config/config.toml",
     ):
         """
         Args:
@@ -162,13 +159,6 @@ class BackendComponent:
         return comp_id
 
     @property
-    def core(self) -> "Core":
-        """
-        The main ``Core`` instance.
-        """
-        return self._core
-
-    @property
     def data(self) -> BackendComponentData:
         """
         A data helper object that stores useful component data and information.
@@ -186,34 +176,6 @@ class BackendComponent:
                     "version": str(self._data.version),
                 }
             ),
-        )
-
-    @staticmethod
-    def create(
-        comp_id: UnitID,
-        role: ComponentRole,
-        *,
-        module_name: str,
-        config_file: str = "./.config/config.toml",
-    ) -> "BackendComponent":
-        """
-        Creates a new backend component.
-
-        If an instance already exists, an error is thrown.
-        Args:
-            comp_id: The identifier of this component.
-            role: The role of this component.
-            module_name: The component module name; simply pass ``__name__`` here.
-            config_file: The configuration file to load.
-
-        Returns:
-            The newly created component.
-
-        Raises:
-            RuntimeError: If a component instance has already been created.
-        """
-        return BackendComponent(
-            comp_id, role, module_name=module_name, config_file=config_file
         )
 
     @staticmethod

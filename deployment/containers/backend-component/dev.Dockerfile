@@ -4,7 +4,7 @@ FROM    rds-ng/py-base:develop
 
 # Argument definitions; note that COMPONENT_NAME MUST always be specified externally!
 ARG     COMPONENT_NAME
-ARG     COMPONENT_FILE="component"
+ARG     COMPONENT_FILE="main"
 ARG     COMPONENT_APP="app"
 ARG     COMPONENT_PORT=6969
 ARG     COMPONENT_THREADS=9

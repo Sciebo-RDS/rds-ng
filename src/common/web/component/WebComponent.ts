@@ -28,20 +28,17 @@ import "../api/API";
  *
  * Web applications are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
  * about the application itself and the entire project.
- *
- * Instances of this class are never created directly. Instead, always use the ``create`` method which performs all necessary initialization
- * tasks.
  */
 export class WebComponent {
     private static _instance: WebComponent | null = null;
     private static readonly _injectionKey = Symbol();
 
-    private readonly _data: WebComponentData;
+    protected readonly _data: WebComponentData;
 
-    private readonly _core: Core;
-    private readonly _vueApp: App;
+    protected readonly _core: Core;
+    protected readonly _vueApp: App;
 
-    private constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
+    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
         if (WebComponent._instance) {
             throw new Error("A component instance has already been created")
         }
@@ -131,13 +128,6 @@ export class WebComponent {
     }
 
     /**
-     * The main ``Core`` instance.
-     */
-    public get core(): Core {
-        return this._core;
-    }
-
-    /**
      * A data helper object that stores useful component data and information.
      */
     public get data(): WebComponentData {
@@ -149,22 +139,6 @@ export class WebComponent {
      */
     public get vue(): App {
         return this._vueApp;
-    }
-
-    /**
-     * Creates a new web component.
-     *
-     * If an instance already exists, an error is thrown.
-     *
-     * @param env - The global environment variables.
-     * @param compID - The identifier of this component.
-     * @param appRoot - The Vue root component.
-     * @param appElement - The HTML element ID used for mounting the root component.
-     *
-     * @returns - The newly created component.
-     */
-    public static create(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): WebComponent {
-        return new WebComponent(env, compID, appRoot, appElement);
     }
 
     /**
