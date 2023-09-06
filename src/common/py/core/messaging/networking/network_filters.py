@@ -24,37 +24,43 @@ class NetworkFilters:
             self._filters.append(fltr)
 
     def filter_incoming_message(
-        self, msg: Message, msg_meta: MessageMetaInformation
+        self,
+        connection: NetworkFilter.ConnectionType,
+        msg: Message,
+        msg_meta: MessageMetaInformation,
     ) -> bool:
         """
         Filters incoming messages.
 
         Args:
+            connection: The connection the message came through.
             msg: The incoming message.
             msg_meta: The message meta information.
 
         Returns:
             Whether the message should be filtered out.
         """
-        return any(f.filter_incoming_message(msg, msg_meta) for f in self._filters)
+        return any(
+            f.filter_incoming_message(connection, msg, msg_meta) for f in self._filters
+        )
 
     def filter_outgoing_message(
         self,
+        connection: NetworkFilter.ConnectionType,
         msg: Message,
         msg_meta: MessageMetaInformation,
-        connection: MessageMetaInformation.Entrypoint,
     ) -> bool:
         """
         Filters outgoing messages.
 
         Args:
+            connection: The connection the message is sent through.
             msg: The outgoing message.
             msg_meta: The message meta information.
-            connection: The connection type (server/client) over which the message is about to be sent.
 
         Returns:
             Whether the message should pass.
         """
         return any(
-            f.filter_outgoing_message(msg, msg_meta, connection) for f in self._filters
+            f.filter_outgoing_message(connection, msg, msg_meta) for f in self._filters
         )

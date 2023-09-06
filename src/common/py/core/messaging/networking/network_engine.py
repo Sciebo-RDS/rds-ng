@@ -2,6 +2,7 @@ import dataclasses
 import typing
 
 from .client import Client
+from .network_filter import NetworkFilter
 from .network_filters import NetworkFilters
 from .network_router import NetworkRouter
 from .server import Server
@@ -133,7 +134,17 @@ class NetworkEngine:
                 msg_meta,
                 NetworkRouter.Direction.OUT,
                 skip_components=[self._comp_data.comp_id],
+                apply_filter=True,
             )
+
+    def install_filter(self, fltr: NetworkFilter) -> None:
+        """
+        Installs a new network message filter.
+
+        Args:
+            fltr: The filter to add.
+        """
+        self._filters.install(fltr)
 
     def _handle_received_message(
         self, entrypoint: MessageMetaInformation.Entrypoint, msg_name: str, data: str
@@ -150,7 +161,13 @@ class NetworkEngine:
                 f"Received message: {msg}", scope="network", entrypoint=entrypoint.name
             )
 
-            if not self._filters.filter_incoming_message(msg, msg_meta):
+            con_type = (
+                NetworkFilter.ConnectionType.SERVER
+                if entrypoint == MessageMetaInformation.Entrypoint.SERVER
+                else NetworkFilter.ConnectionType.CLIENT
+            )
+
+            if not self._filters.filter_incoming_message(con_type, msg, msg_meta):
                 if self._router.check_local_routing(
                     NetworkRouter.Direction.IN, msg, msg_meta
                 ):
@@ -187,15 +204,13 @@ class NetworkEngine:
         direction: NetworkRouter.Direction,
         *,
         skip_components: typing.List[UnitID] | None = None,
+        apply_filter: bool = False,
     ) -> None:
         send_to_client = True
 
         if self._router.check_server_routing(direction, msg, msg_meta):
-            if (
-                direction != NetworkRouter.Direction.OUT
-                or not self._filters.filter_outgoing_message(
-                    msg, msg_meta, MessageMetaInformation.Entrypoint.SERVER
-                )
+            if not apply_filter or not self._filters.filter_outgoing_message(
+                NetworkFilter.ConnectionType.SERVER, msg, msg_meta
             ):
                 send_to_client = (
                     self._server.send_message(msg, skip_components=skip_components)
@@ -205,11 +220,8 @@ class NetworkEngine:
         if send_to_client and self._router.check_client_routing(
             direction, msg, msg_meta
         ):
-            if (
-                direction != NetworkRouter.Direction.OUT
-                or not self._filters.filter_outgoing_message(
-                    msg, msg_meta, MessageMetaInformation.Entrypoint.CLIENT
-                )
+            if not apply_filter or not self._filters.filter_outgoing_message(
+                NetworkFilter.ConnectionType.CLIENT, msg, msg_meta
             ):
                 self._client.send_message(msg)
 
@@ -254,10 +266,3 @@ class NetworkEngine:
         The client instance.
         """
         return self._client
-
-    @property
-    def filters(self) -> NetworkFilters:
-        """
-        The network filters.
-        """
-        return self._filters
