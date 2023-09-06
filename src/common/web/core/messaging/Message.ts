@@ -1,7 +1,7 @@
 import { plainToInstance, Type } from "class-transformer";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { Constructable } from "../../utils/Types";
+import { type Constructable } from "../../utils/Types";
 
 import { UnitID } from "../../utils/UnitID";
 import { Channel } from "./Channel";

@@ -38,6 +38,12 @@ export class WebComponent {
     protected readonly _core: Core;
     protected readonly _vueApp: App;
 
+    /**
+     * @param env - The global environment variables.
+     * @param compID - The identifier of this component.
+     * @param appRoot - The Vue root component.
+     * @param appElement - The HTML element ID used for mounting the root component.
+     */
     public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
         if (WebComponent._instance) {
             throw new Error("A component instance has already been created")

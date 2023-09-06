@@ -28,39 +28,39 @@ class GateComponent(BackendComponent):
     def run(self) -> None:
         super().run()
 
-        # Install a network filter to ensure that only properly directed messages pass the gate
+        self._install_network_filters()
+        self._mount_backend()
+
+    def _add_gate_settings(self) -> None:
+        from gate.settings.gate_settings import get_gate_settings
+
+        self.data.config.add_defaults(get_gate_settings())
+
+    def _install_network_filters(self) -> None:
         from ..networking.gate_filter import GateFilter
 
-        self._core.message_bus.network.install_filter(GateFilter(self.data.comp_id))
+        fltr = GateFilter(self.data.comp_id)
+        self._core.message_bus.network.install_filter(fltr)
 
-        # Mount the backend using the configured driver
+    def _mount_backend(self) -> None:
         from ..settings import BackendSettingIDs
 
         driver = self.data.config.value(BackendSettingIDs.DRIVER)
+
+        debug(f"Mounting backend driver '{driver}'...", scope="gate")
+
         try:
-            self._backend = self._mount_backend(driver)
+            from ..backends import BackendsCatalog
+
+            creator = BackendsCatalog.find_item(driver)
+            if creator is None:
+                raise RuntimeError(f"The backend driver {driver} couldn't be found")
+
+            self._backend = creator(self)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             error(
                 f"Unable to mount the backend: {str(exc)}",
                 driver=driver,
             )
 
-            from .exit_codes import EXIT_MOUNT_BACKEND_FAILED
-
-            exit(EXIT_MOUNT_BACKEND_FAILED)
-
-    def _add_gate_settings(self):
-        from gate.settings.gate_settings import get_gate_settings
-
-        self.data.config.add_defaults(get_gate_settings())
-
-    def _mount_backend(self, driver: str) -> Service:
-        debug(f"Mounting backend driver '{driver}'...", scope="gate")
-
-        from ..backends import BackendsCatalog
-
-        creator = BackendsCatalog.find_item(driver)
-        if creator is None:
-            raise RuntimeError(f"The backend driver {driver} couldn't be found")
-
-        return creator(self)
+            raise exc

@@ -142,7 +142,7 @@ export class MessageBus {
             if (localRouting) {
                 let msgDispatched = false;
                 for (const svc of this._services) {
-                    msgDispatched |= this.dispatchToService(dispatcher, msg, msgMeta, svc);
+                    msgDispatched ||= this.dispatchToService(dispatcher, msg, msgMeta, svc);
                 }
 
                 if (!msgDispatched) {
