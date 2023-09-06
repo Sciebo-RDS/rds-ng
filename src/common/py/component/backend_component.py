@@ -30,7 +30,7 @@ class BackendComponent:
         role: ComponentRole,
         *,
         module_name: str,
-        config_file: str = "./config/config.toml",
+        config_file: str,
     ):
         """
         Args:
@@ -194,7 +194,7 @@ class BackendComponent:
         role: ComponentRole,
         *,
         module_name: str,
-        config_file: str = "./config/config.toml",
+        config_file: str = "./.config/config.toml",
     ) -> "BackendComponent":
         """
         Creates a new backend component.
