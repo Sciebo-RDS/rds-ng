@@ -4,6 +4,7 @@ import typing
 import socketio
 
 from .. import Message
+from ..composers import MessageBuilder
 from ...logging import info, warning, error, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
@@ -16,14 +17,19 @@ class Client(socketio.Client):
     The client connection, based on ``socketio.Client``.
     """
 
-    def __init__(self, comp_id: UnitID, config: Configuration):
+    def __init__(
+        self, comp_id: UnitID, config: Configuration, message_builder: MessageBuilder
+    ):
         """
         Args:
             comp_id: The component identifier.
             config: The global configuration.
+            message_builder: A message builder instance.
         """
         self._comp_id = comp_id
         self._config = config
+
+        self._message_builder = message_builder
 
         from ....settings import NetworkClientSettingIDs
 
@@ -103,14 +109,31 @@ class Client(socketio.Client):
 
     def _on_connect(self) -> None:
         with self._lock:
+            from .. import Channel
+            from ....api import ClientConnectedEvent
+
+            ClientConnectedEvent.build(self._message_builder).emit(Channel.local())
+
             info("Connected to server", scope="client")
 
     def _on_connect_error(self, reason: typing.Any) -> None:
         with self._lock:
+            from .. import Channel
+            from ....api import ClientConnectionErrorEvent
+
+            ClientConnectionErrorEvent.build(
+                self._message_builder, reason=str(reason)
+            ).emit(Channel.local())
+
             warning("Unable to connect to server", scope="client", reason=str(reason))
 
     def _on_disconnect(self) -> None:
         with self._lock:
+            from .. import Channel
+            from ....api import ClientDisconnectedEvent
+
+            ClientDisconnectedEvent.build(self._message_builder).emit(Channel.local())
+
             info("Disconnected from server", scope="client")
 
     def _on_message(self, msg_name: str, data: str) -> None:

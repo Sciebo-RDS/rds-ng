@@ -1,9 +1,11 @@
+import { Configuration } from "../../../utils/config/Configuration";
 import { type Constructable } from "../../../utils/Types";
 import { UnitID } from "../../../utils/UnitID";
 import { LoggerProxy } from "../../logging/LoggerProxy";
+import { MessageBuilder } from "../composers/MessageBuilder";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
+import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 import { MessageContext } from "./MessageContext";
-import { MessageEmitter } from "./MessageEmitter";
 import { MessageHandlers } from "./MessageHandlers";
 
 /**
@@ -35,22 +37,23 @@ export class MessageService<CtxType extends MessageContext = MessageContext> {
     /**
      * Creates a new service context.
      *
+     * @param msgMeta - The meta information of the message.
      * @param logger - The logger to be used within the new context.
-     * @param args - Any additional parameters.
+     * @param config - The global component configuration.
      *
      * @returns - The newly created message context.
      */
-    public createContext(logger: LoggerProxy, ...args: any[]): MessageContext {
-        return new this._contextType(this.createMessageEmitter(), logger, ...args);
+    public createContext(msgMeta: MessageMetaInformation, logger: LoggerProxy, config: Configuration): MessageContext {
+        return new this._contextType(msgMeta, this.createMessageBuilder(), logger, config);
     }
 
     /**
-     * Creates a new message emitter.
+     * Creates a new message builder.
      *
-     * @returns - The newly created message emitter.
+     * @returns - The newly created message builder.
      */
-    public createMessageEmitter(): MessageEmitter {
-        return new MessageEmitter(this._compID, this._messageBus);
+    public createMessageBuilder(): MessageBuilder {
+        return new MessageBuilder(this._compID, this._messageBus);
     }
 
     /**

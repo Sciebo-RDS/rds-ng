@@ -1,6 +1,8 @@
-import { MessageEmitter } from "./MessageEmitter";
+import { Configuration } from "../../../utils/config/Configuration";
 import { LoggerProxy } from "../../logging/LoggerProxy";
+import { MessageBuilder } from "../composers/MessageBuilder";
 import { CommandReply } from "../CommandReply";
+import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaInformation";
 
 /**
  * An execution context for messages dispatched by the message bus.
@@ -16,20 +18,26 @@ import { CommandReply } from "../CommandReply";
  * details.
  */
 export class MessageContext {
-    private readonly _msgEmitter: MessageEmitter;
+    protected readonly _msgMeta: MessageMetaInformation;
+    protected readonly _msgBuilder: MessageBuilder;
 
-    private readonly _logger: LoggerProxy;
+    protected readonly _logger: LoggerProxy;
+    protected readonly _config: Configuration;
 
-    private _requiresReply: boolean = false;
+    protected _requiresReply: boolean = false;
 
     /**
-     * @param msgEmitter - A ``MessageEmitter`` to be assigned to this context.
+     * @param msgMeta - The meta information of the message.
+     * @param msgBuilder - A ``MessageBuilder`` to be assigned to this context.
      * @param logger - A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
+     * @param config - The global component configuration.
      */
-    public constructor(msgEmitter: MessageEmitter, logger: LoggerProxy) {
-        this._msgEmitter = msgEmitter;
+    public constructor(msgMeta: MessageMetaInformation, msgBuilder: MessageBuilder, logger: LoggerProxy, config: Configuration) {
+        this._msgMeta = msgMeta;
+        this._msgBuilder = msgBuilder;
 
         this._logger = logger;
+        this._config = config;
     }
 
     /**
@@ -58,16 +66,37 @@ export class MessageContext {
     }
 
     private checkCommandReply(): void {
-        if (this._requiresReply && this._msgEmitter.getMessageCount(CommandReply.Category) == 0) {
-            this._logger.warning("A message context required a command reply, but none was sent", "bus");
+        if (this._requiresReply && this._msgBuilder.getMessageCount(CommandReply.Category) != 1) {
+            this._logger.warning("A message context required exactly one command reply, but either none or more than one was sent", "bus");
         }
     }
 
     /**
-     * The message emitter to be used within this context.
+     * Whether the message entered locally.
      */
-    public get messageEmitter(): MessageEmitter {
-        return this._msgEmitter;
+    public get isEntrypointLocal(): boolean {
+        return this._msgMeta.entrypoint == MessageEntrypoint.Local;
+    }
+
+    /**
+     * Whether the message entered through the server.
+     */
+    public get isEntrypointServer(): boolean {
+        return this._msgMeta.entrypoint == MessageEntrypoint.Server;
+    }
+
+    /**
+     * Whether the message entered through the client.
+     */
+    public get isEntrypointClient(): boolean {
+        return this._msgMeta.entrypoint == MessageEntrypoint.Client;
+    }
+
+    /**
+     * The message builder to be used within this context.
+     */
+    public get messageBuilder(): MessageBuilder {
+        return this._msgBuilder;
     }
 
     /**
@@ -75,5 +104,12 @@ export class MessageContext {
      */
     public get logger(): LoggerProxy {
         return this._logger;
+    }
+
+    /**
+     * The global component configuration.
+     */
+    public get config(): Configuration {
+        return this._config;
     }
 }

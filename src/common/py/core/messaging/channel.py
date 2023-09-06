@@ -1,9 +1,12 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from dataclasses_json import dataclass_json
+
 from ...utils import UnitID
 
 
+@dataclass_json
 @dataclass(frozen=True)
 class Channel:
     """
@@ -70,8 +73,8 @@ class Channel:
         return Channel(Channel.Type.LOCAL)
 
     @staticmethod
-    def direct(target: str) -> "Channel":
+    def direct(target: str | UnitID) -> "Channel":
         """
         Creates a new direct channel.
         """
-        return Channel(Channel.Type.DIRECT, target)
+        return Channel(Channel.Type.DIRECT, str(target))

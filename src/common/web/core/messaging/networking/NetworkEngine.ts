@@ -1,6 +1,7 @@
 import { WebComponentData } from "../../../component/WebComponentData";
 import { type Constructable } from "../../../utils/Types";
 import logging from "../../logging/Logging";
+import { MessageBuilder } from "../composers/MessageBuilder";
 import { Command } from "../Command";
 import { CommandReply } from "../CommandReply";
 import { Event } from "../Event";
@@ -48,7 +49,7 @@ export class NetworkEngine {
     }
 
     private createClient(): Client {
-        return new Client(this._compData.compID, this._compData.config);
+        return new Client(this._compData.compID, this._compData.config, new MessageBuilder(this._compData.compID, this._messageBus));
     }
 
     /**
@@ -107,7 +108,7 @@ export class NetworkEngine {
 
     private unpackMessage(msgName: string, data: string): Message {
         // Look up the actual message via its name
-        let msgType = MessageTypesCatalog.findType(msgName);
+        let msgType = MessageTypesCatalog.findItem(msgName);
         if (!msgType) {
             throw new Error(`The message type '${msgName}' is unknown`);
         }

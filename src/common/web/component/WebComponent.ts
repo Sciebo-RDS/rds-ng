@@ -8,33 +8,48 @@ import { type App, type Component as VueComponent, createApp, inject } from "vue
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
-import { Service } from "../service/Service";
-import { ServiceContext } from "../service/ServiceContext";
+import { Service } from "../services/Service";
+import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
-import { WebComponentData } from "./WebComponentData";
 import { MetaInformation } from "./MetaInformation";
+import { WebComponentData } from "./WebComponentData";
+
+import createComponentService from "../services/ComponentService";
+import createNetworkService from "../services/NetworkService";
+
+// Necessary to make the entire API known
+import "../api/API";
 
 /**
  * Base class for all web components.
  *
  * Web applications are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
  * about the application itself and the entire project.
- *
- * Instances of this class are never created directly. Instead, always use the ``create`` method which performs all necessary initialization
- * tasks.
  */
 export class WebComponent {
+    private static _instance: WebComponent | null = null;
     private static readonly _injectionKey = Symbol();
 
-    private readonly _data: WebComponentData;
+    protected readonly _data: WebComponentData;
 
-    private readonly _core: Core;
-    private readonly _vueApp: App;
+    protected readonly _core: Core;
+    protected readonly _vueApp: App;
 
-    private constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
+    /**
+     * @param env - The global environment variables.
+     * @param compID - The identifier of this component.
+     * @param appRoot - The Vue root component.
+     * @param appElement - The HTML element ID used for mounting the root component.
+     */
+    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
+        if (WebComponent._instance) {
+            throw new Error("A component instance has already been created")
+        }
+        WebComponent._instance = this;
+
         compID = this.sanitizeComponentID(compID);
 
         let metaInfo = new MetaInformation();
@@ -91,6 +106,11 @@ export class WebComponent {
      */
     public run(): void {
         logging.info("Running component...");
+
+        // Create all basic services
+        createComponentService(this);
+        createNetworkService(this);
+
         this._core.run();
     }
 
@@ -98,13 +118,18 @@ export class WebComponent {
      * Creates and registers a new service.
      *
      * @param name - The name of the service.
+     * @param initializer - A function called to registered message handlers etc. after the service has been created.
      * @param contextType - Can be used to override the default ``ServiceContext`` type. All message handlers
      *      associated with the new service will then receive instances of this type for their service context.
      */
     public createService<CtxType extends ServiceContext>(name: string,
+                                                         initializer: ((svc: Service) => void) | null = null,
                                                          contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>): Service {
         let svc = new Service<CtxType>(this._data.compID, name, this._core.messageBus, contextType);
         this._core.registerService(svc);
+        if (initializer) {
+            initializer(svc);
+        }
         return svc;
     }
 
@@ -123,28 +148,28 @@ export class WebComponent {
     }
 
     /**
-     * Creates a new web component.
+     * The global ``WebComponent`` instance via Vue's injection mechanism.
      *
-     * If an instance already exists, an error is thrown.
-     *
-     * @param env - The global environment variables.
-     * @param compID - The identifier of this component.
-     * @param appRoot - The Vue root component.
-     * @param appElement - The HTML element ID used for mounting the root component.
+     * @throws Error - If no instance has been created.
      */
-    public static create(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string = "#app"): WebComponent {
-        return new WebComponent(env, compID, appRoot, appElement);
-    }
-
-    /**
-     * The global ``WebComponent`` instance.
-     */
-    public static get instance(): WebComponent {
+    public static inject(): WebComponent {
         let inst = inject<WebComponent>(WebComponent._injectionKey);
         if (!inst) {
             throw new Error("No component instance has been created");
         }
         return inst;
+    }
+
+    /**
+     * The global ``WebComponent`` instance.
+     *
+     * @throws Error - If no instance has been created.
+     */
+    public static get instance(): WebComponent {
+        if (!WebComponent._instance) {
+            throw new Error("No component instance has been created");
+        }
+        return WebComponent._instance;
     }
 
     private sanitizeComponentID(compID: UnitID): UnitID {

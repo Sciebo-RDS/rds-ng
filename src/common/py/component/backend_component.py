@@ -7,7 +7,8 @@ from ..utils import UnitID
 from ..utils.config import Configuration
 
 if typing.TYPE_CHECKING:
-    from ..service import ServiceContextType, Service
+    from ..core import Core
+    from ..services import ServiceContextType, Service
 
 
 class BackendComponent:
@@ -16,10 +17,9 @@ class BackendComponent:
 
     Components are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
     about the component itself and the entire project.
-
-    When writing a component, always create a new subclass that extends ``BackendComponent``. Pass all the necessary information to its
-    constructor and, after doing further setup steps, call its ``run`` method.
     """
+
+    _instance: typing.Self | None = None
 
     def __init__(
         self,
@@ -27,7 +27,7 @@ class BackendComponent:
         role: ComponentRole,
         *,
         module_name: str,
-        config_file: str = "./config/config.toml",
+        config_file: str = "./.config/config.toml",
     ):
         """
         Args:
@@ -36,6 +36,10 @@ class BackendComponent:
             module_name: The component module name; simply pass ``__name__`` here.
             config_file: The configuration file to load.
         """
+        if BackendComponent._instance is not None:
+            raise RuntimeError("A component instance has already been created")
+        BackendComponent._instance = self
+
         config = self._create_config(config_file)
         comp_id = self._sanitize_component_id(comp_id, config)
 
@@ -86,10 +90,19 @@ class BackendComponent:
 
         info("Running component...")
 
+        # Create all basic services
+        from ..services import create_component_service, create_network_service
+
+        create_component_service(self)
+        create_network_service(self)
+
         self._core.run()
 
     def create_service(
-        self, name: str, *, context_type: type["ServiceContextType"] | None = None
+        self,
+        name: str,
+        *,
+        context_type: type["ServiceContextType"] | None = None,
     ) -> "Service":
         """
         Creates and registers a new service.
@@ -102,7 +115,7 @@ class BackendComponent:
         Returns:
             The newly created service.
         """
-        from ..service import Service, ServiceContext
+        from ..services import Service, ServiceContext
 
         if context_type is None:
             context_type = ServiceContext
@@ -146,13 +159,6 @@ class BackendComponent:
         return comp_id
 
     @property
-    def config(self) -> Configuration:
-        """
-        The configuration used by the component.
-        """
-        return self._data.config
-
-    @property
     def data(self) -> BackendComponentData:
         """
         A data helper object that stores useful component data and information.
@@ -171,6 +177,18 @@ class BackendComponent:
                 }
             ),
         )
+
+    @staticmethod
+    def instance() -> "BackendComponent":
+        """
+        The global ``BackendComponent`` instance.
+
+        Raises:
+            RuntimeError: If no instance has been created.
+        """
+        if BackendComponent._instance is None:
+            raise RuntimeError("No component instance has been created")
+        return BackendComponent._instance
 
     def __str__(self) -> str:
         return f"{self._data.title} v{self._data.version}: {self._data.name} ({self._data.comp_id})"

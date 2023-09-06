@@ -1,8 +1,8 @@
 import { plainToInstance, Type } from "class-transformer";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-
 import { type Constructable } from "../../utils/Types";
+
 import { UnitID } from "../../utils/UnitID";
 import { Channel } from "./Channel";
 import { MessageTypesCatalog } from "./MessageTypesCatalog";
@@ -74,9 +74,16 @@ export abstract class Message {
      *
      * @returns - The created message.
      */
-    public static convertFromJSON(msgType: Constructable, data: string): Message {
+    public static convertFromJSON(msgType: ConstructableMessage, data: string): Message {
         let objData = JSON.parse(data);
         return plainToInstance(msgType, objData) as Message;
+    }
+
+    /**
+     * Retrieves the name of the message type on a message class basis.
+     */
+    public static messageName(): MessageName {
+        return "";
     }
 
     /**
@@ -101,9 +108,13 @@ export abstract class Message {
                 public constructor(...args: any[]) {
                     super(name, ...args);
                 }
+
+                public static messageName(): MessageName {
+                    return name;
+                }
             };
 
-            MessageTypesCatalog.registerType(name, newClass);
+            MessageTypesCatalog.registerItem(name, newClass);
 
             return newClass;
         };
@@ -120,4 +131,10 @@ export abstract class Message {
     public toString(): string {
         return this.convertToJSON();
     }
+}
+
+export interface ConstructableMessage<T extends Message = Message> {
+    new(...args: any[]): T;
+
+    messageName(): MessageName;
 }

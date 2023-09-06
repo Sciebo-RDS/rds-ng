@@ -7,6 +7,7 @@ from enum import IntEnum, auto
 import socketio
 
 from .. import Message
+from ..composers import MessageBuilder
 from ...logging import info, warning, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
@@ -44,14 +45,19 @@ class Server(socketio.Server):
                 else False
             )
 
-    def __init__(self, comp_id: UnitID, config: Configuration):
+    def __init__(
+        self, comp_id: UnitID, config: Configuration, message_builder: MessageBuilder
+    ):
         """
         Args:
             comp_id: The component identifier.
             config: The global configuration.
+            message_builder: A message builder to use.
         """
         self._comp_id = comp_id
         self._config = config
+
+        self._message_builder = message_builder
 
         super().__init__(
             async_mode="gevent",
@@ -93,6 +99,13 @@ class Server(socketio.Server):
         with self._lock:
             for timed_out_component in self._find_timed_out_components():
                 if timed_out_component in self._connected_components:
+                    debug(
+                        "Component timed out, disconnecting",
+                        scope="server",
+                        component=str(timed_out_component),
+                        timeout=self._connected_components[timed_out_component].timeout,
+                    )
+
                     self.disconnect(
                         self._connected_components[timed_out_component].sid
                     )  # This will trigger _on_disconnect, removing the client from the connected components
@@ -152,22 +165,38 @@ class Server(socketio.Server):
                 )
 
             from ....settings import NetworkServerSettingIDs
-            from ....component import COMPONENT_TYPE_WEB
+            from ....component import ComponentType
 
             self._connected_components[comp_id] = Server._ComponentEntry(
                 sid,
                 timeout=self._config.value(NetworkServerSettingIDs.IDLE_TIMEOUT)
-                if comp_id.type == COMPONENT_TYPE_WEB
+                if comp_id.type == ComponentType.WEB
                 else 0.0,
             )
 
-        info("Client connected", scope="server", session=sid, component=comp_id)
+            from .. import Channel
+            from ....api import ServerConnectedEvent
+
+            ServerConnectedEvent.build(
+                self._message_builder, comp_id=comp_id, client_id=sid
+            ).emit(Channel.local())
+
+            info("Client connected", scope="server", session=sid, component=comp_id)
 
     def _on_disconnect(self, sid: str) -> None:
         with self._lock:
+            comp_id = self._lookup_client(sid)
+
             self._purge_client(sid)
 
-        info("Client disconnected", scope="server", session=sid)
+            from .. import Channel
+            from ....api import ServerDisconnectedEvent
+
+            ServerDisconnectedEvent.build(
+                self._message_builder, comp_id=comp_id, client_id=sid
+            ).emit(Channel.local())
+
+            info("Client disconnected", scope="server", session=sid)
 
     def _on_message(self, msg_name: str, sid: str, data: str) -> None:
         with self._lock:

@@ -2,6 +2,8 @@ import dataclasses
 import typing
 
 from .client import Client
+from .network_filter import NetworkFilter
+from .network_filters import NetworkFilters
 from .network_router import NetworkRouter
 from .server import Server
 from .. import Message, MessageBusProtocol, MessageType, Command, CommandReply, Event
@@ -46,6 +48,7 @@ class NetworkEngine:
             if self._comp_data.role.networking_aspects.has_server
             else None
         )
+
         self._meta_information_types: typing.Dict[
             type[MessageType], type[MessageMetaInformationType]
         ] = {
@@ -53,17 +56,32 @@ class NetworkEngine:
             CommandReply: CommandReplyMetaInformation,
             Event: EventMetaInformation,
         }
+
         self._router = NetworkRouter(
             self._comp_data.comp_id,
             has_client=self.has_client,
             has_server=self.has_server,
         )
 
+        self._filters = NetworkFilters()
+
     def _create_client(self) -> Client:
-        return Client(self._comp_data.comp_id, self._comp_data.config)
+        from ..composers import MessageBuilder
+
+        return Client(
+            self._comp_data.comp_id,
+            self._comp_data.config,
+            MessageBuilder(self._comp_data.comp_id, self._message_bus),
+        )
 
     def _create_server(self) -> Server:
-        return Server(self._comp_data.comp_id, self._comp_data.config)
+        from ..composers import MessageBuilder
+
+        return Server(
+            self._comp_data.comp_id,
+            self._comp_data.config,
+            MessageBuilder(self._comp_data.comp_id, self._message_bus),
+        )
 
     def run(self) -> None:
         """
@@ -116,7 +134,17 @@ class NetworkEngine:
                 msg_meta,
                 NetworkRouter.Direction.OUT,
                 skip_components=[self._comp_data.comp_id],
+                apply_filter=True,
             )
+
+    def install_filter(self, fltr: NetworkFilter) -> None:
+        """
+        Installs a new network message filter.
+
+        Args:
+            fltr: The filter to add.
+        """
+        self._filters.install(fltr)
 
     def _handle_received_message(
         self, entrypoint: MessageMetaInformation.Entrypoint, msg_name: str, data: str
@@ -133,30 +161,37 @@ class NetworkEngine:
                 f"Received message: {msg}", scope="network", entrypoint=entrypoint.name
             )
 
-            if self._router.check_local_routing(
-                NetworkRouter.Direction.IN, msg, msg_meta
-            ):
-                self._message_bus.dispatch(msg, msg_meta)
-
-            # Perform rerouting
-            msg = dataclasses.replace(msg, sender=self._comp_data.comp_id)
-            self._route_message(
-                msg,
-                msg_meta,
-                NetworkRouter.Direction.IN,
-                skip_components=[self._comp_data.comp_id, msg.sender],
+            con_type = (
+                NetworkFilter.ConnectionType.SERVER
+                if entrypoint == MessageMetaInformation.Entrypoint.SERVER
+                else NetworkFilter.ConnectionType.CLIENT
             )
+
+            if not self._filters.filter_incoming_message(con_type, msg, msg_meta):
+                if self._router.check_local_routing(
+                    NetworkRouter.Direction.IN, msg, msg_meta
+                ):
+                    self._message_bus.dispatch(msg, msg_meta)
+
+                # Perform rerouting
+                msg = dataclasses.replace(msg, sender=self._comp_data.comp_id)
+                self._route_message(
+                    msg,
+                    msg_meta,
+                    NetworkRouter.Direction.IN,
+                    skip_components=[self._comp_data.comp_id, msg.sender],
+                )
 
     def _unpack_message(self, msg_name: str, data: str) -> Message:
         # Look up the actual message via its name
         from .. import MessageTypesCatalog
 
-        msg_type = MessageTypesCatalog.find_type(msg_name)
+        msg_type = MessageTypesCatalog.find_item(msg_name)
         if msg_type is None:
             raise RuntimeError(f"The message type '{msg_name}' is unknown")
 
         # Unpack the message into its actual type
-        msg = typing.cast(Message, msg_type.from_json(data))
+        msg = typing.cast(Message, msg_type.schema().loads(data))
         self._router.verify_message(NetworkRouter.Direction.IN, msg)
 
         msg.hops.append(self._comp_data.comp_id)
@@ -169,19 +204,26 @@ class NetworkEngine:
         direction: NetworkRouter.Direction,
         *,
         skip_components: typing.List[UnitID] | None = None,
-    ):
+        apply_filter: bool = False,
+    ) -> None:
         send_to_client = True
 
         if self._router.check_server_routing(direction, msg, msg_meta):
-            send_to_client = (
-                self._server.send_message(msg, skip_components=skip_components)
-                == Server.SendTarget.SPREAD
-            )
+            if not apply_filter or not self._filters.filter_outgoing_message(
+                NetworkFilter.ConnectionType.SERVER, msg, msg_meta
+            ):
+                send_to_client = (
+                    self._server.send_message(msg, skip_components=skip_components)
+                    == Server.SendTarget.SPREAD
+                )
 
         if send_to_client and self._router.check_client_routing(
             direction, msg, msg_meta
         ):
-            self._client.send_message(msg)
+            if not apply_filter or not self._filters.filter_outgoing_message(
+                NetworkFilter.ConnectionType.CLIENT, msg, msg_meta
+            ):
+                self._client.send_message(msg)
 
     def _create_message_meta_information(
         self, msg: Message, entrypoint: MessageMetaInformation.Entrypoint, **kwargs

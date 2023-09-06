@@ -1,10 +1,12 @@
 import { io, Socket } from "socket.io-client";
 
+import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../../../api/NetworkEvents";
 import { NetworkClientSettingIDs } from "../../../settings/NetworkSettingIDs";
-import { networkStore } from "../../../stores/NetworkStore";
 import { Configuration } from "../../../utils/config/Configuration";
 import { UnitID } from "../../../utils/UnitID";
 import logging from "../../logging/Logging";
+import { MessageBuilder } from "../composers/MessageBuilder";
+import { Channel } from "../Channel";
 import { Message } from "../Message";
 
 type ClientMessageHandler = (msgName: string, data: string) => void;
@@ -17,6 +19,7 @@ export class Client {
     private readonly _config: Configuration;
 
     private readonly _socket: Socket;
+    private readonly _messageBuilder: MessageBuilder;
 
     private readonly _serverAddress: string;
     private readonly _connectionTimeout: number;
@@ -26,8 +29,9 @@ export class Client {
     /**
      * @param compID - The component identifier.
      * @param config - The global configuration.
+     * @param messageBuilder - A message builder instance.
      */
-    public constructor(compID: UnitID, config: Configuration) {
+    public constructor(compID: UnitID, config: Configuration, messageBuilder: MessageBuilder) {
         this._compID = compID;
         this._config = config;
 
@@ -35,6 +39,7 @@ export class Client {
         this._connectionTimeout = this._config.value(NetworkClientSettingIDs.ConnectionTimeout);
 
         this._socket = this.createSocket();
+        this._messageBuilder = messageBuilder;
 
         this.connectEvents();
     }
@@ -110,21 +115,21 @@ export class Client {
     }
 
     private onConnect(): void {
-        logging.info("Connected to server", "client");
+        ClientConnectedEvent.build(this._messageBuilder).emit(Channel.local());
 
-        networkStore().connected = true;
+        logging.info("Connected to server", "client");
     }
 
     private onConnectError(reason: any): void {
-        logging.warning("Unable to connect to server", "client", { reason: String(reason) });
+        ClientConnectionErrorEvent.build(this._messageBuilder, String(reason)).emit(Channel.local());
 
-        networkStore().connected = false;
+        logging.warning("Unable to connect to server", "client", { reason: String(reason) });
     }
 
     private onDisconnect(): void {
-        logging.info("Disconnected from server", "client");
+        ClientDisconnectedEvent.build(this._messageBuilder).emit(Channel.local());
 
-        networkStore().connected = false;
+        logging.info("Disconnected from server", "client");
     }
 
     private onMessage(msgName: string, data: string): void {

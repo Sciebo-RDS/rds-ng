@@ -138,11 +138,18 @@ export class MessageBus {
             }
 
             dispatcher.preDispatch(msg, msgMeta);
+
             if (localRouting) {
+                let msgDispatched = false;
                 for (const svc of this._services) {
-                    this.dispatchToService(dispatcher, msg, msgMeta, svc);
+                    msgDispatched ||= this.dispatchToService(dispatcher, msg, msgMeta, svc);
+                }
+
+                if (!msgDispatched) {
+                    logging.warning("A message was dispatched locally but not handled", "bus", { message: msg });
                 }
             }
+
             dispatcher.postDispatch(msg, msgMeta);
         }
     }
@@ -154,21 +161,25 @@ export class MessageBus {
     private dispatchToService<DispatcherType extends MessageDispatcher<any, any>,
         CtxType extends MessageContext>(dispatcher: DispatcherType,
                                         msg: Message, msgMeta: MessageMetaInformation,
-                                        svc: MessageService<CtxType>): void {
+                                        svc: MessageService<CtxType>): boolean {
+        let msgDispatched = false;
         for (const handler of svc.messageHandlers.findHandlers(msg.name)) {
             try {
-                let ctx = this.createContext<CtxType>(msg, svc);
+                let ctx = this.createContext<CtxType>(msg, msgMeta, svc);
                 dispatcher.dispatch(msg, msgMeta, handler, ctx);
+                msgDispatched = true;
             } catch (err) {
                 logging.error(`An error occurred while processing a message: ${String(err)}`, "bus",
                     { message: msg, error: err });
             }
         }
+
+        return msgDispatched;
     }
 
-    private createContext<CtxType extends MessageContext>(msg: Message, svc: MessageService<CtxType>): MessageContext {
+    private createContext<CtxType extends MessageContext>(msg: Message, msgMeta: MessageMetaInformation, svc: MessageService<CtxType>): MessageContext {
         let logger = new LoggerProxy(logging.getDefaultLogger());
         logger.addParam("trace", msg.trace);
-        return svc.createContext(logger, this._compData.config);
+        return svc.createContext(msgMeta, logger, this._compData.config);
     }
 }
