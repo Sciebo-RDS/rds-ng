@@ -1,3 +1,4 @@
+// Start by importing TailwindCSS
 import "../../assets/styles/tailwind-init.css";
 
 import { createPinia } from "pinia";
@@ -5,6 +6,7 @@ import PrimeVue from "primevue/config";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { type App, type Component as VueComponent, createApp, inject } from "vue";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
@@ -86,16 +88,34 @@ export class WebComponent {
     private createVueApp(appRoot: VueComponent, appElement: string): App {
         logging.info("-- Creating Vue application...");
 
-        let app = createApp(appRoot);
+        const app = createApp(appRoot);
 
         app.use(createPinia());
         app.use(PrimeVue);
 
         app.provide(WebComponent._injectionKey, this);
 
+        const routes = this.defineRoutes();
+        if (routes) {
+            const router = createRouter({
+                history: createWebHistory(),
+                routes: routes,
+            });
+            app.use(router);
+        }
+
         app.mount(appElement);
 
         return app;
+    }
+
+    /**
+     * Defines routes for the Vue router.
+     *
+     * @returns - The routes as an array; return `null` if the router shouldn't be used.
+     */
+    protected defineRoutes(): RouteRecordRaw[] | null {
+        return null;
     }
 
     /**
