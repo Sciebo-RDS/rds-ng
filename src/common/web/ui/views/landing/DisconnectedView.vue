@@ -10,10 +10,7 @@ const route = useRoute();
     <Header></Header>
     <div class="grid grid-flow-row auto-rows-max justify-items-center text-slate-700">
         <div>
-            Oh no, I was unable to connect to the server!
-        </div>
-        <div class="text-slate-500 italic">
-            {{ route.query.error }}
+            It seems that I lost my connection...
         </div>
         <div>
             Click

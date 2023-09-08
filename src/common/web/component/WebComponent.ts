@@ -21,6 +21,7 @@ import { WebComponentData } from "./WebComponentData";
 
 import { InitializationView } from "../ui/views/landing/InitializationView";
 import { ConnectionErrorView } from "../ui/views/landing/ConnectionErrorView";
+import { DisconnectedView } from "../ui/views/landing/DisconnectedView";
 
 import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
@@ -118,6 +119,7 @@ export class WebComponent {
         return [
             new InitializationView().route(),
             new ConnectionErrorView().route(),
+            new DisconnectedView().route(),
         ];
     }
 

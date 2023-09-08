@@ -1,6 +1,5 @@
+import logging from "../../logging/Logging";
 import { Event } from "../Event";
-import { MessageContext } from "../handlers/MessageContext";
-import { MessageHandlerMapping } from "../handlers/MessageHandler";
 import { EventMetaInformation } from "../meta/EventMetaInformation";
 import { MessageDispatcher } from "./MessageDispatcher";
 
@@ -9,20 +8,17 @@ import { MessageDispatcher } from "./MessageDispatcher";
  */
 export class EventDispatcher extends MessageDispatcher<Event, EventMetaInformation> {
     /**
-     * Dispatches a message to locally registered message handlers.
+     * Called to perform tasks *before* sending a message.
      *
-     * Notes:
-     *     Exceptions arising within a message handler will not interrupt the running program; instead, such errors will only be logged.
+     * This method is called before any service-registered message handler is invoked.
      *
-     * @param msg - The message to be dispatched.
+     * @param msg - The message that is about to be dispatched.
      * @param msgMeta - The message meta information.
-     * @param handler - The handler to be invoked.
-     * @param ctx - The message context.
      *
-     * @throws Error - If the handler requires a different message type.
+     * @throws Error - If the meta information type is invalid.
      */
-    public dispatch<CtxType extends MessageContext>(msg: Event, msgMeta: EventMetaInformation, handler: MessageHandlerMapping, ctx: CtxType): void {
-        ctx.logger.debug(`Dispatching event: ${String(msg)}`, "bus");
-        super.dispatch(msg, msgMeta, handler, ctx);
+    public preDispatch<MsgType extends CommandReply>(msg: MsgType, msgMeta: CommandReplyMetaInformation): void {
+        logging.debug(`Dispatching event: ${String(msg)}`, "bus");
+        super.preDispatch(msg, msgMeta);
     }
 }

@@ -3,7 +3,7 @@ import typing
 from .message_dispatcher import MessageDispatcher
 from .. import Trace, CommandReply
 from ..command import Command
-from ..handlers import MessageHandlerMapping, MessageContextType
+from ..handlers import MessageContextType
 from ..meta import CommandMetaInformation
 
 
@@ -38,38 +38,14 @@ class CommandDispatcher(MessageDispatcher[Command]):
             msg: The command that is about to be dispatched.
             msg_meta: The command meta information.
         """
+        from ...logging import debug
+
+        debug(f"Dispatching command: {msg}", scope="bus")
         super().pre_dispatch(msg, msg_meta)
 
         MessageDispatcher._meta_information_list.add(
             msg.unique, msg_meta, msg_meta.timeout
         )
-
-    def dispatch(
-        self,
-        msg: Command,
-        msg_meta: CommandMetaInformation,
-        handler: MessageHandlerMapping,
-        ctx: MessageContextType,
-    ) -> None:
-        """
-        Dispatches a message to locally registered message handlers.
-
-        Handlers can be either called synchronously or asynchronously, depending on how the handler was registered.
-
-        Notes:
-            Exceptions arising within a message handler will not interrupt the running program; instead, such errors will only be logged.
-
-        Args:
-            msg: The message to be dispatched.
-            msg_meta: The message meta information.
-            handler: The handler to be invoked.
-            ctx: The message context.
-
-        Raises:
-            RuntimeError: If the handler requires a different message type.
-        """
-        ctx.logger.debug(f"Dispatching command: {msg}", scope="bus")
-        super().dispatch(msg, msg_meta, handler, ctx)
 
     def _context_exception(
         self,

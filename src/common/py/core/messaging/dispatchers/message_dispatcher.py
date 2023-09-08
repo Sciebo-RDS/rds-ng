@@ -15,6 +15,7 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
     Dispatching a message (locally) is done by passing the message to one or more registered message handlers within a ``Service``.
     The message dispatcher also performs pre- and post-dispatching tasks and takes care of catching errors raised in a handler.
     """
+
     _thread_pool = ThreadPoolExecutor()
     _meta_information_list = MessageMetaInformationList()
 
@@ -30,7 +31,9 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
         Called to perform periodic tasks.
         """
 
-    def pre_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
+    def pre_dispatch(
+        self, msg: MessageType, msg_meta: MessageMetaInformationType
+    ) -> None:
         """
         Called to perform tasks *before* sending a message.
 
@@ -44,10 +47,17 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
             RuntimeError: If the meta information type is invalid.
         """
         if not isinstance(msg_meta, self._meta_information_type):
-            raise RuntimeError(f"The meta information for dispatcher {str(self)} is of the wrong type ({type(msg_meta)})")
+            raise RuntimeError(
+                f"The meta information for dispatcher {str(self)} is of the wrong type ({type(msg_meta)})"
+            )
 
-    @abc.abstractmethod
-    def dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: MessageContextType) -> None:
+    def dispatch(
+        self,
+        msg: MessageType,
+        msg_meta: MessageMetaInformationType,
+        handler: MessageHandlerMapping,
+        ctx: MessageContextType,
+    ) -> None:
         """
         Dispatches a message to locally registered message handlers.
 
@@ -65,8 +75,14 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
         Raises:
             RuntimeError: If the handler requires a different message type.
         """
+
         # Callback wrapper for proper exception handling, even when used asynchronously
-        def _dispatch(msg: MessageType, msg_meta: MessageMetaInformationType, handler: MessageHandlerMapping, ctx: MessageContextType) -> None:
+        def _dispatch(
+            msg: MessageType,
+            msg_meta: MessageMetaInformationType,
+            handler: MessageHandlerMapping,
+            ctx: MessageContextType,
+        ) -> None:
             try:
                 with ctx(requires_reply=msg_meta.requires_reply):
                     # The service context will not suppress exceptions so that the dispatcher can react to them
@@ -77,13 +93,19 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
 
         if isinstance(msg, handler.message_type):
             if handler.is_async:
-                MessageDispatcher._thread_pool.submit(_dispatch, msg, msg_meta, handler, ctx)
+                MessageDispatcher._thread_pool.submit(
+                    _dispatch, msg, msg_meta, handler, ctx
+                )
             else:
                 _dispatch(msg, msg_meta, handler, ctx)
         else:
-            raise RuntimeError(f"Handler {str(handler.handler)} requires messages of type {str(handler.message_type)}, but got {str(type(msg))}")
+            raise RuntimeError(
+                f"Handler {str(handler.handler)} requires messages of type {str(handler.message_type)}, but got {str(type(msg))}"
+            )
 
-    def post_dispatch(self, msg: MessageType, msg_meta: MessageMetaInformationType) -> None:
+    def post_dispatch(
+        self, msg: MessageType, msg_meta: MessageMetaInformationType
+    ) -> None:
         """
         Called to perform tasks *after* sending a message.
 
@@ -94,7 +116,13 @@ class MessageDispatcher(abc.ABC, typing.Generic[MessageType]):
             msg_meta: The message meta information.
         """
 
-    def _context_exception(self, exc: Exception, msg: MessageType, msg_meta: MessageMetaInformationType, ctx: MessageContextType) -> None:
+    def _context_exception(
+        self,
+        exc: Exception,
+        msg: MessageType,
+        msg_meta: MessageMetaInformationType,
+        ctx: MessageContextType,
+    ) -> None:
         pass
 
     @staticmethod

@@ -1,8 +1,6 @@
 import logging from "../../logging/Logging";
 import { Command } from "../Command";
 import { CommandFailType, CommandReply } from "../CommandReply";
-import { MessageContext } from "../handlers/MessageContext";
-import { MessageHandlerMapping } from "../handlers/MessageHandler";
 import { type Trace } from "../Message";
 import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { MessageDispatcher } from "./MessageDispatcher";
@@ -34,27 +32,10 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
      * @throws Error - If the meta information type is invalid.
      */
     public preDispatch(msg: Command, msgMeta: CommandMetaInformation): void {
+        logging.debug(`Dispatching command: ${String(msg)}`, "bus");
         super.preDispatch(msg, msgMeta);
 
         MessageDispatcher._metaInformationList.add(msg.unique, msgMeta, msgMeta.timeout);
-    }
-
-    /**
-     * Dispatches a message to locally registered message handlers.
-     *
-     * Notes:
-     *     Exceptions arising within a message handler will not interrupt the running program; instead, such errors will only be logged.
-     *
-     * @param msg - The message to be dispatched.
-     * @param msgMeta - The message meta information.
-     * @param handler - The handler to be invoked.
-     * @param ctx - The message context.
-     *
-     * @throws Error - If the handler requires a different message type.
-     */
-    public dispatch<CtxType extends MessageContext>(msg: Command, msgMeta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: CtxType): void {
-        ctx.logger.debug(`Dispatching command: ${String(msg)}`, "bus");
-        super.dispatch(msg, msgMeta, handler, ctx);
     }
 
     protected contextError(err: any, msg: Command, msgMeta: CommandMetaInformation): void {

@@ -52,6 +52,7 @@ export class Client {
         return io(this._serverAddress, {
             auth: this.getAuthentication(),
             autoConnect: false,
+            reconnection: false,
             timeout: this._connectionTimeout * 1000
         });
     }
