@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { WebComponent } from "@common/component/WebComponent";
+import { WebComponent } from "../../../component/WebComponent";
 
 const comp = WebComponent.inject();
 
@@ -11,7 +11,7 @@ const appVersion = comp.data.version;
 <template>
     <div class="grid grid-flow-row auto-rows-max justify-items-center">
         <div>
-            <img src="@assets/img/rds_ng-octopus-blue.png" alt="RDS-NG Logo" class="logo mt-20">
+            <img src="../../../../assets/img/rds_ng-octopus-blue.png" alt="RDS-NG Logo" class="logo mt-20">
         </div>
         <div>
             <h2 class="text-2xl font-extrabold text-slate-700">{{ appTitle }}</h2>
