@@ -6,7 +6,7 @@ import PrimeVue from "primevue/config";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { type App, type Component as VueComponent, createApp, inject } from "vue";
-import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
@@ -19,8 +19,12 @@ import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
 import { WebComponentData } from "./WebComponentData";
 
+import { InitializationView } from "../ui/views/landing/InitializationView";
+import { ConnectionErrorView } from "../ui/views/landing/ConnectionErrorView";
+
 import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
+import createWebService from "../services/WebService";
 
 // Necessary to make the entire API known
 import "../api/API";
@@ -38,6 +42,7 @@ export class WebComponent {
     protected readonly _data: WebComponentData;
 
     protected readonly _core: Core;
+    protected readonly _router: Router;
     protected readonly _vueApp: App;
 
     /**
@@ -69,6 +74,7 @@ export class WebComponent {
         logging.info("-- Starting component...");
 
         this._core = new Core(this._data);
+        this._router = this.createRouter();
         this._vueApp = this.createVueApp(appRoot, appElement);
     }
 
@@ -85,37 +91,43 @@ export class WebComponent {
         return config;
     }
 
+    private createRouter(): Router {
+        return createRouter({
+            history: createWebHistory(),
+            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()],
+        });
+    }
+
     private createVueApp(appRoot: VueComponent, appElement: string): App {
         logging.info("-- Creating Vue application...");
 
         const app = createApp(appRoot);
 
         app.use(createPinia());
+        app.use(this._router);
         app.use(PrimeVue);
 
         app.provide(WebComponent._injectionKey, this);
-
-        const routes = this.defineRoutes();
-        if (routes) {
-            const router = createRouter({
-                history: createWebHistory(),
-                routes: routes,
-            });
-            app.use(router);
-        }
 
         app.mount(appElement);
 
         return app;
     }
 
+    private configureDefaultRoutes(): RouteRecordRaw[] {
+        return [
+            new InitializationView().route(),
+            new ConnectionErrorView().route(),
+        ];
+    }
+
     /**
-     * Defines routes for the Vue router.
+     * Sets up routes for the Vue router.
      *
      * @returns - The routes as an array; return `null` if the router shouldn't be used.
      */
-    protected defineRoutes(): RouteRecordRaw[] | null {
-        return null;
+    protected configureRoutes(): RouteRecordRaw[] {
+        return [];
     }
 
     /**
@@ -130,6 +142,7 @@ export class WebComponent {
         // Create all basic services
         createComponentService(this);
         createNetworkService(this);
+        createWebService(this);
 
         this._core.run();
     }
@@ -158,6 +171,13 @@ export class WebComponent {
      */
     public get data(): WebComponentData {
         return this._data;
+    }
+
+    /**
+     * The global router.
+     */
+    public get router(): Router {
+        return this._router;
     }
 
     /**

@@ -19,10 +19,15 @@ const appVersion = comp.data.version;
         <div>
             <h3 class="text-1xl italic text-slate-700"><span class="font-bold">{{ appName }}</span> - <span class="text-slate-500">v{{ appVersion }}</span></h3>
         </div>
+        <div class="mt-12">&nbsp;</div>
     </div>
 </template>
 
 <style scoped lang="scss">
+div {
+    margin: 0.25rem;
+}
+
 .logo {
     width: 500px;
     height: auto;
