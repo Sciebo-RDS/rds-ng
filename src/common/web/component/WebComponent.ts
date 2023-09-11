@@ -10,22 +10,22 @@ import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
+
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
+import { MainView } from "../ui/views/main/MainView";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
 import { WebComponentData } from "./WebComponentData";
 
-import { InitializationView } from "../ui/views/landing/InitializationView";
-import { ConnectionErrorView } from "../ui/views/landing/ConnectionErrorView";
-import { DisconnectedView } from "../ui/views/landing/DisconnectedView";
-
 import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
 import createWebService from "../services/WebService";
+
+import WebComponentContainer from "../ui/WebComponentContainer.vue";
 
 // Necessary to make the entire API known
 import "../api/API";
@@ -45,11 +45,13 @@ export class WebComponent {
     protected readonly _core: Core;
     protected readonly _router: Router;
     protected readonly _vueApp: App;
+    protected readonly _appRoot: VueComponent;
+    protected readonly _appElement: string;
 
     /**
      * @param env - The global environment variables.
      * @param compID - The identifier of this component.
-     * @param appRoot - The Vue root component.
+     * @param appRoot - The root (main) application component.
      * @param appElement - The HTML element ID used for mounting the root component.
      */
     public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
@@ -76,7 +78,9 @@ export class WebComponent {
 
         this._core = new Core(this._data);
         this._router = this.createRouter();
-        this._vueApp = this.createVueApp(appRoot, appElement);
+        this._vueApp = this.createVueApp(appElement);
+        this._appRoot = appRoot;
+        this._appElement = appElement;
     }
 
     private createConfig(env: SettingsContainer): Configuration {
@@ -99,10 +103,10 @@ export class WebComponent {
         });
     }
 
-    private createVueApp(appRoot: VueComponent, appElement: string): App {
+    private createVueApp(appElement: string): App {
         logging.info("-- Creating Vue application...");
 
-        const app = createApp(appRoot);
+        const app = createApp(WebComponentContainer);
 
         app.use(createPinia());
         app.use(this._router);
@@ -117,9 +121,7 @@ export class WebComponent {
 
     private configureDefaultRoutes(): RouteRecordRaw[] {
         return [
-            new InitializationView().route(),
-            new ConnectionErrorView().route(),
-            new DisconnectedView().route(),
+            new MainView().route(),
         ];
     }
 
@@ -187,6 +189,13 @@ export class WebComponent {
      */
     public get vue(): App {
         return this._vueApp;
+    }
+
+    /**
+     * The main application component.
+     */
+    public get appRoot(): VueComponent {
+        return this._appRoot;
     }
 
     /**

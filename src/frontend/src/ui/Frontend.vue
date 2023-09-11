@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from "vue"
-
-import { WebComponent } from "@common/component/WebComponent";
-
-const comp = WebComponent.inject();
-
-// Always run our web component when the main Vue component has been mounted
-onMounted(() => {
-    comp.run();
-});
 </script>
 
 <template>
-    <router-view></router-view>
+    <h2>Did you expect to see anything here?! Get out!</h2>
 </template>
+
+<style scoped lang="scss">
+</style>

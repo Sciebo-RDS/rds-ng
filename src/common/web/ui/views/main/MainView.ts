@@ -1,13 +1,13 @@
 import { type RouteRecordRaw } from "vue-router";
 
-import { type ViewActivation, View } from "../View";
+import { type ViewActivation, RoutedView } from "../RoutedView";
 
 /**
- * The disconnection view.
+ * The main view enclosing/containing the entire component.
  */
-export class DisconnectedView extends View {
+export class MainView extends RoutedView {
     public constructor() {
-        super("disconnected");
+        super("main");
     }
 
     /**
@@ -15,8 +15,8 @@ export class DisconnectedView extends View {
      */
     public route(): RouteRecordRaw {
         return {
-            path: "/disconnected",
-            component: () => import("./DisconnectedView.vue"),
+            path: "/",
+            component: () => import("./MainView.vue"),
             name: this._routeName,
         };
     }

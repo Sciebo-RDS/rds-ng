@@ -1,7 +1,7 @@
-import { DisconnectedView } from "@common/ui/views/landing/DisconnectedView";
 import { ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/NetworkEvents";
 import { WebComponent } from "../component/WebComponent";
-import { ConnectionErrorView } from "../ui/views/landing/ConnectionErrorView";
+import { ComponentState, componentStore } from "../stores/ComponentStore";
+import { MainView } from "../ui/views/main/MainView";
 import { Service } from "./Service";
 import { ServiceContext } from "./ServiceContext";
 
@@ -14,16 +14,22 @@ import { ServiceContext } from "./ServiceContext";
  */
 export default function (comp: WebComponent): Service {
     return comp.createService("Web service", (svc: Service) => {
+        const compStore = componentStore();
+
         svc.messageHandler(ClientDisconnectedEvent, (msg: ClientDisconnectedEvent, ctx: ServiceContext) => {
-            // Navigate the user to the disconnected view
-            const view = new DisconnectedView();
+            compStore.componentState = ComponentState.ConnectionLost;
+            compStore.componentStateMessage = "Connection lost";
+
+            const view = new MainView();
             view.activate().then();
         });
 
         svc.messageHandler(ClientConnectionErrorEvent, (msg: ClientConnectionErrorEvent, ctx: ServiceContext) => {
-            // Navigate the user to the connection error view
-            const view = new ConnectionErrorView();
-            view.activate(msg.reason).then();
+            compStore.componentState = ComponentState.ConnectionError;
+            compStore.componentStateMessage = msg.reason;
+
+            const view = new MainView();
+            view.activate().then();
         });
     });
 }

@@ -23,6 +23,6 @@ library.add(faSpinner);
 
 <style scoped lang="scss">
 div {
-    margin: 0.25rem;
+    margin: 0.1rem;
 }
 </style>

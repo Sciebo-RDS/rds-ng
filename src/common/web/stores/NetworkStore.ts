@@ -18,7 +18,9 @@ export const enum ConnectionState {
 /**
  * The global store for all network-related data.
  *
- * @param connected - Whether the client is connected to a server.
+ * @param connectionState - The client connection state.
+ * @param serverInfo - If connected, general information about the server connection.
+ * @param serverChannel - If connected, a ``Channel`` to directly target the connected server.
  */
 export const networkStore = defineStore("networkStore", () => {
     const connectionState = ref(ConnectionState.Disconnected);

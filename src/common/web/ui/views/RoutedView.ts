@@ -5,12 +5,12 @@ import { WebComponent } from "../../component/WebComponent";
 export type ViewActivation = Promise<NavigationFailure | void | undefined>;
 
 /**
- * A class to help with views.
+ * A class to help with routed views.
  *
  * This class does not represent a view *per se*, it is only used to work with the corresponding view.
  * It is therefore safe to instantiate this class and use its functions, as this doesn't automatically create a new view.
  */
-export abstract class View {
+export abstract class RoutedView {
     protected readonly _router: Router;
 
     protected readonly _routeName: string;

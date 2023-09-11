@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useRoute } from "vue-router";
+import { componentStore } from "../../../../stores/ComponentStore";
 
 import Header from "./Header.vue";
 
-const route = useRoute();
+const compStore = componentStore();
 </script>
 
 <template>
@@ -13,18 +13,16 @@ const route = useRoute();
             Oh no, I was unable to connect to the server!
         </div>
         <div class="text-slate-500 italic">
-            {{ route.query.error }}
+            {{ compStore.componentStateMessage }}
         </div>
         <div>
-            Click
-            <router-link to="/">here</router-link>
-            to refresh me.
+            Pretty-Please refresh your browser to try again.
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
 div {
-    margin: 0.25rem;
+    margin: 0.1rem;
 }
 </style>
