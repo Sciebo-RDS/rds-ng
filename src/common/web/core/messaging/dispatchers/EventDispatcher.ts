@@ -17,7 +17,7 @@ export class EventDispatcher extends MessageDispatcher<Event, EventMetaInformati
      *
      * @throws Error - If the meta information type is invalid.
      */
-    public preDispatch<MsgType extends CommandReply>(msg: MsgType, msgMeta: CommandReplyMetaInformation): void {
+    public preDispatch<MsgType extends Event>(msg: MsgType, msgMeta: EventMetaInformation): void {
         logging.debug(`Dispatching event: ${String(msg)}`, "bus");
         super.preDispatch(msg, msgMeta);
     }

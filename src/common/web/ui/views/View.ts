@@ -1,8 +1,4 @@
-import { type LocationQueryRaw, type NavigationFailure, type RouteParamsRaw, type Router, type RouteRecordRaw } from "vue-router";
-
-import { WebComponent } from "../../component/WebComponent";
-
-export type ViewActivation = Promise<NavigationFailure | void | undefined>;
+import { type LocationQueryRaw, type RouteParamsRaw, type Router, type RouteRecordRaw } from "vue-router";
 
 /**
  * A class to help with routed views.
@@ -10,18 +6,19 @@ export type ViewActivation = Promise<NavigationFailure | void | undefined>;
  * This class does not represent a view *per se*, it is only used to work with the corresponding view.
  * It is therefore safe to instantiate this class and use its functions, as this doesn't automatically create a new view.
  */
-export abstract class RoutedView {
+export abstract class View {
     protected readonly _router: Router;
-
     protected readonly _routeName: string;
 
     /**
+     * @param router - The Vue router.
      * @param name - The route name for this view.
      */
-    protected constructor(name: string) {
-        this._router = WebComponent.instance.router;
-
+    protected constructor(router: Router, name: string) {
+        this._router = router;
         this._routeName = name;
+
+        router.addRoute(this.route());
     }
 
     /**
@@ -38,9 +35,9 @@ export abstract class RoutedView {
      *
      * @returns - A promise that can be used to react to page load events.
      */
-    protected navigateTo(replace: boolean = false, query?: LocationQueryRaw, params?: RouteParamsRaw): ViewActivation {
+    public navigateTo(replace: boolean = false, query?: LocationQueryRaw, params?: RouteParamsRaw): void {
         let to = { name: this._routeName, query: query, params: params };
-        return replace ? this._router.replace(to) : this._router.push(to);
+        replace ? this._router.replace(to).then() : this._router.push(to).then();
     }
 
     /**

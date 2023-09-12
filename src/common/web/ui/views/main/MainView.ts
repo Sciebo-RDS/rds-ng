@@ -1,13 +1,27 @@
-import { type RouteRecordRaw } from "vue-router";
+import { type Component as VueComponent } from "@vue/runtime-core";
+import { type Router, type RouteRecordRaw } from "vue-router";
+import { ComponentState } from "../../../stores/ComponentStore";
 
-import { type ViewActivation, RoutedView } from "../RoutedView";
+import { View } from "../View";
+
+import ConnectionError from "./states/ConnectionError.vue";
+import ConnectionLost from "./states/ConnectionLost.vue";
+import Initializing from "./states/Initializing.vue";
 
 /**
  * The main view enclosing/containing the entire component.
  */
-export class MainView extends RoutedView {
-    public constructor() {
-        super("main");
+export class MainView extends View {
+    private readonly _appRoot: VueComponent;
+
+    /**
+     * @param router - The main Vue router.
+     * @param appRoot - The root (main) application component.
+     */
+    public constructor(router: Router, appRoot: VueComponent) {
+        super(router, "main");
+
+        this._appRoot = appRoot;
     }
 
     /**
@@ -22,13 +36,23 @@ export class MainView extends RoutedView {
     }
 
     /**
-     * Navigates to this view.
+     * Get the Vue component for the specified global commponent state.
      *
-     * @param replace - Whether to replace the current browsing history entry.
+     * @param state - The global component state.
      *
-     * @returns - A promise that can be used to react to page load events.
+     * @throws Error - If the component state is unknown.
      */
-    public activate(replace: boolean = false): ViewActivation {
-        return this.navigateTo(replace);
+    public getStateComponent(state: ComponentState): VueComponent {
+        switch (state) {
+            case ComponentState.Initializing:
+                return Initializing;
+            case ComponentState.Running:
+                return this._appRoot;
+            case ComponentState.ConnectionLost:
+                return ConnectionLost;
+            case ComponentState.ConnectionError:
+                return ConnectionError;
+        }
+        throw new Error(`The component state '${state}' is unknown`);
     }
 }

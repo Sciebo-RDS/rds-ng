@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue"
 
-import { WebComponent } from "../component/WebComponent";
+import { WebComponent } from "../../../component/WebComponent";
 
 const comp = WebComponent.inject();
 

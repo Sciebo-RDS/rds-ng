@@ -1,5 +1,7 @@
 // Start by importing TailwindCSS
 import "../../assets/styles/tailwind-init.css";
+// Next, load the Material Icons
+import "material-icons/iconfont/outlined.css";
 
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
@@ -25,7 +27,7 @@ import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
 import createWebService from "../services/WebService";
 
-import WebComponentContainer from "../ui/WebComponentContainer.vue";
+import MainContainer from "../ui/views/main/MainViewContainer.vue";
 
 // Necessary to make the entire API known
 import "../api/API";
@@ -44,9 +46,9 @@ export class WebComponent {
 
     protected readonly _core: Core;
     protected readonly _router: Router;
+
+    protected readonly _mainView: MainView;
     protected readonly _vueApp: App;
-    protected readonly _appRoot: VueComponent;
-    protected readonly _appElement: string;
 
     /**
      * @param env - The global environment variables.
@@ -78,9 +80,9 @@ export class WebComponent {
 
         this._core = new Core(this._data);
         this._router = this.createRouter();
+
+        this._mainView = new MainView(this._router, appRoot);
         this._vueApp = this.createVueApp(appElement);
-        this._appRoot = appRoot;
-        this._appElement = appElement;
     }
 
     private createConfig(env: SettingsContainer): Configuration {
@@ -106,7 +108,7 @@ export class WebComponent {
     private createVueApp(appElement: string): App {
         logging.info("-- Creating Vue application...");
 
-        const app = createApp(WebComponentContainer);
+        const app = createApp(MainContainer);
 
         app.use(createPinia());
         app.use(this._router);
@@ -120,9 +122,7 @@ export class WebComponent {
     }
 
     private configureDefaultRoutes(): RouteRecordRaw[] {
-        return [
-            new MainView().route(),
-        ];
+        return [];
     }
 
     /**
@@ -185,17 +185,17 @@ export class WebComponent {
     }
 
     /**
+     * The global main view.
+     */
+    public get mainView(): MainView {
+        return this._mainView;
+    }
+
+    /**
      * The global Vue application instance.
      */
     public get vue(): App {
         return this._vueApp;
-    }
-
-    /**
-     * The main application component.
-     */
-    public get appRoot(): VueComponent {
-        return this._appRoot;
     }
 
     /**

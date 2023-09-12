@@ -1,7 +1,6 @@
 import { ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/NetworkEvents";
 import { WebComponent } from "../component/WebComponent";
 import { ComponentState, componentStore } from "../stores/ComponentStore";
-import { MainView } from "../ui/views/main/MainView";
 import { Service } from "./Service";
 import { ServiceContext } from "./ServiceContext";
 
@@ -20,16 +19,14 @@ export default function (comp: WebComponent): Service {
             compStore.componentState = ComponentState.ConnectionLost;
             compStore.componentStateMessage = "Connection lost";
 
-            const view = new MainView();
-            view.activate().then();
+            WebComponent.instance.mainView.navigateTo();
         });
 
         svc.messageHandler(ClientConnectionErrorEvent, (msg: ClientConnectionErrorEvent, ctx: ServiceContext) => {
             compStore.componentState = ComponentState.ConnectionError;
             compStore.componentStateMessage = msg.reason;
 
-            const view = new MainView();
-            view.activate().then();
+            WebComponent.instance.mainView.navigateTo();
         });
     });
 }

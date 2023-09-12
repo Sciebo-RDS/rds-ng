@@ -8,10 +8,10 @@ import { ref } from "vue";
  *     - **ConnectionLost**: The connection to the server has been lost
  */
 export const enum ComponentState {
-    Initializing,
-    Running,
-    ConnectionLost,
-    ConnectionError,
+    Initializing = "initializing",
+    Running = "running",
+    ConnectionLost = "connection-lost",
+    ConnectionError = "connection-error",
 }
 
 /**

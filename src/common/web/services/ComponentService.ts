@@ -3,7 +3,6 @@ import { WebComponent } from "../component/WebComponent";
 import { Channel } from "../core/messaging/Channel";
 import { ComponentState, componentStore } from "../stores/ComponentStore";
 import { ConnectionState, networkStore } from "../stores/NetworkStore";
-import { MainView } from "../ui/views/main/MainView";
 import { Service } from "./Service";
 import { ServiceContext } from "./ServiceContext";
 
@@ -39,8 +38,7 @@ export default function (comp: WebComponent): Service {
                 nwStore.connectionState = ConnectionState.Ready;
                 compStore.componentState = ComponentState.Running;
 
-                const view = new MainView();
-                view.activate().then();
+                WebComponent.instance.mainView.navigateTo();
             }, 3000);
         });
     });
