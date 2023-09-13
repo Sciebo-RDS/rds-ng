@@ -9,25 +9,19 @@ const appVersion = comp.data.version;
 </script>
 
 <template>
-    <div class="grid grid-flow-row auto-rows-max justify-items-center">
-        <div>
-            <img src="../../../../../assets/img/rds_ng-octopus-blue.png" alt="RDS-NG Logo" class="logo">
-        </div>
-        <div>
-            <h2 class="text-2xl font-extrabold text-slate-700">{{ appTitle }}</h2>
-        </div>
-        <div>
-            <h3 class="text-1xl italic text-slate-700"><span class="font-bold">{{ appName }}</span> - <span class="text-slate-500">v{{ appVersion }}</span></h3>
-        </div>
-        <div>&nbsp;</div>
+    <div>
+        <img src="../../../../../assets/img/rds_ng-octopus-blue.png" alt="RDS-NG Logo" class="logo">
     </div>
+    <div>
+        <h2 class="text-2xl font-extrabold">{{ appTitle }}</h2>
+    </div>
+    <div>
+        <h3 class="text-1xl italic"><span class="font-bold">{{ appName }}</span> - <span class="r-text-light">v{{ appVersion }}</span></h3>
+    </div>
+    <div>&nbsp;</div>
 </template>
 
 <style scoped lang="scss">
-div {
-    margin: 0.1rem;
-}
-
 .logo {
     width: 500px;
     height: auto;

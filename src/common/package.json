@@ -7,6 +7,7 @@
         "material-icons": "^1.13.11",
         "pinia": "^2.1.6",
         "postcss": "^8.4.29",
+        "primeicons": "^6.0.1",
         "primevue": "^3.34.1",
         "reflect-metadata": "^0.1.13",
         "sass": "^1.66.1",

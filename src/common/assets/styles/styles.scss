@@ -1,0 +1,5 @@
+// Always import TailwindCSS first to avoid style clashes
+@import "global/tailwind-init";
+
+// Next, import various globally used styles
+@import "global/global";

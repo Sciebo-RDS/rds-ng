@@ -1,8 +1,3 @@
-// Start by importing TailwindCSS
-import "../../assets/styles/tailwind-init.css";
-// Next, load the Material Icons
-import "material-icons/iconfont/outlined.css";
-
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 // @ts-ignore
@@ -28,6 +23,10 @@ import createNetworkService from "../services/NetworkService";
 import createWebService from "../services/WebService";
 
 import MainContainer from "../ui/views/main/MainViewContainer.vue";
+
+// Load various icons
+import "material-icons/iconfont/outlined.css";
+import "primeicons/primeicons.css";
 
 // Necessary to make the entire API known
 import "../api/API";

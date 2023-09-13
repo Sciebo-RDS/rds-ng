@@ -3,19 +3,16 @@ import Header from "./Header.vue";
 </script>
 
 <template>
-    <Header></Header>
-    <div class="grid grid-flow-row auto-rows-max justify-items-center text-slate-700">
+    <div class="r-centered-grid r-text">
+        <Header></Header>
         <div>
             It seems that I lost my connection to the server...
         </div>
         <div>
-            Pretty-Please refresh your browser to try again.
+            Pretty-please refresh your browser to try again.
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
-div {
-    margin: 0.1rem;
-}
 </style>
