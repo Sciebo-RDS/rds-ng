@@ -34,11 +34,23 @@
 }
 
 /*
- * Extending theme lasses.
+ * Extending theme classes.
  */
 .r-text-light {
-    color: var(--text-color);
+    color: color-mix(in srgb, var(--text-color), #FFF 30%);
     opacity: 0.7;
+}
+
+.r-border-color {
+    @apply border-gray-300;
+}
+
+.r-shade {
+    background-color: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
+}
+
+.r-shade-text {
+    color: var(--text-color);
 }
 
 /*
