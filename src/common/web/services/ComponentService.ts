@@ -33,13 +33,10 @@ export default function (comp: WebComponent): Service {
             nwStore.serverInfo = msg.componentInformation();
             nwStore.serverChannel = Channel.direct(msg.comp_id);
 
-            // TODO: Delay raus
-            setTimeout(function () {
-                nwStore.connectionState = ConnectionState.Ready;
-                compStore.componentState = ComponentState.Running;
+            nwStore.connectionState = ConnectionState.Ready;
+            compStore.componentState = ComponentState.Running;
 
-                WebComponent.instance.mainView.navigateTo();
-            }, 3000);
+            WebComponent.instance.mainView.navigateTo();
         });
     });
 }

@@ -1,5 +1,2 @@
 [backend]
 driver = "stub"
-
-[network.server]
-idle_timeout = 60
