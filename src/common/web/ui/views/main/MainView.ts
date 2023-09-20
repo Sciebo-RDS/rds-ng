@@ -1,6 +1,6 @@
 import { type Component as VueComponent } from "@vue/runtime-core";
 import { type Router, type RouteRecordRaw } from "vue-router";
-import { ComponentState } from "../../../stores/ComponentStore";
+import { ComponentState } from "../../../data/stores/ComponentStore";
 
 import { View } from "../View";
 

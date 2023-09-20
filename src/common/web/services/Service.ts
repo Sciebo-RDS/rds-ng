@@ -1,4 +1,5 @@
 import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
+import { MessageContext } from "../core/messaging/handlers/MessageContext";
 import { type MessageHandler } from "../core/messaging/handlers/MessageHandler";
 import { MessageService } from "../core/messaging/handlers/MessageService";
 import { type ConstructableMessage, Message } from "../core/messaging/Message";
@@ -6,6 +7,8 @@ import { type MessageBusProtocol } from "../core/messaging/MessageBusProtocol";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { ServiceContext } from "./ServiceContext";
+
+type ServiceHandler<MsgType extends Message, CtxType extends MessageContext> = (msg: MsgType, ctx: CtxType) => void;
 
 /**
  * Base service class providing easy message handler mapping.
@@ -57,12 +60,13 @@ export class Service<CtxType extends ServiceContext = ServiceContext> extends Me
      * @param handler - The message handler callback.
      * @param nameFilter - A more generic message name filter to match against; wildcards (*) are supported as well.
      */
-    public messageHandler<MsgType extends Message>(messageType: ConstructableMessage<MsgType>, handler: MessageHandler,
-                                                   nameFilter: string = ""): void {
+    public messageHandler<MsgType extends Message, CtxType extends MessageContext>(messageType: ConstructableMessage<MsgType>,
+                                                                                   handler: ServiceHandler<MsgType, CtxType>,
+                                                                                   nameFilter: string = ""): void {
         if (!nameFilter) {
             nameFilter = messageType.messageName();
         }
-        this.messageHandlers.addHandler(nameFilter, handler, messageType);
+        this.messageHandlers.addHandler(nameFilter, handler as MessageHandler, messageType);
     }
 
     /**

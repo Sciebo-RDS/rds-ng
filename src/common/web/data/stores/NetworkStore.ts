@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { type ComponentInformation } from "../api/ComponentEvents";
-import { Channel } from "../core/messaging/Channel";
+import { type ComponentInformation } from "../../api/ComponentEvents";
+import { Channel } from "../../core/messaging/Channel";
 
 /**
  * The state of the connection to the server:

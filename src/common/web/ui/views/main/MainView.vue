@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { WebComponent } from "../../../component/WebComponent";
 
-import { ComponentState, componentStore } from "../../../stores/ComponentStore";
+import { ComponentState, componentStore } from "../../../data/stores/ComponentStore";
 
 const comp = WebComponent.inject();
 const compStore = componentStore();

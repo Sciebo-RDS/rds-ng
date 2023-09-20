@@ -1,8 +1,8 @@
 import { ComponentInformationEvent } from "../api/ComponentEvents";
 import { WebComponent } from "../component/WebComponent";
 import { Channel } from "../core/messaging/Channel";
-import { ComponentState, componentStore } from "../stores/ComponentStore";
-import { ConnectionState, networkStore } from "../stores/NetworkStore";
+import { ComponentState, componentStore } from "../data/stores/ComponentStore";
+import { ConnectionState, networkStore } from "../data/stores/NetworkStore";
 import { Service } from "./Service";
 import { ServiceContext } from "./ServiceContext";
 

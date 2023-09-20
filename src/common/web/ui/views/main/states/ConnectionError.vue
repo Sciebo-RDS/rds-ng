@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { componentStore } from "../../../../stores/ComponentStore";
+import { componentStore } from "../../../../data/stores/ComponentStore";
 
 import Header from "./Header.vue";
 
