@@ -1,6 +1,5 @@
 from .service import Service, ServiceContext
 from ..component import BackendComponent
-from ..utils import UnitID
 
 
 def create_network_service(comp: BackendComponent) -> Service:
@@ -25,7 +24,7 @@ def create_network_service(comp: BackendComponent) -> Service:
     svc = comp.create_service("Network service")
 
     @svc.message_handler(PingCommand)
-    def ping_command(msg: PingCommand, ctx: ServiceContext) -> None:
+    def ping(msg: PingCommand, ctx: ServiceContext) -> None:
         ctx.logger.debug("Received PING", scope="component", payload=msg.payload)
 
         PingReply.build(ctx.message_builder, msg).emit()

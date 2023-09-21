@@ -1,6 +1,6 @@
 import typing
 
-from common.py.data.entities.project import Project, ProjectID
+from common.py.data.entities import Project, ProjectID
 from common.py.data.storage import ProjectStorage
 
 

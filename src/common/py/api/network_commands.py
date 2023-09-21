@@ -34,7 +34,7 @@ class PingCommand(Command):
 @Message.define("command/general/ping/reply")
 class PingReply(CommandReply):
     """
-    Reply to the ``PingCommand``.
+    Reply to ``PingCommand``.
     """
 
     payload: str = "PONG"
