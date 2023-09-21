@@ -1,7 +1,7 @@
 import typing
 
-from .. import ProjectStorage
-from ...entities.project import ProjectID, Project
+from common.py.data.entities.project import Project, ProjectID
+from common.py.data.storage import ProjectStorage
 
 
 class MemoryProjectStorage(ProjectStorage):
@@ -18,7 +18,7 @@ class MemoryProjectStorage(ProjectStorage):
         try:
             del MemoryProjectStorage._projects[project.project_id]
         except:  # pylint: disable=bare-except
-            from .. import StorageException
+            from common.py.data.storage import StorageException
 
             raise StorageException(
                 f"A project with ID {project.project_id} was not found"

@@ -1,5 +1,4 @@
-from .. import StoragePool
-from ..project_storage import ProjectStorage
+from common.py.data.storage import StoragePool, ProjectStorage
 
 
 class MemoryStoragePool(StoragePool):
