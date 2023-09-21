@@ -4,7 +4,7 @@ import { WebComponent } from "../../../component/WebComponent";
 
 import { ComponentState, componentStore } from "../../../data/stores/ComponentStore";
 
-const comp = WebComponent.inject();
+const comp = WebComponent.injectComponent();
 const compStore = componentStore();
 
 let activeState = ref(compStore.componentState);

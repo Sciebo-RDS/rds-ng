@@ -53,9 +53,8 @@ export class WebComponent {
      * @param env - The global environment variables.
      * @param compID - The identifier of this component.
      * @param appRoot - The root (main) application component.
-     * @param appElement - The HTML element ID used for mounting the root component.
      */
-    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
+    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent) {
         if (WebComponent._instance) {
             throw new Error("A component instance has already been created")
         }
@@ -81,7 +80,7 @@ export class WebComponent {
         this._router = this.createRouter();
 
         this._mainView = new MainView(this._router, appRoot);
-        this._vueApp = this.createVueApp(appElement);
+        this._vueApp = this.createVueApp();
     }
 
     private createConfig(env: SettingsContainer): Configuration {
@@ -104,7 +103,7 @@ export class WebComponent {
         });
     }
 
-    private createVueApp(appElement: string): App {
+    private createVueApp(): App {
         logging.info("-- Creating Vue application...");
 
         const app = createApp(MainContainer);
@@ -114,8 +113,6 @@ export class WebComponent {
         app.use(PrimeVue);
 
         app.provide(WebComponent._injectionKey, this);
-
-        app.mount(appElement);
 
         return app;
     }
@@ -134,10 +131,22 @@ export class WebComponent {
     }
 
     /**
+     * Mounts the Vue application in the given element.
+     *
+     * Notes:
+     *     This method must be called immediately after creating the main component instance.
+     *
+     * @param appElement - The HTML element ID used for mounting the root component.
+     */
+    public mount(appElement: string = "#app"): void {
+        this._vueApp.mount(appElement);
+    }
+
+    /**
      * Starts the component's execution cycles.
      *
      * Notes:
-     *     It is mandatory to call this method after creating and setting up a component.
+     *     This method is automatically called by the framework.
      */
     public run(): void {
         logging.info("Running component...");
@@ -202,8 +211,8 @@ export class WebComponent {
      *
      * @throws Error - If no instance has been created.
      */
-    public static inject(): WebComponent {
-        let inst = inject<WebComponent>(WebComponent._injectionKey);
+    public static injectComponent<CompType extends WebComponent = WebComponent>(): CompType {
+        let inst = inject<CompType>(WebComponent._injectionKey);
         if (!inst) {
             throw new Error("No component instance has been created");
         }

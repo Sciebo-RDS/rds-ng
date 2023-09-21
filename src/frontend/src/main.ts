@@ -9,3 +9,6 @@ import "@assets/styles/themes/light-theme.scss";
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 const comp = new FrontendComponent();
+
+// Mount the Vue application
+comp.mount();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { WebComponent } from "../../../../component/WebComponent";
 
-const comp = WebComponent.inject();
+const comp = WebComponent.injectComponent();
 
 const appTitle = comp.data.title;
 const appName = comp.data.name;
