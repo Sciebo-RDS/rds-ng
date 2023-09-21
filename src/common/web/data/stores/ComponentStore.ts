@@ -8,10 +8,10 @@ import { ref } from "vue";
  *     - **ConnectionLost**: The connection to the server has been lost
  */
 export const enum ComponentState {
-    Initializing = "initializing",
-    Running = "running",
+    Connecting = "connecting",
     ConnectionLost = "connection-lost",
     ConnectionError = "connection-error",
+    Running = "running",
 }
 
 /**
@@ -21,11 +21,11 @@ export const enum ComponentState {
  * @param componentStateMessage - An additional message about the component state.
  */
 export const componentStore = defineStore("componentStore", () => {
-    const componentState = ref(ComponentState.Initializing);
+    const componentState = ref(ComponentState.Connecting);
     const componentStateMessage = ref("");
 
     function reset() {
-        componentState.value = ComponentState.Initializing;
+        componentState.value = ComponentState.Connecting;
         componentStateMessage.value = "";
     }
 

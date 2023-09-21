@@ -6,7 +6,7 @@ import Header from "./Header.vue";
     <div class="r-centered-grid r-text">
         <Header></Header>
         <div>
-            <span class="italic">Hang on tight while I'm initializing...</span>
+            <span class="italic">Hang on tight while I'm connecting to the server...</span>
         </div>
         <div>
             <span class="material-icons-outlined animate-spin" style="font-size: 32px;">hourglass_empty</span>
