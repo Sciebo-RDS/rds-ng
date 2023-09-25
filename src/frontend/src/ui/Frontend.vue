@@ -9,7 +9,7 @@ import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
 import ProjectList from "@/ui/projectlist/ProjectList.vue";
 
 const comp = FrontendComponent.inject();
-const controller = new ProjectsController(comp.frontendService);
+const controller = new ProjectsController(comp);
 
 // When launching the frontend, request all data first
 onMounted(() => {

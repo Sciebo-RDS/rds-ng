@@ -2,12 +2,12 @@ import { ListProjectsCommand } from "@common/api/ProjectCommands";
 import { type CommandComposerExtender } from "@common/controllers/Controller";
 import logging from "@common/core/logging/Logging";
 
-import { BaseController } from "@/controllers/BaseController";
+import { FrontendController } from "@/controllers/FrontendController";
 
 /**
  * Controller for projects.
  */
-export class ProjectsController extends BaseController {
+export class ProjectsController extends FrontendController {
     /**
      * Requests the entire projects list of the current user.
      *
