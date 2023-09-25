@@ -6,6 +6,7 @@ import { CommandReplyComposer } from "../core/messaging/composers/CommandReplyCo
 import { EventComposer } from "../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { MessageComposer } from "../core/messaging/composers/MessageComposer";
+import { Event } from "../core/messaging/Event";
 import { Message } from "../core/messaging/Message";
 import { networkStore } from "../data/stores/NetworkStore";
 import { Service } from "../services/Service";
