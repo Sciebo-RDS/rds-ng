@@ -50,7 +50,7 @@ export class CommandComposer<MsgType extends Command> extends MessageComposer<Ms
     }
 
     protected verify(): void {
-        if (this._timeout > 0.0 && !this._failCallback) {
+        if (this._timeout > 0.0 && this._failCallbacks.length == 0) {
             logging.warning(`Sending a command (${this._msgType}) with a timeout but no fail callback`, "bus");
         }
     }

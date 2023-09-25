@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import Button from "primevue/button";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { ListProjectsCommand, ListProjectsCommandReply } from "@common/api/ProjectCommands";
-import { networkStore } from "@common/data/stores/NetworkStore";
+import { ProjectsController } from "@/controllers/ProjectsController";
+import Button from "primevue/button";
 
 const comp = FrontendComponent.inject();
 
 function listProjects() {
     console.log("Fetching projects...");
 
-    const store = networkStore();
-    const builder = comp.frontendService.messageBuilder;
-
-    builder.buildCommand(ListProjectsCommand).done((cmd: ListProjectsCommandReply, success: boolean, msg: string) => {
-        console.log("Projects reply:");
-        console.log(cmd.projects);
-    }).emit(store.serverChannel);
+    const controller = new ProjectsController(comp.frontendService);
+    controller.listProjects();
 }
 </script>
 
