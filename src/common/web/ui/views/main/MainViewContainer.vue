@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue"
+import DynamicDialog from "primevue/dynamicdialog";
 
 import { WebComponent } from "../../../component/WebComponent";
 
@@ -12,5 +13,6 @@ onMounted(() => {
 </script>
 
 <template>
+    <DynamicDialog></DynamicDialog>
     <router-view></router-view>
 </template>

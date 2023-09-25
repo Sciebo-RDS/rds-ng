@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+
 import { WebComponent } from "../../../component/WebComponent";
 
 import { ComponentState, componentStore } from "../../../data/stores/ComponentStore";

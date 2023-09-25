@@ -1,5 +1,6 @@
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
+import DialogService from "primevue/dialogservice";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { type App, type Component as VueComponent, createApp, inject } from "vue";
@@ -111,6 +112,7 @@ export class WebComponent {
         app.use(createPinia());
         app.use(this._router);
         app.use(PrimeVue);
+        app.use(DialogService);
 
         app.provide(WebComponent._injectionKey, this);
 

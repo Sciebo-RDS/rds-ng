@@ -1,5 +1,6 @@
-import { ListProjectsCommand, ListProjectsCommandReply } from "@common/api/ProjectCommands";
+import { ListProjectsCommand } from "@common/api/ProjectCommands";
 import { type CommandComposerExtender } from "@common/controllers/Controller";
+import logging from "@common/core/logging/Logging";
 
 import { BaseController } from "@/controllers/BaseController";
 
@@ -13,10 +14,9 @@ export class ProjectsController extends BaseController {
      * @param extender - An optional callback to extend the used composer.
      */
     public listProjects(extender: CommandComposerExtender<ListProjectsCommand> | null = null): void {
-        const composer = this.messageBuilder.buildCommand(ListProjectsCommand).done((cmd: ListProjectsCommandReply, success: boolean, msg: string) => {
-            console.log("Projects reply:");
-            console.log(cmd.projects);
-        });
+        logging.debug("Fetching projects list...", "projects");
+
+        const composer = this.messageBuilder.buildCommand(ListProjectsCommand);
 
         this.emitMessage(composer, extender);
     }
