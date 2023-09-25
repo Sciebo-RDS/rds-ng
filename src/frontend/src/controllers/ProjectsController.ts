@@ -18,6 +18,6 @@ export class ProjectsController extends BaseController {
             console.log(cmd.projects);
         });
 
-        this.emit(composer, extender);
+        this.emitMessage(composer, extender);
     }
 }

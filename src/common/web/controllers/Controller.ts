@@ -29,7 +29,7 @@ export class Controller {
         this._serverChannel = nwStore.serverChannel;
     }
 
-    protected emit<CompType extends MessageComposer<Message>, ExtType extends Function>(composer: CompType, extender: ExtType | null): void {
+    protected emitMessage<CompType extends MessageComposer<Message>, ExtType extends Function>(composer: CompType, extender: ExtType | null): void {
         if (extender) {
             extender(composer);
         }
