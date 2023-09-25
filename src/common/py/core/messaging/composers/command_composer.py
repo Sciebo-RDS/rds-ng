@@ -35,35 +35,35 @@ class CommandComposer(MessageComposer):
         """
         super().__init__(origin_id, message_bus, msg_type, chain, **kwargs)
 
-        self._done_callback: CommandDoneCallback | None = None
-        self._fail_callback: CommandFailCallback | None = None
+        self._done_callbacks: typing.List[CommandDoneCallback] = []
+        self._fail_callbacks: typing.List[CommandFailCallback] = []
         self._async_callbacks = False
         self._timeout = 0.0
 
-    def done(self, cb: CommandDoneCallback | None) -> typing.Self:
+    def done(self, cb: CommandDoneCallback) -> typing.Self:
         """
-        Assigns a *Done* callback.
+        Adds a *Done* callback.
 
         Args:
-            cb: The callback to use.
+            cb: The callback to add.
 
         Returns:
             This composer instance to allow call chaining.
         """
-        self._done_callback = cb
+        self._done_callbacks.append(cb)
         return self
 
-    def failed(self, cb: CommandFailCallback | None) -> typing.Self:
+    def failed(self, cb: CommandFailCallback) -> typing.Self:
         """
-        Assigns a *Fail* callback.
+        Adds a *Fail* callback.
 
         Args:
-            cb: The callback to use.
+            cb: The callback to add.
 
         Returns:
             This composer instance to allow call chaining.
         """
-        self._fail_callback = cb
+        self._fail_callbacks.append(cb)
         return self
 
     def async_callbacks(self, async_cbs: bool) -> typing.Self:
@@ -93,7 +93,7 @@ class CommandComposer(MessageComposer):
         return self
 
     def _verify(self) -> None:
-        if self._timeout > 0.0 and self._fail_callback is None:
+        if self._timeout > 0.0 and len(self._fail_callbacks) == 0:
             from ... import logging
 
             logging.warning(
@@ -106,8 +106,8 @@ class CommandComposer(MessageComposer):
 
         return CommandMetaInformation(
             entrypoint=MessageMetaInformation.Entrypoint.LOCAL,
-            done_callback=self._done_callback,
-            fail_callback=self._fail_callback,
+            done_callbacks=self._done_callbacks,
+            fail_callbacks=self._fail_callbacks,
             async_callbacks=self._async_callbacks,
             timeout=self._timeout,
         )

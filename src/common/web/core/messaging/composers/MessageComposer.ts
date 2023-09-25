@@ -4,6 +4,8 @@ import { type ConstructableMessage, Message } from "../Message";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 
+export type BeforeDispatchCallback = (msg: Message, msgMeta: MessageMetaInformation) => void;
+
 /**
  * A class to collect all information necessary to create and emit a message.
  */
@@ -14,6 +16,8 @@ export abstract class MessageComposer<MsgType extends Message> {
     protected _msgType: ConstructableMessage<MsgType>;
     protected _params: Record<string, any>;
     protected _chain: Message | null;
+
+    private _beforeCallbacks: BeforeDispatchCallback[] = [];
 
     /**
      * @param originID - The component identifier of the origin of newly created messages.
@@ -33,6 +37,18 @@ export abstract class MessageComposer<MsgType extends Message> {
     }
 
     /**
+     * Adds a callback that will be called immediately before the message is dispatched.
+     *
+     * @param cb - The callback to add.
+     *
+     * @returns - This composer instance to allow call chaining.
+     */
+    public before(cb: BeforeDispatchCallback): this {
+        this._beforeCallbacks.push(cb);
+        return this;
+    }
+
+    /**
      * Sends the built message through the message bus.
      *
      * @param target - The target of the message.
@@ -43,6 +59,10 @@ export abstract class MessageComposer<MsgType extends Message> {
 
         let msgMeta = this.createMetaInformation();
         let msg = this.createMessage(target);
+
+        for (const cb of this._beforeCallbacks) {
+            cb(msg, msgMeta);
+        }
 
         this._messageBus.dispatch(msg, msgMeta);
     }
