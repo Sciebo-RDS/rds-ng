@@ -9,9 +9,6 @@ import { StatusDialog } from "@/ui/dialogs/StatusDialog";
 import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
 import ProjectList from "@/ui/projectlist/ProjectList.vue";
 
-import type { ListProjectsCommand } from "@common/api/ProjectCommands";
-import type { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-
 const comp = FrontendComponent.inject();
 
 // When launching the frontend, request all data first
@@ -22,13 +19,12 @@ onMounted(() => {
         statusDlg.show("Fetching data", "Please wait while your data is being downloaded...", "file_download");
 
         const action = new ListProjectsAction(comp);
-        action.execute((composer: CommandComposer<ListProjectsCommand>) => {
-            composer.done(() => {
-                setTimeout(() => {
-                    statusDlg.hide();
-                }, 1000);
-            })
+        action.prepare().done(() => {
+            setTimeout(() => {
+                statusDlg.hide();
+            }, 1000);
         });
+        action.execute();
     });
 });
 </script>

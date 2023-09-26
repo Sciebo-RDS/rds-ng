@@ -1,15 +1,9 @@
 import { Channel } from "../../core/messaging/Channel";
-import { Command } from "../../core/messaging/Command";
-import { CommandComposer } from "../../core/messaging/composers/CommandComposer";
-import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { MessageComposer } from "../../core/messaging/composers/MessageComposer";
-import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
 import { networkStore } from "../../data/stores/NetworkStore";
 import { Service } from "../../services/Service";
-
-export type ActionCallback<MsgType extends Message, CompType extends MessageComposer<MsgType>> = (composer: CompType) => void;
 
 /**
  * Base class for actions from the user interface (usually but not necessarily initiated by the user). An action is a UI-extended
@@ -20,6 +14,8 @@ export type ActionCallback<MsgType extends Message, CompType extends MessageComp
 export abstract class Action<MsgType extends Message, CompType extends MessageComposer<MsgType>> {
     private readonly _service: Service;
     private readonly _serverChannel: Channel;
+
+    protected _composer: CompType | null = null;
 
     private _executed = false;
 
@@ -33,24 +29,39 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
         this._serverChannel = nwStore.serverChannel;
     }
 
-    protected executeAction(composer: CompType, callback: ActionCallback<MsgType, CompType> | null): void {
+    /**
+     * Prepares this action.
+     *
+     * @returns - A message composer that can be further modified.
+     */
+    public abstract prepare(...args: any[]): CompType;
+
+    /**
+     * Executes the action (i.e., the message will be emitted).
+     */
+    public execute(): void {
         if (this._executed) {
             throw new Error("Tried to execute an action more than once");
         }
-
-        if (callback) {
-            callback(composer);
+        if (!this._composer) {
+            throw new Error("Tried to execute an action before preparing it");
         }
 
-        composer.emit(this._serverChannel);
+        this.preExecution();
 
+        this._composer.emit(this._serverChannel);
         this._executed = true;
+
+        this.postExecution();
+    }
+
+    protected preExecution(): void {
+    }
+
+    protected postExecution(): void {
     }
 
     protected get messageBuilder(): MessageBuilder {
         return this._service.messageBuilder;
     }
 }
-
-export type CommandActionCallback<CmdType extends Command> = (composer: CommandComposer<CmdType>) => void;
-export type EventActionCallback<EventType extends Event> = (composer: EventComposer<EventType>) => void;
