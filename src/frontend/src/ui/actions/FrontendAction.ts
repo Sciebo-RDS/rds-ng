@@ -9,7 +9,7 @@ import { Action } from "@common/ui/actions/Action";
 export abstract class FrontendAction<MsgType extends Message, CompType extends MessageComposer<MsgType>> extends Action<MsgType, CompType> {
     protected readonly _component: FrontendComponent;
 
-    protected constructor(comp: FrontendComponent) {
+    public constructor(comp: FrontendComponent) {
         super(comp.frontendService);
 
         this._component = comp;

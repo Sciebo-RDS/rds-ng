@@ -1,5 +1,5 @@
 import { type DynamicDialogInstance, type DynamicDialogOptions } from "primevue/dynamicdialogoptions";
-import { type App } from "vue";
+import { type App, inject, type Ref } from "vue";
 
 import { WebComponent } from "../../component/WebComponent";
 
@@ -39,5 +39,12 @@ export class Dialog {
      */
     public hideDialog(): void {
         this._dialog?.close();
+    }
+
+    /**
+     * Injects the dynamic dialog reference object.
+     */
+    public static inject(): DynamicDialogInstance | undefined {
+        return inject<Ref<DynamicDialogInstance>>("dialogRef")?.value as DynamicDialogInstance;
     }
 }

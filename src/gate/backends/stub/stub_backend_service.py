@@ -23,7 +23,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
     @svc.message_handler(ListProjectsCommand)
     def list_projects(msg: ListProjectsCommand, ctx: StubBackendServiceContext) -> None:
         ListProjectsCommandReply.build(
-            ctx.message_builder, msg, projects=ctx.storage_pool.project_storage.list()
+            ctx.message_builder, msg, projects=ctx.storage_pool.project_storage.list(), success=False, message="NE ALTER SO NICHT"
         ).emit()
 
     # Add some initial data to the in-memory storage
