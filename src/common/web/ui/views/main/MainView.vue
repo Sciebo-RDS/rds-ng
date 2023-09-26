@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DynamicDialog from "primevue/dynamicdialog";
 import { ref, watch } from "vue";
 
 import { WebComponent } from "../../../component/WebComponent";
@@ -16,4 +17,5 @@ watch(() => compStore.componentState, (state: ComponentState, prevState: Compone
 
 <template>
     <component :is="comp.mainView.getStateComponent(activeState)"></component>
+    <DynamicDialog></DynamicDialog>
 </template>
