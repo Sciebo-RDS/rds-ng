@@ -1,16 +1,14 @@
-import { FrontendComponent } from "@/component/FrontendComponent";
 import { ListProjectsCommand } from "@common/api/ProjectCommands";
 import logging from "@common/core/logging/Logging";
-import { CommandAction, type CommandActionCallback } from "@common/ui/actions/CommandAction";
+import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
+import { type CommandActionCallback } from "@common/ui/actions/Action";
+
+import { FrontendAction } from "@/ui/actions/FrontendAction";
 
 /**
  * Action to retrieve all projects.
  */
-export class ListProjectsAction extends CommandAction<ListProjectsCommand> {
-    public constructor(comp: FrontendComponent) {
-        super(comp.frontendService);
-    }
-
+export class ListProjectsAction extends FrontendAction<ListProjectsCommand, CommandComposer<ListProjectsCommand>> {
     /**
      * Requests the entire projects list of the current user.
      *

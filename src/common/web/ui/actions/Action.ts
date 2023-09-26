@@ -1,6 +1,10 @@
 import { Channel } from "../../core/messaging/Channel";
+import { Command } from "../../core/messaging/Command";
+import { CommandComposer } from "../../core/messaging/composers/CommandComposer";
+import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { MessageComposer } from "../../core/messaging/composers/MessageComposer";
+import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
 import { networkStore } from "../../data/stores/NetworkStore";
 import { Service } from "../../services/Service";
@@ -22,7 +26,7 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
     /**
      * @param service - The service to use for message emission.
      */
-    public constructor(service: Service) {
+    protected constructor(service: Service) {
         const nwStore = networkStore();
 
         this._service = service;
@@ -47,3 +51,6 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
         return this._service.messageBuilder;
     }
 }
+
+export type CommandActionCallback<CmdType extends Command> = (composer: CommandComposer<CmdType>) => void;
+export type EventActionCallback<EventType extends Event> = (composer: EventComposer<EventType>) => void;

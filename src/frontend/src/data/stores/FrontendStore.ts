@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import type { Project } from "@common/data/entities/Project";
+import { Project } from "@common/data/entities/Project";
 
 /**
  * The frontend store for all frontend-specific data.
