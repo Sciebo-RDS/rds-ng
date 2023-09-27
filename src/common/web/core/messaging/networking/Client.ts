@@ -35,8 +35,8 @@ export class Client {
         this._compID = compID;
         this._config = config;
 
-        this._serverAddress = this._config.value(NetworkClientSettingIDs.ServerAddress);
-        this._connectionTimeout = this._config.value(NetworkClientSettingIDs.ConnectionTimeout);
+        this._serverAddress = this._config.value<string>(NetworkClientSettingIDs.ServerAddress);
+        this._connectionTimeout = this._config.value<number>(NetworkClientSettingIDs.ConnectionTimeout);
 
         this._socket = this.createSocket();
         this._messageBuilder = messageBuilder;

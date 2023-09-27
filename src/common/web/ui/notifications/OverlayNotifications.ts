@@ -1,6 +1,7 @@
-import { ToastServiceMethods } from "primevue/toastservice";
+import { type ToastServiceMethods } from "primevue/toastservice";
 
 import { WebComponent } from "../../component/WebComponent";
+import { GeneralSettingIDs } from "../../settings/GeneralSettingIDs";
 
 /**
  * The type of an overlay notification.
@@ -25,7 +26,7 @@ export class OverlayNotifications {
     public constructor(comp: WebComponent) {
         this._toast = comp.vue.config.globalProperties.$toast;
 
-        this._timeout = 3 * 1000; // TODO: Config
+        this._timeout = comp.data.config.value<number>(GeneralSettingIDs.NotificationTimeout) * 1000;
     }
 
     /**

@@ -9,4 +9,4 @@ class GeneralSettingIDs:
     Attributes:
         DEBUG: Whether debug mode should be enabled (value type: ``bool``).
     """
-    DEBUG = SettingID(None, "debug")
+    DEBUG = SettingID("general", "debug")

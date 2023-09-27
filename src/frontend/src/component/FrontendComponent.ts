@@ -3,6 +3,8 @@ import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
+import { getFrontendSettings } from "@/settings/FrontendSettings";
+
 import createFrontendService from "@/services/FrontendService";
 import createProjectsService from "@/services/ProjectsService";
 
@@ -17,6 +19,8 @@ export class FrontendComponent extends WebComponent {
 
     public constructor() {
         super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend);
+
+        this.addFrontendSettings();
     }
 
     public run(): void {
@@ -25,6 +29,10 @@ export class FrontendComponent extends WebComponent {
         // Create frontend-specific services
         this._frontendService = createFrontendService(this);
         this._projectsService = createProjectsService(this);
+    }
+
+    private addFrontendSettings(): void {
+        this.data.config.addDefaults(getFrontendSettings());
     }
 
     /**

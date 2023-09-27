@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import { onMounted } from "vue";
+
+import { ActionState } from "@common/ui/actions/Action";
+import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
+import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
+import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
-import { OverlayNotifier } from "@/ui/actions/notifiers/OverlayNotifier";
 
 import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
 import ProjectList from "@/ui/projectlist/ProjectList.vue";
-import { ActionState } from "@common/ui/actions/Action";
-import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
-import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
-import { onMounted } from "vue";
 
 const comp = FrontendComponent.inject();
 
@@ -17,7 +19,7 @@ const comp = FrontendComponent.inject();
 onMounted(() => {
     // We use a timeout (w/o delay) to do the request after the first render
     setTimeout(() => {
-        const action = new ListProjectsAction(comp.frontendService);
+        const action = new ListProjectsAction(comp);
 
         action.addNotifier(
             ActionState.Executing,

@@ -1,6 +1,6 @@
-import { WebComponent } from "@common/component/WebComponent";
-import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
-import { OverlayNotifications, OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
+import { WebComponent } from "../../../component/WebComponent";
+import { OverlayNotifications, OverlayNotificationType } from "../../notifications/OverlayNotifications";
+import { ActionNotifier } from "./ActionNotifier";
 
 /**
  * Notifications displayed via overlay messages.

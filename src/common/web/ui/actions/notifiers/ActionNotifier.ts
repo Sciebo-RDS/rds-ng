@@ -4,7 +4,7 @@ import { ActionState } from "../Action";
  * A snap-in for actions to display arbitrary notifications about the action execution.
  */
 export abstract class ActionNotifier {
-    public readonly MessagePlaceholder = "$MSG$";
+    public static readonly MessagePlaceholder = "$MSG$";
 
     /**
      * Called when the action triggers its notification.

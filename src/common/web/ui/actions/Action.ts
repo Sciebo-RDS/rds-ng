@@ -27,7 +27,7 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
     private readonly _serverChannel: Channel;
 
     private _state: ActionState;
-    private readonly _notifiers: ActionNotifiers = {};
+    private readonly _notifiers: ActionNotifiers = {} as ActionNotifiers;
 
     protected _composer: CompType | null = null;
 
@@ -53,7 +53,12 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
         if (!(state in this._notifiers)) {
             this._notifiers[state] = [];
         }
-        this._notifiers[state].push(notifier);
+
+        if (Array.isArray(notifier)) {
+            this._notifiers[state].push(...notifier);
+        } else {
+            this._notifiers[state].push(notifier);
+        }
     }
 
     /**
