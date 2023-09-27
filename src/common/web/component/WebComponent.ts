@@ -1,6 +1,7 @@
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 import DialogService from "primevue/dialogservice";
+import ToastService from "primevue/toastservice";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { type App, type Component as VueComponent, createApp, inject } from "vue";
@@ -113,6 +114,7 @@ export class WebComponent {
         app.use(this._router);
         app.use(PrimeVue);
         app.use(DialogService);
+        app.use(ToastService);
 
         app.provide(WebComponent._injectionKey, this);
 

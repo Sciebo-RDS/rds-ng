@@ -4,7 +4,7 @@ import { MessageComposer } from "../../core/messaging/composers/MessageComposer"
 import { Message } from "../../core/messaging/Message";
 import { networkStore } from "../../data/stores/NetworkStore";
 import { Service } from "../../services/Service";
-import { ActionNotifier } from "./notifiers/ActionNotifier";
+import { ActionNotifier, type ActionNotifiers } from "./notifiers/ActionNotifier";
 
 /**
  * The state in which an action can be.
@@ -27,22 +27,33 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
     private readonly _serverChannel: Channel;
 
     private _state: ActionState;
-    private readonly _notifiers: ActionNotifier[];
+    private readonly _notifiers: ActionNotifiers = {};
 
     protected _composer: CompType | null = null;
 
     /**
      * @param service - The service to use for message emission.
-     * @param notifiers - Action notifiers.
      */
-    public constructor(service: Service, notifiers: ActionNotifier[] = []) {
+    public constructor(service: Service) {
         const nwStore = networkStore();
 
         this._service = service;
         this._serverChannel = nwStore.serverChannel;
 
         this._state = ActionState.Pending;
-        this._notifiers = notifiers;
+    }
+
+    /**
+     * Adds a new notifier for the specified state.
+     *
+     * @param state - The state the notifier should react to.
+     * @param notifier - The notifier.
+     */
+    public addNotifier(state: ActionState, notifier: ActionNotifier | ActionNotifier[]): void {
+        if (!(state in this._notifiers)) {
+            this._notifiers[state] = [];
+        }
+        this._notifiers[state].push(notifier);
     }
 
     /**
@@ -79,20 +90,19 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
     protected setState(state: ActionState, message: string = ""): void {
         this._state = state;
 
-        for (const notifier of this._notifiers) {
-            switch (this._state) {
-                case ActionState.Executing:
-                    notifier.onExecute();
-                    break;
-                case ActionState.Done:
+        if (state == ActionState.Done || state == ActionState.Failed) {
+            // All notifiers need to know when the action has finished
+            for (const [_, notifiers] of Object.entries(this._notifiers)) {
+                notifiers.forEach((notifier: ActionNotifier) => {
                     notifier.onFinished();
-                    notifier.onDone();
-                    break;
-                case ActionState.Failed:
-                    notifier.onFinished();
-                    notifier.onFailed(message);
-                    break;
+                })
             }
+        }
+
+        if (state in this._notifiers) {
+            this._notifiers[state].forEach((notifer: ActionNotifier) => {
+                notifer.onNotify(message);
+            });
         }
     }
 

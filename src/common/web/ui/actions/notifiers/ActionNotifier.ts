@@ -1,11 +1,15 @@
+import { ActionState } from "../Action";
+
 /**
  * A snap-in for actions to display arbitrary notifications about the action execution.
  */
 export abstract class ActionNotifier {
+    public readonly MessagePlaceholder = "$MSG$";
+
     /**
-     * Called when the action is being executed.
+     * Called when the action triggers its notification.
      */
-    public onExecute(): void {
+    public onNotify(message: string = ""): void {
     }
 
     /**
@@ -14,17 +18,9 @@ export abstract class ActionNotifier {
     public onFinished(): void {
     }
 
-    /**
-     * Called when the action succeeded.
-     */
-    public onDone(): void {
-    }
-
-    /**
-     * Called when the action failed.
-     *
-     * @param reason - The failure reason.
-     */
-    public onFailed(reason: string): void {
+    protected formatMessage(displayMessage: string, message: string): string {
+        return displayMessage.replace(ActionNotifier.MessagePlaceholder, message);
     }
 }
+
+export type ActionNotifiers = Record<ActionState, ActionNotifier[]>;

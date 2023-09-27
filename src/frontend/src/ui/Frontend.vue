@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-
-import { ErrorDialogNotifier } from "@/ui/actions/notifiers/ErrorDialogNotifier";
-import { ExecutionDialogNotifier } from "@/ui/actions/notifiers/ExecutionDialogNotifier";
-import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
+
+import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
+import { OverlayNotifier } from "@/ui/actions/notifiers/OverlayNotifier";
 
 import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
 import ProjectList from "@/ui/projectlist/ProjectList.vue";
+import { ActionState } from "@common/ui/actions/Action";
+import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
+import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
+import { onMounted } from "vue";
 
 const comp = FrontendComponent.inject();
 
@@ -16,10 +17,20 @@ const comp = FrontendComponent.inject();
 onMounted(() => {
     // We use a timeout (w/o delay) to do the request after the first render
     setTimeout(() => {
-        const action = new ListProjectsAction(comp.frontendService, [
-            new ExecutionDialogNotifier("Fetching projects", "Please wait while your projects are being downloaded...", "file_download"),
-            new ErrorDialogNotifier("Error fetching projects", "An error occurred while downloading your projects"),
-        ]);
+        const action = new ListProjectsAction(comp.frontendService);
+
+        action.addNotifier(
+            ActionState.Executing,
+            new OverlayNotifier(OverlayNotificationType.Info, "Fetching projects", "Your projects are being downloaded...")
+        );
+        action.addNotifier(
+            ActionState.Done,
+            new OverlayNotifier(OverlayNotificationType.Success, "Fetching projects", "Your projects have been downloaded.")
+        )
+        action.addNotifier(
+            ActionState.Failed,
+            new OverlayNotifier(OverlayNotificationType.Error, "Error fetching projects", `An error occurred while downloading your projects: ${ActionNotifier.MessagePlaceholder}.`, true)
+        );
         action.prepare();
         action.execute();
     });
