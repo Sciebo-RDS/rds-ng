@@ -20,7 +20,7 @@ validity. Afterwards, the router decides through which channels (local, client, 
 class Direction(IntEnum)
 ```
 
-Flag telling the direction (INcoming or OUTgoing) of a message.
+Enum telling the direction (INcoming or OUTgoing) of a message.
 
 ## RoutingError Objects
 

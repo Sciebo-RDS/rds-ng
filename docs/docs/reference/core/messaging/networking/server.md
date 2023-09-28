@@ -17,7 +17,7 @@ The server connection, based on ``socketio.Server``.
 class SendTarget(IntEnum)
 ```
 
-Flag telling whether an outgoing message is only sent to a single (direct) target or spread across all connected clients.
+Enum telling whether an outgoing message is only sent to a single (direct) target or spread across all connected clients.
 
 ## \_ComponentEntry Objects
 
@@ -37,13 +37,15 @@ Whether the connected component has timed out.
 #### \_\_init\_\_
 
 ```python
-def __init__(comp_id: UnitID, config: Configuration)
+def __init__(comp_id: UnitID, config: Configuration,
+             message_builder: MessageBuilder)
 ```
 
 **Arguments**:
 
 - `comp_id` - The component identifier.
 - `config` - The global configuration.
+- `message_builder` - A message builder to use.
 
 #### set\_message\_handler
 

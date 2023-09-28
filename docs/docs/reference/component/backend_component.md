@@ -1,21 +1,18 @@
 ---
-sidebar_label: component
-title: component.component
+sidebar_label: backend_component
+title: component.backend_component
 ---
 
-## Component Objects
+## BackendComponent Objects
 
 ```python
-class Component()
+class BackendComponent()
 ```
 
 Base class for all project components.
 
 Components are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
 about the component itself and the entire project.
-
-When writing a component, always create a new subclass that extends ``Component``. Pass all the necessary information to its
-constructor and, after doing further setup steps, call its ``run`` method.
 
 #### \_\_init\_\_
 
@@ -24,7 +21,7 @@ def __init__(comp_id: UnitID,
              role: ComponentRole,
              *,
              module_name: str,
-             config_file: str = "./config/config.toml")
+             config_file: str = "./.config/config.toml")
 ```
 
 **Arguments**:
@@ -80,21 +77,25 @@ Creates and registers a new service.
 
   The newly created service.
 
-#### config
-
-```python
-@property
-def config() -> Configuration
-```
-
-The configuration used by the component.
-
 #### data
 
 ```python
 @property
-def data() -> ComponentData
+def data() -> BackendComponentData
 ```
 
 A data helper object that stores useful component data and information.
+
+#### instance
+
+```python
+@staticmethod
+def instance() -> "BackendComponent"
+```
+
+The global ``BackendComponent`` instance.
+
+**Raises**:
+
+- `RuntimeError` - If no instance has been created.
 

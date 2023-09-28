@@ -1,6 +1,6 @@
 ---
 sidebar_label: service
-title: service.service
+title: services.service
 ---
 
 ## Service Objects
@@ -46,9 +46,9 @@ def __init__(comp_id: UnitID,
 
 ```python
 def message_handler(
-    fltr: str,
     message_type: type[MessageType] = Message,
     *,
+    name_filter: str = "",
     is_async: bool = False
 ) -> typing.Callable[[MessageHandler], MessageHandler]
 ```
@@ -63,8 +63,8 @@ ctx.logger.info(f&quot;EVENT HANDLER CALLED&quot;)
 
 **Arguments**:
 
-- `fltr` - The message name filter to match against; wildcards (*) are supported for more generic handlers.
 - `message_type` - The type of the message.
+- `name_filter` - A more generic message name filter to match against; wildcards (*) are supported as well.
 - `is_async` - Whether to execute the handler asynchronously in its own thread.
 
 #### name
@@ -76,12 +76,12 @@ def name() -> str
 
 The name of this service.
 
-#### message\_emitter
+#### message\_builder
 
 ```python
 @property
-def message_emitter() -> MessageEmitter
+def message_builder() -> MessageBuilder
 ```
 
-The service&#x27;s message emitter.
+The service&#x27;s message builder.
 

@@ -32,33 +32,34 @@ def __init__(comp_id: UnitID,
 #### create\_context
 
 ```python
-def create_context(config: Configuration,
-                   logger: LoggerProtocol) -> MessageContext
+def create_context(msg_meta: MessageMetaInformation, *, logger: LoggerProtocol,
+                   config: Configuration) -> MessageContext
 ```
 
 Creates a new service context.
 
 **Arguments**:
 
-- `config` - The global component configuration.
+- `msg_meta` - The meta information of the message.
 - `logger` - The logger to be used within the new context.
+- `config` - The global component configuration.
   
 
 **Returns**:
 
   The newly created message context.
 
-#### create\_message\_emitter
+#### create\_message\_builder
 
 ```python
-def create_message_emitter() -> MessageEmitter
+def create_message_builder() -> MessageBuilder
 ```
 
-Creates a new message emitter.
+Creates a new message builder.
 
 **Returns**:
 
-  The newly created message emitter.
+  The newly created message builder.
 
 #### message\_handlers
 

@@ -24,22 +24,52 @@ details.
 #### \_\_init\_\_
 
 ```python
-def __init__(msg_emitter: MessageEmitter, logger: LoggerProtocol)
+def __init__(msg_meta: MessageMetaInformation, msg_builder: MessageBuilder, *,
+             logger: LoggerProtocol, config: Configuration)
 ```
 
 **Arguments**:
 
-- `msg_emitter` - A ``MessageEmitter`` to be assigned to this context.
+- `msg_builder` - A ``MessageBuilder`` to be assigned to this context.
+- `msg_meta` - The meta information of the message.
 - `logger` - A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
+- `config` - The global component configuration.
 
-#### message\_emitter
+#### is\_entrypoint\_local
 
 ```python
 @property
-def message_emitter() -> MessageEmitter
+def is_entrypoint_local() -> bool
 ```
 
-The message emitter to be used within this context.
+Whether the message entered locally.
+
+#### is\_entrypoint\_server
+
+```python
+@property
+def is_entrypoint_server() -> bool
+```
+
+Whether the message entered through the server.
+
+#### is\_entrypoint\_client
+
+```python
+@property
+def is_entrypoint_client() -> bool
+```
+
+Whether the message entered through the client.
+
+#### message\_builder
+
+```python
+@property
+def message_builder() -> MessageBuilder
+```
+
+The message builder to be used within this context.
 
 #### logger
 
@@ -49,6 +79,15 @@ def logger() -> LoggerProtocol
 ```
 
 The logger to be used within this context.
+
+#### config
+
+```python
+@property
+def config() -> Configuration
+```
+
+The global component configuration.
 
 #### MessageContextType
 

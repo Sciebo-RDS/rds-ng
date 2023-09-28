@@ -1,13 +1,13 @@
 ---
-sidebar_label: component_data
-title: component.component_data
+sidebar_label: backend_component_data
+title: component.backend_component_data
 ---
 
-## ComponentData Objects
+## BackendComponentData Objects
 
 ```python
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class ComponentData()
+class BackendComponentData()
 ```
 
 Holds general data and information about the component.

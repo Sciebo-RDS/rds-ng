@@ -6,6 +6,8 @@ title: core.messaging.channel
 ## Channel Objects
 
 ```python
+@dataclass_json
+
 @dataclass(frozen=True)
 class Channel()
 ```
@@ -72,7 +74,7 @@ Creates a new local channel.
 
 ```python
 @staticmethod
-def direct(target: str) -> "Channel"
+def direct(target: str | UnitID) -> "Channel"
 ```
 
 Creates a new direct channel.

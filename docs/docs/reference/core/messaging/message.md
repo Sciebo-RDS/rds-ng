@@ -31,6 +31,15 @@ some_number: int = 0
 - `hops` - A list of components the message was sent through.
 - `trace` - A unique trace identifying messages that logically belong together.
 
+#### message\_name
+
+```python
+@staticmethod
+def message_name() -> MessageName
+```
+
+Retrieves the name of the message type on a message class basis.
+
 #### define
 
 ```python
