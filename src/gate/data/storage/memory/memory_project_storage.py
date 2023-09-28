@@ -11,20 +11,20 @@ class MemoryProjectStorage(ProjectStorage):
 
     _projects: typing.Dict[ProjectID, Project] = {}
 
-    def add(self, project: Project) -> None:
+    def add(self, entity: Project) -> None:
         with self._lock:
-            MemoryProjectStorage._projects[project.project_id] = project
+            MemoryProjectStorage._projects[entity.project_id] = entity
 
-    def remove(self, project: Project) -> None:
+    def remove(self, entity: Project) -> None:
         with self._lock:
             try:
-                del MemoryProjectStorage._projects[project.project_id]
-            except:  # pylint: disable=bare-except
+                del MemoryProjectStorage._projects[entity.project_id]
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 from common.py.data.storage import StorageException
 
                 raise StorageException(
-                    f"A project with ID {project.project_id} was not found"
-                )
+                    f"A project with ID {entity.project_id} was not found"
+                ) from exc
 
     def get(self, key: ProjectID) -> Project | None:
         with self._lock:

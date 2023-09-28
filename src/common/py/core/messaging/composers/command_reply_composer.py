@@ -29,7 +29,7 @@ class CommandReplyComposer(MessageComposer):
 
         self._command = command
 
-    def emit(self) -> None:
+    def emit(self) -> None:  # pylint: disable=arguments-differ
         """
         Sends the built message through the message bus.
         """

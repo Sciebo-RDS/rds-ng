@@ -45,17 +45,17 @@ class MessageComposer(abc.ABC):
 
         self._before_callbacks: typing.List[BeforeDispatchCallback] = []
 
-    def before(self, cb: BeforeDispatchCallback) -> typing.Self:
+    def before(self, callback: BeforeDispatchCallback) -> typing.Self:
         """
         Adds a callback that will be called immediately before the message is dispatched.
 
         Args:
-            cb: The callback to add.
+            callback: The callback to add.
 
         Returns:
             This composer instance to allow call chaining.
         """
-        self._before_callbacks.append(cb)
+        self._before_callbacks.append(callback)
         return self
 
     def emit(self, target: Channel) -> None:
@@ -71,8 +71,8 @@ class MessageComposer(abc.ABC):
         msg_meta = self._create_meta_information()
         msg = self._create_message(target)
 
-        for cb in self._before_callbacks:
-            cb(msg, msg_meta)
+        for callback in self._before_callbacks:
+            callback(msg, msg_meta)
 
         self._message_bus.dispatch(msg, msg_meta)
 

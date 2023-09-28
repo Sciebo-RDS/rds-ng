@@ -27,4 +27,7 @@ class StubBackendServiceContext(ServiceContext):
 
     @property
     def storage_pool(self) -> StoragePool:
+        """
+        The storage pool used by the stub backend.
+        """
         return self._storage_pool

@@ -123,6 +123,5 @@ class MessageContext:
         return self._config
 
 
-MessageContextType = typing.TypeVar(
-    "MessageContextType", bound=MessageContext
-)  # pylint: disable=invalid-name
+# pylint: disable=invalid-name
+MessageContextType = typing.TypeVar("MessageContextType", bound=MessageContext)

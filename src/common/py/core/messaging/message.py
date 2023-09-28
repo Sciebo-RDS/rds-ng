@@ -95,6 +95,5 @@ class Message(abc.ABC):
         return decorator
 
 
-MessageType = typing.TypeVar(
-    "MessageType", bound=Message
-)  # pylint: disable=invalid-name
+# pylint: disable=invalid-name
+MessageType = typing.TypeVar("MessageType", bound=Message)

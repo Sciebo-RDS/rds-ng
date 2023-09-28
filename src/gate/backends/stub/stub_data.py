@@ -1,7 +1,10 @@
 import time
 
 
-def fill_stub_data():
+def fill_stub_data() -> None:
+    """
+    Adds some hardcoded data to the stub data storage.
+    """
     from ...data.storage.memory import MemoryStoragePool
 
     from common.py.data.entities import Project

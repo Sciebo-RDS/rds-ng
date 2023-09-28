@@ -2,6 +2,7 @@ from common.py.data.storage import StoragePool, ProjectStorage
 
 
 class MemoryStoragePool(StoragePool):
+    # pylint: disable=too-few-public-methods
     """
     A simple, non-persistent in-memory storage pool.
     """
