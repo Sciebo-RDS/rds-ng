@@ -46,6 +46,10 @@ def remove_param(name: str) -> None
 
 Removes a parameter that has been added previously.
 
+**Arguments**:
+
+- `name` - The name of the parameter.
+
 #### clear\_params
 
 ```python

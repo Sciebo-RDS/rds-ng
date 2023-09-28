@@ -3,7 +3,7 @@ import typing
 from .message_dispatcher import MessageDispatcher
 from .. import Trace, CommandReply
 from ..command import Command
-from ..handlers import MessageHandlerMapping, MessageContextType
+from ..handlers import MessageContextType
 from ..meta import CommandMetaInformation
 
 
@@ -23,7 +23,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
         super().process()
 
         for unique in MessageDispatcher._meta_information_list.find_timed_out_entries():
-            CommandDispatcher.invoke_reply_callback(
+            CommandDispatcher.invoke_reply_callbacks(
                 unique,
                 fail_type=CommandReply.FailType.TIMEOUT,
                 fail_msg="The command timed out",
@@ -38,38 +38,14 @@ class CommandDispatcher(MessageDispatcher[Command]):
             msg: The command that is about to be dispatched.
             msg_meta: The command meta information.
         """
+        from ...logging import debug
+
+        debug(f"Dispatching command: {msg}", scope="bus")
         super().pre_dispatch(msg, msg_meta)
 
         MessageDispatcher._meta_information_list.add(
             msg.unique, msg_meta, msg_meta.timeout
         )
-
-    def dispatch(
-        self,
-        msg: Command,
-        msg_meta: CommandMetaInformation,
-        handler: MessageHandlerMapping,
-        ctx: MessageContextType,
-    ) -> None:
-        """
-        Dispatches a message to locally registered message handlers.
-
-        Handlers can be either called synchronously or asynchronously, depending on how the handler was registered.
-
-        Notes:
-            Exceptions arising within a message handler will not interrupt the running program; instead, such errors will only be logged.
-
-        Args:
-            msg: The message to be dispatched.
-            msg_meta: The message meta information.
-            handler: The handler to be invoked.
-            ctx: The message context.
-
-        Raises:
-            RuntimeError: If the handler requires a different message type.
-        """
-        ctx.logger.debug(f"Dispatching command: {msg}", scope="bus")
-        super().dispatch(msg, msg_meta, handler, ctx)
 
     def _context_exception(
         self,
@@ -78,13 +54,13 @@ class CommandDispatcher(MessageDispatcher[Command]):
         msg_meta: CommandMetaInformation,
         ctx: MessageContextType,
     ) -> None:
-        CommandDispatcher.invoke_reply_callback(
+        CommandDispatcher.invoke_reply_callbacks(
             msg.unique, fail_type=CommandReply.FailType.EXCEPTION, fail_msg=str(exc)
         )
         MessageDispatcher._meta_information_list.remove(msg.unique)
 
     @staticmethod
-    def invoke_reply_callback(
+    def invoke_reply_callbacks(
         unique: Trace,
         *,
         reply: CommandReply | None = None,
@@ -92,7 +68,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
         fail_msg: str = "",
     ) -> None:
         """
-        Invokes command reply handlers.
+        Invokes command reply callbacks.
 
         When emitting a command, it is possible to specify reply callbacks that are invoked beside message handlers. This method will call the correct
         callback and take care of intercepting exceptions.
@@ -105,19 +81,20 @@ class CommandDispatcher(MessageDispatcher[Command]):
         """
 
         # Callback wrapper for proper exception handling, even when used asynchronously
-        def _invoke_reply_callback(callback, *args) -> None:
-            try:
-                callback(*args)
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                import traceback
-                from ...logging import error, debug
+        def _invoke_reply_callbacks(callbacks, *args) -> None:
+            for callback in callbacks:
+                try:
+                    callback(*args)
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    import traceback
+                    from ...logging import error, debug
 
-                error(
-                    f"An exception occurred within a command reply callback: {str(exc)}",
-                    scope="bus",
-                    exception=type(exc),
-                )
-                debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")
+                    error(
+                        f"An exception occurred within a command reply callback: {str(exc)}",
+                        scope="bus",
+                        exception=type(exc),
+                    )
+                    debug(f"Traceback:\n{''.join(traceback.format_exc())}", scope="bus")
 
         meta_information = MessageDispatcher._meta_information_list.find(unique)
         if meta_information is not None and isinstance(
@@ -125,18 +102,18 @@ class CommandDispatcher(MessageDispatcher[Command]):
         ):
             command_meta = typing.cast(CommandMetaInformation, meta_information)
 
-            def _invoke(callback, is_async, *args):
-                if callback is not None:
+            def _invoke(callbacks, is_async, *args):
+                if len(callbacks) > 0:
                     if is_async:
                         MessageDispatcher._thread_pool.submit(
-                            _invoke_reply_callback, callback, *args
+                            _invoke_reply_callbacks, callbacks, *args
                         )
                     else:
-                        _invoke_reply_callback(callback, *args)
+                        _invoke_reply_callbacks(callbacks, *args)
 
             if reply is not None:
                 _invoke(
-                    command_meta.done_callback,
+                    command_meta.done_callbacks,
                     command_meta.async_callbacks,
                     reply,
                     reply.success,
@@ -144,7 +121,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
                 )
             else:
                 _invoke(
-                    command_meta.fail_callback,
+                    command_meta.fail_callbacks,
                     command_meta.async_callbacks,
                     fail_type,
                     fail_msg,

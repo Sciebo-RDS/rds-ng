@@ -1,19 +1,10 @@
 {
   "items": [
-    {
-      "items": [
-        "reference/component/roles/component_role",
-        "reference/component/roles/leaf_role",
-        "reference/component/roles/node_role",
-        "reference/component/roles/server_role"
-      ],
-      "label": "component.roles",
-      "type": "category"
-    },
-    "reference/component/component",
-    "reference/component/component_data",
-    "reference/component/meta_information"
+    "reference/api/component_events",
+    "reference/api/network_commands",
+    "reference/api/network_events",
+    "reference/api/project_commands"
   ],
-  "label": "component",
+  "label": "api",
   "type": "category"
 }

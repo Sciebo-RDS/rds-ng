@@ -21,7 +21,7 @@ export class PingCommand extends Command {
 }
 
 /**
- * Reply to the ``PingCommand``.
+ * Reply to ``PingCommand``.
  */
 @Message.define("command/general/ping/reply")
 export class PingReply extends CommandReply {

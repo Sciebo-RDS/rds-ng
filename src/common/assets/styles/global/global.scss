@@ -1,0 +1,61 @@
+/*
+ * Helper classes to encapsulate standard theme variables.
+ */
+.r-text {
+    color: var(--text-color);
+}
+
+.r-primary-fg {
+    color: var(--primary-color);
+}
+
+.r-primary-bg {
+    background-color: var(--primary-color);
+}
+
+.r-primary-text {
+    color: var(--primary-color-text);
+}
+
+.r-highlight-fg {
+    color: var(--highlight-bg);
+}
+
+.r-highlight-bg {
+    background-color: var(--highlight-bg);
+}
+
+.r-highlight-text {
+    color: var(--highlight-text-color);
+}
+
+.r-border {
+    border-radius: var(--border-radius);
+}
+
+/*
+ * Extending theme classes.
+ */
+.r-text-light {
+    color: color-mix(in srgb, var(--text-color), #FFF 30%);
+    opacity: 0.7;
+}
+
+.r-border-color {
+    @apply border-gray-300;
+}
+
+.r-shade {
+    background-color: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
+}
+
+.r-shade-text {
+    color: var(--text-color);
+}
+
+/*
+ * Layout classes.
+ */
+.r-centered-grid {
+    @apply grid grid-flow-row auto-rows-max justify-items-center;
+}

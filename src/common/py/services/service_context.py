@@ -11,6 +11,5 @@ class ServiceContext(MessageContext):
     """
 
 
-ServiceContextType = typing.TypeVar(
-    "ServiceContextType", bound=ServiceContext
-)  # pylint: disable=invalid-name
+# pylint: disable=invalid-name
+ServiceContextType = typing.TypeVar("ServiceContextType", bound=ServiceContext)

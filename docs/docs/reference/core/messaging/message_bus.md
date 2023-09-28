@@ -28,7 +28,7 @@ To be error tolerant, any exceptions that arise during message handling will be 
 #### \_\_init\_\_
 
 ```python
-def __init__(comp_data: ComponentData)
+def __init__(comp_data: BackendComponentData)
 ```
 
 **Arguments**:

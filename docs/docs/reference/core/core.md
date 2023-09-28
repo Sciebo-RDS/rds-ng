@@ -22,7 +22,7 @@ An instance of this class is always created when creating a ``Component``; it sh
 #### \_\_init\_\_
 
 ```python
-def __init__(module_name: str, comp_data: ComponentData)
+def __init__(module_name: str, comp_data: BackendComponentData)
 ```
 
 **Arguments**:

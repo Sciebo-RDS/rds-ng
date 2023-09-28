@@ -93,6 +93,6 @@ export class Core {
      * Whether we're running in Debug mode.
      */
     public get isDebugMode(): boolean {
-        return this._compData.config.value(GeneralSettingIDs.Debug);
+        return this._compData.config.value<boolean>(GeneralSettingIDs.Debug);
     }
 }

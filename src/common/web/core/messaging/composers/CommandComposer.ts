@@ -9,31 +9,31 @@ import { MessageComposer } from "./MessageComposer";
  * Composer for ``Command`` messages.
  */
 export class CommandComposer<MsgType extends Command> extends MessageComposer<MsgType> {
-    private _doneCallback: CommandDoneCallback | null = null;
-    private _failCallback: CommandFailCallback | null = null;
+    private _doneCallbacks: CommandDoneCallback[] = [];
+    private _failCallbacks: CommandFailCallback[] = [];
     private _timeout: number = 0.0;
 
     /**
-     * Assigns a *Done* callback.
+     * Adds a *Done* callback.
      *
-     * @param cb - The callback to use.
+     * @param cb - The callback to add.
      *
      * @returns - This composer instance to allow call chaining.
      */
-    public done(cb: CommandDoneCallback | null): this {
-        this._doneCallback = cb;
+    public done(cb: CommandDoneCallback): this {
+        this._doneCallbacks.push(cb);
         return this;
     }
 
     /**
-     * Assigns a *Fail* callback.
+     * Adds a *Fail* callback.
      *
-     * @param cb - The callback to use.
+     * @param cb - The callback to add.
      *
      * @returns - This composer instance to allow call chaining.
      */
-    public failed(cb: CommandFailCallback | null): this {
-        this._failCallback = cb;
+    public failed(cb: CommandFailCallback): this {
+        this._failCallbacks.push(cb);
         return this;
     }
 
@@ -50,12 +50,12 @@ export class CommandComposer<MsgType extends Command> extends MessageComposer<Ms
     }
 
     protected verify(): void {
-        if (this._timeout > 0.0 && !this._failCallback) {
+        if (this._timeout > 0.0 && this._failCallbacks.length == 0) {
             logging.warning(`Sending a command (${this._msgType}) with a timeout but no fail callback`, "bus");
         }
     }
 
     protected createMetaInformation(): MessageMetaInformation {
-        return new CommandMetaInformation(MessageEntrypoint.Local, this._doneCallback, this._failCallback, this._timeout);
+        return new CommandMetaInformation(MessageEntrypoint.Local, this._doneCallbacks, this._failCallbacks, this._timeout);
     }
 }

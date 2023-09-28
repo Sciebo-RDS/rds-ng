@@ -1,7 +1,7 @@
 import { PingCommand, PingReply } from "../api/NetworkCommands";
 import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/NetworkEvents";
 import { WebComponent } from "../component/WebComponent";
-import { ConnectionState, networkStore } from "../stores/NetworkStore";
+import { ConnectionState, networkStore } from "../data/stores/NetworkStore";
 import { Service } from "./Service";
 import { ServiceContext } from "./ServiceContext";
 

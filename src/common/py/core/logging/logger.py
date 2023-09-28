@@ -40,9 +40,8 @@ class Logger(logging.Logger):
         for handler in self.handlers:
             handler.setLevel(level)
 
-    def debug(
-        self, msg: str, *, scope: str | None = None, **kwargs
-    ) -> None:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def debug(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """
         Logs a debugging message.
 
@@ -54,9 +53,8 @@ class Logger(logging.Logger):
         super().debug(msg, extra=self._pack_extra_params(scope, **kwargs))
         self._flush()
 
-    def info(
-        self, msg: str, *, scope: str | None = None, **kwargs
-    ) -> None:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def info(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """
         Logs an information message.
 
@@ -68,9 +66,8 @@ class Logger(logging.Logger):
         super().info(msg, extra=self._pack_extra_params(scope, **kwargs))
         self._flush()
 
-    def warning(
-        self, msg: str, *, scope: str | None = None, **kwargs
-    ) -> None:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def warning(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """
         Logs a warning message.
 
@@ -82,9 +79,8 @@ class Logger(logging.Logger):
         super().warning(msg, extra=self._pack_extra_params(scope, **kwargs))
         self._flush()
 
-    def error(
-        self, msg: str, *, scope: str | None = None, **kwargs
-    ) -> None:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def error(self, msg: str, *, scope: str | None = None, **kwargs) -> None:
         """
         Logs an error message.
 

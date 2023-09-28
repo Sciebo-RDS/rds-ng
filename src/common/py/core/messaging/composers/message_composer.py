@@ -1,4 +1,5 @@
 import abc
+import typing
 
 from .. import (
     Message,
@@ -8,6 +9,8 @@ from .. import (
 )
 from ..meta import MessageMetaInformation
 from ....utils import UnitID
+
+BeforeDispatchCallback = typing.Callable[[Message, MessageMetaInformation], None]
 
 
 class MessageComposer(abc.ABC):
@@ -40,6 +43,21 @@ class MessageComposer(abc.ABC):
         self._msg_type = msg_type
         self._params = kwargs
 
+        self._before_callbacks: typing.List[BeforeDispatchCallback] = []
+
+    def before(self, callback: BeforeDispatchCallback) -> typing.Self:
+        """
+        Adds a callback that will be called immediately before the message is dispatched.
+
+        Args:
+            callback: The callback to add.
+
+        Returns:
+            This composer instance to allow call chaining.
+        """
+        self._before_callbacks.append(callback)
+        return self
+
     def emit(self, target: Channel) -> None:
         """
         Sends the built message through the message bus.
@@ -52,6 +70,9 @@ class MessageComposer(abc.ABC):
 
         msg_meta = self._create_meta_information()
         msg = self._create_message(target)
+
+        for callback in self._before_callbacks:
+            callback(msg, msg_meta)
 
         self._message_bus.dispatch(msg, msg_meta)
 

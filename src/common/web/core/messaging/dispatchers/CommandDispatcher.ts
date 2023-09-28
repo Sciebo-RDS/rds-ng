@@ -1,8 +1,6 @@
 import logging from "../../logging/Logging";
 import { Command } from "../Command";
 import { CommandFailType, CommandReply } from "../CommandReply";
-import { MessageContext } from "../handlers/MessageContext";
-import { MessageHandlerMapping } from "../handlers/MessageHandler";
 import { type Trace } from "../Message";
 import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { MessageDispatcher } from "./MessageDispatcher";
@@ -18,7 +16,7 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
         super.process();
 
         for (const unique of MessageDispatcher._metaInformationList.findTimedOutEntries()) {
-            CommandDispatcher.invokeReplyCallback(unique, null, CommandFailType.Timeout, "The command timed out");
+            CommandDispatcher.invokeReplyCallbacks(unique, null, CommandFailType.Timeout, "The command timed out");
             MessageDispatcher._metaInformationList.remove(unique);
         }
     }
@@ -34,31 +32,14 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
      * @throws Error - If the meta information type is invalid.
      */
     public preDispatch(msg: Command, msgMeta: CommandMetaInformation): void {
+        logging.debug(`Dispatching command: ${String(msg)}`, "bus");
         super.preDispatch(msg, msgMeta);
 
         MessageDispatcher._metaInformationList.add(msg.unique, msgMeta, msgMeta.timeout);
     }
 
-    /**
-     * Dispatches a message to locally registered message handlers.
-     *
-     * Notes:
-     *     Exceptions arising within a message handler will not interrupt the running program; instead, such errors will only be logged.
-     *
-     * @param msg - The message to be dispatched.
-     * @param msgMeta - The message meta information.
-     * @param handler - The handler to be invoked.
-     * @param ctx - The message context.
-     *
-     * @throws Error - If the handler requires a different message type.
-     */
-    public dispatch<CtxType extends MessageContext>(msg: Command, msgMeta: CommandMetaInformation, handler: MessageHandlerMapping, ctx: CtxType): void {
-        ctx.logger.debug(`Dispatching command: ${String(msg)}`, "bus");
-        super.dispatch(msg, msgMeta, handler, ctx);
-    }
-
     protected contextError(err: any, msg: Command, msgMeta: CommandMetaInformation): void {
-        CommandDispatcher.invokeReplyCallback(msg.unique, null, CommandFailType.Exception, String(err));
+        CommandDispatcher.invokeReplyCallbacks(msg.unique, null, CommandFailType.Exception, String(err));
         MessageDispatcher._metaInformationList.remove(msg.unique);
     }
 
@@ -73,10 +54,10 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
      * @param failType - The type of the command failure (in case of a timeout or exception).
      * @param failMsg - The failure message.
      */
-    public static invokeReplyCallback(unique: Trace, reply: CommandReply | null = null,
-                                      failType: CommandFailType = CommandFailType.None, failMsg: string = ""): void {
-        let invoke = (callback: Function | null, ...args: any[]): void => {
-            if (callback) {
+    public static invokeReplyCallbacks(unique: Trace, reply: CommandReply | null = null,
+                                       failType: CommandFailType = CommandFailType.None, failMsg: string = ""): void {
+        let invoke = (callbacks: Function[], ...args: any[]): void => {
+            for (const callback of callbacks) {
                 try {
                     callback(...args);
                 } catch (err) {
@@ -88,9 +69,9 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
         let metaInfo = MessageDispatcher._metaInformationList.find(unique);
         if (metaInfo && metaInfo instanceof CommandMetaInformation) {
             if (reply) {
-                invoke(metaInfo.doneCallback, reply, reply.success, reply.message);
+                invoke(metaInfo.doneCallbacks, reply, reply.success, reply.message);
             } else {
-                invoke(metaInfo.failCallback, failType, failMsg);
+                invoke(metaInfo.failCallbacks, failType, failMsg);
             }
         }
     }

@@ -48,7 +48,7 @@ Verifies whether a message may enter the message bus.
 
 **Raises**:
 
-- `RoutingError` - In case the message is not valid to enter the network engine.
+- `RoutingError` - In case the message is not valid to enter the message bus.
 
 #### check\_local\_routing
 

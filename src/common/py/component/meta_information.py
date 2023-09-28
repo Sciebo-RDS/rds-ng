@@ -24,6 +24,7 @@ class MetaInformation:
             }
         }
     """
+
     def __init__(self, info_file: str = "/config/meta-information.json"):
         """
         Args:
@@ -33,11 +34,13 @@ class MetaInformation:
             ValueError: If the information file couldn't be loaded.
         """
         import os.path
+
         if info_file == "" or not os.path.exists(info_file):
             raise ValueError("Invalid meta information file given")
 
         with open(info_file, encoding="utf-8") as file:
             import json
+
             data = json.load(file)
             self._title, self._version = self._read_global_info(data)
             self._components = self._read_component_definitions(data)
@@ -52,9 +55,13 @@ class MetaInformation:
 
         return title, version
 
-    def _read_component_definitions(self, data: typing.Any) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
+    def _read_component_definitions(
+        self, data: typing.Any
+    ) -> typing.Dict[str, typing.Dict[str, typing.Any]]:
         try:
-            comps_info: typing.Dict[str, typing.Dict[str, typing.Any]] = data["components"]
+            comps_info: typing.Dict[str, typing.Dict[str, typing.Any]] = data[
+                "components"
+            ]
         except Exception:  # pylint: disable=broad-exception-caught
             return {}
 

@@ -1,16 +1,18 @@
-import "../../assets/styles/tailwind-init.css";
-
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
+import DialogService from "primevue/dialogservice";
+import ToastService from "primevue/toastservice";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { type App, type Component as VueComponent, createApp, inject } from "vue";
+import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
+import { MainView } from "../ui/views/main/MainView";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
@@ -19,6 +21,13 @@ import { WebComponentData } from "./WebComponentData";
 
 import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
+import createWebService from "../services/WebService";
+
+import MainContainer from "../ui/views/main/MainViewContainer.vue";
+
+// Load various icons
+import "material-icons/iconfont/outlined.css";
+import "primeicons/primeicons.css";
 
 // Necessary to make the entire API known
 import "../api/API";
@@ -36,15 +45,17 @@ export class WebComponent {
     protected readonly _data: WebComponentData;
 
     protected readonly _core: Core;
+    protected readonly _router: Router;
+
+    protected readonly _mainView: MainView;
     protected readonly _vueApp: App;
 
     /**
      * @param env - The global environment variables.
      * @param compID - The identifier of this component.
-     * @param appRoot - The Vue root component.
-     * @param appElement - The HTML element ID used for mounting the root component.
+     * @param appRoot - The root (main) application component.
      */
-    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, appElement: string) {
+    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent) {
         if (WebComponent._instance) {
             throw new Error("A component instance has already been created")
         }
@@ -67,7 +78,10 @@ export class WebComponent {
         logging.info("-- Starting component...");
 
         this._core = new Core(this._data);
-        this._vueApp = this.createVueApp(appRoot, appElement);
+        this._router = this.createRouter();
+
+        this._mainView = new MainView(this._router, appRoot);
+        this._vueApp = this.createVueApp();
     }
 
     private createConfig(env: SettingsContainer): Configuration {
@@ -83,26 +97,59 @@ export class WebComponent {
         return config;
     }
 
-    private createVueApp(appRoot: VueComponent, appElement: string): App {
+    private createRouter(): Router {
+        return createRouter({
+            history: createWebHistory(),
+            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()],
+        });
+    }
+
+    private createVueApp(): App {
         logging.info("-- Creating Vue application...");
 
-        let app = createApp(appRoot);
+        const app = createApp(MainContainer);
 
         app.use(createPinia());
+        app.use(this._router);
         app.use(PrimeVue);
+        app.use(DialogService);
+        app.use(ToastService);
 
         app.provide(WebComponent._injectionKey, this);
 
-        app.mount(appElement);
-
         return app;
+    }
+
+    private configureDefaultRoutes(): RouteRecordRaw[] {
+        return [];
+    }
+
+    /**
+     * Sets up routes for the Vue router.
+     *
+     * @returns - The routes as an array; return `null` if the router shouldn't be used.
+     */
+    protected configureRoutes(): RouteRecordRaw[] {
+        return [];
+    }
+
+    /**
+     * Mounts the Vue application in the given element.
+     *
+     * Notes:
+     *     This method must be called immediately after creating the main component instance.
+     *
+     * @param appElement - The HTML element ID used for mounting the root component.
+     */
+    public mount(appElement: string = "#app"): void {
+        this._vueApp.mount(appElement);
     }
 
     /**
      * Starts the component's execution cycles.
      *
      * Notes:
-     *     It is mandatory to call this method after creating and setting up a component.
+     *     This method is automatically called by the framework.
      */
     public run(): void {
         logging.info("Running component...");
@@ -110,6 +157,7 @@ export class WebComponent {
         // Create all basic services
         createComponentService(this);
         createNetworkService(this);
+        createWebService(this);
 
         this._core.run();
     }
@@ -141,6 +189,20 @@ export class WebComponent {
     }
 
     /**
+     * The global router.
+     */
+    public get router(): Router {
+        return this._router;
+    }
+
+    /**
+     * The global main view.
+     */
+    public get mainView(): MainView {
+        return this._mainView;
+    }
+
+    /**
      * The global Vue application instance.
      */
     public get vue(): App {
@@ -152,8 +214,8 @@ export class WebComponent {
      *
      * @throws Error - If no instance has been created.
      */
-    public static inject(): WebComponent {
-        let inst = inject<WebComponent>(WebComponent._injectionKey);
+    public static injectComponent<CompType extends WebComponent = WebComponent>(): CompType {
+        let inst = inject<CompType>(WebComponent._injectionKey);
         if (!inst) {
             throw new Error("No component instance has been created");
         }

@@ -14,8 +14,21 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
     """
     from .stub_backend_service_context import StubBackendServiceContext
 
+    from common.py.api import ListProjectsCommand, ListProjectsReply
+
     svc = comp.create_service(
         "Stub Backend service", context_type=StubBackendServiceContext
     )
+
+    @svc.message_handler(ListProjectsCommand)
+    def list_projects(msg: ListProjectsCommand, ctx: StubBackendServiceContext) -> None:
+        ListProjectsReply.build(
+            ctx.message_builder, msg, projects=ctx.storage_pool.project_storage.list()
+        ).emit()
+
+    # Add some initial data to the in-memory storage
+    from .stub_data import fill_stub_data
+
+    fill_stub_data()
 
     return svc

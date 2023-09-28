@@ -14,13 +14,15 @@ The client connection, based on ``socketio.Client``.
 #### \_\_init\_\_
 
 ```python
-def __init__(comp_id: UnitID, config: Configuration)
+def __init__(comp_id: UnitID, config: Configuration,
+             message_builder: MessageBuilder)
 ```
 
 **Arguments**:
 
 - `comp_id` - The component identifier.
 - `config` - The global configuration.
+- `message_builder` - A message builder instance.
 
 #### set\_message\_handler
 
@@ -49,6 +51,14 @@ def process() -> None
 ```
 
 Periodically performs certain tasks.
+
+#### connect\_to\_server
+
+```python
+def connect_to_server() -> None
+```
+
+Establishes the connection to the server.
 
 #### send\_message
 

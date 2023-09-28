@@ -15,8 +15,8 @@ Message meta information specific to ``Command``.
 **Attributes**:
 
 - `requires_reply` - Commands always require a reply.
-- `done_callback` - Called when a reply was received for this command.
-- `fail_callback` - Called when no reply was received for this command or an exception occurred.
+- `done_callbacks` - Called when a reply was received for this command.
+- `fail_callbacks` - Called when no reply was received for this command or an exception occurred.
 - `async_callbacks` - Whether the callbacks should be invoked asynchronously in their own thread.
 - `timeout` - The timeout (in seconds) before a command is deemed not replied.
 
