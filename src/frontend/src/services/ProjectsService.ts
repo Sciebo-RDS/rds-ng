@@ -1,4 +1,4 @@
-import { ListProjectsCommandReply } from "@common/api/ProjectCommands";
+import { ListProjectsReply } from "@common/api/ProjectCommands";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -13,7 +13,7 @@ import { ProjectsServiceContext } from "@/services/ProjectsServiceContext";
  */
 export default function (comp: WebComponent): Service {
     return comp.createService("Projects service", (svc: Service) => {
-        svc.messageHandler(ListProjectsCommandReply, (msg: ListProjectsCommandReply, ctx: ProjectsServiceContext) => {
+        svc.messageHandler(ListProjectsReply, (msg: ListProjectsReply, ctx: ProjectsServiceContext) => {
             if (msg.success) {
                 ctx.logger.debug("Retrieved projects list", "projects", { projects: JSON.stringify(msg.projects) });
 

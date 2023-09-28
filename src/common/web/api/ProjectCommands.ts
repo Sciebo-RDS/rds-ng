@@ -26,7 +26,7 @@ export class ListProjectsCommand extends Command {
  * Reply to ``ListProjectsCommand``.
  */
 @Message.define("command/project/list/reply")
-export class ListProjectsCommandReply extends CommandReply {
+export class ListProjectsReply extends CommandReply {
     // @ts-ignore
     @Type(() => Project)
     public readonly projects: Project[] = [];
@@ -35,7 +35,7 @@ export class ListProjectsCommandReply extends CommandReply {
      * Helper function to easily build this message.
      */
     public static build(messageBuilder: MessageBuilder, cmd: PingCommand, projects: Project[], success: boolean = true, message: string = ""):
-        CommandReplyComposer<ListProjectsCommandReply> {
-        return messageBuilder.buildCommandReply(ListProjectsCommandReply, cmd, success, message, { projects: projects });
+        CommandReplyComposer<ListProjectsReply> {
+        return messageBuilder.buildCommandReply(ListProjectsReply, cmd, success, message, { projects: projects });
     }
 }

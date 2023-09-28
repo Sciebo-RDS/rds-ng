@@ -20,7 +20,7 @@ class ListProjectsCommand(Command):
     Command to fetch all projects of the current user.
 
     Notes:
-        Requires a ``ListProjectsReply`` reply.
+        Requires a ``ListCommandReply`` reply.
     """
 
     @staticmethod
@@ -34,7 +34,7 @@ class ListProjectsCommand(Command):
 
 
 @Message.define("command/project/list/reply")
-class ListProjectsCommandReply(CommandReply):
+class ListProjectsReply(CommandReply):
     """
     Reply to ``ListProjectsCommand``.
     """
@@ -54,5 +54,5 @@ class ListProjectsCommandReply(CommandReply):
         Helper function to easily build this message.
         """
         return message_builder.build_command_reply(
-            ListProjectsCommandReply, cmd, success, message, projects=projects
+            ListProjectsReply, cmd, success, message, projects=projects
         )
