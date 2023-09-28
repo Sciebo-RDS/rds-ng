@@ -89,7 +89,3 @@ def config() -> Configuration
 
 The global component configuration.
 
-#### MessageContextType
-
-pylint: disable=invalid-name
-

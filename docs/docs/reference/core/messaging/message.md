@@ -62,7 +62,3 @@ some_number: int = 0
 
 - `name` - The name of the message.
 
-#### MessageType
-
-pylint: disable=invalid-name
-

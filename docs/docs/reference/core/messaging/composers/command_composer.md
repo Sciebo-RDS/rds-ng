@@ -32,14 +32,14 @@ def __init__(origin_id: UnitID,
 #### done
 
 ```python
-def done(cb: CommandDoneCallback) -> typing.Self
+def done(callback: CommandDoneCallback) -> typing.Self
 ```
 
 Adds a *Done* callback.
 
 **Arguments**:
 
-- `cb` - The callback to add.
+- `callback` - The callback to add.
   
 
 **Returns**:
@@ -49,14 +49,14 @@ Adds a *Done* callback.
 #### failed
 
 ```python
-def failed(cb: CommandFailCallback) -> typing.Self
+def failed(callback: CommandFailCallback) -> typing.Self
 ```
 
 Adds a *Fail* callback.
 
 **Arguments**:
 
-- `cb` - The callback to add.
+- `callback` - The callback to add.
   
 
 **Returns**:

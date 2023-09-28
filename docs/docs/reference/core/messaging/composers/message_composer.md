@@ -32,14 +32,14 @@ def __init__(origin_id: UnitID,
 #### before
 
 ```python
-def before(cb: BeforeDispatchCallback) -> typing.Self
+def before(callback: BeforeDispatchCallback) -> typing.Self
 ```
 
 Adds a callback that will be called immediately before the message is dispatched.
 
 **Arguments**:
 
-- `cb` - The callback to add.
+- `callback` - The callback to add.
   
 
 **Returns**:

@@ -20,7 +20,7 @@ used component information and data, like its configuration or role.
 - `comp_id` - The component identifier.
 - `role` - The component role.
 - `config` - The configuration.
-- `title` - The project title.
+- `title` - The component title.
 - `name` - The component name.
-- `version` - The project version.
+- `version` - The component version.
 
