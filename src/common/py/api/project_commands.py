@@ -20,7 +20,7 @@ class ListProjectsCommand(Command):
     Command to fetch all projects of the current user.
 
     Notes:
-        Requires a ``ListCommandReply`` reply.
+        Requires a ``ListProjectsReply`` reply.
     """
 
     @staticmethod
