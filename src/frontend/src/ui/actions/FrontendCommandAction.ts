@@ -1,8 +1,9 @@
-import type { FrontendComponent } from "@/component/FrontendComponent";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 import { Command } from "@common/core/messaging/Command";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { CommandAction } from "@common/ui/actions/CommandAction";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 /**
  * Command actions specific to the frontend.

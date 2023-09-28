@@ -55,6 +55,11 @@ export class FrontendComponent extends WebComponent {
         return this._projectsService;
     }
 
+    /**
+     * The global ``FrontendComponent`` instance via Vue's injection mechanism.
+     *
+     * @throws Error - If no instance has been created.
+     */
     public static inject(): FrontendComponent {
         return super.injectComponent<FrontendComponent>();
     }

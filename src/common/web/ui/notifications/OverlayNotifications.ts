@@ -74,7 +74,7 @@ export class OverlayNotifications {
     }
 
     /**
-     * Display an error notification.
+     * Display a notification.
      *
      * @param type - The notification type.
      * @param caption - The notification caption.

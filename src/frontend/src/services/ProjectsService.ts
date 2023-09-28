@@ -2,7 +2,7 @@ import { ListProjectsCommandReply } from "@common/api/ProjectCommands";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
-import { FrontendServiceContext } from "@/services/FrontendServiceContext";
+import { ProjectsServiceContext } from "@/services/ProjectsServiceContext";
 
 /**
  * Creates the projects service.
@@ -13,7 +13,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  */
 export default function (comp: WebComponent): Service {
     return comp.createService("Projects service", (svc: Service) => {
-        svc.messageHandler(ListProjectsCommandReply, (msg: ListProjectsCommandReply, ctx: FrontendServiceContext) => {
+        svc.messageHandler(ListProjectsCommandReply, (msg: ListProjectsCommandReply, ctx: ProjectsServiceContext) => {
             if (msg.success) {
                 ctx.logger.debug("Retrieved projects list", "projects", { projects: JSON.stringify(msg.projects) });
 
@@ -22,5 +22,5 @@ export default function (comp: WebComponent): Service {
                 ctx.logger.error("Unable to retrieve the projects list", "projects", { reason: msg.message });
             }
         });
-    }, FrontendServiceContext);
+    }, ProjectsServiceContext);
 }

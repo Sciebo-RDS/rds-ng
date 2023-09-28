@@ -9,7 +9,6 @@ import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging"
-
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
