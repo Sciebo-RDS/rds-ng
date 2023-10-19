@@ -1,11 +1,11 @@
 <script setup lang="ts">
-
+import PropEditor from "@/ui/propeditor/PropEditor.vue";
 </script>
 
 <template>
-    <div>Project Details Contents</div>
+  <div class="m-10">
+    <PropEditor />
+  </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>
