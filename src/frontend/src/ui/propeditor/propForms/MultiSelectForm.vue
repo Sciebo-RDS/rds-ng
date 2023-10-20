@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import InputNumber from "primevue/inputnumber";
+import MultiSelect from "primevue/multiselect";
 
 const props = defineProps(["property"]);
 
@@ -9,6 +9,6 @@ const value = ref();
 
 <template>
   <div class="">
-    <InputNumber v-model="value" class="w-full" />
+    <MultiSelect v-model="value" :options="property.options" class="w-full" />
   </div>
 </template>

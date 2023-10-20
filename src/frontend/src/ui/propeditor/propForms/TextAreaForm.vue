@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
 
 const props = defineProps(["property"]);
 
@@ -8,5 +8,5 @@ const value = ref("");
 </script>
 
 <template>
-  <InputText type="text" v-model="value" />
+  <Textarea v-model="value" autoResize class="w-full" />
 </template>

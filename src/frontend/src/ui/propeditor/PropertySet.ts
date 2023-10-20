@@ -28,7 +28,13 @@ export type SelectionProperty = Property & {
   options: string[];
 };
 
-export type PropertyDataType = "string" | "number" | "boolean" | "selection";
+export type PropertyDataType =
+  | "string"
+  | "number"
+  | "boolean"
+  | "selection"
+  | "textarea"
+  | "multiselect";
 
 export class PropertySet {
   private _profile: PropertyProfile;
@@ -57,16 +63,24 @@ export const testProfile: PropertyProfile = {
       properties: [
         {
           name: "Number of Authors",
-          type: "selection",
+          type: "number",
           description:
-            "How many authors were there?How many authors were there?How many authors were there?How many authors were there?",
-          required: true,
+            "This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! ",
+          required: false,
           component: "something",
           default: true,
-          options: ["asd", "asd"],
         },
         {
-          name: "Number of Authors",
+          name: "Some Multiselect",
+          type: "multiselect",
+          description: "Here are some options",
+          required: false,
+          component: "something",
+          default: true,
+          options: ["asd", "something else", "another thing"],
+        },
+        {
+          name: "Number",
           type: "number",
           description: "The number of authors",
           required: true,
@@ -74,8 +88,8 @@ export const testProfile: PropertyProfile = {
           default: false,
         },
         {
-          name: "Names of Authors",
-          type: "string",
+          name: "Authors",
+          type: "textarea",
           description: "The Authors name",
           required: true,
           component: "something",
