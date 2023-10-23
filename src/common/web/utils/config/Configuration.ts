@@ -89,8 +89,6 @@ export class Configuration {
      * @throws Error - The setting identifier was not found in the defaults.
      */
     public value<ValType = any>(key: SettingID): ValType {
-        console.log("GETTING " + String(key))
-
         let defaultValue = this.traverseSettings(key.split(), this._defaults) as ValType;
 
         let envKey = key.envName(this._envPrefix);
