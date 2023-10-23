@@ -23,7 +23,6 @@ RUN     echo "{ \"private\": true, \"workspaces\": [\"common\", \"${COMPONENT_NA
 COPY    /src/common ./common
 COPY    /src/${COMPONENT_NAME} ./${COMPONENT_NAME}
 
-
 # Run the container
 WORKDIR /app/${COMPONENT_NAME}
 

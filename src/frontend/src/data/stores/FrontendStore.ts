@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { reactive } from "vue";
 
 import { Project } from "@common/data/entities/Project";
 
@@ -9,10 +9,10 @@ import { Project } from "@common/data/entities/Project";
  * @param projects - List of all projects.
  */
 export const frontendStore = defineStore("frontendStore", () => {
-    const projects = ref<Project[]>([]);
+    let projects = reactive<Project[]>([]);
 
     function reset() {
-        projects.value = [] as Project[];
+        projects = [] as Project[];
     }
 
     return {
