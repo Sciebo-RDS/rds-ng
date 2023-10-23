@@ -104,6 +104,9 @@ export class Configuration {
     }
 
     private traverseSettings(path: string[], settings: SettingsContainer): any {
+        if (!(path[0] in settings)) {
+            throw new Error(`Unknown settings key ${path[0]}}`)
+        }
         settings = settings[path[0]];
         return path.length == 1 ? settings : this.traverseSettings(path.slice(1), settings);
     }
