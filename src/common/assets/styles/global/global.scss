@@ -41,6 +41,15 @@
     opacity: 0.7;
 }
 
+.r-text-caption {
+    @apply font-bold;
+}
+
+.r-text-caption-big {
+    @apply font-bold;
+    @apply text-lg;
+}
+
 .r-border-color {
     @apply border-gray-300;
 }
@@ -53,9 +62,13 @@
     color: var(--text-color);
 }
 
+.r-small-caps {
+    font-variant: small-caps;
+}
+
 /*
  * Layout classes.
  */
 .r-centered-grid {
-    @apply grid grid-flow-row auto-rows-max justify-items-center;
+    @apply grid grid-flow-row auto-rows-max justify-items-center justify-center;
 }

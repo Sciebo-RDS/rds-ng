@@ -1,19 +1,10 @@
 <script setup lang="ts">
-import { frontendStore } from "@/data/stores/FrontendStore";
-
-const feStore = frontendStore();
+import Listbox from "@/ui/projectlist/ProjectListbox.vue"
 </script>
 
 <template>
-    <div>
-        <ul class="p-1.5">
-            <li v-for="proj in feStore.projects" class="pb-5">
-                - {{ proj.name }}: {{ proj.description }}
-            </li>
-        </ul>
-    </div>
+    <Listbox class="r-shade"></Listbox>
 </template>
 
 <style scoped lang="scss">
-
 </style>
