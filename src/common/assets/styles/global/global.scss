@@ -1,4 +1,13 @@
 /*
+ * Global colors.
+ */
+:root {
+    --r-border-color: rgb(209 213 219);
+    --r-shade: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
+    --r-shade-dark: color-mix(in srgb, var(--highlight-bg), #FFF 90%);
+}
+
+/*
  * Helper classes to encapsulate standard theme variables.
  */
 .r-text {
@@ -51,11 +60,15 @@
 }
 
 .r-border-color {
-    @apply border-gray-300;
+    color: var(--r-border-color);
 }
 
 .r-shade {
-    background-color: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
+    background-color: var(--r-shade);
+}
+
+.r-shade-dark {
+    background-color: var(--r-shade-dark);
 }
 
 .r-shade-text {

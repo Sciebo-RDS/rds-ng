@@ -11,7 +11,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
 
 import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
-import ProjectList from "@/ui/projectlist/ProjectList.vue";
+import ProjectsList from "@/ui/projectslist/ProjectsList.vue";
 
 const comp = FrontendComponent.inject();
 
@@ -41,7 +41,7 @@ onMounted(() => {
 
 <template>
     <div class="grid grid-cols-[30rem_1fr] grid-rows-1 gap-0 w-screen h-screen">
-        <ProjectList class="w-full border-e-2 r-border-color"></ProjectList>
+        <ProjectsList class="w-full border-e-2 r-border-color"></ProjectsList>
         <ProjectDetails class="w-full"></ProjectDetails>
     </div>
 </template>
