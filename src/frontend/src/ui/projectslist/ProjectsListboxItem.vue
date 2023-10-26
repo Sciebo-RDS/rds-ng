@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 
 import Menu from "primevue/menu";
 import Button from "primevue/button";
 
 const props = defineProps(['project', 'isSelected']);
-const project = props.project;
-const isSelected = props.isSelected;
+const state = toRefs(props);
+const project = state.project;
+const isSelected = state.isSelected;
 
 const menu = ref();
 const items = ref([
@@ -17,14 +18,12 @@ const items = ref([
                 label: 'Update',
                 icon: 'pi pi-refresh',
                 command: () => {
-                    toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
                 }
             },
             {
                 label: 'Delete',
                 icon: 'pi pi-times',
                 command: () => {
-                    toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 });
                 }
             }
         ]
