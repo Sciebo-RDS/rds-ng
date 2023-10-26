@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
+
 import Button from "primevue/button";
 import Listbox from "primevue/listbox";
-import { ref, watch } from "vue";
+import Menu from 'primevue/menu';
 
 import { Project } from "@common/data/entities/Project";
 
@@ -16,6 +18,33 @@ watch(selectedProject, (newProj, oldProj) => {
         selectedProject.value = oldProj;
     }
 });
+
+const menu = ref();
+const items = ref([
+    {
+        label: 'Options',
+        items: [
+            {
+                label: 'Update',
+                icon: 'pi pi-refresh',
+                command: () => {
+                    toast.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
+                }
+            },
+            {
+                label: 'Delete',
+                icon: 'pi pi-times',
+                command: () => {
+                    toast.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 });
+                }
+            }
+        ]
+    }
+]);
+
+const toggle = (event) => {
+    menu.value.toggle(event);
+};
 </script>
 
 <template>
@@ -30,7 +59,7 @@ watch(selectedProject, (newProj, oldProj) => {
                 <div class="grid grid-rows-[auto_auto] grid-cols-[1fr_min-content] gap-0 h-24 place-content-start group">
                     <div class="r-text-caption-big h-8 truncate" :title="projectEntry.option.name">{{ projectEntry.option.name }}</div>
                     <div class="row-span-2 pl-1">
-                        <Button text rounded size="small" aria-label="Options" title="More options" class="invisible group-hover:visible">
+                        <Button text rounded size="small" aria-label="Options" title="More options" class="invisible group-hover:visible" @click="toggle">
                             <template #icon>
                                 <span class="material-icons-outlined" :class="[projectEntry.option.project_id === selectedProject?.project_id ? 'r-primary-text' : 'r-text']" style="font-size: 32px;">more_vert</span>
                             </template>
@@ -44,27 +73,25 @@ watch(selectedProject, (newProj, oldProj) => {
                 <div class="r-text-caption-big r-small-caps grid justify-center">No current projects</div>
             </template>
         </Listbox>
+        <Menu ref="menu" id="overlay_menu" :model="items" :popup="true"/>
     </div>
 </template>
 
 <style scoped lang="scss">
 :deep(.projects-listbox) {
-    background-color: inherit;
-    border: none;
-    border-radius: 0;
+    @apply border-0 rounded-none bg-inherit #{!important};
 }
 
 :deep(.projects-listbox.p-focus) {
-    box-shadow: none;
+    @apply shadow-none #{!important};
 }
 
 :deep(.projects-listbox-list) {
-    padding: 0 !important;
+    @apply p-0 #{!important};
 }
 
 :deep(.projects-listbox-item) {
-    padding-right: 0.5em !important;
-    border-bottom: 2px solid var(--r-border-color) !important;
+    @apply pr-2 border-solid border-b-2 border-[--r-border-color] #{!important};
 }
 
 #project-description {
