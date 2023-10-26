@@ -1,38 +1,42 @@
 <script setup lang="ts">
 import { ref, toRefs } from "vue";
 
-import Menu from "primevue/menu";
 import Button from "primevue/button";
+
+import PopupMenu from "@/ui/general/PopupMenu.vue";
 
 const props = defineProps(['project', 'isSelected']);
 const state = toRefs(props);
 const project = state.project;
 const isSelected = state.isSelected;
 
-const editMenu = ref();
-const editMenuShown = ref(false);
 const editMenuItems = ref([
     {
-        label: 'Options',
+        label: 'Edit project',
         items: [
             {
-                label: 'Update',
-                icon: 'pi pi-refresh',
+                label: 'Edit project',
+                icon: 'edit',
+                disabled: true,
                 command: () => {
                 }
             },
+            { separator: true },
             {
-                label: 'Delete',
-                icon: 'pi pi-times',
+                label: 'Delete project',
+                icon: 'delete_forever',
+                color: 'text-red-500',
                 command: () => {
                 }
             }
         ]
     }
 ]);
+const editMenuActivator = ref();
+const editMenuShown = ref(false);
 
 const showEditMenu = (event) => {
-    editMenu.value.toggle(event);
+    editMenuActivator.value = event;
 };
 </script>
 
@@ -45,7 +49,7 @@ const showEditMenu = (event) => {
                     <span class="material-icons-outlined" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px;">more_vert</span>
                 </template>
             </Button>
-            <Menu ref="editMenu" :model="editMenuItems" :popup="true" @focus="editMenuShown=true" @blur="editMenuShown=false"/>
+            <PopupMenu :items="editMenuItems" :activator="editMenuActivator" :is-shown="editMenuShown"/>
         </div>
 
         <div id="project-description" class="overflow-hidden line-clamp" :title="project.description">{{ project.description }}</div>
