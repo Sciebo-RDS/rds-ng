@@ -32,7 +32,7 @@ watch(selectedProject, (newProj, oldProj) => {
                     <div class="row-span-2 pl-1">
                         <Button text rounded size="small" aria-label="Options" title="More options" class="invisible group-hover:visible">
                             <template #icon>
-                                <span class="material-icons-outlined" :class="[projectEntry.option.project_id === selectedProject.project_id ? 'r-primary-text' : 'r-text']" style="font-size: 32px;">more_vert</span>
+                                <span class="material-icons-outlined" :class="[projectEntry.option.project_id === selectedProject?.project_id ? 'r-primary-text' : 'r-text']" style="font-size: 32px;">more_vert</span>
                             </template>
                         </Button>
                     </div>
