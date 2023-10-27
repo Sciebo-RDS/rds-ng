@@ -59,6 +59,18 @@
     @apply text-lg;
 }
 
+.r-text-success {
+    @apply text-green-500;
+}
+
+.r-text-warning {
+    @apply text-orange-500;
+}
+
+.r-text-error {
+    @apply text-red-500;
+}
+
 .r-border-color {
     color: var(--r-border-color);
 }

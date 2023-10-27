@@ -25,7 +25,7 @@ const editMenuItems = ref([
             {
                 label: 'Delete project',
                 icon: 'delete_forever',
-                class: 'text-red-500',
+                class: 'r-text-error',
                 command: () => {
                 }
             }
