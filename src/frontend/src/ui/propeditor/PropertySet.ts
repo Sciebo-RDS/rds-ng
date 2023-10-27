@@ -1,100 +1,26 @@
 import { SemVer } from "semver";
 
-export type ProfileName = string;
-
-export type PropertyProfile = {
-  version: SemVer;
-  name: ProfileName;
-  categories: PropertyCategory[];
-};
-
-//categories should rather be subprofiles?
-export type PropertyCategory = {
-  name: string | null;
-  properties: (Property | SelectionProperty)[];
-};
-
+export type ProfileID = [string, SemVer];
 export type Property = {
-  name: string;
-  type: PropertyDataType;
-  description: string;
-  required: boolean;
-  component: string;
-  default?: boolean;
-  filter?: string[];
+    [category: string]: {
+        [name: string]: any;
+    };
 };
 
-export type SelectionProperty = Property & {
-  options: string[];
-};
-
-export type PropertyDataType =
-  | "string"
-  | "number"
-  | "boolean"
-  | "selection"
-  | "textarea"
-  | "multiselect";
-
+/**
+ * Data for a single **PropertySet**.
+ *
+ * @param profile_id - The tuple [name, version] that uniquely identifies the corresponding PropertyProfile.
+ */
 export class PropertySet {
-  private _profile: PropertyProfile;
-  private _categories: PropertyCategory[];
-}
+    public readonly profile_id: ProfileID;
+    public readonly properties: Property = {};
 
-export const testProfile: PropertyProfile = {
-  version: "1.1.1",
-  name: "Test Profile",
-  categories: [
-    {
-      name: "General",
-      properties: [
-        {
-          name: "Author",
-          type: "string",
-          description: "The Authors name",
-          required: true,
-          component: "something",
-          default: true,
-        },
-      ],
-    },
-    {
-      name: "OSF",
-      properties: [
-        {
-          name: "Number of Authors",
-          type: "number",
-          description:
-            "This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! ",
-          required: false,
-          component: "something",
-          default: true,
-        },
-        {
-          name: "Some Multiselect",
-          type: "multiselect",
-          description: "Here are some options",
-          required: false,
-          component: "something",
-          default: true,
-          options: ["asd", "something else", "another thing"],
-        },
-        {
-          name: "Number",
-          type: "number",
-          description: "The number of authors",
-          required: true,
-          component: "something",
-          default: false,
-        },
-        {
-          name: "Authors",
-          type: "textarea",
-          description: "The Authors name",
-          required: true,
-          component: "something",
-        },
-      ],
-    },
-  ],
-};
+    public constructor(profileID: ProfileID) {
+        this.profile_id = profileID;
+    }
+
+    public setProperty(category: string, name: string, value: any): void {
+        this.properties[category] = { [name]: value };
+    }
+}
