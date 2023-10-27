@@ -3,13 +3,14 @@ import { ref, toRefs } from "vue";
 
 import Button from "primevue/button";
 
-import PopupMenu from "@/ui/general/PopupMenu.vue";
+import PopupMenu from "@common/ui/menus/PopupMenu.vue";
 
 const props = defineProps(['project', 'isSelected']);
 const state = toRefs(props);
 const project = state.project;
 const isSelected = state.isSelected;
 
+const editMenu = ref();
 const editMenuItems = ref([
     {
         label: 'Edit project',
@@ -17,7 +18,6 @@ const editMenuItems = ref([
             {
                 label: 'Edit project',
                 icon: 'edit',
-                disabled: true,
                 command: () => {
                 }
             },
@@ -25,31 +25,26 @@ const editMenuItems = ref([
             {
                 label: 'Delete project',
                 icon: 'delete_forever',
-                color: 'text-red-500',
+                class: 'text-red-500',
                 command: () => {
                 }
             }
         ]
     }
 ]);
-const editMenuActivator = ref();
 const editMenuShown = ref(false);
-
-const showEditMenu = (event) => {
-    editMenuActivator.value = event;
-};
 </script>
 
 <template>
     <div class="grid grid-rows-[auto_auto] grid-cols-[1fr_min-content] gap-0 h-24 place-content-start group">
         <div class="r-text-caption-big h-8 truncate" :title="project.name">{{ project.name }}</div>
         <div class="row-span-2 pl-1">
-            <Button text rounded size="small" aria-label="Options" title="More options" :class="{ 'invisible': !editMenuShown, 'group-hover:visible': true }" @click="showEditMenu">
+            <Button text rounded size="small" aria-label="Options" title="More options" :class="{ 'invisible': !editMenuShown, 'group-hover:visible': true }" @click="event => editMenu?.toggle(event)">
                 <template #icon>
                     <span class="material-icons-outlined" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px;">more_vert</span>
                 </template>
             </Button>
-            <PopupMenu :items="editMenuItems" :activator="editMenuActivator" :is-shown="editMenuShown"/>
+            <PopupMenu icon-class="material-icons-outlined" label-class="pt-0.5" :items="editMenuItems" @assign="menuRef => editMenu = menuRef" @focus="editMenuShown=true" @blur="editMenuShown=false"/>
         </div>
 
         <div id="project-description" class="overflow-hidden line-clamp" :title="project.description">{{ project.description }}</div>
