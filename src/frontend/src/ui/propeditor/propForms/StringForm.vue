@@ -8,7 +8,7 @@ const value = ref("");
 watch(value, () => {
     //TODO debounce, implement for other Type Forms as well.
     props.controller.setValue(props.category_name, props.property.name, value);
-    console.log(props.controller.propertySet);
+    console.log(props.controller.propertiesToString());
 });
 </script>
 

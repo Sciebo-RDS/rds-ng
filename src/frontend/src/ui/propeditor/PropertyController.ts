@@ -9,6 +9,7 @@ export interface PropertyController {
 
     getValue(): any;
     setValue(category: string, name: string, value: any): void;
+    propertiesToString(): string;
 }
 
 export class MetadataController implements PropertyController {
@@ -27,5 +28,9 @@ export class MetadataController implements PropertyController {
 
     public setValue(category: string, name: string, value: any): void {
         this.propertySet.setProperty(category, name, value);
+    }
+
+    public propertiesToString(): string {
+        return JSON.stringify(this.propertySet);
     }
 }
