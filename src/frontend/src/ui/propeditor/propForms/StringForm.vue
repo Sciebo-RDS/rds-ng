@@ -14,14 +14,12 @@ function handleInput(e: any) {
     if (debounce) {
         clearTimeout(debounce);
     }
-    console.log(typeof e);
     debounce = setTimeout(() => {
         props.controller.setValue(
             props.category_name,
             props.property.name,
             e.target.value
         );
-        console.log(props.controller.propertiesToString());
     }, 500);
 }
 </script>
