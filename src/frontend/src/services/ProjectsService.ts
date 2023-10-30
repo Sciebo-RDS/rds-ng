@@ -32,7 +32,7 @@ export default function (comp: WebComponent): Service {
 
         svc.messageHandler(DeleteProjectReply, (msg: DeleteProjectReply, ctx: ProjectsServiceContext) => {
             if (msg.success) {
-                ctx.logger.debug(`Deleted project ${msg.project_id}`, "projects", { projects: JSON.stringify(msg.projects) });
+                ctx.logger.debug(`Deleted project ${msg.project_id}`, "projects");
             } else {
                 ctx.logger.error(`Unable to delete project ${msg.project_id}`, "projects", { reason: msg.message });
             }

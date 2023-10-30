@@ -53,7 +53,7 @@ export class DeleteProjectCommand extends Command {
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, projectID: ProjectID, chain: Message | null = null): CommandComposer<ListProjectsCommand> {
+    public static build(messageBuilder: MessageBuilder, projectID: ProjectID, chain: Message | null = null): CommandComposer<DeleteProjectCommand> {
         return messageBuilder.buildCommand(DeleteProjectCommand, { project_id: projectID }, chain);
     }
 }
@@ -70,7 +70,7 @@ export class DeleteProjectReply extends CommandReply {
      * Helper function to easily build this message.
      */
     public static build(messageBuilder: MessageBuilder, cmd: DeleteProjectCommand, success: boolean = true, message: string = ""):
-        CommandReplyComposer<ListProjectsReply> {
+        CommandReplyComposer<DeleteProjectReply> {
         return messageBuilder.buildCommandReply(DeleteProjectReply, cmd, success, message, { project_id: cmd.project_id });
     }
 }
