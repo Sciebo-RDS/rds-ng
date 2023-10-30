@@ -7,4 +7,9 @@ from .network_events import (
     ServerConnectedEvent,
     ServerDisconnectedEvent,
 )
-from .project_commands import ListProjectsCommand, ListProjectsReply
+from .project_commands import (
+    ListProjectsCommand,
+    ListProjectsReply,
+    DeleteProjectCommand,
+    DeleteProjectReply,
+)

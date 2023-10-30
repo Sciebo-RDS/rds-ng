@@ -1,4 +1,4 @@
-import { ListProjectsReply } from "@common/api/ProjectCommands";
+import { DeleteProjectReply, ListProjectsReply } from "@common/api/ProjectCommands";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -20,6 +20,14 @@ export default function (comp: WebComponent): Service {
                 ctx.store.projects = msg.projects;
             } else {
                 ctx.logger.error("Unable to retrieve the projects list", "projects", { reason: msg.message });
+            }
+        });
+
+        svc.messageHandler(DeleteProjectReply, (msg: DeleteProjectReply, ctx: ProjectsServiceContext) => {
+            if (msg.success) {
+                ctx.logger.debug(`Deleted project ${msg.project_id}`, "projects", { projects: JSON.stringify(msg.projects) });
+            } else {
+                ctx.logger.error(`Unable to delete project ${msg.project_id}`, "projects", { reason: msg.message });
             }
         });
     }, ProjectsServiceContext);
