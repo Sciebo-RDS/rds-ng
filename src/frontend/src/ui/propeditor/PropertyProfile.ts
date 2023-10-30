@@ -78,7 +78,7 @@ export const testProfile: PropertyProfile = {
                     name: "Number",
                     type: "number",
                     description: "The number of authors",
-                    required: true,
+                    required: false,
                     component: "something",
                     default: false,
                 },
@@ -95,13 +95,15 @@ export const testProfile: PropertyProfile = {
 };
 
 export const testValues = {
-    General: {
-        Author: "John Doe",
-    },
-    OSF: {
-        NumberofAuthors: 2,
-        SomeMultiselect: ["asd", "another thing"],
-        Number: 2,
-        Authors: "John Doe, Jane Doe",
+    profile_id: ["Test Profile", "1.1.1"],
+    properties: {
+        General: {
+            Author: "John Doee",
+        },
+        OSF: {
+            "Number of Authors": 2,
+            "Some Multiselect": ["asd", "another thing"],
+            Authors: "John Doe, Jane Doe, someone",
+        },
     },
 };

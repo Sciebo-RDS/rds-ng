@@ -7,7 +7,7 @@ export interface PropertyController {
     profile: PropertyProfile;
     propertySet: PropertySet;
 
-    getValue(): any;
+    getValue(ategory: string, name: string): any;
     setValue(category: string, name: string, value: any): void;
     propertiesToString(): string;
 }
@@ -21,9 +21,8 @@ export class MetadataController implements PropertyController {
         this.propertySet = propertySet;
     }
 
-    //TODO
-    public getValue(): any {
-        return null;
+    public getValue(category: string, name: string): any {
+        return this.propertySet.getProperty(category, name);
     }
 
     public setValue(category: string, name: string, value: any): void {

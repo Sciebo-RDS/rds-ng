@@ -10,17 +10,24 @@ export type Property = {
 /**
  * Data for a single **PropertySet**.
  *
- * @param profile_id - The tuple [name, version] that uniquely identifies the corresponding PropertyProfile.
- */
+ * @param profileId - The tuple [name, version] that uniquely identifies the corresponding PropertyProfile.
+ * @param properties - Property data values
+
+*/
 export class PropertySet {
     public readonly profile_id: ProfileID;
     public readonly properties: Property = {};
 
-    public constructor(profileID: ProfileID) {
+    public constructor(profileID: ProfileID, properties: Property = {}) {
         this.profile_id = profileID;
+        this.properties = properties["properties"];
     }
 
     public setProperty(category: string, name: string, value: any): void {
-        this.properties[category] = { [name]: value };
+        this.properties[category][name] = value;
+    }
+
+    public getProperty(category: string, name: string): any {
+        return this.properties[category][name];
     }
 }

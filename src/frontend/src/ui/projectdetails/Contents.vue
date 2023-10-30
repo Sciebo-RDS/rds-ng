@@ -2,14 +2,18 @@
 import { reactive } from "vue";
 import TabMenu from "primevue/tabmenu";
 import { MetadataController } from "@/ui/propeditor/PropertyController";
-import { PropertyProfile, testProfile } from "@/ui/propeditor/PropertyProfile";
+import {
+    PropertyProfile,
+    testProfile,
+    testValues,
+} from "@/ui/propeditor/PropertyProfile";
 import { PropertySet } from "@/ui/propeditor/PropertySet";
 import PropEditor from "@/ui/propeditor/PropEditor.vue";
 
 const controller = reactive(
     new MetadataController(
         testProfile,
-        new PropertySet(["Test Profile", "1.1.1"])
+        new PropertySet(["Test Profile", "1.1.1"], testValues)
     )
 );
 </script>

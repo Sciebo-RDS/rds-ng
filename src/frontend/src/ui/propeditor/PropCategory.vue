@@ -14,11 +14,17 @@ const showPropertySelector = ref(false);
 var selectedProperties = ref<PropertyType>();
 
 var propsToShow = ref<PropertyType[]>(
-    props.category.properties.filter((p: PropertyType) => p.required)
+    props.category.properties.filter(
+        (p: PropertyType) =>
+            props.controller.getValue(props.category.name, p.name) !=
+                undefined || p.required
+    )
 );
 
 var propsToSelect = ref(
-    props.category.properties.filter((p: PropertyType) => !p.required)
+    props.category.properties.filter(
+        (p: PropertyType) => !propsToShow.value.includes(p)
+    )
 );
 
 watch(selectedProperties, (newSP) => {
