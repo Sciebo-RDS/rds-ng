@@ -13,3 +13,4 @@ from .project_commands import (
     DeleteProjectCommand,
     DeleteProjectReply,
 )
+from .project_events import ProjectsListEvent

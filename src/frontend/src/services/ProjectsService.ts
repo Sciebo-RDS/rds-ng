@@ -1,4 +1,5 @@
 import { DeleteProjectReply, ListProjectsReply } from "@common/api/ProjectCommands";
+import { ProjectsListEvent } from "@common/api/ProjectEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -21,6 +22,12 @@ export default function (comp: WebComponent): Service {
             } else {
                 ctx.logger.error("Unable to retrieve the projects list", "projects", { reason: msg.message });
             }
+        });
+
+        svc.messageHandler(ProjectsListEvent, (msg: ProjectsListEvent, ctx: ProjectsServiceContext) => {
+            ctx.logger.debug("Projects list update received", "projects", { projects: JSON.stringify(msg.projects) });
+
+            ctx.store.projects = msg.projects;
         });
 
         svc.messageHandler(DeleteProjectReply, (msg: DeleteProjectReply, ctx: ProjectsServiceContext) => {

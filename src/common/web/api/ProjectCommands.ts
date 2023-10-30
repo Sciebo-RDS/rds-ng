@@ -23,6 +23,8 @@ export class ListProjectsCommand extends Command {
 
 /**
  * Reply to ``ListProjectsCommand``.
+ *
+ * @param projects - The projects list.
  */
 @Message.define("command/project/list/reply")
 export class ListProjectsReply extends CommandReply {
