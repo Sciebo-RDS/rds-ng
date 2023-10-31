@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, toRefs } from "vue";
 import Button from "primevue/button";
-
-import PopupMenu from "@common/ui/menus/PopupMenu.vue";
+import Menu from "primevue/menu";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
@@ -22,14 +21,14 @@ const editMenuItems = ref([
         items: [
             {
                 label: "Edit project",
-                icon: "edit",
+                icon: "material-icons-outlined mi-edit",
                 command: () => {
                 }
             },
             { separator: true },
             {
                 label: "Delete project",
-                icon: "delete_forever",
+                icon: "material-icons-outlined mi-delete-forever",
                 class: "r-text-error",
                 command: () => {
                     const dialog = confirmDeleteProjectDialog(comp, props.project);
@@ -55,7 +54,7 @@ const editMenuShown = ref(false);
                     <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px;"/>
                 </template>
             </Button>
-            <PopupMenu icon-class="material-icons-outlined" label-class="pt-0.5" :items="editMenuItems" @assign="menuRef => editMenu = menuRef" @focus="editMenuShown=true" @blur="editMenuShown=false"/>
+            <Menu ref="editMenu" :model="editMenuItems" popup @focus="editMenuShown=true" @blur="editMenuShown=false"/>
         </div>
 
         <div id="project-description" class="overflow-hidden line-clamp" :title="project.description">{{ project.description }}</div>

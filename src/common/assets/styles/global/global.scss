@@ -59,16 +59,16 @@
     @apply text-lg;
 }
 
-.r-text-success {
-    @apply text-green-500;
+.r-text-success * {
+    @apply text-green-500 #{!important};
 }
 
-.r-text-warning {
-    @apply text-orange-500;
+.r-text-warning * {
+    @apply text-orange-500 #{!important};
 }
 
-.r-text-error {
-    @apply text-red-500;
+.r-text-error * {
+    @apply text-red-500 #{!important};
 }
 
 .r-border-color {
