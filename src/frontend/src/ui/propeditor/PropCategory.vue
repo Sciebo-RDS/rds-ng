@@ -76,7 +76,21 @@ function updatePropsToShow(e: Event) {
                     optionValue="name"
                     class="grow"
                     placeholder="Select a property to add"
-                />
+                    :pt="{
+                        panel: {
+                            class: 'w-0',
+                        } /* FIXME This fixes overflow, there is probably a better way*/,
+                    }"
+                >
+                    <template #option="slotprops">
+                        <div class="font-semibold">
+                            {{ slotprops.option.name }}
+                        </div>
+                        <div class="text-gray-400 ml-3 ellipsis">
+                            {{ slotprops.option.description }}
+                        </div>
+                    </template>
+                </Dropdown>
             </div>
         </Fieldset>
         <!-- /Should have its own component -->
