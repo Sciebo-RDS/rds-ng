@@ -28,14 +28,25 @@ export type SelectionProperty = Property & {
     options: string[];
 };
 
-export type PropertyDataType =
+//use enums
+/* export type PropertyDataType =
     | "string"
     | "number"
     | "boolean"
     | "selection"
     | "textarea"
-    | "multiselect";
+    | "multiselect"; */
 
+export enum PropertyDataType {
+    STRING = "string",
+    NUMBER = "number",
+    BOOLEAN = "boolean",
+    SELECTION = "selection",
+    TEXTAREA = "textarea",
+    MULTISELECT = "multiselect",
+}
+
+// TODO id's for properties and categories
 export const testProfile: PropertyProfile = {
     version: "1.1.1",
     name: "Test Profile",
@@ -45,7 +56,7 @@ export const testProfile: PropertyProfile = {
             properties: [
                 {
                     name: "Author",
-                    type: "string",
+                    type: PropertyDataType.STRING,
                     description: "The Authors name",
                     required: true,
                     component: "something",
@@ -58,7 +69,7 @@ export const testProfile: PropertyProfile = {
             properties: [
                 {
                     name: "Number of Authors",
-                    type: "number",
+                    type: PropertyDataType.NUMBER,
                     description:
                         "This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! ",
                     required: false,
@@ -67,7 +78,7 @@ export const testProfile: PropertyProfile = {
                 },
                 {
                     name: "Some Multiselect",
-                    type: "multiselect",
+                    type: PropertyDataType.MULTISELECT,
                     description: "Here are some options",
                     required: false,
                     component: "something",
@@ -76,7 +87,7 @@ export const testProfile: PropertyProfile = {
                 },
                 {
                     name: "Number",
-                    type: "number",
+                    type: PropertyDataType.NUMBER,
                     description: "The number of authors",
                     required: false,
                     component: "something",
@@ -84,9 +95,9 @@ export const testProfile: PropertyProfile = {
                 },
                 {
                     name: "Authors",
-                    type: "textarea",
+                    type: PropertyDataType.TEXTAREA,
                     description: "The Authors name",
-                    required: true,
+                    required: false,
                     component: "something",
                 },
             ],
@@ -94,6 +105,7 @@ export const testProfile: PropertyProfile = {
     ],
 };
 
+// TODO Make this Property type compatible with the Property type in PropertySet.ts
 export const testValues = {
     profile_id: ["Test Profile", "1.1.1"],
     properties: {
@@ -103,7 +115,6 @@ export const testValues = {
         OSF: {
             "Number of Authors": 2,
             "Some Multiselect": ["asd", "another thing"],
-            Authors: "John Doe, Jane Doe, someone",
         },
     },
 };
