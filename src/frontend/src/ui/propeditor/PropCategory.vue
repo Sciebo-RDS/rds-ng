@@ -27,18 +27,18 @@ var propsToSelect = ref(
     )
 );
 
-watch(selectedProperties, (newSP) => {
+function updatePropsToShow(e: Event) {
     propsToShow.value = [
         ...propsToShow.value,
         props.category.properties.filter(
-            (p: PropertyType) => p.name === newSP
+            (p: PropertyType) => p.name === e.value
         )[0] as PropertyType,
     ];
     propsToSelect.value = propsToSelect.value.filter(
         (p: PropertyType) => !propsToShow.value.includes(p)
     );
     showPropertySelector.value = false;
-});
+}
 </script>
 
 <template>
@@ -70,6 +70,7 @@ watch(selectedProperties, (newSP) => {
             <div class="flex">
                 <Dropdown
                     v-model="selectedProperties"
+                    @change="updatePropsToShow"
                     :options="propsToSelect"
                     optionLabel="name"
                     optionValue="name"
