@@ -6,6 +6,7 @@ import PopupMenu from "@common/ui/menus/PopupMenu.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
+import { confirmDeleteProjectDialog } from "@/dialogs/ConfirmDeleteProjectDialog";
 
 const comp = FrontendComponent.inject();
 
@@ -17,24 +18,26 @@ const isSelected = state.isSelected;
 const editMenu = ref();
 const editMenuItems = ref([
     {
-        label: 'Edit project',
+        label: "Edit project",
         items: [
             {
-                label: 'Edit project',
-                icon: 'edit',
+                label: "Edit project",
+                icon: "edit",
                 command: () => {
                 }
             },
             { separator: true },
             {
-                label: 'Delete project',
-                icon: 'delete_forever',
-                class: 'r-text-error',
+                label: "Delete project",
+                icon: "delete_forever",
+                class: "r-text-error",
                 command: () => {
-                    const action = new DeleteProjectAction(comp);
-
-                    action.prepare(props.project);
-                    action.execute();
+                    const dialog = confirmDeleteProjectDialog(comp, props.project);
+                    dialog.then(() => {
+                        const action = new DeleteProjectAction(comp);
+                        action.prepare(props.project);
+                        action.execute();
+                    });
                 }
             }
         ]
@@ -49,7 +52,7 @@ const editMenuShown = ref(false);
         <div class="row-span-2 pl-1">
             <Button text rounded size="small" aria-label="Options" title="More options" :class="{ 'invisible': !editMenuShown, 'group-hover:visible': true }" @click="event => editMenu.toggle(event)">
                 <template #icon>
-                    <span class="material-icons-outlined" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px;">more_vert</span>
+                    <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px;"/>
                 </template>
             </Button>
             <PopupMenu icon-class="material-icons-outlined" label-class="pt-0.5" :items="editMenuItems" @assign="menuRef => editMenu = menuRef" @focus="editMenuShown=true" @blur="editMenuShown=false"/>

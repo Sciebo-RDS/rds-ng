@@ -1,6 +1,6 @@
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
-import DialogService from "primevue/dialogservice";
+import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from "primevue/toastservice";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
@@ -26,6 +26,7 @@ import createWebService from "../services/WebService";
 import MainContainer from "../ui/views/main/MainViewContainer.vue";
 
 // Load various icons
+import "material-icons/css/material-icons.css";
 import "material-icons/iconfont/outlined.css";
 import "primeicons/primeicons.css";
 
@@ -112,7 +113,7 @@ export class WebComponent {
         app.use(createPinia());
         app.use(this._router);
         app.use(PrimeVue);
-        app.use(DialogService);
+        app.use(ConfirmationService);
         app.use(ToastService);
 
         app.provide(WebComponent._injectionKey, this);
