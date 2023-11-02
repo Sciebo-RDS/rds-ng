@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, provide, inject } from "vue";
 import Button from "primevue/button";
 
 import Dropdown from "primevue/dropdown";
@@ -8,7 +8,11 @@ import Fieldset from "primevue/fieldset";
 import { Property as PropertyType } from "./PropertyProfile";
 import Property from "@/ui/propeditor/Property.vue";
 
-const props = defineProps(["category", "controller"]);
+const props = defineProps(["category"]);
+
+const controller = inject("controller");
+
+provide("categoryId", props.category.id);
 
 const showPropertySelector = ref(false);
 var selectedProperties = ref<PropertyType>();
@@ -16,8 +20,8 @@ var selectedProperties = ref<PropertyType>();
 var propsToShow = ref<PropertyType[]>(
     props.category.properties.filter(
         (p: PropertyType) =>
-            props.controller.getValue(props.category.name, p.name) !=
-                undefined || p.required
+            controller.getValue(props.category.id, p.id) != undefined ||
+            p.required
     )
 );
 
@@ -50,8 +54,6 @@ function updatePropsToShow(e: Event) {
             v-for="prop in propsToShow"
             class="my-10 mx-2"
             :property="prop"
-            :category_name="props.category.name"
-            :controller="props.controller"
         />
 
         <!-- Should have its own component -->
@@ -79,7 +81,7 @@ function updatePropsToShow(e: Event) {
                     :pt="{
                         panel: {
                             class: 'w-0',
-                        } /* FIXME This fixes overflow, there is probably a better way*/,
+                        } /* HACK This fixes overflow, there is probably a better way*/,
                     }"
                 >
                     <template #option="slotprops">

@@ -10,11 +10,13 @@ export type PropertyProfile = {
 
 //categories should rather be subprofiles?
 export type PropertyCategory = {
+    id: string;
     name: string | null;
     properties: (Property | SelectionProperty)[];
 };
 
 export type Property = {
+    id: string;
     name: string;
     type: PropertyDataType;
     description: string;
@@ -52,9 +54,11 @@ export const testProfile: PropertyProfile = {
     name: "Test Profile",
     categories: [
         {
+            id: "General",
             name: "General",
             properties: [
                 {
+                    id: "Author",
                     name: "Author",
                     type: PropertyDataType.STRING,
                     description: "The Authors name",
@@ -65,9 +69,11 @@ export const testProfile: PropertyProfile = {
             ],
         },
         {
+            id: "OSF",
             name: "OSF",
             properties: [
                 {
+                    id: "NumberOfAuthors",
                     name: "Number of Authors",
                     type: PropertyDataType.NUMBER,
                     description:
@@ -77,6 +83,7 @@ export const testProfile: PropertyProfile = {
                     default: true,
                 },
                 {
+                    id: "SomeMultiselect",
                     name: "Some Multiselect",
                     type: PropertyDataType.MULTISELECT,
                     description: "Here are some options",
@@ -86,6 +93,7 @@ export const testProfile: PropertyProfile = {
                     options: ["asd", "something else", "another thing"],
                 },
                 {
+                    id: "Number",
                     name: "Number",
                     type: PropertyDataType.NUMBER,
                     description: "The number of authors",
@@ -94,6 +102,7 @@ export const testProfile: PropertyProfile = {
                     default: false,
                 },
                 {
+                    id: "Authors",
                     name: "Authors",
                     type: PropertyDataType.TEXTAREA,
                     description: "The Authors name",
@@ -113,8 +122,7 @@ export const testValues = {
             Author: "John Doee",
         },
         OSF: {
-            "Number of Authors": 2,
-            "Some Multiselect": ["asd", "another thing"],
+            SomeMultiselect: ["asd", "another thing"],
         },
     },
 };

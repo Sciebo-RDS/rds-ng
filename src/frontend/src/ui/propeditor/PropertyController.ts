@@ -7,8 +7,8 @@ export interface PropertyController {
     profile: PropertyProfile;
     propertySet: PropertySet;
 
-    getValue(ategory: string, name: string): any;
-    setValue(category: string, name: string, value: any): void;
+    getValue(ategory: string, id: string): any;
+    setValue(category: string, id: string, value: any): void;
     propertiesToString(): string;
 }
 
@@ -21,15 +21,15 @@ export class MetadataController implements PropertyController {
         this.propertySet = propertySet;
     }
 
-    public getValue(category: string, name: string): any {
-        return this.propertySet.getProperty(category, name);
+    public getValue(category: string, id: string): any {
+        return this.propertySet.getProperty(category, id);
     }
 
-    public setValue(category: string, name: string, value: any): void {
-        this.propertySet.setProperty(category, name, value);
+    public setValue(category: string, id: string, value: any): void {
+        this.propertySet.setProperty(category, id, value);
     }
 
     public propertiesToString(): string {
-        return JSON.stringify(this.propertySet);
+        return this.propertySet.toString();
     }
 }

@@ -23,11 +23,15 @@ export class PropertySet {
         this.properties = properties["properties"];
     }
 
-    public setProperty(category: string, name: string, value: any): void {
-        this.properties[category][name] = value;
+    public setProperty(category: string, id: string, value: any): void {
+        this.properties[category][id] = value;
     }
 
-    public getProperty(category: string, name: string): any {
-        return this.properties[category][name];
+    public getProperty(category: string, id: string): any {
+        return this.properties[category][id];
+    }
+
+    public toString(): string {
+        return JSON.stringify(this.properties);
     }
 }

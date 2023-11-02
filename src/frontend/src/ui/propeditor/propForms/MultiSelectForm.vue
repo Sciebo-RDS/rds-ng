@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import MultiSelect from "primevue/multiselect";
 
-const props = defineProps(["property", "category_name", "controller"]);
+const props = defineProps(["property"]);
 
-let value = ref(
-    props.controller.getValue(props.category_name, props.property.name)
-);
+const controller = inject("controller");
+const categoryId = inject("categoryId");
+
+let value = ref(controller.getValue(categoryId, props.property.id));
 
 let debounce: number | null = null;
 
@@ -15,11 +16,7 @@ function handleInput(e: any) {
         clearTimeout(debounce);
     }
     debounce = setTimeout(() => {
-        props.controller.setValue(
-            props.category_name,
-            props.property.name,
-            e.value
-        );
+        controller.setValue(categoryId, props.property.id, e.value);
     }, 500);
 }
 </script>

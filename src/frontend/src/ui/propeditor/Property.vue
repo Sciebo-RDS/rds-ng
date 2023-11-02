@@ -5,7 +5,7 @@ import NumberForm from "@/ui/propeditor/propForms/NumberForm.vue";
 import TextAreaForm from "@/ui/propeditor/propForms/TextAreaForm.vue";
 import MultiSelectForm from "@/ui/propeditor/propForms/MultiSelectForm.vue";
 
-const props = defineProps(["property", "category_name", "controller"]);
+const props = defineProps(["property"]);
 
 const forms = {
     string: StringForm,
@@ -28,8 +28,6 @@ const forms = {
                 :is="forms[property.type]"
                 class="w-full"
                 :property="property"
-                :category_name="props.category_name"
-                :controller="props.controller"
             />
         </div>
     </div>
