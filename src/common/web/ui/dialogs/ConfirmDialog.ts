@@ -1,4 +1,4 @@
-import { ConfirmationOptions } from "primevue/confirmationoptions";
+import { type ConfirmationOptions } from "primevue/confirmationoptions";
 
 import { WebComponent } from "../../component/WebComponent";
 

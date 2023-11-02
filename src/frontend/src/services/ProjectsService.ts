@@ -18,7 +18,8 @@ export default function (comp: WebComponent): Service {
             if (msg.success) {
                 ctx.logger.debug("Retrieved projects list", "projects", { projects: JSON.stringify(msg.projects) });
 
-                ctx.store.projects = msg.projects;
+                ctx.projectStore.reset();
+                ctx.projectStore.projects = msg.projects;
             } else {
                 ctx.logger.error("Unable to retrieve the projects list", "projects", { reason: msg.message });
             }
@@ -27,10 +28,13 @@ export default function (comp: WebComponent): Service {
         svc.messageHandler(ProjectsListEvent, (msg: ProjectsListEvent, ctx: ProjectsServiceContext) => {
             ctx.logger.debug("Projects list update received", "projects", { projects: JSON.stringify(msg.projects) });
 
-            ctx.store.projects = msg.projects;
+            ctx.projectStore.reset();
+            ctx.projectStore.projects = msg.projects;
         });
 
         svc.messageHandler(DeleteProjectReply, (msg: DeleteProjectReply, ctx: ProjectsServiceContext) => {
+            ctx.projectStore.unmarkForDeletion(msg.project_id);
+
             if (msg.success) {
                 ctx.logger.debug(`Deleted project ${msg.project_id}`, "projects");
             } else {

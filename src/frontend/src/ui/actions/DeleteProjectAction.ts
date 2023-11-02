@@ -6,6 +6,7 @@ import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
+import { projectsStore } from "@/data/stores/ProjectsStore";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 
 /**
@@ -13,12 +14,19 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
  */
 export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectCommand, CommandComposer<DeleteProjectCommand>> {
     public prepare(project: Project): CommandComposer<DeleteProjectCommand> {
+        this.markProjectForDeletion(project);
+
         this.addDefaultNotifiers(project);
 
         this._composer = this.messageBuilder
             .buildCommand(DeleteProjectCommand, { project_id: project.project_id })
             .timeout(this._regularTimeout);
         return this._composer;
+    }
+
+    private markProjectForDeletion(project: Project): void {
+        const projStore = projectsStore();
+        projStore.markForDeletion(project.project_id);
     }
 
     private addDefaultNotifiers(project: Project): void {

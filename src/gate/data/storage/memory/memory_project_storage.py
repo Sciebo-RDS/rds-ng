@@ -17,6 +17,8 @@ class MemoryProjectStorage(ProjectStorage):
 
     def remove(self, entity: Project) -> None:
         with self._lock:
+            entity.status = Project.Status.DELETED
+
             try:
                 del MemoryProjectStorage._projects[entity.project_id]
             except Exception as exc:  # pylint: disable=broad-exception-caught

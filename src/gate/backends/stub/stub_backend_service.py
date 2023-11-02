@@ -66,7 +66,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         DeleteProjectReply.build(
             ctx.message_builder,
             msg,
-            project_id=project.project_id,
+            project_id=msg.project_id,
             success=success,
             message=message,
         ).emit()

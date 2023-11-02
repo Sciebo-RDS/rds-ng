@@ -1,34 +1,49 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-
 import Listbox from "primevue/listbox";
 
-import { Project } from "@common/data/entities/Project";
+import { Project, ProjectStatus } from "@common/data/entities/Project";
 
-import { frontendStore } from "@/data/stores/FrontendStore";
+import { projectsStore } from "@/data/stores/ProjectsStore";
 import ProjectsListboxItem from "@/ui/projectslist/ProjectsListboxItem.vue";
 
-const feStore = frontendStore();
+const projStore = projectsStore();
+const { projects } = storeToRefs(projStore);
 
-const selectedProject = ref<Project | null>(null);
+const selectedProject = ref<Project | null | undefined>(undefined);
 watch(selectedProject, (newProj, oldProj) => {
     // Prevent deselecting the currently selected project item
-    if (!newProj && oldProj) {
+    if (newProj === null && oldProj) {
         selectedProject.value = oldProj;
     }
 });
+
+function isProjectSelected(project: Project): boolean {
+    return project.project_id === selectedProject?.value?.project_id;
+}
+
+function isProjectDeleted(project: Project): boolean {
+    return (project.status == ProjectStatus.Deleted) || (projStore.pendingDeletions.includes(project.project_id));
+}
+
+function onProjectDeleted(project: Project): void {
+    if (isProjectSelected(project)) {
+        selectedProject.value = undefined;
+    }
+}
 </script>
 
 <template>
     <div>
-        <Listbox v-model="selectedProject" :options="feStore.projects" class="w-full" :pt="{
+        <Listbox v-model="selectedProject" :options="projects" :option-disabled="isProjectDeleted" class="w-full" :pt="{
                 root: 'projects-listbox',
                 list: 'projects-listbox-list',
                 item: 'projects-listbox-item',
             }"
         >
             <template #option="projectEntry">
-                <ProjectsListboxItem :project="projectEntry.option" :is-selected="projectEntry.option.project_id === selectedProject?.project_id"/>
+                <ProjectsListboxItem :project="projectEntry.option" :is-selected="isProjectSelected(projectEntry.option)" :is-deleted="isProjectDeleted(projectEntry.option)" @project-deleted="onProjectDeleted"/>
             </template>
             <template #empty>
                 <div class="r-text-caption-big r-small-caps grid justify-center">No current projects</div>

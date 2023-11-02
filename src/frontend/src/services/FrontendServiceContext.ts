@@ -1,4 +1,4 @@
-import { frontendStore } from "@/data/stores/FrontendStore";
+import { projectsStore } from "@/data/stores/ProjectsStore";
 import { ServiceContext } from "@common/services/ServiceContext";
 
 /**
@@ -7,12 +7,12 @@ import { ServiceContext } from "@common/services/ServiceContext";
  * Note that the store type isn't explicitely defined due to Pinia's excessive type definitions.
  */
 export class FrontendServiceContext extends ServiceContext {
-    private _store = frontendStore();
+    private _projectStore = projectsStore();
 
     /**
-     * The general frontend store.
+     * The project store.
      */
-    public get store() {
-        return this._store;
+    public get projectStore() {
+        return this._projectStore;
     }
 }
