@@ -5,7 +5,7 @@ export type ProjectID = number;
  */
 export const enum ProjectStatus {
     Active = 0x0,
-    Deleted = 0xFF,
+    Deleted = 0xff,
 }
 
 /**

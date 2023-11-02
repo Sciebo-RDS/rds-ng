@@ -8,7 +8,7 @@
         "pinia": "^2.1.7",
         "postcss": "^8.4.31",
         "primeicons": "^6.0.1",
-        "primevue": "^3.38.1",
+        "primevue": "^3.39.0",
         "reflect-metadata": "^0.1.13",
         "sass": "^1.69.5",
         "semver": "^7.5.4",
@@ -23,7 +23,7 @@
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.5.1",
         "@tsconfig/node18": "^18.2.2",
-        "@types/node": "^20.8.9",
+        "@types/node": "^20.8.10",
         "@vitejs/plugin-vue": "^4.4.0",
         "@vue/eslint-config-typescript": "^12.0.0",
         "@vue/tsconfig": "^0.4.0",
