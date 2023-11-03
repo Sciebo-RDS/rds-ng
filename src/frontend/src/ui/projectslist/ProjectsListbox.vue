@@ -24,7 +24,7 @@ function isProjectSelected(project: Project): boolean {
 }
 
 function isProjectDeleted(project: Project): boolean {
-    return (project.status == ProjectStatus.Deleted) || (projStore.pendingDeletions.includes(project.project_id));
+    return project.status == ProjectStatus.Deleted || projStore.pendingDeletions.includes(project.project_id);
 }
 
 function onProjectDeleted(project: Project): void {
@@ -36,14 +36,24 @@ function onProjectDeleted(project: Project): void {
 
 <template>
     <div>
-        <Listbox v-model="selectedProject" :options="projects" :option-disabled="isProjectDeleted" class="w-full" :pt="{
+        <Listbox
+            v-model="selectedProject"
+            :options="projects"
+            :option-disabled="isProjectDeleted"
+            class="w-full"
+            :pt="{
                 root: 'projects-listbox',
                 list: 'projects-listbox-list',
                 item: 'projects-listbox-item',
             }"
         >
             <template #option="projectEntry">
-                <ProjectsListboxItem :project="projectEntry.option" :is-selected="isProjectSelected(projectEntry.option)" :is-deleted="isProjectDeleted(projectEntry.option)" @project-deleted="onProjectDeleted"/>
+                <ProjectsListboxItem
+                    :project="projectEntry.option"
+                    :is-selected="isProjectSelected(projectEntry.option)"
+                    :is-deleted="isProjectDeleted(projectEntry.option)"
+                    @project-deleted="onProjectDeleted"
+                />
             </template>
             <template #empty>
                 <div class="r-text-caption-big r-small-caps grid justify-center">No current projects</div>
@@ -54,7 +64,8 @@ function onProjectDeleted(project: Project): void {
 
 <style scoped lang="scss">
 :deep(.projects-listbox) {
-    @apply border-0 rounded-none bg-inherit #{!important};
+    // Max height is 100% - header height (5rem) - footer height (6.5rem)
+    @apply border-0 rounded-none bg-inherit overflow-y-auto max-h-[calc(100vh-5rem-6.5rem)] #{!important};
 }
 
 :deep(.projects-listbox.p-focus) {

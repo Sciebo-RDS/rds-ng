@@ -35,9 +35,59 @@ export class ListProjectsReply extends CommandReply {
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, cmd: ListProjectsCommand, projects: Project[], success: boolean = true, message: string = ""):
-        CommandReplyComposer<ListProjectsReply> {
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: ListProjectsCommand,
+        projects: Project[],
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<ListProjectsReply> {
         return messageBuilder.buildCommandReply(ListProjectsReply, cmd, success, message, { projects: projects });
+    }
+}
+
+/**
+ * Command to create a project. Requires a ``CreateProjectReply`` reply.
+ *
+ * @param title - The title of the project.
+ * @param description - An optional project description.
+ */
+@Message.define("command/project/create")
+export class CreateProjectCommand extends Command {
+    public readonly title: string = "";
+    public readonly description: string = "";
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        title: string,
+        description: string,
+        chain: Message | null = null,
+    ): CommandComposer<CreateProjectCommand> {
+        return messageBuilder.buildCommand(CreateProjectCommand, { title: title, description: description }, chain);
+    }
+}
+
+/**
+ * Reply to ``CreateProjectCommand``.
+ */
+@Message.define("command/project/create/reply")
+export class CreateProjectReply extends CommandReply {
+    public readonly project_id: ProjectID = 0;
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: CreateProjectCommand,
+        project_id: ProjectID,
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<CreateProjectReply> {
+        return messageBuilder.buildCommandReply(CreateProjectReply, cmd, success, message, { project_id: project_id });
     }
 }
 
@@ -58,7 +108,6 @@ export class DeleteProjectCommand extends Command {
     }
 }
 
-
 /**
  * Reply to ``DeleteProjectCommand``.
  */
@@ -69,8 +118,12 @@ export class DeleteProjectReply extends CommandReply {
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, cmd: DeleteProjectCommand, success: boolean = true, message: string = ""):
-        CommandReplyComposer<DeleteProjectReply> {
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: DeleteProjectCommand,
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<DeleteProjectReply> {
         return messageBuilder.buildCommandReply(DeleteProjectReply, cmd, success, message, { project_id: cmd.project_id });
     }
 }

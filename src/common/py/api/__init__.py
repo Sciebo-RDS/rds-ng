@@ -10,6 +10,8 @@ from .network_events import (
 from .project_commands import (
     ListProjectsCommand,
     ListProjectsReply,
+    CreateProjectCommand,
+    CreateProjectReply,
     DeleteProjectCommand,
     DeleteProjectReply,
 )

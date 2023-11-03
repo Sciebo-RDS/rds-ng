@@ -32,11 +32,11 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
     private addDefaultNotifiers(project: Project): void {
         this.addNotifier(
             ActionState.Done,
-            new OverlayNotifier(OverlayNotificationType.Success, "Delete project", `Project '${project.name}' (ID: ${project.project_id}) has been deleted.`)
+            new OverlayNotifier(OverlayNotificationType.Success, "Delete project", `Project '${project.title}' (ID: ${project.project_id}) has been deleted.`)
         );
         this.addNotifier(
             ActionState.Failed,
-            new OverlayNotifier(OverlayNotificationType.Error, "Error deleting project", `An error occurred while deleting project '${project.name}' (ID: ${project.project_id}): ${ActionNotifier.MessagePlaceholder}.`, true)
+            new OverlayNotifier(OverlayNotificationType.Error, "Error deleting project", `An error occurred while deleting project '${project.title}' (ID: ${project.project_id}): ${ActionNotifier.MessagePlaceholder}.`, true)
         );
     }
 }

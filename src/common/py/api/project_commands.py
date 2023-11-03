@@ -61,6 +61,69 @@ class ListProjectsReply(CommandReply):
         )
 
 
+@Message.define("command/project/create")
+class CreateProjectCommand(Command):
+    """
+    Command to create a new project.
+
+    Args:
+        title: The title of the project.
+        description: An optional project description.
+
+    Notes:
+        Requires a ``CreateProjectReply`` reply.
+    """
+
+    title: str
+    description: str
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        title: str,
+        description: str,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            CreateProjectCommand,
+            chain,
+            title=title,
+            description=description,
+        )
+
+
+@Message.define("command/project/create/reply")
+class CreateProjectReply(CommandReply):
+    """
+    Reply to ``CreateProjectCommand``.
+
+    Args:
+        project_id: The ID of the created project.
+    """
+
+    project_id: ProjectID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: CreateProjectCommand,
+        *,
+        project_id: ProjectID,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            CreateProjectReply, cmd, success, message, project_id=project_id
+        )
+
+
 @Message.define("command/project/delete")
 class DeleteProjectCommand(Command):
     """

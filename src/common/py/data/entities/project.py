@@ -15,7 +15,7 @@ class Project:
     Attributes:
         project_id: The unique project identifier.
         creation_time: A UNIX timestamp of the project creation time.
-        name: The name of the project.
+        title: The title of the project.
         description: An optional project description.
         status: The project status.
     """
@@ -32,7 +32,7 @@ class Project:
 
     creation_time: float
 
-    name: str
+    title: str
     description: str
 
     status: Status = Status.ACTIVE

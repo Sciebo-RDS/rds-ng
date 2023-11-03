@@ -1,3 +1,5 @@
+import time
+
 from common.py.component import BackendComponent
 from common.py.core.messaging import Message, Channel
 from common.py.services import Service
@@ -30,6 +32,8 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
     from common.py.api import (
         ListProjectsCommand,
         ListProjectsReply,
+        CreateProjectCommand,
+        CreateProjectReply,
         DeleteProjectCommand,
         DeleteProjectReply,
     )
@@ -44,6 +48,38 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         ListProjectsReply.build(
             ctx.message_builder, msg, projects=ctx.storage_pool.project_storage.list()
         ).emit()
+
+    @svc.message_handler(CreateProjectCommand)
+    def create_project(
+        msg: CreateProjectCommand, ctx: StubBackendServiceContext
+    ) -> None:
+        success = False
+        message = ""
+
+        from common.py.data.entities import Project
+
+        project = Project(
+            project_id=ctx.storage_pool.project_storage.next_id(),
+            creation_time=time.time(),
+            title=msg.title,
+            description=msg.description,
+        )
+
+        try:
+            ctx.storage_pool.project_storage.add(project)
+            success = True
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            message = str(exc)
+
+        CreateProjectReply.build(
+            ctx.message_builder,
+            msg,
+            project_id=project.project_id,
+            success=success,
+            message=message,
+        ).emit()
+
+        _send_projects_list(msg, ctx)
 
     @svc.message_handler(DeleteProjectCommand)
     def delete_project(
@@ -71,7 +107,6 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             message=message,
         ).emit()
 
-        # Automatically send the updated projects list
         _send_projects_list(msg, ctx)
 
     # Add some initial data to the in-memory storage

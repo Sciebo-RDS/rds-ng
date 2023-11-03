@@ -7,7 +7,6 @@ import { ref, toRefs } from "vue";
 import { Project } from "@common/data/entities/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { projectsStore } from "@/data/stores/ProjectsStore";
 import { confirmDeleteProjectDialog } from "@/dialogs/ConfirmDeleteProjectDialog";
 import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
 
@@ -15,19 +14,18 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true
+        required: true,
     },
     isSelected: {
         type: Boolean,
-        default: false
+        default: false,
     },
     isDeleted: {
         type: Boolean,
-        default: false
-    }
+        default: false,
+    },
 });
 const emit = defineEmits(["projectDeleted"]);
-const projStore = projectsStore();
 
 const { project, isSelected, isDeleted } = toRefs(props);
 
@@ -39,8 +37,7 @@ const editMenuItems = ref([
             {
                 label: "Edit project",
                 icon: "material-icons-outlined mi-edit",
-                command: () => {
-                }
+                command: () => {},
             },
             { separator: true },
             {
@@ -56,28 +53,36 @@ const editMenuItems = ref([
 
                         emit("projectDeleted", project!.value);
                     });
-                }
-            }
-        ]
-    }
+                },
+            },
+        ],
+    },
 ]);
 const editMenuShown = ref(false);
 </script>
 
 <template>
     <div class="grid grid-rows-[auto_auto] grid-cols-[1fr_min-content] grid-flow-row gap-0 h-24 place-content-start group">
-        <div class="r-text-caption-big h-8 truncate" :title="project.name">{{ project!.name }}</div>
+        <div class="r-text-caption-big h-8 truncate" :title="project.title">{{ project!.title }}</div>
 
         <div v-if="!isDeleted" class="row-span-2 pl-1">
-            <Button text rounded size="small" aria-label="Options" title="More options" :class="{ 'invisible': !editMenuShown, 'group-hover:visible': true }" @click="event => editMenu.toggle(event)">
+            <Button
+                text
+                rounded
+                size="small"
+                aria-label="Options"
+                title="More options"
+                :class="{ invisible: !editMenuShown, 'group-hover:visible': true }"
+                @click="(event) => editMenu.toggle(event)"
+            >
                 <template #icon>
-                    <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px;"/>
+                    <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px" />
                 </template>
             </Button>
-            <Menu ref="editMenu" :model="editMenuItems" popup @focus="editMenuShown=true" @blur="editMenuShown=false"/>
+            <Menu ref="editMenu" :model="editMenuItems" popup @focus="editMenuShown = true" @blur="editMenuShown = false" />
         </div>
         <div v-else class="row-span-2 pl-1">
-            <ProgressSpinner class="w-8 h-8" strokeWidth="4"/>
+            <ProgressSpinner class="w-8 h-8" strokeWidth="4" />
         </div>
 
         <div v-if="!isDeleted" id="project-description" class="overflow-hidden line-clamp" :title="project.description">{{ project!.description }}</div>
