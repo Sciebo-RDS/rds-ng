@@ -28,7 +28,7 @@ export const networkStore = defineStore("networkStore", () => {
     const serverInfo = ref({} as ComponentInformation);
     const serverChannel = ref(Channel.local());
 
-    function reset() {
+    function reset(): void {
         connectionState.value = ConnectionState.Disconnected;
 
         serverInfo.value = {} as ComponentInformation;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { ref, watch } from "vue";
+import { watch } from "vue";
 import Listbox from "primevue/listbox";
 
 import { Project, ProjectStatus } from "@common/data/entities/Project";
@@ -9,18 +9,17 @@ import { projectsStore } from "@/data/stores/ProjectsStore";
 import ProjectsListboxItem from "@/ui/projectslist/ProjectsListboxItem.vue";
 
 const projStore = projectsStore();
-const { projects } = storeToRefs(projStore);
+const { projects, activeProject } = storeToRefs(projStore);
 
-const selectedProject = ref<Project | null | undefined>(undefined);
-watch(selectedProject, (newProj, oldProj) => {
+watch(activeProject, (newProj, oldProj) => {
     // Prevent deselecting the currently selected project item
     if (newProj === null && oldProj) {
-        selectedProject.value = oldProj;
+        activeProject.value = oldProj;
     }
 });
 
 function isProjectSelected(project: Project): boolean {
-    return project.project_id === selectedProject?.value?.project_id;
+    return project.project_id === activeProject.value;
 }
 
 function isProjectDeleted(project: Project): boolean {
@@ -29,7 +28,7 @@ function isProjectDeleted(project: Project): boolean {
 
 function onProjectDeleted(project: Project): void {
     if (isProjectSelected(project)) {
-        selectedProject.value = undefined;
+        activeProject.value = undefined;
     }
 }
 </script>
@@ -37,9 +36,11 @@ function onProjectDeleted(project: Project): void {
 <template>
     <div>
         <Listbox
-            v-model="selectedProject"
+            v-model="activeProject"
             :options="projects"
+            option-value="project_id"
             :option-disabled="isProjectDeleted"
+            select-on-focus
             class="w-full"
             :pt="{
                 root: 'projects-listbox',

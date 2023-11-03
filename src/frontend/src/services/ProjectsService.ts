@@ -12,7 +12,7 @@ import { ProjectsServiceContext } from "@/services/ProjectsServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function(comp: WebComponent): Service {
     return comp.createService(
         "Projects service",
         (svc: Service) => {
@@ -20,7 +20,7 @@ export default function (comp: WebComponent): Service {
                 if (msg.success) {
                     ctx.logger.debug("Retrieved projects list", "projects", { projects: JSON.stringify(msg.projects) });
 
-                    ctx.projectStore.reset();
+                    ctx.projectStore.resetPendingDeletions();
                     ctx.projectStore.projects = msg.projects;
                 } else {
                     ctx.logger.error("Unable to retrieve the projects list", "projects", { reason: msg.message });
@@ -30,13 +30,15 @@ export default function (comp: WebComponent): Service {
             svc.messageHandler(ProjectsListEvent, (msg: ProjectsListEvent, ctx: ProjectsServiceContext) => {
                 ctx.logger.debug("Projects list update received", "projects", { projects: JSON.stringify(msg.projects) });
 
-                ctx.projectStore.reset();
+                ctx.projectStore.resetPendingDeletions();
                 ctx.projectStore.projects = msg.projects;
             });
 
             svc.messageHandler(CreateProjectReply, (msg: CreateProjectReply, ctx: ProjectsServiceContext) => {
                 if (msg.success) {
                     ctx.logger.debug(`Created project ${msg.project_id}`, "projects");
+
+                    ctx.projectStore.activeProject = msg.project_id;
                 } else {
                     ctx.logger.error(`Unable to create project ${msg.project_id}`, "projects", { reason: msg.message });
                 }
@@ -52,6 +54,6 @@ export default function (comp: WebComponent): Service {
                 }
             });
         },
-        ProjectsServiceContext,
+        ProjectsServiceContext
     );
 }

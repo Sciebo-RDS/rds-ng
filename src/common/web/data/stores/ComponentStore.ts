@@ -24,7 +24,7 @@ export const componentStore = defineStore("componentStore", () => {
     const componentState = ref(ComponentState.Connecting);
     const componentStateMessage = ref("");
 
-    function reset() {
+    function reset(): void {
         componentState.value = ComponentState.Connecting;
         componentStateMessage.value = "";
     }
