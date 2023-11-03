@@ -2,7 +2,6 @@ import typing
 
 from common.py.data.entities import Project, ProjectID
 from common.py.data.storage import ProjectStorage
-from common.py.data.storage.storage import EntityKeyType
 
 
 class MemoryProjectStorage(ProjectStorage):
@@ -12,7 +11,7 @@ class MemoryProjectStorage(ProjectStorage):
 
     _projects: typing.Dict[ProjectID, Project] = {}
 
-    def next_id(self) -> EntityKeyType:
+    def next_id(self) -> ProjectID:
         with self._lock:
             ids = MemoryProjectStorage._projects.keys()
             if len(ids) > 0:
