@@ -16,22 +16,26 @@ export type Property = {
 */
 export class PropertySet {
     public readonly profile_id: ProfileID;
-    public readonly properties: Property = {};
+    public readonly properties: Property;
 
-    public constructor(profileID: ProfileID, properties: Property = {}) {
-        this.profile_id = profileID;
-        this.properties = properties["properties"];
+    //FIXME profile ID hier doppelt gemoppelt, steht schon in den Properties
+    public constructor(
+        profile_id: ProfileID,
+        propertyData: Property = { properties: {} as Property }
+    ) {
+        this.properties = propertyData["properties"] as Property;
     }
 
     public setProperty(category: string, id: string, value: any): void {
+        category in this.properties || (this.properties[category] = {});
         this.properties[category][id] = value;
     }
 
     public getProperty(category: string, id: string): any {
-        return this.properties[category][id];
+        return this.properties[category]?.[id];
     }
 
     public toString(): string {
-        return JSON.stringify(this.properties);
+        return JSON.stringify(this);
     }
 }

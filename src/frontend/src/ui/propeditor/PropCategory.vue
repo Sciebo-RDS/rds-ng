@@ -21,7 +21,7 @@ var propsToShow = ref<PropertyType[]>(
     props.category.properties.filter(
         (p: PropertyType) =>
             controller.getValue(props.category.id, p.id) != undefined ||
-            p.required
+            p.showAlways
     )
 );
 

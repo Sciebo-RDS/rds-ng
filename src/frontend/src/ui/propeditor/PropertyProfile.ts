@@ -8,7 +8,6 @@ export type PropertyProfile = {
     categories: PropertyCategory[];
 };
 
-//categories should rather be subprofiles?
 export type PropertyCategory = {
     id: string;
     name: string | null;
@@ -20,7 +19,7 @@ export type Property = {
     name: string;
     type: PropertyDataType;
     description: string;
-    required: boolean;
+    showAlways: boolean;
     component: string;
     default?: boolean;
     filter?: string[];
@@ -29,15 +28,6 @@ export type Property = {
 export type SelectionProperty = Property & {
     options: string[];
 };
-
-//use enums
-/* export type PropertyDataType =
-    | "string"
-    | "number"
-    | "boolean"
-    | "selection"
-    | "textarea"
-    | "multiselect"; */
 
 export enum PropertyDataType {
     STRING = "string",
@@ -48,7 +38,6 @@ export enum PropertyDataType {
     MULTISELECT = "multiselect",
 }
 
-// TODO id's for properties and categories
 export const testProfile: PropertyProfile = {
     version: "1.1.1",
     name: "Test Profile",
@@ -62,7 +51,7 @@ export const testProfile: PropertyProfile = {
                     name: "Author",
                     type: PropertyDataType.STRING,
                     description: "The Authors name",
-                    required: true,
+                    showAlways: true,
                     component: "something",
                     default: true,
                 },
@@ -78,7 +67,7 @@ export const testProfile: PropertyProfile = {
                     type: PropertyDataType.NUMBER,
                     description:
                         "This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! ",
-                    required: false,
+                    showAlways: true,
                     component: "something",
                     default: true,
                 },
@@ -87,7 +76,7 @@ export const testProfile: PropertyProfile = {
                     name: "Some Multiselect",
                     type: PropertyDataType.MULTISELECT,
                     description: "Here are some options",
-                    required: false,
+                    showAlways: false,
                     component: "something",
                     default: true,
                     options: ["asd", "something else", "another thing"],
@@ -97,7 +86,7 @@ export const testProfile: PropertyProfile = {
                     name: "Number",
                     type: PropertyDataType.NUMBER,
                     description: "The number of authors",
-                    required: false,
+                    showAlways: false,
                     component: "something",
                     default: false,
                 },
@@ -106,7 +95,7 @@ export const testProfile: PropertyProfile = {
                     name: "Authors",
                     type: PropertyDataType.TEXTAREA,
                     description: "The Authors name",
-                    required: false,
+                    showAlways: false,
                     component: "something",
                 },
             ],

@@ -11,7 +11,7 @@ let value = ref(controller.getValue(categoryId, props.property.id));
 
 let debounce: number | null = null;
 
-function handleInput(e: any) {
+function handleInput(e: Event) {
     if (debounce) {
         clearTimeout(debounce);
     }
