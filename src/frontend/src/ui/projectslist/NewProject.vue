@@ -24,10 +24,10 @@ function createNewProject() {
     <div class="place-self-stretch self-end m-4">
         <Button
             rounded
-            class="w-full !p-2 !text-2xl r-small-caps"
+            class="w-full !p-2 !text-xl"
             label="New Project"
             icon="material-icons-outlined mi-add-circle-outline"
-            icon-class="!text-5xl"
+            icon-class="!text-4xl"
             @click="createNewProject"
         />
     </div>
