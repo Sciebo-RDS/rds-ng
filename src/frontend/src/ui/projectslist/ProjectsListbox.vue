@@ -64,8 +64,8 @@ function onProjectDeleted(project: Project): void {
 
 <style scoped lang="scss">
 :deep(.projects-listbox) {
-    // Max height is 100% - header height (5rem) - footer height (6.5rem)
-    @apply border-0 rounded-none bg-inherit overflow-y-auto max-h-[calc(100vh-5rem-6.5rem)] #{!important};
+    // Max height is 100% - header height (5rem) - footer height (6rem)
+    @apply border-0 rounded-none bg-inherit overflow-y-auto max-h-[calc(100vh-5rem-6rem)] #{!important};
 }
 
 :deep(.projects-listbox.p-focus) {

@@ -4,7 +4,7 @@ import ProjectsListbox from "@/ui/projectslist/ProjectsListbox.vue";
 </script>
 
 <template>
-    <div class="grid grid-rows-[1fr_6.5rem] grid-cols-1 r-shade">
+    <div class="grid grid-rows-[1fr_6rem] grid-cols-1 r-shade">
         <ProjectsListbox />
         <NewProject />
     </div>
