@@ -14,7 +14,6 @@ export const testProfile: PropertyProfile = {
                     type: PropertyDataType.STRING,
                     description: "The Authors name",
                     showAlways: true,
-                    component: "something",
                 },
             ],
         },
@@ -29,7 +28,6 @@ export const testProfile: PropertyProfile = {
                     description:
                         "This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! ",
                     showAlways: true,
-                    component: "something",
                 },
                 {
                     id: "SomeMultiselect",
@@ -37,7 +35,6 @@ export const testProfile: PropertyProfile = {
                     type: PropertyDataType.MULTISELECT,
                     description: "Here are some options",
                     showAlways: false,
-                    component: "something",
                     options: ["asd", "something else", "another thing"],
                 },
                 {
@@ -46,7 +43,6 @@ export const testProfile: PropertyProfile = {
                     type: PropertyDataType.NUMBER,
                     description: "The number of authors",
                     showAlways: false,
-                    component: "something",
                 },
                 {
                     id: "Authors",
@@ -54,7 +50,13 @@ export const testProfile: PropertyProfile = {
                     type: PropertyDataType.TEXTAREA,
                     description: "The Authors name",
                     showAlways: false,
-                    component: "something",
+                },
+                {
+                    id: "Authorslist",
+                    name: "Authors list",
+                    type: PropertyDataType.STRINGLIST,
+                    description: "Comma separeted list of authors",
+                    showAlways: true,
                 },
             ],
         },

@@ -4,6 +4,7 @@ import StringForm from "@/ui/propeditor/propForms/StringForm.vue";
 import NumberForm from "@/ui/propeditor/propForms/NumberForm.vue";
 import TextAreaForm from "@/ui/propeditor/propForms/TextAreaForm.vue";
 import MultiSelectForm from "@/ui/propeditor/propForms/MultiSelectForm.vue";
+import StringListForm from "@/ui/propeditor/propForms/StringListForm.vue";
 
 export type ProfileName = string;
 
@@ -25,7 +26,6 @@ export type Property = {
     type: PropertyDataType;
     description: string;
     showAlways: boolean;
-    component: string;
     filter?: string[];
 };
 
@@ -40,6 +40,7 @@ export enum PropertyDataType {
     SELECTION = "selection",
     TEXTAREA = "textarea",
     MULTISELECT = "multiselect",
+    STRINGLIST = "stringlist",
 }
 
 export const propertyDataForms: { [key in PropertyDataType]?: typeof Vue } = {
@@ -47,4 +48,5 @@ export const propertyDataForms: { [key in PropertyDataType]?: typeof Vue } = {
     [PropertyDataType.NUMBER]: NumberForm,
     [PropertyDataType.TEXTAREA]: TextAreaForm,
     [PropertyDataType.MULTISELECT]: MultiSelectForm,
+    [PropertyDataType.STRINGLIST]: StringListForm,
 };
