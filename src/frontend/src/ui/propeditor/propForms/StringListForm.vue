@@ -28,6 +28,6 @@ let handleInput = (eValue: Event) => {
         separator=","
         class="inline"
         :addOnBlur="true"
-        placeholder="Separate by comma"
+        :placeholder="!value || value.length === 0 ? 'Separate by comma' : null"
     />
 </template>
