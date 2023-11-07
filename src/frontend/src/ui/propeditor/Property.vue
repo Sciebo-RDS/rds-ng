@@ -1,18 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import StringForm from "@/ui/propeditor/propForms/StringForm.vue";
-import NumberForm from "@/ui/propeditor/propForms/NumberForm.vue";
-import TextAreaForm from "@/ui/propeditor/propForms/TextAreaForm.vue";
-import MultiSelectForm from "@/ui/propeditor/propForms/MultiSelectForm.vue";
+import { propertyDataForms } from "@/ui/propeditor/PropertyProfile";
 
 const props = defineProps(["property"]);
-
-const forms = {
-    string: StringForm,
-    number: NumberForm,
-    textarea: TextAreaForm,
-    multiselect: MultiSelectForm,
-};
 </script>
 
 <template>
@@ -25,7 +14,7 @@ const forms = {
         </div>
         <div class="row-span-1 col-span-3">
             <component
-                :is="forms[property.type]"
+                :is="propertyDataForms[property.type]"
                 class="w-full"
                 :property="property"
             />

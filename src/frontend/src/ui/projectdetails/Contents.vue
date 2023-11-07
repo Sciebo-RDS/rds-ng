@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import TabMenu from "primevue/tabmenu";
 import { MetadataController } from "@/ui/propeditor/PropertyController";
-import {
-    PropertyProfile,
-    testProfile,
-    testValues,
-} from "@/ui/propeditor/PropertyProfile";
+import { testProfile, testValues } from "@/ui/propeditor/DummyData";
 import { PropertySet } from "@/ui/propeditor/PropertySet";
 import PropEditor from "@/ui/propeditor/PropEditor.vue";
 
