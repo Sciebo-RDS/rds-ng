@@ -7,18 +7,19 @@ const props = defineProps(["property"]);
 const controller = inject("controller");
 const categoryId = inject("categoryId");
 
+// TODO: Handle overflows
 let value = ref(controller.getValue(categoryId, props.property.id));
 
 let debounce: number | null = null;
 
-function handleInput(e: Event) {
-    if (debounce) {
-        clearTimeout(debounce);
-    }
-    debounce = setTimeout(() => {
-        controller.setValue(categoryId, props.property.id, e.value);
-    }, 500);
-}
+let handleInput = (e: Event) => {
+    debounce = controller.setValue(
+        debounce,
+        categoryId,
+        props.property.id,
+        e.value
+    );
+};
 </script>
 
 <template>

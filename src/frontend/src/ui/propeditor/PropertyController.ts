@@ -8,7 +8,12 @@ export interface PropertyController {
     propertySet: PropertySet;
 
     getValue(ategory: string, id: string): any;
-    setValue(category: string, id: string, value: any): void;
+    setValue(
+        debounce: number | null,
+        category: string,
+        id: string,
+        value: any
+    ): void;
     propertiesToString(): string;
 }
 
@@ -25,8 +30,19 @@ export class MetadataController implements PropertyController {
         return this.propertySet.getProperty(category, id);
     }
 
-    public setValue(category: string, id: string, value: any): void {
-        this.propertySet.setProperty(category, id, value);
+    public setValue(
+        debounce: number | null,
+        category: string,
+        id: string,
+        value: any
+    ): number {
+        if (debounce) {
+            clearTimeout(debounce);
+        }
+
+        return setTimeout(() => {
+            this.propertySet.setProperty(category, id, value);
+        }, 500);
     }
 
     public propertiesToString(): string {
