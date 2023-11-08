@@ -5,6 +5,8 @@ import NumberForm from "@/ui/propeditor/propForms/NumberForm.vue";
 import TextAreaForm from "@/ui/propeditor/propForms/TextAreaForm.vue";
 import MultiSelectForm from "@/ui/propeditor/propForms/MultiSelectForm.vue";
 import StringListForm from "@/ui/propeditor/propForms/StringListForm.vue";
+import RadioButtonForm from "@/ui/propeditor/propForms/RadioButtonForm.vue";
+import DateForm from "@/ui/propeditor/propForms/DateForm.vue";
 
 export type ProfileName = string;
 
@@ -16,7 +18,8 @@ export type PropertyProfile = {
 
 export type PropertyCategory = {
     id: string;
-    name: string | null;
+    name?: string;
+    description?: string;
     properties: (Property | SelectionProperty)[];
 };
 
@@ -25,6 +28,7 @@ export type Property = {
     name: string;
     type: PropertyDataType;
     description: string;
+    required?: boolean;
     showAlways: boolean;
     filter?: string[];
 };
@@ -41,6 +45,8 @@ export enum PropertyDataType {
     TEXTAREA = "textarea",
     MULTISELECT = "multiselect",
     STRINGLIST = "stringlist",
+    RADIOBUTTONS = "radiobuttons",
+    DATE = "date",
 }
 
 export const propertyDataForms: { [key in PropertyDataType]?: typeof Vue } = {
@@ -49,4 +55,6 @@ export const propertyDataForms: { [key in PropertyDataType]?: typeof Vue } = {
     [PropertyDataType.TEXTAREA]: TextAreaForm,
     [PropertyDataType.MULTISELECT]: MultiSelectForm,
     [PropertyDataType.STRINGLIST]: StringListForm,
+    [PropertyDataType.RADIOBUTTONS]: RadioButtonForm,
+    [PropertyDataType.DATE]: DateForm,
 };

@@ -47,8 +47,11 @@ function updatePropsToShow(e: Event) {
 
 <template>
     <div>
-        <div class="text-2xl ma-2">
+        <div class="text-2xl">
             {{ props.category.name }}
+        </div>
+        <div class="text-slate-600 mt-3 mb-5">
+            {{ props.category.description }}
         </div>
         <Property
             v-for="prop in propsToShow"
