@@ -14,7 +14,7 @@ const controller = reactive(
 </script>
 
 <template>
-    <div class="m-10">
+    <div class="p-10 overflow-y-auto">
         <PropEditor :controller="controller" />
     </div>
 </template>
