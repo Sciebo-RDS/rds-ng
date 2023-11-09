@@ -10,10 +10,7 @@ const showDescription = ref(false);
 
 <template>
     <div class="grid grid-rows-1 grid-cols-4 gap-x-10">
-        <div
-            class="row-start-1 row-span-1"
-            v-tooltip.bottom="props.property.description"
-        >
+        <div class="row-start-1 row-span-1">
             {{ props.property.name }}
             <div @click="showDescription = !showDescription">
                 <i
@@ -25,10 +22,22 @@ const showDescription = ref(false);
                     style="font-size: 0.7rem; color: 'var(--secondary-color)'"
                 />
                 <span
-                    v-show="showDescription"
-                    class="text-sm ml-2 text-slate-600"
+                    v-show="!showDescription"
+                    style="font-size: 0.7rem; color: 'var(--secondary-color)'"
                 >
-                    {{ props.property.description }}
+                    Description
+                </span>
+                <span
+                    class="grid grid-rows-1 transition-all duration-300 ease-out"
+                    :style="
+                        showDescription
+                            ? 'grid-template-rows: 1fr'
+                            : 'grid-template-rows: 0fr'
+                    "
+                >
+                    <span class="text-sm ml-2 text-neutral-700 overflow-hidden">
+                        {{ props.property.description }}
+                    </span>
                 </span>
             </div>
         </div>

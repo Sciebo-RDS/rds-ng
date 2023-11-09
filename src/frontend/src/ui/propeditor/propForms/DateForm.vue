@@ -7,7 +7,6 @@ const props = defineProps(["property"]);
 const controller = inject("controller");
 const categoryId = inject("categoryId");
 
-// TODO: Handle overflows
 let value = ref(controller.getValue(categoryId, props.property.id));
 
 let debounce: number | null = null;

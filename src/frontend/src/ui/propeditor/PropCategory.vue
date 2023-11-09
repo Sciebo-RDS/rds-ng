@@ -50,7 +50,7 @@ function updatePropsToShow(e: Event) {
         <div class="text-2xl">
             {{ props.category.name }}
         </div>
-        <div class="text-slate-600 mt-3 mb-5">
+        <div class="text-neutral-700 mt-3 mb-5">
             {{ props.category.description }}
         </div>
         <Property
@@ -81,6 +81,7 @@ function updatePropsToShow(e: Event) {
                     optionValue="name"
                     class="grow"
                     placeholder="Select a property to add"
+                    filter
                     :pt="{
                         panel: {
                             class: 'w-0',
