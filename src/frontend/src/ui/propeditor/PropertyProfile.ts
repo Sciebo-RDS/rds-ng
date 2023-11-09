@@ -7,6 +7,8 @@ import MultiSelectForm from "@/ui/propeditor/propForms/MultiSelectForm.vue";
 import StringListForm from "@/ui/propeditor/propForms/StringListForm.vue";
 import RadioButtonForm from "@/ui/propeditor/propForms/RadioButtonForm.vue";
 import DateForm from "@/ui/propeditor/propForms/DateForm.vue";
+import DropDownForm from "@/ui/propeditor/propForms/DropdownForm.vue";
+import CheckBoxForm from "@/ui/propeditor/propForms/CheckBoxForm.vue";
 
 export type ProfileName = string;
 
@@ -47,6 +49,8 @@ export enum PropertyDataType {
     STRINGLIST = "stringlist",
     RADIOBUTTONS = "radiobuttons",
     DATE = "date",
+    DROPDOWN = "dropdown",
+    CHECKBOX = "checkbox",
 }
 
 export const propertyDataForms: { [key in PropertyDataType]?: typeof Vue } = {
@@ -57,4 +61,6 @@ export const propertyDataForms: { [key in PropertyDataType]?: typeof Vue } = {
     [PropertyDataType.STRINGLIST]: StringListForm,
     [PropertyDataType.RADIOBUTTONS]: RadioButtonForm,
     [PropertyDataType.DATE]: DateForm,
+    [PropertyDataType.DROPDOWN]: DropDownForm,
+    [PropertyDataType.CHECKBOX]: CheckBoxForm,
 };
