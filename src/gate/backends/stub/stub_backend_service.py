@@ -27,6 +27,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         DeleteProjectReply,
     )
     from common.py.data.entities import Project
+    from common.py.data.verifiers import ProjectVerifier
 
     svc = comp.create_service(
         "Stub Backend service", context_type=StubBackendServiceContext
@@ -54,6 +55,8 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         )
 
         try:
+            ProjectVerifier(project).verify_create()
+
             ctx.storage_pool.project_storage.add(project)
             success = True
         except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -80,6 +83,8 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             project := ctx.storage_pool.project_storage.get(msg.project_id)
         ) is not None:
             try:
+                ProjectVerifier(project).verify_delete()
+
                 ctx.storage_pool.project_storage.remove(project)
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
