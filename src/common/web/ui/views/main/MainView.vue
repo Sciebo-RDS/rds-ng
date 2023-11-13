@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import ConfirmDialog from "primevue/confirmdialog";
-import ConfirmPopup from "primevue/confirmpopup";
-import Toast from "primevue/toast";
 
 import { WebComponent } from "../../../component/WebComponent";
-
 import { ComponentState, componentStore } from "../../../data/stores/ComponentStore";
 
 const comp = WebComponent.injectComponent();
@@ -18,8 +14,8 @@ watch(() => compStore.componentState, (state: ComponentState, prevState: Compone
 </script>
 
 <template>
-    <ConfirmDialog/>
-    <ConfirmPopup/>
-    <Toast/>
+    <ConfirmDialog />
+    <ConfirmPopup />
+    <Toast />
     <component :is="comp.mainView.getStateComponent(activeState)"></component>
 </template>

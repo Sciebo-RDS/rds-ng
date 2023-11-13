@@ -1,6 +1,9 @@
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
-import ConfirmationService from 'primevue/confirmationservice';
+import ConfirmDialog from "primevue/confirmdialog";
+import ConfirmPopup from "primevue/confirmpopup";
+import ConfirmationService from "primevue/confirmationservice";
+import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +11,7 @@ import { type App, type Component as VueComponent, createApp, inject } from "vue
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
-import logging from "../core/logging/Logging"
+import logging from "../core/logging/Logging";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
@@ -58,7 +61,7 @@ export class WebComponent {
      */
     public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent) {
         if (WebComponent._instance) {
-            throw new Error("A component instance has already been created")
+            throw new Error("A component instance has already been created");
         }
         WebComponent._instance = this;
 
@@ -101,7 +104,7 @@ export class WebComponent {
     private createRouter(): Router {
         return createRouter({
             history: createWebHistory(),
-            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()],
+            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()]
         });
     }
 
@@ -110,6 +113,12 @@ export class WebComponent {
 
         const app = createApp(MainContainer);
 
+        // Register some global components
+        app.component("ConfirmDialog", ConfirmDialog);
+        app.component("ConfirmPopup", ConfirmPopup);
+        app.component("Toast", Toast);
+
+        // Register various plugins
         app.use(createPinia());
         app.use(this._router);
         app.use(PrimeVue);
