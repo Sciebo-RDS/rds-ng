@@ -8,15 +8,16 @@ const comp = FrontendComponent.inject();
 const emit = defineEmits(["projectCreated"]);
 
 function createNewProject() {
-    // TODO: Dialog
     const title = "I have no title";
     const description = "And also no description :(";
 
     const action = new CreateProjectAction(comp);
-    action.prepare(title, description);
-    action.execute();
+    action.showEditDialog(undefined).then(() => {
+        action.prepare(title, description);
+        action.execute();
 
-    emit("projectCreated", title, description);
+        emit("projectCreated", title, description);
+    });
 }
 </script>
 
