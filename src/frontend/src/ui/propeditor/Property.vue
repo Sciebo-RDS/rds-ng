@@ -14,29 +14,25 @@ const showDescription = ref(false);
             {{ props.property.name }}
             <div
                 @click="showDescription = !showDescription"
-                class="p-1 rounded-md cursor-pointer"
+                class="py-1 rounded-md cursor-pointer"
             >
                 <span class="grid grid-rows-1">
                     <span
-                        class="text-sm text-neutral-700"
-                        :class="
-                            showDescription
-                                ? 'whitespace-normal'
-                                : 'whitespace-nowrap truncate'
-                        "
+                        class="text-sm text-neutral-700 flex"
+                        :class="showDescription ? '' : 'truncate'"
                     >
-                        <i
-                            class="pi"
-                            :class="{
-                                'pi-chevron-right': !showDescription,
-                                'pi-chevron-down': showDescription,
-                            }"
-                            style="
-                                font-size: 0.7rem;
-                                color: 'var(--secondary-color)';
-                            "
-                        />
-                        {{ props.property.description }}
+                        <span
+                            class="material-icons-outlined"
+                            style="font-size: 1.3rem"
+                            >{{
+                                showDescription
+                                    ? "arrow_drop_down"
+                                    : "arrow_right"
+                            }}</span
+                        >
+                        <span class="m-w-0 text-ellipsis overflow-hidden">
+                            {{ props.property.description }}
+                        </span>
                     </span>
                 </span>
             </div>
