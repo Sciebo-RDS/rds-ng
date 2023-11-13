@@ -15,15 +15,8 @@ const showDescription = ref(false);
             <div
                 @click="showDescription = !showDescription"
                 class="p-1 rounded-md cursor-pointer"
-                :class="!showDescription ? 'hover:bg-sky-50' : ''"
-                style="
-                    transition: background-color 0.2s, color 0.2s,
-                        border-color 0.2s, box-shadow 0.2s;
-                "
             >
-                <span
-                    class="grid grid-rows-1 transition-all duration-500 ease-out"
-                >
+                <span class="grid grid-rows-1">
                     <span
                         class="text-sm text-neutral-700"
                         :class="
@@ -32,6 +25,17 @@ const showDescription = ref(false);
                                 : 'whitespace-nowrap truncate'
                         "
                     >
+                        <i
+                            class="pi"
+                            :class="{
+                                'pi-chevron-right': !showDescription,
+                                'pi-chevron-down': showDescription,
+                            }"
+                            style="
+                                font-size: 0.7rem;
+                                color: 'var(--secondary-color)';
+                            "
+                        />
                         {{ props.property.description }}
                     </span>
                 </span>
