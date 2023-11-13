@@ -7,23 +7,22 @@ import { ref, toRefs } from "vue";
 import { Project } from "@common/data/entities/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { confirmDeleteProjectDialog } from "@/dialogs/ConfirmDeleteProjectDialog";
 import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true,
+        required: true
     },
     isSelected: {
         type: Boolean,
-        default: false,
+        default: false
     },
     isDeleted: {
         type: Boolean,
-        default: false,
-    },
+        default: false
+    }
 });
 const emit = defineEmits(["projectDeleted"]);
 
@@ -37,7 +36,8 @@ const editMenuItems = ref([
             {
                 label: "Edit project",
                 icon: "material-icons-outlined mi-edit",
-                command: () => {},
+                command: () => {
+                }
             },
             { separator: true },
             {
@@ -45,18 +45,17 @@ const editMenuItems = ref([
                 icon: "material-icons-outlined mi-delete-forever",
                 class: "r-text-error",
                 command: () => {
-                    const dialog = confirmDeleteProjectDialog(comp, project!.value);
-                    dialog.then(() => {
-                        const action = new DeleteProjectAction(comp);
+                    const action = new DeleteProjectAction(comp);
+                    action.showConfirmation(project!.value).then(() => {
                         action.prepare(project!.value);
                         action.execute();
 
                         emit("projectDeleted", project!.value);
                     });
-                },
-            },
-        ],
-    },
+                }
+            }
+        ]
+    }
 ]);
 const editMenuShown = ref(false);
 </script>

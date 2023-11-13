@@ -4,15 +4,26 @@ import { Project } from "@common/data/entities/Project";
 import { ActionState } from "@common/ui/actions/Action";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
+import { type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { projectsStore } from "@/data/stores/ProjectsStore";
+import { confirmDeleteProjectDialog } from "@/dialogs/ConfirmDeleteProjectDialog";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 
 /**
  * Action to delete a project.
  */
 export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectCommand, CommandComposer<DeleteProjectCommand>> {
+    /**
+     * Shows a confirmation dialog.
+     *
+     * @param project - The project to delete.
+     */
+    public showConfirmation(project: Project): ConfirmDialogResult {
+        return confirmDeleteProjectDialog(this._component, project);
+    }
+
     public prepare(project: Project): CommandComposer<DeleteProjectCommand> {
         this.markProjectForDeletion(project);
 
