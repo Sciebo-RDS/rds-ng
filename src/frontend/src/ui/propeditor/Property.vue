@@ -12,30 +12,26 @@ const showDescription = ref(false);
     <div class="grid grid-rows-1 grid-cols-4 gap-x-10">
         <div class="row-start-1 row-span-1">
             {{ props.property.name }}
-            <div @click="showDescription = !showDescription">
-                <i
-                    class="pi"
-                    :class="{
-                        'pi-angle-right': !showDescription,
-                        'pi-angle-down': showDescription,
-                    }"
-                    style="font-size: 0.7rem; color: 'var(--secondary-color)'"
-                />
+            <div
+                @click="showDescription = !showDescription"
+                class="p-1 rounded-md cursor-pointer"
+                :class="!showDescription ? 'hover:bg-sky-50' : ''"
+                style="
+                    transition: background-color 0.2s, color 0.2s,
+                        border-color 0.2s, box-shadow 0.2s;
+                "
+            >
                 <span
-                    v-show="!showDescription"
-                    style="font-size: 0.7rem; color: 'var(--secondary-color)'"
+                    class="grid grid-rows-1 transition-all duration-500 ease-out"
                 >
-                    Description
-                </span>
-                <span
-                    class="grid grid-rows-1 transition-all duration-300 ease-out"
-                    :style="
-                        showDescription
-                            ? 'grid-template-rows: 1fr'
-                            : 'grid-template-rows: 0fr'
-                    "
-                >
-                    <span class="text-sm ml-2 text-neutral-700 overflow-hidden">
+                    <span
+                        class="text-sm text-neutral-700"
+                        :class="
+                            showDescription
+                                ? 'whitespace-normal'
+                                : 'whitespace-nowrap truncate'
+                        "
+                    >
                         {{ props.property.description }}
                     </span>
                 </span>

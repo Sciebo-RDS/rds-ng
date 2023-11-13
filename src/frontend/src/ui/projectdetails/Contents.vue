@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { MetadataController } from "@/ui/propeditor/PropertyController";
-import { testProfile, testValues } from "@/ui/propeditor/DummyData";
+import { dataCite, testValues } from "@/ui/propeditor/DummyData";
 import { PropertySet } from "@/ui/propeditor/PropertySet";
 import PropEditor from "@/ui/propeditor/PropEditor.vue";
 
+// TODO make sure Values and Profile match
 const controller = reactive(
     new MetadataController(
-        testProfile,
-        new PropertySet(["Test Profile", "1.1.1"], testValues)
+        dataCite,
+        new PropertySet(["DataCite", "4.4"], undefined)
     )
 );
 </script>
