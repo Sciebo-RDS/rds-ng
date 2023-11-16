@@ -8,11 +8,12 @@ import Fieldset from "primevue/fieldset";
 import { Property as PropertyType } from "./PropertyProfile";
 import Property from "@/ui/propeditor/Property.vue";
 
-const props = defineProps(["category"]);
+const props = defineProps(["category", "profileId"]);
 
 const controller = inject("controller");
 
 provide("categoryId", props.category.id);
+provide("profileId", props.profileId);
 
 const showPropertySelector = ref(false);
 var selectedProperties = ref<PropertyType>();
@@ -20,8 +21,8 @@ var selectedProperties = ref<PropertyType>();
 var propsToShow = ref<PropertyType[]>(
     props.category.properties.filter(
         (p: PropertyType) =>
-            controller.getValue(props.category.id, p.id) != undefined ||
-            p.showAlways
+            controller.getValue(props.profileId, props.category.id, p.id) !=
+                undefined || p.showAlways
     )
 );
 
