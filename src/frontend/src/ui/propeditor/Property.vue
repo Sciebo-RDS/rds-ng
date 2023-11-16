@@ -9,12 +9,12 @@ const showDescription = ref(false);
 </script>
 
 <template>
-    <div class="grid grid-rows-1 grid-cols-4 gap-x-10">
-        <div class="row-start-1 row-span-1">
+    <div class="lg:grid grid-rows-1 xl:grid-cols-4 gap-10 my-5">
+        <div class="row-start-1 row-span-1 xl:col-span-2 2xl:col-span-1">
             {{ props.property.name }}
             <div
                 @click="showDescription = !showDescription"
-                class="py-1 rounded-md cursor-pointer"
+                class="py-1 cursor-pointer"
             >
                 <span class="grid grid-rows-1">
                     <span
@@ -22,7 +22,7 @@ const showDescription = ref(false);
                         :class="showDescription ? '' : 'truncate'"
                     >
                         <span
-                            class="material-icons-outlined"
+                            class="material-icons-outlined ff-alignment-fix"
                             style="font-size: 1.3rem"
                             >{{
                                 showDescription
@@ -30,14 +30,14 @@ const showDescription = ref(false);
                                     : "arrow_right"
                             }}</span
                         >
-                        <span class="m-w-0 text-ellipsis overflow-hidden">
+                        <span class="text-ellipsis overflow-hidden">
                             {{ props.property.description }}
                         </span>
                     </span>
                 </span>
             </div>
         </div>
-        <div class="row-span-1 col-span-3">
+        <div class="row-span-1 xl:col-span-2 2xl:col-span-3 col-span-2">
             <component
                 :is="propertyDataForms[property.type]"
                 class="w-full"
@@ -46,3 +46,12 @@ const showDescription = ref(false);
         </div>
     </div>
 </template>
+
+<style scoped>
+/* fixes icon alignment in Firefox */
+@-moz-document url-prefix() {
+    .ff-alignment-fix {
+        line-height: 1rem;
+    }
+}
+</style>

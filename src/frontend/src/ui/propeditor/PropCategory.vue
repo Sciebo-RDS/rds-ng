@@ -48,18 +48,13 @@ function updatePropsToShow(e: Event) {
 
 <template>
     <div>
-        <div class="text-2xl">
+        <div class="text-xl">
             {{ props.category.name }}
         </div>
-        <div class="text-neutral-700 mt-3 mb-5">
+        <div class="text-neutral-700 mt-5 mb-5">
             {{ props.category.description }}
         </div>
-        <Property
-            v-for="prop in propsToShow"
-            class="my-10 mx-2"
-            :property="prop"
-        />
-
+        <Property v-for="prop in propsToShow" class="mx-2" :property="prop" />
         <!-- Should have its own component -->
         <div v-show="!showPropertySelector" class="flex justify-end">
             <Button
