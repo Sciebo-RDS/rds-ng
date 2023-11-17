@@ -2,7 +2,7 @@
 import { provide, type PropType } from "vue";
 import PropCategory from "./PropCategory.vue";
 import InlineMessage from "primevue/inlinemessage";
-import { Logger as DefaultLogger } from "./utils/Logging";
+import { Logger } from "./utils/Logging";
 import { PropertyController } from "@/ui/propeditor/PropertyController";
 
 const props = defineProps({
@@ -11,22 +11,27 @@ const props = defineProps({
         required: true,
     },
     logging: {
-        type: Object,
+        type: Object as PropType<Logger>,
         default: null,
     },
 });
-const logging = props.logging || DefaultLogger;
+const logging = props.logging || Logger;
 
 provide("controller", props.controller);
 provide("logging", logging);
 
 logging.info(`PropertyEditor started.`, "propertyeditor");
-logging.info(
-    `${
-        props.controller.getProfileIds().length
-    } profiles loaded: ${JSON.stringify(props.controller.getProfileIds())}`,
-    "propertyeditor"
-);
+
+if (props.controller.getProfileIds().length) {
+    logging.info(
+        `Loaded ${
+            props.controller.getProfileIds().length
+        } profiles: ${JSON.stringify(props.controller.getProfileIds())}`,
+        "propertyeditor"
+    );
+} else {
+    logging.warning(`Could not load any metadata Profiles.`, "propertyeditor");
+}
 </script>
 
 <template>

@@ -1,5 +1,5 @@
-export class Logger {
-    public static info(message: string, source: string) {
+export abstract class Logger {
+    public static info(message: string, source: string): void {
         console.log(
             `${new Date().toLocaleString(
                 navigator.language
@@ -7,7 +7,7 @@ export class Logger {
         );
     }
 
-    public static error(message: string, source: string) {
+    public static error(message: string, source: string): void {
         console.error(
             `${new Date().toLocaleString(
                 navigator.language
@@ -15,7 +15,7 @@ export class Logger {
         );
     }
 
-    public static debug(message: string, source: string) {
+    public static debug(message: string, source: string): void {
         console.log(
             `${new Date().toLocaleString(
                 navigator.language
@@ -23,7 +23,7 @@ export class Logger {
         );
     }
 
-    public static warning(message: string, source: string) {
+    public static warning(message: string, source: string): void {
         console.warn(
             `${new Date().toLocaleString(
                 navigator.language

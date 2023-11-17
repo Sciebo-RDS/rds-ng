@@ -17,7 +17,7 @@ try {
 try {
     profiles.push(new PropertySet(testProfile, testValues));
 } catch (e) {
-    logging.warning(e, "propertyeditor");
+    logging.error(e, "propertyeditor");
 }
 
 const controller = reactive(new MetadataController(profiles));
