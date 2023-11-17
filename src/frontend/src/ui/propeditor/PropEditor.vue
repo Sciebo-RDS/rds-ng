@@ -3,9 +3,18 @@ import { provide } from "vue";
 import PropCategory from "./PropCategory.vue";
 import InlineMessage from "primevue/inlinemessage";
 
-const props = defineProps(["controller"]);
+const props = defineProps(["controller", "logging"]);
 
 provide("controller", props.controller);
+provide("logging", props.logging);
+
+props.logging.info(`PropertyEditor started.`, "propertyeditor");
+props.logging.info(
+    `${
+        props.controller.getProfileIds().length
+    } profiles loaded: ${JSON.stringify(props.controller.getProfileIds())}`,
+    "propertyeditor"
+);
 </script>
 
 <template>

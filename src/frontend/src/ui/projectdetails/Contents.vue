@@ -4,17 +4,28 @@ import { MetadataController } from "@/ui/propeditor/PropertyController";
 import { dataCite, testProfile, testValues } from "@/ui/propeditor/DummyData";
 import { PropertySet } from "@/ui/propeditor/PropertySet";
 import PropEditor from "@/ui/propeditor/PropEditor.vue";
+import logging from "@common/core/logging/Logging";
 
-const datacite = new PropertySet(dataCite, undefined);
-const testprofile = new PropertySet(testProfile, testValues);
+// TODO have a closer look at Toasts
 
-// TODO make sure Values and Profile match
-const controller = reactive(new MetadataController([datacite, testprofile]));
+const profiles: PropertySet[] = [];
+try {
+    profiles.push(new PropertySet(dataCite));
+} catch (e) {
+    logging.error(e, "propertyeditor");
+}
+try {
+    profiles.push(new PropertySet(testProfile, testValues));
+} catch (e) {
+    logging.warning(e, "propertyeditor");
+}
+
+const controller = reactive(new MetadataController(profiles));
 </script>
 
 <template>
     <div class="p-10 overflow-y-auto">
-        <PropEditor :controller="controller" />
+        <PropEditor :controller="controller" :logging="logging" />
     </div>
 </template>
 

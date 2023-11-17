@@ -27,7 +27,7 @@ export class PropertySet {
         public propertyData: PersistedPropertySet | null = null
     ) {
         if (!this._validateProfile()) {
-            throw new Error("PropertyProfile has no valid profile_id");
+            throw new Error("PropertyProfile is not valid.");
         }
 
         this.profile_id = profile["profile_id"];
