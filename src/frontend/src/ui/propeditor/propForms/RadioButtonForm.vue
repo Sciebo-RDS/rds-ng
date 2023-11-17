@@ -9,11 +9,13 @@ const controller = inject("controller");
 const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 
-let value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = ref(
+    controller.getValue(profileId, categoryId, props.property.id)
+);
 
 let debounce: number | null = null;
 
-let handleInput = (eValue: Event) => {
+const handleInput = (eValue: Event) => {
     debounce = controller.setValue(
         profileId,
         debounce,

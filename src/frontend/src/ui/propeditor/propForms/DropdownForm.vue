@@ -8,11 +8,13 @@ const controller = inject("controller");
 const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 
-let value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = ref(
+    controller.getValue(profileId, categoryId, props.property.id)
+);
 
 let debounce: number | null = null;
 
-let handleInput = (e: string) => {
+const handleInput = (e: string) => {
     console.log(e.value);
     debounce = controller.setValue(
         profileId,
@@ -36,7 +38,7 @@ let handleInput = (e: string) => {
             :pt="{
                 panel: {
                     class: 'w-0',
-                } /* HACK This fixes overflow, there is probably a better way*/,
+                },
             }"
         />
     </div>

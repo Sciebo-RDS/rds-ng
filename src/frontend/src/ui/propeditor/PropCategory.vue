@@ -16,9 +16,9 @@ provide("categoryId", props.category.id);
 provide("profileId", props.profileId);
 
 const showPropertySelector = ref(false);
-var selectedProperties = ref<PropertyType>();
+const selectedProperties = ref<PropertyType>();
 
-var propsToShow = ref<PropertyType[]>(
+const propsToShow = ref<PropertyType[]>(
     props.category.properties.filter(
         (p: PropertyType) =>
             controller.getValue(props.profileId, props.category.id, p.id) !=
@@ -26,7 +26,7 @@ var propsToShow = ref<PropertyType[]>(
     )
 );
 
-var propsToSelect = ref(
+const propsToSelect = ref(
     props.category.properties.filter(
         (p: PropertyType) => !propsToShow.value.includes(p)
     )
@@ -81,7 +81,7 @@ function updatePropsToShow(e: Event) {
                     :pt="{
                         panel: {
                             class: 'w-0',
-                        } /* HACK This fixes overflow, there is probably a better way*/,
+                        },
                     }"
                 >
                     <template #option="slotprops">

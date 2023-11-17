@@ -8,12 +8,14 @@ const controller = inject("controller");
 const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 
-let value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = ref(
+    controller.getValue(profileId, categoryId, props.property.id)
+);
 
 let debounce: number | null = null;
 
-let handleInput = (eValue: string) => {
-    let ms: number = new Date(eValue).getTime();
+const handleInput = (eValue: string) => {
+    const ms: number = new Date(eValue).getTime();
     console.log(ms);
     debounce = controller.setValue(
         profileId,

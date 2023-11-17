@@ -30,7 +30,7 @@ logging.info(
 </script>
 
 <template>
-    <div>
+    <div class="overflow-hidden">
         <div v-for="profileId in props.controller.getProfileIds()">
             <div class="text-2xl bg-sky-100">
                 {{ `${profileId["name"]} v${profileId["version"]}` }}

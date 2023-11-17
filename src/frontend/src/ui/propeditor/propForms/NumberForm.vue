@@ -9,11 +9,13 @@ const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 
 // TODO: Handle overflows
-let value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = ref(
+    controller.getValue(profileId, categoryId, props.property.id)
+);
 
 let debounce: number | null = null;
 
-let handleInput = (e: Event) => {
+const handleInput = (e: Event) => {
     debounce = controller.setValue(
         profileId,
         debounce,
