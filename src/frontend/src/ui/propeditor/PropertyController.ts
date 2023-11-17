@@ -1,7 +1,9 @@
-import { SemVer } from "semver";
-
-import { PropertySet, type ProfileID } from "./PropertySet";
-import { type PropertyProfile, type PropertyCategory } from "./PropertyProfile";
+import { PropertySet, type PersistedPropertySet } from "./PropertySet";
+import {
+    type PropertyProfile,
+    type PropertyCategory,
+    type ProfileID,
+} from "./PropertyProfile";
 
 export interface PropertyController {
     propertySets: PropertySet[];
@@ -17,7 +19,7 @@ export interface PropertyController {
     getProfileIds(): ProfileID[];
     getProfile(id: ProfileID): PropertyProfile;
     getCategoryById(id: ProfileID): PropertyCategory[];
-    propertiesToString(): string;
+    exportData(): PersistedPropertySet[];
 }
 
 export class MetadataController implements PropertyController {
@@ -63,14 +65,15 @@ export class MetadataController implements PropertyController {
         return this.getPropertySet(id).profile.categories as PropertyCategory[];
     }
 
-    getPropertySet(id: ProfileID): PropertySet {
+    private getPropertySet(id: ProfileID): PropertySet {
         return this.propertySets.filter(
             (e) =>
-                e.profile_id[0] == id[0] && e.profile_id[1] == (id[1] as SemVer)
+                e.profile_id["name"] === id["name"] &&
+                e.profile_id["version"] === id["version"]
         )[0];
     }
 
-    public propertiesToString(): string {
-        return this.propertySets.toString();
+    public exportData(): PersistedPropertySet[] {
+        return this.propertySets.map((e) => e.exportPropertySet());
     }
 }

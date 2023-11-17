@@ -1,8 +1,8 @@
 import { type PropertyProfile, PropertyDataType } from "./PropertyProfile";
+import { type PersistedPropertySet } from "./PropertySet";
 
 export const testProfile: PropertyProfile = {
-    version: "1.1.1",
-    name: "Test Profile",
+    profile_id: { name: "Test Profile", version: "1.1.1" },
     categories: [
         {
             id: "General",
@@ -79,8 +79,7 @@ export const testProfile: PropertyProfile = {
 };
 
 export const dataCite: PropertyProfile = {
-    version: "4.4",
-    name: "DataCite",
+    profile_id: { name: "DataCite", version: "4.3" },
     categories: [
         {
             id: "Mandatory",
@@ -180,9 +179,8 @@ export const dataCite: PropertyProfile = {
     ],
 };
 
-// TODO Make this Property type compatible with the Property type in PropertySet.ts
-export const testValues = {
-    profile_id: ["Test Profile", "1.1.1"],
+export const testValues: PersistedPropertySet = {
+    profile_id: { name: "Test Profile", version: "1.1.1" },
     properties: {
         General: {
             Author: "John Doee",

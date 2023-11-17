@@ -1,33 +1,54 @@
-import { SemVer } from "semver";
-import { type PropertyProfile } from "./PropertyProfile";
+import { type PropertyProfile, type ProfileID } from "./PropertyProfile";
 
-export type ProfileID = [string, SemVer];
-export type Property = {
+export type Properties = {
     [category: string]: {
         [name: string]: any;
     };
 };
 
+export type PersistedPropertySet = {
+    profile_id: ProfileID;
+    properties: Properties;
+};
+
 /**
  * Data for a single **PropertySet**.
  *
- * @param profileId - The tuple [name, version] that uniquely identifies the corresponding PropertyProfile.
+ * @param profileId - The ID {name: string, version: SemVer} that uniquely identifies the corresponding PropertyProfile.
  * @param properties - Property data values
 
 */
 export class PropertySet {
-    public readonly profile: PropertyProfile;
-    public readonly properties: Property;
+    public readonly properties: Properties;
     public readonly profile_id: ProfileID;
 
-    //FIXME profile ID hier doppelt gemoppelt, steht schon in den Properties
     public constructor(
-        propertyProfile: PropertyProfile,
-        propertyData: Property = { properties: {} as Property }
+        public profile: PropertyProfile,
+        public propertyData: PersistedPropertySet | null = null
     ) {
-        this.profile = propertyProfile;
-        this.properties = propertyData["properties"] as Property;
-        this.profile_id = [propertyProfile["name"], propertyProfile["version"]];
+        if (!this._validateProfile()) {
+            throw new Error("PropertyProfile has no valid profile_id");
+        }
+
+        this.profile_id = profile["profile_id"];
+
+        if (!propertyData) {
+            this.properties = {} as Properties;
+            return;
+        }
+
+        if (
+            !this._dataMatchesProfile(
+                propertyData["profile_id"],
+                profile["profile_id"]
+            )
+        ) {
+            throw new Error(
+                `Provided data does not match profile. Data uses profile \"${propertyData["profile_id"]["name"]} ${propertyData["profile_id"]["version"]}\" but profile is \"${profile["profile_id"]["name"]} ${profile["profile_id"]["version"]}\".`
+            );
+        }
+
+        this.properties = propertyData["properties"] as Properties;
     }
 
     public setProperty(category: string, id: string, value: any): void {
@@ -35,7 +56,7 @@ export class PropertySet {
         this.properties[category][id] = value;
     }
 
-    public getProperty(category: string, id: string): any {
+    public getProperty(category: string, id: string): Properties {
         return this.properties[category]?.[id];
     }
 
@@ -45,5 +66,29 @@ export class PropertySet {
 
     public toString(): string {
         return JSON.stringify(this);
+    }
+
+    public exportPropertySet() {
+        return {
+            profile_id: this.profile_id,
+            properties: this.properties,
+        };
+    }
+
+    private _validateProfile() {
+        return (
+            this.profile["profile_id"]?.["name"] &&
+            this.profile["profile_id"]?.["version"]
+        );
+    }
+
+    private _dataMatchesProfile(
+        propertyDataId: ProfileID,
+        profileProfileId: ProfileID
+    ) {
+        return (
+            propertyDataId["name"] === profileProfileId["name"] &&
+            propertyDataId["version"] === profileProfileId["version"]
+        );
     }
 }

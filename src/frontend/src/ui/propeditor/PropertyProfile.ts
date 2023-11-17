@@ -10,11 +10,10 @@ import DateForm from "@/ui/propeditor/propForms/DateForm.vue";
 import DropDownForm from "@/ui/propeditor/propForms/DropdownForm.vue";
 import CheckBoxForm from "@/ui/propeditor/propForms/CheckBoxForm.vue";
 
-export type ProfileName = string;
+export type ProfileID = { name: string; version: SemVer };
 
 export type PropertyProfile = {
-    version: SemVer;
-    name: ProfileName;
+    profile_id: ProfileID;
     categories: PropertyCategory[];
 };
 
