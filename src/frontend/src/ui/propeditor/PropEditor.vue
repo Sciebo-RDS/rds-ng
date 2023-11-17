@@ -1,15 +1,27 @@
 <script setup lang="ts">
-import { provide } from "vue";
+import { provide, type PropType } from "vue";
 import PropCategory from "./PropCategory.vue";
 import InlineMessage from "primevue/inlinemessage";
+import { Logger as DefaultLogger } from "./utils/Logging";
+import { PropertyController } from "@/ui/propeditor/PropertyController";
 
-const props = defineProps(["controller", "logging"]);
+const props = defineProps({
+    controller: {
+        type: Object as PropType<PropertyController>,
+        required: true,
+    },
+    logging: {
+        type: Object,
+        default: null,
+    },
+});
+const logging = props.logging || DefaultLogger;
 
 provide("controller", props.controller);
-provide("logging", props.logging);
+provide("logging", logging);
 
-props.logging.info(`PropertyEditor started.`, "propertyeditor");
-props.logging.info(
+logging.info(`PropertyEditor started.`, "propertyeditor");
+logging.info(
     `${
         props.controller.getProfileIds().length
     } profiles loaded: ${JSON.stringify(props.controller.getProfileIds())}`,
