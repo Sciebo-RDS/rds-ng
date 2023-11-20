@@ -13,7 +13,7 @@ import { ServiceContext } from "./ServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function(comp: WebComponent): Service {
     return comp.createService("Component service", (svc: Service) => {
         const nwStore = networkStore();
         const compStore = componentStore();
@@ -36,7 +36,7 @@ export default function (comp: WebComponent): Service {
             nwStore.connectionState = ConnectionState.Ready;
             compStore.componentState = ComponentState.Running;
 
-            WebComponent.instance.mainView.navigateTo();
+            WebComponent.instance.userInterface.mainView.navigateTo();
         });
     });
 }

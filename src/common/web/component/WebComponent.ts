@@ -15,7 +15,7 @@ import logging from "../core/logging/Logging";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
-import { MainView } from "../ui/views/main/MainView";
+import { UserInterface } from "../ui/UserInterface";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
@@ -51,7 +51,7 @@ export class WebComponent {
     protected readonly _core: Core;
     protected readonly _router: Router;
 
-    protected readonly _mainView: MainView;
+    protected readonly _userInterface: UserInterface;
     protected readonly _vueApp: App;
 
     /**
@@ -84,7 +84,7 @@ export class WebComponent {
         this._core = new Core(this._data);
         this._router = this.createRouter();
 
-        this._mainView = new MainView(this._router, appRoot);
+        this._userInterface = new UserInterface(this._router, appRoot);
         this._vueApp = this.createVueApp();
     }
 
@@ -206,10 +206,10 @@ export class WebComponent {
     }
 
     /**
-     * The global main view.
+     * The global user interface.
      */
-    public get mainView(): MainView {
-        return this._mainView;
+    public get userInterface(): UserInterface {
+        return this._userInterface;
     }
 
     /**

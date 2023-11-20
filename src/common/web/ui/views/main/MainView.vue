@@ -17,5 +17,5 @@ watch(() => compStore.componentState, (state: ComponentState, prevState: Compone
     <ConfirmDialog />
     <ConfirmPopup />
     <Toast />
-    <component :is="comp.mainView.getStateComponent(activeState)"></component>
+    <component :is="comp.userInterface.mainView.getStateComponent(activeState)"></component>
 </template>
