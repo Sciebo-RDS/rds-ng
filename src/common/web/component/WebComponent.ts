@@ -3,6 +3,8 @@ import PrimeVue from "primevue/config";
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmPopup from "primevue/confirmpopup";
 import ConfirmationService from "primevue/confirmationservice";
+import DynamicDialog from "primevue/dynamicdialog";
+import DialogService from "primevue/dialogservice";
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
 // @ts-ignore
@@ -116,6 +118,7 @@ export class WebComponent {
         // Register some global components
         app.component("ConfirmDialog", ConfirmDialog);
         app.component("ConfirmPopup", ConfirmPopup);
+        app.component("DynamicDialog", DynamicDialog);
         app.component("Toast", Toast);
 
         // Register various plugins
@@ -123,6 +126,7 @@ export class WebComponent {
         app.use(this._router);
         app.use(PrimeVue);
         app.use(ConfirmationService);
+        app.use(DialogService);
         app.use(ToastService);
 
         app.provide(WebComponent._injectionKey, this);

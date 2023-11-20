@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
 import InputText from "primevue/inputtext";
-import { ref, watch } from "vue";
+import Textarea from "primevue/textarea";
+import { inject } from "vue";
+
+import { type EditDialogData } from "@common/ui/dialogs/EditDialog";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { type EditProjectDialogData } from "@/ui/dialogs/EditProjectDialog";
+
+const dialogRef = inject("dialogRef") as any;
+const dialogData = dialogRef.value.data as EditDialogData<EditProjectDialogData>;
 
 const comp = FrontendComponent.inject();
-
-const text = ref("THIS IS WSPA");
-watch(text, (o, n) => {
-    console.log(o + "---" + n);
-});
 </script>
 
 <template>
-    <ConfirmDialog group="templating">
-        <template #message="slotProps">
-            <div class="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
-                <i :class="slotProps.message.icon" class="text-6xl text-primary-500"></i>
-                <p>{{ slotProps.message.message }}</p>
-                <div>
-                    <InputText v-model="text"></InputText>
-                </div>
-            </div>
-        </template>
-    </ConfirmDialog>
+    <!-- TODO: Make pretty <3 -->
+    <div class="grid grid-rows-auto grid-cols-[min-content_1fr] gap-5">
+        <label>Title</label>
+        <InputText v-model="dialogData.userData.title" placeholder="Title" />
+
+        <label>Description</label>
+        <Textarea v-model="dialogData.userData.description" placeholder="Description" rows="3" />
+    </div>
 </template>
 
 <style scoped lang="scss">

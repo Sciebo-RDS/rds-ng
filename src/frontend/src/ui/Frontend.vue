@@ -7,8 +7,6 @@ import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
 import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
 import ProjectsList from "@/ui/projectslist/ProjectsList.vue";
 
-import EditProjectDialog from "@/ui/dialogs/EditProjectDialog.vue";
-
 const comp = FrontendComponent.inject();
 
 // When launching the frontend, request all data first
@@ -28,9 +26,6 @@ onMounted(() => {
         <ProjectsList class="w-full border-e-2 r-border-color" />
         <ProjectDetails class="w-full" />
     </div>
-
-    <!-- Make various globally used dialogs available -->
-    <EditProjectDialog />
 </template>
 
 <style scoped lang="scss">

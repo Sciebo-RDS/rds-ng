@@ -15,8 +15,6 @@ export class UserInterface {
      */
     public constructor(router: Router, appRoot: VueComponent) {
         this._mainView = new MainView(router, appRoot);
-
-        this._dialogManager = new DialogManager();
     }
 
     /**

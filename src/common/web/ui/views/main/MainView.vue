@@ -14,8 +14,14 @@ watch(() => compStore.componentState, (state: ComponentState, prevState: Compone
 </script>
 
 <template>
+    <!-- Dialogs -->
     <ConfirmDialog />
     <ConfirmPopup />
+    <DynamicDialog />
+
+    <!-- Notifications -->
     <Toast />
+
+    <!-- Main view -->
     <component :is="comp.userInterface.mainView.getStateComponent(activeState)"></component>
 </template>

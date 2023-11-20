@@ -4,10 +4,10 @@ import { Project } from "@common/data/entities/Project";
 import { ActionState } from "@common/ui/actions/Action";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
-import { type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
+import { type EditDialogResult } from "@common/ui/dialogs/EditDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
-import { editProjectDialog } from "@/ui/dialogs/EditProjectDialog";
+import { editProjectDialog, type EditProjectDialogData } from "@/ui/dialogs/EditProjectDialog";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 
 /**
@@ -19,7 +19,7 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
      *
      * @param project - The project to edit.
      */
-    public showEditDialog(project: Project): ConfirmDialogResult {
+    public showEditDialog(project: Project | undefined = undefined): EditDialogResult<EditProjectDialogData> {
         return editProjectDialog(this._component, project);
     }
 
