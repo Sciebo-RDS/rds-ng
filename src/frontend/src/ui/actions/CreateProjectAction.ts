@@ -7,7 +7,7 @@ import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
-import { editProjectDialog } from "@/dialogs/EditProjectDialog";
+import { editProjectDialog } from "@/ui/dialogs/EditProjectDialog";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 
 /**

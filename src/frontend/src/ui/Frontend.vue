@@ -7,7 +7,7 @@ import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
 import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
 import ProjectsList from "@/ui/projectslist/ProjectsList.vue";
 
-import EditProjectDialog from "@/dialogs/EditProjectDialog.vue";
+import EditProjectDialog from "@/ui/dialogs/EditProjectDialog.vue";
 
 const comp = FrontendComponent.inject();
 
