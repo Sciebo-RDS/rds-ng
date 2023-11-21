@@ -90,10 +90,3 @@
 .r-small-caps {
     font-variant: small-caps;
 }
-
-/*
- * Layout classes.
- */
-.r-centered-grid {
-    @apply grid grid-flow-row auto-rows-max justify-items-center justify-center;
-}
