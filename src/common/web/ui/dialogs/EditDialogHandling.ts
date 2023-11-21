@@ -1,11 +1,11 @@
-import { inject, watch } from "vue";
+import { inject } from "vue";
 
 import { type EditDialogData } from "./EditDialog";
 
 /**
  * Data and functions for handling the edit dialog.
  */
-export function editDialogHandling() {
+export function useEditDialogHandling() {
     const dialogRef = inject("dialogRef") as any;
     const dialogData = dialogRef.value.data as EditDialogData<any>;
 
@@ -23,17 +23,10 @@ export function editDialogHandling() {
         dialogRef.value.close();
     }
 
-    function autoFocus(element: any): void {
-        watch(element, () => {
-            element.value.$el.focus();
-        });
-    }
-
     return {
         dialogRef,
         dialogData,
         acceptDialog,
-        rejectDialog,
-        autoFocus
+        rejectDialog
     };
 }

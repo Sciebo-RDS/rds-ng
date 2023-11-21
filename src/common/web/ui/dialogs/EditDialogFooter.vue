@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 
-import { editDialogHandling } from "./EditDialogHandling";
+import { useEditDialogHandling } from "./EditDialogHandling";
 
-const { acceptDialog, rejectDialog, dialogData } = editDialogHandling();
+const { acceptDialog, rejectDialog, dialogData } = useEditDialogHandling();
 </script>
 
 <template>
