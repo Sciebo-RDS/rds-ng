@@ -27,6 +27,9 @@ export async function editProjectDialog(comp: FrontendComponent, project: Projec
         {
             title: project?.title || "",
             description: project?.description || ""
+        },
+        {
+            acceptLabel: project ? "Save" : "Create"
         }
     );
 }
