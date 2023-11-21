@@ -37,7 +37,6 @@ export type EditDialogResult<ResultType> = Promise<ResultType>;
 export function editDialog<DataType>(comp: WebComponent, dialogComponent: VueComponent, options: DialogProps, data: DataType, ignoreReject: boolean = true): EditDialogResult<DataType> {
     const dialog = comp.vue.config.globalProperties.$dialog;
 
-    // TODO: Enter/Escape handlen
     return new Promise<DataType>((resolve, reject) => {
         const dialogData: EditDialogData<DataType> = {
             userData: data
