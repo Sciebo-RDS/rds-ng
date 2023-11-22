@@ -4,7 +4,7 @@ import { Project } from "@common/data/entities/Project";
 import { ActionState } from "@common/ui/actions/Action";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
-import { type EditDialogResult } from "@common/ui/dialogs/EditDialog";
+import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { editProjectDialog, type EditProjectDialogData } from "@/ui/dialogs/EditProjectDialog";
@@ -19,7 +19,7 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
      *
      * @param project - The project to edit.
      */
-    public showEditDialog(project: Project | undefined = undefined): EditDialogResult<EditProjectDialogData> {
+    public showEditDialog(project: Project | undefined = undefined): ExtendedDialogResult<EditProjectDialogData> {
         return editProjectDialog(this._component, project);
     }
 

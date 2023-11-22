@@ -1,7 +1,7 @@
 import { type Project } from "@common/data/entities/Project";
 
 import { type FrontendComponent } from "@/component/FrontendComponent";
-import { editDialog, type EditDialogResult } from "@common/ui/dialogs/EditDialog";
+import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { defineAsyncComponent } from "vue";
 
 /**
@@ -18,18 +18,25 @@ export interface EditProjectDialogData {
  * @param comp - The global component.
  * @param project - The project to edit.
  */
-export async function editProjectDialog(comp: FrontendComponent, project: Project | undefined): EditDialogResult<EditProjectDialogData> {
-    return editDialog<EditProjectDialogData>(comp, defineAsyncComponent(() => import("@/ui/dialogs/EditProjectDialog.vue")),
+export async function editProjectDialog(comp: FrontendComponent, project: Project | undefined): ExtendedDialogResult<EditProjectDialogData> {
+    return extendedDialog<EditProjectDialogData>(comp, defineAsyncComponent(() => import("@/ui/dialogs/EditProjectDialog.vue")),
         {
             header: project ? "Edit Project" : "New Project",
-            modal: true
+            modal: true,
+            contentClass: "w-[20vw] min-w-[25rem]"
         },
         {
             title: project?.title || "",
             description: project?.description || ""
         },
         {
-            acceptLabel: project ? "Save" : "Create"
+            hasAcceptButton: true,
+            acceptLabel: project ? "Save" : "Create",
+            acceptIcon: "material-icons-outlined mi-done",
+
+            hasRejectButton: true,
+            rejectLabel: "Cancel",
+            rejectIcon: "material-icons-outlined mi-clear"
         }
     );
 }

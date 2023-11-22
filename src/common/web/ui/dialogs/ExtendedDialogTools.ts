@@ -1,13 +1,13 @@
 import { inject } from "vue";
 
-import { type EditDialogData } from "./EditDialog";
+import { type ExtendedDialogData } from "./ExtendedDialog";
 
 /**
- * Data and functions for handling the edit dialog.
+ * Tools for working with the extended dialog.
  */
-export function useEditDialogHandling() {
+export function extendedDialogTools() {
     const dialogRef = inject("dialogRef") as any;
-    const dialogData = dialogRef.value.data as EditDialogData<any>;
+    const dialogData = dialogRef.value.data as ExtendedDialogData<any>;
 
     function acceptDialog(): void {
         if (dialogData.accept) {
