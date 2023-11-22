@@ -11,21 +11,34 @@ import logging from "@common/core/logging/Logging";
 const profiles: PropertySet[] = [];
 try {
     profiles.push(new PropertySet(dataCite));
-} catch (e) {
+} catch (e: any) {
     logging.error(e, "propertyeditor");
 }
 try {
     profiles.push(new PropertySet(testProfile, testValues));
-} catch (e) {
+} catch (e: any) {
     logging.error(e, "propertyeditor");
 }
 
-const controller = reactive(new MetadataController(profiles));
+const controller: MetadataController = reactive(
+    new MetadataController(profiles)
+);
+
+const handleMetadataUpdate: Function = (data: any) => {
+    logging.debug(
+        `Received update from PropertyEditor: ${JSON.stringify(data)}`,
+        "ProjectDetails"
+    );
+};
 </script>
 
 <template>
     <div class="p-10 overflow-y-auto">
-        <PropEditor :controller="controller" :logging="logging" />
+        <PropEditor
+            @update="(data: any) => handleMetadataUpdate(data)"
+            :controller="controller"
+            :logging="logging"
+        />
     </div>
 </template>
 

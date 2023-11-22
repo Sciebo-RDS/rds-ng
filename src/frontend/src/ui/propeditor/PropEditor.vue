@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { provide, type PropType } from "vue";
+import { provide, type PropType, watch } from "vue";
 import PropCategory from "./PropCategory.vue";
 import InlineMessage from "primevue/inlinemessage";
 import { Logger } from "./utils/Logging";
 import { PropertyController } from "@/ui/propeditor/PropertyController";
 
+const emit = defineEmits(["update"]);
 const props = defineProps({
     controller: {
         type: Object as PropType<PropertyController>,
@@ -32,6 +33,10 @@ if (props.controller.getProfileIds().length) {
 } else {
     logging.warning(`Could not load any metadata Profiles.`, "propertyeditor");
 }
+
+watch(props.controller.propertySets, () => {
+    emit("update", props.controller.exportData());
+});
 </script>
 
 <template>

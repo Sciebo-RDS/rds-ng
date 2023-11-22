@@ -9,7 +9,7 @@ const showDescription = ref(false);
 
 let overflows = ref(false);
 
-const vTest = {
+const vTestOverflow = {
     mounted: (el) => {
         if (el.offsetWidth < el.scrollWidth) {
             overflows.value = true;
@@ -31,7 +31,7 @@ const vTest = {
                     <span
                         class="text-sm text-neutral-700 flex overflow-clip"
                         :class="showDescription ? '' : 'truncate'"
-                        v-test
+                        v-testOverflow
                     >
                         <span
                             class="material-icons-outlined ff-alignment-fix"
