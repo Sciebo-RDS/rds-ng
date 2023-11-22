@@ -21,7 +21,7 @@ const title = validator.defineComponentBinds("title");
 </script>
 
 <template>
-    <form @submit.prevent="acceptDialog" class="r-form pt-5">
+    <form @submit.prevent="acceptDialog" class="r-form">
         <span class="r-form-field">
             <FieldLabel title="Title" mandatory />
             <InputText name="title" v-bind="title" v-model="dialogData.userData.title" placeholder="Title" :class="{ 'p-invalid': validator.errors.title }" v-focus />
