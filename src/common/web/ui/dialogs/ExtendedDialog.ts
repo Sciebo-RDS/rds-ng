@@ -25,6 +25,9 @@ export interface ExtendedDialogOptions {
     rejectLabel?: string;
     /** The icon of the Reject button */
     rejectIcon?: string;
+
+    /** Whether to show a hint about mandatory fields. */
+    showMandatoryHint?: boolean;
 }
 
 /**
