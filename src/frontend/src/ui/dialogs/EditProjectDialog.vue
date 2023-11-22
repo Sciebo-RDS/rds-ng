@@ -14,7 +14,6 @@ const comp = FrontendComponent.inject();
 </script>
 
 <template>
-    <!-- TODO: Make pretty <3 -->
     <form @submit.prevent="acceptDialog" class="r-form pt-5">
         <span class="r-form-field">
             <label>Title</label>
