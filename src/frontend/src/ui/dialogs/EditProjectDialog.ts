@@ -1,8 +1,9 @@
+import { defineAsyncComponent } from "vue";
+
 import { type Project } from "@common/data/entities/Project";
+import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 
 import { type FrontendComponent } from "@/component/FrontendComponent";
-import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
-import { defineAsyncComponent } from "vue";
 
 /**
  * The data used by the ``EditProjectDialog``.

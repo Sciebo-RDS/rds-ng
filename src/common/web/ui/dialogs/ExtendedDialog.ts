@@ -4,6 +4,8 @@ import { type Component as VueComponent, markRaw } from "vue";
 
 import { WebComponent } from "../../component/WebComponent";
 
+import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
+
 import ExtendedDialogFooter from "./ExtendedDialogFooter.vue";
 
 /**
@@ -34,6 +36,9 @@ export interface ExtendedDialogData<UserDataType> {
 
     /** Various display properties */
     options: ExtendedDialogOptions;
+
+    /** A form validator if a schema was provided in the options. */
+    validator?: ExtendedDialogValidator;
 
     /** Called when the dialog was accepted. */
     accept?: (data: UserDataType) => void;
