@@ -22,7 +22,17 @@ export function extendedDialogTools() {
         }
 
         if (dialogData.validator) {
-            dialogData.validator.handleSubmit(accept)();
+            function selectFirstError({ errors }) {
+                try {
+                    const firstError = Object.keys(errors)[0];
+                    const el = document.querySelector(`[name="${firstError}"]`);
+                    el?.scrollIntoView({ behavior: "smooth" });
+                    el?.focus();
+                } catch (e) {
+                }
+            }
+
+            dialogData.validator.handleSubmit(accept, selectFirstError)();
         } else {
             accept();
         }

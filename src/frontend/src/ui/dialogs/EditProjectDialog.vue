@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import InlineMessage from "primevue/inlinemessage";
 import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import { string as ystring } from "yup";
@@ -25,14 +24,13 @@ const title = validator.defineComponentBinds("title");
     <form @submit.prevent="acceptDialog" class="r-form pt-5">
         <span class="r-form-field">
             <FieldLabel title="Title" mandatory />
-            <InputText v-bind="title" v-model="dialogData.userData.title" placeholder="Title" :class="{ 'p-invalid': validator.errors.title }" v-focus />
-            <InlineMessage v-if="validator.errors.title">{{ validator.errors.title }}</InlineMessage>
+            <InputText name="title" v-bind="title" v-model="dialogData.userData.title" placeholder="Title" :class="{ 'p-invalid': validator.errors.title }" v-focus />
             <small>The title of the project.</small>
         </span>
 
         <span class="r-form-field">
             <FieldLabel title="Description" />
-            <Textarea v-model="dialogData.userData.description" placeholder="Description" rows="3" />
+            <Textarea name="description" v-model="dialogData.userData.description" placeholder="Description" rows="3" />
             <small>An (optional) project description.</small>
         </span>
     </form>
