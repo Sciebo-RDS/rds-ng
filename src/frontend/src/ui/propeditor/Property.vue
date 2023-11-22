@@ -6,6 +6,16 @@ import { propertyDataForms } from "@/ui/propeditor/PropertyProfile";
 const props = defineProps(["property"]);
 
 const showDescription = ref(false);
+
+let overflows = ref(false);
+
+const vTest = {
+    mounted: (el) => {
+        if (el.offsetWidth < el.scrollWidth) {
+            overflows.value = true;
+        }
+    },
+};
 </script>
 
 <template>
@@ -13,24 +23,30 @@ const showDescription = ref(false);
         <div class="row-start-1 row-span-1 xl:col-span-2 2xl:col-span-1">
             {{ props.property.name }}
             <div
-                @click="showDescription = !showDescription"
+                @click="overflows ? showDescription = !showDescription : null"
                 class="py-1 cursor-pointer"
+                :class="overflows ? 'cursor-pointer' : 'cursor-default'"
             >
                 <span class="grid grid-rows-1">
                     <span
-                        class="text-sm text-neutral-700 flex"
+                        class="text-sm text-neutral-700 flex overflow-clip"
                         :class="showDescription ? '' : 'truncate'"
+                        v-test
                     >
                         <span
                             class="material-icons-outlined ff-alignment-fix"
                             style="font-size: 1.3rem"
+                            :style="overflows ? '' : 'opacity: 0'"
                             >{{
                                 showDescription
                                     ? "arrow_drop_down"
                                     : "arrow_right"
                             }}</span
                         >
-                        <span class="text-ellipsis overflow-hidden">
+                        <span
+                            class="text-ellipsis"
+                            :class="overflows && !showDescription ? 'overflow-hidden' : ''"
+                        >
                             {{ props.property.description }}
                         </span>
                     </span>
