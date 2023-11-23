@@ -3,7 +3,7 @@
  */
 export function useDirectives() {
     const vFocus = {
-        mounted: (el) => el.focus()
+        mounted: (el: HTMLElement) => el.focus()
     };
 
     return {

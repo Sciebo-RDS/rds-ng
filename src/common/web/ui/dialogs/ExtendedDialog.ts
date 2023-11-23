@@ -25,9 +25,6 @@ export interface ExtendedDialogOptions {
     rejectLabel?: string;
     /** The icon of the Reject button */
     rejectIcon?: string;
-
-    /** Whether to show a hint about mandatory fields. */
-    showMandatoryHint?: boolean;
 }
 
 /**
@@ -41,7 +38,7 @@ export interface ExtendedDialogData<UserDataType> {
     options: ExtendedDialogOptions;
 
     /** A form validator if a schema was provided in the options. */
-    validator?: ExtendedDialogValidator;
+    validator?: ExtendedDialogValidator<any>;
 
     /** Called when the dialog was accepted. */
     accept?: (data: UserDataType) => void;

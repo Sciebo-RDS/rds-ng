@@ -21,6 +21,7 @@ export default function(comp: WebComponent): Service {
                     ctx.logger.debug("Retrieved projects list", "projects", { projects: JSON.stringify(msg.projects) });
 
                     ctx.projectStore.resetPendingDeletions();
+                    // @ts-ignore
                     ctx.projectStore.projects = msg.projects;
                 } else {
                     ctx.logger.error("Unable to retrieve the projects list", "projects", { reason: msg.message });
@@ -31,6 +32,7 @@ export default function(comp: WebComponent): Service {
                 ctx.logger.debug("Projects list update received", "projects", { projects: JSON.stringify(msg.projects) });
 
                 ctx.projectStore.resetPendingDeletions();
+                // @ts-ignore
                 ctx.projectStore.projects = msg.projects;
             });
 
@@ -38,6 +40,7 @@ export default function(comp: WebComponent): Service {
                 if (msg.success) {
                     ctx.logger.debug(`Created project ${msg.project_id}`, "projects");
 
+                    // @ts-ignore
                     ctx.projectStore.activeProject = msg.project_id;
                 } else {
                     ctx.logger.error(`Unable to create project ${msg.project_id}`, "projects", { reason: msg.message });

@@ -1,9 +1,7 @@
-import { type FormContext, type GenericObject } from "vee-validate";
-
 /**
  * A wrapper class for validation using vee-validate.
  */
-export class ExtendedDialogValidator<TValues extends GenericObject = GenericObject, TOutput = TValues, FormType extends FormContext<TValues, TOutput>> {
+export class ExtendedDialogValidator<FormType> {
     private readonly _form: FormType;
 
     /**
@@ -17,13 +15,21 @@ export class ExtendedDialogValidator<TValues extends GenericObject = GenericObje
      * The `defineComponentBinds` function.
      */
     public get defineComponentBinds() {
+        // @ts-ignore
         return this._form.defineComponentBinds;
+    }
+
+    /** Validate the form. */
+    public get validate() {
+        // @ts-ignore
+        return this._form.validate;
     }
 
     /**
      * The `handleSubmit` function.
      */
     public get handleSubmit() {
+        // @ts-ignore
         return this._form.handleSubmit;
     }
 
@@ -31,6 +37,7 @@ export class ExtendedDialogValidator<TValues extends GenericObject = GenericObje
      * A collection of all errors.
      */
     public get errors() {
+        // @ts-ignore
         return this._form.errors;
     }
 }

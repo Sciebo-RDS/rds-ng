@@ -37,9 +37,7 @@ export async function editProjectDialog(comp: FrontendComponent, project: Projec
 
             hasRejectButton: true,
             rejectLabel: "Cancel",
-            rejectIcon: "material-icons-outlined mi-clear",
-
-            showMandatoryHint: true
+            rejectIcon: "material-icons-outlined mi-clear"
         }
     );
 }

@@ -1,6 +1,6 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useForm } from "vee-validate";
-import { inject, reactive } from "vue";
+import { inject, reactive, nextTick } from "vue";
 import { object as yobject } from "yup";
 
 import { type ExtendedDialogData } from "./ExtendedDialog";
@@ -22,11 +22,13 @@ export function extendedDialogTools() {
         }
 
         if (dialogData.validator) {
+            // @ts-ignore
             function selectFirstError({ errors }) {
                 try {
                     const firstError = Object.keys(errors)[0];
                     const el = document.querySelector(`[name="${firstError}"]`);
                     el?.scrollIntoView({ behavior: "smooth" });
+                    // @ts-ignore
                     el?.focus();
                 } catch (e) {
                 }
@@ -45,14 +47,25 @@ export function extendedDialogTools() {
         dialogRef.value.close();
     }
 
-    function useValidator<SchemaType, ValidatorType>(schema: SchemaType): ValidatorType {
+    function useValidator<SchemaType>(schema: SchemaType, validateImmediately: boolean = true) {
         const validator = reactive(new ExtendedDialogValidator(
             useForm({
+                // @ts-ignore
                 validationSchema: toTypedSchema(yobject(schema))
             })
         ));
 
+        // @ts-ignore
         dialogData.validator = validator;
+
+        if (validateImmediately) {
+            // Schedule an automatic validation for the next tick
+            nextTick(() => {
+                dialogData.validator?.validate().then();
+            }).then();
+        }
+
+        // @ts-ignore
         return validator;
     }
 
