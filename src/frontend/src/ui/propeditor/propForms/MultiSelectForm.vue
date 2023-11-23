@@ -31,7 +31,7 @@ const handleInput = (e: Event) => {
             @change="handleInput"
             v-model="value"
             :options="property.options"
-            class="w-full"
+            class="w-full relative"
         />
     </div>
 </template>
