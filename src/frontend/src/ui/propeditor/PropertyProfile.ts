@@ -30,7 +30,7 @@ export type Property = {
     type: PropertyDataType;
     description: string;
     required?: boolean;
-    showAlways: boolean;
+    showAlways?: boolean;
     filter?: string[];
 };
 

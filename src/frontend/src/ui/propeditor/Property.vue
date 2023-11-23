@@ -23,9 +23,8 @@ const vTestOverflow = {
         <div class="row-start-1 row-span-1 xl:col-span-2 2xl:col-span-1">
             {{ props.property.name }}
             <div
-                @click="overflows ? showDescription = !showDescription : null"
-                class="py-1 cursor-pointer"
-                :class="overflows ? 'cursor-pointer' : 'cursor-default'"
+                @click="overflows ? (showDescription = !showDescription) : null"
+                class="py-1 cursor-default"
             >
                 <span class="grid grid-rows-1">
                     <span
@@ -45,7 +44,12 @@ const vTestOverflow = {
                         >
                         <span
                             class="text-ellipsis"
-                            :class="overflows && !showDescription ? 'overflow-hidden' : ''"
+                            :class="{
+                                'overflow-hidden':
+                                    overflows && !showDescription,
+                                'cursor-pointer': overflows,
+                                'cursor-text': !overflows,
+                            }"
                         >
                             {{ props.property.description }}
                         </span>

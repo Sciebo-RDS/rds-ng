@@ -60,10 +60,7 @@ watch(props.controller.propertySets, () => {
             v-show="!props.controller.getProfileIds().length"
             class="flex justify-center text-2xl w-full"
         >
-            <InlineMessage
-                v-show="!props.controller.getProfileIds().length"
-                class="text-2xl"
-                severity="error"
+            <InlineMessage class="text-2xl" severity="error"
                 >Could not load any metadata profiles</InlineMessage
             >
         </div>

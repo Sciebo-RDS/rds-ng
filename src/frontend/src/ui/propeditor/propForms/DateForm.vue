@@ -16,7 +16,6 @@ let debounce: number | null = null;
 
 const handleInput = (eValue: string) => {
     const ms: number = new Date(eValue).getTime();
-    console.log(ms);
     debounce = controller.setValue(
         profileId,
         debounce,
