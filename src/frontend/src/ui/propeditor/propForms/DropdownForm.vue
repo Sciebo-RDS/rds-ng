@@ -15,7 +15,6 @@ const value = ref(
 let debounce: number | null = null;
 
 const handleInput = (e: string) => {
-    console.log(e.value);
     debounce = controller.setValue(
         profileId,
         debounce,

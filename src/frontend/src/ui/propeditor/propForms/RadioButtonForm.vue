@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, inject } from "vue";
+import { getRandomId } from "../utils/Ids.ts";
+
 import RadioButton from "primevue/radiobutton";
 import Button from "primevue/button";
 
@@ -24,6 +26,8 @@ const handleInput = (eValue: Event) => {
         eValue
     );
 };
+
+const id = getRandomId();
 </script>
 
 <template>
@@ -48,12 +52,12 @@ const handleInput = (eValue: Event) => {
             >
                 <RadioButton
                     v-model="value"
-                    :inputId="option"
+                    :inputId="option + id"
                     name="dynamic"
                     :value="option"
                     @update:modelValue="handleInput"
                 />
-                <label :for="option" class="ml-2">{{ option }}</label>
+                <label :for="option + id" class="ml-2">{{ option }}</label>
             </div>
         </div>
     </div>

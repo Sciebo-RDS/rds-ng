@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, inject } from "vue";
+import { getRandomId } from "../utils/Ids.ts";
+
 import Checkbox from "primevue/checkbox";
 
 const props = defineProps(["property"]);
@@ -12,6 +14,7 @@ const value = ref(
     controller.getValue(profileId, categoryId, props.property.id)
 );
 
+// BUG the debounce only works for the first checked box, might be a library bug or some js quirks
 let debounce: number | null = null;
 
 const handleInput = () => {
@@ -23,6 +26,8 @@ const handleInput = () => {
         value
     );
 };
+
+const id = getRandomId();
 </script>
 
 <template>
@@ -30,13 +35,13 @@ const handleInput = () => {
         <div v-for="option of property.options" :key="option">
             <Checkbox
                 v-model="value"
-                :inputId="option"
-                name="option"
+                :inputId="option + id"
+                :name="option"
                 :value="option"
                 @change="handleInput"
                 class="mr-2"
             />
-            <label class="break-all" :for="option">{{ option }}</label>
+            <label class="break-all" :for="option + id">{{ option }}</label>
         </div>
     </div>
 </template>
