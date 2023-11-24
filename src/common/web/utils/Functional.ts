@@ -4,7 +4,7 @@
  * @param cb - The function to call.
  * @param args - Arguments passed to the function.
  */
-export function optCall(cb: Function | undefined, ...args: any[]): any | undefined {
+export function optCall(cb?: Function, ...args: any[]): any | undefined {
     if (cb) {
         return cb(...args);
     }

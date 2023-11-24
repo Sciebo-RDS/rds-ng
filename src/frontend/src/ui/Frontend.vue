@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { nextTick, onMounted } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
+import { projectActions } from "@/ui/actions/ProjectActions";
 
 import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
 import ProjectsList from "@/ui/projectslist/ProjectsList.vue";
 
 const comp = FrontendComponent.inject();
+const { listProjects } = projectActions(comp);
 
 // When launching the frontend, request all data first
 onMounted(() => {
-    // We use a timeout (w/o delay) to do the request after the first render
-    setTimeout(() => {
-        const action = new ListProjectsAction(comp);
-
-        action.prepare();
-        action.execute();
-    });
+    // Request the projects list after the first render
+    nextTick(listProjects);
 });
 </script>
 
