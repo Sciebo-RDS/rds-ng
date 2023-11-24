@@ -1,6 +1,5 @@
 import { CreateProjectCommand } from "@common/api/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import { Project } from "@common/data/entities/Project";
 import { ActionState } from "@common/ui/actions/Action";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
@@ -16,11 +15,9 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 export class CreateProjectAction extends FrontendCommandAction<CreateProjectCommand, CommandComposer<CreateProjectCommand>> {
     /**
      * Shows the edit project dialog.
-     *
-     * @param project - The project to edit.
      */
-    public showEditDialog(project: Project | undefined = undefined): ExtendedDialogResult<EditProjectDialogData> {
-        return editProjectDialog(this._component, project);
+    public showEditDialog(): ExtendedDialogResult<EditProjectDialogData> {
+        return editProjectDialog(this._component, undefined);
     }
 
     public prepare(title: string, description: string): CommandComposer<CreateProjectCommand> {

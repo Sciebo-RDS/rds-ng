@@ -1,4 +1,4 @@
-import { CreateProjectReply, DeleteProjectReply, ListProjectsReply } from "@common/api/ProjectCommands";
+import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/ProjectCommands";
 import { ProjectsListEvent } from "@common/api/ProjectEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
@@ -44,6 +44,14 @@ export default function(comp: WebComponent): Service {
                     ctx.projectStore.activeProject = msg.project_id;
                 } else {
                     ctx.logger.error(`Unable to create project ${msg.project_id}`, "projects", { reason: msg.message });
+                }
+            });
+
+            svc.messageHandler(UpdateProjectReply, (msg: UpdateProjectReply, ctx: ProjectsServiceContext) => {
+                if (msg.success) {
+                    ctx.logger.debug(`Updated project ${msg.project_id}`, "projects");
+                } else {
+                    ctx.logger.error(`Unable to Update project ${msg.project_id}`, "projects", { reason: msg.message });
                 }
             });
 

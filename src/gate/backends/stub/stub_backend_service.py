@@ -1,6 +1,7 @@
 import time
 
 from common.py.component import BackendComponent
+from common.py.data.entities import clone_entity
 from common.py.services import Service
 
 from .stub_backend_service_context import StubBackendServiceContext
@@ -23,6 +24,8 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         ListProjectsReply,
         CreateProjectCommand,
         CreateProjectReply,
+        UpdateProjectCommand,
+        UpdateProjectReply,
         DeleteProjectCommand,
         DeleteProjectReply,
     )
@@ -63,6 +66,39 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             message = str(exc)
 
         CreateProjectReply.build(
+            ctx.message_builder,
+            msg,
+            project_id=project.project_id,
+            success=success,
+            message=message,
+        ).emit()
+
+        send_projects_list(msg, ctx)
+
+    @svc.message_handler(UpdateProjectCommand)
+    def create_project(
+        msg: UpdateProjectCommand, ctx: StubBackendServiceContext
+    ) -> None:
+        success = False
+        message = ""
+
+        if (
+            project := ctx.storage_pool.project_storage.get(msg.project_id)
+        ) is not None:
+            try:
+                project_upd = clone_entity(
+                    project, title=msg.title, description=msg.description
+                )
+                ProjectVerifier(project_upd).verify_update()
+
+                ctx.storage_pool.project_storage.add(project_upd)
+                success = True
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                message = str(exc)
+        else:
+            message = f"A project with ID {msg.project_id} was not found"
+
+        UpdateProjectReply.build(
             ctx.message_builder,
             msg,
             project_id=project.project_id,

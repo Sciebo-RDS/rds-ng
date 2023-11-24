@@ -26,9 +26,8 @@ export function extendedDialogTools() {
             function selectFirstError({ errors }) {
                 try {
                     const firstError = Object.keys(errors)[0];
-                    const el = document.querySelector(`[name="${firstError}"]`);
+                    const el = document.querySelector(`[name="${firstError}"]`) as HTMLInputElement;
                     el?.scrollIntoView({ behavior: "smooth" });
-                    // @ts-ignore
                     el?.focus();
                 } catch (e) {
                 }
@@ -65,7 +64,6 @@ export function extendedDialogTools() {
             }).then();
         }
 
-        // @ts-ignore
         return validator;
     }
 

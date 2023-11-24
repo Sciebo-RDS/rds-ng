@@ -12,6 +12,8 @@ from .project_commands import (
     ListProjectsReply,
     CreateProjectCommand,
     CreateProjectReply,
+    UpdateProjectCommand,
+    UpdateProjectReply,
     DeleteProjectCommand,
     DeleteProjectReply,
 )

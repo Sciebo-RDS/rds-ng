@@ -7,7 +7,7 @@ import { ref, toRefs } from "vue";
 import { Project } from "@common/data/entities/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
+import { projectActions } from "@/ui/actions/ProjectActions";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -24,7 +24,8 @@ const props = defineProps({
         default: false
     }
 });
-const emit = defineEmits(["projectDeleted"]);
+const emit = defineEmits(["projectUpdated", "projectDeleted"]);
+const { editProject, deleteProject } = projectActions(comp);
 
 const { project, isSelected, isDeleted } = toRefs(props);
 
@@ -37,6 +38,7 @@ const editMenuItems = ref([
                 label: "Edit project",
                 icon: "material-icons-outlined mi-edit",
                 command: () => {
+                    editProject(project!.value, (projectID, title, description) => emit("projectUpdated", projectID, title, description));
                 }
             },
             { separator: true },
@@ -45,13 +47,7 @@ const editMenuItems = ref([
                 icon: "material-icons-outlined mi-delete-forever",
                 class: "r-text-error",
                 command: () => {
-                    const action = new DeleteProjectAction(comp);
-                    action.showConfirmation(project!.value).then(() => {
-                        action.prepare(project!.value);
-                        action.execute();
-
-                        emit("projectDeleted", project!.value);
-                    });
+                    deleteProject(project!.value, (projectID) => emit("projectDeleted", projectID));
                 }
             }
         ]

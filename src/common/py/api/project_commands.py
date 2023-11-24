@@ -124,6 +124,73 @@ class CreateProjectReply(CommandReply):
         )
 
 
+@Message.define("command/project/update")
+class UpdateProjectCommand(Command):
+    """
+    Command to update an existing project.
+
+    Args:
+        project_id: The ID of the project to update.
+        title: The title of the project.
+        description: An optional project description.
+
+    Notes:
+        Requires an ``UpdateProjectReply`` reply.
+    """
+
+    project_id: ProjectID
+    title: str
+    description: str
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project_id: ProjectID,
+        title: str,
+        description: str,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            UpdateProjectCommand,
+            chain,
+            project_id=project_id,
+            title=title,
+            description=description,
+        )
+
+
+@Message.define("command/project/update/reply")
+class UpdateProjectReply(CommandReply):
+    """
+    Reply to ``UpdateProjectCommand``.
+
+    Args:
+        project_id: The ID of the updated project.
+    """
+
+    project_id: ProjectID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: UpdateProjectCommand,
+        *,
+        project_id: ProjectID,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            UpdateProjectReply, cmd, success, message, project_id=project_id
+        )
+
+
 @Message.define("command/project/delete")
 class DeleteProjectCommand(Command):
     """

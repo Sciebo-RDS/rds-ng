@@ -16,8 +16,10 @@ const { vFocus } = useDirectives();
 const comp = FrontendComponent.inject();
 
 const validator = useValidator({
-    title: ystring().required().label("Title")
-});
+        title: ystring().required().label("Title").default(dialogData.userData.title),
+        description: ystring().label("Description").default(dialogData.userData.description)
+    }
+);
 const title = validator.defineComponentBinds("title");
 </script>
 
