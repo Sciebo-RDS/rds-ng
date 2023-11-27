@@ -1,7 +1,10 @@
 import { defineAsyncComponent } from "vue";
 
 import { type Project } from "@common/data/entities/Project";
-import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
+import {
+    extendedDialog,
+    type ExtendedDialogResult,
+} from "@common/ui/dialogs/ExtendedDialog";
 
 import { type FrontendComponent } from "@/component/FrontendComponent";
 
@@ -19,16 +22,24 @@ export interface EditProjectDialogData {
  * @param comp - The global component.
  * @param project - The project to edit.
  */
-export async function editProjectDialog(comp: FrontendComponent, project: Project | undefined): ExtendedDialogResult<EditProjectDialogData> {
-    return extendedDialog<EditProjectDialogData>(comp, defineAsyncComponent(() => import("@/ui/dialogs/EditProjectDialog.vue")),
+export async function editProjectDialog(
+    comp: FrontendComponent,
+    project: Project | undefined
+): ExtendedDialogResult<EditProjectDialogData> {
+    return extendedDialog<EditProjectDialogData>(
+        comp,
+        defineAsyncComponent(
+            () => import("@/ui/dialogs/EditProjectDialog.vue")
+        ),
         {
             header: project ? "Edit Project" : "New Project",
             modal: true,
-            contentClass: "w-[20vw] min-w-[25rem]"
+            contentClass:
+                "w-[20vw] w-full min-w-[40rem] shadow-inner !pt-4",
         },
         {
             title: project?.title || "",
-            description: project?.description || ""
+            description: project?.description || "",
         },
         {
             hasAcceptButton: true,
@@ -37,7 +48,7 @@ export async function editProjectDialog(comp: FrontendComponent, project: Projec
 
             hasRejectButton: true,
             rejectLabel: "Cancel",
-            rejectIcon: "material-icons-outlined mi-clear"
+            rejectIcon: "material-icons-outlined mi-clear",
         }
     );
 }
