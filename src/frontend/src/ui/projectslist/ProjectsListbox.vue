@@ -39,6 +39,7 @@ function onProjectDeleted(project: Project): void {
 
 <template>
     <div>
+        <!-- TODO: Add select-on-focus -->
         <Listbox
             v-model="activeProject"
             :options="projects"
