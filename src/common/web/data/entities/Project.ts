@@ -1,3 +1,6 @@
+/**
+ * The project ID type.
+ */
 export type ProjectID = number;
 
 /*

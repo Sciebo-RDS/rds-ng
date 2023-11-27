@@ -2,11 +2,20 @@
 import Button from "primevue/button";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { projectActions } from "@/ui/actions/ProjectActions";
+import { CreateProjectAction } from "@/ui/actions/CreateProjectAction";
 
 const comp = FrontendComponent.inject();
 const emit = defineEmits(["projectCreated"]);
-const { createProject } = projectActions(comp);
+
+function createProject() {
+    const action = new CreateProjectAction(comp);
+    action.showEditDialog().then((data) => {
+        action.prepare(data.title, data.description);
+        action.execute();
+
+        emit("projectCreated", data.title, data.description);
+    });
+}
 </script>
 
 <template>
@@ -17,7 +26,7 @@ const { createProject } = projectActions(comp);
             label="New Project"
             icon="material-icons-outlined mi-add-circle-outline"
             icon-class="!text-4xl"
-            @click="createProject((title, description) => emit('projectCreated', title, description))"
+            @click="createProject"
         />
     </div>
 </template>

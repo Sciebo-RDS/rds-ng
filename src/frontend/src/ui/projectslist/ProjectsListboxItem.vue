@@ -7,7 +7,8 @@ import { ref, toRefs } from "vue";
 import { Project } from "@common/data/entities/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { projectActions } from "@/ui/actions/ProjectActions";
+import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
+import { UpdateProjectAction } from "@/ui/actions/UpdateProjectAction";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -25,7 +26,6 @@ const props = defineProps({
     }
 });
 const emit = defineEmits(["projectUpdated", "projectDeleted"]);
-const { editProject, deleteProject } = projectActions(comp);
 
 const { project, isSelected, isDeleted } = toRefs(props);
 
@@ -38,7 +38,13 @@ const editMenuItems = ref([
                 label: "Edit project",
                 icon: "material-icons-outlined mi-edit",
                 command: () => {
-                    editProject(project!.value, (projectID, title, description) => emit("projectUpdated", projectID, title, description));
+                    const action = new UpdateProjectAction(comp);
+                    action.showEditDialog(project!.value).then((data) => {
+                        action.prepare(project!.value.project_id, data.title, data.description);
+                        action.execute();
+
+                        emit("projectUpdated", project!.value.project_id, title, description);
+                    });
                 }
             },
             { separator: true },
@@ -47,7 +53,13 @@ const editMenuItems = ref([
                 icon: "material-icons-outlined mi-delete-forever",
                 class: "r-text-error",
                 command: () => {
-                    deleteProject(project!.value, (projectID) => emit("projectDeleted", projectID));
+                    const action = new DeleteProjectAction(comp);
+                    action.showConfirmation(project!.value).then(() => {
+                        action.prepare(project!.value);
+                        action.execute();
+
+                        emit("projectDeleted", project!.value.project_id);
+                    });
                 }
             }
         ]

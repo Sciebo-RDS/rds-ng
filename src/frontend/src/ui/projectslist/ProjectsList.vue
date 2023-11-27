@@ -5,8 +5,8 @@ import Header from "@/ui/projectslist/Header.vue";
 
 <template>
     <div class="grid grid-rows-[5rem_1fr] grid-cols-1 gap-0 w-full">
-        <Header/>
-        <Contents/>
+        <Header />
+        <Contents />
     </div>
 </template>
 

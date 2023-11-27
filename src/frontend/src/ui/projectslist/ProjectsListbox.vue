@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed, unref, watch } from "vue";
+import { watch } from "vue";
 import Listbox from "primevue/listbox";
 
 import { Project, ProjectStatus } from "@common/data/entities/Project";
@@ -35,19 +35,15 @@ function onProjectDeleted(project: Project): void {
         activeProject.value = undefined;
     }
 }
-
-// This unref'ed value is necessary for TS to not complain in the Listbox below
-const projectsList = computed(() => unref(projects.value));
 </script>
 
 <template>
     <div>
         <Listbox
             v-model="activeProject"
-            :options="projectsList"
+            :options="projects"
             option-value="project_id"
             :option-disabled="isProjectDeleted"
-            select-on-focus
             class="w-full"
             :pt="{
                 root: 'projects-listbox',
