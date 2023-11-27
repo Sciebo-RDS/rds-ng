@@ -16,9 +16,9 @@ import Button from "primevue/button";
             3 Projects
         </div>
         <div class="row-span-2 pr-2">
-            <Button plain rounded aria-label="Settings">
+            <Button plain rounded aria-label="Settings" title="Settings">
                 <template #icon>
-                    <span class="material-icons-outlined r-primary-text" style="font-size: 40px;">settings</span>
+                    <span class="material-icons-outlined mi-settings r-primary-text" style="font-size: 40px;"/>
                 </template>
             </Button>
         </div>

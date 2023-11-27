@@ -9,7 +9,7 @@ import Header from "./Header.vue";
             <span class="italic">Hang on tight while I'm connecting to the server...</span>
         </div>
         <div>
-            <span class="material-icons-outlined animate-spin" style="font-size: 32px;">hourglass_empty</span>
+            <span class="material-icons-outlined mi-hourglass-empty animate-spin" style="font-size: 32px;"/>
         </div>
     </div>
 </template>

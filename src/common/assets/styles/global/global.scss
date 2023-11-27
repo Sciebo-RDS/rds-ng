@@ -1,4 +1,13 @@
 /*
+ * Global colors.
+ */
+:root {
+    --r-border-color: rgb(209 213 219);
+    --r-shade: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
+    --r-shade-dark: color-mix(in srgb, var(--highlight-bg), #FFF 90%);
+}
+
+/*
  * Helper classes to encapsulate standard theme variables.
  */
 .r-text {
@@ -41,21 +50,43 @@
     opacity: 0.7;
 }
 
+.r-text-caption {
+    @apply font-bold;
+}
+
+.r-text-caption-big {
+    @apply font-bold;
+    @apply text-lg;
+}
+
+.r-text-success * {
+    @apply text-green-500 #{!important};
+}
+
+.r-text-warning * {
+    @apply text-orange-500 #{!important};
+}
+
+.r-text-error * {
+    @apply text-red-500 #{!important};
+}
+
 .r-border-color {
-    @apply border-gray-300;
+    color: var(--r-border-color);
 }
 
 .r-shade {
-    background-color: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
+    background-color: var(--r-shade);
+}
+
+.r-shade-dark {
+    background-color: var(--r-shade-dark);
 }
 
 .r-shade-text {
     color: var(--text-color);
 }
 
-/*
- * Layout classes.
- */
-.r-centered-grid {
-    @apply grid grid-flow-row auto-rows-max justify-items-center;
+.r-small-caps {
+    font-variant: small-caps;
 }

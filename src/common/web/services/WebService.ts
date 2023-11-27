@@ -11,7 +11,7 @@ import { ServiceContext } from "./ServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function(comp: WebComponent): Service {
     return comp.createService("Web service", (svc: Service) => {
         const compStore = componentStore();
 
@@ -19,14 +19,14 @@ export default function (comp: WebComponent): Service {
             compStore.componentState = ComponentState.ConnectionLost;
             compStore.componentStateMessage = "Connection lost";
 
-            WebComponent.instance.mainView.navigateTo();
+            WebComponent.instance.userInterface.mainView.navigateTo();
         });
 
         svc.messageHandler(ClientConnectionErrorEvent, (msg: ClientConnectionErrorEvent, ctx: ServiceContext) => {
             compStore.componentState = ComponentState.ConnectionError;
             compStore.componentStateMessage = msg.reason;
 
-            WebComponent.instance.mainView.navigateTo();
+            WebComponent.instance.userInterface.mainView.navigateTo();
         });
     });
 }

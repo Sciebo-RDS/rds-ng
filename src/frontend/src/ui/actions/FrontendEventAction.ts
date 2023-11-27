@@ -2,7 +2,7 @@ import { EventComposer } from "@common/core/messaging/composers/EventComposer";
 import { Event } from "@common/core/messaging/Event";
 import { EventAction } from "@common/ui/actions/EventAction";
 
-import type { FrontendComponent } from "@/component/FrontendComponent";
+import { type FrontendComponent } from "@/component/FrontendComponent";
 
 /**
  * Event actions specific to the frontend.

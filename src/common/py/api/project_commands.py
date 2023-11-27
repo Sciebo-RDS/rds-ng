@@ -11,7 +11,7 @@ from ..core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ..data.entities import Project
+from ..data.entities import Project, ProjectID
 
 
 @Message.define("command/project/list")
@@ -37,6 +37,9 @@ class ListProjectsCommand(Command):
 class ListProjectsReply(CommandReply):
     """
     Reply to ``ListProjectsCommand``.
+
+    Args:
+        projects: List of all projects.
     """
 
     projects: typing.List[Project] = dataclasses.field(default_factory=list)
@@ -55,4 +58,191 @@ class ListProjectsReply(CommandReply):
         """
         return message_builder.build_command_reply(
             ListProjectsReply, cmd, success, message, projects=projects
+        )
+
+
+@Message.define("command/project/create")
+class CreateProjectCommand(Command):
+    """
+    Command to create a new project.
+
+    Args:
+        title: The title of the project.
+        description: An optional project description.
+
+    Notes:
+        Requires a ``CreateProjectReply`` reply.
+    """
+
+    title: str
+    description: str
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        title: str,
+        description: str,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            CreateProjectCommand,
+            chain,
+            title=title,
+            description=description,
+        )
+
+
+@Message.define("command/project/create/reply")
+class CreateProjectReply(CommandReply):
+    """
+    Reply to ``CreateProjectCommand``.
+
+    Args:
+        project_id: The ID of the created project.
+    """
+
+    project_id: ProjectID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: CreateProjectCommand,
+        *,
+        project_id: ProjectID,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            CreateProjectReply, cmd, success, message, project_id=project_id
+        )
+
+
+@Message.define("command/project/update")
+class UpdateProjectCommand(Command):
+    """
+    Command to update an existing project.
+
+    Args:
+        project_id: The ID of the project to update.
+        title: The title of the project.
+        description: An optional project description.
+
+    Notes:
+        Requires an ``UpdateProjectReply`` reply.
+    """
+
+    project_id: ProjectID
+    title: str
+    description: str
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project_id: ProjectID,
+        title: str,
+        description: str,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            UpdateProjectCommand,
+            chain,
+            project_id=project_id,
+            title=title,
+            description=description,
+        )
+
+
+@Message.define("command/project/update/reply")
+class UpdateProjectReply(CommandReply):
+    """
+    Reply to ``UpdateProjectCommand``.
+
+    Args:
+        project_id: The ID of the updated project.
+    """
+
+    project_id: ProjectID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: UpdateProjectCommand,
+        *,
+        project_id: ProjectID,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            UpdateProjectReply, cmd, success, message, project_id=project_id
+        )
+
+
+@Message.define("command/project/delete")
+class DeleteProjectCommand(Command):
+    """
+    Command to delete a project of the current user.
+
+    Args:
+        project_id: The ID of the project to delete.
+
+    Notes:
+        Requires a ``DeleteProjectReply`` reply.
+    """
+
+    project_id: ProjectID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project_id: ProjectID,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            DeleteProjectCommand, chain, project_id=project_id
+        )
+
+
+@Message.define("command/project/delete/reply")
+class DeleteProjectReply(CommandReply):
+    """
+    Reply to ``DeleteProjectCommand``.
+
+    Args:
+        project_id: The ID of the deleted project.
+    """
+
+    project_id: ProjectID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: DeleteProjectCommand,
+        *,
+        project_id: ProjectID,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            DeleteProjectReply, cmd, success, message, project_id=project_id
         )

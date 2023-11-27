@@ -1,6 +1,11 @@
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
+import ConfirmDialog from "primevue/confirmdialog";
+import ConfirmPopup from "primevue/confirmpopup";
+import ConfirmationService from "primevue/confirmationservice";
+import DynamicDialog from "primevue/dynamicdialog";
 import DialogService from "primevue/dialogservice";
+import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
@@ -8,11 +13,11 @@ import { type App, type Component as VueComponent, createApp, inject } from "vue
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
-import logging from "../core/logging/Logging"
+import logging from "../core/logging/Logging";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
-import { MainView } from "../ui/views/main/MainView";
+import { UserInterface } from "../ui/UserInterface";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
@@ -26,6 +31,7 @@ import createWebService from "../services/WebService";
 import MainContainer from "../ui/views/main/MainViewContainer.vue";
 
 // Load various icons
+import "material-icons/css/material-icons.css";
 import "material-icons/iconfont/outlined.css";
 import "primeicons/primeicons.css";
 
@@ -47,7 +53,7 @@ export class WebComponent {
     protected readonly _core: Core;
     protected readonly _router: Router;
 
-    protected readonly _mainView: MainView;
+    protected readonly _userInterface: UserInterface;
     protected readonly _vueApp: App;
 
     /**
@@ -57,7 +63,7 @@ export class WebComponent {
      */
     public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent) {
         if (WebComponent._instance) {
-            throw new Error("A component instance has already been created")
+            throw new Error("A component instance has already been created");
         }
         WebComponent._instance = this;
 
@@ -80,7 +86,7 @@ export class WebComponent {
         this._core = new Core(this._data);
         this._router = this.createRouter();
 
-        this._mainView = new MainView(this._router, appRoot);
+        this._userInterface = new UserInterface(this._router, appRoot);
         this._vueApp = this.createVueApp();
     }
 
@@ -100,7 +106,7 @@ export class WebComponent {
     private createRouter(): Router {
         return createRouter({
             history: createWebHistory(),
-            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()],
+            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()]
         });
     }
 
@@ -109,9 +115,17 @@ export class WebComponent {
 
         const app = createApp(MainContainer);
 
+        // Register some global components
+        app.component("ConfirmDialog", ConfirmDialog);
+        app.component("ConfirmPopup", ConfirmPopup);
+        app.component("DynamicDialog", DynamicDialog);
+        app.component("Toast", Toast);
+
+        // Register various plugins
         app.use(createPinia());
         app.use(this._router);
         app.use(PrimeVue);
+        app.use(ConfirmationService);
         app.use(DialogService);
         app.use(ToastService);
 
@@ -196,10 +210,10 @@ export class WebComponent {
     }
 
     /**
-     * The global main view.
+     * The global user interface.
      */
-    public get mainView(): MainView {
-        return this._mainView;
+    public get userInterface(): UserInterface {
+        return this._userInterface;
     }
 
     /**
