@@ -9,16 +9,16 @@ import Button from "primevue/button";
                 <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-1.5" title="Visit the RDS website">
             </a>
         </div>
-        <div class="font-bold pt-3">
+        <div class="font-bold self-center pt-3">
             Donald T. Rump
         </div>
-        <div class="italic pb-3">
+        <div class="italic self-center pb-3">
             3 Projects
         </div>
         <div class="row-span-2 pr-2">
             <Button plain rounded aria-label="Settings" title="Settings">
                 <template #icon>
-                    <span class="material-icons-outlined mi-settings r-primary-text" style="font-size: 40px;"/>
+                    <span class="material-icons-outlined mi-settings r-primary-text" style="font-size: 40px;" />
                 </template>
             </Button>
         </div>
