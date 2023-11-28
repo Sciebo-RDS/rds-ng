@@ -43,7 +43,7 @@ const editMenuItems = ref([
                         action.prepare(project!.value.project_id, data.title, data.description);
                         action.execute();
 
-                        emit("projectUpdated", project!.value.project_id, title, description);
+                        emit("projectUpdated", project!.value.project_id, data.title, data.description);
                     });
                 }
             },

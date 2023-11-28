@@ -14,12 +14,14 @@ export const projectsStore = defineStore("projectStore", () => {
 
     let pendingDeletions = ref<ProjectID[]>([]);
 
-    function getActiveProject(): Project | null {
-        const project = projects.value.find(proj => proj.project_id === activeProject.value);
-        if (project) {
-            return project;
+    function resolveActiveProject(): Project | undefined {
+        if (activeProject) {
+            const project = projects.value.find(proj => proj.project_id === activeProject.value);
+            if (project) {
+                return project;
+            }
         }
-        return null;
+        return undefined;
     }
 
     function markForDeletion(projectID: ProjectID): void {
@@ -51,6 +53,7 @@ export const projectsStore = defineStore("projectStore", () => {
         projects,
         activeProject,
         pendingDeletions,
+        resolveActiveProject,
         markForDeletion,
         unmarkForDeletion,
         reset,
