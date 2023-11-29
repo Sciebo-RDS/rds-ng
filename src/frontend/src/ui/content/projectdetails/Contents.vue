@@ -28,7 +28,7 @@ const tabs = ref([
         }">
             <TabPanel v-for="tab in tabs" :key="tab.title" :header="tab.title" :pt="{
                 header: 'tab-view-panel',
-                headerAction: 'tab-view-panel'
+                headerAction: 'tab-view-panel-action'
             }">
                 <p class="m-0">{{ tab.content }}</p>
             </TabPanel>
@@ -42,6 +42,10 @@ const tabs = ref([
 }
 
 :deep(.tab-view-panel) {
-    @apply bg-[var(--r-shade)] #{!important};
+    @apply bg-[var(--r-shade)] w-full border-e-2 #{!important};
+}
+
+:deep(.tab-view-panel-action) {
+    @apply bg-[var(--r-shade)] place-content-center #{!important};
 }
 </style>
