@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import NewProject from "@/ui/projectslist/NewProject.vue";
-import ProjectsListbox from "@/ui/projectslist/ProjectsListbox.vue";
+import NewProject from "@/ui/content/projectslist/NewProject.vue";
+import ProjectsListbox from "@/ui/content/projectslist/ProjectsListbox.vue";
 </script>
 
 <template>

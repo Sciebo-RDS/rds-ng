@@ -6,7 +6,7 @@ import Listbox from "primevue/listbox";
 import { Project, ProjectStatus } from "@common/data/entities/Project";
 
 import { projectsStore } from "@/data/stores/ProjectsStore";
-import ProjectsListboxItem from "@/ui/projectslist/ProjectsListboxItem.vue";
+import ProjectsListboxItem from "@/ui/content/projectslist/ProjectsListboxItem.vue";
 
 const projStore = projectsStore();
 const { projects, activeProject } = storeToRefs(projStore);

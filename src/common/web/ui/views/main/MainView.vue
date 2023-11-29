@@ -20,7 +20,7 @@ watch(() => compStore.componentState, (state: ComponentState, prevState: Compone
     <DynamicDialog />
 
     <!-- Notifications -->
-    <Toast />
+    <Toast position="bottom-right" />
 
     <!-- Main view -->
     <component :is="comp.userInterface.mainView.getStateComponent(activeState)"></component>

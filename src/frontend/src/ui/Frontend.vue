@@ -5,8 +5,8 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 
 import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
 
-import ProjectDetails from "@/ui/projectdetails/ProjectDetails.vue";
-import ProjectsList from "@/ui/projectslist/ProjectsList.vue";
+import ProjectDetails from "@/ui/content/projectdetails/ProjectDetails.vue";
+import ProjectsList from "@/ui/content/projectslist/ProjectsList.vue";
 
 const comp = FrontendComponent.inject();
 

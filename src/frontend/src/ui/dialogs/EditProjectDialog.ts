@@ -22,7 +22,7 @@ export interface EditProjectDialogData {
 export async function editProjectDialog(comp: FrontendComponent, project: Project | undefined): ExtendedDialogResult<EditProjectDialogData> {
     return extendedDialog<EditProjectDialogData>(comp, defineAsyncComponent(() => import("@/ui/dialogs/EditProjectDialog.vue")),
         {
-            header: project ? "Edit Project" : "New Project",
+            header: project ? "Project settings" : "New project",
             modal: true,
             contentClass: "w-[20vw] min-w-[25rem]"
         },

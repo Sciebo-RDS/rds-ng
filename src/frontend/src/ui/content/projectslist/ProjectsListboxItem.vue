@@ -25,7 +25,6 @@ const props = defineProps({
         default: false
     }
 });
-const emit = defineEmits(["projectUpdated", "projectDeleted"]);
 
 const { project, isSelected, isDeleted } = toRefs(props);
 
@@ -35,15 +34,13 @@ const editMenuItems = ref([
         label: "Edit project",
         items: [
             {
-                label: "Edit project",
-                icon: "material-icons-outlined mi-edit",
+                label: "Project settings",
+                icon: "material-icons-outlined mi-engineering",
                 command: () => {
                     const action = new UpdateProjectAction(comp);
                     action.showEditDialog(project!.value).then((data) => {
                         action.prepare(project!.value.project_id, data.title, data.description);
                         action.execute();
-
-                        emit("projectUpdated", project!.value.project_id, data.title, data.description);
                     });
                 }
             },
@@ -57,8 +54,6 @@ const editMenuItems = ref([
                     action.showConfirmation(project!.value).then(() => {
                         action.prepare(project!.value);
                         action.execute();
-
-                        emit("projectDeleted", project!.value.project_id);
                     });
                 }
             }

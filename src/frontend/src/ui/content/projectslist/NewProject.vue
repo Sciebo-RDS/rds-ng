@@ -5,15 +5,12 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { CreateProjectAction } from "@/ui/actions/CreateProjectAction";
 
 const comp = FrontendComponent.inject();
-const emit = defineEmits(["projectCreated"]);
 
 function createProject() {
     const action = new CreateProjectAction(comp);
     action.showEditDialog().then((data) => {
         action.prepare(data.title, data.description);
         action.execute();
-
-        emit("projectCreated", data.title, data.description);
     });
 }
 </script>
