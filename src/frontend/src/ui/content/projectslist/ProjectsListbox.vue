@@ -28,13 +28,6 @@ function isProjectDeleted(project: Project): boolean {
     // @ts-ignore
     return project.status == ProjectStatus.Deleted || projStore.pendingDeletions.includes(project.project_id);
 }
-
-function onProjectDeleted(project: Project): void {
-    if (isProjectSelected(project)) {
-        // @ts-ignore
-        activeProject.value = undefined;
-    }
-}
 </script>
 
 <template>
@@ -57,7 +50,6 @@ function onProjectDeleted(project: Project): void {
                     :project="projectEntry.option"
                     :is-selected="isProjectSelected(projectEntry.option)"
                     :is-deleted="isProjectDeleted(projectEntry.option)"
-                    @project-deleted="onProjectDeleted"
                 />
             </template>
             <template #empty>
