@@ -10,7 +10,7 @@ import { FrontendView } from "@/ui/views/frontend/FrontendView";
  * Class for frontend-specific user interface handling.
  */
 export class FrontendUserInterface extends UserInterface {
-    private _frontendView: FrontendView | null = null;
+    private _frontendView: FrontendView;
 
     /**
      * @param router - The Vue router.
@@ -18,18 +18,19 @@ export class FrontendUserInterface extends UserInterface {
      */
     public constructor(router: Router, appRoot: VueComponent) {
         super(router, appRoot);
+
+        // We know in which order we placed the sub-views, so we can safely assign them to local variables
+        this._frontendView = this.mainView.subViews[0]! as FrontendView;
     }
 
     protected configureMainRoute(): RouteRecordRaw | undefined {
         return {
-            redirect: FrontendView.rootPath
+            redirect: `/${FrontendView.rootPath}`
         } as RouteRecordRaw;
     }
 
     protected createSubViews(router: Router): View[] {
-        this._frontendView = new FrontendView(router);
-
-        return [this._frontendView];
+        return [new FrontendView(router)];
     }
 
     /**
