@@ -35,8 +35,6 @@ export default function(comp: WebComponent): Service {
 
             nwStore.connectionState = ConnectionState.Ready;
             compStore.componentState = ComponentState.Running;
-
-            WebComponent.instance.userInterface.mainView.navigateTo();
         });
     });
 }

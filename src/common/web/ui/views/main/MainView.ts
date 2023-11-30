@@ -17,21 +17,20 @@ export class MainView extends View {
     /**
      * @param router - The main Vue router.
      * @param appRoot - The root (main) application component.
+     * @param routeOptions - Additional route options.
+     * @param subViews - Optional sub-views.
      */
-    public constructor(router: Router, appRoot: VueComponent) {
-        super(router, "main");
+    public constructor(router: Router, appRoot: VueComponent, routeOptions?: RouteRecordRaw, subViews?: View[]) {
+        super(router, "main", routeOptions, subViews);
 
         this._appRoot = appRoot;
     }
 
-    /**
-     * Defines the route for this view.
-     */
-    public route(): RouteRecordRaw {
+    protected defineRoute(): RouteRecordRaw {
         return {
             path: "/",
             component: () => import("./MainView.vue"),
-            name: this._routeName,
+            name: this._routeName
         };
     }
 

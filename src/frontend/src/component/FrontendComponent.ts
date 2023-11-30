@@ -4,6 +4,7 @@ import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
 import { getFrontendSettings } from "@/settings/FrontendSettings";
+import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 
 import createFrontendService from "@/services/FrontendService";
 import createProjectsService from "@/services/ProjectsService";
@@ -13,12 +14,12 @@ import Frontend from "@/ui/Frontend.vue";
 /**
  * The main frontend component class.
  */
-export class FrontendComponent extends WebComponent {
+export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _frontendService: Service | null = null;
     private _projectsService: Service | null = null;
 
     public constructor() {
-        super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend);
+        super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendUserInterface);
 
         this.addFrontendSettings();
     }
