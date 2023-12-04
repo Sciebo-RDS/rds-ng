@@ -129,38 +129,23 @@ class CreateProjectReply(CommandReply):
 class UpdateProjectCommand(Command):
     """
     Command to update an existing project.
+    Note that the project features are updated using a separate ``UpdateProjectFeaturesCommand`` message.
 
     Args:
         project_id: The ID of the project to update.
-        scope: The scope of which parts of the project to update.
         title: The title of the project.
         description: An optional project description.
-        features: The data of the various project features.
         features_selection: List of enabled user-selectable features.
 
     Notes:
         Requires an ``UpdateProjectReply`` reply.
     """
 
-    class Scope(IntFlag):
-        NONE = 0x0000
-        HEAD = 0x0001
-        FEATURES_DATA = 0x0002
-        FEATURES_SELECTION = 0x0004
-
     project_id: ProjectID
-    scope: Scope
 
-    # Scope: HEAD
     title: str
     description: str
 
-    # Scope: FEATURES_DATA
-    features: typing.Dict[ProjectFeatureID, ProjectFeature] = dataclasses.field(
-        default_factory=dict
-    )
-
-    # Scope: FEATURES_SELECTION
     features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
         default_factory=list
     )
@@ -170,10 +155,8 @@ class UpdateProjectCommand(Command):
         message_builder: MessageBuilder,
         *,
         project_id: ProjectID,
-        scope: Scope,
         title: str,
         description: str,
-        features: typing.Dict[ProjectFeatureID, ProjectFeature],
         features_selection: typing.List[ProjectFeatureID],
         chain: Message | None = None,
     ) -> CommandComposer:
@@ -184,10 +167,8 @@ class UpdateProjectCommand(Command):
             UpdateProjectCommand,
             chain,
             project_id=project_id,
-            scope=scope,
             title=title,
             description=description,
-            features=features,
             features_selection=features_selection,
         )
 

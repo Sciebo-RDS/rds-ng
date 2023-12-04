@@ -87,19 +87,12 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             project := ctx.storage_pool.project_storage.get(msg.project_id)
         ) is not None:
             try:
-                updates: typing.Dict[str, typing.Any] = {}
-
-                if UpdateProjectCommand.Scope.HEAD in msg.scope:
-                    updates["title"] = msg.title
-                    updates["description"] = msg.description
-
-                if UpdateProjectCommand.Scope.FEATURES_SELECTION in msg.scope:
-                    updates["features_selection"] = msg.features_selection
-
-                if UpdateProjectCommand.Scope.FEATURES_DATA in msg.scope:
-                    pass  # TODO: Update features
-
-                project_upd = clone_entity(project, **updates)
+                project_upd = clone_entity(
+                    project,
+                    title=msg.title,
+                    description=msg.description,
+                    features_selection=msg.features_selection,
+                )
                 ProjectVerifier(project_upd).verify_update()
 
                 ctx.storage_pool.project_storage.add(project_upd)

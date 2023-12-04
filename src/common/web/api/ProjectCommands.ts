@@ -10,16 +10,6 @@ import { Project, type ProjectID } from "../data/entities/Project";
 import { ProjectFeature, ProjectFeatureID } from "../data/entities/ProjectFeature";
 
 /**
- * The scope of a project update.
- */
-export const enum UpdateProjectScope {
-    None = 0x0000,
-    Head = 0x0001,
-    FeaturesData = 0x0002,
-    FeaturesSelection = 0x0004,
-}
-
-/**
  * Command to fetch all projects of the current user. Requires a ``ListProjectsReply`` reply.
  */
 @Message.define("command/project/list")
@@ -106,29 +96,20 @@ export class CreateProjectReply extends CommandReply {
 
 /**
  * Command to update a project. Requires an ``UpdateProjectReply`` reply.
+ * Note that the project features are updated using a separate ``UpdateProjectFeaturesCommand`` message.
  *
  * @param project_id - The ID of the project to update.
- * @param scope - The scope of which parts of the project to update.
  * @param title - The title of the project.
  * @param description - An optional project description.
- * @param features - The data of the various project features.
  * @param features_selection - A boolean map whether a user-selectable feature is selected (enabled).
  */
 @Message.define("command/project/update")
 export class UpdateProjectCommand extends Command {
     public readonly project_id: ProjectID = 0;
-    public readonly scope: UpdateProjectScope = UpdateProjectScope.None;
 
-    // Scope: HEAD
     public readonly title: string = "";
     public readonly description: string = "";
 
-    // Scope: FEATURES_DATA
-    // @ts-ignore
-    @Type(() => ProjectFeature)
-    public readonly features: Map<ProjectFeatureID, ProjectFeature> = new Map<ProjectFeatureID, ProjectFeature>();
-
-    // Scope: FEATURES_SELECTION
     // @ts-ignore
     @Type(() => String)
     public readonly features_selection: ProjectFeatureID[] = [];
@@ -139,15 +120,13 @@ export class UpdateProjectCommand extends Command {
     public static build(
         messageBuilder: MessageBuilder,
         project_id: ProjectID,
-        scope: UpdateProjectScope,
         title: string,
         description: string,
-        features: Map<ProjectFeatureID, ProjectFeature> = new Map<ProjectFeatureID, ProjectFeature>(),
-        features_selection: ProjectFeatureID[] = [],
+        features_selection: ProjectFeatureID[],
         chain: Message | null = null
     ): CommandComposer<UpdateProjectCommand> {
         return messageBuilder.buildCommand(UpdateProjectCommand, {
-            project_id: project_id, scope: scope, title: title, description: description, features: features, features_selection: features_selection
+            project_id: project_id, title: title, description: description, features_selection: features_selection
         }, chain);
     }
 }
