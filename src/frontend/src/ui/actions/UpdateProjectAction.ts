@@ -1,6 +1,7 @@
-import { UpdateProjectCommand } from "@common/api/ProjectCommands";
+import { UpdateProjectCommand, UpdateProjectScope } from "@common/api/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { Project, type ProjectID } from "@common/data/entities/Project";
+import { type ProjectFeature } from "@common/data/entities/ProjectFeature";
 import { ActionState } from "@common/ui/actions/Action";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
@@ -23,10 +24,10 @@ export class UpdateProjectAction extends FrontendCommandAction<UpdateProjectComm
         return editProjectDialog(this._component, project);
     }
 
-    public prepare(project_id: ProjectID, title: string, description: string): CommandComposer<UpdateProjectCommand> {
+    public prepare(projectID: ProjectID, scope: UpdateProjectScope, title: string, description: string, features: ProjectFeature[] = []): CommandComposer<UpdateProjectCommand> {
         this.addDefaultNotifiers(title);
 
-        this._composer = this.messageBuilder.buildCommand(UpdateProjectCommand, { project_id: project_id, title: title, description: description }).timeout(this._regularTimeout);
+        this._composer = UpdateProjectCommand.build(this.messageBuilder, projectID, scope, title, description, features).timeout(this._regularTimeout);
         return this._composer;
     }
 

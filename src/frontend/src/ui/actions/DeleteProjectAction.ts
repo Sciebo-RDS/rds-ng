@@ -1,4 +1,4 @@
-import { DeleteProjectCommand } from "@common/api/ProjectCommands";
+import { DeleteProjectCommand, DeleteProjectReply } from "@common/api/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { Project } from "@common/data/entities/Project";
 import { ActionState } from "@common/ui/actions/Action";
@@ -29,9 +29,7 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
 
         this.addDefaultNotifiers(project);
 
-        this._composer = this.messageBuilder
-            .buildCommand(DeleteProjectCommand, { project_id: project.project_id })
-            .timeout(this._regularTimeout);
+        this._composer = DeleteProjectCommand.build(this.messageBuilder, project.project_id).timeout(this._regularTimeout);
         return this._composer;
     }
 

@@ -1,4 +1,5 @@
 import time
+import typing
 
 from common.py.component import BackendComponent
 from common.py.data.entities import clone_entity
@@ -76,7 +77,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         send_projects_list(msg, ctx)
 
     @svc.message_handler(UpdateProjectCommand)
-    def create_project(
+    def update_project(
         msg: UpdateProjectCommand, ctx: StubBackendServiceContext
     ) -> None:
         success = False
@@ -86,9 +87,16 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             project := ctx.storage_pool.project_storage.get(msg.project_id)
         ) is not None:
             try:
-                project_upd = clone_entity(
-                    project, title=msg.title, description=msg.description
-                )
+                updates: typing.Dict[str, typing.Any] = {}
+
+                if UpdateProjectCommand.Scope.HEAD in msg.scope:
+                    updates["title"] = msg.title
+                    updates["description"] = msg.description
+
+                if UpdateProjectCommand.Scope.FEATURES in msg.scope:
+                    pass  # TODO: Features
+
+                project_upd = clone_entity(project, **updates)
                 ProjectVerifier(project_upd).verify_update()
 
                 ctx.storage_pool.project_storage.add(project_upd)

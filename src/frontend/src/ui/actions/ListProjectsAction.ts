@@ -14,9 +14,7 @@ export class ListProjectsAction extends FrontendCommandAction<ListProjectsComman
     public prepare(): CommandComposer<ListProjectsCommand> {
         this.addDefaultNotifications();
 
-        this._composer = this.messageBuilder
-            .buildCommand(ListProjectsCommand)
-            .timeout(this._regularTimeout);
+        this._composer = ListProjectsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
         return this._composer;
     }
 
@@ -28,7 +26,7 @@ export class ListProjectsAction extends FrontendCommandAction<ListProjectsComman
         this.addNotifier(
             ActionState.Done,
             new OverlayNotifier(OverlayNotificationType.Success, "Fetching projects", "Your projects have been downloaded.")
-        )
+        );
         this.addNotifier(
             ActionState.Failed,
             new OverlayNotifier(OverlayNotificationType.Error, "Error fetching projects", `An error occurred while downloading your projects: ${ActionNotifier.MessagePlaceholder}.`, true)

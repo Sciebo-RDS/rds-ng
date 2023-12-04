@@ -23,7 +23,7 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
     public prepare(title: string, description: string): CommandComposer<CreateProjectCommand> {
         this.addDefaultNotifiers(title);
 
-        this._composer = this.messageBuilder.buildCommand(CreateProjectCommand, { title: title, description: description }).timeout(this._regularTimeout);
+        this._composer = CreateProjectCommand.build(this.messageBuilder, title, description).timeout(this._regularTimeout);
         return this._composer;
     }
 

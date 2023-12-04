@@ -7,6 +7,16 @@ import { CommandReplyComposer } from "../core/messaging/composers/CommandReplyCo
 import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { Message } from "../core/messaging/Message";
 import { Project, type ProjectID } from "../data/entities/Project";
+import { ProjectFeature } from "../data/entities/ProjectFeature";
+
+/**
+ * The scope of a project update.
+ */
+export const enum UpdateProjectScope {
+    None = 0x0000,
+    Head = 0x0001,
+    Features = 0x0002,
+}
 
 /**
  * Command to fetch all projects of the current user. Requires a ``ListProjectsReply`` reply.
@@ -97,14 +107,21 @@ export class CreateProjectReply extends CommandReply {
  * Command to update a project. Requires an ``UpdateProjectReply`` reply.
  *
  * @param project_id - The ID of the project to update.
+ * @param scope - The scope of which parts of the project to update.
  * @param title - The title of the project.
  * @param description - An optional project description.
  */
 @Message.define("command/project/update")
 export class UpdateProjectCommand extends Command {
     public readonly project_id: ProjectID = 0;
+    public readonly scope: UpdateProjectScope = UpdateProjectScope.None;
+
     public readonly title: string = "";
     public readonly description: string = "";
+
+    // @ts-ignore
+    @Type(() => ProjectFeature)
+    public readonly features: ProjectFeature[] = [];
 
     /**
      * Helper function to easily build this message.
@@ -112,11 +129,15 @@ export class UpdateProjectCommand extends Command {
     public static build(
         messageBuilder: MessageBuilder,
         project_id: ProjectID,
+        scope: UpdateProjectScope,
         title: string,
         description: string,
+        features: ProjectFeature[],
         chain: Message | null = null
     ): CommandComposer<UpdateProjectCommand> {
-        return messageBuilder.buildCommand(UpdateProjectCommand, { project_id: project_id, title: title, description: description }, chain);
+        return messageBuilder.buildCommand(UpdateProjectCommand, {
+            project_id: project_id, scope: scope, title: title, description: description, features: features
+        }, chain);
     }
 }
 

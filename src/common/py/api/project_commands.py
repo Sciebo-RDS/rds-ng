@@ -1,5 +1,6 @@
 import dataclasses
 import typing
+from enum import IntFlag, auto
 
 from ..core.messaging import (
     Command,
@@ -11,7 +12,7 @@ from ..core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ..data.entities import Project, ProjectID
+from ..data.entities import Project, ProjectID, ProjectFeature
 
 
 @Message.define("command/project/list")
@@ -131,6 +132,7 @@ class UpdateProjectCommand(Command):
 
     Args:
         project_id: The ID of the project to update.
+        scope: The scope of which parts of the project to update.
         title: The title of the project.
         description: An optional project description.
 
@@ -138,17 +140,30 @@ class UpdateProjectCommand(Command):
         Requires an ``UpdateProjectReply`` reply.
     """
 
+    class Scope(IntFlag):
+        NONE = 0x0000
+        HEAD = 0x0001
+        FEATURES = 0x0002
+
     project_id: ProjectID
+    scope: Scope
+
+    # Scope: HEAD
     title: str
     description: str
+
+    # Scope: FEATURES
+    features: typing.List[ProjectFeature] = dataclasses.field(default_factory=list)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
         project_id: ProjectID,
+        scope: Scope,
         title: str,
         description: str,
+        features: typing.List[ProjectFeature],
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -158,8 +173,10 @@ class UpdateProjectCommand(Command):
             UpdateProjectCommand,
             chain,
             project_id=project_id,
+            scope=scope,
             title=title,
             description=description,
+            features=features,
         )
 
 
