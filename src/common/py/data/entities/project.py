@@ -1,10 +1,11 @@
+import dataclasses
 import typing
 from dataclasses import dataclass, field
 from enum import IntEnum
 
 from dataclasses_json import dataclass_json
 
-from .project_feature import ProjectFeature
+from .project_feature import ProjectFeature, ProjectFeatureID
 
 ProjectID = int
 
@@ -21,7 +22,8 @@ class Project:
         title: The title of the project.
         description: An optional project description.
         status: The project status.
-        features: All features of the project.
+        features: The data of the various project features.
+        features_selection: List of enabled user-selectable features.
     """
 
     class Status(IntEnum):
@@ -41,4 +43,9 @@ class Project:
 
     status: Status = Status.ACTIVE
 
-    features: typing.List[ProjectFeature] = field(default_factory=list)
+    features: typing.Dict[ProjectFeatureID, ProjectFeature] = dataclasses.field(
+        default_factory=dict
+    )
+    features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
+        default_factory=list
+    )

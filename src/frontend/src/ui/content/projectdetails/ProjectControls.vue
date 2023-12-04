@@ -19,7 +19,7 @@ const { project } = toRefs(props);
 function editProject() {
     const action = new UpdateProjectAction(comp);
     action.showEditDialog(project.value).then((data) => {
-        action.prepare(project.value.project_id, UpdateProjectScope.Head, data.title, data.description);
+        action.prepare(project.value.project_id, UpdateProjectScope.Head | UpdateProjectScope.FeaturesSelection, data.title, data.description);
         action.execute();
     });
 }

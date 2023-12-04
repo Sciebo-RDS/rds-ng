@@ -93,8 +93,11 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
                     updates["title"] = msg.title
                     updates["description"] = msg.description
 
-                if UpdateProjectCommand.Scope.FEATURES in msg.scope:
-                    pass  # TODO: Features
+                if UpdateProjectCommand.Scope.FEATURES_SELECTION in msg.scope:
+                    updates["features_selection"] = msg.features_selection
+
+                if UpdateProjectCommand.Scope.FEATURES_DATA in msg.scope:
+                    pass  # TODO: Update features
 
                 project_upd = clone_entity(project, **updates)
                 ProjectVerifier(project_upd).verify_update()

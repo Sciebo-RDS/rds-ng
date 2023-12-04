@@ -1,6 +1,6 @@
 import dataclasses
 import typing
-from enum import IntFlag, auto
+from enum import IntFlag
 
 from ..core.messaging import (
     Command,
@@ -12,7 +12,7 @@ from ..core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ..data.entities import Project, ProjectID, ProjectFeature
+from ..data.entities import Project, ProjectID, ProjectFeature, ProjectFeatureID
 
 
 @Message.define("command/project/list")
@@ -135,6 +135,8 @@ class UpdateProjectCommand(Command):
         scope: The scope of which parts of the project to update.
         title: The title of the project.
         description: An optional project description.
+        features: The data of the various project features.
+        features_selection: List of enabled user-selectable features.
 
     Notes:
         Requires an ``UpdateProjectReply`` reply.
@@ -143,7 +145,8 @@ class UpdateProjectCommand(Command):
     class Scope(IntFlag):
         NONE = 0x0000
         HEAD = 0x0001
-        FEATURES = 0x0002
+        FEATURES_DATA = 0x0002
+        FEATURES_SELECTION = 0x0004
 
     project_id: ProjectID
     scope: Scope
@@ -152,8 +155,15 @@ class UpdateProjectCommand(Command):
     title: str
     description: str
 
-    # Scope: FEATURES
-    features: typing.List[ProjectFeature] = dataclasses.field(default_factory=list)
+    # Scope: FEATURES_DATA
+    features: typing.Dict[ProjectFeatureID, ProjectFeature] = dataclasses.field(
+        default_factory=dict
+    )
+
+    # Scope: FEATURES_SELECTION
+    features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
+        default_factory=list
+    )
 
     @staticmethod
     def build(
@@ -163,7 +173,8 @@ class UpdateProjectCommand(Command):
         scope: Scope,
         title: str,
         description: str,
-        features: typing.List[ProjectFeature],
+        features: typing.Dict[ProjectFeatureID, ProjectFeature],
+        features_selection: typing.List[ProjectFeatureID],
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -177,6 +188,7 @@ class UpdateProjectCommand(Command):
             title=title,
             description=description,
             features=features,
+            features_selection=features_selection,
         )
 
 

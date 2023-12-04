@@ -1,6 +1,6 @@
-import { Type } from "class-transformer";
+import { Type, Transform } from "class-transformer";
 
-import { ProjectFeature } from "./ProjectFeature";
+import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
  * The project ID type.
@@ -23,7 +23,8 @@ export const enum ProjectStatus {
  * @param title - The title of the project.
  * @param description - An optional project description.
  * @param status - The project status.
- * @param features - All features of the project.
+ * @param features - The data of the various project features.
+ * @param features_selection - List of enabled user-selectable features.
  */
 export class Project {
     public readonly project_id: ProjectID;
@@ -37,7 +38,10 @@ export class Project {
 
     // @ts-ignore
     @Type(() => ProjectFeature)
-    public readonly features: ProjectFeature[] = [];
+    public readonly features: Map<ProjectFeatureID, ProjectFeature> = new Map<ProjectFeatureID, ProjectFeature>();
+    // @ts-ignore
+    @Type(() => String)
+    public readonly features_selection: ProjectFeatureID[] = [];
 
     public constructor(projectID: ProjectID, creationTime: number, title: string, description: string = "") {
         this.project_id = projectID;
