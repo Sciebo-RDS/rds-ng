@@ -5,11 +5,11 @@ export class MetadataFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "metadata";
 
     public constructor() {
-        super(
-            MetadataFeature.FeatureID,
-            ProjectFeatureFlags.Optional,
-            "Metadata",
-            "Metadata (entire project)"
-        );
+        super(MetadataFeature.FeatureID, {
+            flags: ProjectFeatureFlags.Optional | ProjectFeatureFlags.HasPanel,
+            displayName: "Metadata",
+            optionName: "Project metadata",
+            panel: () => import("@/ui/content/features/MetadataPanel.vue")
+        });
     }
 }

@@ -4,6 +4,8 @@ import TabView from "primevue/tabview";
 import { toRefs } from "vue";
 
 import { Project } from "@common/data/entities/Project";
+import { ProjectFeatureFlags } from "@common/features/ProjectFeature";
+import { ProjectFeaturesCatalog } from "@common/features/ProjectFeaturesCatalog";
 
 const props = defineProps({
     project: {
@@ -12,13 +14,10 @@ const props = defineProps({
 });
 const { project } = toRefs(props);
 
-import { ref } from "vue";
-
-const tabs = ref([
-    { title: "Metadata", content: "Tab 1 Content" },
-    { title: "Data Management Plan", content: "Tab 2 Content" },
-    { title: "Summary", content: "Tab 3 Content" }
-]);
+const panelFeatures = ProjectFeaturesCatalog.filter(ProjectFeatureFlags.HasPanel);
+const panels = panelFeatures.map((feature) => {
+    return { title: feature.displayName, component: feature.panel };
+});
 </script>
 
 <template>
@@ -26,11 +25,11 @@ const tabs = ref([
         <TabView select-on-focus :pt="{
             nav: 'tab-view'
         }">
-            <TabPanel v-for="tab in tabs" :key="tab.title" :header="tab.title" :pt="{
+            <TabPanel v-for="panel in panels" :key="panel.title" :header="panel.title" :pt="{
                 header: 'tab-view-panel',
                 headerAction: 'tab-view-panel-action'
             }">
-                <p class="m-0">{{ tab.content }}</p>
+                <component :is="panel.component" />
             </TabPanel>
         </TabView>
     </div>
