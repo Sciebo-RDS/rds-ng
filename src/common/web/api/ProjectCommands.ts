@@ -6,8 +6,8 @@ import { CommandComposer } from "../core/messaging/composers/CommandComposer";
 import { CommandReplyComposer } from "../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { Message } from "../core/messaging/Message";
-import { Project, type ProjectID } from "../data/entities/Project";
-import { type ProjectFeatureID } from "../data/entities/ProjectFeature";
+import { type ProjectFeatureID, type ProjectID } from "../data/entities/EntityTypes";
+import { Project } from "../data/entities/Project";
 
 /**
  * Command to fetch all projects of the current user. Requires a ``ListProjectsReply`` reply.

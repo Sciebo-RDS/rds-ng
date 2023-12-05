@@ -12,7 +12,7 @@ from ..core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ..data.entities import Project, ProjectID, ProjectFeature, ProjectFeatureID
+from ..data.entities import Project, ProjectID, ProjectFeatureStore, ProjectFeatureID
 
 
 @Message.define("command/project/list")

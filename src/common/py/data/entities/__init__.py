@@ -1,4 +1,6 @@
 from .clone import clone_entity
 
-from .project import Project, ProjectID
-from .project_feature import ProjectFeature, ProjectFeatureID
+from .entity_types import ProjectID, ProjectFeatureID
+
+from .project import Project
+from .project_feature_store import ProjectFeatureStore

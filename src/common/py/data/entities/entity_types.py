@@ -1,0 +1,2 @@
+ProjectID = int
+ProjectFeatureID = str
