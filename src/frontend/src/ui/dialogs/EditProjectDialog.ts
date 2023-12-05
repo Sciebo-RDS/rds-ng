@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from "vue";
 
+import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
 import { type Project } from "@common/data/entities/Project";
 import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 
@@ -11,6 +12,7 @@ import { type FrontendComponent } from "@/component/FrontendComponent";
 export interface EditProjectDialogData {
     title: string;
     description: string;
+    selectedFeatures: ProjectFeatureID[];
 }
 
 /**
@@ -28,7 +30,8 @@ export async function editProjectDialog(comp: FrontendComponent, project: Projec
         },
         {
             title: project?.title || "",
-            description: project?.description || ""
+            description: project?.description || "",
+            selectedFeatures: project?.features_selection || []
         },
         {
             hasAcceptButton: true,

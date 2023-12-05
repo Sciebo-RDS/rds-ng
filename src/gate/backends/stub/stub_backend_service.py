@@ -56,6 +56,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             creation_time=time.time(),
             title=msg.title,
             description=msg.description,
+            features_selection=msg.features_selection,
         )
 
         try:

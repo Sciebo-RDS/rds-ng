@@ -1,4 +1,4 @@
-import { ProjectFeatureID } from "../data/entities/EntityTypes";
+import { type ProjectFeatureID } from "../data/entities/EntityTypes";
 
 /**
  * Possible flags for a project feature.

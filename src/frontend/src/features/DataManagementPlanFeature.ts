@@ -9,7 +9,7 @@ export class DataManagementPlanFeature extends ProjectFeature {
             DataManagementPlanFeature.FeatureID,
             ProjectFeatureFlags.Optional,
             "Data Management Plan",
-            "Write a Data Management Plan"
+            "Data Management Plan"
         );
     }
 }

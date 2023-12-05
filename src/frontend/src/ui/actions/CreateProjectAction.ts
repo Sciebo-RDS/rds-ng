@@ -1,5 +1,6 @@
 import { CreateProjectCommand } from "@common/api/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
+import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
 import { ActionState } from "@common/ui/actions/Action";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
@@ -20,10 +21,10 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
         return editProjectDialog(this._component, undefined);
     }
 
-    public prepare(title: string, description: string): CommandComposer<CreateProjectCommand> {
+    public prepare(title: string, description: string, featuresSelection: ProjectFeatureID[]): CommandComposer<CreateProjectCommand> {
         this.addDefaultNotifiers(title);
 
-        this._composer = CreateProjectCommand.build(this.messageBuilder, title, description).timeout(this._regularTimeout);
+        this._composer = CreateProjectCommand.build(this.messageBuilder, title, description, featuresSelection).timeout(this._regularTimeout);
         return this._composer;
     }
 

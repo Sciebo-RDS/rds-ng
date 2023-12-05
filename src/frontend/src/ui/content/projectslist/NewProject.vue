@@ -9,7 +9,7 @@ const comp = FrontendComponent.inject();
 function createProject() {
     const action = new CreateProjectAction(comp);
     action.showEditDialog().then((data) => {
-        action.prepare(data.title, data.description);
+        action.prepare(data.title, data.description, data.selectedFeatures);
         action.execute();
     });
 }

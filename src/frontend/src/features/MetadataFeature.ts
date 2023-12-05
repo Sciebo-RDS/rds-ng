@@ -9,7 +9,7 @@ export class MetadataFeature extends ProjectFeature {
             MetadataFeature.FeatureID,
             ProjectFeatureFlags.Optional,
             "Metadata",
-            "Add metadata to the entire project"
+            "Metadata (entire project)"
         );
     }
 }

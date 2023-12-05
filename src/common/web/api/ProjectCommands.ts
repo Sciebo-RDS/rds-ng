@@ -52,11 +52,16 @@ export class ListProjectsReply extends CommandReply {
  *
  * @param title - The title of the project.
  * @param description - An optional project description.
+ * @param features_selection - List of enabled user-selectable features.
  */
 @Message.define("command/project/create")
 export class CreateProjectCommand extends Command {
     public readonly title: string = "";
     public readonly description: string = "";
+
+    // @ts-ignore
+    @Type(() => String)
+    public readonly features_selection: ProjectFeatureID[] = [];
 
     /**
      * Helper function to easily build this message.
@@ -65,9 +70,10 @@ export class CreateProjectCommand extends Command {
         messageBuilder: MessageBuilder,
         title: string,
         description: string,
+        features_selection: ProjectFeatureID[],
         chain: Message | null = null
     ): CommandComposer<CreateProjectCommand> {
-        return messageBuilder.buildCommand(CreateProjectCommand, { title: title, description: description }, chain);
+        return messageBuilder.buildCommand(CreateProjectCommand, { title: title, description: description, features_selection: features_selection }, chain);
     }
 }
 
@@ -101,7 +107,7 @@ export class CreateProjectReply extends CommandReply {
  * @param project_id - The ID of the project to update.
  * @param title - The title of the project.
  * @param description - An optional project description.
- * @param features_selection - A boolean map whether a user-selectable feature is selected (enabled).
+ * @param features_selection - List of enabled user-selectable features.
  */
 @Message.define("command/project/update")
 export class UpdateProjectCommand extends Command {

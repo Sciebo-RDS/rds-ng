@@ -1,5 +1,5 @@
 import { ItemsCatalog } from "../utils/ItemsCatalog";
-import { ProjectFeature } from "./ProjectFeature";
+import { ProjectFeature, ProjectFeatureFlags } from "./ProjectFeature";
 
 /**
  * Global catalog of all registered backend types.
@@ -8,4 +8,7 @@ import { ProjectFeature } from "./ProjectFeature";
  */
 @ItemsCatalog.define()
 export class ProjectFeaturesCatalog extends ItemsCatalog<ProjectFeature> {
+    public static filter(flags: ProjectFeatureFlags): ProjectFeature[] {
+        return Object.values(this.items).filter((feature) => feature.hasFlags(flags));
+    }
 }

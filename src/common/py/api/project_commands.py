@@ -70,6 +70,7 @@ class CreateProjectCommand(Command):
     Args:
         title: The title of the project.
         description: An optional project description.
+        features_selection: List of enabled user-selectable features.
 
     Notes:
         Requires a ``CreateProjectReply`` reply.
@@ -78,12 +79,17 @@ class CreateProjectCommand(Command):
     title: str
     description: str
 
+    features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
+        default_factory=list
+    )
+
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
         title: str,
         description: str,
+        features_selection: typing.List[ProjectFeatureID],
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -94,6 +100,7 @@ class CreateProjectCommand(Command):
             chain,
             title=title,
             description=description,
+            features_selection=features_selection,
         )
 
 

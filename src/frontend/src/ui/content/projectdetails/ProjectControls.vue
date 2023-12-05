@@ -18,7 +18,7 @@ const { project } = toRefs(props);
 function editProject() {
     const action = new UpdateProjectAction(comp);
     action.showEditDialog(project.value).then((data) => {
-        action.prepare(project.value.project_id, data.title, data.description, []); // TODO
+        action.prepare(project.value.project_id, data.title, data.description, data.selectedFeatures);
         action.execute();
     });
 }
