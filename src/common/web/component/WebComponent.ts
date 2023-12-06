@@ -14,6 +14,7 @@ import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
+import { registerProjectFeatures } from "../features/Features";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
@@ -84,7 +85,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         );
 
         logging.info(this.toString());
-        logging.info("-- Starting component...");
+        logging.info("Starting component");
 
         this._core = new Core(this._data);
         this._router = this.createRouter();
@@ -118,7 +119,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     }
 
     private createVueApp(): App {
-        logging.info("-- Creating Vue application...");
+        logging.info("Creating Vue application");
 
         const app = createApp(MainContainer);
 
@@ -173,7 +174,10 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      *     This method is automatically called by the framework.
      */
     public run(): void {
-        logging.info("Running component...");
+        logging.info("Running component");
+
+        // Register all project features
+        registerProjectFeatures(this._userInterface.configureProjectFeaturePanels());
 
         // Create all basic services
         createComponentService(this);

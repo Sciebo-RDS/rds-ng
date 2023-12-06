@@ -60,7 +60,7 @@ class BackendComponent:
         from ..core.logging import info
 
         info(str(self), role=self._data.role.name)
-        info("-- Starting component...")
+        info("Starting component")
 
         from ..core import Core
 
@@ -88,7 +88,12 @@ class BackendComponent:
         """
         from ..core.logging import info
 
-        info("Running component...")
+        info("Running component")
+
+        # Register all project features
+        from ..features import register_project_features
+
+        register_project_features()
 
         # Create all basic services
         from ..services import create_component_service, create_network_service

@@ -3,7 +3,6 @@ import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
-import { registerProjectFeatures } from "@/features/Features";
 import { getFrontendSettings } from "@/settings/FrontendSettings";
 import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 
@@ -23,8 +22,6 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendUserInterface);
 
         this.addFrontendSettings();
-
-        registerProjectFeatures();
     }
 
     public run(): void {

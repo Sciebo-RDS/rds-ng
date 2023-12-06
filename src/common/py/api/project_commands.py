@@ -1,6 +1,5 @@
 import dataclasses
 import typing
-from enum import IntFlag
 
 from ..core.messaging import (
     Command,

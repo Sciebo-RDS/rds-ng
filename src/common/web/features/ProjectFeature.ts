@@ -1,6 +1,7 @@
 import { type Component as VueComponent, defineAsyncComponent } from "vue";
 
 import { type ProjectFeatureID } from "../data/entities/EntityTypes";
+import { type ProjectFeaturePanelLoader } from "./ProjectFeaturePanelLoader";
 
 /**
  * Possible flags for a project feature.
@@ -11,7 +12,7 @@ export const enum ProjectFeatureFlags {
     // Optional features can be turned on or off for a project
     Optional = 1 << 0,
 
-    // Whether the feature has a display panel (shown as a tab)
+    // Whether the feature has a display panel (shown as a tab); this flag is automatically set if a panel is provided for the feature
     HasPanel = 1 << 1
 }
 
@@ -28,7 +29,7 @@ export interface ProjectFeatureOptions {
     optionName?: string;
 
     /** If a Vue component loader is specified, it will be used to load the feature's panel dynamically. */
-    panel?: () => any;
+    panel?: ProjectFeaturePanelLoader;
 }
 
 /**
@@ -57,6 +58,8 @@ export abstract class ProjectFeature {
         this._optionName = options.optionName || "";
 
         if (options.panel) {
+            this._flags |= ProjectFeatureFlags.HasPanel;
+
             this._panel = defineAsyncComponent(options.panel);
         }
     }

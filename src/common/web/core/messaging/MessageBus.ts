@@ -42,7 +42,7 @@ export class MessageBus {
     public constructor(compData: WebComponentData) {
         this._compData = compData;
 
-        logging.debug("-- Creating network engine", "bus")
+        logging.debug("Creating network engine", "bus");
         this._networkEngine = this.createNetworkEngine();
 
         this._dispatchers[Command.Category] = new CommandDispatcher();

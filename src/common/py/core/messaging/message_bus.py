@@ -45,7 +45,7 @@ class MessageBus:
 
         self._comp_data = comp_data
 
-        debug("-- Creating network engine", scope="bus")
+        debug("Creating network engine", scope="bus")
         self._network_engine = self._create_network_engine()
 
         self._services: typing.List[MessageService] = []

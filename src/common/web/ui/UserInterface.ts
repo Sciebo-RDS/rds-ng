@@ -1,5 +1,6 @@
 import { type Component as VueComponent } from "vue";
 import { type Router, type RouteRecordRaw } from "vue-router";
+import { type ProjectFeaturePanelLoaders } from "../features/ProjectFeaturePanelLoader";
 
 import { MainView } from "./views/main/MainView";
 import { View } from "./views/View";
@@ -16,6 +17,15 @@ export class UserInterface {
      */
     public constructor(router: Router, appRoot: VueComponent) {
         this._mainView = new MainView(router, appRoot, this.configureMainRoute(), this.createSubViews(router));
+    }
+
+    /**
+     * Configures panels for the various project features; by default, no panels are created.
+     *
+     * @returns - The project feature panel loaders or `undefined` if no panels should be created.
+     */
+    public configureProjectFeaturePanels(): ProjectFeaturePanelLoaders | undefined {
+        return undefined;
     }
 
     /**
