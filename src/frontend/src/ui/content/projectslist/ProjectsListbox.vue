@@ -1,15 +1,31 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { watch } from "vue";
 import Listbox from "primevue/listbox";
+import { watch } from "vue";
+import { useRoute } from "vue-router";
 
+import { type ProjectID } from "@common/data/entities/EntityTypes";
 import { Project, ProjectStatus } from "@common/data/entities/Project";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { projectsStore } from "@/data/stores/ProjectsStore";
-import ProjectsListboxItem from "@/ui/projectslist/ProjectsListboxItem.vue";
 
+import ProjectsListboxItem from "@/ui/content/projectslist/ProjectsListboxItem.vue";
+
+const comp = FrontendComponent.inject();
+const route = useRoute();
 const projStore = projectsStore();
 const { projects, activeProject } = storeToRefs(projStore);
+
+const unwatchProjects = watch(projects, () => {
+    // If the current URL contains a project ID, select that project once we received our projects list
+    if (route.params.hasOwnProperty("project_id")) {
+        let projectID = route.params.project_id as string;
+        selectProject(parseInt(projectID), true);
+    }
+
+    unwatchProjects();
+});
 
 watch(activeProject, (newProj, oldProj) => {
     // Prevent deselecting the currently selected project item
@@ -17,7 +33,23 @@ watch(activeProject, (newProj, oldProj) => {
         // @ts-ignore
         activeProject.value = oldProj;
     }
+
+    // Update the shown URL to reflect the selected project
+    if (activeProject.value !== oldProj) {
+        comp.userInterface.frontendView.navigateTo(true, undefined, { project_id: activeProject.value });
+    }
 });
+
+function selectProject(projectID: ProjectID | undefined, autoNavigateOnMissing: boolean = false): void {
+    if (!projects.value.find((proj) => proj.project_id === projectID)) {
+        projectID = undefined;
+
+        if (autoNavigateOnMissing) {
+            comp.userInterface.frontendView.navigateTo(true);
+        }
+    }
+    activeProject.value = projectID;
+}
 
 function isProjectSelected(project: Project): boolean {
     // @ts-ignore
@@ -28,23 +60,16 @@ function isProjectDeleted(project: Project): boolean {
     // @ts-ignore
     return project.status == ProjectStatus.Deleted || projStore.pendingDeletions.includes(project.project_id);
 }
-
-function onProjectDeleted(project: Project): void {
-    if (isProjectSelected(project)) {
-        // @ts-ignore
-        activeProject.value = undefined;
-    }
-}
 </script>
 
 <template>
     <div>
-        <!-- TODO: Add select-on-focus -->
         <Listbox
             v-model="activeProject"
             :options="projects"
             option-value="project_id"
             :option-disabled="isProjectDeleted"
+            select-on-focus
             class="w-full"
             :pt="{
                 root: 'projects-listbox',
@@ -57,7 +82,6 @@ function onProjectDeleted(project: Project): void {
                     :project="projectEntry.option"
                     :is-selected="isProjectSelected(projectEntry.option)"
                     :is-deleted="isProjectDeleted(projectEntry.option)"
-                    @project-deleted="onProjectDeleted"
                 />
             </template>
             <template #empty>

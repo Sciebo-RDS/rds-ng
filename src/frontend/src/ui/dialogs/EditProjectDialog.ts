@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from "vue";
 
+import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
 import { type Project } from "@common/data/entities/Project";
 import {
     extendedDialog,
@@ -14,6 +15,7 @@ import { type FrontendComponent } from "@/component/FrontendComponent";
 export interface EditProjectDialogData {
     title: string;
     description: string;
+    selectedFeatures: ProjectFeatureID[];
 }
 
 /**
@@ -32,7 +34,7 @@ export async function editProjectDialog(
             () => import("@/ui/dialogs/EditProjectDialog.vue")
         ),
         {
-            header: project ? "Edit Project" : "New Project",
+            header: project ? "Project settings" : "New project",
             modal: true,
             contentClass:
                 "w-[20vw] w-full min-w-[40rem] shadow-inner !pt-4",
@@ -40,15 +42,16 @@ export async function editProjectDialog(
         {
             title: project?.title || "",
             description: project?.description || "",
+            selectedFeatures: project?.features_selection || []
         },
         {
             hasAcceptButton: true,
             acceptLabel: project ? "Save" : "Create",
-            acceptIcon: "material-icons-outlined mi-done",
+            acceptIcon: "material-icons-outlined mi-done"
 
             hasRejectButton: true,
             rejectLabel: "Cancel",
-            rejectIcon: "material-icons-outlined mi-clear",
+            rejectIcon: "material-icons-outlined mi-clear"
         }
     );
 }

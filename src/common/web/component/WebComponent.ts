@@ -14,6 +14,7 @@ import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
+import { registerProjectFeatures } from "../features/Features";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
@@ -41,11 +42,14 @@ import "../api/API";
 /**
  * Base class for all web components.
  *
+ * By default, an instance of ``UserInterfaceType`` is used to create the main UI handler. This can be overriden using the corresponding
+ * template and constructor parameters.
+ *
  * Web applications are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
  * about the application itself and the entire project.
  */
-export class WebComponent {
-    private static _instance: WebComponent | null = null;
+export class WebComponent<UserInterfaceType extends UserInterface = UserInterface> {
+    private static _instance: WebComponent<any> | null = null;
     private static readonly _injectionKey = Symbol();
 
     protected readonly _data: WebComponentData;
@@ -53,21 +57,21 @@ export class WebComponent {
     protected readonly _core: Core;
     protected readonly _router: Router;
 
-    protected readonly _userInterface: UserInterface;
+    protected readonly _userInterface: UserInterfaceType;
     protected readonly _vueApp: App;
 
     /**
      * @param env - The global environment variables.
      * @param compID - The identifier of this component.
      * @param appRoot - The root (main) application component.
+     * @param userInterfaceType - The type of the user interface class.
      */
-    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent) {
+    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>) {
         if (WebComponent._instance) {
             throw new Error("A component instance has already been created");
         }
         WebComponent._instance = this;
 
-        compID = this.sanitizeComponentID(compID);
 
         let metaInfo = new MetaInformation();
         let compInfo = metaInfo.getComponent(compID.unit);
@@ -81,12 +85,12 @@ export class WebComponent {
         );
 
         logging.info(this.toString());
-        logging.info("-- Starting component...");
+        logging.info("Starting component");
 
         this._core = new Core(this._data);
         this._router = this.createRouter();
 
-        this._userInterface = new UserInterface(this._router, appRoot);
+        this._userInterface = this.createUserInterface(userInterfaceType, appRoot);
         this._vueApp = this.createVueApp();
     }
 
@@ -110,8 +114,12 @@ export class WebComponent {
         });
     }
 
+    private createUserInterface(userInterfaceType: Constructable<UserInterfaceType>, appRoot: VueComponent): UserInterfaceType {
+        return new userInterfaceType(this._router, appRoot);
+    }
+
     private createVueApp(): App {
-        logging.info("-- Creating Vue application...");
+        logging.info("Creating Vue application");
 
         const app = createApp(MainContainer);
 
@@ -166,7 +174,10 @@ export class WebComponent {
      *     This method is automatically called by the framework.
      */
     public run(): void {
-        logging.info("Running component...");
+        logging.info("Running component");
+
+        // Register all project features
+        registerProjectFeatures(this._userInterface.configureProjectFeaturePanels());
 
         // Create all basic services
         createComponentService(this);
@@ -212,7 +223,7 @@ export class WebComponent {
     /**
      * The global user interface.
      */
-    public get userInterface(): UserInterface {
+    public get userInterface(): UserInterfaceType {
         return this._userInterface;
     }
 

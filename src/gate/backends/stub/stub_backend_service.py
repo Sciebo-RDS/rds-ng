@@ -1,4 +1,5 @@
 import time
+import typing
 
 from common.py.component import BackendComponent
 from common.py.data.entities import clone_entity
@@ -55,6 +56,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             creation_time=time.time(),
             title=msg.title,
             description=msg.description,
+            features_selection=msg.features_selection,
         )
 
         try:
@@ -76,7 +78,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         send_projects_list(msg, ctx)
 
     @svc.message_handler(UpdateProjectCommand)
-    def create_project(
+    def update_project(
         msg: UpdateProjectCommand, ctx: StubBackendServiceContext
     ) -> None:
         success = False
@@ -87,7 +89,10 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         ) is not None:
             try:
                 project_upd = clone_entity(
-                    project, title=msg.title, description=msg.description
+                    project,
+                    title=msg.title,
+                    description=msg.description,
+                    features_selection=msg.features_selection,
                 )
                 ProjectVerifier(project_upd).verify_update()
 

@@ -1,13 +1,16 @@
-from dataclasses import dataclass
+import dataclasses
+import typing
+from dataclasses import dataclass, field
 from enum import IntEnum
 
 from dataclasses_json import dataclass_json
 
-ProjectID = int
+from .entity_types import ProjectID, ProjectFeatureID
+from .project_feature_store import ProjectFeatureStore
 
 
 @dataclass_json
-@dataclass(kw_only=True)
+@dataclass(frozen=True, kw_only=True)
 class Project:
     """
     Data for a single **Project**.
@@ -18,6 +21,8 @@ class Project:
         title: The title of the project.
         description: An optional project description.
         status: The project status.
+        features_stores: The data stores of the various project features.
+        features_selection: List of enabled user-selectable features.
     """
 
     class Status(IntEnum):
@@ -36,3 +41,10 @@ class Project:
     description: str
 
     status: Status = Status.ACTIVE
+
+    features_stores: typing.Dict[
+        ProjectFeatureID, ProjectFeatureStore
+    ] = dataclasses.field(default_factory=dict)
+    features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
+        default_factory=list
+    )

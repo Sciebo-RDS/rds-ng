@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue"
+import { onMounted } from "vue";
 
 import { WebComponent } from "../../../component/WebComponent";
 
@@ -12,5 +12,5 @@ onMounted(() => {
 </script>
 
 <template>
-    <router-view></router-view>
+    <router-view />
 </template>

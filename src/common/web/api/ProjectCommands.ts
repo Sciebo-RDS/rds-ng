@@ -6,7 +6,8 @@ import { CommandComposer } from "../core/messaging/composers/CommandComposer";
 import { CommandReplyComposer } from "../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { Message } from "../core/messaging/Message";
-import { Project, type ProjectID } from "../data/entities/Project";
+import { type ProjectFeatureID, type ProjectID } from "../data/entities/EntityTypes";
+import { Project } from "../data/entities/Project";
 
 /**
  * Command to fetch all projects of the current user. Requires a ``ListProjectsReply`` reply.
@@ -51,11 +52,16 @@ export class ListProjectsReply extends CommandReply {
  *
  * @param title - The title of the project.
  * @param description - An optional project description.
+ * @param features_selection - List of enabled user-selectable features.
  */
 @Message.define("command/project/create")
 export class CreateProjectCommand extends Command {
     public readonly title: string = "";
     public readonly description: string = "";
+
+    // @ts-ignore
+    @Type(() => String)
+    public readonly features_selection: ProjectFeatureID[] = [];
 
     /**
      * Helper function to easily build this message.
@@ -64,9 +70,10 @@ export class CreateProjectCommand extends Command {
         messageBuilder: MessageBuilder,
         title: string,
         description: string,
+        features_selection: ProjectFeatureID[],
         chain: Message | null = null
     ): CommandComposer<CreateProjectCommand> {
-        return messageBuilder.buildCommand(CreateProjectCommand, { title: title, description: description }, chain);
+        return messageBuilder.buildCommand(CreateProjectCommand, { title: title, description: description, features_selection: features_selection }, chain);
     }
 }
 
@@ -95,16 +102,23 @@ export class CreateProjectReply extends CommandReply {
 
 /**
  * Command to update a project. Requires an ``UpdateProjectReply`` reply.
+ * Note that the project features are updated using a separate ``UpdateProjectFeaturesCommand`` message.
  *
  * @param project_id - The ID of the project to update.
  * @param title - The title of the project.
  * @param description - An optional project description.
+ * @param features_selection - List of enabled user-selectable features.
  */
 @Message.define("command/project/update")
 export class UpdateProjectCommand extends Command {
     public readonly project_id: ProjectID = 0;
+
     public readonly title: string = "";
     public readonly description: string = "";
+
+    // @ts-ignore
+    @Type(() => String)
+    public readonly features_selection: ProjectFeatureID[] = [];
 
     /**
      * Helper function to easily build this message.
@@ -114,9 +128,12 @@ export class UpdateProjectCommand extends Command {
         project_id: ProjectID,
         title: string,
         description: string,
+        features_selection: ProjectFeatureID[],
         chain: Message | null = null
     ): CommandComposer<UpdateProjectCommand> {
-        return messageBuilder.buildCommand(UpdateProjectCommand, { project_id: project_id, title: title, description: description }, chain);
+        return messageBuilder.buildCommand(UpdateProjectCommand, {
+            project_id: project_id, title: title, description: description, features_selection: features_selection
+        }, chain);
     }
 }
 

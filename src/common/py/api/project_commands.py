@@ -11,7 +11,7 @@ from ..core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ..data.entities import Project, ProjectID
+from ..data.entities import Project, ProjectID, ProjectFeatureStore, ProjectFeatureID
 
 
 @Message.define("command/project/list")
@@ -69,6 +69,7 @@ class CreateProjectCommand(Command):
     Args:
         title: The title of the project.
         description: An optional project description.
+        features_selection: List of enabled user-selectable features.
 
     Notes:
         Requires a ``CreateProjectReply`` reply.
@@ -77,12 +78,17 @@ class CreateProjectCommand(Command):
     title: str
     description: str
 
+    features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
+        default_factory=list
+    )
+
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
         title: str,
         description: str,
+        features_selection: typing.List[ProjectFeatureID],
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -93,6 +99,7 @@ class CreateProjectCommand(Command):
             chain,
             title=title,
             description=description,
+            features_selection=features_selection,
         )
 
 
@@ -128,19 +135,26 @@ class CreateProjectReply(CommandReply):
 class UpdateProjectCommand(Command):
     """
     Command to update an existing project.
+    Note that the project features are updated using a separate ``UpdateProjectFeaturesCommand`` message.
 
     Args:
         project_id: The ID of the project to update.
         title: The title of the project.
         description: An optional project description.
+        features_selection: List of enabled user-selectable features.
 
     Notes:
         Requires an ``UpdateProjectReply`` reply.
     """
 
     project_id: ProjectID
+
     title: str
     description: str
+
+    features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
+        default_factory=list
+    )
 
     @staticmethod
     def build(
@@ -149,6 +163,7 @@ class UpdateProjectCommand(Command):
         project_id: ProjectID,
         title: str,
         description: str,
+        features_selection: typing.List[ProjectFeatureID],
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -160,6 +175,7 @@ class UpdateProjectCommand(Command):
             project_id=project_id,
             title=title,
             description=description,
+            features_selection=features_selection,
         )
 
 
