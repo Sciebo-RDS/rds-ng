@@ -25,7 +25,10 @@ class MemoryProjectStorage(ProjectStorage):
 
     def remove(self, entity: Project) -> None:
         with self._lock:
-            entity.status = Project.Status.DELETED
+            from common.py.data.entities import clone_entity
+
+            proj_deleted = clone_entity(entity, status=Project.Status.DELETED)
+            self.add(proj_deleted)
 
             try:
                 del MemoryProjectStorage._projects[entity.project_id]

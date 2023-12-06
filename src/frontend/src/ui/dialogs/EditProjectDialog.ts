@@ -4,7 +4,7 @@ import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
 import { type Project } from "@common/data/entities/Project";
 import {
     extendedDialog,
-    type ExtendedDialogResult,
+    type ExtendedDialogResult
 } from "@common/ui/dialogs/ExtendedDialog";
 
 import { type FrontendComponent } from "@/component/FrontendComponent";
@@ -36,8 +36,7 @@ export async function editProjectDialog(
         {
             header: project ? "Project settings" : "New project",
             modal: true,
-            contentClass:
-                "w-[20vw] w-full min-w-[40rem] shadow-inner !pt-4",
+            contentClass: "w-[20vw] w-full min-w-[40rem] shadow-inner !pt-4"
         },
         {
             title: project?.title || "",
@@ -47,7 +46,7 @@ export async function editProjectDialog(
         {
             hasAcceptButton: true,
             acceptLabel: project ? "Save" : "Create",
-            acceptIcon: "material-icons-outlined mi-done"
+            acceptIcon: "material-icons-outlined mi-done",
 
             hasRejectButton: true,
             rejectLabel: "Cancel",
