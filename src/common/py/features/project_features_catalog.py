@@ -5,7 +5,7 @@ from ..utils import ItemsCatalog
 @ItemsCatalog.define()
 class ProjectFeaturesCatalog(ItemsCatalog[ProjectFeature]):
     """
-    Global catalog of all registered backend types.
+    Global catalog of all registered project features.
 
     This is a globally accessible list of all project features, associated with their respective IDs.
     """
