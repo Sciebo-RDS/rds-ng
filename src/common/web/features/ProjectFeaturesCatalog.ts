@@ -2,7 +2,7 @@ import { ItemsCatalog } from "../utils/ItemsCatalog";
 import { ProjectFeature, ProjectFeatureFlags } from "./ProjectFeature";
 
 /**
- * Global catalog of all registered backend types.
+ * Global catalog of all registered project features.
  *
  * This is a globally accessible list of all project features, associated with their respective IDs.
  */
