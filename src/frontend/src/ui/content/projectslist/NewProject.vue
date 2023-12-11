@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 
+import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { CreateProjectAction } from "@/ui/actions/CreateProjectAction";
 
@@ -9,7 +11,7 @@ const comp = FrontendComponent.inject();
 function createProject() {
     const action = new CreateProjectAction(comp);
     action.showEditDialog().then((data) => {
-        action.prepare(data.title, data.description, data.selectedFeatures);
+        action.prepare(data.title, data.description, data.optionalSnapIns as ProjectFeatureID[]);
         action.execute();
     });
 }

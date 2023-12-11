@@ -6,9 +6,9 @@ import Textarea from "primevue/textarea";
 import { string as ystring } from "yup";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { ProjectFeatureFlags } from "@common/features/ProjectFeature";
+import { SnapInFlags } from "@/ui/snapins/SnapIn";
 
-import { ProjectFeaturesCatalog } from "@common/features/ProjectFeaturesCatalog";
+import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 import { extendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
 
@@ -18,7 +18,7 @@ const { dialogData, acceptDialog, useValidator } = extendedDialogTools();
 const { vFocus } = useDirectives();
 
 const comp = FrontendComponent.inject();
-const optFeatures = ProjectFeaturesCatalog.filter(ProjectFeatureFlags.Optional);
+const optSnapIns = SnapInsCatalog.filter(SnapInFlags.Optional);
 
 const validator = useValidator({
         title: ystring().required().label("Title").default(dialogData.userData.title),
@@ -45,9 +45,9 @@ const title = validator.defineComponentBinds("title");
         </Panel>
 
         <Panel header="Features" :pt="{ header: ' !p-3' }">
-            <div v-for="feature of optFeatures" :key="feature.featureID" class="flex align-items-center pb-1">
-                <Checkbox v-model="dialogData.userData.selectedFeatures" :inputId="feature.featureID" :value="feature.featureID" />
-                <label :for="feature.featureID" class="pl-1.5">{{ feature.optionName }}</label>
+            <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
+                <Checkbox v-model="dialogData.userData.optionalSnapIns" :inputId="snapIn.snapInID" :value="snapIn.snapInID" />
+                <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.optionName }}</label>
             </div>
         </Panel>
     </form>

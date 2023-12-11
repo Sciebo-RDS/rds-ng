@@ -1,10 +1,10 @@
 import typing
 
-from .project_feature import ProjectFeature
+from .project_feature import SnapIn
 from .. import ProjectFeatureID
 
 
-class MetadataFeature(ProjectFeature):
+class MetadataSnapIn(SnapIn):
     """
     Data class for the metadata project feature.
     """

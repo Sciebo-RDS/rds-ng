@@ -1,4 +1,4 @@
 from .project_features import ProjectFeatures
 
-from .data_management_plan_feature import DataManagementPlanFeature
-from .metadata_feature import MetadataFeature
+from .data_management_plan_feature import DataManagementPlanSnapIn
+from .metadata_feature import MetadataSnapIn

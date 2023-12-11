@@ -3,8 +3,8 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
-from .data_management_plan_feature import DataManagementPlanFeature
-from .metadata_feature import MetadataFeature
+from .data_management_plan_feature import DataManagementPlanSnapIn
+from .metadata_feature import MetadataSnapIn
 from .. import ProjectFeatureID
 
 
@@ -20,7 +20,7 @@ class ProjectFeatures:
         optional_features: A list of all user-enabled optional features (this might include features that are only present in the UI bot not the backend).
     """
 
-    metadata: MetadataFeature = field(default_factory=MetadataFeature)
-    dmp: DataManagementPlanFeature = field(default_factory=DataManagementPlanFeature)
+    metadata: MetadataSnapIn = field(default_factory=MetadataSnapIn)
+    dmp: DataManagementPlanSnapIn = field(default_factory=DataManagementPlanSnapIn)
 
     optional_features: typing.List[ProjectFeatureID] = field(default_factory=list)

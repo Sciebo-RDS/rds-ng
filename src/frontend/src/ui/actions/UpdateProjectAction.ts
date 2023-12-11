@@ -24,10 +24,10 @@ export class UpdateProjectAction extends FrontendCommandAction<UpdateProjectComm
         return editProjectDialog(this._component, project);
     }
 
-    public prepare(projectID: ProjectID, title: string, description: string, featuresSelection: ProjectFeatureID[]): CommandComposer<UpdateProjectCommand> {
+    public prepare(projectID: ProjectID, title: string, description: string, optionalFeatures: ProjectFeatureID[]): CommandComposer<UpdateProjectCommand> {
         this.addDefaultNotifiers(title);
 
-        this._composer = UpdateProjectCommand.build(this.messageBuilder, projectID, title, description, featuresSelection).timeout(this._regularTimeout);
+        this._composer = UpdateProjectCommand.build(this.messageBuilder, projectID, title, description, optionalFeatures).timeout(this._regularTimeout);
         return this._composer;
     }
 

@@ -14,7 +14,6 @@ import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from
 
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
-import { registerProjectFeatures } from "../features/Features";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
@@ -71,7 +70,6 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
             throw new Error("A component instance has already been created");
         }
         WebComponent._instance = this;
-
 
         let metaInfo = new MetaInformation();
         let compInfo = metaInfo.getComponent(compID.unit);
@@ -175,9 +173,6 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      */
     public run(): void {
         logging.info("Running component");
-
-        // Register all project features
-        registerProjectFeatures(this._userInterface.configureProjectFeaturePanels());
 
         // Create all basic services
         createComponentService(this);

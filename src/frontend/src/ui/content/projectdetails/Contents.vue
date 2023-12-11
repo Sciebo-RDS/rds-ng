@@ -4,8 +4,9 @@ import TabView from "primevue/tabview";
 import { computed, toRefs } from "vue";
 
 import { Project } from "@common/data/entities/Project";
-import { ProjectFeatureFlags } from "@common/features/ProjectFeature";
-import { ProjectFeaturesCatalog } from "@common/features/ProjectFeaturesCatalog";
+
+import { SnapInFlags } from "@/ui/snapins/SnapIn";
+import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
 const props = defineProps({
     project: {
@@ -16,11 +17,11 @@ const props = defineProps({
 const { project } = toRefs(props);
 
 const panels = computed(() => {
-    // Select all features that provide a panel and are either non-optional or turned on by the user
-    const panelFeatures = ProjectFeaturesCatalog.filter(ProjectFeatureFlags.HasPanel)
-        .filter((feature) => !feature.hasFlags(ProjectFeatureFlags.Optional) || project!.value.features_selection.includes(feature.featureID));
-    return panelFeatures.map((feature) => {
-        return { title: feature.displayName, component: feature.panel };
+    // Select all snap-ins that provide a tab panel and are either non-optional or turned on by the user
+    const panelSnapIns = SnapInsCatalog.filter(SnapInFlags.HasTabPanel)
+        .filter((snapIn) => !snapIn.hasFlags(SnapInFlags.Optional) || project!.value.features.optional_features.includes(snapIn.snapInID));
+    return panelSnapIns.map((snapIn) => {
+        return { title: snapIn.displayName, component: snapIn.tabPanel };
     });
 });
 </script>

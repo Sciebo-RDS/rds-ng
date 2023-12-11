@@ -88,7 +88,7 @@ class CreateProjectCommand(Command):
         *,
         title: str,
         description: str,
-        features_selection: typing.List[ProjectFeatureID],
+        optional_features: typing.List[ProjectFeatureID],
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -99,7 +99,7 @@ class CreateProjectCommand(Command):
             chain,
             title=title,
             description=description,
-            features_selection=features_selection,
+            optional_features=optional_features,
         )
 
 
@@ -163,7 +163,7 @@ class UpdateProjectCommand(Command):
         project_id: ProjectID,
         title: str,
         description: str,
-        features_selection: typing.List[ProjectFeatureID],
+        optional_features: typing.List[ProjectFeatureID],
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -175,7 +175,7 @@ class UpdateProjectCommand(Command):
             project_id=project_id,
             title=title,
             description=description,
-            features_selection=features_selection,
+            optional_features=optional_features,
         )
 
 

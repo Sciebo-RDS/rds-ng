@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 
-import { type ProjectFeatureID, type ProjectID } from "./EntityTypes";
-import { ProjectFeatureStore } from "./ProjectFeatureStore";
+import { type ProjectID } from "./EntityTypes";
+import { ProjectFeatures } from "./features/ProjectFeatures";
 
 /*
  * The status of a project.
@@ -19,8 +19,7 @@ export const enum ProjectStatus {
  * @param title - The title of the project.
  * @param description - An optional project description.
  * @param status - The project status.
- * @param features_stores - The data stores of the various project features.
- * @param features_selection - List of enabled user-selectable features.
+ * @param features - All project features data.
  */
 export class Project {
     public readonly project_id: ProjectID;
@@ -33,18 +32,17 @@ export class Project {
     public readonly status: ProjectStatus = ProjectStatus.Active;
 
     // @ts-ignore
-    @Type(() => ProjectFeatureStore)
-    public readonly features_stores: Map<ProjectFeatureID, ProjectFeatureStore> = new Map<ProjectFeatureID, ProjectFeatureStore>();
-    // @ts-ignore
-    @Type(() => String)
-    public readonly features_selection: ProjectFeatureID[] = [];
+    @Type(() => ProjectFeatures)
+    public readonly features: ProjectFeatures = new ProjectFeatures();
 
-    public constructor(projectID: ProjectID, creationTime: number, title: string, description: string = "") {
+    public constructor(projectID: ProjectID, creationTime: number, title: string, description: string = "", features: ProjectFeatures = new ProjectFeatures()) {
         this.project_id = projectID;
 
         this.creation_time = creationTime;
 
         this.title = title;
         this.description = description;
+
+        this.features = features;
     }
 }

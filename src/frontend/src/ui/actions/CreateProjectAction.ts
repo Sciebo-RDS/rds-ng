@@ -21,10 +21,10 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
         return editProjectDialog(this._component, undefined);
     }
 
-    public prepare(title: string, description: string, featuresSelection: ProjectFeatureID[]): CommandComposer<CreateProjectCommand> {
+    public prepare(title: string, description: string, optionalFeatures: ProjectFeatureID[]): CommandComposer<CreateProjectCommand> {
         this.addDefaultNotifiers(title);
 
-        this._composer = CreateProjectCommand.build(this.messageBuilder, title, description, featuresSelection).timeout(this._regularTimeout);
+        this._composer = CreateProjectCommand.build(this.messageBuilder, title, description, optionalFeatures).timeout(this._regularTimeout);
         return this._composer;
     }
 
