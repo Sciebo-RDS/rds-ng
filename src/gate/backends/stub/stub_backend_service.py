@@ -1,10 +1,9 @@
 import time
-import typing
 
 from common.py.component import BackendComponent
 from common.py.data.entities import clone_entity
+from common.py.data.entities.features import ProjectFeatures
 from common.py.services import Service
-
 from .stub_backend_service_context import StubBackendServiceContext
 from .stub_utils import send_projects_list
 
@@ -56,7 +55,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             creation_time=time.time(),
             title=msg.title,
             description=msg.description,
-            features_selection=msg.features_selection,
+            features=ProjectFeatures(optional_features=msg.optional_features),
         )
 
         try:
@@ -88,11 +87,14 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             project := ctx.storage_pool.project_storage.get(msg.project_id)
         ) is not None:
             try:
+                features_upd = clone_entity(
+                    project.features, optional_features=msg.optional_features
+                )
                 project_upd = clone_entity(
                     project,
                     title=msg.title,
                     description=msg.description,
-                    features_selection=msg.features_selection,
+                    features=features_upd,
                 )
                 ProjectVerifier(project_upd).verify_update()
 
