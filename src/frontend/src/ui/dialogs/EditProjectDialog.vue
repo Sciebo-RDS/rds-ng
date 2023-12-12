@@ -3,11 +3,13 @@ import Checkbox from "primevue/checkbox";
 import InputText from "primevue/inputtext";
 import Panel from "primevue/panel";
 import Textarea from "primevue/textarea";
+import { watch } from "vue";
 import { string as ystring } from "yup";
 
+import { type SnapInID } from "@common/data/entities/EntityTypes";
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { SnapInFlags } from "@/ui/snapins/SnapIn";
 
+import { SnapInFlags } from "@/ui/snapins/SnapIn";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 import { extendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
@@ -26,6 +28,17 @@ const validator = useValidator({
     }
 );
 const title = validator.defineComponentBinds("title");
+
+// Reflect selected features based on snap-ins with associated project features
+watch(() => dialogData.userData.options.optional_snapins, (snapins) => {
+    dialogData.userData.options.optional_features = [];
+    snapins.forEach((snapInID: SnapInID) => {
+        const snapIn = SnapInsCatalog.findItem(snapInID);
+        if (snapIn?.associatedFeature) {
+            dialogData.userData.options.optional_features.push(snapIn.associatedFeature);
+        }
+    });
+});
 </script>
 
 <template>
@@ -46,7 +59,7 @@ const title = validator.defineComponentBinds("title");
 
         <Panel header="Features" :pt="{ header: ' !p-3' }">
             <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
-                <Checkbox v-model="dialogData.userData.optionalSnapIns" :inputId="snapIn.snapInID" :value="snapIn.snapInID" />
+                <Checkbox v-model="dialogData.userData.options.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" />
                 <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.optionName }}</label>
             </div>
         </Panel>

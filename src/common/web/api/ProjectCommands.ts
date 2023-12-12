@@ -6,8 +6,9 @@ import { CommandComposer } from "../core/messaging/composers/CommandComposer";
 import { CommandReplyComposer } from "../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { Message } from "../core/messaging/Message";
-import { type ProjectFeatureID, type ProjectID } from "../data/entities/EntityTypes";
+import { type ProjectID } from "../data/entities/EntityTypes";
 import { Project } from "../data/entities/Project";
+import { ProjectOptions } from "../data/entities/ProjectOptions";
 
 /**
  * Command to fetch all projects of the current user. Requires a ``ListProjectsReply`` reply.
@@ -52,7 +53,7 @@ export class ListProjectsReply extends CommandReply {
  *
  * @param title - The title of the project.
  * @param description - An optional project description.
- * @param optional_features - A list of all user-enabled optional features (this might include features that are only present in the UI bot not the backend).
+ * @param options - The project options.
  */
 @Message.define("command/project/create")
 export class CreateProjectCommand extends Command {
@@ -60,8 +61,8 @@ export class CreateProjectCommand extends Command {
     public readonly description: string = "";
 
     // @ts-ignore
-    @Type(() => String)
-    public readonly optional_features: ProjectFeatureID[] = [];
+    @Type(() => ProjectOptions)
+    public readonly options: ProjectOptions = new ProjectOptions();
 
     /**
      * Helper function to easily build this message.
@@ -70,10 +71,10 @@ export class CreateProjectCommand extends Command {
         messageBuilder: MessageBuilder,
         title: string,
         description: string,
-        optional_features: ProjectFeatureID[],
+        options: ProjectOptions,
         chain: Message | null = null
     ): CommandComposer<CreateProjectCommand> {
-        return messageBuilder.buildCommand(CreateProjectCommand, { title: title, description: description, optional_features: optional_features }, chain);
+        return messageBuilder.buildCommand(CreateProjectCommand, { title: title, description: description, options: options }, chain);
     }
 }
 
@@ -107,7 +108,7 @@ export class CreateProjectReply extends CommandReply {
  * @param project_id - The ID of the project to update.
  * @param title - The title of the project.
  * @param description - An optional project description.
- * @param optional_features - A list of all user-enabled optional features (this might include features that are only present in the UI bot not the backend).
+ * @param options - The project options.
  */
 @Message.define("command/project/update")
 export class UpdateProjectCommand extends Command {
@@ -117,8 +118,8 @@ export class UpdateProjectCommand extends Command {
     public readonly description: string = "";
 
     // @ts-ignore
-    @Type(() => String)
-    public readonly optional_features: ProjectFeatureID[] = [];
+    @Type(() => ProjectOptions)
+    public readonly options: ProjectOptions = new ProjectOptions();
 
     /**
      * Helper function to easily build this message.
@@ -128,12 +129,10 @@ export class UpdateProjectCommand extends Command {
         project_id: ProjectID,
         title: string,
         description: string,
-        optional_features: ProjectFeatureID[],
+        options: ProjectOptions,
         chain: Message | null = null
     ): CommandComposer<UpdateProjectCommand> {
-        return messageBuilder.buildCommand(UpdateProjectCommand, {
-            project_id: project_id, title: title, description: description, optional_features: optional_features
-        }, chain);
+        return messageBuilder.buildCommand(UpdateProjectCommand, { project_id: project_id, title: title, description: description, options: options }, chain);
     }
 }
 

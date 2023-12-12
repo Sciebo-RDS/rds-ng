@@ -1,11 +1,11 @@
 function isObject(item: any) {
-    return item && typeof item === 'object' && !Array.isArray(item);
+    return item && typeof item === "object" && !Array.isArray(item);
 }
 
 type MergeObjectType = Record<string | number | symbol, any>;
 
 /**
- * Deep merge two objects.
+ * Deep-merge two objects.
  *
  * @param target - The target object.
  * @param sources - The source objects to merge into the target.

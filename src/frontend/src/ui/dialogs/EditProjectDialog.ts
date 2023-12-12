@@ -1,10 +1,10 @@
 import { defineAsyncComponent } from "vue";
 
-import { type Project } from "@common/data/entities/Project";
+import { Project } from "@common/data/entities/Project";
+import { ProjectOptions } from "@common/data/entities/ProjectOptions";
 import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 
-import { type FrontendComponent } from "@/component/FrontendComponent";
-import { type SnapInID } from "@/ui/snapins/SnapIn";
+import { FrontendComponent } from "@/component/FrontendComponent";
 
 /**
  * The data used by the ``EditProjectDialog``.
@@ -12,7 +12,7 @@ import { type SnapInID } from "@/ui/snapins/SnapIn";
 export interface EditProjectDialogData {
     title: string;
     description: string;
-    optionalSnapIns: SnapInID[];
+    options: ProjectOptions,
 }
 
 /**
@@ -38,7 +38,7 @@ export async function editProjectDialog(
         {
             title: project?.title || "",
             description: project?.description || "",
-            optionalSnapIns: project?.features.optional_features as SnapInID[] || []
+            options: Object.assign(new ProjectOptions(), project?.options)
         },
         {
             hasAcceptButton: true,

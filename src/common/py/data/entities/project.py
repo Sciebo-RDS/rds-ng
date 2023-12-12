@@ -5,6 +5,7 @@ from dataclasses_json import dataclass_json
 
 from .entity_types import ProjectID
 from .features import ProjectFeatures
+from .project_options import ProjectOptions
 
 
 @dataclass_json
@@ -19,7 +20,8 @@ class Project:
         title: The title of the project.
         description: An optional project description.
         status: The project status.
-        features: All project features data.
+        features: All project features.
+        options: All project options.
     """
 
     class Status(IntEnum):
@@ -40,3 +42,4 @@ class Project:
     status: Status = Status.ACTIVE
 
     features: ProjectFeatures = field(default_factory=ProjectFeatures)
+    options: ProjectOptions = field(default_factory=ProjectOptions)

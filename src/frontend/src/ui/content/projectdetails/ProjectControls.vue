@@ -2,7 +2,6 @@
 import Button from "primevue/button";
 import { toRefs } from "vue";
 
-import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
 import { Project } from "@common/data/entities/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -20,7 +19,7 @@ const { project } = toRefs(props);
 function editProject() {
     const action = new UpdateProjectAction(comp);
     action.showEditDialog(project.value).then((data) => {
-        action.prepare(project.value.project_id, data.title, data.description, data.optionalSnapIns as ProjectFeatureID[]);
+        action.prepare(project.value.project_id, data.title, data.description, data.options);
         action.execute();
     });
 }

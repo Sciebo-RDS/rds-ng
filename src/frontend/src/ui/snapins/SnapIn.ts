@@ -1,3 +1,5 @@
+import { type ProjectFeatureID, type SnapInID } from "@common/data/entities/EntityTypes";
+
 import { type Component as VueComponent, defineAsyncComponent } from "vue";
 
 /**
@@ -14,8 +16,10 @@ export const enum SnapInFlags {
     // Optional snap-ins can be turned on or off for a project
     Optional = 1 << 0,
 
+    // Whether a project feature is directly associated with this snap-in
+    HasAssociatedFeature = 1 << 1,
     // Whether the snap-in has a tab panel
-    HasTabPanel = 1 << 1
+    HasTabPanel = 1 << 2
 }
 
 /**
@@ -30,14 +34,12 @@ export interface SnapInOptions {
     /** The toggle-option name (only effective for optional snap-ins). */
     optionName?: string;
 
+    /** The ID of a directly associated project feature. */
+    associatedFeature?: ProjectFeatureID;
+
     /** If a Vue component loader is specified, it will be used to load the snap-in's tab panel dynamically. */
     tabPanel?: SnapInPanelLoader;
 }
-
-/**
- * The snap-in ID type.
- */
-export type SnapInID = string;
 
 /**
  * A snap-in represents a certain feature aspect of a project that integrates itself automatically into the UI.
@@ -49,6 +51,8 @@ export abstract class SnapIn {
 
     private readonly _displayName: string;
     private readonly _optionName: string;
+
+    private readonly _associatedFeature: ProjectFeatureID | undefined = undefined;
 
     private readonly _tabPanel: VueComponent | undefined = undefined;
 
@@ -63,6 +67,8 @@ export abstract class SnapIn {
 
         this._displayName = options.displayName;
         this._optionName = options.optionName || "";
+
+        this._associatedFeature = options.associatedFeature;
 
         if (options.tabPanel) {
             this._flags |= SnapInFlags.HasTabPanel;
@@ -96,6 +102,13 @@ export abstract class SnapIn {
      */
     public get optionName(): string {
         return this._optionName;
+    }
+
+    /**
+     * The ID of a directly associated project feature.
+     */
+    public get associatedFeature(): ProjectFeatureID | undefined {
+        return this._associatedFeature;
     }
 
     /**

@@ -4,7 +4,6 @@ import Menu from "primevue/menu";
 import ProgressSpinner from "primevue/progressspinner";
 import { ref, toRefs } from "vue";
 
-import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
 import { Project } from "@common/data/entities/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -40,7 +39,7 @@ const editMenuItems = ref([
                 command: () => {
                     const action = new UpdateProjectAction(comp);
                     action.showEditDialog(project!.value).then((data) => {
-                        action.prepare(project!.value.project_id, data.title, data.description, data.optionalSnapIns as ProjectFeatureID[]);
+                        action.prepare(project!.value.project_id, data.title, data.description, data.options);
                         action.execute();
                     });
                 }

@@ -1,4 +1,7 @@
-import { SnapIn, SnapInFlags, type SnapInID } from "../SnapIn";
+import { type SnapInID } from "@common/data/entities/EntityTypes";
+import { DataManagementPlanFeature } from "@common/data/entities/features/DataManagementPlanFeature";
+
+import { SnapIn, SnapInFlags } from "../SnapIn";
 
 export class DataManagementPlanSnapIn extends SnapIn {
     public static readonly SnapInID: SnapInID = "dmp";
@@ -8,6 +11,7 @@ export class DataManagementPlanSnapIn extends SnapIn {
             flags: SnapInFlags.Optional,
             displayName: "Data Management Plan",
             optionName: "Data Management Plan",
+            associatedFeature: DataManagementPlanFeature.FeatureID,
             tabPanel: () => import("./DataManagementPlanPanel.vue")
         });
     }

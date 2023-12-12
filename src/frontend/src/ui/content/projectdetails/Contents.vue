@@ -19,7 +19,7 @@ const { project } = toRefs(props);
 const panels = computed(() => {
     // Select all snap-ins that provide a tab panel and are either non-optional or turned on by the user
     const panelSnapIns = SnapInsCatalog.filter(SnapInFlags.HasTabPanel)
-        .filter((snapIn) => !snapIn.hasFlags(SnapInFlags.Optional) || project!.value.features.optional_features.includes(snapIn.snapInID));
+        .filter((snapIn) => !snapIn.hasFlags(SnapInFlags.Optional) || project!.value.options.optional_snapins.includes(snapIn.snapInID));
     return panelSnapIns.map((snapIn) => {
         return { title: snapIn.displayName, component: snapIn.tabPanel };
     });
