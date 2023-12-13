@@ -1,4 +1,4 @@
-import { type SnapInID } from "@common/data/entities/EntityTypes";
+import { type SnapInID } from "@/ui/snapins/SnapIn";
 
 /**
  * Frontend-specific UI settings.

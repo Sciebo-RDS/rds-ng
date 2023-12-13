@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
-from .data_management_plan_feature import DataManagementPlanSnapIn
-from .metadata_feature import MetadataSnapIn
+from .data_management_plan_feature import DataManagementPlanFeature
+from .metadata_feature import MetadataFeature
 
 
 @dataclass_json
@@ -17,5 +17,5 @@ class ProjectFeatures:
         dmp: The data management plan feature.
     """
 
-    metadata: MetadataSnapIn = field(default_factory=MetadataSnapIn)
-    dmp: DataManagementPlanSnapIn = field(default_factory=DataManagementPlanSnapIn)
+    metadata: MetadataFeature = field(default_factory=MetadataFeature)
+    dmp: DataManagementPlanFeature = field(default_factory=DataManagementPlanFeature)

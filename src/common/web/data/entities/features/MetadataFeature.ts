@@ -1,5 +1,4 @@
-import { type ProjectFeatureID } from "../EntityTypes";
-import { ProjectFeature } from "./ProjectFeature";
+import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
  * Data class for the metadata project feature.

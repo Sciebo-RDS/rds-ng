@@ -1,10 +1,9 @@
 import typing
 
-from .project_feature import SnapIn
-from .. import ProjectFeatureID
+from .project_feature import ProjectFeature, ProjectFeatureID
 
 
-class DataManagementPlanSnapIn(SnapIn):
+class DataManagementPlanFeature(ProjectFeature):
     """
     Data class for the data management plan project feature.
     """

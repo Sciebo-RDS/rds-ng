@@ -1,4 +1,4 @@
-import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
+import { type ProjectFeatureID } from "@common/data/entities/features/ProjectFeature";
 
 /**
  * The snap-in identifier type.

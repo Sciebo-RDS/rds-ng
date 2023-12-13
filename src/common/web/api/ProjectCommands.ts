@@ -6,8 +6,7 @@ import { CommandComposer } from "../core/messaging/composers/CommandComposer";
 import { CommandReplyComposer } from "../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
 import { Message } from "../core/messaging/Message";
-import { type ProjectID } from "../data/entities/EntityTypes";
-import { Project } from "../data/entities/Project";
+import { Project, type ProjectID } from "../data/entities/Project";
 import { ProjectOptions } from "../data/entities/ProjectOptions";
 
 /**

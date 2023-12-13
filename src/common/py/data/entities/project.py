@@ -3,9 +3,10 @@ from enum import IntEnum
 
 from dataclasses_json import dataclass_json
 
-from .entity_types import ProjectID
 from .features import ProjectFeatures
 from .project_options import ProjectOptions
+
+ProjectID = int
 
 
 @dataclass_json

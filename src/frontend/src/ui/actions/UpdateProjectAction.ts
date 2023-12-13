@@ -1,7 +1,6 @@
 import { UpdateProjectCommand } from "@common/api/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import { type ProjectID } from "@common/data/entities/EntityTypes";
-import { Project } from "@common/data/entities/Project";
+import { Project, type ProjectID } from "@common/data/entities/Project";
 import { ProjectOptions } from "@common/data/entities/ProjectOptions";
 import { ActionState } from "@common/ui/actions/Action";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";

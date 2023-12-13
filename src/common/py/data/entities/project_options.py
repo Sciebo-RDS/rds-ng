@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
-from .entity_types import ProjectFeatureID
+from .features import ProjectFeatureID
 
 UIOptions = typing.Dict[str, typing.Any]
 

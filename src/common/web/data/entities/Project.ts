@@ -1,8 +1,12 @@
 import { Type } from "class-transformer";
 
-import { type ProjectID } from "./EntityTypes";
 import { ProjectFeatures } from "./features/ProjectFeatures";
 import { ProjectOptions } from "./ProjectOptions";
+
+/**
+ * The project ID type.
+ */
+export type ProjectID = number;
 
 /*
  * The status of a project.
