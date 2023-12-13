@@ -1,44 +1,34 @@
 import { type ProjectFeatureID, type SnapInID } from "@common/data/entities/EntityTypes";
 
-import { type Component as VueComponent, defineAsyncComponent } from "vue";
-
 /**
  * Dynamic panel Vue component loader.
  */
 export type SnapInPanelLoader = () => any;
 
 /**
- * Possible flags for a snap-in.
- */
-export const enum SnapInFlags {
-    None = 0,
-
-    // Optional snap-ins can be turned on or off for a project
-    Optional = 1 << 0,
-
-    // Whether a project feature is directly associated with this snap-in
-    HasAssociatedFeature = 1 << 1,
-    // Whether the snap-in has a tab panel
-    HasTabPanel = 1 << 2
-}
-
-/**
  * Options to initialize a snap-in.
  */
 export interface SnapInOptions {
-    /** Snap-In flags. */
-    flags: SnapInFlags;
-
     /** The general display name. */
-    displayName: string;
-    /** The toggle-option name (only effective for optional snap-ins). */
-    optionName?: string;
+    name: string;
 
-    /** The ID of a directly associated project feature. */
-    associatedFeature?: ProjectFeatureID;
+    /** Options specific to optional snap-ins (and their associated feature, if any). */
+    optional?: {
+        /** The label name of the option (shown as a checkbox) for this snap-in. */
+        label: string;
 
-    /** If a Vue component loader is specified, it will be used to load the snap-in's tab panel dynamically. */
-    tabPanel?: SnapInPanelLoader;
+        /** The ID of a directly associated project feature. If set, the associated feature will be en-/disabled alongside the snap-in. */
+        feature?: ProjectFeatureID;
+    };
+
+    /** Tab-panel options. */
+    tabPanel?: {
+        /** The tab panel label name (displayed as its header). */
+        label: string;
+
+        /** The panel loader. */
+        loader: SnapInPanelLoader;
+    };
 }
 
 /**
@@ -46,15 +36,7 @@ export interface SnapInOptions {
  */
 export abstract class SnapIn {
     private readonly _snapInID: SnapInID;
-
-    private readonly _flags: SnapInFlags;
-
-    private readonly _displayName: string;
-    private readonly _optionName: string;
-
-    private readonly _associatedFeature: ProjectFeatureID | undefined = undefined;
-
-    private readonly _tabPanel: VueComponent | undefined = undefined;
+    private readonly _options: SnapInOptions;
 
     /**
      * @param snapInID - The ID of the snap-in.
@@ -62,18 +44,7 @@ export abstract class SnapIn {
      */
     protected constructor(snapInID: SnapInID, options: SnapInOptions) {
         this._snapInID = snapInID;
-
-        this._flags = options.flags;
-
-        this._displayName = options.displayName;
-        this._optionName = options.optionName || "";
-
-        this._associatedFeature = options.associatedFeature;
-
-        if (options.tabPanel) {
-            this._flags |= SnapInFlags.HasTabPanel;
-            this._tabPanel = defineAsyncComponent(options.tabPanel);
-        }
+        this._options = options;
     }
 
     /**
@@ -84,37 +55,23 @@ export abstract class SnapIn {
     }
 
     /**
-     * Check if certain flags are set.
+     * The snap-in options.
      */
-    public hasFlags(flags: SnapInFlags): boolean {
-        return (this._flags & flags) === flags;
+    public get options(): SnapInOptions {
+        return this._options;
     }
 
     /**
-     * The general display name.
+     * Whether this snap-in is optional.
      */
-    public get displayName(): string {
-        return this._displayName;
+    public isOptional(): boolean {
+        return !!this._options.optional;
     }
 
     /**
-     * The toggle-option name.
+     * Whether this snap-in has a tab panel.
      */
-    public get optionName(): string {
-        return this._optionName;
-    }
-
-    /**
-     * The ID of a directly associated project feature.
-     */
-    public get associatedFeature(): ProjectFeatureID | undefined {
-        return this._associatedFeature;
-    }
-
-    /**
-     * The snap-in's tab panel.
-     */
-    public get tabPanel(): VueComponent | undefined {
-        return this._tabPanel;
+    public hasTabPanel(): boolean {
+        return !!this._options.tabPanel;
     }
 }

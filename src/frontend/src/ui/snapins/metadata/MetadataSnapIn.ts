@@ -1,18 +1,22 @@
 import { type SnapInID } from "@common/data/entities/EntityTypes";
 import { MetadataFeature } from "@common/data/entities/features/MetadataFeature";
 
-import { SnapIn, SnapInFlags } from "../SnapIn";
+import { SnapIn } from "../SnapIn";
 
 export class MetadataSnapIn extends SnapIn {
     public static readonly SnapInID: SnapInID = "metadata";
 
     public constructor() {
         super(MetadataSnapIn.SnapInID, {
-            flags: SnapInFlags.Optional,
-            displayName: "Project Metadata",
-            optionName: "Project Metadata",
-            associatedFeature: MetadataFeature.FeatureID,
-            tabPanel: () => import("./MetadataPanel.vue")
+            name: "Project Metadata",
+            optional: {
+                label: "Project Metadata",
+                feature: MetadataFeature.FeatureID
+            },
+            tabPanel: {
+                label: "Project Metadata",
+                loader: () => import("./MetadataPanel.vue")
+            }
         });
     }
 }

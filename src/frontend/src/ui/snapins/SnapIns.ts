@@ -29,6 +29,6 @@ export function registerSnapIns(): void {
     registerSnapIn(SummarySnapIn);
 
     // Print all available snap-ins for debugging purposes
-    const names = Object.keys(SnapInsCatalog.items).map((item) => `${SnapInsCatalog.items[item].displayName} (${item})`);
+    const names = Object.keys(SnapInsCatalog.items).map((item) => `${SnapInsCatalog.items[item].options.name} (${item})`);
     logging.debug(`Registered snap-ins: ${names.join("; ")}`);
 }

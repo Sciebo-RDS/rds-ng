@@ -24,7 +24,7 @@ def fill_stub_data() -> None:
             description="This is our first attempt to create a project",
             options=ProjectOptions(
                 optional_features=["metadata", "dmp"],
-                optional_snapins=["metadata", "dmp"],
+                ui={"optional_snapins": ["metadata", "dmp"]},
             ),
         )
     )
@@ -36,7 +36,7 @@ def fill_stub_data() -> None:
             description="If you read this, the FBI is already on their way to you!",
             options=ProjectOptions(
                 optional_features=["metadata", "dmp"],
-                optional_snapins=["metadata", "dmp"],
+                ui={"optional_snapins": ["metadata", "dmp"]},
             ),
         )
     )
@@ -48,7 +48,7 @@ def fill_stub_data() -> None:
             description="To be honest, this project sucks. It is crap. Do not even look at it!",
             options=ProjectOptions(
                 optional_features=["metadata"],
-                optional_snapins=["metadata"],
+                ui={"optional_snapins": ["metadata"]},
             ),
         )
     )
@@ -60,7 +60,7 @@ def fill_stub_data() -> None:
             description="And frankly, the description should also be shorter. But that's not my fault, it is yours. Of course. BAH! Let me tell you this, never write such a LONG description, trust me, it displays totally crappy.",
             options=ProjectOptions(
                 optional_features=["dmp"],
-                optional_snapins=["dmp"],
+                ui={"optional_snapins": ["dmp"]},
             ),
         )
     )

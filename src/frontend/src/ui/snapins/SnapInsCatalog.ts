@@ -1,6 +1,6 @@
 import { ItemsCatalog } from "@common/utils/ItemsCatalog";
 
-import { SnapIn, SnapInFlags } from "./SnapIn";
+import { SnapIn } from "./SnapIn";
 
 /**
  * Global catalog of all registered snap-ins.
@@ -9,7 +9,26 @@ import { SnapIn, SnapInFlags } from "./SnapIn";
  */
 @ItemsCatalog.define()
 export class SnapInsCatalog extends ItemsCatalog<SnapIn> {
-    public static filter(flags: SnapInFlags): SnapIn[] {
-        return Object.values(this.items).filter((feature) => feature.hasFlags(flags));
+    /**
+     * Select certain snap-ins that satisfy the given predicate.
+     *
+     * @param predicate - The selection criterium.
+     */
+    public static filter(predicate: (snapIn: SnapIn) => boolean): SnapIn[] {
+        return Object.values(this.items).filter(predicate);
+    }
+
+    /**
+     * Retrieve all optional snap-ins.
+     */
+    public static allOptionals(): SnapIn[] {
+        return this.filter((snapIn) => snapIn.isOptional());
+    }
+
+    /**
+     * Retrieve all snap-ins with a tab panel.
+     */
+    public static allWithTabPanel(): SnapIn[] {
+        return this.filter((snapIn) => snapIn.hasTabPanel());
     }
 }

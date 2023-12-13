@@ -3,6 +3,7 @@ import { defineAsyncComponent } from "vue";
 import { Project } from "@common/data/entities/Project";
 import { ProjectOptions } from "@common/data/entities/ProjectOptions";
 import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
+import { deepClone } from "@common/utils/DeepMerge";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
@@ -38,7 +39,7 @@ export async function editProjectDialog(
         {
             title: project?.title || "",
             description: project?.description || "",
-            options: Object.assign(new ProjectOptions(), project?.options)
+            options: deepClone<ProjectOptions>(new ProjectOptions(), project?.options)
         },
         {
             hasAcceptButton: true,
