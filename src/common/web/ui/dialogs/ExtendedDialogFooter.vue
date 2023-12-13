@@ -25,17 +25,17 @@ watch(
 
 <template>
     <div
-        class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] items-center !pt-[1.5rem] shadow-inner"
+        class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] items-center !pt-[1.5rem]"
     >
         <small v-if="errors.length" class="p-error mr-auto text-left">
             <span class="font-bold"
-                >One or more fields in the form are missing or invalid:</span
+            >One or more fields in the form are missing or invalid:</span
             >
             <br />
             <span class="italic">
                 {{ errors[0] }}
                 <span v-if="errors.length > 1"
-                    >(+ {{ errors.length - 1 }} more)</span
+                >(+ {{ errors.length - 1 }} more)</span
                 >
             </span>
         </small>

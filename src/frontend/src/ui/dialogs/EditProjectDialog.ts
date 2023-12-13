@@ -34,7 +34,7 @@ export async function editProjectDialog(
         {
             header: project ? "Project settings" : "New project",
             modal: true,
-            contentClass: "w-[20vw] w-full min-w-[40rem] shadow-inner !pt-4"
+            contentClass: "w-[20vw] w-full min-w-[40rem] !pt-4"
         },
         {
             title: project?.title || "",
