@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, toRefs } from "vue";
+import { computed, defineAsyncComponent, toRefs } from "vue";
 
 import { Project } from "@common/data/entities/Project";
-import { ProjectFeatureFlags } from "@common/features/ProjectFeature";
-import { ProjectFeaturesCatalog } from "@common/features/ProjectFeaturesCatalog";
+
+import { type UIOptions } from "@/data/entities/UIOptions";
+import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
 const props = defineProps({
     project: {
@@ -16,11 +17,15 @@ const props = defineProps({
 const { project } = toRefs(props);
 
 const panels = computed(() => {
-    // Select all features that provide a panel and are either non-optional or turned on by the user
-    const panelFeatures = ProjectFeaturesCatalog.filter(ProjectFeatureFlags.HasPanel)
-        .filter((feature) => !feature.hasFlags(ProjectFeatureFlags.Optional) || project!.value.features_selection.includes(feature.featureID));
-    return panelFeatures.map((feature) => {
-        return { title: feature.displayName, component: feature.panel };
+    // Select all snap-ins that provide a tab panel and are either non-optional or turned on by the user
+    const panelSnapIns = SnapInsCatalog.allWithTabPanel().filter(
+        (snapIn) => {
+            const uiOptions = project!.value.options.ui as UIOptions;
+            return !snapIn.isOptional() || uiOptions.optional_snapins?.includes(snapIn.snapInID);
+        }
+    );
+    return panelSnapIns.map((snapIn) => {
+        return { title: snapIn.options.tabPanel!.label, component: defineAsyncComponent(snapIn.options.tabPanel!.loader) };
     });
 });
 </script>

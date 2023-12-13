@@ -1,5 +1,4 @@
 import time
-import typing
 
 from common.py.component import BackendComponent
 from common.py.data.entities import clone_entity
@@ -56,7 +55,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
             creation_time=time.time(),
             title=msg.title,
             description=msg.description,
-            features_selection=msg.features_selection,
+            options=msg.options,
         )
 
         try:
@@ -92,7 +91,7 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
                     project,
                     title=msg.title,
                     description=msg.description,
-                    features_selection=msg.features_selection,
+                    options=msg.options,
                 )
                 ProjectVerifier(project_upd).verify_update()
 

@@ -90,11 +90,6 @@ class BackendComponent:
 
         info("Running component")
 
-        # Register all project features
-        from ..features import register_project_features
-
-        register_project_features()
-
         # Create all basic services
         from ..services import create_component_service, create_network_service
 

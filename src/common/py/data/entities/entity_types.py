@@ -1,2 +1,0 @@
-ProjectID = int
-ProjectFeatureID = str

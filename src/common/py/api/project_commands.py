@@ -11,7 +11,11 @@ from ..core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ..data.entities import Project, ProjectID, ProjectFeatureStore, ProjectFeatureID
+from ..data.entities import (
+    Project,
+    ProjectID,
+    ProjectOptions,
+)
 
 
 @Message.define("command/project/list")
@@ -69,7 +73,7 @@ class CreateProjectCommand(Command):
     Args:
         title: The title of the project.
         description: An optional project description.
-        features_selection: List of enabled user-selectable features.
+        options: The project options.
 
     Notes:
         Requires a ``CreateProjectReply`` reply.
@@ -78,9 +82,7 @@ class CreateProjectCommand(Command):
     title: str
     description: str
 
-    features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
-        default_factory=list
-    )
+    options: ProjectOptions = dataclasses.field(default_factory=ProjectOptions)
 
     @staticmethod
     def build(
@@ -88,7 +90,7 @@ class CreateProjectCommand(Command):
         *,
         title: str,
         description: str,
-        features_selection: typing.List[ProjectFeatureID],
+        options: ProjectOptions,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -99,7 +101,7 @@ class CreateProjectCommand(Command):
             chain,
             title=title,
             description=description,
-            features_selection=features_selection,
+            options=options,
         )
 
 
@@ -141,7 +143,7 @@ class UpdateProjectCommand(Command):
         project_id: The ID of the project to update.
         title: The title of the project.
         description: An optional project description.
-        features_selection: List of enabled user-selectable features.
+        options: The project options.
 
     Notes:
         Requires an ``UpdateProjectReply`` reply.
@@ -152,9 +154,7 @@ class UpdateProjectCommand(Command):
     title: str
     description: str
 
-    features_selection: typing.List[ProjectFeatureID] = dataclasses.field(
-        default_factory=list
-    )
+    options: ProjectOptions = dataclasses.field(default_factory=ProjectOptions)
 
     @staticmethod
     def build(
@@ -163,7 +163,7 @@ class UpdateProjectCommand(Command):
         project_id: ProjectID,
         title: str,
         description: str,
-        features_selection: typing.List[ProjectFeatureID],
+        options: ProjectOptions,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -175,7 +175,7 @@ class UpdateProjectCommand(Command):
             project_id=project_id,
             title=title,
             description=description,
-            features_selection=features_selection,
+            options=options,
         )
 
 

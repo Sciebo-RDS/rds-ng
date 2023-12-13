@@ -3,13 +3,14 @@ import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
-import { getFrontendSettings } from "@/settings/FrontendSettings";
-import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
-
 import createFrontendService from "@/services/FrontendService";
 import createProjectsService from "@/services/ProjectsService";
 
+import { getFrontendSettings } from "@/settings/FrontendSettings";
+
 import Frontend from "@/ui/Frontend.vue";
+import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
+import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
 /**
  * The main frontend component class.
@@ -26,6 +27,9 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
 
     public run(): void {
         super.run();
+
+        // Reigster snap-ins
+        registerSnapIns();
 
         // Create frontend-specific services
         this._frontendService = createFrontendService(this);

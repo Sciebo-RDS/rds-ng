@@ -1,14 +1,14 @@
 import { CreateProjectCommand } from "@common/api/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
+import { ProjectOptions } from "@common/data/entities/ProjectOptions";
 import { ActionState } from "@common/ui/actions/Action";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
-import { editProjectDialog, type EditProjectDialogData } from "@/ui/dialogs/EditProjectDialog";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
+import { editProjectDialog, type EditProjectDialogData } from "@/ui/dialogs/EditProjectDialog";
 
 /**
  * Action to create a project.
@@ -21,10 +21,10 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
         return editProjectDialog(this._component, undefined);
     }
 
-    public prepare(title: string, description: string, featuresSelection: ProjectFeatureID[]): CommandComposer<CreateProjectCommand> {
+    public prepare(title: string, description: string, options: ProjectOptions): CommandComposer<CreateProjectCommand> {
         this.addDefaultNotifiers(title);
 
-        this._composer = CreateProjectCommand.build(this.messageBuilder, title, description, featuresSelection).timeout(this._regularTimeout);
+        this._composer = CreateProjectCommand.build(this.messageBuilder, title, description, options).timeout(this._regularTimeout);
         return this._composer;
     }
 

@@ -3,22 +3,23 @@ import Checkbox from "primevue/checkbox";
 import InputText from "primevue/inputtext";
 import Panel from "primevue/panel";
 import Textarea from "primevue/textarea";
+import { ref, watch } from "vue";
 import { string as ystring } from "yup";
 
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { ProjectFeatureFlags } from "@common/features/ProjectFeature";
-
-import { ProjectFeaturesCatalog } from "@common/features/ProjectFeaturesCatalog";
 import { extendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
-
 import MandatoryMark from "@common/ui/forms/MandatoryMark.vue";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { type UIOptions } from "@/data/entities/UIOptions";
+import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
 const { dialogData, acceptDialog, useValidator } = extendedDialogTools();
 const { vFocus } = useDirectives();
 
 const comp = FrontendComponent.inject();
-const optFeatures = ProjectFeaturesCatalog.filter(ProjectFeatureFlags.Optional);
+const optSnapIns = SnapInsCatalog.allOptionals();
+const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
 
 const validator = useValidator({
         title: ystring().required().label("Title").default(dialogData.userData.title),
@@ -26,6 +27,15 @@ const validator = useValidator({
     }
 );
 const title = validator.defineComponentBinds("title");
+
+// Reflect selected features based on snap-ins with associated project features
+watch(() => uiOptions.value.optional_snapins, (snapIns) => {
+    dialogData.userData.options.optional_features = SnapInsCatalog.filter(
+        (snapIn) => snapIns.includes(snapIn.snapInID) && !!snapIn.options.optional?.feature
+    ).map(
+        (snapIn) => snapIn.options.optional!.feature
+    );
+});
 </script>
 
 <template>
@@ -45,9 +55,9 @@ const title = validator.defineComponentBinds("title");
         </Panel>
 
         <Panel header="Features" :pt="{ header: ' !p-3' }">
-            <div v-for="feature of optFeatures" :key="feature.featureID" class="flex align-items-center pb-1">
-                <Checkbox v-model="dialogData.userData.selectedFeatures" :inputId="feature.featureID" :value="feature.featureID" />
-                <label :for="feature.featureID" class="pl-1.5">{{ feature.optionName }}</label>
+            <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
+                <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" />
+                <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
             </div>
         </Panel>
     </form>

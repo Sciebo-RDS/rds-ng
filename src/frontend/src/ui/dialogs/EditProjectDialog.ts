@@ -1,13 +1,11 @@
 import { defineAsyncComponent } from "vue";
 
-import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
-import { type Project } from "@common/data/entities/Project";
-import {
-    extendedDialog,
-    type ExtendedDialogResult
-} from "@common/ui/dialogs/ExtendedDialog";
+import { Project } from "@common/data/entities/Project";
+import { ProjectOptions } from "@common/data/entities/ProjectOptions";
+import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
+import { deepClone } from "@common/utils/DeepMerge";
 
-import { type FrontendComponent } from "@/component/FrontendComponent";
+import { FrontendComponent } from "@/component/FrontendComponent";
 
 /**
  * The data used by the ``EditProjectDialog``.
@@ -15,7 +13,7 @@ import { type FrontendComponent } from "@/component/FrontendComponent";
 export interface EditProjectDialogData {
     title: string;
     description: string;
-    selectedFeatures: ProjectFeatureID[];
+    options: ProjectOptions,
 }
 
 /**
@@ -36,12 +34,12 @@ export async function editProjectDialog(
         {
             header: project ? "Project settings" : "New project",
             modal: true,
-            contentClass: "w-[20vw] w-full min-w-[40rem] shadow-inner !pt-4"
+            contentClass: "w-[20vw] w-full min-w-[40rem] !pt-4"
         },
         {
             title: project?.title || "",
             description: project?.description || "",
-            selectedFeatures: project?.features_selection || []
+            options: deepClone<ProjectOptions>(new ProjectOptions(), project?.options)
         },
         {
             hasAcceptButton: true,

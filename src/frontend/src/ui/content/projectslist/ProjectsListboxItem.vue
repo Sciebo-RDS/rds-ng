@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
-import { UpdateProjectAction } from "@/ui/actions/UpdateProjectAction";
-
-import { Project } from "@common/data/entities/Project";
 import Button from "primevue/button";
 import Menu from "primevue/menu";
 import ProgressSpinner from "primevue/progressspinner";
 import { ref, toRefs } from "vue";
+
+import { Project } from "@common/data/entities/Project";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
+import { UpdateProjectAction } from "@/ui/actions/UpdateProjectAction";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -38,7 +39,7 @@ const editMenuItems = ref([
                 command: () => {
                     const action = new UpdateProjectAction(comp);
                     action.showEditDialog(project!.value).then((data) => {
-                        action.prepare(project!.value.project_id, data.title, data.description, data.selectedFeatures);
+                        action.prepare(project!.value.project_id, data.title, data.description, data.options);
                         action.execute();
                     });
                 }
