@@ -1,6 +1,6 @@
 import { MetadataFeature } from "@common/data/entities/features/MetadataFeature";
 
-import { SnapIn } from "../SnapIn";
+import { SnapIn, type SnapInID } from "../SnapIn";
 
 export class MetadataSnapIn extends SnapIn {
     public static readonly SnapInID: SnapInID = "metadata";

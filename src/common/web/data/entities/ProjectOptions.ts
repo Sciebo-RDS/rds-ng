@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 
-import { ProjectFeatureID } from "./features/ProjectFeature";
+import { type ProjectFeatureID } from "./features/ProjectFeature";
 
 /**
  * Arbitrary UI options.
