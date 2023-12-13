@@ -1,6 +1,4 @@
-import { type SnapInID } from "@common/data/entities/EntityTypes";
-
-import { SnapIn } from "../SnapIn";
+import { SnapIn, type SnapInID } from "../SnapIn";
 
 export class SummarySnapIn extends SnapIn {
     public static readonly SnapInID: SnapInID = "summary";

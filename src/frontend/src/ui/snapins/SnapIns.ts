@@ -1,8 +1,7 @@
 import logging from "@common/core/logging/Logging";
-import { type SnapInID } from "@common/data/entities/EntityTypes";
 import { type Constructable } from "@common/utils/Types";
 
-import { SnapIn } from "./SnapIn";
+import { SnapIn, type SnapInID } from "./SnapIn";
 import { SnapInsCatalog } from "./SnapInsCatalog";
 
 import { DataManagementPlanSnapIn } from "./dmp/DataManagementPlanSnapIn";

@@ -1,7 +1,6 @@
-import { type SnapInID } from "@common/data/entities/EntityTypes";
 import { DataManagementPlanFeature } from "@common/data/entities/features/DataManagementPlanFeature";
 
-import { SnapIn } from "../SnapIn";
+import { SnapIn, type SnapInID } from "../SnapIn";
 
 export class DataManagementPlanSnapIn extends SnapIn {
     public static readonly SnapInID: SnapInID = "dmp";

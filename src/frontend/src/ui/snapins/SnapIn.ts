@@ -1,4 +1,9 @@
-import { type ProjectFeatureID, type SnapInID } from "@common/data/entities/EntityTypes";
+import { type ProjectFeatureID } from "@common/data/entities/EntityTypes";
+
+/**
+ * The snap-in identifier type.
+ */
+export type SnapInID = string;
 
 /**
  * Dynamic panel Vue component loader.

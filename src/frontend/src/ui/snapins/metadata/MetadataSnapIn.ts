@@ -1,4 +1,3 @@
-import { type SnapInID } from "@common/data/entities/EntityTypes";
 import { MetadataFeature } from "@common/data/entities/features/MetadataFeature";
 
 import { SnapIn } from "../SnapIn";

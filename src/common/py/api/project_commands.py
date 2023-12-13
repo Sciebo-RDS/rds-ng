@@ -14,8 +14,6 @@ from ..core.messaging.composers import (
 from ..data.entities import (
     Project,
     ProjectID,
-    ProjectFeatureID,
-    SnapInID,
     ProjectOptions,
 )
 
