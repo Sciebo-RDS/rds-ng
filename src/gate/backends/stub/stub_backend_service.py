@@ -1,7 +1,11 @@
 import time
+import typing
 
+from common.py.api import UpdateProjectFeaturesCommand, UpdateProjectFeaturesReply
 from common.py.component import BackendComponent
 from common.py.data.entities import clone_entity
+from common.py.data.entities.features import ProjectFeature, ProjectFeatureID
+from common.py.data.verifiers.project_features_verifier import ProjectFeaturesVerifier
 from common.py.services import Service
 
 from .stub_backend_service_context import StubBackendServiceContext
@@ -105,7 +109,48 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         UpdateProjectReply.build(
             ctx.message_builder,
             msg,
-            project_id=project.project_id,
+            project_id=msg.project_id,
+            success=success,
+            message=message,
+        ).emit()
+
+        send_projects_list(msg, ctx)
+
+    @svc.message_handler(UpdateProjectFeaturesCommand)
+    def update_project_features(
+        msg: UpdateProjectFeaturesCommand, ctx: StubBackendServiceContext
+    ) -> None:
+        success = False
+        message = ""
+
+        if (
+            project := ctx.storage_pool.project_storage.get(msg.project_id)
+        ) is not None:
+            try:
+                project_features_upd = clone_entity(
+                    project.features,
+                    **msg.features.features_dict(
+                        selected_features=msg.updated_features
+                    ),
+                )
+                ProjectFeaturesVerifier(
+                    project_features_upd, selected_features=msg.updated_features
+                ).verify_update()
+
+                project_upd = clone_entity(project, features=project_features_upd)
+
+                ctx.storage_pool.project_storage.add(project_upd)
+                success = True
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                message = str(exc)
+        else:
+            message = f"A project with ID {msg.project_id} was not found"
+
+        UpdateProjectFeaturesReply.build(
+            ctx.message_builder,
+            msg,
+            project_id=msg.project_id,
+            updated_features=msg.updated_features if success else [],
             success=success,
             message=message,
         ).emit()
