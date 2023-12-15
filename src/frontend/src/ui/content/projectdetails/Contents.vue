@@ -39,7 +39,7 @@ const panels = computed(() => {
                 header: 'tab-view-panel',
                 headerAction: 'tab-view-panel-action'
             }">
-                <component :is="panel.component" />
+                <component :is="panel.component" :project="project" />
             </TabPanel>
         </TabView>
     </div>
