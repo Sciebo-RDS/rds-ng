@@ -18,3 +18,7 @@ from .project_commands import (
     DeleteProjectReply,
 )
 from .project_events import ProjectsListEvent
+from .project_features_commands import (
+    UpdateProjectFeaturesCommand,
+    UpdateProjectFeaturesReply,
+)
