@@ -188,8 +188,10 @@ def create_stub_backend_service(comp: BackendComponent) -> Service:
         send_projects_list(msg, ctx)
 
     # Add some initial data to the in-memory storage
-    from .stub_data import fill_stub_data
+    from .stub_data_connectors import fill_stub_data_connectors
+    from .stub_data_projects import fill_stub_data_projects
 
-    fill_stub_data()
+    fill_stub_data_connectors()
+    fill_stub_data_projects()
 
     return svc

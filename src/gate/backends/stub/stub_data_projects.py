@@ -3,7 +3,7 @@ import time
 from common.py.data.entities import ProjectOptions
 
 
-def fill_stub_data() -> None:
+def fill_stub_data_projects() -> None:
     """
     Adds some hardcoded data to the stub data storage.
     """
@@ -15,7 +15,6 @@ def fill_stub_data() -> None:
         MemoryStoragePool()
     )  # The memory storage pool uses shared data objects, so we can fill them using a new instance
 
-    # -- Projects
     pool.project_storage.add(
         Project(
             project_id=pool.project_storage.next_id(),
