@@ -20,7 +20,8 @@ export default function(comp: WebComponent): Service {
                 if (msg.success) {
                     ctx.logger.debug("Retrieved connectors list", "connectors", { connectors: JSON.stringify(msg.connectors) });
 
-                    // TODO: Store them
+                    // @ts-ignore
+                    ctx.connectorsStore.connectors = msg.connectors;
                 } else {
                     ctx.logger.error("Unable to retrieve the connectors list", "connectors", { reason: msg.message });
                 }
@@ -29,7 +30,8 @@ export default function(comp: WebComponent): Service {
             svc.messageHandler(ConnectorsListEvent, (msg: ConnectorsListEvent, ctx: FrontendServiceContext) => {
                 ctx.logger.debug("Connectors list update received", "connectors", { connectors: JSON.stringify(msg.connectors) });
 
-                // TODO: Store them
+                // @ts-ignore
+                ctx.connectorsStore.connectors = msg.connectors;
             });
         },
         FrontendServiceContext

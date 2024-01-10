@@ -20,9 +20,9 @@ export default function(comp: WebComponent): Service {
                 if (msg.success) {
                     ctx.logger.debug("Retrieved projects list", "projects", { projects: JSON.stringify(msg.projects) });
 
-                    ctx.projectStore.resetPendingDeletions();
+                    ctx.projectsStore.resetPendingDeletions();
                     // @ts-ignore
-                    ctx.projectStore.projects = msg.projects;
+                    ctx.projectsStore.projects = msg.projects;
                 } else {
                     ctx.logger.error("Unable to retrieve the projects list", "projects", { reason: msg.message });
                 }
@@ -31,9 +31,9 @@ export default function(comp: WebComponent): Service {
             svc.messageHandler(ProjectsListEvent, (msg: ProjectsListEvent, ctx: FrontendServiceContext) => {
                 ctx.logger.debug("Projects list update received", "projects", { projects: JSON.stringify(msg.projects) });
 
-                ctx.projectStore.resetPendingDeletions();
+                ctx.projectsStore.resetPendingDeletions();
                 // @ts-ignore
-                ctx.projectStore.projects = msg.projects;
+                ctx.projectsStore.projects = msg.projects;
             });
 
             svc.messageHandler(CreateProjectReply, (msg: CreateProjectReply, ctx: FrontendServiceContext) => {
@@ -41,7 +41,7 @@ export default function(comp: WebComponent): Service {
                     ctx.logger.debug(`Created project ${msg.project_id}`, "projects");
 
                     // @ts-ignore
-                    ctx.projectStore.activeProject = msg.project_id;
+                    ctx.projectsStore.activeProject = msg.project_id;
                 } else {
                     ctx.logger.error(`Unable to create project ${msg.project_id}`, "projects", { reason: msg.message });
                 }
@@ -56,7 +56,7 @@ export default function(comp: WebComponent): Service {
             });
 
             svc.messageHandler(DeleteProjectReply, (msg: DeleteProjectReply, ctx: FrontendServiceContext) => {
-                ctx.projectStore.unmarkForDeletion(msg.project_id);
+                ctx.projectsStore.unmarkForDeletion(msg.project_id);
 
                 if (msg.success) {
                     ctx.logger.debug(`Deleted project ${msg.project_id}`, "projects");
