@@ -1,9 +1,9 @@
 from common.py.core.messaging import Message, Channel
 
-from .stub_backend_service_context import StubBackendServiceContext
+from .stub_service_context import StubServiceContext
 
 
-def send_projects_list(msg: Message, ctx: StubBackendServiceContext) -> None:
+def send_projects_list(msg: Message, ctx: StubServiceContext) -> None:
     from common.py.api.project_events import ProjectsListEvent
 
     ProjectsListEvent.build(
