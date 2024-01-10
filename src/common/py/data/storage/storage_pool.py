@@ -1,5 +1,6 @@
 import abc
 
+from .connector_storage import ConnectorStorage
 from .project_storage import ProjectStorage
 
 
@@ -11,8 +12,16 @@ class StoragePool(abc.ABC):
 
     @property
     @abc.abstractmethod
+    def connector_storage(self) -> ConnectorStorage:
+        """
+        The connector storage.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
     def project_storage(self) -> ProjectStorage:
         """
         The project storage.
         """
-        raise NotImplementedError
+        raise NotImplementedError()
