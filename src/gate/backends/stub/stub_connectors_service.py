@@ -13,8 +13,18 @@ def create_stub_connectors_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
 
-    from gate.backends.stub.stub_service_context import StubServiceContext
+    from common.py.api.connector import ListConnectorsCommand, ListConnectorsReply
+
+    from .stub_service_context import StubServiceContext
 
     svc = comp.create_service("Connectors service", context_type=StubServiceContext)
+
+    @svc.message_handler(ListConnectorsCommand)
+    def list_connectors(msg: ListConnectorsCommand, ctx: StubServiceContext) -> None:
+        ListConnectorsReply.build(
+            ctx.message_builder,
+            msg,
+            connectors=ctx.storage_pool.connector_storage.list(),
+        ).emit()
 
     return svc

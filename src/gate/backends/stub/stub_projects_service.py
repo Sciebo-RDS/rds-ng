@@ -35,7 +35,6 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
 
     svc = comp.create_service("Projects service", context_type=StubServiceContext)
 
-    # Project commands
     @svc.message_handler(ListProjectsCommand)
     def list_projects(msg: ListProjectsCommand, ctx: StubServiceContext) -> None:
         ListProjectsReply.build(
