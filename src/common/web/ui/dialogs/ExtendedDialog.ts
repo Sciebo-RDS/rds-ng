@@ -1,8 +1,8 @@
 import { type DialogProps } from "primevue/dialog";
 import { type DynamicDialogOptions } from "primevue/dynamicdialogoptions";
-import { type Component as VueComponent, markRaw } from "vue";
+import { markRaw } from "vue";
 
-import { WebComponent } from "../../component/WebComponent";
+import { type VueComponent, WebComponent } from "../../component/WebComponent";
 
 import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
 
