@@ -4,6 +4,9 @@ import "./component/ComponentEvents";
 import "./network/NetworkCommands";
 import "./network/NetworkEvents";
 
+import "./connector/ConnectorCommands";
+import "./connector/ConnectorEvents";
+
 import "./project/ProjectCommands";
 import "./project/ProjectEvents";
 import "./project/ProjectFeaturesCommands";
