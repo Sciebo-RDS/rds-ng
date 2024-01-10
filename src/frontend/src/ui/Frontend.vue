@@ -1,20 +1,31 @@
 <script setup lang="ts">
+import { Command } from "@common/core/messaging/Command";
 import { nextTick, onMounted } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
+import { ListConnectorsAction } from "@/ui/actions/ListConnectorsAction";
 import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
 
 const comp = FrontendComponent.inject();
 
-// When launching the frontend, request all data first
+// When launching the frontend (after the initial render), request all data first
 onMounted(() => {
-    // Request the projects list after the first render
     nextTick(() => {
-        const action = new ListProjectsAction(comp);
+        // TODO: Merge into single action
+        // TODO: Error handling
+        const listConAction = new ListConnectorsAction(comp);
 
-        action.prepare();
-        action.execute();
+        listConAction.prepare().done((cmd: Command, success: boolean, msg: string) => {
+            if (success) {
+                const listProjAction = new ListProjectsAction(comp);
+
+                listProjAction.prepare();
+                listProjAction.execute();
+            }
+        });
+
+        listConAction.execute();
     });
 });
 </script>
