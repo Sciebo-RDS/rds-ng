@@ -1,4 +1,4 @@
-import { ComponentInformationEvent } from "../api/ComponentEvents";
+import { ComponentInformationEvent } from "../api/component/ComponentEvents";
 import { WebComponent } from "../component/WebComponent";
 import { Channel } from "../core/messaging/Channel";
 import { ComponentState, componentStore } from "../data/stores/ComponentStore";

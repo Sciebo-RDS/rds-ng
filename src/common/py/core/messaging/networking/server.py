@@ -175,7 +175,7 @@ class Server(socketio.Server):
             )
 
             from .. import Channel
-            from ....api import ServerConnectedEvent
+            from ....api.network import ServerConnectedEvent
 
             ServerConnectedEvent.build(
                 self._message_builder, comp_id=comp_id, client_id=sid
@@ -190,7 +190,7 @@ class Server(socketio.Server):
             self._purge_client(sid)
 
             from .. import Channel
-            from ....api import ServerDisconnectedEvent
+            from ....api.network import ServerDisconnectedEvent
 
             ServerDisconnectedEvent.build(
                 self._message_builder, comp_id=comp_id, client_id=sid

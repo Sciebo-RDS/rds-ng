@@ -1,4 +1,4 @@
-import { CreateProjectCommand } from "@common/api/ProjectCommands";
+import { CreateProjectCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { ProjectOptions } from "@common/data/entities/ProjectOptions";
 import { ActionState } from "@common/ui/actions/Action";

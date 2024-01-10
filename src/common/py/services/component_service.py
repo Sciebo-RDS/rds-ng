@@ -13,7 +13,7 @@ def create_component_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
     from ..core.messaging import Channel
-    from ..api import ComponentInformationEvent
+    from ..api.component import ComponentInformationEvent
 
     svc = comp.create_service("Component service")
 

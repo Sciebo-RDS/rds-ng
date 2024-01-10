@@ -4,7 +4,7 @@ from .stub_service_context import StubServiceContext
 
 
 def send_projects_list(msg: Message, ctx: StubServiceContext) -> None:
-    from common.py.api.project_events import ProjectsListEvent
+    from common.py.api.project.project_events import ProjectsListEvent
 
     ProjectsListEvent.build(
         ctx.message_builder,

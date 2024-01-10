@@ -1,11 +1,11 @@
 import { Type } from "class-transformer";
 
-import { EventComposer } from "../core/messaging/composers/EventComposer";
-import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
-import { Event } from "../core/messaging/Event";
-import { Message } from "../core/messaging/Message";
-import { UnitID } from "../utils/UnitID";
-import { API_PROTOCOL_VERSION } from "./Version";
+import { EventComposer } from "../../core/messaging/composers/EventComposer";
+import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
+import { Event } from "../../core/messaging/Event";
+import { Message } from "../../core/messaging/Message";
+import { UnitID } from "../../utils/UnitID";
+import { API_PROTOCOL_VERSION } from "../Version";
 
 /**
  * Layout of component information objects.

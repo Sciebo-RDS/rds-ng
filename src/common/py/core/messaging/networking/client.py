@@ -110,7 +110,7 @@ class Client(socketio.Client):
     def _on_connect(self) -> None:
         with self._lock:
             from .. import Channel
-            from ....api import ClientConnectedEvent
+            from ....api.network import ClientConnectedEvent
 
             ClientConnectedEvent.build(self._message_builder).emit(Channel.local())
 
@@ -119,7 +119,7 @@ class Client(socketio.Client):
     def _on_connect_error(self, reason: typing.Any) -> None:
         with self._lock:
             from .. import Channel
-            from ....api import ClientConnectionErrorEvent
+            from ....api.network import ClientConnectionErrorEvent
 
             ClientConnectionErrorEvent.build(
                 self._message_builder, reason=str(reason)
@@ -130,7 +130,7 @@ class Client(socketio.Client):
     def _on_disconnect(self) -> None:
         with self._lock:
             from .. import Channel
-            from ....api import ClientDisconnectedEvent
+            from ....api.network import ClientDisconnectedEvent
 
             ClientDisconnectedEvent.build(self._message_builder).emit(Channel.local())
 

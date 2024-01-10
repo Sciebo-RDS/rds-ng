@@ -1,4 +1,4 @@
-import { DeleteProjectCommand, DeleteProjectReply } from "@common/api/ProjectCommands";
+import { DeleteProjectCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { Project } from "@common/data/entities/Project";
 import { ActionState } from "@common/ui/actions/Action";

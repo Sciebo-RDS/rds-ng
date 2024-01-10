@@ -1,15 +1,15 @@
 import dataclasses
 import typing
 
-from ..core.messaging import (
+from ...core.messaging import (
     Message,
     Event,
 )
-from ..core.messaging.composers import (
+from ...core.messaging.composers import (
     MessageBuilder,
     EventComposer,
 )
-from ..data.entities import Project
+from ...data.entities import Project
 
 
 @Message.define("event/project/list")

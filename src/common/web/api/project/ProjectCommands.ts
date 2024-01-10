@@ -1,13 +1,13 @@
 import { Type } from "class-transformer";
 
-import { Command } from "../core/messaging/Command";
-import { CommandReply } from "../core/messaging/CommandReply";
-import { CommandComposer } from "../core/messaging/composers/CommandComposer";
-import { CommandReplyComposer } from "../core/messaging/composers/CommandReplyComposer";
-import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
-import { Message } from "../core/messaging/Message";
-import { Project, type ProjectID } from "../data/entities/Project";
-import { ProjectOptions } from "../data/entities/ProjectOptions";
+import { Command } from "../../core/messaging/Command";
+import { CommandReply } from "../../core/messaging/CommandReply";
+import { CommandComposer } from "../../core/messaging/composers/CommandComposer";
+import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
+import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
+import { Message } from "../../core/messaging/Message";
+import { Project, type ProjectID } from "../../data/entities/Project";
+import { ProjectOptions } from "../../data/entities/ProjectOptions";
 
 /**
  * Command to fetch all projects of the current user. Requires a ``ListProjectsReply`` reply.

@@ -14,12 +14,12 @@ def create_network_service(comp: BackendComponent) -> Service:
 
     """
     from ..core.messaging import Channel
-    from ..api import (
+    from ..api.network import (
         PingCommand,
         PingReply,
         ServerConnectedEvent,
-        ComponentInformationEvent,
     )
+    from ..api.component import ComponentInformationEvent
 
     svc = comp.create_service("Network service")
 

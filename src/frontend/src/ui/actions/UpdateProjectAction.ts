@@ -1,4 +1,4 @@
-import { UpdateProjectCommand } from "@common/api/ProjectCommands";
+import { UpdateProjectCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { Project, type ProjectID } from "@common/data/entities/Project";
 import { ProjectOptions } from "@common/data/entities/ProjectOptions";

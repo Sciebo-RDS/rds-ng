@@ -1,5 +1,5 @@
-import { PingCommand, PingReply } from "../api/NetworkCommands";
-import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/NetworkEvents";
+import { PingCommand, PingReply } from "../api/network/NetworkCommands";
+import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/network/NetworkEvents";
 import { WebComponent } from "../component/WebComponent";
 import { ConnectionState, networkStore } from "../data/stores/NetworkStore";
 import { Service } from "./Service";
@@ -12,7 +12,7 @@ import { ServiceContext } from "./ServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function(comp: WebComponent): Service {
     return comp.createService("Network service", (svc: Service) => {
         const nwStore = networkStore();
 

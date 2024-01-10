@@ -1,8 +1,8 @@
 import dataclasses
 
-from ..core.messaging import Event, Message
-from ..core.messaging.composers import MessageBuilder, EventComposer
-from ..utils import UnitID
+from ...core.messaging import Event, Message
+from ...core.messaging.composers import MessageBuilder, EventComposer
+from ...utils import UnitID
 
 
 @Message.define("event/network/client-connected")

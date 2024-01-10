@@ -1,9 +1,9 @@
-from ..core.messaging import (
+from ...core.messaging import (
     Command,
     CommandReply,
     Message,
 )
-from ..core.messaging.composers import (
+from ...core.messaging.composers import (
     MessageBuilder,
     CommandComposer,
     CommandReplyComposer,

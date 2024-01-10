@@ -1,13 +1,7 @@
 import time
 
-from common.py.api import UpdateProjectFeaturesCommand, UpdateProjectFeaturesReply
 from common.py.component import BackendComponent
-from common.py.data.entities import clone_entity
-from common.py.data.verifiers.project_features_verifier import ProjectFeaturesVerifier
 from common.py.services import Service
-
-from .stub_service_context import StubServiceContext
-from .stub_utils import send_projects_list
 
 
 def create_stub_projects_service(comp: BackendComponent) -> Service:
@@ -21,7 +15,7 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
 
-    from common.py.api import (
+    from common.py.api.project import (
         ListProjectsCommand,
         ListProjectsReply,
         CreateProjectCommand,
@@ -30,9 +24,14 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
         UpdateProjectReply,
         DeleteProjectCommand,
         DeleteProjectReply,
+        UpdateProjectFeaturesCommand,
+        UpdateProjectFeaturesReply,
     )
-    from common.py.data.entities import Project
-    from common.py.data.verifiers import ProjectVerifier
+    from common.py.data.entities import Project, clone_entity
+    from common.py.data.verifiers import ProjectVerifier, ProjectFeaturesVerifier
+
+    from .stub_service_context import StubServiceContext
+    from .stub_utils import send_projects_list
 
     svc = comp.create_service("Projects service", context_type=StubServiceContext)
 

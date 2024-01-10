@@ -1,9 +1,9 @@
 import dataclasses
 
-from .version import API_PROTOCOL_VERSION
-from ..core.messaging import Event, Message
-from ..core.messaging.composers import MessageBuilder, EventComposer
-from ..utils import UnitID
+from ..version import API_PROTOCOL_VERSION
+from ...core.messaging import Event, Message
+from ...core.messaging.composers import MessageBuilder, EventComposer
+from ...utils import UnitID
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)

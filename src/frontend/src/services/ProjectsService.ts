@@ -1,5 +1,5 @@
-import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/ProjectCommands";
-import { ProjectsListEvent } from "@common/api/ProjectEvents";
+import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/project/ProjectCommands";
+import { ProjectsListEvent } from "@common/api/project/ProjectEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
