@@ -8,6 +8,7 @@ class ComponentType(StrEnum):
 
     INFRASTRUCTURE = "infra"
     WEB = "web"
+    CONNECTOR = "connector"
 
 
 class ComponentUnit(StrEnum):

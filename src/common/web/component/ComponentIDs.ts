@@ -4,6 +4,7 @@
 export const enum ComponentType {
     Infrastructure = "infra",
     Web = "web",
+    Connector = "connector",
 }
 
 /**
