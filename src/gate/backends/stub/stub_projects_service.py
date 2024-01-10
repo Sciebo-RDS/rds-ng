@@ -12,7 +12,7 @@ from .stub_utils import send_projects_list
 
 def create_stub_projects_service(comp: BackendComponent) -> Service:
     """
-    Creates the stub backend service.
+    Creates the stub backend projects service.
 
     Args:
         comp: The main component instance.
@@ -34,7 +34,7 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
     from common.py.data.entities import Project
     from common.py.data.verifiers import ProjectVerifier
 
-    svc = comp.create_service("Stub Backend service", context_type=StubServiceContext)
+    svc = comp.create_service("Projects service", context_type=StubServiceContext)
 
     # Project commands
     @svc.message_handler(ListProjectsCommand)
@@ -176,12 +176,5 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
         ).emit()
 
         send_projects_list(msg, ctx)
-
-    # Add some initial data to the in-memory storage
-    from .stub_data_connectors import fill_stub_data_connectors
-    from .stub_data_projects import fill_stub_data_projects
-
-    fill_stub_data_connectors()
-    fill_stub_data_projects()
 
     return svc
