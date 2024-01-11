@@ -1,6 +1,6 @@
 import { ListConnectorsCommand } from "@common/api/connector/ConnectorCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import { ActionState } from "@common/ui/actions/Action";
+import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
