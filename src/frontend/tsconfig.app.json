@@ -5,30 +5,18 @@
         "src/**/*",
         "src/**/*.vue"
     ],
-    "exclude": [
-        "src/**/__tests__/*"
-    ],
+    "exclude": ["src/**/__tests__/*"],
     "compilerOptions": {
-        "lib": [
-            "ES2021",
-            "DOM"
-        ],
+        "lib": ["ES2021", "DOM"],
         "target": "ES2021",
         "strict": true,
         "strictFunctionTypes": false,
         "noUnusedParameters": false,
-        "composite": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": [
-                "./src/*"
-            ],
-            "@common/*": [
-                "../common/web/*"
-            ],
-            "@assets/*": [
-                "../common/assets/*"
-            ]
+            "@/*": ["./src/*"],
+            "@common/*": ["../common/web/*"],
+            "@assets/*": ["../common/assets/*"]
         }
     }
 }
