@@ -12,13 +12,13 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
  */
 export class ListProjectsAction extends FrontendCommandAction<ListProjectsCommand, CommandComposer<ListProjectsCommand>> {
     public prepare(): CommandComposer<ListProjectsCommand> {
-        this.addDefaultNotifications();
+        this.prepareNotifiers();
 
         this._composer = ListProjectsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
         return this._composer;
     }
 
-    private addDefaultNotifications(): void {
+    protected addDefaultNotifiers(): void {
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Fetching projects", "Your projects are being downloaded...")

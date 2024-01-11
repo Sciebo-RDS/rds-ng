@@ -17,8 +17,9 @@ export abstract class ActionBase {
     protected _state: ActionState;
 
     private readonly _notifiers: ActionNotifiers = {} as ActionNotifiers;
+    private _suppressDefaultNotifiers: boolean = false;
 
-    protected constructor() {
+    public constructor() {
         this._state = ActionState.Pending;
     }
 
@@ -38,6 +39,15 @@ export abstract class ActionBase {
         } else {
             this._notifiers[state].push(notifier);
         }
+    }
+
+    protected prepareNotifiers(...args: any[]): void {
+        if (!this._suppressDefaultNotifiers) {
+            this.addDefaultNotifiers(...args);
+        }
+    }
+
+    protected addDefaultNotifiers(...args: any[]): void {
     }
 
     /**
@@ -90,5 +100,19 @@ export abstract class ActionBase {
      */
     public get state(): ActionState {
         return this._state;
+    }
+
+    /**
+     * Whether default notifiers are suppressed.
+     */
+    public get suppressDefaultNotifiers(): boolean {
+        return this._suppressDefaultNotifiers;
+    }
+
+    /**
+     * Suppress default notifiers. Must be called in `prepare` is called.
+     */
+    public set suppressDefaultNotifiers(suppress: boolean) {
+        this._suppressDefaultNotifiers = suppress;
     }
 }

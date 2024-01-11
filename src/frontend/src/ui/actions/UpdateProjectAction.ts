@@ -25,13 +25,13 @@ export class UpdateProjectAction extends FrontendCommandAction<UpdateProjectComm
     }
 
     public prepare(projectID: ProjectID, title: string, description: string, options: ProjectOptions): CommandComposer<UpdateProjectCommand> {
-        this.addDefaultNotifiers(title);
+        this.prepareNotifiers(title);
 
         this._composer = UpdateProjectCommand.build(this.messageBuilder, projectID, title, description, options).timeout(this._regularTimeout);
         return this._composer;
     }
 
-    private addDefaultNotifiers(title: string): void {
+    protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`)

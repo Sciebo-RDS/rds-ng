@@ -9,18 +9,20 @@ import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotific
 
 export class FetchAllDataAction extends MultiAction {
     public prepare(comp: FrontendComponent): void {
+        this.prepareNotifiers();
+
         const listConAction = new ListConnectorsAction(comp);
         const listProjAction = new ListProjectsAction(comp);
 
+        listConAction.suppressDefaultNotifiers = true;
         listConAction.prepare();
+        listProjAction.suppressDefaultNotifiers = true;
         listProjAction.prepare();
 
         this.addActions([listConAction, listProjAction]);
-
-        this.addDefaultNotifiers();
     }
 
-    private addDefaultNotifiers(): void {
+    protected addDefaultNotifiers(): void {
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Fetching data", "The data are being downloaded...")

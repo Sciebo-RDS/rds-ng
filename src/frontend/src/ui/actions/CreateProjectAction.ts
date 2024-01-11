@@ -22,13 +22,13 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
     }
 
     public prepare(title: string, description: string, options: ProjectOptions): CommandComposer<CreateProjectCommand> {
-        this.addDefaultNotifiers(title);
+        super.prepareNotifiers(title);
 
         this._composer = CreateProjectCommand.build(this.messageBuilder, title, description, options).timeout(this._regularTimeout);
         return this._composer;
     }
 
-    private addDefaultNotifiers(title: string): void {
+    protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Creating project", `Project '${title}' is being created...`)

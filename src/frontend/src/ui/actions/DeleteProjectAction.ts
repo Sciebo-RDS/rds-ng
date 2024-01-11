@@ -27,7 +27,7 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
     public prepare(project: Project): CommandComposer<DeleteProjectCommand> {
         this.markProjectForDeletion(project);
 
-        this.addDefaultNotifiers(project);
+        this.prepareNotifiers(project);
 
         this._composer = DeleteProjectCommand.build(this.messageBuilder, project.project_id).timeout(this._regularTimeout);
         return this._composer;
@@ -38,7 +38,7 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
         projStore.markForDeletion(project.project_id);
     }
 
-    private addDefaultNotifiers(project: Project): void {
+    protected addDefaultNotifiers(project: Project): void {
         this.addNotifier(
             ActionState.Done,
             new OverlayNotifier(OverlayNotificationType.Success, "Delete project", `Project '${project.title}' (ID: ${project.project_id}) has been deleted.`)
