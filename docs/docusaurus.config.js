@@ -61,18 +61,17 @@ const config = {
             position: "right",
             items: [
               {
-              type: "docSidebar",
-              sidebarId: "backendSidebar",
-              label: "Python (Backend)",
-            },
-            {
-              type: "docSidebar",
-              sidebarId: "frontendSidebar",
-              label: "TypeScript (Frontend)",
-            },
-          ]
-          }
-          
+                type: "docSidebar",
+                sidebarId: "backendSidebar",
+                label: "Python (Backend)",
+              },
+              {
+                type: "docSidebar",
+                sidebarId: "frontendSidebar",
+                label: "TypeScript (Frontend)",
+              },
+            ],
+          },
         ],
       },
       footer: {
@@ -94,7 +93,7 @@ const config = {
       {
         entryPoints: ["../src/frontend/src/", "../src/common/web/"],
         exclude: "../src/frontend/src/vue-shim.d.ts",
-        entryPointStrategy: 'expand',
+        entryPointStrategy: "expand",
         tsconfig: "../src/frontend/tsconfig.json",
         out: "reference/frontend",
         //readme: "", // currently deleted in refresh_reference.sh after build
