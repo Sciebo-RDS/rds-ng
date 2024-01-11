@@ -9,23 +9,25 @@ export class MultiAction extends ActionBase {
     private _currentAction: number = -1;
 
     /**
-     * Enqueues a new action.
+     * Enqueues new actions.
      *
      * Note that actions are executed synchronously in the order in which they were added.
      *
-     * @param action - The action to add.
+     * @param actions - The actions to add.
      */
-    public addAction(action: ActionBase): void {
-        this._actions.push(action);
+    public addActions(actions: ActionBase[]): void {
+        this._actions.push(...actions);
 
-        action.addNotifier(
-            ActionState.Done,
-            new CallbackNotifier((message) => this.onActionDone(action, message))
-        );
-        action.addNotifier(
-            ActionState.Failed,
-            new CallbackNotifier((message) => this.onActionFailed(action, message))
-        );
+        actions.forEach((action) => {
+            action.addNotifier(
+                ActionState.Done,
+                new CallbackNotifier((message) => this.onActionDone(action, message))
+            );
+            action.addNotifier(
+                ActionState.Failed,
+                new CallbackNotifier((message) => this.onActionFailed(action, message))
+            );
+        });
     }
 
     /**
@@ -47,18 +49,16 @@ export class MultiAction extends ActionBase {
     }
 
     private executeNextAction(): void {
-        this._currentAction += 1;
-        if (this._currentAction >= 0 && this._currentAction < this._actions.length) {
+        // If a next action is still available, execute it; otherwise, this action is done
+        if (++this._currentAction < this._actions.length) {
             this._actions[this._currentAction].execute();
+        } else {
+            this.setState(ActionState.Done);
         }
     }
 
     private onActionDone(action: ActionBase, message: string): void {
-        if (this._currentAction >= this._actions.length) {
-            this.setState(ActionState.Done);
-        } else {
-            this.executeNextAction();
-        }
+        this.executeNextAction();
     }
 
     private onActionFailed(action: ActionBase, message: string): void {
