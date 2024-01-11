@@ -1,17 +1,17 @@
 import dataclasses
 import typing
 
-from ..core.messaging import (
+from ...core.messaging import (
     Command,
     CommandReply,
     Message,
 )
-from ..core.messaging.composers import (
+from ...core.messaging.composers import (
     MessageBuilder,
     CommandComposer,
     CommandReplyComposer,
 )
-from ..data.entities import (
+from ...data.entities import (
     Project,
     ProjectID,
     ProjectOptions,

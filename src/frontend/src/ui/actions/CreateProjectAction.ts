@@ -1,7 +1,7 @@
-import { CreateProjectCommand } from "@common/api/ProjectCommands";
+import { CreateProjectCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { ProjectOptions } from "@common/data/entities/ProjectOptions";
-import { ActionState } from "@common/ui/actions/Action";
+import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
@@ -22,13 +22,13 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
     }
 
     public prepare(title: string, description: string, options: ProjectOptions): CommandComposer<CreateProjectCommand> {
-        this.addDefaultNotifiers(title);
+        super.prepareNotifiers(title);
 
         this._composer = CreateProjectCommand.build(this.messageBuilder, title, description, options).timeout(this._regularTimeout);
         return this._composer;
     }
 
-    private addDefaultNotifiers(title: string): void {
+    protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Creating project", `Project '${title}' is being created...`)

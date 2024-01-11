@@ -1,8 +1,8 @@
-import { UpdateProjectCommand } from "@common/api/ProjectCommands";
+import { UpdateProjectCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { Project, type ProjectID } from "@common/data/entities/Project";
 import { ProjectOptions } from "@common/data/entities/ProjectOptions";
-import { ActionState } from "@common/ui/actions/Action";
+import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
@@ -25,13 +25,13 @@ export class UpdateProjectAction extends FrontendCommandAction<UpdateProjectComm
     }
 
     public prepare(projectID: ProjectID, title: string, description: string, options: ProjectOptions): CommandComposer<UpdateProjectCommand> {
-        this.addDefaultNotifiers(title);
+        this.prepareNotifiers(title);
 
         this._composer = UpdateProjectCommand.build(this.messageBuilder, projectID, title, description, options).timeout(this._regularTimeout);
         return this._composer;
     }
 
-    private addDefaultNotifiers(title: string): void {
+    protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`)

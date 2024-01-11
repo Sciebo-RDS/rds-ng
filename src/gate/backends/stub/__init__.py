@@ -1,4 +1,4 @@
-from .stub_backend_service import create_stub_backend_service
+from .stub_backend import StubBackend
 from .. import BackendsCatalog
 
-BackendsCatalog.register_item("stub", create_stub_backend_service)
+BackendsCatalog.register_item("stub", StubBackend)

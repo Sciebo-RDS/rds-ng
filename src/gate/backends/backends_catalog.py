@@ -1,14 +1,10 @@
-import typing
-
-from common.py.component import BackendComponent
-from common.py.services import Service
 from common.py.utils import ItemsCatalog
 
-BackendCreator = typing.Callable[[BackendComponent], Service]
+from .backend import Backend
 
 
 @ItemsCatalog.define()
-class BackendsCatalog(ItemsCatalog[BackendCreator]):
+class BackendsCatalog(ItemsCatalog[type[Backend]]):
     """
     Global catalog of all registered backend types.
 

@@ -6,7 +6,7 @@ from common.py.data.storage import StoragePool
 from common.py.utils.config import Configuration
 
 
-class StubBackendServiceContext(ServiceContext):
+class StubServiceContext(ServiceContext):
     """
     Service context specific to the stub backend.
     """

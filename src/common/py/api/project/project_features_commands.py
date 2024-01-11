@@ -1,21 +1,21 @@
 import dataclasses
 import typing
 
-from ..core.messaging import (
+from common.py.core.messaging import (
     Command,
     CommandReply,
     Message,
 )
-from ..core.messaging.composers import (
+from common.py.core.messaging.composers import (
     MessageBuilder,
     CommandComposer,
     CommandReplyComposer,
 )
-from ..data.entities import (
+from common.py.data.entities import (
     ProjectID,
     ProjectOptions,
 )
-from ..data.entities.features import (
+from common.py.data.entities.features import (
     ProjectFeatures,
     ProjectFeatureID,
 )

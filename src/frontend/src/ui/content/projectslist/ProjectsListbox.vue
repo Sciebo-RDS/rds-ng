@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// @ts-nocheck
+
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
 import { watch } from "vue";
@@ -29,7 +31,6 @@ const unwatchProjects = watch(projects, () => {
 watch(activeProject, (newProj, oldProj) => {
     // Prevent deselecting the currently selected project item
     if (newProj === null && oldProj) {
-        // @ts-ignore
         activeProject.value = oldProj;
     }
 
@@ -51,12 +52,10 @@ function selectProject(projectID: ProjectID | undefined, autoNavigateOnMissing: 
 }
 
 function isProjectSelected(project: Project): boolean {
-    // @ts-ignore
     return project.project_id === activeProject.value;
 }
 
 function isProjectDeleted(project: Project): boolean {
-    // @ts-ignore
     return project.status == ProjectStatus.Deleted || projStore.pendingDeletions.includes(project.project_id);
 }
 </script>

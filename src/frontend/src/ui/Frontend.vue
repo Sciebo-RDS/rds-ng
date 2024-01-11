@@ -3,17 +3,16 @@ import { nextTick, onMounted } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
-import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
+import { FetchAllDataAction } from "@/ui/actions/FetchAllDataAction";
 
 const comp = FrontendComponent.inject();
 
-// When launching the frontend, request all data first
+// When launching the frontend (after the initial render), request all data first
 onMounted(() => {
-    // Request the projects list after the first render
     nextTick(() => {
-        const action = new ListProjectsAction(comp);
+        const action = new FetchAllDataAction();
 
-        action.prepare();
+        action.prepare(comp);
         action.execute();
     });
 });

@@ -1,9 +1,9 @@
-import { CommandComposer } from "../core/messaging/composers/CommandComposer";
-import { CommandReplyComposer } from "../core/messaging/composers/CommandReplyComposer";
-import { MessageBuilder } from "../core/messaging/composers/MessageBuilder";
-import { Command } from "../core/messaging/Command";
-import { CommandReply } from "../core/messaging/CommandReply";
-import { Message } from "../core/messaging/Message";
+import { CommandComposer } from "../../core/messaging/composers/CommandComposer";
+import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
+import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
+import { Command } from "../../core/messaging/Command";
+import { CommandReply } from "../../core/messaging/CommandReply";
+import { Message } from "../../core/messaging/Message";
 
 /**
  * A generic PING command. Requires a ``PingReply`` reply.

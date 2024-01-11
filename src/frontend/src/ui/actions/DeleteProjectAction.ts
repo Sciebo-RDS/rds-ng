@@ -1,7 +1,7 @@
-import { DeleteProjectCommand, DeleteProjectReply } from "@common/api/ProjectCommands";
+import { DeleteProjectCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { Project } from "@common/data/entities/Project";
-import { ActionState } from "@common/ui/actions/Action";
+import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
@@ -27,7 +27,7 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
     public prepare(project: Project): CommandComposer<DeleteProjectCommand> {
         this.markProjectForDeletion(project);
 
-        this.addDefaultNotifiers(project);
+        this.prepareNotifiers(project);
 
         this._composer = DeleteProjectCommand.build(this.messageBuilder, project.project_id).timeout(this._regularTimeout);
         return this._composer;
@@ -38,7 +38,7 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
         projStore.markForDeletion(project.project_id);
     }
 
-    private addDefaultNotifiers(project: Project): void {
+    protected addDefaultNotifiers(project: Project): void {
         this.addNotifier(
             ActionState.Done,
             new OverlayNotifier(OverlayNotificationType.Success, "Delete project", `Project '${project.title}' (ID: ${project.project_id}) has been deleted.`)

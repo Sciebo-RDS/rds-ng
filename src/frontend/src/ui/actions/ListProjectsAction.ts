@@ -1,6 +1,6 @@
-import { ListProjectsCommand } from "@common/api/ProjectCommands";
+import { ListProjectsCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import { ActionState } from "@common/ui/actions/Action";
+import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
@@ -12,13 +12,13 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
  */
 export class ListProjectsAction extends FrontendCommandAction<ListProjectsCommand, CommandComposer<ListProjectsCommand>> {
     public prepare(): CommandComposer<ListProjectsCommand> {
-        this.addDefaultNotifications();
+        this.prepareNotifiers();
 
         this._composer = ListProjectsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
         return this._composer;
     }
 
-    private addDefaultNotifications(): void {
+    protected addDefaultNotifiers(): void {
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Fetching projects", "Your projects are being downloaded...")

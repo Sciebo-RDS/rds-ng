@@ -1,6 +1,12 @@
-import "./ComponentEvents";
-import "./NetworkCommands";
-import "./NetworkEvents";
-import "./ProjectCommands";
-import "./ProjectEvents";
-import "./ProjectFeaturesCommands";
+// Import all API files to make them known to the networking system
+import "./component/ComponentEvents";
+
+import "./network/NetworkCommands";
+import "./network/NetworkEvents";
+
+import "./connector/ConnectorCommands";
+import "./connector/ConnectorEvents";
+
+import "./project/ProjectCommands";
+import "./project/ProjectEvents";
+import "./project/ProjectFeaturesCommands";

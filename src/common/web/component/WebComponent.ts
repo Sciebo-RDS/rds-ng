@@ -9,7 +9,7 @@ import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { type App, type Component as VueComponent, createApp, inject } from "vue";
+import { type App, type Component as VueComp, createApp, inject } from "vue";
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
@@ -37,6 +37,11 @@ import "primeicons/primeicons.css";
 
 // Necessary to make the entire API known
 import "../api/API";
+
+/**
+ * Introduce a global type for Vue components.
+ */
+export type VueComponent = VueComp;
 
 /**
  * Base class for all web components.

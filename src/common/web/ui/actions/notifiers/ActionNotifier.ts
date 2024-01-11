@@ -1,4 +1,4 @@
-import { ActionState } from "../Action";
+import { ActionState } from "../ActionBase";
 
 /**
  * A snap-in for actions to display arbitrary notifications about the action execution.
