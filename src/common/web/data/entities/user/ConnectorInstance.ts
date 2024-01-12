@@ -1,4 +1,4 @@
-import { ConnectorID } from "../connector/Connector";
+import { type ConnectorID } from "../connector/Connector";
 
 /**
  * The connector instance ID type.

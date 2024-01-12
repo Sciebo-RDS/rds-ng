@@ -12,7 +12,7 @@ export class UserConfiguration {
     @Type(() => ConnectorInstance)
     public readonly connector_instances: ConnectorInstance[] = [];
 
-    public constructor(connectorInstances: ConnectorInstance[]) {
+    public constructor(connectorInstances: ConnectorInstance[] = []) {
         this.connector_instances = connectorInstances;
     }
 }

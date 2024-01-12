@@ -10,3 +10,6 @@ import "./connector/ConnectorEvents";
 import "./project/ProjectCommands";
 import "./project/ProjectEvents";
 import "./project/ProjectFeaturesCommands";
+
+import "./user/UserCommands";
+import "./user/UserEvents";
