@@ -20,9 +20,10 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
 
     /**
      * @param service - The service to use for message emission.
+     * @param suppressDefaultNotifiers - Suppress default notifiers.
      */
-    public constructor(service: Service) {
-        super();
+    public constructor(service: Service, suppressDefaultNotifiers: boolean = false) {
+        super(suppressDefaultNotifiers);
 
         const nwStore = networkStore();
 

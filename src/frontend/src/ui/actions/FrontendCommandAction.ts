@@ -13,8 +13,12 @@ export abstract class FrontendCommandAction<CmdType extends Command, CompType ex
 
     protected _regularTimeout: number;
 
-    public constructor(comp: FrontendComponent) {
-        super(comp.frontendService);
+    /**
+     * @param comp - The main frontend component.
+     * @param suppressDefaultNotifiers - Suppress default notifiers.
+     */
+    public constructor(comp: FrontendComponent, suppressDefaultNotifiers: boolean = false) {
+        super(comp.frontendService, suppressDefaultNotifiers);
 
         this._component = comp;
 
