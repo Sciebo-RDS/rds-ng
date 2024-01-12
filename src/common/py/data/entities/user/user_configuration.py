@@ -1,0 +1,19 @@
+import typing
+from dataclasses import dataclass, field
+
+from dataclasses_json import dataclass_json
+
+from .connector_instance import ConnectorInstance
+
+
+@dataclass_json
+@dataclass(frozen=True, kw_only=True)
+class UserConfiguration:
+    """
+    User configuration (i.e., the settings a user configures in the UI) data.
+
+    Attributes:
+        connector_instances: A list of all configured connector instances.
+    """
+
+    connector_instances: typing.List[ConnectorInstance] = field(default_factory=list)

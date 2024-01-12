@@ -33,7 +33,7 @@ class ProjectFeaturesVerifier(Verifier):
                 self._selected_features is None or feature_id in self._selected_features
             )
 
-        from common.py.data.entities.project.features import (
+        from ..entities.project.features import (
             MetadataFeature,
             DataManagementPlanFeature,
         )
