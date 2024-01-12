@@ -4,7 +4,7 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
-import { Project } from "../../data/entities/Project";
+import { Project } from "../../data/entities/project/Project";
 
 /**
  * Emitted whenever the user's projects list has been updated.

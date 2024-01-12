@@ -1,6 +1,6 @@
 import typing
 
-from common.py.data.entities import ConnectorID, Connector
+from common.py.data.entities.connector import ConnectorID, Connector
 from common.py.data.storage import ConnectorStorage
 
 

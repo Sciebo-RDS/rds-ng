@@ -1,6 +1,6 @@
 from .verification_exception import VerificationException
 from .verifier import Verifier
-from ..entities import Project
+from ..entities.project import Project
 
 
 class ProjectVerifier(Verifier):

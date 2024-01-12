@@ -11,9 +11,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities import (
-    Connector,
-)
+from ...data.entities.connector import Connector
 
 
 @Message.define("command/connector/list")

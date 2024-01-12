@@ -4,7 +4,7 @@ import Menu from "primevue/menu";
 import ProgressSpinner from "primevue/progressspinner";
 import { ref, toRefs } from "vue";
 
-import { Project } from "@common/data/entities/Project";
+import { Project } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";

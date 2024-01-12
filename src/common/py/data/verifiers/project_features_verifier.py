@@ -1,8 +1,7 @@
 import typing
 
-from .verification_exception import VerificationException
 from .verifier import Verifier
-from ..entities.features import ProjectFeatures, ProjectFeatureID
+from ..entities.project.features import ProjectFeatures, ProjectFeatureID
 
 
 class ProjectFeaturesVerifier(Verifier):
@@ -34,7 +33,10 @@ class ProjectFeaturesVerifier(Verifier):
                 self._selected_features is None or feature_id in self._selected_features
             )
 
-        from ..entities.features import MetadataFeature, DataManagementPlanFeature
+        from common.py.data.entities.project.features import (
+            MetadataFeature,
+            DataManagementPlanFeature,
+        )
 
         # Important! When adding new features, include them here as well
         if is_selected(MetadataFeature.feature_id):

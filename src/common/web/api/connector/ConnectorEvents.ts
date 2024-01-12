@@ -4,7 +4,7 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
-import { Connector } from "../../data/entities/Connector";
+import { Connector } from "../../data/entities/connector/Connector";
 
 /**
  * Emitted whenever the list of available connectors has been updated.

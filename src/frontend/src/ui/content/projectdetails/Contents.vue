@@ -3,7 +3,7 @@ import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
 import { computed, defineAsyncComponent, toRefs } from "vue";
 
-import { Project } from "@common/data/entities/Project";
+import { Project } from "@common/data/entities/project/Project";
 
 import { type UIOptions } from "@/data/entities/UIOptions";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";

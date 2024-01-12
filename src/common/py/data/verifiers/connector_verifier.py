@@ -1,6 +1,6 @@
 from .verification_exception import VerificationException
 from .verifier import Verifier
-from ..entities import Connector
+from ..entities.connector import Connector
 from ...component import ComponentType
 
 

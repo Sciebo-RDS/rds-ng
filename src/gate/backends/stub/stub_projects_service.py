@@ -27,7 +27,8 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
         UpdateProjectFeaturesCommand,
         UpdateProjectFeaturesReply,
     )
-    from common.py.data.entities import Project, clone_entity
+    from common.py.data.entities import clone_entity
+    from common.py.data.entities.project import Project
     from common.py.data.verifiers import ProjectVerifier, ProjectFeaturesVerifier
 
     from .stub_service_context import StubServiceContext

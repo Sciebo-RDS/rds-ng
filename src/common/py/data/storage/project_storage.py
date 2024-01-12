@@ -1,7 +1,7 @@
 import abc
 
 from .storage import Storage
-from ..entities import Project, ProjectID
+from ..entities.project import Project, ProjectID
 
 
 class ProjectStorage(Storage[Project, ProjectID], abc.ABC):

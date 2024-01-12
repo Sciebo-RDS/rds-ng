@@ -1,4 +1,4 @@
-import { DataManagementPlanFeature } from "@common/data/entities/features/DataManagementPlanFeature";
+import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 
 import { SnapIn, type SnapInID } from "../SnapIn";
 

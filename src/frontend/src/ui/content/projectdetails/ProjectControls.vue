@@ -2,7 +2,7 @@
 import Button from "primevue/button";
 import { toRefs } from "vue";
 
-import { Project } from "@common/data/entities/Project";
+import { Project } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectAction } from "@/ui/actions/UpdateProjectAction";

@@ -1,15 +1,13 @@
 import time
 
-from common.py.data.entities import ProjectOptions
-
 
 def fill_stub_data_projects() -> None:
     """
     Adds some hardcoded data to the stub data storage.
     """
-    from ...data.storage.memory import MemoryStoragePool
+    from common.py.data.entities.project import Project, ProjectOptions
 
-    from common.py.data.entities import Project
+    from ...data.storage.memory import MemoryStoragePool
 
     pool = (
         MemoryStoragePool()

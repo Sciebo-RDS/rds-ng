@@ -1,4 +1,4 @@
-import { type Project } from "@common/data/entities/Project";
+import { type Project } from "@common/data/entities/project/Project";
 import { confirmDialog, type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
 
 import { type FrontendComponent } from "@/component/FrontendComponent";

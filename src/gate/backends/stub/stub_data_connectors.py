@@ -4,7 +4,7 @@ def fill_stub_data_connectors() -> None:
     """
     from ...data.storage.memory import MemoryStoragePool
 
-    from common.py.data.entities import Connector, ConnectorID
+    from common.py.data.entities.connector import Connector, ConnectorID
 
     pool = (
         MemoryStoragePool()
