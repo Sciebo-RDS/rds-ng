@@ -3,6 +3,8 @@
 # generate python markdown files
 cd ./docs
 rm -rf ./docs/reference
+#for gh-action to run properly
+pip install pydoc-markdown
 pydoc-markdown
 
 # generate & install workspace package.json
