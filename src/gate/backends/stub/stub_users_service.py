@@ -1,5 +1,4 @@
 from common.py.component import BackendComponent
-from common.py.data.entities.user import UserConfiguration
 from common.py.services import Service
 
 
@@ -20,7 +19,7 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
         SetUserConfigurationCommand,
         SetUserConfigurationReply,
     )
-    from common.py.data.verifiers.user_configuration_verifier import (
+    from common.py.data.verifiers.user import (
         UserConfigurationVerifier,
     )
 

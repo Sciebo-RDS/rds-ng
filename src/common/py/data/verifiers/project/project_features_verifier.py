@@ -1,7 +1,7 @@
 import typing
 
-from .verifier import Verifier
-from ..entities.project.features import ProjectFeatures, ProjectFeatureID
+from common.py.data.verifiers.verifier import Verifier
+from common.py.data.entities.project.features import ProjectFeatures, ProjectFeatureID
 
 
 class ProjectFeaturesVerifier(Verifier):

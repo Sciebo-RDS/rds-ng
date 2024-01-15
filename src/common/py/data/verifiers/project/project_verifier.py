@@ -1,6 +1,6 @@
-from .verification_exception import VerificationException
-from .verifier import Verifier
-from ..entities.project import Project
+from common.py.data.verifiers.verification_exception import VerificationException
+from common.py.data.verifiers.verifier import Verifier
+from common.py.data.entities.project import Project
 
 
 class ProjectVerifier(Verifier):

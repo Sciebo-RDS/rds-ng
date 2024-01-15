@@ -29,7 +29,10 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
     )
     from common.py.data.entities import clone_entity
     from common.py.data.entities.project import Project
-    from common.py.data.verifiers import ProjectVerifier, ProjectFeaturesVerifier
+    from common.py.data.verifiers.project import (
+        ProjectVerifier,
+        ProjectFeaturesVerifier,
+    )
 
     from .stub_service_context import StubServiceContext
     from .stub_utils import send_projects_list
