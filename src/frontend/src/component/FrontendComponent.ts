@@ -60,7 +60,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
      * The user service.
      */
     public get userService(): Service {
-        if (!this._userInterface) {
+        if (!this._userService) {
             throw new Error("Tried to access the user service before its creation");
         }
         return this._userService;

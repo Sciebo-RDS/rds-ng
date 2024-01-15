@@ -10,7 +10,7 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 /**
  * Action to retrieve all connectors.
  */
-export class GetUserConfigurationAction extends FrontendCommandAction<GetUserConfigurationCommand, CommandComposer<GetUserConfigurationCommandListConnectorsCommand>> {
+export class GetUserConfigurationAction extends FrontendCommandAction<GetUserConfigurationCommand, CommandComposer<GetUserConfigurationCommand>> {
     public prepare(): CommandComposer<GetUserConfigurationCommand> {
         this.prepareNotifiers();
 
