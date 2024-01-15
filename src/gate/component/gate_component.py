@@ -47,7 +47,7 @@ class GateComponent(BackendComponent):
 
         driver = self.data.config.value(BackendSettingIDs.DRIVER)
 
-        debug(f"Mounting backend driver '{driver}'...", scope="gate")
+        debug(f"Mounting backend driver '{driver}'", scope="gate")
 
         try:
             from ..backends import BackendsCatalog

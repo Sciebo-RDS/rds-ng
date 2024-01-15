@@ -24,19 +24,19 @@ class Core:
             module_name: The module name used for *Flask* initialization.
             comp_data: The component data used to access common component information.
         """
-        info("Initializing core...", scope="core")
+        info("Initializing core", scope="core")
         
         self._comp_data = comp_data
         
         if self.is_debug_mode:
             self._enable_debug_mode()
         
-        debug(f"-- Settings file: {self._comp_data.config.settings_file}", scope="core")
+        debug(f"Settings file: {self._comp_data.config.settings_file}", scope="core")
         
-        debug("-- Creating Flask server", scope="core", module_name=module_name)
+        debug("Creating Flask server", scope="core", module_name=module_name)
         self._flask = self._create_flask(module_name)
         
-        debug("-- Creating message bus", scope="core")
+        debug("Creating message bus", scope="core")
         self._message_bus = self._create_message_bus()
     
     def _create_flask(self, module_name: str) -> flask.Flask:
@@ -55,7 +55,7 @@ class Core:
     def _enable_debug_mode(self) -> None:
         import logging as log
         set_level(log.DEBUG)
-        debug("-- Debug mode enabled", scope="core")
+        debug("Debug mode enabled", scope="core")
     
     def register_service(self, svc: MessageService) -> None:
         """

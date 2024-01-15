@@ -11,6 +11,13 @@ class Storage(typing.Generic[EntityType, EntityKeyType], abc.ABC):
     """
 
     @abc.abstractmethod
+    def next_id(self) -> EntityKeyType:
+        """
+        Gets the next ID to use for a new entity.
+        """
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def add(self, entity: EntityType) -> None:
         """
         Adds a new entity or updates an existing one.

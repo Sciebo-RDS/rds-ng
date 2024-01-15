@@ -79,7 +79,7 @@ class Client(socketio.Client):
         Establishes the connection to the server.
         """
         if self._server_address != "" and not self.connected:
-            info(f"Connecting to {self._server_address}...", scope="client")
+            info(f"Connecting to {self._server_address}", scope="client")
 
             import socketio.exceptions as sioexc
 

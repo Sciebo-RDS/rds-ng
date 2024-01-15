@@ -1,0 +1,17 @@
+/*
+ * General layout classes.
+ */
+.r-centered-grid {
+    @apply grid grid-flow-row auto-rows-max justify-items-center justify-center;
+}
+
+/*
+ * Form classes.
+ */
+.r-form {
+    @apply grid auto-rows-auto grid-cols-1 gap-5;
+}
+
+.r-form-field {
+    @apply grid auto-rows-auto grid-cols-1 gap-1;
+}

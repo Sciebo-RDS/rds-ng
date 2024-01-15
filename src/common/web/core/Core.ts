@@ -1,5 +1,5 @@
 import { WebComponentData } from "../component/WebComponentData";
-import logging from "../core/logging/Logging"
+import logging from "../core/logging/Logging";
 import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import { LogLevel } from "./logging/LogRecord";
 import { MessageService } from "./messaging/handlers/MessageService";
@@ -25,7 +25,7 @@ export class Core {
      * @param compData - The component data used to access common component information.
      */
     public constructor(compData: WebComponentData) {
-        logging.info("Initializing core...", "core")
+        logging.info("Initializing core", "core");
 
         this._compData = compData;
 
@@ -33,13 +33,13 @@ export class Core {
             this.enableDebugMode();
         }
 
-        logging.debug("-- Creating message bus", "core");
+        logging.debug("Creating message bus", "core");
         this._messageBus = this.createMessageBus();
     }
 
     private enableDebugMode(): void {
         logging.setLevel(LogLevel.Debug);
-        logging.debug("-- Debug mode enabled", "core")
+        logging.debug("Debug mode enabled", "core");
     }
 
     private createMessageBus(): MessageBus {

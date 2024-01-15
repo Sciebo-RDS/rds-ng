@@ -1,6 +1,11 @@
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
+import ConfirmDialog from "primevue/confirmdialog";
+import ConfirmPopup from "primevue/confirmpopup";
+import ConfirmationService from "primevue/confirmationservice";
+import DynamicDialog from "primevue/dynamicdialog";
 import DialogService from "primevue/dialogservice";
+import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
@@ -8,11 +13,11 @@ import { type App, type Component as VueComponent, createApp, inject } from "vue
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
-import logging from "../core/logging/Logging"
+import logging from "../core/logging/Logging";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
-import { MainView } from "../ui/views/main/MainView";
+import { UserInterface } from "../ui/UserInterface";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
@@ -26,6 +31,7 @@ import createWebService from "../services/WebService";
 import MainContainer from "../ui/views/main/MainViewContainer.vue";
 
 // Load various icons
+import "material-icons/css/material-icons.css";
 import "material-icons/iconfont/outlined.css";
 import "primeicons/primeicons.css";
 
@@ -35,11 +41,14 @@ import "../api/API";
 /**
  * Base class for all web components.
  *
+ * By default, an instance of ``UserInterfaceType`` is used to create the main UI handler. This can be overriden using the corresponding
+ * template and constructor parameters.
+ *
  * Web applications are always based on this class. It mainly maintains an instance of the ``Core``, but also stores general information
  * about the application itself and the entire project.
  */
-export class WebComponent {
-    private static _instance: WebComponent | null = null;
+export class WebComponent<UserInterfaceType extends UserInterface = UserInterface> {
+    private static _instance: WebComponent<any> | null = null;
     private static readonly _injectionKey = Symbol();
 
     protected readonly _data: WebComponentData;
@@ -47,21 +56,20 @@ export class WebComponent {
     protected readonly _core: Core;
     protected readonly _router: Router;
 
-    protected readonly _mainView: MainView;
+    protected readonly _userInterface: UserInterfaceType;
     protected readonly _vueApp: App;
 
     /**
      * @param env - The global environment variables.
      * @param compID - The identifier of this component.
      * @param appRoot - The root (main) application component.
+     * @param userInterfaceType - The type of the user interface class.
      */
-    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent) {
+    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>) {
         if (WebComponent._instance) {
-            throw new Error("A component instance has already been created")
+            throw new Error("A component instance has already been created");
         }
         WebComponent._instance = this;
-
-        compID = this.sanitizeComponentID(compID);
 
         let metaInfo = new MetaInformation();
         let compInfo = metaInfo.getComponent(compID.unit);
@@ -75,12 +83,12 @@ export class WebComponent {
         );
 
         logging.info(this.toString());
-        logging.info("-- Starting component...");
+        logging.info("Starting component");
 
         this._core = new Core(this._data);
         this._router = this.createRouter();
 
-        this._mainView = new MainView(this._router, appRoot);
+        this._userInterface = this.createUserInterface(userInterfaceType, appRoot);
         this._vueApp = this.createVueApp();
     }
 
@@ -100,18 +108,30 @@ export class WebComponent {
     private createRouter(): Router {
         return createRouter({
             history: createWebHistory(),
-            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()],
+            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()]
         });
     }
 
+    private createUserInterface(userInterfaceType: Constructable<UserInterfaceType>, appRoot: VueComponent): UserInterfaceType {
+        return new userInterfaceType(this._router, appRoot);
+    }
+
     private createVueApp(): App {
-        logging.info("-- Creating Vue application...");
+        logging.info("Creating Vue application");
 
         const app = createApp(MainContainer);
 
+        // Register some global components
+        app.component("ConfirmDialog", ConfirmDialog);
+        app.component("ConfirmPopup", ConfirmPopup);
+        app.component("DynamicDialog", DynamicDialog);
+        app.component("Toast", Toast);
+
+        // Register various plugins
         app.use(createPinia());
         app.use(this._router);
         app.use(PrimeVue);
+        app.use(ConfirmationService);
         app.use(DialogService);
         app.use(ToastService);
 
@@ -152,7 +172,7 @@ export class WebComponent {
      *     This method is automatically called by the framework.
      */
     public run(): void {
-        logging.info("Running component...");
+        logging.info("Running component");
 
         // Create all basic services
         createComponentService(this);
@@ -196,10 +216,10 @@ export class WebComponent {
     }
 
     /**
-     * The global main view.
+     * The global user interface.
      */
-    public get mainView(): MainView {
-        return this._mainView;
+    public get userInterface(): UserInterfaceType {
+        return this._userInterface;
     }
 
     /**

@@ -1,18 +1,18 @@
 /**
- * Override the following additional theme-specific classes as needed.
+ * Override global colors as needed.
  */
 
 /*
-.r-border-color {
-    @apply border-gray-300;
+:root {
+    --r-border-color: rgb(209 213 219);
+    --r-shade: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
+    --r-shade-dark: color-mix(in srgb, var(--highlight-bg), #FFF 90%);
 }
-*/
+ */
 
-/*
-.r-shade {
-    background-color: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
-}
-*/
+/**
+ * Override the following additional theme-specific classes as needed.
+ */
 
 /*
 .r-shade-text {
