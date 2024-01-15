@@ -1,3 +1,8 @@
+import typing
+
+from common.py.data.entities.connector import ConnectorInstance
+
+
 def fill_stub_data_connectors() -> None:
     """
     Adds some hardcoded data to the stub data storage.
@@ -34,4 +39,19 @@ def fill_stub_data_connectors() -> None:
             name="Zenodo",
             description="Zenodo connector",
         )
+    )
+
+
+def fill_stub_data_connector_instances() -> None:
+    from gate.backends.stub.stub_service_context import StubServiceContext
+
+    StubServiceContext.user_configuration.connector_instances.extend(
+        [
+            ConnectorInstance(
+                instance_id=1, connector_id="osf", name="Main OSF Account"
+            ),
+            ConnectorInstance(
+                instance_id=2, connector_id="datacite", name="Backup DataCite"
+            ),
+        ]
     )
