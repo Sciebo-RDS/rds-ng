@@ -9,7 +9,7 @@ from ...core.messaging.composers import (
     MessageBuilder,
     EventComposer,
 )
-from ...data.entities import Connector
+from ...data.entities.connector import Connector
 
 
 @Message.define("event/connector/list")

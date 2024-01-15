@@ -11,7 +11,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities import (
+from ...data.entities.project import (
     Project,
     ProjectID,
     ProjectOptions,

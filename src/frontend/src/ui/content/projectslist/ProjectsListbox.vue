@@ -6,7 +6,7 @@ import Listbox from "primevue/listbox";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
 
-import { Project, type ProjectID, ProjectStatus } from "@common/data/entities/Project";
+import { Project, type ProjectID, ProjectStatus } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { projectsStore } from "@/data/stores/ProjectsStore";

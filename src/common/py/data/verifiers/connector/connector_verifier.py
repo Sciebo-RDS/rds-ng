@@ -1,7 +1,6 @@
-from .verification_exception import VerificationException
-from .verifier import Verifier
-from ..entities import Connector
-from ...component import ComponentType
+from common.py.data.verifiers.verification_exception import VerificationException
+from common.py.data.verifiers.verifier import Verifier
+from common.py.data.entities.connector import Connector
 
 
 class ConnectorVerifier(Verifier):
@@ -24,11 +23,7 @@ class ConnectorVerifier(Verifier):
         self._verify_id()
 
     def _verify_id(self) -> None:
-        if (
-            self._connector.connector_id.type != ComponentType.CONNECTOR
-            or self._connector.connector_id.unit == ""
-            or self._connector.connector_id.instance is not None
-        ):
+        if self._connector.connector_id == "":
             raise VerificationException("Invalid connector ID")
 
     def _verify_name(self) -> None:

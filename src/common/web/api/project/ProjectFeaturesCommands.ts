@@ -6,9 +6,9 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
-import { type ProjectFeatureID } from "../../data/entities/features/ProjectFeature";
-import { ProjectFeatures } from "../../data/entities/features/ProjectFeatures";
-import { type ProjectID } from "../../data/entities/Project";
+import { type ProjectFeatureID } from "../../data/entities/project/features/ProjectFeature";
+import { ProjectFeatures } from "../../data/entities/project/features/ProjectFeatures";
+import { type ProjectID } from "../../data/entities/project/Project";
 
 /**
  * Command to update the features (data) of a project.

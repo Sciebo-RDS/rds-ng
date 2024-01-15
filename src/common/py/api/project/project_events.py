@@ -9,7 +9,7 @@ from ...core.messaging.composers import (
     MessageBuilder,
     EventComposer,
 )
-from ...data.entities import Project
+from ...data.entities.project import Project
 
 
 @Message.define("event/project/list")

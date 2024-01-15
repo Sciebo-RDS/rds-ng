@@ -1,5 +1,2 @@
-from .connector_verifier import ConnectorVerifier
-from .project_verifier import ProjectVerifier
-from .project_features_verifier import ProjectFeaturesVerifier
-
+from .verifier import Verifier
 from .verification_exception import VerificationException

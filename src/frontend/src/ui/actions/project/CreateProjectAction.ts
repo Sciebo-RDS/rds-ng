@@ -1,6 +1,6 @@
 import { CreateProjectCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import { ProjectOptions } from "@common/data/entities/ProjectOptions";
+import { ProjectOptions } from "@common/data/entities/project/ProjectOptions";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";

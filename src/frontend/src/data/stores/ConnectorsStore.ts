@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import { Connector } from "@common/data/entities/Connector";
+import { Connector } from "@common/data/entities/connector/Connector";
 
 /**
  * The connectors store for all connector-specific data.

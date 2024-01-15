@@ -2,7 +2,7 @@
 import Button from "primevue/button";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { CreateProjectAction } from "@/ui/actions/CreateProjectAction";
+import { CreateProjectAction } from "@/ui/actions/project/CreateProjectAction";
 
 const comp = FrontendComponent.inject();
 

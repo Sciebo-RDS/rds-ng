@@ -3,14 +3,14 @@ import { nextTick, onMounted } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
-import { FetchAllDataAction } from "@/ui/actions/FetchAllDataAction";
+import { GetAllDataAction } from "@/ui/actions/multi/GetAllDataAction";
 
 const comp = FrontendComponent.inject();
 
-// When launching the frontend (after the initial render), request all data first
+// When launching the frontend (after the initial render), get all data first
 onMounted(() => {
     nextTick(() => {
-        const action = new FetchAllDataAction();
+        const action = new GetAllDataAction();
 
         action.prepare(comp);
         action.execute();

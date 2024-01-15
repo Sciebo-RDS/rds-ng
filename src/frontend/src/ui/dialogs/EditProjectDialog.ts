@@ -1,7 +1,7 @@
 import { defineAsyncComponent } from "vue";
 
-import { Project } from "@common/data/entities/Project";
-import { ProjectOptions } from "@common/data/entities/ProjectOptions";
+import { Project } from "@common/data/entities/project/Project";
+import { ProjectOptions } from "@common/data/entities/project/ProjectOptions";
 import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { deepClone } from "@common/utils/DeepMerge";
 

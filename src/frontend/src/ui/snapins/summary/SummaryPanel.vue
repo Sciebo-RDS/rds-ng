@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toRefs } from "vue";
 
-import { Project } from "@common/data/entities/Project";
+import { Project } from "@common/data/entities/project/Project";
 
 const props = defineProps({
     project: {

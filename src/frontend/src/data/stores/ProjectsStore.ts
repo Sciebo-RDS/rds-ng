@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import { Project, type ProjectID } from "@common/data/entities/Project";
+import { Project, type ProjectID } from "@common/data/entities/project/Project";
 
 /**
  * The projects store for all project-specific data.

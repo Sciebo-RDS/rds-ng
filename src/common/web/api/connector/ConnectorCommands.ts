@@ -6,7 +6,7 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
-import { Connector } from "../../data/entities/Connector";
+import { Connector } from "../../data/entities/connector/Connector";
 
 /**
  * Command to fetch all available connectors.

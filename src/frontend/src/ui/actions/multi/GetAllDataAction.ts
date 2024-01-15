@@ -1,25 +1,29 @@
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { ListConnectorsAction } from "@/ui/actions/ListConnectorsAction";
-import { ListProjectsAction } from "@/ui/actions/ListProjectsAction";
+import { ListConnectorsAction } from "@/ui/actions/connector/ListConnectorsAction";
+import { ListProjectsAction } from "@/ui/actions/project/ListProjectsAction";
+import { GetUserConfigurationAction } from "@/ui/actions/user/GetUserConfigurationAction";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { MultiAction } from "@common/ui/actions/MultiAction";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
-export class FetchAllDataAction extends MultiAction {
+/**
+ * Multi-action to fetch all data from the server.
+ */
+export class GetAllDataAction extends MultiAction {
     public prepare(comp: FrontendComponent): void {
         this.prepareNotifiers();
 
-        const listConAction = new ListConnectorsAction(comp);
-        const listProjAction = new ListProjectsAction(comp);
+        const listConAction = new ListConnectorsAction(comp, true);
+        const getUserConfigAction = new GetUserConfigurationAction(comp, true);
+        const listProjAction = new ListProjectsAction(comp, true);
 
-        listConAction.suppressDefaultNotifiers = true;
         listConAction.prepare();
-        listProjAction.suppressDefaultNotifiers = true;
+        getUserConfigAction.prepare();
         listProjAction.prepare();
 
-        this.addActions([listConAction, listProjAction]);
+        this.addActions([listConAction, getUserConfigAction, listProjAction]);
     }
 
     protected addDefaultNotifiers(): void {

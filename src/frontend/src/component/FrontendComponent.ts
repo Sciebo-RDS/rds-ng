@@ -4,6 +4,7 @@ import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
 import createFrontendService from "@/services/FrontendService";
+import createUserService from "@/services/UserService";
 import createConnectorsService from "@/services/ConnectorsService";
 import createProjectsService from "@/services/ProjectsService";
 
@@ -18,6 +19,7 @@ import { registerSnapIns } from "@/ui/snapins/SnapIns";
  */
 export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _frontendService: Service | null = null;
+    private _userService: Service | null = null;
     private _connectorsService: Service | null = null;
     private _projectsService: Service | null = null;
 
@@ -35,6 +37,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
 
         // Create frontend-specific services
         this._frontendService = createFrontendService(this);
+        this._userService = createUserService(this);
         this._connectorsService = createConnectorsService(this);
         this._projectsService = createProjectsService(this);
     }
@@ -51,6 +54,16 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
             throw new Error("Tried to access the frontend service before its creation");
         }
         return this._frontendService;
+    }
+
+    /**
+     * The user service.
+     */
+    public get userService(): Service {
+        if (!this._userService) {
+            throw new Error("Tried to access the user service before its creation");
+        }
+        return this._userService;
     }
 
     /**
