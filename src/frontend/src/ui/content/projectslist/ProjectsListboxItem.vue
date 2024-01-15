@@ -7,8 +7,8 @@ import { ref, toRefs } from "vue";
 import { Project } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { DeleteProjectAction } from "@/ui/actions/DeleteProjectAction";
-import { UpdateProjectAction } from "@/ui/actions/UpdateProjectAction";
+import { DeleteProjectAction } from "@/ui/actions/project/DeleteProjectAction";
+import { UpdateProjectAction } from "@/ui/actions/project/UpdateProjectAction";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
