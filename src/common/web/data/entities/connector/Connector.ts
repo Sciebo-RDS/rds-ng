@@ -1,9 +1,7 @@
-import { UnitID } from "../../../utils/UnitID";
-
 /**
  * The connector ID type.
  */
-export type ConnectorID = UnitID;
+export type ConnectorID = string;
 
 /**
  * Data for a single **Connector**.

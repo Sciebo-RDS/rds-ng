@@ -14,7 +14,7 @@ def fill_stub_data_connectors() -> None:
 
     pool.connector_storage.add(
         Connector(
-            connector_id=ConnectorID(ComponentType.CONNECTOR, "osf"),
+            connector_id="osf",
             name="OpenScienceFramework",
             description="OSF connector",
         )
@@ -22,7 +22,7 @@ def fill_stub_data_connectors() -> None:
 
     pool.connector_storage.add(
         Connector(
-            connector_id=ConnectorID(ComponentType.CONNECTOR, "datacite"),
+            connector_id="datacite",
             name="DataCite",
             description="DataCite connector",
         )
@@ -30,7 +30,7 @@ def fill_stub_data_connectors() -> None:
 
     pool.connector_storage.add(
         Connector(
-            connector_id=ConnectorID(ComponentType.CONNECTOR, "zenodo"),
+            connector_id="zenodo",
             name="Zenodo",
             description="Zenodo connector",
         )
