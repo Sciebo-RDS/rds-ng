@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
 
-from ..connector import ConnectorID
+from .connector import ConnectorID
 
 ConnectorInstanceID = int
 

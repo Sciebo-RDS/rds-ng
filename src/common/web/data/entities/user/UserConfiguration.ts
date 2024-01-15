@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 
-import { ConnectorInstance } from "./ConnectorInstance";
+import { ConnectorInstance } from "../connector/ConnectorInstance";
 
 /**
  * User configuration (i.e., the settings a user configures in the UI) data.

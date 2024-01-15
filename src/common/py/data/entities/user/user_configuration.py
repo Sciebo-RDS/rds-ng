@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
-from .connector_instance import ConnectorInstance
+from ..connector import ConnectorInstance
 
 
 @dataclass_json
