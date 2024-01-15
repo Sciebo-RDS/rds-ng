@@ -24,7 +24,6 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
     )
 
     from .stub_service_context import StubServiceContext
-    from .stub_utils import send_user_configuration
 
     svc = comp.create_service("Users service", context_type=StubServiceContext)
 
@@ -58,7 +57,5 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
         SetUserConfigurationReply.build(
             ctx.message_builder, msg, success=success, message=message
         )
-
-        send_user_configuration(msg, ctx)
 
     return svc

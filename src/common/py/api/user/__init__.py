@@ -4,4 +4,3 @@ from .user_commands import (
     SetUserConfigurationCommand,
     SetUserConfigurationReply,
 )
-from .user_events import UserConfigurationEvent

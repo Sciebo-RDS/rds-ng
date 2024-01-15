@@ -1,5 +1,4 @@
 import { GetUserConfigurationReply, SetUserConfigurationReply } from "@common/api/user/UserCommands";
-import { UserConfigurationEvent } from "@common/api/user/UserEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -33,13 +32,6 @@ export default function(comp: WebComponent): Service {
                 } else {
                     ctx.logger.error("Unable to update the user configuration", "user", { reason: msg.message });
                 }
-            });
-
-            svc.messageHandler(UserConfigurationEvent, (msg: UserConfigurationEvent, ctx: FrontendServiceContext) => {
-                ctx.logger.debug("User configuration update received", "user", { configuration: JSON.stringify(msg.configuration) });
-
-                // @ts-ignore
-                ctx.userStore.configuration = msg.configuration;
             });
         },
         FrontendServiceContext

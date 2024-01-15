@@ -12,4 +12,3 @@ import "./project/ProjectEvents";
 import "./project/ProjectFeaturesCommands";
 
 import "./user/UserCommands";
-import "./user/UserEvents";
