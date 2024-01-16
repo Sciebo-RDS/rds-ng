@@ -29,7 +29,7 @@ export async function editProjectDialog(
     return extendedDialog<EditProjectDialogData>(
         comp,
         defineAsyncComponent(
-            () => import("@/ui/dialogs/EditProjectDialog.vue")
+            () => import("@/ui/dialogs/project/EditProjectDialog.vue")
         ),
         {
             header: project ? "Project settings" : "New project",
