@@ -8,7 +8,7 @@ import { string as ystring } from "yup";
 
 import { extendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
-import MandatoryMark from "@common/ui/forms/MandatoryMark.vue";
+import MandatoryMark from "@common/ui/components/MandatoryMark.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/UIOptions";

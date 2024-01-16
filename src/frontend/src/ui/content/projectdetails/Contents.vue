@@ -57,4 +57,8 @@ const panels = computed(() => {
 :deep(.tab-view-panel-action) {
     @apply bg-[var(--r-shade)] place-content-center #{!important};
 }
+
+:deep(.tab-view-panel-action:focus) {
+    @apply shadow-none #{!important};
+}
 </style>
