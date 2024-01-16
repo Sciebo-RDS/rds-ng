@@ -45,7 +45,7 @@ def fill_stub_data_connectors() -> None:
 def fill_stub_data_connector_instances() -> None:
     from gate.backends.stub.stub_service_context import StubServiceContext
 
-    StubServiceContext.user_configuration.connector_instances.extend(
+    StubServiceContext.user_settings.connector_instances.extend(
         [
             ConnectorInstance(
                 instance_id=1, connector_id="osf", name="Main OSF Account"

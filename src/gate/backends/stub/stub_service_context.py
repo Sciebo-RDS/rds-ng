@@ -1,7 +1,7 @@
 from common.py.core.logging import LoggerProtocol
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.core.messaging.meta import MessageMetaInformation
-from common.py.data.entities.user import UserConfiguration
+from common.py.data.entities.user import UserSettings
 from common.py.services import ServiceContext
 from common.py.data.storage import StoragePool
 from common.py.utils.config import Configuration
@@ -12,9 +12,9 @@ class StubServiceContext(ServiceContext):
     Service context specific to the stub backend.
     """
 
-    user_configuration: UserConfiguration = (
-        UserConfiguration()
-    )  # Global user configuration, added here for simplicity
+    user_settings: UserSettings = (
+        UserSettings()
+    )  # Global user settings, added here for easy access within the stub backend
 
     def __init__(
         self,

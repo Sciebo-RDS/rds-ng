@@ -8,9 +8,9 @@ from ..connector import ConnectorInstance
 
 @dataclass_json
 @dataclass(frozen=True, kw_only=True)
-class UserConfiguration:
+class UserSettings:
     """
-    User configuration (i.e., the settings a user configures in the UI) data.
+    User settings (i.e., the settings a user configures in the UI) data.
 
     Attributes:
         connector_instances: A list of all configured connector instances.

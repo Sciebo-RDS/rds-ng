@@ -5,35 +5,33 @@ from common.py.data.verifiers.connector.connector_instance_verifier import (
 )
 from common.py.data.verifiers.verifier import Verifier
 from common.py.data.entities.connector import Connector
-from common.py.data.entities.user import UserConfiguration
+from common.py.data.entities.user import UserSettings
 
 
-class UserConfigurationVerifier(Verifier):
+class UserSettingsVerifier(Verifier):
     """
-    Verifies a user configuration.
+    Verifies user settings.
     """
 
-    def __init__(
-        self, config: UserConfiguration, *, connectors: typing.List[Connector]
-    ):
-        self._config = config
+    def __init__(self, settings: UserSettings, *, connectors: typing.List[Connector]):
+        self._settings = settings
 
         self._connectors = connectors
 
     def verify_create(self) -> None:
-        for instance in self._config.connector_instances:
+        for instance in self._settings.connector_instances:
             ConnectorInstanceVerifier(
                 instance, connectors=self._connectors
             ).verify_create()
 
     def verify_update(self) -> None:
-        for instance in self._config.connector_instances:
+        for instance in self._settings.connector_instances:
             ConnectorInstanceVerifier(
                 instance, connectors=self._connectors
             ).verify_update()
 
     def verify_delete(self) -> None:
-        for instance in self._config.connector_instances:
+        for instance in self._settings.connector_instances:
             ConnectorInstanceVerifier(
                 instance, connectors=self._connectors
             ).verify_delete()

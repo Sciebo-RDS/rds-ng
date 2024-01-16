@@ -1,22 +1,22 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import { UserConfiguration } from "@common/data/entities/user/UserConfiguration";
+import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 /**
  * The user store for all user-specific data.
  *
- * @param configuration - The user configuration.
+ * @param settings - The user settings.
  */
 export const userStore = defineStore("userStore", () => {
-    const configuration = ref(new UserConfiguration());
+    const settings = ref(new UserSettings());
 
     function reset(): void {
-        configuration.value = new UserConfiguration();
+        settings.value = new UserSettings();
     }
 
     return {
-        configuration,
+        settings,
         reset
     };
 });

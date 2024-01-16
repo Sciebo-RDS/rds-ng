@@ -1,6 +1,6 @@
 from .user_commands import (
-    GetUserConfigurationCommand,
-    GetUserConfigurationReply,
-    SetUserConfigurationCommand,
-    SetUserConfigurationReply,
+    GetUserSettingsCommand,
+    GetUserSettingsReply,
+    SetUserSettingsCommand,
+    SetUserSettingsReply,
 )

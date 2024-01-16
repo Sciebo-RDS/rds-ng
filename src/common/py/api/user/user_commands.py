@@ -10,16 +10,16 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities.user import UserConfiguration
+from ...data.entities.user import UserSettings
 
 
-@Message.define("command/user/configuration/get")
-class GetUserConfigurationCommand(Command):
+@Message.define("command/user/settings/get")
+class GetUserSettingsCommand(Command):
     """
-    Command to get the configuration of the current user.
+    Command to get the settings of the current user.
 
     Notes:
-        Requires a ``GetUserConfigurationReply`` reply.
+        Requires a ``GetUserSettingsReply`` reply.
     """
 
     @staticmethod
@@ -29,28 +29,26 @@ class GetUserConfigurationCommand(Command):
         """
         Helper function to easily build this message.
         """
-        return message_builder.build_command(GetUserConfigurationCommand, chain)
+        return message_builder.build_command(GetUserSettingsCommand, chain)
 
 
-@Message.define("command/user/configuration/get/reply")
-class GetUserConfigurationReply(CommandReply):
+@Message.define("command/user/settings/get/reply")
+class GetUserSettingsReply(CommandReply):
     """
-    Reply to ``GetUserConfigurationCommand``.
+    Reply to ``GetUserSettingsCommand``.
 
     Args:
-        configuration: The user configuration.
+        settings: The user settings.
     """
 
-    configuration: UserConfiguration = dataclasses.field(
-        default_factory=UserConfiguration
-    )
+    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
-        cmd: GetUserConfigurationCommand,
+        cmd: GetUserSettingsCommand,
         *,
-        configuration: UserConfiguration,
+        settings: UserSettings,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -58,55 +56,53 @@ class GetUserConfigurationReply(CommandReply):
         Helper function to easily build this message.
         """
         return message_builder.build_command_reply(
-            GetUserConfigurationReply,
+            GetUserSettingsReply,
             cmd,
             success,
             message,
-            configuration=configuration,
+            settings=settings,
         )
 
 
-@Message.define("command/user/configuration/set")
-class SetUserConfigurationCommand(Command):
+@Message.define("command/user/settings/set")
+class SetUserSettingsCommand(Command):
     """
-    Command to set the configuration of the current user.
+    Command to set the settings of the current user.
 
     Args:
-        configuration: The new user configuration.
+        settings: The new user settings.
 
     Notes:
-        Requires a ``SetUserConfigurationReply`` reply.
+        Requires a ``SetUserSettingsReply`` reply.
     """
 
-    configuration: UserConfiguration = dataclasses.field(
-        default_factory=UserConfiguration
-    )
+    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
-        configuration: UserConfiguration,
+        settings: UserSettings,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
         Helper function to easily build this message.
         """
         return message_builder.build_command(
-            SetUserConfigurationCommand, chain, configuration=configuration
+            SetUserSettingsCommand, chain, settings=settings
         )
 
 
-@Message.define("command/user/configuration/set/reply")
-class SetUserConfigurationReply(CommandReply):
+@Message.define("command/user/settings/set/reply")
+class SetUserSettingsReply(CommandReply):
     """
-    Reply to ``SetUserConfigurationCommand``.
+    Reply to ``SetUserSettingsCommand``.
     """
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
-        cmd: SetUserConfigurationCommand,
+        cmd: SetUserSettingsCommand,
         *,
         success: bool = True,
         message: str = "",
@@ -115,7 +111,7 @@ class SetUserConfigurationReply(CommandReply):
         Helper function to easily build this message.
         """
         return message_builder.build_command_reply(
-            SetUserConfigurationReply,
+            SetUserSettingsReply,
             cmd,
             success,
             message,

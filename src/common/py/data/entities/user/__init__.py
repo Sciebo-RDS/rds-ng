@@ -1,1 +1,1 @@
-from .user_configuration import UserConfiguration
+from .user_settings import UserSettings
