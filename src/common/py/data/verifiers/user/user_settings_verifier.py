@@ -1,11 +1,11 @@
 import typing
 
-from common.py.data.verifiers.connector.connector_instance_verifier import (
+from ..connector import (
     ConnectorInstanceVerifier,
 )
-from common.py.data.verifiers.verifier import Verifier
-from common.py.data.entities.connector import Connector
-from common.py.data.entities.user import UserSettings
+from .. import Verifier
+from ...entities.connector import Connector
+from ...entities.user import UserSettings
 
 
 class UserSettingsVerifier(Verifier):

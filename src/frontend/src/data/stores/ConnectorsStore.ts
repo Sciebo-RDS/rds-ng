@@ -8,7 +8,7 @@ import { Connector } from "@common/data/entities/connector/Connector";
  *
  * @param connectors - List of all connectors.
  */
-export const connectorsStore = defineStore("connectorsStore", () => {
+export const useConnectorsStore = defineStore("connectorsStore", () => {
     const connectors = ref<Connector[]>([]);
 
     function reset(): void {

@@ -7,7 +7,7 @@ import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
-import { projectsStore } from "@/data/stores/ProjectsStore";
+import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { confirmDeleteProjectDialog } from "@/ui/dialogs/project/ConfirmDeleteProjectDialog";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 
@@ -34,7 +34,7 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
     }
 
     private markProjectForDeletion(project: Project): void {
-        const projStore = projectsStore();
+        const projStore = useProjectsStore();
         projStore.markForDeletion(project.project_id);
     }
 

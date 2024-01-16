@@ -8,15 +8,15 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
  *
  * @param settings - The user settings.
  */
-export const userStore = defineStore("userStore", () => {
-    const settings = ref(new UserSettings());
+export const useUserStore = defineStore("userStore", () => {
+    const userSettings = ref(new UserSettings());
 
     function reset(): void {
-        settings.value = new UserSettings();
+        userSettings.value = new UserSettings();
     }
 
     return {
-        settings,
+        userSettings,
         reset
     };
 });

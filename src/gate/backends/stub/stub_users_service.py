@@ -52,6 +52,6 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
 
         SetUserSettingsReply.build(
             ctx.message_builder, msg, success=success, message=message
-        )
+        ).emit()
 
     return svc

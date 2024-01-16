@@ -1,8 +1,8 @@
 import { ServiceContext } from "@common/services/ServiceContext";
 
-import { connectorsStore } from "@/data/stores/ConnectorsStore";
-import { projectsStore } from "@/data/stores/ProjectsStore";
-import { userStore } from "@/data/stores/UserStore";
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useProjectsStore } from "@/data/stores/ProjectsStore";
+import { useUserStore } from "@/data/stores/UserStore";
 
 /**
  * Service context for the frontend.
@@ -10,9 +10,9 @@ import { userStore } from "@/data/stores/UserStore";
  * Note that the store type isn't explicitely defined due to Pinia's excessive type definitions.
  */
 export class FrontendServiceContext extends ServiceContext {
-    private _connectorsStore = connectorsStore();
-    private _userStore = userStore();
-    private _projectsStore = projectsStore();
+    private _connectorsStore = useConnectorsStore();
+    private _userStore = useUserStore();
+    private _projectsStore = useProjectsStore();
 
     /**
      * The connectors store.

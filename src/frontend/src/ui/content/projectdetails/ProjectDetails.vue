@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import { projectsStore } from "@/data/stores/ProjectsStore";
+import { useProjectsStore } from "@/data/stores/ProjectsStore";
 
 import Contents from "@/ui/content/projectdetails/Contents.vue";
 import ContentsEmpty from "@/ui/content/projectdetails/ContentsEmpty.vue";
 import Header from "@/ui/content/projectdetails/Header.vue";
 import HeaderEmpty from "@/ui/content/projectdetails/HeaderEmpty.vue";
 
-const projStore = projectsStore();
+const projStore = useProjectsStore();
 const currentProject = computed(() => projStore.resolveActiveProject());
 </script>
 

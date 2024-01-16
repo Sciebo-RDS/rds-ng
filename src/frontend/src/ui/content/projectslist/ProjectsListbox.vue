@@ -9,13 +9,13 @@ import { useRoute } from "vue-router";
 import { Project, type ProjectID, ProjectStatus } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { projectsStore } from "@/data/stores/ProjectsStore";
+import { useProjectsStore } from "@/data/stores/ProjectsStore";
 
 import ProjectsListboxItem from "@/ui/content/projectslist/ProjectsListboxItem.vue";
 
 const comp = FrontendComponent.inject();
 const route = useRoute();
-const projStore = projectsStore();
+const projStore = useProjectsStore();
 const { projects, activeProject } = storeToRefs(projStore);
 
 const unwatchProjects = watch(projects, () => {

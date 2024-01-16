@@ -1,9 +1,9 @@
 import typing
 
-from common.py.utils.config import Configuration
 from ..composers import MessageBuilder
 from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
+from ....utils.config import Configuration
 
 
 class MessageContext:

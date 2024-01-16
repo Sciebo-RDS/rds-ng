@@ -20,7 +20,7 @@ export default function(comp: WebComponent): Service {
                     ctx.logger.debug("Retrieved user settings", "user", { settings: JSON.stringify(msg.settings) });
 
                     // @ts-ignore
-                    ctx.userStore.settings = msg.settings;
+                    ctx.userStore.userSettings = msg.settings;
                 } else {
                     ctx.logger.error("Unable to retrieve the user settings", "user", { reason: msg.message });
                 }

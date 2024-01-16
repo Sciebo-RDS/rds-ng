@@ -4,14 +4,24 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
+import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
+import { userSettingsDialog } from "@/ui/dialogs/user/UserSettingsDialog";
+import { type UserSettingsDialogData } from "@/ui/dialogs/user/UserSettingsDialog";
 
 /**
  * Action to create a project.
  */
 export class SetUserSettingsAction extends FrontendCommandAction<SetUserSettingsCommand, CommandComposer<SetUserSettingsCommand>> {
+    /**
+     * Shows the user settings dialog.
+     */
+    public showUserSettingsDialog(userSettings: UserSettings): ExtendedDialogResult<UserSettingsDialogData> {
+        return userSettingsDialog(this._component, userSettings);
+    }
+
     public prepare(userSettings: UserSettings): CommandComposer<SetUserSettingsCommand> {
         super.prepareNotifiers();
 

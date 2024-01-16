@@ -1,5 +1,22 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import Button from "primevue/button";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
+import { SetUserSettingsAction } from "@/ui/actions/user/SetUserSettingsAction";
+
+const comp = FrontendComponent.inject();
+const userStore = useUserStore();
+const { userSettings } = storeToRefs(userStore);
+
+function showUserSettings() {
+    const action = new SetUserSettingsAction(comp);
+    action.showUserSettingsDialog(userSettings.value).then((data) => {
+        action.prepare(data.userSettings);
+        action.execute();
+    });
+}
 </script>
 
 <template>
@@ -13,10 +30,10 @@ import Button from "primevue/button";
             Donald T. Rump
         </div>
         <div class="italic self-center pb-3">
-            3 Projects
+            X Projects
         </div>
         <div class="row-span-2 pr-2">
-            <Button plain rounded aria-label="Settings" title="Settings">
+            <Button plain rounded aria-label="Settings" title="Settings" @click="showUserSettings">
                 <template #icon>
                     <span class="material-icons-outlined mi-settings r-primary-text" style="font-size: 40px;" />
                 </template>
