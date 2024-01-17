@@ -18,9 +18,9 @@ const comp = FrontendComponent.inject();
 const userSettings = ref<UserSettings>(dialogData.userData.settings);
 
 const tabs = ref([
-    { title: "Connections", component: markRaw(ConnectionsTab) },
-    { title: "Appearance", component: markRaw(AppearanceTab) },
-    { title: "Help & Support", component: markRaw(SupportTab) }
+    { title: "Connections", component: markRaw(ConnectionsTab), icon: "mi-hub" },
+    { title: "Appearance", component: markRaw(AppearanceTab), icon: "mi-brightness-medium" },
+    { title: "Help & Support", component: markRaw(SupportTab), icon: "mi-help-outline" }
 ]);
 </script>
 

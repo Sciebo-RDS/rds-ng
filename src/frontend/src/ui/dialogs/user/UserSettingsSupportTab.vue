@@ -13,7 +13,7 @@ const userSettings = propRefs.tabData as UserSettings;
 </script>
 
 <template>
-    <div>No Support here!</div>
+    <div class="r-text-title">Help &amp; Support</div>
 </template>
 
 <style scoped lang="scss">

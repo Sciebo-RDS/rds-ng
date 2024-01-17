@@ -13,7 +13,7 @@ const userSettings = propRefs.tabData as UserSettings;
 </script>
 
 <template>
-    <div>Appearance here!</div>
+    <div class="r-text-title">Appearance</div>
 </template>
 
 <style scoped lang="scss">

@@ -59,6 +59,10 @@
     @apply text-lg;
 }
 
+.r-text-title {
+    @apply font-bold text-xl mb-2;
+}
+
 .r-text-success * {
     @apply text-green-500 #{!important};
 }

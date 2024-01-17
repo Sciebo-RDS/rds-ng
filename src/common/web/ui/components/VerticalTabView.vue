@@ -22,10 +22,16 @@ const { tabs, tabData } = toRefs(props);
             navContent: 'tab-view-nav-content',
             panelContainer: 'tab-view-panels'
         }">
-        <TabPanel v-for="tab in tabs" :key="tab.title" :header="tab.title" :pt="{
+        <TabPanel v-for="tab in tabs" :key="tab.title" :pt="{
                 header: 'tab-view-panel',
                 headerAction: 'tab-view-panel-action'
             }">
+            <template #header>
+                <div class="flex items-center gap-1.5">
+                    <span v-if="tab.icon" :class="'material-icons-outlined ' + tab.icon" style="font-size: 1rem;" />
+                    <span>{{ tab.title }}</span>
+                </div>
+            </template>
             <component :is="tab.component" :tabData="tabData" />
         </TabPanel>
     </TabView>
@@ -41,11 +47,11 @@ const { tabs, tabData } = toRefs(props);
 }
 
 :deep(.tab-view-nav-content) {
-    @apply float-left pr-10;
+    @apply float-left pr-10 pt-1;
 }
 
 :deep(.tab-view-panels) {
-    @apply p-0;
+    @apply p-0 flex;
 }
 
 :deep(.tab-view-panel) {

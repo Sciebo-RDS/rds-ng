@@ -6,4 +6,6 @@ import { type VueComponent } from "common/web/component/WebComponent";
 export interface VerticalTabDefinition {
     title: string;
     component: VueComponent;
+
+    icon?: string;
 }

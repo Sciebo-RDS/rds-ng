@@ -13,7 +13,18 @@ const userSettings = propRefs.tabData as UserSettings;
 </script>
 
 <template>
+    <div class="r-text-title">Connections</div>
     <div>Connections here!</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
+    <div>And more and more</div>
 </template>
 
 <style scoped lang="scss">
