@@ -14,7 +14,7 @@ import { type UserSettingsDialogData } from "@/ui/dialogs/user/UserSettingsDialo
 /**
  * Action to create a project.
  */
-export class SetUserSettingsAction extends FrontendCommandAction<SetUserSettingsCommand, CommandComposer<SetUserSettingsCommand>> {
+export class EditUserSettingsAction extends FrontendCommandAction<SetUserSettingsCommand, CommandComposer<SetUserSettingsCommand>> {
     /**
      * Shows the user settings dialog.
      */

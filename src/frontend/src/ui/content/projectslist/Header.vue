@@ -4,14 +4,14 @@ import Button from "primevue/button";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { SetUserSettingsAction } from "@/ui/actions/user/SetUserSettingsAction";
+import { EditUserSettingsAction } from "@/ui/actions/user/EditUserSettingsAction";
 
 const comp = FrontendComponent.inject();
 const userStore = useUserStore();
 const { userSettings } = storeToRefs(userStore);
 
 function showUserSettings() {
-    const action = new SetUserSettingsAction(comp);
+    const action = new EditUserSettingsAction(comp);
     action.showUserSettingsDialog(userSettings.value).then((data) => {
         action.prepare(data.userSettings);
         action.execute();
