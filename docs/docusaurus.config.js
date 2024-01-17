@@ -1,5 +1,4 @@
-// @ts-check
-
+// @ts-ignore
 const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
@@ -10,15 +9,16 @@ const config = {
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://research-data-services.org",
+  url: "https://rds-ng.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "University of Muenster", // Usually your GitHub org/user name.
-  projectName: "rds-ng-docs", // Usually your repo name.
+  organizationName: "University of Muenster ", // Usually your GitHub org/user name.
+  projectName: "sciebo-rds.github.io", // Usually your repo name.
+  deploymentBranch: "gh-pages",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",

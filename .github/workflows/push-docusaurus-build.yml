@@ -1,0 +1,41 @@
+# This Action builds Docusaurus files and push them to sciebo-rds.github.io
+name: Build and publish Docusaurus build files
+
+on:
+  workflow_dispatch:
+  push:
+       branches: [release]
+
+
+env:
+    SCRIPTS_DIR: scripts
+
+permissions:
+    contents: write
+
+jobs:
+        # This workflow contains a single job called "build"
+    build:
+          # The type of runner that the job will run on
+          runs-on: ubuntu-latest
+      
+          # Steps represent a sequence of tasks that will be executed as part of the job
+          steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - uses: actions/checkout@v3
+
+            # Runs a single command using the runn
+            - name: Run bash script
+              run: sh  scripts/refresh_reference.sh
+                
+
+            - name: Pushes to another repository
+              uses: cpina/github-action-push-to-another-repository@main
+              env: 
+                SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+              with:
+                  source-directory: 'docs/build'
+                  destination-github-username: 'Sciebo-RDS'
+                  destination-repository-name: 'sciebo-rds.github.io'
+                  user-email:
+                  target-branch: gh-pages
