@@ -2,8 +2,9 @@
 name: Build and publish Docusaurus build files
 
 on:
-    pull_request:
-      branches: [develop]
+  push:
+       branches: [release]
+
 
 env:
     SCRIPTS_DIR: scripts
@@ -35,5 +36,5 @@ jobs:
                   source-directory: 'docs/build'
                   destination-github-username: 'Sciebo-RDS'
                   destination-repository-name: 'sciebo-rds.github.io'
-                  #user-email:
+                  user-email:
                   target-branch: gh-pages
