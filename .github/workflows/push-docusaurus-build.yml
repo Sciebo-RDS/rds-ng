@@ -2,6 +2,7 @@
 name: Build and publish Docusaurus build files
 
 on:
+  workflow_dispatch:
   push:
        branches: [release]
 
