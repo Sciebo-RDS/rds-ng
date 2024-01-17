@@ -8,14 +8,14 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
-import AppearanceTab from "@/ui/dialogs/user/UserSettingsAppearanceTab.vue";
-import ConnectionsTab from "@/ui/dialogs/user/UserSettingsConnectionsTab.vue";
-import SupportTab from "@/ui/dialogs/user/UserSettingsSupportTab.vue";
+import AppearanceTab from "@/ui/dialogs/usersettings/UserSettingsAppearanceTab.vue";
+import ConnectionsTab from "@/ui/dialogs/usersettings/UserSettingsConnectionsTab.vue";
+import SupportTab from "@/ui/dialogs/usersettings/UserSettingsSupportTab.vue";
 
 const { dialogData } = extendedDialogTools();
 
 const comp = FrontendComponent.inject();
-const userSettings = ref<UserSettings>(dialogData.userData.settings);
+const userSettings = ref<UserSettings>(dialogData.userData.userSettings);
 
 const tabs = ref([
     { title: "Connections", component: markRaw(ConnectionsTab), icon: "mi-hub" },
@@ -25,7 +25,7 @@ const tabs = ref([
 </script>
 
 <template>
-    <VerticalTabView :tabs="tabs" :tabData="userSettings" />
+    <VerticalTabView :tabs="tabs" :tab-data="userSettings" />
 </template>
 
 <style scoped lang="scss">

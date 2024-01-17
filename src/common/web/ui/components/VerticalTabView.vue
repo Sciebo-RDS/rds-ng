@@ -32,7 +32,7 @@ const { tabs, tabData } = toRefs(props);
                     <span>{{ tab.title }}</span>
                 </div>
             </template>
-            <component :is="tab.component" :tabData="tabData" />
+            <component :is="tab.component" :tab-data="tabData" />
         </TabPanel>
     </TabView>
 </template>

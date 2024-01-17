@@ -26,7 +26,7 @@ export async function userSettingsDialog(
     return extendedDialog<UserSettingsDialogData>(
         comp,
         defineAsyncComponent(
-            () => import("@/ui/dialogs/user/UserSettingsDialog.vue")
+            () => import("@/ui/dialogs/usersettings/UserSettingsDialog.vue")
         ),
         {
             header: "User settings",

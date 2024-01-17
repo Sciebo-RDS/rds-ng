@@ -51,7 +51,10 @@ def fill_stub_data_connector_instances() -> None:
                 instance_id=1, connector_id="osf", name="Main OSF Account"
             ),
             ConnectorInstance(
-                instance_id=2, connector_id="datacite", name="Backup DataCite"
+                instance_id=2, connector_id="osf", name="Backup OSF"
+            ),
+            ConnectorInstance(
+                instance_id=3, connector_id="datacite", name="Backup DataCite"
             ),
         ]
     )

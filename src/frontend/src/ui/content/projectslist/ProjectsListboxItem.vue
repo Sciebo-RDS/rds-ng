@@ -65,7 +65,7 @@ const editMenuShown = ref(false);
 
 <template>
     <div class="grid grid-rows-[auto_auto] grid-cols-[1fr_min-content] grid-flow-row gap-0 h-24 place-content-start group">
-        <div class="r-text-caption-big h-8 truncate" :title="project.title">{{ project!.title }}</div>
+        <div class="r-text-caption-big h-8 truncate" :title="project!.title">{{ project!.title }}</div>
 
         <div v-if="!isDeleted" class="row-span-2 pl-1">
             <Button
