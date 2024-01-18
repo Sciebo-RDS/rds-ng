@@ -9,7 +9,7 @@ const props = defineProps({
     }
 });
 const propRefs = toRefs(props);
-const userSettings = propRefs.tabData as UserSettings;
+const userSettings = propRefs.tabData!.value as UserSettings;
 </script>
 
 <template>

@@ -6,6 +6,7 @@ import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entiti
 import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
+import ConnectorInstancesListboxGroup from "@/ui/dialogs/usersettings/ConnectorInstancesListboxGroup.vue";
 import ConnectorInstancesListboxItem from "@/ui/dialogs/usersettings/ConnectorInstancesListboxItem.vue";
 
 const props = defineProps({
@@ -33,7 +34,16 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
             option-group-children="connectorInstances"
             option-value="instance_id"
             class="w-full"
+            :pt="{
+                list: 'coninst-listbox-list',
+                itemGroup: 'coninst-listbox-item-group'
+            }"
         >
+            <template #optiongroup="groupEntry">
+                <ConnectorInstancesListboxGroup
+                    :group="groupEntry.option"
+                />
+            </template>
             <template #option="instanceEntry">
                 <ConnectorInstancesListboxItem
                     :instance="instanceEntry.option"
@@ -48,5 +58,11 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
 </template>
 
 <style scoped lang="scss">
+:deep(.coninst-listbox-list) {
+    @apply p-0 #{!important};
+}
 
+:deep(.coninst-listbox-item-group) {
+    @apply bg-[var(--r-shade-dark)] p-2 #{!important};
+}
 </style>

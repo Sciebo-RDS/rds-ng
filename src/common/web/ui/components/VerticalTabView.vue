@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs } from "vue";
+import { type PropType, toRefs } from "vue";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
 
@@ -7,7 +7,7 @@ import { type VerticalTabDefinition } from "./VerticalTabView";
 
 const props = defineProps({
     tabs: {
-        type: Object as [VerticalTabDefinition],
+        type: Object as PropType<VerticalTabDefinition[]>,
         required: true
     },
     tabData: {}
