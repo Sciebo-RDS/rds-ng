@@ -34,7 +34,7 @@ const editMenuItems = ref([
         label: "Edit project",
         items: [
             {
-                label: "Project settings",
+                label: "Settings",
                 icon: "material-icons-outlined mi-engineering",
                 command: () => {
                     const action = new UpdateProjectAction(comp);
@@ -46,7 +46,7 @@ const editMenuItems = ref([
             },
             { separator: true },
             {
-                label: "Delete project",
+                label: "Delete",
                 icon: "material-icons-outlined mi-delete-forever",
                 class: "r-text-error",
                 command: () => {

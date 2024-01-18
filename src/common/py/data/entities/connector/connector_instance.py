@@ -17,6 +17,7 @@ class ConnectorInstance:
         instance_id: The ID of the connector instance.
         connector_id: The assigned connector.
         name: The name of this connector instance.
+        description: The instance description.
     """
 
     instance_id: ConnectorInstanceID
@@ -24,3 +25,4 @@ class ConnectorInstance:
     connector_id: ConnectorID
 
     name: str
+    description: str = ""

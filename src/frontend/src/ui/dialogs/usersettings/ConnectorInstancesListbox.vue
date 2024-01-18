@@ -35,7 +35,9 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
             option-value="instance_id"
             class="w-full"
             :pt="{
+                root: 'coninst-listbox',
                 list: 'coninst-listbox-list',
+                item: 'coninst-listbox-item',
                 itemGroup: 'coninst-listbox-item-group'
             }"
         >
@@ -58,8 +60,16 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
 </template>
 
 <style scoped lang="scss">
+:deep(.coninst-listbox) {
+    @apply rounded-none;
+}
+
 :deep(.coninst-listbox-list) {
     @apply p-0 #{!important};
+}
+
+:deep(.coninst-listbox-item) {
+    @apply border-solid border-b border-[--r-border-color] #{!important};
 }
 
 :deep(.coninst-listbox-item-group) {

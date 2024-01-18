@@ -23,7 +23,7 @@ const connector = findConnectorByID(consStore.connectors, group.value.connectorI
         <div class="truncate r-shade-text opacity-70" :title="connector.description">{{ connector.name }}</div>
     </div>
     <div v-else class="place-content-start items-center r-text-error">
-        <div class="truncate opacity-70">Unknown connector <em>{{ group!.connectorID }}</em></div>
+        <div class="truncate opacity-70">Unknown connector <em>&lsquo;{{ group!.connectorID }}&rsquo;</em></div>
     </div>
 </template>
 
