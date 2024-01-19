@@ -72,9 +72,7 @@ const editMenuShown = ref(false);
                     <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px" />
                 </template>
             </Button>
-            <Menu ref="editMenu" :model="editMenuItems" :base-z-index="Number.MAX_SAFE_INTEGER" popup @focus="editMenuShown = true" @blur="editMenuShown = false" :pt="{
-                root: 'coninst-popup-menu'
-            }" />
+            <Menu ref="editMenu" :model="editMenuItems" :base-z-index="Number.MAX_SAFE_INTEGER" popup @focus="editMenuShown = true" @blur="editMenuShown = false" />
         </div>
 
         <div class="truncate" :title="instance!.description">{{ instance!.description }}</div>
@@ -93,7 +91,5 @@ const editMenuShown = ref(false);
 </template>
 
 <style scoped lang="scss">
-:deep(.coninst-popup-menu) {
-    @apply w-96 #{!important};
-}
+
 </style>
