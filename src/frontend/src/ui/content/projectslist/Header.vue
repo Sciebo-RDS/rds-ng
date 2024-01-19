@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
+import { unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -12,7 +13,7 @@ const { userSettings } = storeToRefs(userStore);
 
 function showUserSettings() {
     const action = new EditUserSettingsAction(comp);
-    action.showUserSettingsDialog(userSettings.value).then((data) => {
+    action.showUserSettingsDialog(unref(userSettings.value)).then((data) => {
         action.prepare(data.userSettings);
         action.execute();
     });

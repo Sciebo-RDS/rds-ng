@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import Listbox from "primevue/listbox";
-import { computed, ref, toRefs } from "vue";
+import { computed, type PropType, ref, toRefs } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
+import { findConnectorInstanceByID, groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import ConnectorInstancesListboxGroup from "@/ui/dialogs/usersettings/ConnectorInstancesListboxGroup.vue";
@@ -11,7 +11,7 @@ import ConnectorInstancesListboxItem from "@/ui/dialogs/usersettings/ConnectorIn
 
 const props = defineProps({
     userSettings: {
-        type: UserSettings,
+        type: Object as PropType<UserSettings>,
         required: true
     }
 });
@@ -33,6 +33,15 @@ function deleteInstance(instance: ConnectorInstance): void {
         userSettings!.value.connector_instances.splice(index, 1);
     }
 }
+
+function onDeleteKey() {
+    if (selectedInstance.value) {
+        const instance = findConnectorInstanceByID(userSettings!.value!.connector_instances, selectedInstance.value);
+        if (instance) {
+            deleteInstance(instance);
+        }
+    }
+}
 </script>
 
 <template>
@@ -50,7 +59,7 @@ function deleteInstance(instance: ConnectorInstance): void {
                 item: 'coninst-listbox-item',
                 itemGroup: 'coninst-listbox-item-group'
             }"
-            @keydown="(event) => console.log(event)"
+            @keydown="(event: KeyboardEvent) => { if (event.code == 'Delete') onDeleteKey(); }"
         >
             <template #optiongroup="groupEntry">
                 <ConnectorInstancesListboxGroup

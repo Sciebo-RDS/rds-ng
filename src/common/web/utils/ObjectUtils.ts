@@ -38,9 +38,13 @@ export function deepMerge<ObjType = object>(target: CloneObjectType, ...sources:
  * @param source - The source object; if this is undefined, the default value is used.
  * @param defaultValue - The default value if the source is undefined.
  */
-export function deepClone<ObjType = object>(source?: CloneObjectType, defaultValue?: CloneObjectType): ObjType | undefined {
+export function deepClone<ObjType = object>(source?: CloneObjectType, defaultValue?: CloneObjectType): ObjType {
+    if (!source && !defaultValue) {
+        throw new Error("Tried to deep-clone an object without a source and default value");
+    }
+
     if (!source) {
-        return defaultValue;
+        return defaultValue!;
     }
     return JSON.parse(JSON.stringify(source)) as ObjType;
 }

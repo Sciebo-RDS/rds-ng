@@ -2,7 +2,7 @@
 import Button from "primevue/button";
 import Menu from "primevue/menu";
 import ProgressSpinner from "primevue/progressspinner";
-import { ref, toRefs } from "vue";
+import { type PropType, ref, toRefs } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
@@ -11,7 +11,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
-        type: Project,
+        type: Object as PropType<Project>,
         required: true
     },
     isSelected: {

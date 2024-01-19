@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs } from "vue";
+import { type PropType, toRefs } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
@@ -7,11 +7,12 @@ import ConnectorInstancesListbox from "@/ui/dialogs/usersettings/ConnectorInstan
 
 const props = defineProps({
     tabData: {
+        type: Object as PropType<UserSettings>,
         required: true
     }
 });
 const propRefs = toRefs(props);
-const userSettings = propRefs.tabData!.value as UserSettings;
+const userSettings = propRefs.tabData!;
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import Menu from "primevue/menu";
-import { ref, toRefs } from "vue";
+import { type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
@@ -11,7 +11,7 @@ import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 const consStore = useConnectorsStore();
 const props = defineProps({
     instance: {
-        type: ConnectorInstance,
+        type: Object as PropType<ConnectorInstance>,
         required: true
     },
     isSelected: {
@@ -25,7 +25,7 @@ const emits = defineEmits<{
 }>();
 
 const { instance, isSelected } = toRefs(props);
-const connector = findConnectorByID(consStore.connectors, instance.value.connector_id);
+const connector = findConnectorByID(unref(consStore.connectors), instance.value.connector_id);
 
 const editMenu = ref();
 const editMenuItems = ref([

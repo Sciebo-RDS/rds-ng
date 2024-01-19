@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type PropType, toRefs } from "vue";
+import { type PropType, toRefs, unref } from "vue";
 
 import { type ConnectorInstancesGroup, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 
@@ -14,7 +14,7 @@ const props = defineProps({
 });
 
 const { group } = toRefs(props);
-const connector = findConnectorByID(consStore.connectors, group.value.connectorID);
+const connector = findConnectorByID(unref(consStore.connectors), group.value.connectorID);
 </script>
 
 <template>

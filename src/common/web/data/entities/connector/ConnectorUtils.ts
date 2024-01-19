@@ -1,5 +1,5 @@
 import { Connector, type ConnectorID } from "./Connector";
-import { ConnectorInstance } from "./ConnectorInstance";
+import { ConnectorInstance, type ConnectorInstanceID } from "./ConnectorInstance";
 
 /**
  * A single connector instances group.
@@ -42,4 +42,16 @@ export function groupConnectorInstances(connectorInstances: ConnectorInstance[])
  */
 export function findConnectorByID(connectors: Connector[], connectorID: ConnectorID): Connector | undefined {
     return connectors.find((con) => con.connector_id == connectorID);
+}
+
+/**
+ * Searches for a connector instance by its ID within a list of connector instances.
+ *
+ * @param connectorInstances - The list of connector instances.
+ * @param instanceID - The connector instance to search for.
+ *
+ * @returns - The found connector instance or **undefined** otherwise.
+ */
+export function findConnectorInstanceByID(connectorInstances: ConnectorInstance[], instanceID: ConnectorInstanceID): ConnectorInstance | undefined {
+    return connectorInstances.find((inst) => inst.instance_id == instanceID);
 }
