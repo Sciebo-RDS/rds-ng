@@ -2,7 +2,7 @@ import { defineAsyncComponent } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
-import { deepClone } from "@common/utils/DeepMerge";
+import { deepClone } from "@common/utils/ObjectUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
@@ -34,7 +34,7 @@ export async function userSettingsDialog(
             contentClass: "w-[20vw] w-full min-w-[40rem] max-w-[80rem] !pt-4"
         },
         {
-            userSettings: deepClone<UserSettings>(new UserSettings(), userSettings)
+            userSettings: deepClone<UserSettings>(userSettings)
         },
         {
             hasAcceptButton: true,

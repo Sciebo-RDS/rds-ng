@@ -2,7 +2,7 @@ function isObject(item: any) {
     return item && typeof item === "object" && !Array.isArray(item);
 }
 
-type MergeObjectType = Record<string | number | symbol, any>;
+type CloneObjectType = Record<string | number | symbol, any>;
 
 /**
  * Deep-merge two objects.
@@ -10,7 +10,7 @@ type MergeObjectType = Record<string | number | symbol, any>;
  * @param target - The target object.
  * @param sources - The source objects to merge into the target.
  */
-export function deepMerge<ObjType = object>(target: MergeObjectType, ...sources: MergeObjectType[]): ObjType {
+export function deepMerge<ObjType = object>(target: CloneObjectType, ...sources: CloneObjectType[]): ObjType {
     if (!sources.length) {
         return target;
     }
@@ -33,11 +33,14 @@ export function deepMerge<ObjType = object>(target: MergeObjectType, ...sources:
 }
 
 /**
- * Deep-clones an object into another one.
+ * Deep-clones an object.
  *
- * @param target - The target object.
- * @param source - The source object, if any.
+ * @param source - The source object; if this is undefined, the default value is used.
+ * @param defaultValue - The default value if the source is undefined.
  */
-export function deepClone<ObjType = object>(target: MergeObjectType, source?: MergeObjectType): ObjType {
-    return deepMerge<ObjType>(target, source ? source : {});
+export function deepClone<ObjType = object>(source?: CloneObjectType, defaultValue?: CloneObjectType): ObjType | undefined {
+    if (!source) {
+        return defaultValue;
+    }
+    return JSON.parse(JSON.stringify(source)) as ObjType;
 }

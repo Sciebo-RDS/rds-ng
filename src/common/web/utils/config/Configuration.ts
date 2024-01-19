@@ -1,10 +1,10 @@
 import { parse } from "toml";
 
 import { SettingID } from "./SettingID";
-import { deepMerge } from "../DeepMerge";
+import { deepMerge } from "../ObjectUtils";
 
 // @ts-ignore
-import configData from "/config/config.toml?url&raw"
+import configData from "/config/config.toml?url&raw";
 
 /**
  * A general record-like object.
@@ -105,7 +105,7 @@ export class Configuration {
 
     private traverseSettings(path: string[], settings: SettingsContainer): any {
         if (!(path[0] in settings)) {
-            throw new Error(`Unknown settings key ${path[0]}}`)
+            throw new Error(`Unknown settings key ${path[0]}}`);
         }
         settings = settings[path[0]];
         return path.length == 1 ? settings : this.traverseSettings(path.slice(1), settings);
