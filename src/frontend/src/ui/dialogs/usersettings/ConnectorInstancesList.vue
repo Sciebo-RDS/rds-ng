@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { Connector } from "@common/data/entities/connector/Connector";
+import { storeToRefs } from "pinia";
+import Dropdown from "primevue/dropdown";
 import Listbox from "primevue/listbox";
 import { computed, type PropType, ref, toRefs } from "vue";
 
@@ -6,15 +9,19 @@ import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entiti
 import { findConnectorInstanceByID, groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+
 import ConnectorInstancesListboxGroup from "@/ui/dialogs/usersettings/ConnectorInstancesListboxGroup.vue";
 import ConnectorInstancesListboxItem from "@/ui/dialogs/usersettings/ConnectorInstancesListboxItem.vue";
 
+const consStore = useConnectorsStore();
 const props = defineProps({
     userSettings: {
         type: Object as PropType<UserSettings>,
         required: true
     }
 });
+const { connectors } = storeToRefs(consStore);
 const { userSettings } = toRefs(props);
 
 const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances));
@@ -24,7 +31,19 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
     return instance.instance_id === selectedInstance.value;
 }
 
+function addInstance(connector: Connector): void {
+    // TODO
+    const instances = userSettings!.value.connector_instances;
+    const instanceID = instances.length ? instances[instances.length - 1].instance_id + 1 : 1;
+    instances.push(
+        new ConnectorInstance(instanceID, connector.connector_id, "I am new!", "And not unique...")
+    );
+
+    selectedInstance.value = instanceID;
+}
+
 function editInstance(instance: ConnectorInstance): void {
+    // TODO
 }
 
 function deleteInstance(instance: ConnectorInstance): void {
@@ -78,12 +97,28 @@ function onDeleteKey() {
                 <div class="r-text-caption-big r-small-caps grid justify-center">No connections</div>
             </template>
         </Listbox>
+
+        <Dropdown
+            :options="connectors"
+            optionLabel="name"
+            placeholder="Add a new connection..."
+            class="w-full mt-1"
+            :autoOptionFocus="false"
+            @change="(event) => addInstance(event.value as Connector)"
+        >
+            <template #option="connectorItem">
+                <div class="grid grid-rows-1 grid-cols-[min-content-1fr] grid-flow-col gap-3 place-content-start items-center">
+                    <img v-if="connectorItem.option.logos.horizontal_logo" :src="connectorItem.option.logos.horizontal_logo" class="h-4" alt="{{ connectorItem.option.name }}" :title="connectorItem.option.description" />
+                    <div :title="connectorItem.option.description">{{ connectorItem.option.name }}</div>
+                </div>
+            </template>
+        </Dropdown>
     </div>
 </template>
 
 <style scoped lang="scss">
 :deep(.coninst-listbox) {
-    @apply rounded-none;
+    @apply overflow-y-auto max-h-[calc(100vh-40rem)] #{!important};
 }
 
 :deep(.coninst-listbox-list) {

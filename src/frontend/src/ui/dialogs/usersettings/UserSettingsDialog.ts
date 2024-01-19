@@ -31,7 +31,7 @@ export async function userSettingsDialog(
         {
             header: "User settings",
             modal: true,
-            contentClass: "w-[20vw] w-full min-w-[40rem] max-w-[80rem] !pt-4"
+            contentClass: "w-[20vw] w-full min-w-[40rem] h-[20vh] h-full min-h-[40rem] !pt-4"
         },
         {
             userSettings: deepClone<UserSettings>(userSettings)
