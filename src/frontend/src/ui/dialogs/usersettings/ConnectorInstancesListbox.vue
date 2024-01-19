@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Listbox from "primevue/listbox";
-import { ref, toRefs } from "vue";
+import { computed, ref, toRefs } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
@@ -17,11 +17,21 @@ const props = defineProps({
 });
 const { userSettings } = toRefs(props);
 
-const groupedInstances = ref(groupConnectorInstances(userSettings!.value!.connector_instances));
+const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances));
 const selectedInstance = ref<ConnectorInstanceID | undefined>();
 
 function isInstanceSelected(instance: ConnectorInstance): boolean {
     return instance.instance_id === selectedInstance.value;
+}
+
+function editInstance(instance: ConnectorInstance): void {
+}
+
+function deleteInstance(instance: ConnectorInstance): void {
+    const index = userSettings!.value.connector_instances.indexOf(instance);
+    if (index != -1) {
+        userSettings!.value.connector_instances.splice(index, 1);
+    }
 }
 </script>
 
@@ -40,6 +50,7 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
                 item: 'coninst-listbox-item',
                 itemGroup: 'coninst-listbox-item-group'
             }"
+            @keydown="(event) => console.log(event)"
         >
             <template #optiongroup="groupEntry">
                 <ConnectorInstancesListboxGroup
@@ -50,6 +61,8 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
                 <ConnectorInstancesListboxItem
                     :instance="instanceEntry.option"
                     :is-selected="isInstanceSelected(instanceEntry.option)"
+                    @edit-instance="editInstance"
+                    @delete-instance="deleteInstance"
                 />
             </template>
             <template #empty>

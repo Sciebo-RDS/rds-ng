@@ -7,8 +7,6 @@ import { ref, toRefs } from "vue";
 import { Project } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { DeleteProjectAction } from "@/ui/actions/project/DeleteProjectAction";
-import { UpdateProjectAction } from "@/ui/actions/project/UpdateProjectAction";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -25,6 +23,10 @@ const props = defineProps({
         default: false
     }
 });
+const emits = defineEmits<{
+    (e: "edit-project", project: Project): void;
+    (e: "delete-project", project: Project): void;
+}>();
 
 const { project, isSelected, isDeleted } = toRefs(props);
 
@@ -37,11 +39,7 @@ const editMenuItems = ref([
                 label: "Settings",
                 icon: "material-icons-outlined mi-engineering",
                 command: () => {
-                    const action = new UpdateProjectAction(comp);
-                    action.showEditDialog(project!.value).then((data) => {
-                        action.prepare(project!.value.project_id, data.title, data.description, data.options);
-                        action.execute();
-                    });
+                    emits("edit-project", project!.value);
                 }
             },
             { separator: true },
@@ -50,11 +48,7 @@ const editMenuItems = ref([
                 icon: "material-icons-outlined mi-delete-forever",
                 class: "r-text-error",
                 command: () => {
-                    const action = new DeleteProjectAction(comp);
-                    action.showConfirmation(project!.value).then(() => {
-                        action.prepare(project!.value);
-                        action.execute();
-                    });
+                    emits("delete-project", project!.value);
                 }
             }
         ]

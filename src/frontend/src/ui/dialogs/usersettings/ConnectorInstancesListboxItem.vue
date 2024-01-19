@@ -19,6 +19,11 @@ const props = defineProps({
         default: false
     }
 });
+const emits = defineEmits<{
+    (e: "edit-instance", instance: ConnectorInstance): void;
+    (e: "delete-instance", instance: ConnectorInstance): void;
+}>();
+
 const { instance, isSelected } = toRefs(props);
 const connector = findConnectorByID(consStore.connectors, instance.value.connector_id);
 
@@ -31,6 +36,7 @@ const editMenuItems = ref([
                 label: "Settings",
                 icon: "material-icons-outlined mi-engineering",
                 command: () => {
+                    emits("edit-instance", instance!.value);
                 }
             },
             { separator: true },
@@ -39,6 +45,7 @@ const editMenuItems = ref([
                 icon: "material-icons-outlined mi-delete-forever",
                 class: "r-text-error",
                 command: () => {
+                    emits("delete-instance", instance!.value);
                 }
             }
         ]
