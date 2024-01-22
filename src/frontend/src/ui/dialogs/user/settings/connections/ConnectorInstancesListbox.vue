@@ -37,7 +37,7 @@ function onDeleteKey() {
     if (selectedInstance.value) {
         const instance = findConnectorInstanceByID(userSettings!.value!.connector_instances, selectedInstance.value);
         if (instance) {
-            deleteInstance(instance);
+            deleteInstance(userSettings!.value!.connector_instances, instance);
         }
     }
 }
