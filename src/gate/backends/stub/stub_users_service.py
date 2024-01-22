@@ -30,7 +30,7 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
     @svc.message_handler(GetUserSettingsCommand)
     def get_user_settings(msg: GetUserSettingsCommand, ctx: StubServiceContext) -> None:
         GetUserSettingsReply.build(
-            ctx.message_builder, msg, settings=ctx.user_settings
+            ctx.message_builder, msg, settings=StubServiceContext.user_settings
         ).emit()
 
     @svc.message_handler(SetUserSettingsCommand)
@@ -45,7 +45,7 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
                 user_settings, connectors=ctx.storage_pool.connector_storage.list()
             ).verify_update()
 
-            ctx.user_settings = user_settings
+            StubServiceContext.user_settings = user_settings
             success = True
         except Exception as exc:  # pylint: disable=broad-exception-caught
             message = str(exc)
