@@ -3,7 +3,7 @@ import { type PropType, toRefs } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
-import ConnectorInstancesList from "@/ui/dialogs/usersettings/ConnectorInstancesList.vue";
+import ConnectorInstancesList from "@/ui/dialogs/user/settings/connections/ConnectorInstancesList.vue";
 
 const props = defineProps({
     tabData: {

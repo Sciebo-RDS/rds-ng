@@ -11,8 +11,8 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 
-import ConnectorInstancesListboxGroup from "@/ui/dialogs/usersettings/ConnectorInstancesListboxGroup.vue";
-import ConnectorInstancesListboxItem from "@/ui/dialogs/usersettings/ConnectorInstancesListboxItem.vue";
+import ConnectorInstancesListboxGroup from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxGroup.vue";
+import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxItem.vue";
 
 const consStore = useConnectorsStore();
 const props = defineProps({

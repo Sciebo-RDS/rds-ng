@@ -8,9 +8,9 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
-import AppearanceTab from "@/ui/dialogs/usersettings/UserSettingsAppearanceTab.vue";
-import ConnectionsTab from "@/ui/dialogs/usersettings/UserSettingsConnectionsTab.vue";
-import SupportTab from "@/ui/dialogs/usersettings/UserSettingsSupportTab.vue";
+import AppearanceTab from "@/ui/dialogs/user/settings/appearance/UserSettingsAppearanceTab.vue";
+import ConnectionsTab from "@/ui/dialogs/user/settings/connections/UserSettingsConnectionsTab.vue";
+import SupportTab from "@/ui/dialogs/user/settings/support/UserSettingsSupportTab.vue";
 
 const { dialogData } = extendedDialogTools();
 

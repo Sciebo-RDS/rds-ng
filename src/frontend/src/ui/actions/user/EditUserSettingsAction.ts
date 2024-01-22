@@ -8,8 +8,8 @@ import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
-import { userSettingsDialog } from "@/ui/dialogs/usersettings/UserSettingsDialog";
-import { type UserSettingsDialogData } from "@/ui/dialogs/usersettings/UserSettingsDialog";
+import { userSettingsDialog } from "@/ui/dialogs/user/settings/UserSettingsDialog";
+import { type UserSettingsDialogData } from "@/ui/dialogs/user/settings/UserSettingsDialog";
 
 /**
  * Action to create a project.
