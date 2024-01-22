@@ -69,6 +69,7 @@ function onDeleteKey() {
                 <ConnectorInstancesListboxItem
                     :instance="instanceEntry.option"
                     :is-selected="isInstanceSelected(instanceEntry.option)"
+                    @dblclick="editInstance(instanceEntry.option)"
                     @edit-instance="editInstance(instanceEntry.option)"
                     @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
                 />

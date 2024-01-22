@@ -15,6 +15,7 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
 
     function editInstance(instance: ConnectorInstance): void {
         // TODO
+        console.log("Edit " + instance.name);
     }
 
     function deleteInstance(instances: ConnectorInstance[], instance: ConnectorInstance): void {
