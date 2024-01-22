@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import Menu from "primevue/menu";
-import { type PropType, ref, toRefs, unref } from "vue";
+import { computed, type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
@@ -25,7 +25,7 @@ const emits = defineEmits<{
 }>();
 
 const { instance, isSelected } = toRefs(props);
-const connector = findConnectorByID(unref(consStore.connectors), instance.value.connector_id);
+const connector = computed(() => findConnectorByID(unref(consStore.connectors), instance.value.connector_id));
 
 const editMenu = ref();
 const editMenuItems = ref([
