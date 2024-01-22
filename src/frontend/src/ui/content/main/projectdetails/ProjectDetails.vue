@@ -3,10 +3,10 @@ import { computed } from "vue";
 
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 
-import Contents from "@/ui/content/projectdetails/Contents.vue";
-import ContentsEmpty from "@/ui/content/projectdetails/ContentsEmpty.vue";
-import Header from "@/ui/content/projectdetails/Header.vue";
-import HeaderEmpty from "@/ui/content/projectdetails/HeaderEmpty.vue";
+import Contents from "@/ui/content/main/projectdetails/Contents.vue";
+import ContentsEmpty from "@/ui/content/main/projectdetails/ContentsEmpty.vue";
+import Header from "@/ui/content/main/projectdetails/Header.vue";
+import HeaderEmpty from "@/ui/content/main/projectdetails/HeaderEmpty.vue";
 
 const projStore = useProjectsStore();
 const currentProject = computed(() => projStore.resolveActiveProject());

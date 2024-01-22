@@ -24,7 +24,7 @@ function showUserSettings() {
     <div class="grid grid-rows-2 grid-cols-[min-content_1fr_min-content] grid-flow-col gap-x-2 content-center items-center r-primary-bg r-primary-text">
         <div class="row-span-2">
             <a href="https://www.research-data-services.org" target="_blank">
-                <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-1.5" title="Visit the RDS website">
+                <img id="logo" src="../../../../../../common/assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-1.5" title="Visit the RDS website">
             </a>
         </div>
         <div class="font-bold self-center pt-3">

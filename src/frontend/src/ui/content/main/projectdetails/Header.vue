@@ -3,7 +3,7 @@ import { toRefs } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
-import ProjectControls from "@/ui/content/projectdetails/ProjectControls.vue";
+import ProjectControls from "@/ui/content/main/projectdetails/ProjectControls.vue";
 
 const props = defineProps({
     project: {

@@ -13,7 +13,7 @@ import { useProjectsStore } from "@/data/stores/ProjectsStore";
 
 import { UpdateProjectAction } from "@/ui/actions/project/UpdateProjectAction";
 import { DeleteProjectAction } from "@/ui/actions/project/DeleteProjectAction";
-import ProjectsListboxItem from "@/ui/content/projectslist/ProjectsListboxItem.vue";
+import ProjectsListboxItem from "@/ui/content/main/projectslist/ProjectsListboxItem.vue";
 
 const comp = FrontendComponent.inject();
 const route = useRoute();
