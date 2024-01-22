@@ -9,7 +9,7 @@ import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
 /**
  * Tools for working with the extended dialog.
  */
-export function extendedDialogTools() {
+export function useExtendedDialogTools() {
     const dialogRef = inject("dialogRef") as any;
     const dialogData = dialogRef.value.data as ExtendedDialogData<any>;
 

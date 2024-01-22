@@ -1,18 +1,11 @@
 <script setup lang="ts">
+import { useProjectTools } from "@/ui/tools/ProjectTools";
 import Button from "primevue/button";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { CreateProjectAction } from "@/ui/actions/project/CreateProjectAction";
 
 const comp = FrontendComponent.inject();
-
-function createProject() {
-    const action = new CreateProjectAction(comp);
-    action.showEditDialog().then((data) => {
-        action.prepare(data.title, data.description, data.options);
-        action.execute();
-    });
-}
+const { createProject } = useProjectTools(comp);
 </script>
 
 <template>

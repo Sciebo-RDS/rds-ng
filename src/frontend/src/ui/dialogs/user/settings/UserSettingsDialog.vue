@@ -2,7 +2,7 @@
 import { markRaw, ref } from "vue";
 
 import VerticalTabView from "@common/ui/components/VerticalTabView.vue";
-import { extendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
+import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
@@ -12,7 +12,7 @@ import AppearanceTab from "@/ui/dialogs/user/settings/appearance/UserSettingsApp
 import ConnectionsTab from "@/ui/dialogs/user/settings/connections/UserSettingsConnectionsTab.vue";
 import SupportTab from "@/ui/dialogs/user/settings/support/UserSettingsSupportTab.vue";
 
-const { dialogData } = extendedDialogTools();
+const { dialogData } = useExtendedDialogTools();
 
 const comp = FrontendComponent.inject();
 const userSettings = ref<UserSettings>(dialogData.userData.userSettings);

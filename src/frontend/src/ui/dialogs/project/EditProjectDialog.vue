@@ -6,7 +6,7 @@ import Textarea from "primevue/textarea";
 import { ref, watch } from "vue";
 import { string as ystring } from "yup";
 
-import { extendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
+import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
 import MandatoryMark from "@common/ui/components/MandatoryMark.vue";
 
@@ -14,7 +14,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/UIOptions";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
-const { dialogData, acceptDialog, useValidator } = extendedDialogTools();
+const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { vFocus } = useDirectives();
 
 const comp = FrontendComponent.inject();

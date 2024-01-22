@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import Dropdown from "primevue/dropdown";
 import Listbox from "primevue/listbox";
 import { computed, type PropType, ref, toRefs, unref } from "vue";
 
-import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorInstanceByID, groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useConnectorInstancesTools } from "@/ui/tools/ConnectorInstancesTools";
 
 import ConnectorInstancesListboxGroup from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxGroup.vue";
 import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxItem.vue";
 
+const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
 const props = defineProps({
     userSettings: {
@@ -23,34 +24,13 @@ const props = defineProps({
 });
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = toRefs(props);
+const { editInstance, deleteInstance } = useConnectorInstancesTools(comp);
 
 const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, unref(connectors.value)));
 const selectedInstance = ref<ConnectorInstanceID | undefined>();
 
 function isInstanceSelected(instance: ConnectorInstance): boolean {
     return instance.instance_id === selectedInstance.value;
-}
-
-function addInstance(connector: Connector): void {
-    // TODO
-    const instances = userSettings!.value.connector_instances;
-    const instanceID = instances.length ? instances[instances.length - 1].instance_id + 1 : 1;
-    instances.push(
-        new ConnectorInstance(instanceID, connector.connector_id, "I am new!", "And not unique...")
-    );
-
-    selectedInstance.value = instanceID;
-}
-
-function editInstance(instance: ConnectorInstance): void {
-    // TODO
-}
-
-function deleteInstance(instance: ConnectorInstance): void {
-    const index = userSettings!.value.connector_instances.indexOf(instance);
-    if (index != -1) {
-        userSettings!.value.connector_instances.splice(index, 1);
-    }
 }
 
 function onDeleteKey() {
@@ -89,33 +69,14 @@ function onDeleteKey() {
                 <ConnectorInstancesListboxItem
                     :instance="instanceEntry.option"
                     :is-selected="isInstanceSelected(instanceEntry.option)"
-                    @edit-instance="editInstance"
-                    @delete-instance="deleteInstance"
+                    @edit-instance="editInstance(instanceEntry.option)"
+                    @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
                 />
             </template>
             <template #empty>
                 <div class="r-text-caption-big r-small-caps grid justify-center">No connections</div>
             </template>
         </Listbox>
-
-        <Dropdown
-            :options="connectors"
-            optionLabel="name"
-            placeholder="Add a new connection..."
-            class="w-full mt-1"
-            :autoOptionFocus="false"
-            @change="(event) => addInstance(event.value as Connector)"
-            :pt="{
-                panel: 'r-z-index-toplevel'
-            }"
-        >
-            <template #option="connectorItem">
-                <div class="grid grid-rows-1 grid-cols-[min-content-1fr] grid-flow-col gap-3 place-content-start items-center">
-                    <img v-if="connectorItem.option.logos.horizontal_logo" :src="connectorItem.option.logos.horizontal_logo" class="h-4" alt="{{ connectorItem.option.name }}" :title="connectorItem.option.description" />
-                    <div :title="connectorItem.option.description">{{ connectorItem.option.name }}</div>
-                </div>
-            </template>
-        </Dropdown>
     </div>
 </template>
 

@@ -2,9 +2,9 @@
 import Button from "primevue/button";
 import { ref, watch } from "vue";
 
-import { extendedDialogTools } from "./ExtendedDialogTools";
+import { useExtendedDialogTools } from "./ExtendedDialogTools";
 
-const { acceptDialog, rejectDialog, dialogData } = extendedDialogTools();
+const { acceptDialog, rejectDialog, dialogData } = useExtendedDialogTools();
 
 const errors = ref([]);
 // We need this "double watch", as the validator doesn't necessarily exist (yet)

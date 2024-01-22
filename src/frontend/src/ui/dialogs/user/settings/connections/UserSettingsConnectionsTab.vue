@@ -3,7 +3,8 @@ import { type PropType, toRefs } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
-import ConnectorInstancesList from "@/ui/dialogs/user/settings/connections/ConnectorInstancesList.vue";
+import ConnectorInstancesListbox from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListbox.vue";
+import NewConnectorInstance from "@/ui/dialogs/user/settings/connections/NewConnectorInstance.vue";
 
 const props = defineProps({
     tabData: {
@@ -23,7 +24,8 @@ const userSettings = propRefs.tabData!;
             use the drop-down list at the bottom of the connections list.
         </div>
 
-        <ConnectorInstancesList :user-settings="userSettings" />
+        <ConnectorInstancesListbox :user-settings="userSettings" />
+        <NewConnectorInstance :user-settings="userSettings" />
     </div>
 </template>
 

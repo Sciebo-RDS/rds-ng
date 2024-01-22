@@ -5,7 +5,7 @@ import { toRefs } from "vue";
 import { Project } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { UpdateProjectAction } from "@/ui/actions/project/UpdateProjectAction";
+import { useProjectTools } from "@/ui/tools/ProjectTools";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -15,14 +15,7 @@ const props = defineProps({
     }
 });
 const { project } = toRefs(props);
-
-function editProject() {
-    const action = new UpdateProjectAction(comp);
-    action.showEditDialog(project.value).then((data) => {
-        action.prepare(project.value.project_id, data.title, data.description, data.options);
-        action.execute();
-    });
-}
+const { editProject } = useProjectTools(comp);
 </script>
 
 <template>
@@ -32,7 +25,7 @@ function editProject() {
             label="Project settings"
             icon="material-icons-outlined mi-engineering"
             icon-class="!text-3xl"
-            @click="editProject"
+            @click="editProject(project)"
         />
     </div>
 </template>

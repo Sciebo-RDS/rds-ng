@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // @ts-nocheck
 
+import { useProjectTools } from "@/ui/tools/ProjectTools";
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
 import { watch } from "vue";
@@ -11,14 +12,13 @@ import { Project, type ProjectID, ProjectStatus } from "@common/data/entities/pr
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 
-import { UpdateProjectAction } from "@/ui/actions/project/UpdateProjectAction";
-import { DeleteProjectAction } from "@/ui/actions/project/DeleteProjectAction";
 import ProjectsListboxItem from "@/ui/content/main/projectslist/ProjectsListboxItem.vue";
 
 const comp = FrontendComponent.inject();
 const route = useRoute();
 const projStore = useProjectsStore();
 const { projects, activeProject } = storeToRefs(projStore);
+const { editProject, deleteProject } = useProjectTools(comp);
 
 const unwatchProjects = watch(projects, () => {
     // If the current URL contains a project ID, select that project once we received our projects list
@@ -60,22 +60,6 @@ function isProjectSelected(project: Project): boolean {
 function isProjectDeleted(project: Project): boolean {
     return project.status == ProjectStatus.Deleted || projStore.pendingDeletions.includes(project.project_id);
 }
-
-function editProject(project: Project): void {
-    const action = new UpdateProjectAction(comp);
-    action.showEditDialog(project).then((data) => {
-        action.prepare(project.project_id, data.title, data.description, data.options);
-        action.execute();
-    });
-}
-
-function deleteProject(project: Project): void {
-    const action = new DeleteProjectAction(comp);
-    action.showConfirmation(project).then(() => {
-        action.prepare(project);
-        action.execute();
-    });
-}
 </script>
 
 <template>
@@ -98,8 +82,8 @@ function deleteProject(project: Project): void {
                     :project="projectEntry.option"
                     :is-selected="isProjectSelected(projectEntry.option)"
                     :is-deleted="isProjectDeleted(projectEntry.option)"
-                    @edit-project="editProject"
-                    @delete-project="deleteProject"
+                    @edit-project="editProject(projectEntry.option)"
+                    @delete-project="deleteProject(projectEntry.option)"
                 />
             </template>
             <template #empty>
