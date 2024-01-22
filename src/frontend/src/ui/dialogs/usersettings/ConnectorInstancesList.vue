@@ -105,6 +105,9 @@ function onDeleteKey() {
             class="w-full mt-1"
             :autoOptionFocus="false"
             @change="(event) => addInstance(event.value as Connector)"
+            :pt="{
+                panel: 'r-z-index-toplevel'
+            }"
         >
             <template #option="connectorItem">
                 <div class="grid grid-rows-1 grid-cols-[min-content-1fr] grid-flow-col gap-3 place-content-start items-center">

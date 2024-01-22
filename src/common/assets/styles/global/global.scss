@@ -94,3 +94,10 @@
 .r-small-caps {
     font-variant: small-caps;
 }
+
+/*
+ * Helper classes.
+ */
+.r-z-index-toplevel {
+    @apply z-[9999] #{!important};
+}
