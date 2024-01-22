@@ -17,7 +17,7 @@ const userSettings = propRefs.tabData!;
 </script>
 
 <template>
-    <div class="grid grid-flow-row grid-cols-1 gap-1.5 w-full">
+    <div class="grid grid-rows-[auto_auto_1fr_auto] grid-cols-1 gap-1.5 w-full h-full">
         <div class="r-text-title">Connections</div>
         <div>
             To publish your project or export its data to an external service, you need to set up <em>connections</em> to these services. To add a new connection,

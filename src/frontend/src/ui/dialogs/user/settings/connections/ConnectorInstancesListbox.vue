@@ -82,7 +82,7 @@ function onDeleteKey() {
 
 <style scoped lang="scss">
 :deep(.coninst-listbox) {
-    @apply overflow-y-auto max-h-[calc(100vh-40rem)] #{!important};
+    @apply overflow-y-auto max-h-[27rem] #{!important};
 }
 
 :deep(.coninst-listbox-list) {
