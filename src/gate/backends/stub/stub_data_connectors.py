@@ -82,6 +82,5 @@ def fill_stub_data_connector_instances() -> None:
                 description="Just a backup on a different service platform...",
             ),
             ConnectorInstance(instance_id=4, connector_id="osf", name="Long description...", description="This is our main OSF account we use to publish our excellent work. This is our main OSF account we use to publish our excellent work. This is our main OSF account we use to publish our excellent work."),
-            ConnectorInstance(instance_id=5, connector_id="oops", name="My connector is broken"),
         ]
     )
