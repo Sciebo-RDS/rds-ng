@@ -67,18 +67,25 @@ export class SetUserSettingsCommand extends Command {
 
 /**
  * Reply to ``SetUserSettingsCommand``.
+ *
+ * @param settings - The new user settings (note that these might have been adjusted by the server).
  */
 @Message.define("command/user/settings/set/reply")
 export class SetUserSettingsReply extends CommandReply {
+    // @ts-ignore
+    @Type(() => UserSettings)
+    public readonly settings: UserSettings = new UserSettings();
+
     /**
      * Helper function to easily build this message.
      */
     public static build(
         messageBuilder: MessageBuilder,
         cmd: SetUserSettingsCommand,
+        settings: UserSettings,
         success: boolean = true,
         message: string = ""
     ): CommandReplyComposer<SetUserSettingsReply> {
-        return messageBuilder.buildCommandReply(SetUserSettingsReply, cmd, success, message);
+        return messageBuilder.buildCommandReply(SetUserSettingsReply, cmd, success, message, { settings: settings });
     }
 }

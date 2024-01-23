@@ -28,7 +28,10 @@ export default function(comp: WebComponent): Service {
 
             svc.messageHandler(SetUserSettingsReply, (msg: SetUserSettingsReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
-                    ctx.logger.debug("Updated the user settings", "user");
+                    ctx.logger.debug("Updated the user settings", "user", { settings: JSON.stringify(msg.settings) });
+
+                    // @ts-ignore
+                    ctx.userStore.userSettings = msg.settings;
                 } else {
                     ctx.logger.error("Unable to update the user settings", "user", { reason: msg.message });
                 }

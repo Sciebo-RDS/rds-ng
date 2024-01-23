@@ -29,7 +29,7 @@ watch(
     >
         <small v-if="errors.length" class="p-error mr-auto text-left">
             <span class="font-bold"
-            >One or more fields in the form are missing or invalid:</span
+            >One or more fields are missing or invalid:</span
             >
             <br />
             <span class="italic">

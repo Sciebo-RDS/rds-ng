@@ -97,13 +97,19 @@ class SetUserSettingsCommand(Command):
 class SetUserSettingsReply(CommandReply):
     """
     Reply to ``SetUserSettingsCommand``.
+
+    Args:
+        settings: The new user settings (note that these might have been adjusted by the server).
     """
+
+    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         cmd: SetUserSettingsCommand,
         *,
+        settings: UserSettings,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -115,4 +121,5 @@ class SetUserSettingsReply(CommandReply):
             cmd,
             success,
             message,
+            settings=settings,
         )
