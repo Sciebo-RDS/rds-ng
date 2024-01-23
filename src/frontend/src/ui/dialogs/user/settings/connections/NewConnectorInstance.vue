@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import Dropdown from "primevue/dropdown";
-import { nextTick, type PropType, toRefs } from "vue";
+import { computed, nextTick, type PropType, toRefs } from "vue";
 
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
@@ -23,7 +22,9 @@ const props = defineProps({
 const emits = defineEmits<{
     (e: "create-instance", instance: ConnectorInstance): void;
 }>();
-const { connectors } = storeToRefs(consStore);
+const connectors = computed(() => {
+    return consStore.connectors.sort((con1, con2) => con1.name.toLowerCase().localeCompare(con2.name.toLowerCase()));
+});
 const { userSettings } = toRefs(props);
 const { createInstance } = useConnectorInstancesTools(comp);
 </script>
