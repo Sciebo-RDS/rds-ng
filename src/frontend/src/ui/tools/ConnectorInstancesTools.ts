@@ -4,13 +4,12 @@ import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entiti
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
-    function createInstance(instances: ConnectorInstance[], connector: Connector): ConnectorInstanceID {
+    function createInstance(instances: ConnectorInstance[], connector: Connector): ConnectorInstance {
         // TODO
         const instanceID = (instances.length ? instances[instances.length - 1].instance_id + 1 : 1) as ConnectorInstanceID;
-        instances.push(
-            new ConnectorInstance(instanceID, connector.connector_id, "I am new!", "And not unique...")
-        );
-        return instanceID;
+        const instance = new ConnectorInstance(instanceID, connector.connector_id, "I am new!", "And not unique...");
+        instances.push(instance);
+        return instance;
     }
 
     function editInstance(instance: ConnectorInstance): void {

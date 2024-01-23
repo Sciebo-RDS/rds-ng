@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { type PropType, toRefs } from "vue";
+import { type PropType, ref, toRefs } from "vue";
 
+import { type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import ConnectorInstancesListbox from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListbox.vue";
@@ -14,6 +15,7 @@ const props = defineProps({
 });
 const propRefs = toRefs(props);
 const userSettings = propRefs.tabData!;
+const selectedConnectorInstance = ref<ConnectorInstanceID | undefined>();
 </script>
 
 <template>
@@ -24,8 +26,14 @@ const userSettings = propRefs.tabData!;
             use the drop-down list at the bottom of the connections list.
         </div>
 
-        <ConnectorInstancesListbox :user-settings="userSettings" />
-        <NewConnectorInstance :user-settings="userSettings" />
+        <ConnectorInstancesListbox
+            v-model="selectedConnectorInstance"
+            :user-settings="userSettings"
+        />
+        <NewConnectorInstance
+            :user-settings="userSettings"
+            @create-instance="(instance) => { selectedConnectorInstance = instance.instance_id;  }"
+        />
     </div>
 </template>
 

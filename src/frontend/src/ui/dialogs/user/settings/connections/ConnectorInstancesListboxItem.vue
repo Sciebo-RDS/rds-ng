@@ -56,7 +56,7 @@ const editMenuShown = ref(false);
 
 <template>
     <div class="grid grid-rows-auto grid-cols-[1fr_min-content] grid-flow-row gap-0 place-content-start group">
-        <div class="r-text-caption h-6 truncate" :title="instance!.name">{{ instance!.name }}</div>
+        <div :id="'connector-instance-' + instance!.instance_id" class="r-text-caption h-6 truncate" :title="instance!.name">{{ instance!.name }}</div>
 
         <div class="row-span-2 pl-1">
             <Button
