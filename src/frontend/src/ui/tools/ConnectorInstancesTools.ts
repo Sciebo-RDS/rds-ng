@@ -5,7 +5,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/EditConnectorInstanceDialog";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
-    function newInstance(instances: ConnectorInstance[], connector?: Connector): Promise<ConnectorInstance> {
+    function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, undefined, connector).then((data) => {
             // TODO
             const instanceID = (instances.length ? instances[instances.length - 1].instance_id + 1 : 1) as ConnectorInstanceID;
