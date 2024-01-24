@@ -5,7 +5,7 @@ import Button from "primevue/button";
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 const comp = FrontendComponent.inject();
-const { createProject } = useProjectTools(comp);
+const { newProject } = useProjectTools(comp);
 </script>
 
 <template>
@@ -16,7 +16,7 @@ const { createProject } = useProjectTools(comp);
             label="New Project"
             icon="material-icons-outlined mi-add-circle-outline"
             icon-class="!text-4xl"
-            @click="createProject"
+            @click="newProject"
         />
     </div>
 </template>

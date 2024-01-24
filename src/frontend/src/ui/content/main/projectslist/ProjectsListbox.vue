@@ -74,7 +74,7 @@ function isProjectDeleted(project: Project): boolean {
             :pt="{
                 root: 'projects-listbox',
                 list: 'projects-listbox-list',
-                item: 'projects-listbox-item',
+                item: 'projects-listbox-item'
             }"
         >
             <template #option="projectEntry">
@@ -82,6 +82,7 @@ function isProjectDeleted(project: Project): boolean {
                     :project="projectEntry.option"
                     :is-selected="isProjectSelected(projectEntry.option)"
                     :is-deleted="isProjectDeleted(projectEntry.option)"
+                    @dblclick="editProject(projectEntry.option)"
                     @edit-project="editProject(projectEntry.option)"
                     @delete-project="deleteProject(projectEntry.option)"
                 />

@@ -8,7 +8,7 @@ import { deepClone } from "@common/utils/ObjectUtils";
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 /**
- * The data used by the ``EditProjectDialog``.
+ * The data used by the ``editProjectDialog`` function.
  */
 export interface EditProjectDialogData {
     title: string;

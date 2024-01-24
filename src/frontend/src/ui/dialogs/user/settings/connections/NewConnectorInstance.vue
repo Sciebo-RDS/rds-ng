@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Dropdown from "primevue/dropdown";
-import { computed, nextTick, type PropType, toRefs } from "vue";
+import { computed, type PropType, toRefs } from "vue";
 
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
@@ -26,7 +26,14 @@ const connectors = computed(() => {
     return consStore.connectors.sort((con1, con2) => con1.name.toLowerCase().localeCompare(con2.name.toLowerCase()));
 });
 const { userSettings } = toRefs(props);
-const { createInstance } = useConnectorInstancesTools(comp);
+const { newInstance } = useConnectorInstancesTools(comp);
+
+function onSelectConnector(connector: Connector): void {
+    newInstance(userSettings!.value!.connector_instances, connector).then((newInst) => {
+        scrollElementIntoView(`[id='connector-instance-${newInst.instance_id}']`, false);
+        emits("create-instance", newInst);
+    });
+}
 </script>
 
 <template>
@@ -37,13 +44,7 @@ const { createInstance } = useConnectorInstancesTools(comp);
             placeholder="Add a new connection..."
             class="w-full"
             :autoOptionFocus="false"
-            @change="(event) => {
-                const newInst = createInstance(userSettings!.connector_instances, event.value as Connector);
-                nextTick(() => {
-                    scrollElementIntoView(`[id='connector-instance-${newInst.instance_id}']`, false);
-                    emits('create-instance', newInst);
-                });
-            }"
+            @change="(event) => onSelectConnector(event.value as Connector)"
             :pt="{
                 panel: 'r-z-index-toplevel'
             }"

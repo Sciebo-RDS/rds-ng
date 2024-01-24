@@ -9,17 +9,17 @@ import { UpdateProjectAction } from "@/ui/actions/project/UpdateProjectAction";
  * Tools for working with projects.
  */
 export function useProjectTools(comp: FrontendComponent) {
-    function createProject() {
+    function newProject(): Promise<void> {
         const action = new CreateProjectAction(comp);
-        action.showEditDialog().then((data) => {
+        return action.showEditDialog().then((data) => {
             action.prepare(data.title, data.description, data.options);
             action.execute();
         });
     }
 
-    function editProject(project: Project): void {
+    function editProject(project: Project): Promise<void> {
         const action = new UpdateProjectAction(comp);
-        action.showEditDialog(project).then((data) => {
+        return action.showEditDialog(project).then((data) => {
             action.prepare(project.project_id, data.title, data.description, data.options);
             action.execute();
         });
@@ -34,7 +34,7 @@ export function useProjectTools(comp: FrontendComponent) {
     }
 
     return {
-        createProject,
+        newProject,
         editProject,
         deleteProject
     };
