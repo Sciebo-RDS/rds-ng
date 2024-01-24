@@ -4,7 +4,7 @@ import Listbox from "primevue/listbox";
 import { computed, type PropType, toRefs, unref } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorInstanceByID, groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
+import { findConnectorByID, findConnectorInstanceByID, groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -69,8 +69,8 @@ function onDeleteKey() {
                 <ConnectorInstancesListboxItem
                     :instance="instanceEntry.option"
                     :is-selected="isInstanceSelected(instanceEntry.option)"
-                    @dblclick="editInstance(instanceEntry.option)"
-                    @edit-instance="editInstance(instanceEntry.option)"
+                    @dblclick="editInstance(instanceEntry.option, findConnectorByID(connectors, instanceEntry.option.connector_id))"
+                    @edit-instance="editInstance(instanceEntry.option, findConnectorByID(connectors, instanceEntry.option.connector_id))"
                     @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
                 />
             </template>

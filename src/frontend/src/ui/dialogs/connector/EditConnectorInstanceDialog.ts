@@ -1,3 +1,4 @@
+import type { Connector } from "@common/data/entities/connector/Connector";
 import { defineAsyncComponent } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
@@ -18,10 +19,12 @@ export interface EditConnectorInstanceDialogData {
  *
  * @param comp - The global component.
  * @param instance - The connector instance to edit.
+ * @param connector - The connector used by the instance.
  */
 export async function editConnectorInstanceDialog(
     comp: FrontendComponent,
-    instance: ConnectorInstance | undefined
+    instance?: ConnectorInstance,
+    connector?: Connector
 ): ExtendedDialogResult<EditConnectorInstanceDialogData> {
     return extendedDialog<EditConnectorInstanceDialogData>(
         comp,
@@ -29,7 +32,7 @@ export async function editConnectorInstanceDialog(
             () => import("@/ui/dialogs/connector/EditConnectorInstanceDialog.vue")
         ),
         {
-            header: instance ? "Connection settings" : "New connection",
+            header: (instance ? "Connection settings" : "New connection") + ` (${connector ? connector.name : "unknown connector"})`,
             modal: true,
             contentClass: "w-[20vw] w-full min-w-[40rem] !pt-4"
         },

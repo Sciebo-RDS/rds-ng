@@ -24,7 +24,7 @@ export interface EditProjectDialogData {
  */
 export async function editProjectDialog(
     comp: FrontendComponent,
-    project: Project | undefined
+    project?: Project
 ): ExtendedDialogResult<EditProjectDialogData> {
     return extendedDialog<EditProjectDialogData>(
         comp,
