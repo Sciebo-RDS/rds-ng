@@ -29,11 +29,18 @@ const tabs = ref([
     { title: "Appearance", component: markRaw(AppearanceTab), icon: "mi-brightness-medium" },
     { title: "Help & Support", component: markRaw(SupportTab), icon: "mi-help-outline" }
 ]);
+const tabIndices = {
+    connections: 0,
+    appearance: 1,
+    support: 2
+};
+const activeTab = ref(tabIndices.connections);
 
 const validator = useValidator({
         connector_instances: yarray().required().test("all-connectors-exist", "The connector '${path}' doesn't exist", (value: ConnectorInstance[], ctx) => {
             for (const conInst of value) {
                 if (!findConnectorByID(connectors.value, conInst.connector_id)) {
+                    activeTab.value = tabIndices.connections;
                     return ctx.createError({ path: conInst.connector_id });
                 }
             }
@@ -48,7 +55,7 @@ watch(userSettings.value.connector_instances, (newConInsts) => {
 
 <template>
     <form @submit.prevent="acceptDialog">
-        <VerticalTabView :tabs="tabs" :tab-data="userSettings" />
+        <VerticalTabView v-model:active-tab="activeTab" :tabs="tabs" :tab-data="userSettings" />
     </form>
 </template>
 
