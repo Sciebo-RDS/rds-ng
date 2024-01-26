@@ -2,6 +2,7 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { useForm } from "vee-validate";
 import { inject, reactive, nextTick } from "vue";
 import { object as yobject } from "yup";
+import { scrollElementIntoView } from "../../utils/HTMLUtils";
 
 import { type ExtendedDialogData } from "./ExtendedDialog";
 import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
@@ -9,7 +10,7 @@ import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
 /**
  * Tools for working with the extended dialog.
  */
-export function extendedDialogTools() {
+export function useExtendedDialogTools() {
     const dialogRef = inject("dialogRef") as any;
     const dialogData = dialogRef.value.data as ExtendedDialogData<any>;
 
@@ -26,9 +27,7 @@ export function extendedDialogTools() {
             function selectFirstError({ errors }) {
                 try {
                     const firstError = Object.keys(errors)[0];
-                    const el = document.querySelector(`[name="${firstError}"]`) as HTMLInputElement;
-                    el?.scrollIntoView({ behavior: "smooth" });
-                    el?.focus();
+                    scrollElementIntoView(`[name="${firstError}"]`);
                 } catch (e) {
                 }
             }

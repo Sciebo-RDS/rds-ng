@@ -1,8 +1,7 @@
 import typing
 
-from common.py.data.verifiers.verification_exception import VerificationException
-from common.py.data.verifiers.verifier import Verifier
-from common.py.data.entities.connector import Connector, ConnectorInstance
+from .. import Verifier, VerificationException
+from ...entities.connector import Connector, ConnectorInstance
 
 
 class ConnectorInstanceVerifier(Verifier):
@@ -31,7 +30,7 @@ class ConnectorInstanceVerifier(Verifier):
         self._verify_id()
 
     def _verify_id(self) -> None:
-        if self._instance.instance_id <= 0:
+        if str(self._instance.instance_id) == "":
             raise VerificationException("Invalid connector instance ID")
 
     def _verify_name(self) -> None:
@@ -39,5 +38,7 @@ class ConnectorInstanceVerifier(Verifier):
             raise VerificationException("Missing connector instance name")
 
     def _verify_connector(self) -> None:
-        if self._instance.connector_id not in self._connectors:
+        from ...entities.connector import find_connector_by_id
+
+        if find_connector_by_id(self._connectors, self._instance.connector_id) is None:
             raise VerificationException("Connector instance uses an unknown connector")

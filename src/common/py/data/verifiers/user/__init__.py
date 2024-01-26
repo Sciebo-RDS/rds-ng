@@ -1,1 +1,1 @@
-from .user_configuration_verifier import UserConfigurationVerifier
+from .user_settings_verifier import UserSettingsVerifier

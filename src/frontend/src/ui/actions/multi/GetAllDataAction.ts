@@ -1,7 +1,7 @@
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { ListConnectorsAction } from "@/ui/actions/connector/ListConnectorsAction";
 import { ListProjectsAction } from "@/ui/actions/project/ListProjectsAction";
-import { GetUserConfigurationAction } from "@/ui/actions/user/GetUserConfigurationAction";
+import { GetUserSettingsAction } from "@/ui/actions/user/GetUserSettingsAction";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { MultiAction } from "@common/ui/actions/MultiAction";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
@@ -16,14 +16,14 @@ export class GetAllDataAction extends MultiAction {
         this.prepareNotifiers();
 
         const listConAction = new ListConnectorsAction(comp, true);
-        const getUserConfigAction = new GetUserConfigurationAction(comp, true);
+        const getUserSettingsAction = new GetUserSettingsAction(comp, true);
         const listProjAction = new ListProjectsAction(comp, true);
 
         listConAction.prepare();
-        getUserConfigAction.prepare();
+        getUserSettingsAction.prepare();
         listProjAction.prepare();
 
-        this.addActions([listConAction, getUserConfigAction, listProjAction]);
+        this.addActions([listConAction, getUserSettingsAction, listProjAction]);
     }
 
     protected addDefaultNotifiers(): void {

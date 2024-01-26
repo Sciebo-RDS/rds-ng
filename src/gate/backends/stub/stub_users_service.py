@@ -14,48 +14,48 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
     """
 
     from common.py.api.user import (
-        GetUserConfigurationCommand,
-        GetUserConfigurationReply,
-        SetUserConfigurationCommand,
-        SetUserConfigurationReply,
+        GetUserSettingsCommand,
+        GetUserSettingsReply,
+        SetUserSettingsCommand,
+        SetUserSettingsReply,
     )
     from common.py.data.verifiers.user import (
-        UserConfigurationVerifier,
+        UserSettingsVerifier,
     )
 
     from .stub_service_context import StubServiceContext
 
     svc = comp.create_service("Users service", context_type=StubServiceContext)
 
-    @svc.message_handler(GetUserConfigurationCommand)
-    def get_user_configuration(
-        msg: GetUserConfigurationCommand, ctx: StubServiceContext
-    ) -> None:
-        GetUserConfigurationReply.build(
-            ctx.message_builder, msg, configuration=ctx.user_configuration
+    @svc.message_handler(GetUserSettingsCommand)
+    def get_user_settings(msg: GetUserSettingsCommand, ctx: StubServiceContext) -> None:
+        GetUserSettingsReply.build(
+            ctx.message_builder, msg, settings=StubServiceContext.user_settings
         ).emit()
 
-    @svc.message_handler(SetUserConfigurationCommand)
-    def set_user_configuration(
-        msg: SetUserConfigurationCommand, ctx: StubServiceContext
-    ) -> None:
+    @svc.message_handler(SetUserSettingsCommand)
+    def set_user_settings(msg: SetUserSettingsCommand, ctx: StubServiceContext) -> None:
         success = False
         message = ""
 
         try:
-            user_config = msg.configuration
+            user_settings = msg.settings
 
-            UserConfigurationVerifier(
-                user_config, connectors=ctx.storage_pool.connector_storage.list()
+            UserSettingsVerifier(
+                user_settings, connectors=ctx.storage_pool.connector_storage.list()
             ).verify_update()
 
-            ctx.user_configuration = user_config
+            StubServiceContext.user_settings = user_settings
             success = True
         except Exception as exc:  # pylint: disable=broad-exception-caught
             message = str(exc)
 
-        SetUserConfigurationReply.build(
-            ctx.message_builder, msg, success=success, message=message
-        )
+        SetUserSettingsReply.build(
+            ctx.message_builder,
+            msg,
+            success=success,
+            message=message,
+            settings=StubServiceContext.user_settings,
+        ).emit()
 
     return svc

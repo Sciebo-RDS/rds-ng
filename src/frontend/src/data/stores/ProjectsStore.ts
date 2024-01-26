@@ -8,7 +8,7 @@ import { Project, type ProjectID } from "@common/data/entities/project/Project";
  *
  * @param projects - List of all projects.
  */
-export const projectsStore = defineStore("projectsStore", () => {
+export const useProjectsStore = defineStore("projectsStore", () => {
     const projects = ref<Project[]>([]);
     const activeProject = ref<ProjectID | null | undefined>(undefined);
 

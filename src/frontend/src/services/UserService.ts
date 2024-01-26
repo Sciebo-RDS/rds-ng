@@ -1,4 +1,4 @@
-import { GetUserConfigurationReply, SetUserConfigurationReply } from "@common/api/user/UserCommands";
+import { GetUserSettingsReply, SetUserSettingsReply } from "@common/api/user/UserCommands";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -15,22 +15,25 @@ export default function(comp: WebComponent): Service {
     return comp.createService(
         "User service",
         (svc: Service) => {
-            svc.messageHandler(GetUserConfigurationReply, (msg: GetUserConfigurationReply, ctx: FrontendServiceContext) => {
+            svc.messageHandler(GetUserSettingsReply, (msg: GetUserSettingsReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
-                    ctx.logger.debug("Retrieved user configuration", "user", { configuration: JSON.stringify(msg.configuration) });
+                    ctx.logger.debug("Retrieved user settings", "user", { settings: JSON.stringify(msg.settings) });
 
                     // @ts-ignore
-                    ctx.userStore.configuration = msg.configuration;
+                    ctx.userStore.userSettings = msg.settings;
                 } else {
-                    ctx.logger.error("Unable to retrieve the user configuration", "user", { reason: msg.message });
+                    ctx.logger.error("Unable to retrieve the user settings", "user", { reason: msg.message });
                 }
             });
 
-            svc.messageHandler(SetUserConfigurationReply, (msg: SetUserConfigurationReply, ctx: FrontendServiceContext) => {
+            svc.messageHandler(SetUserSettingsReply, (msg: SetUserSettingsReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
-                    ctx.logger.debug("Updated the user configuration", "user");
+                    ctx.logger.debug("Updated the user settings", "user", { settings: JSON.stringify(msg.settings) });
+
+                    // @ts-ignore
+                    ctx.userStore.userSettings = msg.settings;
                 } else {
-                    ctx.logger.error("Unable to update the user configuration", "user", { reason: msg.message });
+                    ctx.logger.error("Unable to update the user settings", "user", { reason: msg.message });
                 }
             });
         },

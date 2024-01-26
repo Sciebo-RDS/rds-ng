@@ -6,79 +6,86 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
-import { UserConfiguration } from "../../data/entities/user/UserConfiguration";
+import { UserSettings } from "../../data/entities/user/UserSettings";
 
 /**
- * Command to get the configuration of the current user. Requires a ``GetUserConfigurationReply`` reply.
+ * Command to get the settings of the current user. Requires a ``GetUserSettingsReply`` reply.
  */
-@Message.define("command/user/configuration/get")
-export class GetUserConfigurationCommand extends Command {
+@Message.define("command/user/settings/get")
+export class GetUserSettingsCommand extends Command {
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, chain: Message | null = null): CommandComposer<GetUserConfigurationCommand> {
-        return messageBuilder.buildCommand(GetUserConfigurationCommand, {}, chain);
+    public static build(messageBuilder: MessageBuilder, chain: Message | null = null): CommandComposer<GetUserSettingsCommand> {
+        return messageBuilder.buildCommand(GetUserSettingsCommand, {}, chain);
     }
 }
 
 /**
- * Reply to ``GetUserConfigurationCommand``.
+ * Reply to ``GetUserSettingsCommand``.
  *
- * @param configuration - The user configuration.
+ * @param settings - The user settings.
  */
-@Message.define("command/user/configuration/get/reply")
-export class GetUserConfigurationReply extends CommandReply {
+@Message.define("command/user/settings/get/reply")
+export class GetUserSettingsReply extends CommandReply {
     // @ts-ignore
-    @Type(() => UserConfiguration)
-    public readonly configuration: UserConfiguration = new UserConfiguration();
+    @Type(() => UserSettings)
+    public readonly settings: UserSettings = new UserSettings();
 
     /**
      * Helper function to easily build this message.
      */
     public static build(
         messageBuilder: MessageBuilder,
-        cmd: GetUserConfigurationCommand,
-        configuration: UserConfiguration,
+        cmd: GetUserSettingsCommand,
+        settings: UserSettings,
         success: boolean = true,
         message: string = ""
-    ): CommandReplyComposer<GetUserConfigurationReply> {
-        return messageBuilder.buildCommandReply(GetUserConfigurationReply, cmd, success, message, { configuration: configuration });
+    ): CommandReplyComposer<GetUserSettingsReply> {
+        return messageBuilder.buildCommandReply(GetUserSettingsReply, cmd, success, message, { settings: settings });
     }
 }
 
 /**
- * Command to set the configuration of the current user. Requires a ``SetUserConfigurationReply`` reply.
+ * Command to set the settings of the current user. Requires a ``SetUserSettingsReply`` reply.
  *
- * @param configuration - The new user configuration.
+ * @param settings - The new user settings.
  */
-@Message.define("command/user/configuration/set")
-export class SetUserConfigurationCommand extends Command {
+@Message.define("command/user/settings/set")
+export class SetUserSettingsCommand extends Command {
     // @ts-ignore
-    @Type(() => UserConfiguration)
-    public readonly configuration: UserConfiguration = new UserConfiguration();
+    @Type(() => UserSettings)
+    public readonly settings: UserSettings = new UserSettings();
 
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, configuration: UserConfiguration, chain: Message | null = null): CommandComposer<SetUserConfigurationCommand> {
-        return messageBuilder.buildCommand(SetUserConfigurationCommand, { configuration: configuration }, chain);
+    public static build(messageBuilder: MessageBuilder, settings: UserSettings, chain: Message | null = null): CommandComposer<SetUserSettingsCommand> {
+        return messageBuilder.buildCommand(SetUserSettingsCommand, { settings: settings }, chain);
     }
 }
 
 /**
- * Reply to ``SetUserConfigurationCommand``.
+ * Reply to ``SetUserSettingsCommand``.
+ *
+ * @param settings - The new user settings (note that these might have been adjusted by the server).
  */
-@Message.define("command/user/configuration/set/reply")
-export class SetUserConfigurationReply extends CommandReply {
+@Message.define("command/user/settings/set/reply")
+export class SetUserSettingsReply extends CommandReply {
+    // @ts-ignore
+    @Type(() => UserSettings)
+    public readonly settings: UserSettings = new UserSettings();
+
     /**
      * Helper function to easily build this message.
      */
     public static build(
         messageBuilder: MessageBuilder,
-        cmd: SetUserConfigurationCommand,
+        cmd: SetUserSettingsCommand,
+        settings: UserSettings,
         success: boolean = true,
         message: string = ""
-    ): CommandReplyComposer<SetUserConfigurationReply> {
-        return messageBuilder.buildCommandReply(SetUserConfigurationReply, cmd, success, message);
+    ): CommandReplyComposer<SetUserSettingsReply> {
+        return messageBuilder.buildCommandReply(SetUserSettingsReply, cmd, success, message, { settings: settings });
     }
 }

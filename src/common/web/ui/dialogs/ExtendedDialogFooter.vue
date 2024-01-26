@@ -2,9 +2,9 @@
 import Button from "primevue/button";
 import { ref, watch } from "vue";
 
-import { extendedDialogTools } from "./ExtendedDialogTools";
+import { useExtendedDialogTools } from "./ExtendedDialogTools";
 
-const { acceptDialog, rejectDialog, dialogData } = extendedDialogTools();
+const { acceptDialog, rejectDialog, dialogData } = useExtendedDialogTools();
 
 const errors = ref([]);
 // We need this "double watch", as the validator doesn't necessarily exist (yet)
@@ -29,7 +29,7 @@ watch(
     >
         <small v-if="errors.length" class="p-error mr-auto text-left">
             <span class="font-bold"
-            >One or more fields in the form are missing or invalid:</span
+            >One or more fields are missing or invalid:</span
             >
             <br />
             <span class="italic">

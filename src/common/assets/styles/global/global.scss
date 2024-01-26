@@ -59,15 +59,19 @@
     @apply text-lg;
 }
 
-.r-text-success * {
+.r-text-title {
+    @apply font-bold text-xl mb-2;
+}
+
+.r-text-success, .r-text-success * {
     @apply text-green-500 #{!important};
 }
 
-.r-text-warning * {
+.r-text-warning, .r-text-warning * {
     @apply text-orange-500 #{!important};
 }
 
-.r-text-error * {
+.r-text-error, .r-text-error * {
     @apply text-red-500 #{!important};
 }
 
@@ -89,4 +93,11 @@
 
 .r-small-caps {
     font-variant: small-caps;
+}
+
+/*
+ * Helper classes.
+ */
+.r-z-index-toplevel {
+    @apply z-[9999] #{!important};
 }
