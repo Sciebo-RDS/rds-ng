@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserTools } from "@/ui/tools/UserTools";
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
@@ -8,7 +9,9 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 
 const comp = FrontendComponent.inject();
+const projStore = useProjectsStore();
 const userStore = useUserStore();
+const { projects } = storeToRefs(projStore);
 const { userSettings } = storeToRefs(userStore);
 const { editUserSettings } = useUserTools(comp);
 
@@ -28,7 +31,9 @@ function onEditUserSettings(): void {
             Donald T. Rump
         </div>
         <div class="italic self-center pb-3">
-            X Projects
+            <div v-if="projects.length > 1">{{ projects.length }} projects</div>
+            <div v-else-if="projects.length == 1">{{ projects.length }} project</div>
+            <div v-else>No projects</div>
         </div>
         <div class="row-span-2 pr-2">
             <Button plain rounded aria-label="Settings" title="Settings" @click="onEditUserSettings">
