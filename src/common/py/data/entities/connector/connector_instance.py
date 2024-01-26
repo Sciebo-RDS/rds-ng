@@ -1,10 +1,11 @@
-from dataclasses import dataclass
+import uuid
+from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
 from .connector import ConnectorID
 
-ConnectorInstanceID = int
+ConnectorInstanceID = uuid.UUID
 
 
 @dataclass_json
@@ -20,7 +21,7 @@ class ConnectorInstance:
         description: The instance description.
     """
 
-    instance_id: ConnectorInstanceID
+    instance_id: ConnectorInstanceID = field(default_factory=uuid.uuid4)
 
     connector_id: ConnectorID
 

@@ -7,9 +7,7 @@ import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/EditConnecto
 export function useConnectorInstancesTools(comp: FrontendComponent) {
     function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, undefined, connector).then((data) => {
-            // TODO
-            const instanceID = (instances.length ? instances[instances.length - 1].instance_id + 1 : 1) as ConnectorInstanceID;
-            const instance = new ConnectorInstance(instanceID, connector.connector_id, data.name, data.description);
+            const instance = new ConnectorInstance(crypto.randomUUID() as ConnectorInstanceID, connector.connector_id, data.name, data.description);
             instances.push(instance);
             return instance;
         });

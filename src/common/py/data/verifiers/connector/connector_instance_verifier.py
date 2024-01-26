@@ -30,7 +30,7 @@ class ConnectorInstanceVerifier(Verifier):
         self._verify_id()
 
     def _verify_id(self) -> None:
-        if self._instance.instance_id <= 0:
+        if str(self._instance.instance_id) == "":
             raise VerificationException("Invalid connector instance ID")
 
     def _verify_name(self) -> None:

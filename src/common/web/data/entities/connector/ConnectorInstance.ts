@@ -3,7 +3,7 @@ import { type ConnectorID } from "./Connector";
 /**
  * The connector instance ID type.
  */
-export type ConnectorInstanceID = number;
+export type ConnectorInstanceID = string;
 
 /**
  * A configured connector instance (i.e., a connector the user has added to his configuration).
