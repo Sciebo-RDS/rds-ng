@@ -2,7 +2,7 @@ import { Type } from "class-transformer";
 
 import { ProjectFeatures } from "./features/ProjectFeatures";
 import { ProjectOptions } from "./ProjectOptions";
-import { Resource } from "../resource/Resource";
+import { type Resource } from "../resource/Resource";
 
 /**
  * The project ID type.
@@ -48,10 +48,12 @@ export class Project {
     @Type(() => ProjectOptions)
     public readonly options: ProjectOptions = new ProjectOptions();
 
-    public constructor(projectID: ProjectID, creationTime: number, title: string, description: string = "", features: ProjectFeatures = new ProjectFeatures(), options: ProjectOptions = new ProjectOptions()) {
+    public constructor(projectID: ProjectID, creationTime: number, resource: Resource, title: string, description: string = "", features: ProjectFeatures = new ProjectFeatures(), options: ProjectOptions = new ProjectOptions()) {
         this.project_id = projectID;
 
         this.creation_time = creationTime;
+
+        this.resource = resource;
 
         this.title = title;
         this.description = description;
