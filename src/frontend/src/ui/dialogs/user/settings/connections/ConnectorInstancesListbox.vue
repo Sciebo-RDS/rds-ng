@@ -34,7 +34,7 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
 }
 
 function onEditInstance(instance: ConnectorInstance): void {
-    editInstance(instance, findConnectorByID(unref(connectors.value), instance.connector_id));
+    editInstance(userSettings!.value!.connector_instances, instance, findConnectorByID(unref(connectors.value), instance.connector_id));
 }
 
 function onDeleteKey() {

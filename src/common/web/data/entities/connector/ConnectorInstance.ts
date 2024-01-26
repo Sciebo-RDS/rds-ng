@@ -18,8 +18,8 @@ export class ConnectorInstance {
 
     public readonly connector_id: ConnectorID;
 
-    public name: string;
-    public description: string;
+    public readonly name: string;
+    public readonly description: string;
 
     public constructor(instanceID: ConnectorInstanceID, connectorID: ConnectorID, name: string, description: string = "") {
         this.instance_id = instanceID;

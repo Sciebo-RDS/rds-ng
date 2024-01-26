@@ -13,11 +13,16 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         });
     }
 
-    function editInstance(instance: ConnectorInstance, connector?: Connector): Promise<ConnectorInstance> {
+    function editInstance(instances: ConnectorInstance[], instance: ConnectorInstance, connector?: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, instance, connector).then((data) => {
-            instance.name = data.name;
-            instance.description = data.description;
-            return instance;
+            const editedInstance = new ConnectorInstance(instance.instance_id, instance.connector_id, data.name, data.description);
+            const index = instances.indexOf(instance);
+            if (index == -1) {
+                instances.push(editedInstance);
+            } else {
+                instances[index] = editedInstance;
+            }
+            return editedInstance;
         });
     }
 
