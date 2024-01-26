@@ -2,6 +2,7 @@
 import { useUserTools } from "@/ui/tools/UserTools";
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
+import { unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -10,6 +11,10 @@ const comp = FrontendComponent.inject();
 const userStore = useUserStore();
 const { userSettings } = storeToRefs(userStore);
 const { editUserSettings } = useUserTools(comp);
+
+function onEditUserSettings(): void {
+    editUserSettings(unref(userSettings.value));
+}
 </script>
 
 <template>
@@ -26,7 +31,7 @@ const { editUserSettings } = useUserTools(comp);
             X Projects
         </div>
         <div class="row-span-2 pr-2">
-            <Button plain rounded aria-label="Settings" title="Settings" @click="editUserSettings(userSettings)">
+            <Button plain rounded aria-label="Settings" title="Settings" @click="onEditUserSettings">
                 <template #icon>
                     <span class="material-icons-outlined mi-settings r-primary-text" style="font-size: 40px;" />
                 </template>

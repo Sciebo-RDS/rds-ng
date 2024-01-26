@@ -23,7 +23,8 @@ const emits = defineEmits<{
     (e: "create-instance", instance: ConnectorInstance): void;
 }>();
 const connectors = computed(() => {
-    return consStore.connectors.sort((con1, con2) => con1.name.toLowerCase().localeCompare(con2.name.toLowerCase()));
+    // @ts-ignore
+    return consStore.connectors.sort((con1: ConnectorInstance, con2: ConnectorInstance) => con1.name.toLowerCase().localeCompare(con2.name.toLowerCase()));
 });
 const { userSettings } = toRefs(props);
 const { newInstance } = useConnectorInstancesTools(comp);

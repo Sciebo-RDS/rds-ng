@@ -33,6 +33,10 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
     return instance.instance_id === selectedInstance.value;
 }
 
+function onEditInstance(instance: ConnectorInstance): void {
+    editInstance(instance, findConnectorByID(unref(connectors.value), instance.connector_id));
+}
+
 function onDeleteKey() {
     if (selectedInstance.value) {
         const instance = findConnectorInstanceByID(userSettings!.value!.connector_instances, selectedInstance.value);
@@ -69,8 +73,8 @@ function onDeleteKey() {
                 <ConnectorInstancesListboxItem
                     :instance="instanceEntry.option"
                     :is-selected="isInstanceSelected(instanceEntry.option)"
-                    @dblclick="editInstance(instanceEntry.option, findConnectorByID(connectors, instanceEntry.option.connector_id))"
-                    @edit-instance="editInstance(instanceEntry.option, findConnectorByID(connectors, instanceEntry.option.connector_id))"
+                    @dblclick="onEditInstance(instanceEntry.option)"
+                    @edit-instance="onEditInstance(instanceEntry.option)"
                     @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
                 />
             </template>

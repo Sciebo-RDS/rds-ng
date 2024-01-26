@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { markRaw, ref, watch } from "vue";
+import { markRaw, ref, unref, watch } from "vue";
 import { array as yarray } from "yup";
 
 import VerticalTabView from "@common/ui/components/VerticalTabView.vue";
@@ -39,7 +39,7 @@ const activeTab = ref(tabIndices.connections);
 const validator = useValidator({
         connector_instances: yarray().required().test("all-connectors-exist", "The connector '${path}' doesn't exist", (value: ConnectorInstance[], ctx) => {
             for (const conInst of value) {
-                if (!findConnectorByID(connectors.value, conInst.connector_id)) {
+                if (!findConnectorByID(unref(connectors.value), conInst.connector_id)) {
                     activeTab.value = tabIndices.connections;
                     return ctx.createError({ path: conInst.connector_id });
                 }
