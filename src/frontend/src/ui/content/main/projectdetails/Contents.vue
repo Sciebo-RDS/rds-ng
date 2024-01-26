@@ -32,7 +32,7 @@ const panels = computed(() => {
 
 <template>
     <div>
-        <TabView select-on-focus :pt="{
+        <TabView :pt="{
             nav: 'tab-view'
         }">
             <TabPanel v-for="panel in panels" :key="panel.title" :header="panel.title" :pt="{

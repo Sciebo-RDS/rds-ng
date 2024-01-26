@@ -17,7 +17,7 @@ const activeTab = defineModel<number>("activeTab", { default: 0 });
 </script>
 
 <template>
-    <TabView v-model:active-index="activeTab" select-on-focus :pt="{
+    <TabView v-model:active-index="activeTab" :pt="{
             root: 'tab-view',
             nav: 'tab-view-nav',
             navContent: 'tab-view-nav-content',

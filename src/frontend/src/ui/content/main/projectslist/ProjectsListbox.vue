@@ -69,7 +69,6 @@ function isProjectDeleted(project: Project): boolean {
             :options="projects"
             option-value="project_id"
             :option-disabled="isProjectDeleted"
-            select-on-focus
             class="w-full"
             :pt="{
                 root: 'projects-listbox',
