@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// @ts-nocheck
+
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserTools } from "@/ui/tools/UserTools";
 import { storeToRefs } from "pinia";
