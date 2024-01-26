@@ -6,8 +6,8 @@ from .resources_list import ResourcesList, ResourceFiles, ResourceFolders
 def resources_list_from_syspath(
     path: str,
     *,
-    include_files: bool = True,
     include_folders: bool = True,
+    include_files: bool = True,
     recursive: bool = True
 ) -> ResourcesList:
     """
@@ -15,8 +15,8 @@ def resources_list_from_syspath(
 
     Args:
         path: The root path.
-        include_files: Whether to list files.
         include_folders: Whether to list folders (if this is set to false, no recursion will occur independent of `recursive`).
+        include_files: Whether to list files.
         recursive: Whether to recursively process all sub-folders as well.
 
     Returns:
