@@ -19,7 +19,7 @@ const { project } = toRefs(props);
         <div class="text-xl font-bold self-center">
             {{ project!.title }}
         </div>
-        <div class="italic self-center">I do not have a path yet</div>
+        <div class="italic self-center"><b>Path: </b>{{ project!.resource }}</div>
         <div class="row-span-2 self-center">
             <ProjectControls :project="project!" />
         </div>

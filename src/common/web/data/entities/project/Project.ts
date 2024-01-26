@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 
 import { ProjectFeatures } from "./features/ProjectFeatures";
 import { ProjectOptions } from "./ProjectOptions";
+import { Resource } from "../resource/Resource";
 
 /**
  * The project ID type.
@@ -21,6 +22,7 @@ export const enum ProjectStatus {
  *
  * @param project_id - The unique project identifier.
  * @param creation_time - A UNIX timestamp of the project creation time.
+ * @param resource - The resource path of the project.
  * @param title - The title of the project.
  * @param description - An optional project description.
  * @param status - The project status.
@@ -31,6 +33,8 @@ export class Project {
     public readonly project_id: ProjectID;
 
     public readonly creation_time: number;
+
+    public readonly resource: Resource;
 
     public readonly title: string;
     public readonly description: string;

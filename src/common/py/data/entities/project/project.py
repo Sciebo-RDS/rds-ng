@@ -5,6 +5,7 @@ from dataclasses_json import dataclass_json
 
 from .features import ProjectFeatures
 from .project_options import ProjectOptions
+from ..resource import Resource
 
 ProjectID = int
 
@@ -18,6 +19,7 @@ class Project:
     Attributes:
         project_id: The unique project identifier.
         creation_time: A UNIX timestamp of the project creation time.
+        resource: The resource path of the project.
         title: The title of the project.
         description: An optional project description.
         status: The project status.
@@ -36,6 +38,8 @@ class Project:
     project_id: ProjectID
 
     creation_time: float
+
+    resource: Resource
 
     title: str
     description: str
