@@ -51,8 +51,8 @@ onMounted(() => {
 });
 
 watch(selectedResource, (newResource) => {
-    dialogData.userData.datapath = newResource;
-    console.log(dialogData.userData.datapath);
+    const data = Object.keys(newResource);
+    dialogData.userData.datapath = data.length > 0 ? data[0] : "";
 });
 
 // Reflect selected features based on snap-ins with associated project features
@@ -115,4 +115,5 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
 </template>
 
 <style scoped lang="scss">
+
 </style>

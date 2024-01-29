@@ -16,6 +16,7 @@ from ...data.entities.project import (
     ProjectID,
     ProjectOptions,
 )
+from ...data.entities.resource import Resource
 
 
 @Message.define("command/project/list")
@@ -71,6 +72,7 @@ class CreateProjectCommand(Command):
     Command to create a new project.
 
     Args:
+        resource: The resource path of the project.
         title: The title of the project.
         description: An optional project description.
         options: The project options.
@@ -78,6 +80,8 @@ class CreateProjectCommand(Command):
     Notes:
         Requires a ``CreateProjectReply`` reply.
     """
+
+    resource: Resource
 
     title: str
     description: str
@@ -88,6 +92,7 @@ class CreateProjectCommand(Command):
     def build(
         message_builder: MessageBuilder,
         *,
+        resource: Resource,
         title: str,
         description: str,
         options: ProjectOptions,
@@ -99,6 +104,7 @@ class CreateProjectCommand(Command):
         return message_builder.build_command(
             CreateProjectCommand,
             chain,
+            resource=resource,
             title=title,
             description=description,
             options=options,
