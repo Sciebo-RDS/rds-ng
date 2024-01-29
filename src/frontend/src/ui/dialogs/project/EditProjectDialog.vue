@@ -39,10 +39,7 @@ onMounted(() => {
     const action = new ListResourcesAction(comp, true);
     action.prepare("", true, false).done((reply: ListResourcesReply, success, msg) => {
         if (success) {
-            setTimeout(() => {
-                resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
-            }, 5000);
-            //resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
+            resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
         }
     });
     action.execute();
