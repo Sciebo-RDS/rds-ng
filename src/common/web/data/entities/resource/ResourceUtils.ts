@@ -1,4 +1,4 @@
-import { TreeNode } from "primevue/treenode";
+import { type TreeNode } from "primevue/treenode";
 
 import { ResourcesList } from "./ResourcesList";
 import { extractFilenameFromPath } from "../../../utils/Paths";
@@ -12,12 +12,12 @@ import { extractFilenameFromPath } from "../../../utils/Paths";
  */
 export function resourcesListToTreeNodes(resources: ResourcesList): TreeNode[] {
     const sortNodes = (nodes: TreeNode[]): TreeNode[] => {
-        return nodes.sort((node1, node2) => node1.label.localeCompare(node2.label));
+        return nodes.sort((node1, node2) => node1.label && node2.label ? node1.label.localeCompare(node2.label) : 0);
     };
 
     const folderNodes: TreeNode[] = [];
     for (const [_, folderResource] of Object.entries(resources.folders)) {
-        folderNodes.push(...resourcesListToTreeNodes(folderResource));
+        folderNodes.push(...resourcesListToTreeNodes(folderResource!));
     }
 
     const fileNodes: TreeNode[] = [];
