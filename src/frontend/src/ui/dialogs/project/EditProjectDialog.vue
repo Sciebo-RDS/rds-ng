@@ -39,7 +39,10 @@ onMounted(() => {
     const action = new ListResourcesAction(comp, true);
     action.prepare("", true, false).done((reply: ListResourcesReply, success, msg) => {
         if (success) {
-            resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
+            setTimeout(() => {
+                resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
+            }, 5000);
+            //resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
         }
     });
     action.execute();
@@ -80,6 +83,7 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
                         v-model="dialogData.userData.datapath"
                         :options="resourcesNodes"
                         placeholder="Select where the data of this project is stored"
+                        loading
                         :class="{ 'p-invalid': validator.errors.datapath }"
                     />
                     <small><b>Important:</b> This path cannot be changed after the project has been created!</small>

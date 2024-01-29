@@ -19,10 +19,25 @@ const props = defineProps({
     placeholder: {
         type: String,
         default: "Select a value"
+    },
+    loading: {
+        type: Boolean,
+        default: false
+    },
+    loadingLabel: {
+        type: String,
+        default: "Loading data..."
     }
 });
-const { options, placeholder } = toRefs(props);
+const { options, placeholder, loading, loadingLabel } = toRefs(props);
 const model = defineModel<Resource>({ default: "" });
+
+const isLoading = ref(loading.value);
+if (isLoading.value) {
+    watch(options, () => {
+        isLoading.value = false;
+    });
+}
 
 const selectedResources = ref<Object>(pathToSelectedResources(model.value));
 watch(selectedResources, (newResources) => {
@@ -43,10 +58,16 @@ watch(model, (newPath) => {
         :pt="{
             panel: 'r-z-index-toplevel'
         }"
+        :disabled="isLoading"
     >
         <template #value="value">
-            <div v-if="value.value.length > 0" class="flex gap-2"><span :class="value.value[0].icon + ' opacity-75'" /> {{ value.value[0].data }}</div>
-            <div v-else>{{ value.placeholder }}</div>
+            <div v-if="!isLoading && value.value.length > 0" class="flex gap-2"><span :class="value.value[0].icon + ' opacity-75'" /> {{ value.value[0].data }}</div>
+            <div v-else>
+                <span v-if="isLoading" class="flex">
+                    <span class="material-icons-outlined mi-refresh animate-spin mr-1" /><span>{{ loadingLabel }}</span>
+                </span>
+                <span v-else>{{ value.placeholder }}</span>
+            </div>
         </template>
     </TreeSelect>
 </template>
