@@ -37,7 +37,7 @@ export class ListResourcesCommand extends Command {
         recursive: boolean = true,
         chain: Message | null = null
     ): CommandComposer<ListResourcesCommand> {
-        return messageBuilder.buildCommand(ListResourcesCommand, { root: root, includeFolders: includeFolders, includeFiles: includeFiles, recursive: recursive }, chain);
+        return messageBuilder.buildCommand(ListResourcesCommand, { root: root, include_folders: includeFolders, include_files: includeFiles, recursive: recursive }, chain);
     }
 }
 

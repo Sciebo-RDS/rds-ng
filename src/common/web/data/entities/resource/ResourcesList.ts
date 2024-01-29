@@ -8,15 +8,6 @@ import { type Resource } from "./Resource";
 export type ResourceFolders = Record<Resource, ResourcesList | undefined>;
 
 /**
- * A list of resource files.
- */
-export type ResourceFiles = Resource[];
-
-class X extends Map<Resource, ResourcesList> {
-
-}
-
-/**
  * A recursive list of resources.
  *
  * Resources are always given in absolute form.
