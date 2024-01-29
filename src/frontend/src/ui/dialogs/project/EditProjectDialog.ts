@@ -13,6 +13,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 export interface EditProjectDialogData {
     title: string;
     description: string;
+    datapath: string;
     options: ProjectOptions,
 }
 
@@ -39,6 +40,7 @@ export async function editProjectDialog(
         {
             title: project?.title || "",
             description: project?.description || "",
+            datapath: project?.resource || "",
             options: deepClone<ProjectOptions>(project?.options, new ProjectOptions())
         },
         {

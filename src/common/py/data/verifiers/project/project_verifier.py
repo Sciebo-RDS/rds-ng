@@ -13,10 +13,12 @@ class ProjectVerifier(Verifier):
     def verify_create(self) -> None:
         self._verify_id()
         self._verify_title()
+        self._verify_resource()
 
     def verify_update(self) -> None:
         self._verify_id()
         self._verify_title()
+        self._verify_resource()
 
     def verify_delete(self) -> None:
         self._verify_id()
@@ -28,3 +30,7 @@ class ProjectVerifier(Verifier):
     def _verify_title(self) -> None:
         if self._project.title == "":
             raise VerificationException("Missing project title")
+
+    def _verify_resource(self) -> None:
+        if self._project.resource == "":
+            raise VerificationException("Missing project resource")

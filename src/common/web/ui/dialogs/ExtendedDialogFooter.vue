@@ -34,9 +34,7 @@ watch(
             <br />
             <span class="italic">
                 {{ errors[0] }}
-                <span v-if="errors.length > 1"
-                >(+ {{ errors.length - 1 }} more)</span
-                >
+                <span v-if="errors.length > 1" :title="errors.join('\n')">(+ {{ errors.length - 1 }} more)</span>
             </span>
         </small>
         <small v-else>&nbsp;</small>

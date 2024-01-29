@@ -32,7 +32,7 @@ export function resourcesListToTreeNodes(resources: ResourcesList): TreeNode[] {
 
     return [{
         key: resources.resource,
-        label: extractFilenameFromPath(resources.resource),
+        label: extractFilenameFromPath(resources.resource) || "/",
         data: resources.resource,
         icon: "material-icons-outlined mi-folder",
         children: [...sortNodes(folderNodes), ...sortNodes(fileNodes)]

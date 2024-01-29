@@ -6,7 +6,7 @@ import Textarea from "primevue/textarea";
 import { TreeNode } from "primevue/treenode";
 import TreeSelect from "primevue/treeselect";
 import { onMounted, ref, watch } from "vue";
-import { string as ystring } from "yup";
+import { string as ystring, object as yobject } from "yup";
 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { type Resource } from "@common/data/entities/resource/Resource";
@@ -29,10 +29,14 @@ const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
 
 const validator = useValidator({
         title: ystring().required().label("Title").default(dialogData.userData.title),
-        description: ystring().label("Description").default(dialogData.userData.description)
+        description: ystring().label("Description").default(dialogData.userData.description),
+        datapath: yobject().required().label("Data path").test("datapath-test", "Data path is a required field", (value, ctx) => {
+            return Object.entries(value).length > 0;
+        })
     }
 );
 const title = validator.defineComponentBinds("title");
+const datapath = validator.defineComponentBinds("datapath");
 
 const resourcesNodes = ref<TreeNode[] | null>();
 const selectedResource = ref<Resource>();
@@ -40,11 +44,15 @@ onMounted(() => {
     const action = new ListResourcesAction(comp, true);
     action.prepare("", true, false, true).done((reply: ListResourcesReply, success, msg) => {
         if (success) {
-            console.log(resourcesListToTreeNodes(reply.resources));
             resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
         }
     });
     action.execute();
+});
+
+watch(selectedResource, (newResource) => {
+    dialogData.userData.datapath = newResource;
+    console.log(dialogData.userData.datapath);
 });
 
 // Reflect selected features based on snap-ins with associated project features
@@ -78,14 +86,21 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
                 <label>Data path <MandatoryMark /></label>
                 <!-- TODO: Separate component -->
                 <TreeSelect
+                    v-bind="datapath"
                     v-model="selectedResource"
                     :options="resourcesNodes"
                     selection-mode="single"
                     placeholder="Select where the data of this project is stored"
+                    :class="{ 'p-invalid': validator.errors.datapath }"
                     :pt="{
                         panel: 'r-z-index-toplevel'
                     }"
-                />
+                >
+                    <template #value="value">
+                        <div v-if="value.value.length > 0" class="flex gap-2"><span class="material-icons-outlined mi-folder opacity-75" /> {{ value.value[0].data }}</div>
+                        <div v-else>{{ value.placeholder }}</div>
+                    </template>
+                </TreeSelect>
                 <small><b>Important:</b> This path cannot be changed after the project has been created!</small>
             </span>
         </Panel>
