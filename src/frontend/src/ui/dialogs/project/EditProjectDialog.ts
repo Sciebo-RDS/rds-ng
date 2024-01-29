@@ -50,7 +50,9 @@ export async function editProjectDialog(
 
             hasRejectButton: true,
             rejectLabel: "Cancel",
-            rejectIcon: "material-icons-outlined mi-clear"
+            rejectIcon: "material-icons-outlined mi-clear",
+
+            showDataPathSelector: !project
         }
     );
 }

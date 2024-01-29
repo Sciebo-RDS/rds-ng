@@ -74,14 +74,23 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
         <Panel header="Data" :pt="{ header: '!p-3' }">
             <span class="r-form-field">
                 <label>Data path <MandatoryMark /></label>
-                <ResourcesTreeSelect
-                    v-bind="datapath"
-                    v-model="dialogData.userData.datapath"
-                    :options="resourcesNodes"
-                    placeholder="Select where the data of this project is stored"
-                    :class="{ 'p-invalid': validator.errors.datapath }"
-                />
-                <small><b>Important:</b> This path cannot be changed after the project has been created!</small>
+                <span v-if="dialogData.options['showDataPathSelector']" class="grid grid-flow-row">
+                    <ResourcesTreeSelect
+                        v-bind="datapath"
+                        v-model="dialogData.userData.datapath"
+                        :options="resourcesNodes"
+                        placeholder="Select where the data of this project is stored"
+                        :class="{ 'p-invalid': validator.errors.datapath }"
+                    />
+                    <small><b>Important:</b> This path cannot be changed after the project has been created!</small>
+                </span>
+                <span v-else class="grid grid-flow-row">
+                    <span class="flex border border-solid rounded p-2">
+                        <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
+                        <span>{{ dialogData.userData.datapath }}</span>
+                    </span>
+                    <small><b>Note:</b> This path cannot be changed anymore after project creation.</small>
+                </span>
             </span>
         </Panel>
 

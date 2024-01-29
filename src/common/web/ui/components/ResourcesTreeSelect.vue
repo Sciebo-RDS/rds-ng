@@ -5,6 +5,12 @@ import { type PropType, ref, toRefs, watch } from "vue";
 
 import { type Resource } from "../../data/entities/resource/Resource";
 
+function pathToSelectedResources(path: Resource): Record<string, boolean> {
+    const selectedResources: Record<string, boolean> = {};
+    selectedResources[path] = true;
+    return selectedResources;
+}
+
 const props = defineProps({
     options: {
         type: Object as PropType<TreeNode[]>,
@@ -18,15 +24,13 @@ const props = defineProps({
 const { options, placeholder } = toRefs(props);
 const model = defineModel<Resource>({ default: "" });
 
-const selectedResources = ref<Object>({});
+const selectedResources = ref<Object>(pathToSelectedResources(model.value));
 watch(selectedResources, (newResources) => {
     const paths = Object.keys(newResources);
     model.value = paths.length > 0 ? paths[0] : "";
 });
 watch(model, (newPath) => {
-    const newSelectedResources: Record<string, boolean> = {};
-    newSelectedResources[newPath] = true;
-    selectedResources.value = newSelectedResources;
+    selectedResources.value = pathToSelectedResources(newPath);
 });
 </script>
 
