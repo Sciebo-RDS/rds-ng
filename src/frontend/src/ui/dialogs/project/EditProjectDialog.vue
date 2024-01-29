@@ -24,6 +24,7 @@ const { vFocus } = useDirectives();
 const comp = FrontendComponent.inject();
 const optSnapIns = SnapInsCatalog.allOptionals();
 const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
+const showDataPathSelector = dialogData.options["showDataPathSelector"];
 
 const validator = useValidator({
         title: ystring().required().label("Title").default(dialogData.userData.title),
@@ -36,13 +37,15 @@ const datapath = validator.defineComponentBinds("datapath");
 
 const resourcesNodes = ref<Object[]>([]);
 onMounted(() => {
-    const action = new ListResourcesAction(comp, true);
-    action.prepare("", true, false).done((reply: ListResourcesReply, success, msg) => {
-        if (success) {
-            resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
-        }
-    });
-    action.execute();
+    if (showDataPathSelector) {
+        const action = new ListResourcesAction(comp, true);
+        action.prepare("", true, false).done((reply: ListResourcesReply, success, msg) => {
+            if (success) {
+                resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
+            }
+        });
+        action.execute();
+    }
 });
 
 // Reflect selected features based on snap-ins with associated project features
@@ -74,7 +77,7 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
         <Panel header="Data" :pt="{ header: '!p-3' }">
             <span class="r-form-field">
                 <label>Data path <MandatoryMark /></label>
-                <span v-if="dialogData.options['showDataPathSelector']" class="grid grid-flow-row">
+                <span v-if="showDataPathSelector" class="grid grid-flow-row">
                     <ResourcesTreeSelect
                         v-bind="datapath"
                         v-model="dialogData.userData.datapath"
