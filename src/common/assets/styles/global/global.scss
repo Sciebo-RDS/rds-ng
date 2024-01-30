@@ -79,6 +79,10 @@
     color: var(--r-border-color);
 }
 
+.r-border-error {
+    @apply border-rose-500 #{!important};
+}
+
 .r-shade {
     background-color: var(--r-shade);
 }

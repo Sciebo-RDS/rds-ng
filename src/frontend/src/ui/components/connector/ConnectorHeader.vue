@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { computed, type PropType, toRefs, unref } from "vue";
+import { computed, toRefs, unref } from "vue";
 
-import { type ConnectorInstancesGroup, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 
 const consStore = useConnectorsStore();
 const props = defineProps({
-    group: {
-        type: Object as PropType<ConnectorInstancesGroup>,
+    connectorId: {
+        type: String,
         required: true
     }
 });
 
-const { group } = toRefs(props);
-const connector = computed(() => findConnectorByID(unref(consStore.connectors), group.value.connectorID));
+const { connectorId } = toRefs(props);
+const connector = computed(() => findConnectorByID(unref(consStore.connectors), connectorId!.value));
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const connector = computed(() => findConnectorByID(unref(consStore.connectors), 
         <div class="truncate r-shade-text opacity-70" :title="connector.description">{{ connector.name }}</div>
     </div>
     <div v-else class="place-content-start items-center r-text-error">
-        <div class="truncate opacity-70">Unknown connector <em>&lsquo;{{ group!.connectorID }}&rsquo;</em></div>
+        <div class="truncate opacity-70">Unknown connector <em>&lsquo;{{ connectorId }}&rsquo;</em></div>
     </div>
 </template>
 

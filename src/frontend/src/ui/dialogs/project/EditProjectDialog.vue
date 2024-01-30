@@ -128,11 +128,12 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
                         <label for="useSelectConnectorInstances">Use only the following connections:</label>
                     </div>
 
-                    <div class="border border-solid rounded p-2 ml-2 mr-2 mt-1" :class="{ 'border-rose-500': validator.errors.activeInstances }">
+                    <div class="border border-solid rounded p-2 ml-2 mr-2 mt-1" :class="{ 'r-border-error': validator.errors.activeInstances }">
                         <ConnectorInstancesSelect
                             v-bind="activeInstances"
                             v-model="dialogData.userData.options.active_connector_instances"
                             :disabled="dialogData.userData.options.use_all_connector_instances"
+                            class="w-full h-44"
                         />
                     </div>
                 </div>

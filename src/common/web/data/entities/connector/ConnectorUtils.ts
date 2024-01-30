@@ -24,7 +24,7 @@ export function groupConnectorInstances(connectorInstances: ConnectorInstance[],
         let group = instancesGroups.find((group) => group.connectorID == instance.connector_id);
         if (!group) {
             group = {
-                connectorID: instance.connector_id,
+                connectorId: instance.connector_id,
                 connectorInstances: [] as ConnectorInstance[]
             };
             instancesGroups.push(group);
