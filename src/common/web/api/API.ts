@@ -11,4 +11,6 @@ import "./project/ProjectCommands";
 import "./project/ProjectEvents";
 import "./project/ProjectFeaturesCommands";
 
+import "./resource/ResourceCommands";
+
 import "./user/UserCommands";

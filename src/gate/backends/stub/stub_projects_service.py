@@ -53,6 +53,7 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
         project = Project(
             project_id=ctx.storage_pool.project_storage.next_id(),
             creation_time=time.time(),
+            resource=msg.resource,
             title=msg.title,
             description=msg.description,
             options=msg.options,

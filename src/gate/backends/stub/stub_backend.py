@@ -20,6 +20,7 @@ class StubBackend(Backend):
         from .stub_connectors_service import create_stub_connectors_service
         from .stub_projects_service import create_stub_projects_service
         from .stub_users_service import create_stub_users_service
+        from .stub_resources_service import create_stub_resources_service
 
         super().__init__(
             comp,
@@ -28,5 +29,6 @@ class StubBackend(Backend):
                 create_stub_connectors_service(comp),
                 create_stub_users_service(comp),
                 create_stub_projects_service(comp),
+                create_stub_resources_service(comp),
             ],
         )

@@ -21,7 +21,8 @@ const activeTab = defineModel<number>("activeTab", { default: 0 });
             root: 'tab-view',
             nav: 'tab-view-nav',
             navContent: 'tab-view-nav-content',
-            panelContainer: 'tab-view-panels'
+            panelContainer: 'tab-view-panels',
+            inkbar: '!hidden'
         }">
         <TabPanel v-for="tab in tabs" :key="tab.title" :pt="{
                 header: 'tab-view-panel',

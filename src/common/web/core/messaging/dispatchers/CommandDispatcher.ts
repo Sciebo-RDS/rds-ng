@@ -3,6 +3,7 @@ import { Command } from "../Command";
 import { CommandFailType, CommandReply } from "../CommandReply";
 import { type Trace } from "../Message";
 import { CommandMetaInformation } from "../meta/CommandMetaInformation";
+import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
 import { MessageDispatcher } from "./MessageDispatcher";
 
 /**
@@ -16,7 +17,7 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
         super.process();
 
         for (const unique of MessageDispatcher._metaInformationList.findTimedOutEntries()) {
-            CommandDispatcher.invokeReplyCallbacks(unique, null, CommandFailType.Timeout, "The command timed out");
+            CommandDispatcher.invokeReplyCallbacks(unique, null, null, CommandFailType.Timeout, "The command timed out");
             MessageDispatcher._metaInformationList.remove(unique);
         }
     }
@@ -39,7 +40,7 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
     }
 
     protected contextError(err: any, msg: Command, msgMeta: CommandMetaInformation): void {
-        CommandDispatcher.invokeReplyCallbacks(msg.unique, null, CommandFailType.Exception, String(err));
+        CommandDispatcher.invokeReplyCallbacks(msg.unique, null, null, CommandFailType.Exception, String(err));
         MessageDispatcher._metaInformationList.remove(msg.unique);
     }
 
@@ -51,12 +52,13 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
      *
      * @param unique - The unique trace of the command.
      * @param reply - The received command reply (if any).
+     * @param replyMeta - The reply meta information (if any).
      * @param failType - The type of the command failure (in case of a timeout or exception).
      * @param failMsg - The failure message.
      */
-    public static invokeReplyCallbacks(unique: Trace, reply: CommandReply | null = null,
+    public static invokeReplyCallbacks(unique: Trace, reply: CommandReply | null = null, replyMeta: CommandReplyMetaInformation | null = null,
                                        failType: CommandFailType = CommandFailType.None, failMsg: string = ""): void {
-        let invoke = (callbacks: Function[], ...args: any[]): void => {
+        const invoke = (callbacks: Function[], ...args: any[]): void => {
             for (const callback of callbacks) {
                 try {
                     callback(...args);
@@ -64,7 +66,11 @@ export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInf
                     logging.error(`An error occurred within a command reply callback: ${String(err)}`, "bus", { error: typeof err });
                 }
             }
-        }
+
+            if (replyMeta && callbacks.length > 0) {
+                replyMeta.isHandledExternally = true;
+            }
+        };
 
         let metaInfo = MessageDispatcher._metaInformationList.find(unique);
         if (metaInfo && metaInfo instanceof CommandMetaInformation) {

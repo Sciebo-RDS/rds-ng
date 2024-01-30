@@ -11,6 +11,8 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useConnectorInstancesTools } from "@/ui/tools/ConnectorInstancesTools";
 
+import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
+
 const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
 const props = defineProps({
@@ -51,10 +53,7 @@ function onSelectConnector(connector: Connector): void {
             }"
         >
             <template #option="connectorItem">
-                <div class="grid grid-rows-1 grid-cols-[min-content-1fr] grid-flow-col gap-3 place-content-start items-center">
-                    <img v-if="connectorItem.option.logos.horizontal_logo" :src="connectorItem.option.logos.horizontal_logo" class="h-4" alt="{{ connectorItem.option.name }}" :title="connectorItem.option.description" />
-                    <div :title="connectorItem.option.description">{{ connectorItem.option.name }}</div>
-                </div>
+                <ConnectorHeader :connector-id="connectorItem.option.connector_id" />
             </template>
         </Dropdown>
     </div>

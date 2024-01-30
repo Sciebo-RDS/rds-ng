@@ -11,7 +11,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useConnectorInstancesTools } from "@/ui/tools/ConnectorInstancesTools";
 
-import ConnectorInstancesListboxGroup from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxGroup.vue";
+import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
 import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxItem.vue";
 
 const comp = FrontendComponent.inject();
@@ -65,10 +65,9 @@ function onDeleteKey() {
             @keydown="(event: KeyboardEvent) => { if (event.code == 'Delete') onDeleteKey(); }"
         >
             <template #optiongroup="groupEntry">
-                <ConnectorInstancesListboxGroup
-                    :group="groupEntry.option"
-                />
+                <ConnectorHeader :connector-id="groupEntry.option.connectorID" />
             </template>
+
             <template #option="instanceEntry">
                 <ConnectorInstancesListboxItem
                     :instance="instanceEntry.option"
@@ -78,6 +77,7 @@ function onDeleteKey() {
                     @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
                 />
             </template>
+
             <template #empty>
                 <div class="r-text-caption-big r-small-caps grid justify-center">No connections</div>
             </template>

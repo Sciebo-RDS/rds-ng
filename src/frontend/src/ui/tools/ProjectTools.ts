@@ -12,7 +12,7 @@ export function useProjectTools(comp: FrontendComponent) {
     function newProject(): Promise<void> {
         const action = new CreateProjectAction(comp);
         return action.showEditDialog().then((data) => {
-            action.prepare(data.title, data.description, data.options);
+            action.prepare(data.datapath, data.title, data.description, data.options);
             action.execute();
         });
     }

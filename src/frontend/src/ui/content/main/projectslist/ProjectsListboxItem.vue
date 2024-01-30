@@ -72,7 +72,7 @@ const editMenuShown = ref(false);
                 @click="(event) => editMenu.toggle(event)"
             >
                 <template #icon>
-                    <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-primary-text' : 'r-text']" style="font-size: 32px" />
+                    <span class="material-icons-outlined mi-more-vert" :class="[isSelected ? 'r-highlight-text' : 'r-text']" style="font-size: 32px" />
                 </template>
             </Button>
             <Menu ref="editMenu" :model="editMenuItems" popup @focus="editMenuShown = true" @blur="editMenuShown = false" />

@@ -3,7 +3,7 @@ import "reflect-metadata";
 
 // Import the global styles.scss first, then your desired theme
 import "@assets/styles/styles.scss";
-import "@assets/styles/themes/light-theme.scss";
+import "primevue/resources/themes/aura-light-green/theme.css";
 
 // Create the frontend component, which will automatically mount the main Vue App component
 import { FrontendComponent } from "@/component/FrontendComponent";

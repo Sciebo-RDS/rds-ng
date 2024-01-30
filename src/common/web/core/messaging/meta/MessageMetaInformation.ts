@@ -20,4 +20,11 @@ export class MessageMetaInformation {
      */
     public constructor(readonly entrypoint: MessageEntrypoint, readonly requiresReply: boolean = false) {
     }
+
+    /**
+     * Whether the message is handled outside the message bus.
+     */
+    public get isHandledExternally(): boolean {
+        return false;
+    }
 }

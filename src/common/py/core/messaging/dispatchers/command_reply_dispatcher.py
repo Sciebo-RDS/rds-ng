@@ -28,5 +28,7 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
         debug(f"Dispatching command reply: {msg}", scope="bus")
         super().pre_dispatch(msg, msg_meta)
 
-        CommandDispatcher.invoke_reply_callbacks(msg.unique, reply=msg)
+        CommandDispatcher.invoke_reply_callbacks(
+            msg.unique, reply=msg, reply_meta=msg_meta
+        )
         MessageDispatcher._meta_information_list.remove(msg.unique)

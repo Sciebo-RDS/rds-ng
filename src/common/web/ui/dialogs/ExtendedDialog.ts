@@ -25,6 +25,9 @@ export interface ExtendedDialogOptions {
     rejectLabel?: string;
     /** The icon of the Reject button */
     rejectIcon?: string;
+
+    /** Additional options. */
+    [key: string]: any;
 }
 
 /**
@@ -39,6 +42,9 @@ export interface ExtendedDialogData<UserDataType> {
 
     /** A form validator if a schema was provided in the options. */
     validator?: ExtendedDialogValidator<any>;
+
+    /** Called before accepting the dialog to pre-process the dialog data. */
+    processData?: (data: UserDataType) => void;
 
     /** Called when the dialog was accepted. */
     accept?: (data: UserDataType) => void;
@@ -60,6 +66,7 @@ export type ExtendedDialogResult<ResultType> = Promise<ResultType>;
  * @param dialogProps - Vue dialog properties.
  * @param data - Optional user data to pass to the dialog.
  * @param options - Extended dialog options.
+ * @param processDataCallback - A callback that is called before the dialog is being accepted to pre-process the dialog data.
  * @param ignoreReject - If true, nothing will happen if the user rejects the dialog.
  */
 export function extendedDialog<DataType>(
@@ -68,6 +75,7 @@ export function extendedDialog<DataType>(
     dialogProps: DialogProps,
     data: DataType,
     options: ExtendedDialogOptions | undefined = undefined,
+    processDataCallback: (data: UserDataType) => void,
     ignoreReject: boolean = true
 ): ExtendedDialogResult<DataType> {
     const dialog = comp.vue.config.globalProperties.$dialog;
@@ -75,7 +83,8 @@ export function extendedDialog<DataType>(
     return new Promise<DataType>((resolve, reject) => {
         const dialogData: ExtendedDialogData<DataType> = {
             userData: data,
-            options: options || {} as ExtendedDialogOptions
+            options: options || {} as ExtendedDialogOptions,
+            processData: processDataCallback
         };
 
         dialogData.accept = (result: DataType) => {

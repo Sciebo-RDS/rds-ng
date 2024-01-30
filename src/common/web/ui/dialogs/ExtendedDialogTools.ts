@@ -22,6 +22,10 @@ export function useExtendedDialogTools() {
             dialogRef.value.close(dialogData.userData);
         }
 
+        if (dialogData.processData) {
+            dialogData.processData(dialogData.userData);
+        }
+
         if (dialogData.validator) {
             // @ts-ignore
             function selectFirstError({ errors }) {

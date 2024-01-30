@@ -145,7 +145,7 @@ export class MessageBus {
                     msgDispatched = this.dispatchToService(dispatcher, msg, msgMeta, svc) || msgDispatched;
                 }
 
-                if (!msgDispatched) {
+                if (!msgDispatched && !msgMeta.isHandledExternally) {
                     logging.warning("A message was dispatched locally but not handled", "bus", { message: msg });
                 }
             }

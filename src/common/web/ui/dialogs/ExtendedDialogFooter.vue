@@ -25,7 +25,7 @@ watch(
 
 <template>
     <div
-        class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] items-center !pt-[1.5rem]"
+        class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] w-full items-center !pt-[1.5rem]"
     >
         <small v-if="errors.length" class="p-error mr-auto text-left">
             <span class="font-bold"
@@ -34,9 +34,7 @@ watch(
             <br />
             <span class="italic">
                 {{ errors[0] }}
-                <span v-if="errors.length > 1"
-                >(+ {{ errors.length - 1 }} more)</span
-                >
+                <span v-if="errors.length > 1" :title="errors.join('\n')">(+ <b>{{ errors.length - 1 }} more</b>)</span>
             </span>
         </small>
         <small v-else>&nbsp;</small>

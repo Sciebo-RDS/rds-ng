@@ -4,7 +4,7 @@ from .message_dispatcher import MessageDispatcher
 from .. import Trace, CommandReply
 from ..command import Command
 from ..handlers import MessageContextType
-from ..meta import CommandMetaInformation
+from ..meta import CommandMetaInformation, CommandReplyMetaInformation
 
 
 class CommandDispatcher(MessageDispatcher[Command]):
@@ -64,6 +64,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
         unique: Trace,
         *,
         reply: CommandReply | None = None,
+        reply_meta: CommandReplyMetaInformation | None = None,
         fail_type: CommandReply.FailType = CommandReply.FailType.NONE,
         fail_msg: str = "",
     ) -> None:
@@ -76,6 +77,7 @@ class CommandDispatcher(MessageDispatcher[Command]):
         Args:
             unique: The unique trace of the command.
             reply: The received command reply (if any).
+            reply_meta: The reply meta information (if any).
             fail_type: The type of the command failure (in case of a timeout or exception).
             fail_msg: The failure message.
         """
@@ -110,6 +112,9 @@ class CommandDispatcher(MessageDispatcher[Command]):
                         )
                     else:
                         _invoke_reply_callbacks(callbacks, *args)
+
+                if reply_meta is not None and len(callbacks) > 0:
+                    reply_meta.set_handled_externally()
 
             if reply is not None:
                 _invoke(
