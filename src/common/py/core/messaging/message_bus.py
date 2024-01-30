@@ -151,7 +151,7 @@ class MessageBus:
                         dispatcher, msg, msg_type, msg_meta, svc
                     )
 
-                if not msg_dispatched:
+                if not msg_dispatched and not msg_meta.is_handled_externally:
                     warning(
                         "A message was dispatched locally but not handled",
                         scope="bus",
