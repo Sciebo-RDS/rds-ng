@@ -38,8 +38,9 @@ const model = defineModel({ default: [] });
                     :inputId="instance.instance_id"
                     :value="instance.instance_id"
                     :disabled="disabled"
+                    class="self-center"
                 />
-                <label :for="instance.instance_id">{{ instance.name }}</label>
+                <label :for="instance.instance_id" class="pl-1.5">{{ instance.name }}</label>
             </div>
         </div>
     </ScrollPanel>

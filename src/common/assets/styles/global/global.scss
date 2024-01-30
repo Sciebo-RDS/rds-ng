@@ -3,8 +3,8 @@
  */
 :root {
     --r-border-color: rgb(209 213 219);
-    --r-shade: color-mix(in srgb, var(--highlight-bg), #FFF 95%);
-    --r-shade-dark: color-mix(in srgb, var(--highlight-bg), #FFF 90%);
+    --r-shade: color-mix(in srgb, var(--highlight-bg), #FFF 50%);
+    --r-shade-dark: color-mix(in srgb, var(--highlight-bg), #FFF 25%);
 }
 
 /*

@@ -116,7 +116,7 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
 
         <Panel header="Features" :pt="{ header: '!p-3' }">
             <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
-                <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" />
+                <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" class="self-center" />
                 <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
             </div>
         </Panel>
@@ -124,17 +124,17 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
         <Panel header="Connections" :pt="{ header: '!p-3' }">
             <div class="r-form-field">
                 <div class="grid grid-flow-row">
-                    <div>
-                        <RadioButton v-model="dialogData.userData.options.use_all_connector_instances" inputId="useAllConnectorInstances" :value="true" @change="validator.validate()" />
-                        <label for="useAllConnectorInstances">Use all available connections</label>
+                    <div class="flex align-items-center">
+                        <RadioButton v-model="dialogData.userData.options.use_all_connector_instances" inputId="useAllConnectorInstances" :value="true" @change="validator.validate()" class="self-center" />
+                        <label for="useAllConnectorInstances" class="pl-1.5">Use all available connections</label>
                     </div>
 
-                    <div>
-                        <RadioButton v-model="dialogData.userData.options.use_all_connector_instances" inputId="useSelectConnectorInstances" :value="false" @change="validator.validate()" />
-                        <label for="useSelectConnectorInstances">Use only the following connections:</label>
+                    <div class="flex align-items-center">
+                        <RadioButton v-model="dialogData.userData.options.use_all_connector_instances" inputId="useSelectConnectorInstances" :value="false" @change="validator.validate()" class="self-center" />
+                        <label for="useSelectConnectorInstances" class="pl-1.5">Use only the following connections:</label>
                     </div>
 
-                    <div class="border border-solid rounded p-2 ml-2 mr-2 mt-1" :class="{ 'r-border-error': validator.errors.activeInstances }">
+                    <div class="border border-solid rounded p-1 ml-2 mr-2 mt-1" :class="{ 'r-border-error': validator.errors.activeInstances }">
                         <ConnectorInstancesSelect
                             v-bind="activeInstances"
                             v-model="dialogData.userData.options.active_connector_instances"
