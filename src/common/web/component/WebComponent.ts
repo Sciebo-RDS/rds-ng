@@ -80,7 +80,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         let compInfo = metaInfo.getComponent(compID.unit);
 
         this._data = new WebComponentData(
-            compID,
+            this.sanitizeComponentID(compID),
             this.createConfig(env),
             metaInfo.title,
             compInfo.name,
