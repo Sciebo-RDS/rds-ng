@@ -20,7 +20,7 @@ const props = defineProps({
     }
 });
 const { connectors } = storeToRefs(consStore);
-const { userSettings } = toRefs(userStore);
+const { userSettings } = storeToRefs(userStore);
 const { disabled } = toRefs(props);
 
 const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, unref(connectors.value)));
