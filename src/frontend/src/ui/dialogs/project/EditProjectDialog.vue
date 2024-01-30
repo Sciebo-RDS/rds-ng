@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import Checkbox from "primevue/checkbox";
 import InputText from "primevue/inputtext";
 import Panel from "primevue/panel";
@@ -9,6 +8,8 @@ import { onMounted, ref, watch } from "vue";
 import { string as ystring, array as yarray } from "yup";
 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
+import { type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
+import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
@@ -19,6 +20,7 @@ import ConnectorInstancesSelect from "@/ui/dialogs/project/ConnectorInstancesSel
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/UIOptions";
+import { useUserStore } from "@/data/stores/UserStore";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
@@ -26,6 +28,7 @@ const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { vFocus } = useDirectives();
 
 const comp = FrontendComponent.inject();
+const userStore = useUserStore();
 const optSnapIns = SnapInsCatalog.allOptionals();
 const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
 const showDataPathSelector = dialogData.options["showDataPathSelector"];
@@ -37,7 +40,10 @@ const validator = useValidator({
         activeInstances: yarray().label("Active connections").default(dialogData.userData.options.active_connector_instances).test(
             "active-instances",
             "Select at least one connection to use",
-            (value: ConnectorInstanceID[]) => dialogData.userData.options.use_all_connector_instances || (Array.isArray(value) && value.length > 0)
+            (value: ConnectorInstanceID[]) => {
+                return dialogData.userData.options.use_all_connector_instances ||
+                    (Array.isArray(value) && value.filter((instance) => !!findConnectorInstanceByID(userStore.userSettings.connector_instances, instance)).length > 0);
+            }
         )
     }
 );
