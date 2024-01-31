@@ -66,7 +66,7 @@ def fill_stub_data_connectors() -> None:
 
 
 def fill_stub_data_connector_instances() -> None:
-    from gate.backends.stub.service.stub_service_context import StubServiceContext
+    from ..services import StubServiceContext
 
     StubServiceContext.user_settings.connector_instances.extend(
         [

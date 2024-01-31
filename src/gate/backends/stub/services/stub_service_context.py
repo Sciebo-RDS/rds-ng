@@ -2,12 +2,13 @@ from common.py.core.logging import LoggerProtocol
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.core.messaging.meta import MessageMetaInformation
 from common.py.data.entities.user import UserSettings
-from common.py.services import ServiceContext
 from common.py.data.storage import StoragePool
 from common.py.utils.config import Configuration
 
+from ....services import GateServiceContext
 
-class StubServiceContext(ServiceContext):
+
+class StubServiceContext(GateServiceContext):
     """
     Service context specific to the stub backend.
     """

@@ -6,7 +6,7 @@ from ..backend import Backend
 class StubBackend(Backend):
     def __init__(self, comp: BackendComponent):
         # Add some initial data to the in-memory storage
-        from gate.backends.stub.data import (
+        from .data import (
             fill_stub_data_connectors,
             fill_stub_data_connector_instances,
             fill_stub_data_projects,
@@ -17,7 +17,7 @@ class StubBackend(Backend):
         fill_stub_data_projects()
 
         # Create all stub services
-        from .service import (
+        from .services import (
             create_stub_connectors_service,
             create_stub_projects_service,
             create_stub_users_service,
