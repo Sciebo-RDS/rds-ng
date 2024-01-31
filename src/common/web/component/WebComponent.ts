@@ -1,3 +1,4 @@
+import { useSessionStorage } from "@vueuse/core";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 import ConfirmDialog from "primevue/confirmdialog";
@@ -17,6 +18,7 @@ import logging from "../core/logging/Logging";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
+import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import { UserInterface } from "../ui/UserInterface";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
@@ -76,12 +78,13 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         }
         WebComponent._instance = this;
 
-        let metaInfo = new MetaInformation();
-        let compInfo = metaInfo.getComponent(compID.unit);
+        const config = this.createConfig(env);
+        const metaInfo = new MetaInformation();
+        const compInfo = metaInfo.getComponent(compID.unit);
 
         this._data = new WebComponentData(
-            this.sanitizeComponentID(compID),
-            this.createConfig(env),
+            this.sanitizeComponentID(compID, config),
+            config,
             metaInfo.title,
             compInfo.name,
             metaInfo.version
@@ -259,10 +262,10 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         return WebComponent._instance;
     }
 
-    private sanitizeComponentID(compID: UnitID): UnitID {
-        let instance: string = compID.instance ? compID.instance : "default";
-        let uniqueID = uuidv4();
-
+    private sanitizeComponentID(compID: UnitID, config: Configuration): UnitID {
+        // Grab an existing uniqueID from the session storage or use a new one by default
+        const uniqueID = useSessionStorage(config.value<string>(GeneralSettingIDs.SessionKey), uuidv4()).value;
+        const instance: string = compID.instance ? compID.instance : "default";
         return new UnitID(compID.type, compID.unit, `${instance}::${uniqueID}`);
     }
 

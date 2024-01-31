@@ -11,6 +11,7 @@ export function getDefaultSettings(): Map<SettingID, any> {
     let defaults = new Map<SettingID, any>();
 
     defaults.set(GeneralSettingIDs.Debug, false);
+    defaults.set(GeneralSettingIDs.SessionKey, "rds-ng-sid");
     defaults.set(GeneralSettingIDs.NotificationTimeout, 3.0);
 
     defaults.set(NetworkClientSettingIDs.ServerAddress, "");

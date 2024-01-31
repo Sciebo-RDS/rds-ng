@@ -3,6 +3,7 @@
     "private": true,
     "dependencies": {
         "@vee-validate/yup": "^4.12.4",
+        "@vueuse/core": "^10.7.2",
         "autoprefixer": "^10.4.17",
         "class-transformer": "^0.5.1",
         "material-icons": "^1.13.12",
