@@ -7,7 +7,7 @@ def fill_stub_data_connectors() -> None:
     """
     Adds some hardcoded data to the stub data storage.
     """
-    from ...data.storage.memory import MemoryStoragePool
+    from ....data.storage.memory import MemoryStoragePool
 
     from common.py.data.entities.connector import Connector
     from common.py.utils.img_conversion import convert_image_to_img_source
@@ -66,7 +66,7 @@ def fill_stub_data_connectors() -> None:
 
 
 def fill_stub_data_connector_instances() -> None:
-    from gate.backends.stub.stub_service_context import StubServiceContext
+    from gate.backends.stub.service.stub_service_context import StubServiceContext
 
     StubServiceContext.user_settings.connector_instances.extend(
         [

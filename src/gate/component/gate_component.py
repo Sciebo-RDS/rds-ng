@@ -29,6 +29,10 @@ class GateComponent(BackendComponent):
     def run(self) -> None:
         super().run()
 
+        from ..services import create_gate_service
+
+        create_gate_service(self)
+
         self._install_network_filters()
         self._mount_backend()
 

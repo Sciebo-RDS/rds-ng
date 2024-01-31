@@ -26,7 +26,7 @@ class StubServiceContext(ServiceContext):
     ):
         super().__init__(msg_meta, msg_builder, logger=logger, config=config)
 
-        from ...data.storage.memory import MemoryStoragePool
+        from ....data.storage.memory import MemoryStoragePool
 
         self._storage_pool = MemoryStoragePool()
 

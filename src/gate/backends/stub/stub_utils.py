@@ -1,6 +1,6 @@
 from common.py.core.messaging import Message, Channel
 
-from .stub_service_context import StubServiceContext
+from gate.backends.stub.service.stub_service_context import StubServiceContext
 
 
 def send_projects_list(msg: Message, ctx: StubServiceContext) -> None:

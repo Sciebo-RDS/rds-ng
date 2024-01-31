@@ -7,7 +7,7 @@ def fill_stub_data_projects() -> None:
     """
     from common.py.data.entities.project import Project, ProjectOptions
 
-    from ...data.storage.memory import MemoryStoragePool
+    from ....data.storage.memory import MemoryStoragePool
 
     pool = (
         MemoryStoragePool()

@@ -66,6 +66,7 @@ class ServerConnectedEvent(Event):
     Emitted whenever the ``Server`` established a connection to a client.
 
     Attributes:
+        comp_id: The client ID.
         client_id: The internal client ID.
     """
 
@@ -94,6 +95,7 @@ class ServerDisconnectedEvent(Event):
     Emitted whenever the ``Server`` cuts a connection from a client.
 
     Attributes:
+        comp_id: The client ID.
         client_id: The internal client ID.
     """
 
@@ -113,4 +115,33 @@ class ServerDisconnectedEvent(Event):
         """
         return message_builder.build_event(
             ServerConnectedEvent, chain, comp_id=comp_id, client_id=client_id
+        )
+
+
+@Message.define("event/network/server-timeout")
+class ServerTimeoutEvent(Event):
+    """
+    Emitted whenever the ``Server`` cuts a connection from a client due to a timeout.
+
+    Attributes:
+        comp_id: The client ID.
+        client_id: The internal client ID.
+    """
+
+    comp_id: UnitID = dataclasses.field(default_factory=lambda: UnitID("", ""))
+    client_id: str = ""
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        comp_id: UnitID,
+        client_id: str,
+        chain: Message | None = None
+    ) -> EventComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_event(
+            ServerTimeoutEvent, chain, comp_id=comp_id, client_id=client_id
         )

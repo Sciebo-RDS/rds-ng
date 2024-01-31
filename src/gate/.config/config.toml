@@ -2,4 +2,4 @@
 driver = "stub"
 
 [network.server]
-#idle_timeout = 5
+idle_timeout = 5

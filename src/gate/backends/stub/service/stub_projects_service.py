@@ -35,7 +35,7 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
     )
 
     from .stub_service_context import StubServiceContext
-    from .stub_utils import send_projects_list
+    from ..stub_utils import send_projects_list
 
     svc = comp.create_service("Projects service", context_type=StubServiceContext)
 
