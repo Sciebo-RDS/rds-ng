@@ -1,4 +1,3 @@
-import { useSessionStorage } from "@vueuse/core";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 import ConfirmDialog from "primevue/confirmdialog";
@@ -8,8 +7,6 @@ import DynamicDialog from "primevue/dynamicdialog";
 import DialogService from "primevue/dialogservice";
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
-// @ts-ignore
-import { v4 as uuidv4 } from "uuid";
 import { type App, type Component as VueComp, createApp, inject } from "vue";
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
@@ -18,12 +15,12 @@ import logging from "../core/logging/Logging";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
-import { GeneralSettingIDs } from "../settings/GeneralSettingIDs";
 import { UserInterface } from "../ui/UserInterface";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
+import { Session } from "./Session";
 import { WebComponentData } from "./WebComponentData";
 
 import createComponentService from "../services/ComponentService";
@@ -58,6 +55,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     private static _instance: WebComponent<any> | null = null;
     private static readonly _injectionKey = Symbol();
 
+    protected readonly _session: Session;
     protected readonly _data: WebComponentData;
 
     protected readonly _core: Core;
@@ -82,6 +80,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         const metaInfo = new MetaInformation();
         const compInfo = metaInfo.getComponent(compID.unit);
 
+        this._session = new Session(compID);
         this._data = new WebComponentData(
             this.sanitizeComponentID(compID, config),
             config,
@@ -210,6 +209,13 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     }
 
     /**
+     * The client session.
+     */
+    public get session(): Session {
+        return this._session;
+    }
+
+    /**
      * A data helper object that stores useful component data and information.
      */
     public get data(): WebComponentData {
@@ -263,10 +269,8 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     }
 
     private sanitizeComponentID(compID: UnitID, config: Configuration): UnitID {
-        // Grab an existing uniqueID from the session storage or use a new one by default
-        const uniqueID = useSessionStorage(config.value<string>(GeneralSettingIDs.SessionKey), uuidv4()).value;
         const instance: string = compID.instance ? compID.instance : "default";
-        return new UnitID(compID.type, compID.unit, `${instance}::${uniqueID}`);
+        return new UnitID(compID.type, compID.unit, `${instance}::${this.session.sessionID}`);
     }
 
     /**
