@@ -14,3 +14,5 @@ import "./project/ProjectFeaturesCommands";
 import "./resource/ResourceCommands";
 
 import "./user/UserCommands";
+
+import "./session/SessionCommands";
