@@ -54,8 +54,8 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
             project_id=ctx.storage_pool.project_storage.next_id(),
             creation_time=time.time(),
             resource=msg.resource,
-            title=msg.title,
-            description=msg.description,
+            title=msg.title.strip(),
+            description=msg.description.strip(),
             options=msg.options,
         )
 
@@ -88,8 +88,8 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
             try:
                 project_upd = clone_entity(
                     project,
-                    title=msg.title,
-                    description=msg.description,
+                    title=msg.title.strip(),
+                    description=msg.description.strip(),
                     options=msg.options,
                 )
                 ProjectVerifier(project_upd).verify_update()

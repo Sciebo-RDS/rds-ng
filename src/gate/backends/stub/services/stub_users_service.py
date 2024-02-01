@@ -1,4 +1,7 @@
+import typing
+
 from common.py.component import BackendComponent
+from common.py.data.entities.connector import ConnectorInstance
 from common.py.services import Service
 
 
@@ -40,6 +43,15 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
 
         try:
             user_settings = msg.settings
+
+            # Strip string values
+            for index, instance in enumerate(user_settings.connector_instances):
+                user_settings.connector_instances[index] = ConnectorInstance(
+                    instance_id=instance.instance_id,
+                    connector_id=instance.connector_id,
+                    name=instance.name.strip(),
+                    description=instance.description.strip(),
+                )
 
             UserSettingsVerifier(
                 user_settings, connectors=ctx.storage_pool.connector_storage.list()
