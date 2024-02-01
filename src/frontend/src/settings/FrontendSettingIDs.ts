@@ -9,5 +9,7 @@ import { SettingID } from "@common/utils/config/SettingID";
 export class FrontendSettingIDs {
     public static readonly RegularCommandTimeout = new SettingID("frontend", "regular_command_timeout");
 
+    public static readonly UserTokenKey = new SettingID("frontend", "user_token_key");
+
     public static readonly UseLoginPage = new SettingID("frontend", "use_login_page");
 }

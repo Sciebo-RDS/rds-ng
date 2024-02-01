@@ -9,13 +9,13 @@ import { useDirectives } from "@common/ui/Directives";
 import { useUserStore } from "@/data/stores/UserStore";
 
 const userStore = useUserStore();
-const { userIDToken } = storeToRefs(userStore);
+const { userToken } = storeToRefs(userStore);
 const { vFocus } = useDirectives();
 
 const userName = ref("");
 
 function performLogin(): void {
-    userIDToken.value = userName.value;
+    userToken.value = userName.value;
 }
 </script>
 

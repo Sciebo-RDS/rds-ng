@@ -1,7 +1,11 @@
+import { useSessionStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 /**
  * The user store for all user-specific data.
@@ -9,18 +13,19 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
  * @param settings - The user settings.
  */
 export const useUserStore = defineStore("userStore", () => {
-    const userIDToken = ref<string | undefined>(undefined);
+    const comp = FrontendComponent.inject();
 
+    const userToken = useSessionStorage(comp.data.config.value<string>(FrontendSettingIDs.UserTokenKey), undefined);
     const userSettings = ref(new UserSettings());
 
     function reset(): void {
-        userIDToken.value = undefined;
+        userToken.value = undefined;
 
         userSettings.value = new UserSettings();
     }
 
     return {
-        userIDToken,
+        userToken,
         userSettings,
         reset
     };

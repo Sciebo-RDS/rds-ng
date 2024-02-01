@@ -12,7 +12,7 @@ const comp = FrontendComponent.inject();
 const projStore = useProjectsStore();
 const userStore = useUserStore();
 const { projects } = storeToRefs(projStore);
-const { userIDToken, userSettings } = storeToRefs(userStore);
+const { userToken, userSettings } = storeToRefs(userStore);
 const { editUserSettings } = useUserTools(comp);
 
 function onEditUserSettings(): void {
@@ -30,7 +30,7 @@ function onEditUserSettings(): void {
 
         <div class="font-bold self-center pt-3">
             <!-- TODO: Display actual user name, not his ID -->
-            <div v-if="userIDToken">{{ userIDToken }}</div>
+            <div v-if="userToken">{{ userToken }}</div>
             <div v-else>(No user logged in)</div>
         </div>
 

@@ -10,10 +10,10 @@ import BasicLoginForm from "@/ui/misc/login/BasicLoginForm.vue";
 
 const comp = FrontendComponent.inject();
 const userStore = useUserStore();
-const { userIDToken } = storeToRefs(userStore);
+const { userToken } = storeToRefs(userStore);
 
 // If enabled, show the dummy login page to get a user ID token
-const showLoginPage = computed(() => comp.data.config.value<boolean>(FrontendSettingIDs.UseLoginPage) && !userIDToken.value);
+const showLoginPage = computed(() => comp.data.config.value<boolean>(FrontendSettingIDs.UseLoginPage) && !userToken.value);
 </script>
 
 <template>
