@@ -45,7 +45,7 @@ class GetSessionValueReply(CommandReply):
         value: The value or *None* if no such value was found.
     """
 
-    value: typing.Any
+    value: ... = None
 
     @staticmethod
     def build(
@@ -82,7 +82,7 @@ class SetSessionValueCommand(Command):
     """
 
     key: str
-    value: typing.Any
+    value: ... = None
 
     @staticmethod
     def build(

@@ -35,7 +35,7 @@ export class Session {
     /**
      * The current session ID.
      */
-    public get sessionID(): RemovableRef<string> {
-        return this._sessionID;
+    public get sessionID(): string {
+        return this._sessionID.value;
     }
 }

@@ -2,12 +2,15 @@
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
-import { ref } from "vue";
+import { ref, unref } from "vue";
 
 import { useDirectives } from "@common/ui/Directives";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { SetSessionValueAction } from "@/ui/actions/session/SetSessionValueAction";
 
+const comp = FrontendComponent.inject();
 const userStore = useUserStore();
 const { userToken } = storeToRefs(userStore);
 const { vFocus } = useDirectives();
@@ -15,7 +18,16 @@ const { vFocus } = useDirectives();
 const userName = ref("");
 
 function performLogin(): void {
-    userToken.value = userName.value;
+    const action = new SetSessionValueAction(comp, true);
+
+    const token = unref(userName.value);
+    action.prepare("user-token", token).done((_, success) => {
+        // Wait till the server has actually stored the user token
+        if (success) {
+            userToken.value = token;
+        }
+    });
+    action.execute();
 }
 </script>
 
