@@ -1,4 +1,5 @@
 import dataclasses
+import threading
 import typing
 
 from common.py.data.entities.project import Project, ProjectID
@@ -16,6 +17,8 @@ class MemoryProjectStorage(ProjectStorage):
     default_projects: typing.List[Project] = []
 
     _global_projects: typing.Dict[str, typing.Dict[ProjectID, Project]] = {}
+
+    _lock = threading.RLock()
 
     def __init__(self, storage_id: str):
         super().__init__()
@@ -35,7 +38,7 @@ class MemoryProjectStorage(ProjectStorage):
                 self.add(clone_entity(project))
 
     def next_id(self) -> ProjectID:
-        with self._lock:
+        with MemoryProjectStorage._lock:
             ids = self._projects.keys()
             if len(ids) > 0:
                 return max(ids) + 1
@@ -43,11 +46,11 @@ class MemoryProjectStorage(ProjectStorage):
                 return 1000
 
     def add(self, entity: Project) -> None:
-        with self._lock:
+        with MemoryProjectStorage._lock:
             self._projects[entity.project_id] = entity
 
     def remove(self, entity: Project) -> None:
-        with self._lock:
+        with MemoryProjectStorage._lock:
             from common.py.data.entities import clone_entity
 
             proj_deleted = clone_entity(entity, status=Project.Status.DELETED)
@@ -63,11 +66,11 @@ class MemoryProjectStorage(ProjectStorage):
                 ) from exc
 
     def get(self, key: ProjectID) -> Project | None:
-        with self._lock:
+        with MemoryProjectStorage._lock:
             if key in self._projects:
                 return self._projects[key]
             return None
 
     def list(self) -> typing.List[Project]:
-        with self._lock:
+        with MemoryProjectStorage._lock:
             return list(self._projects.values())
