@@ -5,6 +5,7 @@ from common.py.utils import UnitID
 
 SessionID = UnitID
 SessionData = typing.Dict[str, typing.Any]
+SessionDataType = typing.TypeVar("SessionDataType")
 
 
 class SessionStorage:
@@ -19,8 +20,8 @@ class SessionStorage:
     _lock = threading.RLock()
 
     def get_data(
-        self, session: SessionID, key: str, default: typing.Any = None
-    ) -> typing.Any:
+        self, session: SessionID, key: str, default: SessionDataType = None
+    ) -> SessionDataType:
         """
         Retrieves a value of a session.
 
@@ -34,9 +35,9 @@ class SessionStorage:
         """
         with SessionStorage._lock:
             data = self._session_data(session)
-            return data[key] if key in data else default
+            return typing.cast(SessionDataType, data[key]) if key in data else default
 
-    def set_data(self, session: SessionID, key: str, value: typing.Any) -> None:
+    def set_data(self, session: SessionID, key: str, value: SessionDataType) -> None:
         """
         Stores a value for a session.
 

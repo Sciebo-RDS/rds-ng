@@ -8,12 +8,10 @@ class StubBackend(Backend):
         # Add some initial data to the in-memory storage
         from .data import (
             fill_stub_data_connectors,
-            fill_stub_data_connector_instances,
             fill_stub_data_projects,
         )
 
         fill_stub_data_connectors()
-        fill_stub_data_connector_instances()
         fill_stub_data_projects()
 
         # Create all stub services

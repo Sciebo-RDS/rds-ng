@@ -1,6 +1,7 @@
 import uuid
 
 from common.py.data.entities.connector import ConnectorInstance
+from common.py.data.entities.user import UserSettings
 
 
 def fill_stub_data_connectors() -> None:
@@ -65,10 +66,8 @@ def fill_stub_data_connectors() -> None:
     )
 
 
-def fill_stub_data_connector_instances() -> None:
-    from ..services import StubServiceContext
-
-    StubServiceContext.user_settings.connector_instances.extend(
+def fill_stub_data_connector_instances(user_settings: UserSettings) -> None:
+    user_settings.connector_instances.extend(
         [
             ConnectorInstance(
                 instance_id=uuid.uuid4(),
