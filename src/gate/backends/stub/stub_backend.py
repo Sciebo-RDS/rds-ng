@@ -6,13 +6,12 @@ from ..backend import Backend
 class StubBackend(Backend):
     def __init__(self, comp: BackendComponent):
         # Add some initial data to the in-memory storage
-        from .data import get_stub_data_connectors
-        from ...data.storage.memory import MemoryStoragePool
+        from .data import get_stub_data_connectors, get_stub_data_projects
+        from ...data.storage.memory import MemoryConnectorStorage, MemoryProjectStorage
 
-        # Add all connectors to the global pool
-        pool = MemoryStoragePool()
-        for connector in get_stub_data_connectors():
-            pool.connector_storage.add(connector)
+        # Add default data to all storages
+        MemoryConnectorStorage.default_connectors = get_stub_data_connectors()
+        MemoryProjectStorage.default_projects = get_stub_data_projects()
 
         # Create all stub services
         from .services import (

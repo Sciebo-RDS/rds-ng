@@ -10,14 +10,13 @@ class MemoryConnectorStorage(ConnectorStorage):
 
     Args:
         storage_id: If set, the session storage is used instead of the global one.
-        default_connectors: A list of projects to add to new storages.
     """
+
+    default_connectors: typing.List[Connector] = []
 
     _global_connectors: typing.Dict[str, typing.Dict[ConnectorID, Connector]] = {}
 
-    def __init__(
-        self, storage_id: str, default_connectors: typing.List[Connector] | None = None
-    ):
+    def __init__(self, storage_id: str):
         super().__init__()
 
         self._storage_id = storage_id
@@ -28,9 +27,11 @@ class MemoryConnectorStorage(ConnectorStorage):
 
         self._connectors = MemoryConnectorStorage._global_connectors[storage_id]
 
-        if not has_storage and default_connectors:
-            for connector in default_connectors:
-                self.add(connector)
+        if not has_storage:
+            from common.py.data.entities import clone_entity
+
+            for connector in MemoryConnectorStorage.default_connectors:
+                self.add(clone_entity(connector))
 
     def next_id(self) -> ConnectorID:
         raise NotImplementedError("Connectors do not support automatic IDs")

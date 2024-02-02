@@ -43,8 +43,7 @@ class StubServiceContext(GateServiceContext):
 
         # Connectors are global for all users, projects are specific to each user
         self._storage_pool = MemoryStoragePool(
-            project_storage_id=f"user:{self._user_token}",
-            default_projects=get_stub_data_projects(),
+            project_storage_id=f"user:{self._user_token}"
         )
 
     @property

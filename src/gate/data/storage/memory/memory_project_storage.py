@@ -1,3 +1,4 @@
+import dataclasses
 import typing
 
 from common.py.data.entities.project import Project, ProjectID
@@ -10,14 +11,13 @@ class MemoryProjectStorage(ProjectStorage):
 
     Args:
         storage_id: If set, the session storage is used instead of the global one.
-        default_projects: A list of projects to add to new storages.
     """
+
+    default_projects: typing.List[Project] = []
 
     _global_projects: typing.Dict[str, typing.Dict[ProjectID, Project]] = {}
 
-    def __init__(
-        self, storage_id: str, default_projects: typing.List[Project] | None = None
-    ):
+    def __init__(self, storage_id: str):
         super().__init__()
 
         self._storage_id = storage_id
@@ -28,9 +28,11 @@ class MemoryProjectStorage(ProjectStorage):
 
         self._projects = MemoryProjectStorage._global_projects[storage_id]
 
-        if not has_storage and default_projects:
-            for project in default_projects:
-                self.add(project)
+        if not has_storage:
+            from common.py.data.entities import clone_entity
+
+            for project in MemoryProjectStorage.default_projects:
+                self.add(clone_entity(project))
 
     def next_id(self) -> ProjectID:
         with self._lock:
