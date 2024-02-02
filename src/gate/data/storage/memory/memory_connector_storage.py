@@ -2,7 +2,6 @@ import typing
 
 from common.py.data.entities.connector import ConnectorID, Connector
 from common.py.data.storage import ConnectorStorage
-from common.py.utils import UnitID
 
 
 class MemoryConnectorStorage(ConnectorStorage):
@@ -10,23 +9,17 @@ class MemoryConnectorStorage(ConnectorStorage):
     In-memory storage for connectors.
 
     Args:
-        session_id: If set, the session storage is used instead of the global one.
+        storage_id: If set, the session storage is used instead of the global one.
     """
 
-    _global_connectors: typing.Dict[ConnectorID, Connector] = {}
+    _global_connectors: typing.Dict[str, typing.Dict[ConnectorID, Connector]] = {}
 
-    def __init__(self, session_id: UnitID | None = None):
+    def __init__(self, storage_id: str):
         super().__init__()
 
-        self._connectors = MemoryConnectorStorage._global_connectors
-        if session_id:
-            from ..session import SessionStorage
-
-            self._connectors = SessionStorage().get_data(
-                session_id,
-                "connectors",
-                typing.cast(typing.Dict[ConnectorID, Connector], {}),
-            )
+        if storage_id not in MemoryConnectorStorage._global_connectors:
+            MemoryConnectorStorage._global_connectors[storage_id] = {}
+        self._connectors = MemoryConnectorStorage._global_connectors[storage_id]
 
     def next_id(self) -> ConnectorID:
         raise NotImplementedError("Connectors do not support automatic IDs")

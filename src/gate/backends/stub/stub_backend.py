@@ -6,13 +6,9 @@ from ..backend import Backend
 class StubBackend(Backend):
     def __init__(self, comp: BackendComponent):
         # Add some initial data to the in-memory storage
-        from .data import (
-            fill_stub_data_connectors,
-            fill_stub_data_projects,
-        )
+        from .data import fill_stub_data_connectors
 
         fill_stub_data_connectors()
-        fill_stub_data_projects()
 
         # Create all stub services
         from .services import (

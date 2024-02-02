@@ -31,16 +31,19 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(GetUserSettingsCommand)
     def get_user_settings(msg: GetUserSettingsCommand, ctx: StubServiceContext) -> None:
-        from ..data import fill_stub_data_connector_instances
+        if ctx.user_token not in StubServiceContext.user_settings:
+            from ..data import fill_stub_data_connector_instances
 
-        default_settings = UserSettings()
-        fill_stub_data_connector_instances(default_settings)
+            default_settings = UserSettings()
+            fill_stub_data_connector_instances(default_settings)
 
-        settings = ctx.session_storage.get_data(
-            msg.origin, "user-settings", default_settings
-        )
+            StubServiceContext.user_settings[ctx.user_token] = default_settings
 
-        GetUserSettingsReply.build(ctx.message_builder, msg, settings=settings).emit()
+        GetUserSettingsReply.build(
+            ctx.message_builder,
+            msg,
+            settings=StubServiceContext.user_settings[ctx.user_token],
+        ).emit()
 
     @svc.message_handler(SetUserSettingsCommand)
     def set_user_settings(msg: SetUserSettingsCommand, ctx: StubServiceContext) -> None:
@@ -63,7 +66,7 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
                 user_settings, connectors=ctx.storage_pool.connector_storage.list()
             ).verify_update()
 
-            ctx.session_storage.set_data(msg.origin, "user-settings", user_settings)
+            StubServiceContext.user_settings[ctx.user_token] = user_settings
             success = True
         except Exception as exc:  # pylint: disable=broad-exception-caught
             message = str(exc)

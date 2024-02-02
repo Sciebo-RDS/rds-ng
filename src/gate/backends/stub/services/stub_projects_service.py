@@ -41,14 +41,6 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(ListProjectsCommand)
     def list_projects(msg: ListProjectsCommand, ctx: StubServiceContext) -> None:
-        from ....data.storage.session import SessionStorage
-
-        # When listing the projects for the first time, create some default ones
-        if not SessionStorage().has_data(msg.origin, "projects"):
-            from ..data import fill_stub_data_projects
-
-            fill_stub_data_projects(msg.origin)
-
         ListProjectsReply.build(
             ctx.message_builder, msg, projects=ctx.storage_pool.project_storage.list()
         ).emit()

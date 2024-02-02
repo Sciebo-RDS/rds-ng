@@ -2,7 +2,6 @@ import typing
 
 from common.py.data.entities.project import Project, ProjectID
 from common.py.data.storage import ProjectStorage
-from common.py.utils import UnitID
 
 
 class MemoryProjectStorage(ProjectStorage):
@@ -10,23 +9,17 @@ class MemoryProjectStorage(ProjectStorage):
     In-memory storage for projects.
 
     Args:
-        session_id: If set, the session storage is used instead of the global one.
+        storage_id: If set, the session storage is used instead of the global one.
     """
 
-    _global_projects: typing.Dict[ProjectID, Project] = {}
+    _global_projects: typing.Dict[str, typing.Dict[ProjectID, Project]] = {}
 
-    def __init__(self, session_id: UnitID | None = None):
+    def __init__(self, storage_id: str):
         super().__init__()
 
-        self._projects = MemoryProjectStorage._global_projects
-        if session_id:
-            from ..session import SessionStorage
-
-            self._projects = SessionStorage().get_data(
-                session_id,
-                "projects",
-                typing.cast(typing.Dict[ProjectID, Project], {}),
-            )
+        if storage_id not in MemoryProjectStorage._global_projects:
+            MemoryProjectStorage._global_projects[storage_id] = {}
+        self._projects = MemoryProjectStorage._global_projects[storage_id]
 
     def next_id(self) -> ProjectID:
         with self._lock:

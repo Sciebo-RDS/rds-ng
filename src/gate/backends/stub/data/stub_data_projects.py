@@ -1,9 +1,7 @@
 import time
 
-from common.py.utils import UnitID
 
-
-def fill_stub_data_projects(session_id: UnitID | None = None) -> None:
+def fill_stub_data_projects(storage_id: str) -> None:
     """
     Adds some hardcoded data to the stub data storage.
     """
@@ -11,7 +9,7 @@ def fill_stub_data_projects(session_id: UnitID | None = None) -> None:
 
     from ....data.storage.memory import MemoryStoragePool
 
-    pool = MemoryStoragePool(project_storage_id=session_id)
+    pool = MemoryStoragePool(project_storage_id=storage_id)
 
     pool.project_storage.add(
         Project(
