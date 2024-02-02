@@ -3,6 +3,7 @@ import typing
 from ..composers import MessageBuilder
 from ..meta import MessageMetaInformation
 from ...logging import LoggerProtocol
+from ....utils import UnitID
 from ....utils.config import Configuration
 
 
@@ -24,6 +25,7 @@ class MessageContext:
     def __init__(
         self,
         msg_meta: MessageMetaInformation,
+        msg_origin: UnitID,
         msg_builder: MessageBuilder,
         *,
         logger: LoggerProtocol,
@@ -32,11 +34,13 @@ class MessageContext:
         """
         Args:
             msg_builder: A ``MessageBuilder`` to be assigned to this context.
+            msg_origin: The origin of the message.
             msg_meta: The meta information of the message.
             logger: A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
             config: The global component configuration.
         """
         self._msg_meta = msg_meta
+        self._msg_origin = msg_origin
         self._msg_builder = msg_builder
 
         self._logger = logger
@@ -100,6 +104,13 @@ class MessageContext:
         Whether the message entered through the client.
         """
         return self._msg_meta.entrypoint == MessageMetaInformation.Entrypoint.CLIENT
+
+    @property
+    def origin(self) -> UnitID:
+        """
+        The origin of the message.
+        """
+        return self._msg_origin
 
     @property
     def message_builder(self) -> MessageBuilder:

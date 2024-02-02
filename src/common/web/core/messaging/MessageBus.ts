@@ -180,6 +180,6 @@ export class MessageBus {
     private createContext<CtxType extends MessageContext>(msg: Message, msgMeta: MessageMetaInformation, svc: MessageService<CtxType>): MessageContext {
         let logger = new LoggerProxy(logging.getDefaultLogger());
         logger.addParam("trace", msg.trace);
-        return svc.createContext(msgMeta, logger, this._compData.config);
+        return svc.createContext(msgMeta, msg.origin, logger, this._compData.config);
     }
 }

@@ -38,6 +38,7 @@ class MessageService:
     def create_context(
         self,
         msg_meta: MessageMetaInformation,
+        msg_origin: UnitID,
         *,
         logger: LoggerProtocol,
         config: Configuration,
@@ -47,6 +48,7 @@ class MessageService:
 
         Args:
             msg_meta: The meta information of the message.
+            msg_origin: The origin of the message.
             logger: The logger to be used within the new context.
             config: The global component configuration.
 
@@ -55,6 +57,7 @@ class MessageService:
         """
         return self._context_type(
             msg_meta,
+            msg_origin,
             self.create_message_builder(),
             logger=logger,
             config=config,
