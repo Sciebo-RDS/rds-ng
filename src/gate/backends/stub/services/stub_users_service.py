@@ -32,10 +32,12 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
     @svc.message_handler(GetUserSettingsCommand)
     def get_user_settings(msg: GetUserSettingsCommand, ctx: StubServiceContext) -> None:
         if ctx.user_token not in StubServiceContext.user_settings:
-            from ..data import fill_stub_data_connector_instances
+            from ..data import get_stub_data_connector_instances
 
             default_settings = UserSettings()
-            fill_stub_data_connector_instances(default_settings)
+            default_settings.connector_instances.extend(
+                get_stub_data_connector_instances()
+            )
 
             StubServiceContext.user_settings[ctx.user_token] = default_settings
 

@@ -28,6 +28,7 @@ class StubServiceContext(GateServiceContext):
         logger: LoggerProtocol,
         config: Configuration,
     ):
+        from ..data import get_stub_data_projects
         from ....data.storage.memory import MemoryStoragePool
         from ....data.storage.session import SessionStorage
 
@@ -42,7 +43,8 @@ class StubServiceContext(GateServiceContext):
 
         # Connectors are global for all users, projects are specific to each user
         self._storage_pool = MemoryStoragePool(
-            project_storage_id=f"user:{self._user_token}"
+            project_storage_id=f"user:{self._user_token}",
+            default_projects=get_stub_data_projects(),
         )
 
     @property

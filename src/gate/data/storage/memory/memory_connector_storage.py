@@ -10,16 +10,27 @@ class MemoryConnectorStorage(ConnectorStorage):
 
     Args:
         storage_id: If set, the session storage is used instead of the global one.
+        default_connectors: A list of projects to add to new storages.
     """
 
     _global_connectors: typing.Dict[str, typing.Dict[ConnectorID, Connector]] = {}
 
-    def __init__(self, storage_id: str):
+    def __init__(
+        self, storage_id: str, default_connectors: typing.List[Connector] | None = None
+    ):
         super().__init__()
 
-        if storage_id not in MemoryConnectorStorage._global_connectors:
+        self._storage_id = storage_id
+
+        has_storage = self._storage_id in MemoryConnectorStorage._global_connectors
+        if not has_storage:
             MemoryConnectorStorage._global_connectors[storage_id] = {}
+
         self._connectors = MemoryConnectorStorage._global_connectors[storage_id]
+
+        if not has_storage and default_connectors:
+            for connector in default_connectors:
+                self.add(connector)
 
     def next_id(self) -> ConnectorID:
         raise NotImplementedError("Connectors do not support automatic IDs")
