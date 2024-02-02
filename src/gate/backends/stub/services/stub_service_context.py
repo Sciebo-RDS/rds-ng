@@ -28,7 +28,10 @@ class StubServiceContext(GateServiceContext):
 
         from ....data.storage.memory import MemoryStoragePool
 
-        self._storage_pool = MemoryStoragePool()
+        # Connectors are global for all users, projects are specific to each user
+        self._storage_pool = MemoryStoragePool(
+            connector_storage_id=None, project_storage_id=msg_origin
+        )
 
     @property
     def storage_pool(self) -> StoragePool:

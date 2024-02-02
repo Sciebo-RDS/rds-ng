@@ -35,7 +35,9 @@ class SessionStorage:
         """
         with SessionStorage._lock:
             data = self._session_data(session)
-            return typing.cast(SessionDataType, data[key]) if key in data else default
+            if key not in data:
+                data[key] = default
+            return typing.cast(SessionDataType, data[key])
 
     def set_data(self, session: SessionID, key: str, value: SessionDataType) -> None:
         """

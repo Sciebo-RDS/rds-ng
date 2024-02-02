@@ -1,7 +1,9 @@
 import time
 
+from common.py.utils import UnitID
 
-def fill_stub_data_projects() -> None:
+
+def fill_stub_data_projects(session_id: UnitID | None = None) -> None:
     """
     Adds some hardcoded data to the stub data storage.
     """
@@ -9,9 +11,7 @@ def fill_stub_data_projects() -> None:
 
     from ....data.storage.memory import MemoryStoragePool
 
-    pool = (
-        MemoryStoragePool()
-    )  # The memory storage pool uses shared data objects, so we can fill them using a new instance
+    pool = MemoryStoragePool(project_storage_id=session_id)
 
     pool.project_storage.add(
         Project(
