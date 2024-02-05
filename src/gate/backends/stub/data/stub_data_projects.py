@@ -1,21 +1,17 @@
 import time
+import typing
+
+from common.py.data.entities.project import Project, ProjectOptions
 
 
-def fill_stub_data_projects() -> None:
+def get_stub_data_projects() -> typing.List[Project]:
     """
-    Adds some hardcoded data to the stub data storage.
+    Gets some hardcoded projects data.
     """
-    from common.py.data.entities.project import Project, ProjectOptions
 
-    from ...data.storage.memory import MemoryStoragePool
-
-    pool = (
-        MemoryStoragePool()
-    )  # The memory storage pool uses shared data objects, so we can fill them using a new instance
-
-    pool.project_storage.add(
+    return [
         Project(
-            project_id=pool.project_storage.next_id(),
+            project_id=1000,
             creation_time=time.time(),
             resource="/data/personal",
             title="Our first project",
@@ -24,11 +20,9 @@ def fill_stub_data_projects() -> None:
                 optional_features=["metadata", "dmp"],
                 ui={"optional_snapins": ["metadata", "dmp"]},
             ),
-        )
-    )
-    pool.project_storage.add(
+        ),
         Project(
-            project_id=pool.project_storage.next_id(),
+            project_id=1001,
             creation_time=time.time(),
             resource="/data/science_proj",
             title="Top-secret experiments",
@@ -37,11 +31,9 @@ def fill_stub_data_projects() -> None:
                 optional_features=["metadata", "dmp"],
                 ui={"optional_snapins": ["metadata", "dmp"]},
             ),
-        )
-    )
-    pool.project_storage.add(
+        ),
         Project(
-            project_id=pool.project_storage.next_id(),
+            project_id=1002,
             creation_time=time.time(),
             resource="/data/not_existing",
             title="This is crap",
@@ -50,11 +42,9 @@ def fill_stub_data_projects() -> None:
                 optional_features=["metadata"],
                 ui={"optional_snapins": ["metadata"]},
             ),
-        )
-    )
-    pool.project_storage.add(
+        ),
         Project(
-            project_id=pool.project_storage.next_id(),
+            project_id=1003,
             creation_time=time.time(),
             resource="/data/science_proj/img",
             title="Sorry, but this project has a way too long title to be displayed",
@@ -63,14 +53,12 @@ def fill_stub_data_projects() -> None:
                 optional_features=["dmp"],
                 ui={"optional_snapins": ["dmp"]},
             ),
-        )
-    )
-    pool.project_storage.add(
+        ),
         Project(
-            project_id=pool.project_storage.next_id(),
+            project_id=1004,
             creation_time=time.time(),
             resource="/data",
             title="A fine project",
             description="Last but not least, a fine one.",
-        )
-    )
+        ),
+    ]

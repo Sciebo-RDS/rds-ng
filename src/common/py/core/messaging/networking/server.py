@@ -106,8 +106,19 @@ class Server(socketio.Server):
                         timeout=self._connected_components[timed_out_component].timeout,
                     )
 
+                    from .. import Channel
+                    from ....api.network import ServerTimeoutEvent
+
+                    component = self._connected_components[timed_out_component]
+
+                    ServerTimeoutEvent.build(
+                        self._message_builder,
+                        comp_id=timed_out_component,
+                        client_id=component.sid,
+                    ).emit(Channel.local())
+
                     self.disconnect(
-                        self._connected_components[timed_out_component].sid
+                        component.sid
                     )  # This will trigger _on_disconnect, removing the client from the connected components
 
     def send_message(

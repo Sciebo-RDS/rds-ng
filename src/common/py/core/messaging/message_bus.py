@@ -196,10 +196,15 @@ class MessageBus:
     def _create_context(
         self, msg: Message, msg_meta: MessageMetaInformation, svc: MessageService
     ) -> MessageContextType:
+        from ..logging import LoggerProtocol
+
         logger_proxy = LoggerProxy(default_logger())
         logger_proxy.add_param("trace", str(msg.trace))
         return svc.create_context(
-            msg_meta, logger=logger_proxy, config=self._comp_data.config
+            msg_meta,
+            msg.origin,
+            logger=typing.cast(LoggerProtocol, logger_proxy),
+            config=self._comp_data.config,
         )
 
     @property

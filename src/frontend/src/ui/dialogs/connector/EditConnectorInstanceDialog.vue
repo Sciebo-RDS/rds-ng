@@ -12,7 +12,7 @@ const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { vFocus } = useDirectives();
 
 const validator = useValidator({
-        name: ystring().required().label("Name").default(dialogData.userData.name),
+        name: ystring().trim().required().label("Name").default(dialogData.userData.name),
         description: ystring().label("Description").default(dialogData.userData.description)
     }
 );
@@ -30,7 +30,7 @@ const name = validator.defineComponentBinds("name");
 
             <span class="r-form-field">
                 <label>Description</label>
-                <Textarea name="description" v-model="dialogData.userData.description" placeholder="Description" rows="3" />
+                <Textarea name="description" v-model.trim="dialogData.userData.description" placeholder="Description" rows="3" />
                 <small>An (optional) connection description.</small>
             </span>
         </Panel>

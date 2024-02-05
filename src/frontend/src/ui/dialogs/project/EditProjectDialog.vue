@@ -34,9 +34,9 @@ const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
 const showDataPathSelector = dialogData.options["showDataPathSelector"];
 
 const validator = useValidator({
-        title: ystring().required().label("Title").default(dialogData.userData.title),
+        title: ystring().trim().required().label("Title").default(dialogData.userData.title),
         description: ystring().label("Description").default(dialogData.userData.description),
-        datapath: ystring().required().label("Data path").default(dialogData.userData.datapath),
+        datapath: ystring().trim().required().label("Data path").default(dialogData.userData.datapath),
         activeInstances: yarray().label("Active connections").default(dialogData.userData.options.active_connector_instances).test(
             "active-instances",
             "Select at least one connection to use",
@@ -85,7 +85,7 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
 
             <span class="r-form-field">
                 <label>Description</label>
-                <Textarea name="description" v-model="dialogData.userData.description" placeholder="Description" rows="3" />
+                <Textarea name="description" v-model.trim="dialogData.userData.description" placeholder="Description" rows="3" />
                 <small>An (optional) project description.</small>
             </span>
         </Panel>

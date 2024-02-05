@@ -1,4 +1,5 @@
 import abc
+import collections.abc
 import dataclasses
 import typing
 import uuid
@@ -93,6 +94,27 @@ class Message(abc.ABC):
             return cls
 
         return decorator
+
+    def __str__(self) -> str:
+        def cleanup(cur_obj, parent_obj, parent_key):
+            if isinstance(cur_obj, str):
+                if cur_obj.startswith("data:"):
+                    from ...utils import human_readable_file_size
+
+                    parent_obj[parent_key] = (
+                        cur_obj.split(",", 1)[0]
+                        + f",<data:{human_readable_file_size(len(cur_obj))}>"
+                    )
+            elif isinstance(cur_obj, dict):
+                for key, value in cur_obj.items():
+                    cleanup(value, cur_obj, key)
+            elif isinstance(cur_obj, collections.abc.Sequence):
+                for value in cur_obj:
+                    cleanup(value, parent_obj, parent_key)
+
+        obj_dict = self.to_dict()
+        cleanup(obj_dict, None, None)
+        return str(obj_dict)
 
 
 # pylint: disable=invalid-name

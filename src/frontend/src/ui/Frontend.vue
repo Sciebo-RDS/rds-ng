@@ -1,25 +1,24 @@
 <script setup lang="ts">
-import { nextTick, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
+import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
-import { GetAllDataAction } from "@/ui/actions/multi/GetAllDataAction";
+import BasicLoginForm from "@/ui/misc/login/BasicLoginForm.vue";
 
 const comp = FrontendComponent.inject();
+const userStore = useUserStore();
+const { userToken } = storeToRefs(userStore);
 
-// When launching the frontend (after the initial render), get all data first
-onMounted(() => {
-    nextTick(() => {
-        const action = new GetAllDataAction();
-
-        action.prepare(comp);
-        action.execute();
-    });
-});
+// If enabled, show the dummy login page to get a user ID token
+const showLoginPage = computed(() => comp.data.config.value<boolean>(FrontendSettingIDs.UseLoginPage) && !userToken.value);
 </script>
 
 <template>
-    <router-view />
+    <BasicLoginForm v-if="showLoginPage" />
+    <RouterView v-else />
 </template>
 
 <style scoped lang="scss">

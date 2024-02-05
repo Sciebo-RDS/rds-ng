@@ -1,4 +1,5 @@
 import time
+import typing
 
 from common.py.component import BackendComponent
 from common.py.services import Service
@@ -35,7 +36,7 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
     )
 
     from .stub_service_context import StubServiceContext
-    from .stub_utils import send_projects_list
+    from ..stub_utils import send_projects_list
 
     svc = comp.create_service("Projects service", context_type=StubServiceContext)
 
@@ -54,8 +55,8 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
             project_id=ctx.storage_pool.project_storage.next_id(),
             creation_time=time.time(),
             resource=msg.resource,
-            title=msg.title,
-            description=msg.description,
+            title=msg.title.strip(),
+            description=msg.description.strip(),
             options=msg.options,
         )
 
@@ -88,8 +89,8 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
             try:
                 project_upd = clone_entity(
                     project,
-                    title=msg.title,
-                    description=msg.description,
+                    title=msg.title.strip(),
+                    description=msg.description.strip(),
                     options=msg.options,
                 )
                 ProjectVerifier(project_upd).verify_update()

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// @ts-nocheck
-
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserTools } from "@/ui/tools/UserTools";
 import { storeToRefs } from "pinia";
@@ -14,7 +12,7 @@ const comp = FrontendComponent.inject();
 const projStore = useProjectsStore();
 const userStore = useUserStore();
 const { projects } = storeToRefs(projStore);
-const { userSettings } = storeToRefs(userStore);
+const { userToken, userSettings } = storeToRefs(userStore);
 const { editUserSettings } = useUserTools(comp);
 
 function onEditUserSettings(): void {
@@ -29,9 +27,13 @@ function onEditUserSettings(): void {
                 <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-1.5" title="Visit the RDS website">
             </a>
         </div>
+
         <div class="font-bold self-center pt-3">
-            Donald T. Rump
+            <!-- TODO: Display actual user name, not his ID -->
+            <div v-if="userToken">{{ userToken }}</div>
+            <div v-else>(No user logged in)</div>
         </div>
+
         <div class="italic self-center pb-3">
             <div v-if="projects.length > 1">{{ projects.length }} projects</div>
             <div v-else-if="projects.length == 1">{{ projects.length }} project</div>

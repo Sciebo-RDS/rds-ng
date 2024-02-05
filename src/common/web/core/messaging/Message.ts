@@ -1,11 +1,12 @@
 import { plainToInstance, Type } from "class-transformer";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { type Constructable } from "../../utils/Types";
 
-import { UnitID } from "../../utils/UnitID";
 import { Channel } from "./Channel";
 import { MessageTypesCatalog } from "./MessageTypesCatalog";
+import { humanReadableFileSize } from "../../utils/Strings";
+import { type Constructable } from "../../utils/Types";
+import { UnitID } from "../../utils/UnitID";
 
 export type MessageCategory = string;
 export type MessageName = string;
@@ -129,7 +130,23 @@ export abstract class Message {
      * Gets the string representation of this message.
      */
     public toString(): string {
-        return this.convertToJSON();
+        const cleanupObject = (obj: any): any => {
+            for (const [name, value] of Object.entries(obj)) {
+                if (typeof value === "object") {
+                    cleanupObject(value);
+                } else if (typeof value === "string") {
+                    if (value.startsWith("data:")) {
+                        obj[name] = value.split(",", 1).join() + `,<data:${humanReadableFileSize(value.length)}>`;
+                    }
+                }
+            }
+
+            return obj;
+        };
+
+        // Remove all data fields from the output to not clutter the output
+        let obj = JSON.parse(this.convertToJSON());
+        return JSON.stringify(cleanupObject(obj));
     }
 }
 
