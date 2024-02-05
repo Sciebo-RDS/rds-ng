@@ -15,17 +15,23 @@ const props = defineProps({
     }
 });
 const { project } = toRefs(props);
-const { editProject } = useProjectTools(comp);
+const { editProject, publishProject } = useProjectTools(comp);
 </script>
 
 <template>
-    <div>
+    <div class="flex gap-2">
         <Button
-            severity="secondary"
             label="Project settings"
             icon="material-icons-outlined mi-engineering"
             icon-class="!text-3xl"
             @click="editProject(project)"
+        />
+        <Button
+            severity="contrast"
+            label="Publish &amp; Export"
+            icon="material-icons-outlined mi-rocket-launch"
+            icon-class="!text-3xl"
+            @click="publishProject(project)"
         />
     </div>
 </template>

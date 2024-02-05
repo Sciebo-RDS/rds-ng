@@ -16,7 +16,7 @@ import { useDirectives } from "@common/ui/Directives";
 
 import MandatoryMark from "@common/ui/components/MandatoryMark.vue";
 import ResourcesTreeSelect from "@common/ui/components/ResourcesTreeSelect.vue";
-import ConnectorInstancesSelect from "@/ui/dialogs/project/ConnectorInstancesSelect.vue";
+import ConnectorInstancesSelect from "@/ui/dialogs/project/edit/ConnectorInstancesSelect.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/UIOptions";

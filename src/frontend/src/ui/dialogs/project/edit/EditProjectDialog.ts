@@ -30,12 +30,12 @@ export async function editProjectDialog(
     return extendedDialog<EditProjectDialogData>(
         comp,
         defineAsyncComponent(
-            () => import("@/ui/dialogs/project/EditProjectDialog.vue")
+            () => import("@/ui/dialogs/project/edit/EditProjectDialog.vue")
         ),
         {
             header: project ? "Project settings" : "New project",
             modal: true,
-            contentClass: "w-[20vw] w-full min-w-[40rem] !pt-4"
+            contentClass: "w-[20vw] min-w-[40rem] !pt-4"
         },
         {
             title: project?.title || "",

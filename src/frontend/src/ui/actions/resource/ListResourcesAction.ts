@@ -1,6 +1,6 @@
 import { ListResourcesCommand } from "@common/api/resource/ResourceCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import type { Resource } from "@common/data/entities/resource/Resource";
+import { type Resource } from "@common/data/entities/resource/Resource";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";

@@ -2,7 +2,7 @@ import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/EditConnectorInstanceDialog";
+import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
     function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
