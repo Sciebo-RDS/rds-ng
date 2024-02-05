@@ -1,4 +1,4 @@
-import type { Connector } from "@common/data/entities/connector/Connector";
+import { Connector } from "@common/data/entities/connector/Connector";
 import { defineAsyncComponent } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
@@ -29,7 +29,7 @@ export async function editConnectorInstanceDialog(
     return extendedDialog<EditConnectorInstanceDialogData>(
         comp,
         defineAsyncComponent(
-            () => import("@/ui/dialogs/connector/EditConnectorInstanceDialog.vue")
+            () => import("@/ui/dialogs/connector/instance/EditConnectorInstanceDialog.vue")
         ),
         {
             header: (instance ? "Connection settings" : "New connection") + ` (${connector ? connector.name : "unknown connector"})`,

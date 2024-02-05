@@ -8,7 +8,7 @@ import { type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
-import { confirmDeleteProjectDialog } from "@/ui/dialogs/project/ConfirmDeleteProjectDialog";
+import { confirmDeleteProjectDialog } from "@/ui/dialogs/project/delete/ConfirmDeleteProjectDialog";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 
 /**

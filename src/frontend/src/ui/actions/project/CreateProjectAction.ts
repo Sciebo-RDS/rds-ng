@@ -9,7 +9,7 @@ import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
-import { editProjectDialog, type EditProjectDialogData } from "@/ui/dialogs/project/EditProjectDialog";
+import { editProjectDialog, type EditProjectDialogData } from "@/ui/dialogs/project/edit/EditProjectDialog";
 
 /**
  * Action to create a project.
