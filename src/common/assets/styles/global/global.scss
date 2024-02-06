@@ -99,6 +99,10 @@
     @apply bg-slate-50 #{!important};
 }
 
+.r-shade-dark-gray {
+    @apply bg-slate-100 #{!important};
+}
+
 .r-small-caps {
     font-variant: small-caps;
 }
