@@ -55,7 +55,8 @@ watch(model, (newPath) => {
         selection-mode="single"
         :placeholder="placeholder"
         :pt="{
-            panel: 'r-z-index-toplevel'
+            panel: 'r-z-index-toplevel',
+
         }"
         :disabled="isLoading"
     >

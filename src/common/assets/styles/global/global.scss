@@ -95,6 +95,10 @@
     color: var(--text-color);
 }
 
+.r-shade-gray {
+    @apply bg-slate-50 #{!important};
+}
+
 .r-small-caps {
     font-variant: small-caps;
 }
