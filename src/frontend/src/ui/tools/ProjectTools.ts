@@ -4,7 +4,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { CreateProjectAction } from "@/ui/actions/project/CreateProjectAction";
 import { DeleteProjectAction } from "@/ui/actions/project/DeleteProjectAction";
 import { UpdateProjectAction } from "@/ui/actions/project/UpdateProjectAction";
-import { publishProjectDialog } from "@/ui/dialogs/project/publish/PublishProjectDialog";
+import { publishProjectDialog, type PublishProjectDialogData } from "@/ui/dialogs/project/publish/PublishProjectDialog";
 
 /**
  * Tools for working with projects.
@@ -26,7 +26,7 @@ export function useProjectTools(comp: FrontendComponent) {
         });
     }
 
-    function publishProject(project: Project): Promise<void> {
+    function publishProject(project: Project): Promise<PublishProjectDialogData> {
         return publishProjectDialog(comp, project);
     }
 
