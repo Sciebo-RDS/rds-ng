@@ -1,5 +1,6 @@
 import { type TreeNode } from "primevue/treenode";
 
+import { type Resource } from "./Resource";
 import { ResourcesList } from "./ResourcesList";
 import { extractFilenameFromPath } from "../../../utils/Paths";
 
@@ -66,4 +67,30 @@ export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: b
         icon: "material-icons-outlined mi-folder",
         children: [...sortNodes(folderNodes), ...sortNodes(fileNodes)]
     } as TreeNode];
+}
+
+/**
+ * Flattens a resources list into an array.
+ *
+ * @param resources - The resourcces to flatten.
+ * @param resourceType - Whether to retrieve files or folders or both if left undefined.
+ */
+export function flattenResourcesList(resources: ResourcesList, resourceType?: ResourceType): Resource[] {
+    const flatten = (resources: ResourcesList, results: Resource[]) => {
+        if (!resourceType || resourceType === ResourceType.Folder) {
+            results.push(resources.resource);
+        }
+
+        if (!resourceType || resourceType === ResourceType.File) {
+            resources.files.forEach((resource) => results.push(resource));
+        }
+
+        for (const [_, folderResource] of Object.entries(resources.folders)) {
+            flatten(folderResource, results);
+        }
+    };
+
+    let results: Resource[] = [];
+    flatten(resources, results);
+    return results;
 }
