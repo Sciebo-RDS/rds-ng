@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 
 import { DataManagementPlanFeature } from "./DataManagementPlanFeature";
+import { FilesFeature } from "./FilesFeature";
 import { MetadataFeature } from "./MetadataFeature";
 
 /**
@@ -14,11 +15,19 @@ export class ProjectFeatures {
     @Type(() => MetadataFeature)
     public readonly metadata: MetadataFeature;
     // @ts-ignore
+    @Type(() => FilesFeature)
+    public readonly files: FilesFeature;
+    // @ts-ignore
     @Type(() => DataManagementPlanFeature)
     public readonly dmp: DataManagementPlanFeature;
 
-    public constructor(metadata: MetadataFeature = new MetadataFeature(), dmp: DataManagementPlanFeature = new DataManagementPlanFeature()) {
+    public constructor(
+        metadata: MetadataFeature = new MetadataFeature(),
+        files: FilesFeature = new FilesFeature(),
+        dmp: DataManagementPlanFeature = new DataManagementPlanFeature()
+    ) {
         this.metadata = metadata;
+        this.files = files;
         this.dmp = dmp;
     }
 }

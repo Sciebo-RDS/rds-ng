@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
 
 from .data_management_plan_feature import DataManagementPlanFeature
+from .files_feature import FilesFeature
 from .metadata_feature import MetadataFeature
 from .project_feature import ProjectFeatureID, ProjectFeature
 
@@ -16,10 +17,12 @@ class ProjectFeatures:
 
     Attributes:
         metadata: The metadata project feature.
+        files: The files project feature.
         dmp: The data management plan feature.
     """
 
     metadata: MetadataFeature = field(default_factory=MetadataFeature)
+    files: FilesFeature = field(default_factory=FilesFeature)
     dmp: DataManagementPlanFeature = field(default_factory=DataManagementPlanFeature)
 
     def features_dict(
@@ -42,6 +45,7 @@ class ProjectFeatures:
 
         # Important! When adding new features, always add them here as well
         add_feature(MetadataFeature.feature_id, self.metadata)
+        add_feature(FilesFeature.feature_id, self.files)
         add_feature(DataManagementPlanFeature.feature_id, self.dmp)
 
         return features

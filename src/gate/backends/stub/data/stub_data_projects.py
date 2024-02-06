@@ -17,8 +17,8 @@ def get_stub_data_projects() -> typing.List[Project]:
             title="Our first project",
             description="This is our first attempt to create a project",
             options=ProjectOptions(
-                optional_features=["metadata", "dmp"],
-                ui={"optional_snapins": ["metadata", "dmp"]},
+                optional_features=["metadata", "files", "dmp"],
+                ui={"optional_snapins": ["metadata", "files", "dmp"]},
             ),
         ),
         Project(
