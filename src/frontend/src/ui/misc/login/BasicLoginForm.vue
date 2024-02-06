@@ -2,6 +2,8 @@
 import { storeToRefs } from "pinia";
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
 import { ref, unref } from "vue";
 
@@ -52,11 +54,14 @@ function performLogin(): void {
             <form @submit.prevent="performLogin" class="r-form w-full">
                 <span>
                     <label>Enter your username:</label>
-                    <span class="p-input-icon-left r-form-field">
-                        <i class="material-icons-outlined mi-account-circle mt-[-12px]" />
-                        <InputText v-model.trim="userName" placeholder="Username" v-focus />
-                    </span>
+                    <IconField iconPosition="left">
+                        <InputIcon>
+                            <i class="material-icons-outlined mi-account-circle mt-[-12px]" />
+                        </InputIcon>
+                        <InputText v-model.trim="userName" placeholder="Username" v-focus class="w-full" />
+                    </IconField>
                 </span>
+
                 <Button
                     label="Login"
                     icon="material-icons-outlined mi-login"
