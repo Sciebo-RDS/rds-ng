@@ -28,16 +28,18 @@ const groupedInstances = computed(() => groupConnectorInstances(userSettings.val
             This dialog is only a placeholder without functionality! It is solely here to show the basic workflow of publishing a project.
         </div>
 
-        <div v-for="group in groupedInstances">
-            <ConnectorHeader :connector-id="group.connectorID" class="r-shade-dark p-2 rounded" />
+        <div v-for="group in groupedInstances" class="p-listbox">
+            <ConnectorHeader :connector-id="group.connectorID" class="r-shade-dark p-2 rounded p-listbox-item-group" />
 
-            <div v-for="instance in group.connectorInstances" class="grid grid-cols-[1fr_min-content] items-center gap-2 p-1">
-                <div class="mr-auto mb-1">
-                    <div class="r-text-caption h-6 truncate" :title="instance.name">{{ instance.name }}</div>
-                    <div class="" :title="instance.description">{{ instance.description }}</div>
-                </div>
-                <div>
-                    <Button label="Publish" size="small" rounded disabled />
+            <div class="divide-y">
+                <div v-for="instance in group.connectorInstances" class="grid grid-cols-[1fr_min-content] gap-2 p-2">
+                    <div class="mr-auto mb-1">
+                        <div class="r-text-caption h-6 truncate" :title="instance.name">{{ instance.name }}</div>
+                        <div class="" :title="instance.description">{{ instance.description }}</div>
+                    </div>
+                    <div class="pt-1">
+                        <Button label="Publish" size="small" rounded disabled />
+                    </div>
                 </div>
             </div>
         </div>
