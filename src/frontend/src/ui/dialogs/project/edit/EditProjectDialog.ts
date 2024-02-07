@@ -40,7 +40,7 @@ export async function editProjectDialog(
         {
             title: project?.title || "",
             description: project?.description || "",
-            datapath: project?.resource || "",
+            datapath: project?.resources_path || "",
             options: deepClone<ProjectOptions>(project?.options, new ProjectOptions())
         },
         {

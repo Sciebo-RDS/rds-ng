@@ -6,7 +6,7 @@ import { SnapInsCatalog } from "./SnapInsCatalog";
 
 import { DataManagementPlanSnapIn } from "./dmp/DataManagementPlanSnapIn";
 import { MetadataSnapIn } from "./metadata/MetadataSnapIn";
-import { ResourcesMetadataSnapIn } from "@/ui/snapins/resources_metadata/ResourcesMetadataSnapIn";
+import { ResourcesMetadataSnapIn } from "@/ui/snapins/resourcesmetadata/ResourcesMetadataSnapIn";
 import { SummarySnapIn } from "./summary/SummarySnapIn";
 
 /**

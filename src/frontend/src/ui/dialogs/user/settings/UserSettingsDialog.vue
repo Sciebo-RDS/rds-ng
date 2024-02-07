@@ -3,7 +3,7 @@ import { storeToRefs } from "pinia";
 import { markRaw, ref, unref, watch } from "vue";
 import { array as yarray } from "yup";
 
-import VerticalTabView from "@common/ui/components/VerticalTabView.vue";
+import VerticalTabView from "@common/ui/components/verticaltabview/VerticalTabView.vue";
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";

@@ -1,3 +1,5 @@
+import os.path
+
 from common.py.component import BackendComponent
 from common.py.services import Service
 
@@ -21,13 +23,19 @@ def create_stub_resources_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(ListResourcesCommand)
     def list_resources(msg: ListResourcesCommand, ctx: StubServiceContext) -> None:
-        from common.py.data.entities.resource import ResourcesList
+        from common.py.data.entities.resource import Resource, ResourcesList
 
         success = False
         message = ""
 
         root = msg.root if msg.root != "" else "/data"
-        resources = ResourcesList(resource=root)
+        resources = ResourcesList(
+            resource=Resource(
+                filename=root,
+                basename=os.path.basename(root),
+                type=Resource.Type.FOLDER,
+            )
+        )
 
         try:
             from common.py.data.entities.resource.resource_utils import (

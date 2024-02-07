@@ -14,8 +14,8 @@ import { resourcesListToTreeNodes } from "@common/data/entities/resource/Resourc
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
 
-import MandatoryMark from "@common/ui/components/MandatoryMark.vue";
-import ResourcesTreeSelect from "@common/ui/components/ResourcesTreeSelect.vue";
+import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
+import ResourcesTreeSelect from "@common/ui/components/resource/ResourcesTreeSelect.vue";
 import ConnectorInstancesSelect from "@/ui/dialogs/project/edit/ConnectorInstancesSelect.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";

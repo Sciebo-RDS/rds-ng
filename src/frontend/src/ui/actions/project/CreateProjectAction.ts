@@ -1,7 +1,6 @@
 import { CreateProjectCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { ProjectOptions } from "@common/data/entities/project/ProjectOptions";
-import { type Resource } from "@common/data/entities/resource/Resource";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
@@ -22,10 +21,10 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
         return editProjectDialog(this._component, undefined);
     }
 
-    public prepare(resource: Resource, title: string, description: string, options: ProjectOptions): CommandComposer<CreateProjectCommand> {
+    public prepare(resourcesPath: string, title: string, description: string, options: ProjectOptions): CommandComposer<CreateProjectCommand> {
         super.prepareNotifiers(title);
 
-        this._composer = CreateProjectCommand.build(this.messageBuilder, resource, title, description, options).timeout(this._regularTimeout);
+        this._composer = CreateProjectCommand.build(this.messageBuilder, resourcesPath, title, description, options).timeout(this._regularTimeout);
         return this._composer;
     }
 

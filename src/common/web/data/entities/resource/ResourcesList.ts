@@ -1,11 +1,11 @@
-import { Type, Transform, plainToInstance } from "class-transformer";
+import { Type } from "class-transformer";
 
-import { type Resource } from "./Resource";
+import { Resource } from "./Resource";
 
 /**
- * A map of resource folders.
+ * A list of resource folders.
  */
-export type ResourceFolders = Record<Resource, ResourcesList | undefined>;
+export type ResourceFolders = ResourcesList[];
 
 /**
  * A list of resource files.
@@ -18,25 +18,20 @@ export type ResourceFiles = Resource[];
  * Resources are always given in absolute form.
  *
  * @param resource - The current resource path.
- * @param folders - A dictionary containing all folders and their respective sub-folder contents (can be **undefined**).
+ * @param folders - A list of all folders.
  * @param files - A list of all files.
  */
 export class ResourcesList {
     public readonly resource: Resource;
 
     // @ts-ignore
-    @Transform(({ value, key, obj, type }) => {
-        for (const [k, v] of Object.entries(value)) {
-            value[k] = plainToInstance(ResourcesList, v);
-        }
-        return value;
-    })
+    @Type(() => ResourcesList)
     public readonly folders: ResourceFolders;
     // @ts-ignore
-    @Type(() => String)
+    @Type(() => Resource)
     public readonly files: ResourceFiles;
 
-    public constructor(resource: Resource, folders: ResourceFolders = {}, files: ResourceFiles = []) {
+    public constructor(resource: Resource, folders: ResourceFolders = [], files: ResourceFiles = []) {
         this.resource = resource;
 
         this.folders = folders;

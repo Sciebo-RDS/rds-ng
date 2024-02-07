@@ -5,7 +5,7 @@ import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
 import { type Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import ResourcesTreeTable from "@common/ui/components/ResourcesTreeTable.vue";
+import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
@@ -25,7 +25,7 @@ const selectedNodes = ref({} as Record<Resource, boolean>);
 
 function refreshResources(): void {
     const action = new ListResourcesAction(comp, true);
-    action.prepare(project!.value.resource).done((reply: ListResourcesReply, success, msg) => {
+    action.prepare(project!.value.resources_path).done((reply: ListResourcesReply, success, msg) => {
         if (success) {
             resourcesNodes.value = resourcesListToTreeNodes(reply.resources);
         }
@@ -38,7 +38,7 @@ function refreshResources(): void {
     <ResourcesTreeTable
         :data="resourcesNodes"
         v-model:selected-nodes="selectedNodes"
-        class="p-treetable-sm border border-b-0"
+        class="p-treetable-sm text-sm border border-b-0"
         refreshable
         @refresh="refreshResources"
     />

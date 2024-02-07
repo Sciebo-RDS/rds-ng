@@ -7,8 +7,9 @@ import InputText from "primevue/inputtext";
 import TreeTable from "primevue/treetable";
 import { onMounted, type PropType, ref, toRefs, watch } from "vue";
 
-import { type Resource } from "../../data/entities/resource/Resource";
-import { flattenResourcesTreeNodes, ResourceType } from "../../data/entities/resource/ResourceUtils";
+import { Resource, ResourceType } from "../../../data/entities/resource/Resource";
+import { flattenResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
+import { humanReadableFileSize } from "../../../utils/Strings";
 
 const props = defineProps({
     data: {
@@ -80,19 +81,19 @@ function collapseAll(): void {
 
         <Column field="label" header="Name" class="p-0 pl-2" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
             <template #body="entry">
-                <span :class="entry.node.icon" class="opacity-75 relative top-1.5 mr-1" /><span>{{ entry.node.data.label }}</span>
+                <span :class="entry.node.icon" class="opacity-75 relative top-1.5 mr-1" /><span>{{ entry.node.data.basename }}</span>
             </template>
         </Column>
 
         <Column field="resource" header="Size" class="w-48 text-right" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
-                100kb
+                {{ humanReadableFileSize(entry.node.data.size) }}
             </template>
         </Column>
 
         <Column field="resource" header="Files in folder" class="w-40 text-right" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
-                <span v-if="entry.node.data.resourceType === ResourceType.Folder">{{ entry.node.children.length }}</span>
+                <span v-if="entry.node.data.type === ResourceType.Folder">{{ entry.node.children.length }}</span>
             </template>
         </Column>
 

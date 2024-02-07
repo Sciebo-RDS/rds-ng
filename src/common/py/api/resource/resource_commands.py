@@ -10,7 +10,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities.resource import Resource, ResourcesList
+from ...data.entities.resource import ResourcesList
 
 
 @Message.define("command/resource/list")
@@ -22,13 +22,13 @@ class ListResourcesCommand(Command):
         Requires a ``ListResourcesReply`` reply.
 
     Args:
-        root: The root resource path (or empty if the system root should be used).
+        root: The root path (or empty if the system root should be used).
         include_folders: Whether to list folders (if this is set to false, no recursion will occur independent of `recursive`).
         include_files: Whether to list files.
         recursive: Whether to recursively process all sub-folders as well.
     """
 
-    root: Resource
+    root: str
 
     include_folders: bool
     include_files: bool
@@ -39,7 +39,7 @@ class ListResourcesCommand(Command):
     def build(
         message_builder: MessageBuilder,
         *,
-        root: Resource = "",
+        root: str = "",
         include_folders: bool = True,
         include_files: bool = True,
         recursive: bool = True,

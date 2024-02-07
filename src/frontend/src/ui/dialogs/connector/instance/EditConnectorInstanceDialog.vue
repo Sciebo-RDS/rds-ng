@@ -6,7 +6,7 @@ import { string as ystring } from "yup";
 
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
-import MandatoryMark from "@common/ui/components/MandatoryMark.vue";
+import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { vFocus } = useDirectives();

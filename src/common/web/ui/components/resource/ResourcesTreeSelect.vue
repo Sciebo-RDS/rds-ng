@@ -2,9 +2,7 @@
 import TreeSelect from "primevue/treeselect";
 import { type PropType, ref, toRefs, watch } from "vue";
 
-import { type Resource } from "../../data/entities/resource/Resource";
-
-function pathToSelectedResources(path: Resource): Record<string, boolean> {
+function pathToSelectedResources(path: string): Record<string, boolean> {
     const selectedResources: Record<string, boolean> = {};
     selectedResources[path] = true;
     return selectedResources;
@@ -29,7 +27,7 @@ const props = defineProps({
     }
 });
 const { options, placeholder, loading, loadingLabel } = toRefs(props);
-const model = defineModel<Resource>({ default: "" });
+const model = defineModel<string>({ default: "" });
 
 const isLoading = ref(loading.value);
 if (isLoading.value) {

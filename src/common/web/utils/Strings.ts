@@ -28,7 +28,7 @@ export function convertToStringArray(value: any | any[], delimiter: string = " "
 export function humanReadableFileSize(size: number): string {
     try {
         const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-        return (size / Math.pow(1024, i)).toFixed(2) + " " + ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"][i];
+        return (size / Math.pow(1024, i)).toFixed(1) + " " + ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"][i];
     } catch {
         return size + " B";
     }
