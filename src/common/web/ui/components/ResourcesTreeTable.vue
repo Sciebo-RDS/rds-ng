@@ -1,0 +1,111 @@
+<script setup lang="ts">
+import Button from "primevue/button";
+import Column from "primevue/column";
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
+import InputText from "primevue/inputtext";
+import TreeTable from "primevue/treetable";
+import { onMounted, type PropType, ref, toRefs, watch } from "vue";
+
+import { type Resource } from "../../data/entities/resource/Resource";
+import { flattenResourcesTreeNodes, ResourceType } from "../../data/entities/resource/ResourceUtils";
+
+const props = defineProps({
+    data: {
+        type: Object as PropType<Object[]>,
+        required: true
+    },
+    refreshable: {
+        type: Boolean,
+        default: false
+    }
+});
+const { data, refreshable } = toRefs(props);
+const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
+const emits = defineEmits<{
+    (e: "refresh"): void;
+}>();
+
+const filters = ref({} as Record<string, string>);
+const expandedNodes = ref({} as Record<Resource, boolean>);
+
+const isLoading = ref(true);
+watch(data, () => {
+    isLoading.value = false;
+    expandAll();
+});
+onMounted(() => {
+    refresh();
+});
+
+function refresh(): void {
+    isLoading.value = true;
+    emits("refresh");
+}
+
+function expandAll(): void {
+    if (data!.value) {
+        const allResources: Record<Resource, boolean> = {};
+        flattenResourcesTreeNodes(data!.value).forEach((resource) => allResources[resource] = true);
+        expandedNodes.value = allResources;
+    }
+}
+
+function collapseAll(): void {
+    expandedNodes.value = {};
+}
+</script>
+
+<template>
+    <TreeTable
+        :value="data"
+        selection-mode="multiple"
+        v-model:selection-keys="selectedNodes"
+        v-model:expanded-keys="expandedNodes"
+        :filters="filters"
+        :loading="isLoading"
+        auto-layout
+        :pt="{ header: 'r-shade-dark-gray', footer: 'r-shade-gray' }"
+    >
+        <template #header>
+            <div class="text-right">
+                <IconField iconPosition="left">
+                    <InputIcon>
+                        <i class="material-icons-outlined mi-search mt-[-12px]" />
+                    </InputIcon>
+                    <InputText v-model="filters['global']" placeholder="Search objects" class="w-full" />
+                </IconField>
+            </div>
+        </template>
+
+        <Column field="label" header="Name" class="p-0 pl-2" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
+            <template #body="entry">
+                <span :class="entry.node.icon" class="opacity-75 relative top-1.5 mr-1" /><span>{{ entry.node.data.label }}</span>
+            </template>
+        </Column>
+
+        <Column field="resource" header="Size" class="w-48 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+            <template #body="entry">
+                100kb
+            </template>
+        </Column>
+
+        <Column field="resource" header="Files in folder" class="w-40 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+            <template #body="entry">
+                <span v-if="entry.node.data.resourceType === ResourceType.Folder">{{ entry.node.children.length }}</span>
+            </template>
+        </Column>
+
+        <template #footer>
+            <div class="flex justify-end gap-2">
+                <Button icon="material-icons-outlined mi-keyboard-arrow-down" label="Expand all" size="small" text @click="expandAll" />
+                <Button icon="material-icons-outlined mi-keyboard-arrow-right" label="Collapse all" size="small" text @click="collapseAll" />
+                <Button v-if="refreshable" icon="material-icons-outlined mi-refresh" label="Refresh" size="small" text severity="warning" @click="refresh" />
+            </div>
+        </template>
+    </TreeTable>
+</template>
+
+<style scoped lang="scss">
+
+</style>

@@ -13,12 +13,12 @@ def get_stub_data_projects() -> typing.List[Project]:
         Project(
             project_id=1000,
             creation_time=time.time(),
-            resource="/data/personal",
+            resource="/data",
             title="Our first project",
             description="This is our first attempt to create a project",
             options=ProjectOptions(
-                optional_features=["metadata", "files", "dmp"],
-                ui={"optional_snapins": ["metadata", "files", "dmp"]},
+                optional_features=["files", "dmp"],
+                ui={"optional_snapins": ["files", "dmp"]},
             ),
         ),
         Project(
@@ -57,7 +57,7 @@ def get_stub_data_projects() -> typing.List[Project]:
         Project(
             project_id=1004,
             creation_time=time.time(),
-            resource="/data",
+            resource="/data/personal",
             title="A fine project",
             description="Last but not least, a fine one.",
         ),

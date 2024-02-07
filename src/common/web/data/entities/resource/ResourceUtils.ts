@@ -70,27 +70,22 @@ export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: b
 }
 
 /**
- * Flattens a resources list into an array.
+ * Flattens resources tree nodes into a single, flat array.
  *
- * @param resources - The resourcces to flatten.
- * @param resourceType - Whether to retrieve files or folders or both if left undefined.
+ * @param nodes - The nodes to flatten.
  */
-export function flattenResourcesList(resources: ResourcesList, resourceType?: ResourceType): Resource[] {
-    const flatten = (resources: ResourcesList, results: Resource[]) => {
-        if (!resourceType || resourceType === ResourceType.Folder) {
-            results.push(resources.resource);
-        }
+export function flattenResourcesTreeNodes(nodes: TreeNode[]): Resource[] {
+    const flatten = (nodes: TreeNode[], results: Resource[]) => {
+        nodes.forEach((node) => {
+            results.push(node.key || "(unknown)");
 
-        if (!resourceType || resourceType === ResourceType.File) {
-            resources.files.forEach((resource) => results.push(resource));
-        }
-
-        for (const [_, folderResource] of Object.entries(resources.folders)) {
-            flatten(folderResource, results);
-        }
+            if (Array.isArray(node.children)) {
+                flatten(node.children, results);
+            }
+        });
     };
 
     let results: Resource[] = [];
-    flatten(resources, results);
+    flatten(nodes, results);
     return results;
 }
