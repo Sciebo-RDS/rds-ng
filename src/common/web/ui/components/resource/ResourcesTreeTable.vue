@@ -7,7 +7,7 @@ import InputText from "primevue/inputtext";
 import TreeTable from "primevue/treetable";
 import { onMounted, type PropType, ref, toRefs, watch } from "vue";
 
-import { Resource, ResourceType } from "../../../data/entities/resource/Resource";
+import { ResourceType } from "../../../data/entities/resource/Resource";
 import { flattenResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
 import { humanReadableFileSize } from "../../../utils/Strings";
 
@@ -28,7 +28,7 @@ const emits = defineEmits<{
 }>();
 
 const filters = ref({} as Record<string, string>);
-const expandedNodes = ref({} as Record<Resource, boolean>);
+const expandedNodes = ref({} as Record<string, boolean>);
 
 const isLoading = ref(true);
 watch(data, () => {
@@ -46,7 +46,7 @@ function refresh(): void {
 
 function expandAll(): void {
     if (data!.value) {
-        const allResources: Record<Resource, boolean> = {};
+        const allResources: Record<string, boolean> = {};
         flattenResourcesTreeNodes(data!.value).forEach((resource) => allResources[resource] = true);
         expandedNodes.value = allResources;
     }

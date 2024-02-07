@@ -1,6 +1,5 @@
 import { type TreeNode } from "primevue/treenode";
 
-import { Resource } from "./Resource";
 import { ResourcesList } from "./ResourcesList";
 
 /**
@@ -45,8 +44,8 @@ export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: b
  *
  * @param nodes - The nodes to flatten.
  */
-export function flattenResourcesTreeNodes(nodes: TreeNode[]): Resource[] {
-    const flatten = (nodes: TreeNode[], results: Resource[]) => {
+export function flattenResourcesTreeNodes(nodes: TreeNode[]): string[] {
+    const flatten = (nodes: TreeNode[], results: string[]) => {
         nodes.forEach((node) => {
             results.push(node.key || "(unknown)");
 
@@ -56,7 +55,7 @@ export function flattenResourcesTreeNodes(nodes: TreeNode[]): Resource[] {
         });
     };
 
-    let results: Resource[] = [];
+    let results: string[] = [];
     flatten(nodes, results);
     return results;
 }
