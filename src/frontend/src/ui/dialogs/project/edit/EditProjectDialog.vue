@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Checkbox from "primevue/checkbox";
+import Fieldset from "primevue/fieldset";
 import InputText from "primevue/inputtext";
-import Panel from "primevue/panel";
 import RadioButton from "primevue/radiobutton";
 import Textarea from "primevue/textarea";
 import { onMounted, ref, watch } from "vue";
@@ -76,7 +76,7 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
 
 <template>
     <form @submit.prevent="acceptDialog" class="r-form">
-        <Panel header="General" :pt="{ header: '!p-3' }">
+        <Fieldset legend="General">
             <span class="r-form-field">
                 <label>Title <MandatoryMark /></label>
                 <InputText name="title" v-bind="title" v-model="dialogData.userData.title" placeholder="Title" :class="{ 'p-invalid': validator.errors.title }" v-focus />
@@ -88,9 +88,9 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
                 <Textarea name="description" v-model.trim="dialogData.userData.description" placeholder="Description" rows="3" />
                 <small>An (optional) project description.</small>
             </span>
-        </Panel>
+        </Fieldset>
 
-        <Panel header="Data" :pt="{ header: '!p-3' }">
+        <Fieldset legend="Data">
             <span class="r-form-field">
                 <label>Data path <MandatoryMark /></label>
                 <span v-if="showDataPathSelector" class="grid grid-flow-row">
@@ -112,16 +112,16 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
                     <small><b>Note:</b> This path cannot be changed anymore after project creation.</small>
                 </span>
             </span>
-        </Panel>
+        </Fieldset>
 
-        <Panel header="Features" :pt="{ header: '!p-3' }">
+        <Fieldset legend="Features">
             <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
                 <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" class="self-center" />
                 <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
             </div>
-        </Panel>
+        </Fieldset>
 
-        <Panel header="Connections" :pt="{ header: '!p-3' }">
+        <Fieldset legend="Connections">
             <div class="r-form-field">
                 <div class="grid grid-flow-row">
                     <div class="flex align-items-center">
@@ -144,7 +144,7 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
                     </div>
                 </div>
             </div>
-        </Panel>
+        </Fieldset>
     </form>
 </template>
 
