@@ -5,8 +5,8 @@ import { SnapIn, type SnapInID } from "./SnapIn";
 import { SnapInsCatalog } from "./SnapInsCatalog";
 
 import { DataManagementPlanSnapIn } from "./dmp/DataManagementPlanSnapIn";
-import { FilesSnapIn } from "@/ui/snapins/files/FilesSnapIn";
 import { MetadataSnapIn } from "./metadata/MetadataSnapIn";
+import { ResourcesMetadataSnapIn } from "@/ui/snapins/resources_metadata/ResourcesMetadataSnapIn";
 import { SummarySnapIn } from "./summary/SummarySnapIn";
 
 /**
@@ -25,7 +25,7 @@ export function registerSnapIns(): void {
 
     // New snap-ins go here; the order in which they are added also define the order of their panels
     registerSnapIn(MetadataSnapIn);
-    registerSnapIn(FilesSnapIn);
+    registerSnapIn(ResourcesMetadataSnapIn);
     registerSnapIn(DataManagementPlanSnapIn);
     registerSnapIn(SummarySnapIn);
 
