@@ -8,7 +8,6 @@ import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
 import { Project, type ProjectID } from "../../data/entities/project/Project";
 import { ProjectOptions } from "../../data/entities/project/ProjectOptions";
-import { type Resource } from "../../data/entities/resource/Resource";
 
 /**
  * Command to fetch all projects of the current user. Requires a ``ListProjectsReply`` reply.
@@ -51,14 +50,14 @@ export class ListProjectsReply extends CommandReply {
 /**
  * Command to create a project. Requires a ``CreateProjectReply`` reply.
  *
- * @param resource - The resource path of the project.
+ * @param resources_path - The resources path of the project.
  * @param title - The title of the project.
  * @param description - An optional project description.
  * @param options - The project options.
  */
 @Message.define("command/project/create")
 export class CreateProjectCommand extends Command {
-    public readonly resource: Resource = "";
+    public readonly resources_path: string = "";
 
     public readonly title: string = "";
     public readonly description: string = "";
@@ -72,13 +71,13 @@ export class CreateProjectCommand extends Command {
      */
     public static build(
         messageBuilder: MessageBuilder,
-        resource: Resource,
+        resourcesPath: string,
         title: string,
         description: string,
         options: ProjectOptions,
         chain: Message | null = null
     ): CommandComposer<CreateProjectCommand> {
-        return messageBuilder.buildCommand(CreateProjectCommand, { resource: resource, title: title, description: description, options: options }, chain);
+        return messageBuilder.buildCommand(CreateProjectCommand, { resources_path: resourcesPath, title: title, description: description, options: options }, chain);
     }
 }
 

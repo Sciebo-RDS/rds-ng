@@ -6,20 +6,20 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
-import { type Resource } from "../../data/entities/resource/Resource";
+import { Resource, ResourceType } from "../../data/entities/resource/Resource";
 import { ResourcesList } from "../../data/entities/resource/ResourcesList";
 
 /**
  * Command to fetch all available resources.
  *
- * @param root - The root resource path (or empty if the system root should be used).
+ * @param root - The root path (or empty if the system root should be used).
  * @param include_folders - Whether to list folders (if this is set to false, no recursion will occur independent of `recursive`).
  * @param include_files - Whether to list files.
  * @param recursive - Whether to recursively process all sub-folders as well.
  */
 @Message.define("command/resource/list")
 export class ListResourcesCommand extends Command {
-    public readonly root: Resource = "";
+    public readonly root: string = "";
 
     public readonly include_folders: boolean = true;
     public readonly include_files: boolean = true;
@@ -31,7 +31,7 @@ export class ListResourcesCommand extends Command {
      */
     public static build(
         messageBuilder: MessageBuilder,
-        root: Resource = "",
+        root: string = "",
         includeFolders: boolean = true,
         includeFiles: boolean = true,
         recursive: boolean = true,
@@ -50,7 +50,7 @@ export class ListResourcesCommand extends Command {
 export class ListResourcesReply extends CommandReply {
     // @ts-ignore
     @Type(() => ResourcesList)
-    public readonly resources: ResourcesList = new ResourcesList("");
+    public readonly resources: ResourcesList = new ResourcesList(new Resource("", "", ResourceType.Folder));
 
     /**
      * Helper function to easily build this message.

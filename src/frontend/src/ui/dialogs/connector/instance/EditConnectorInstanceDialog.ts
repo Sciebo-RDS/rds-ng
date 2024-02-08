@@ -34,7 +34,7 @@ export async function editConnectorInstanceDialog(
         {
             header: (instance ? "Connection settings" : "New connection") + ` (${connector ? connector.name : "unknown connector"})`,
             modal: true,
-            contentClass: "w-[20vw] w-full min-w-[40rem] !pt-4"
+            contentClass: "w-[20vw] w-full min-w-[40rem]"
         },
         {
             name: instance?.name || "",

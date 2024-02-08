@@ -1,6 +1,5 @@
 import { ListResourcesCommand } from "@common/api/resource/ResourceCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import { type Resource } from "@common/data/entities/resource/Resource";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
@@ -12,7 +11,7 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
  * Action to retrieve all resources (i.e., files and folders).
  */
 export class ListResourcesAction extends FrontendCommandAction<ListResourcesCommand, CommandComposer<ListResourcesCommand>> {
-    public prepare(root: Resource = "", includeFolders: boolean = true, includeFiles: boolean = true, recursive: boolean = true): CommandComposer<ListResourcesCommand> {
+    public prepare(root: string = "", includeFolders: boolean = true, includeFiles: boolean = true, recursive: boolean = true): CommandComposer<ListResourcesCommand> {
         this.prepareNotifiers();
 
         this._composer = ListResourcesCommand.build(this.messageBuilder, root, includeFolders, includeFiles, recursive).timeout(this._regularTimeout);

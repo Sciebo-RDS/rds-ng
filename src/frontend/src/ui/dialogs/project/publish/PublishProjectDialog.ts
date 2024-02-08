@@ -29,7 +29,7 @@ export async function publishProjectDialog(
         {
             header: "Publish & Export project",
             modal: true,
-            contentClass: "w-[20vw] min-w-[40rem] !pt-4"
+            contentClass: "w-[20vw] min-w-[40rem]"
         },
         {},
         {

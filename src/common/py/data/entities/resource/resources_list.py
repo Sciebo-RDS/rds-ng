@@ -5,7 +5,7 @@ from dataclasses_json import dataclass_json
 
 from .resource import Resource
 
-ResourceFolders = typing.Dict[Resource, typing.Union["ResourcesList", None]]
+ResourceFolders = typing.List["ResourcesList"]
 ResourceFiles = typing.List[Resource]
 
 
@@ -20,11 +20,11 @@ class ResourcesList:
 
     Attributes:
         resource: The current resource path.
-        folders: A dictionary containing all folders and their respective sub-folder contents (can be **None**).
+        folders: A list of all folders.
         files: A list of all files.
     """
 
     resource: Resource
 
-    folders: ResourceFolders = field(default_factory=dict)
+    folders: ResourceFolders = field(default_factory=list)
     files: ResourceFiles = field(default_factory=list)
