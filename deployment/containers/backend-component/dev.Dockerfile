@@ -9,11 +9,6 @@ ARG     COMPONENT_APP="app"
 ARG     COMPONENT_PORT=6969
 ARG     COMPONENT_THREADS=9
 
-# Copy testing data
-WORKDIR /data
-
-COPY    /deployment/debug_data/ .
-
 # Copy the source code
 WORKDIR /component
 
