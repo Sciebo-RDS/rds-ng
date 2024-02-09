@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../../../api/NetworkEvents";
+import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../../../api/network/NetworkEvents";
 import { NetworkClientSettingIDs } from "../../../settings/NetworkSettingIDs";
 import { Configuration } from "../../../utils/config/Configuration";
 import { UnitID } from "../../../utils/UnitID";

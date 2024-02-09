@@ -1,8 +1,8 @@
 import { type DialogProps } from "primevue/dialog";
 import { type DynamicDialogOptions } from "primevue/dynamicdialogoptions";
-import { type Component as VueComponent, markRaw } from "vue";
+import { markRaw } from "vue";
 
-import { WebComponent } from "../../component/WebComponent";
+import { type VueComponent, WebComponent } from "../../component/WebComponent";
 
 import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
 
@@ -25,6 +25,9 @@ export interface ExtendedDialogOptions {
     rejectLabel?: string;
     /** The icon of the Reject button */
     rejectIcon?: string;
+
+    /** Additional options. */
+    [key: string]: any;
 }
 
 /**
@@ -39,6 +42,9 @@ export interface ExtendedDialogData<UserDataType> {
 
     /** A form validator if a schema was provided in the options. */
     validator?: ExtendedDialogValidator<any>;
+
+    /** Called before accepting the dialog to pre-process the dialog data. */
+    processData?: (data: UserDataType) => void;
 
     /** Called when the dialog was accepted. */
     accept?: (data: UserDataType) => void;
@@ -60,25 +66,28 @@ export type ExtendedDialogResult<ResultType> = Promise<ResultType>;
  * @param dialogProps - Vue dialog properties.
  * @param data - Optional user data to pass to the dialog.
  * @param options - Extended dialog options.
+ * @param processDataCallback - A callback that is called before the dialog is being accepted to pre-process the dialog data.
  * @param ignoreReject - If true, nothing will happen if the user rejects the dialog.
  */
-export function extendedDialog<DataType>(
+export function extendedDialog<UserDataType>(
     comp: WebComponent,
     dialogComponent: VueComponent,
     dialogProps: DialogProps,
-    data: DataType,
+    data: UserDataType,
     options: ExtendedDialogOptions | undefined = undefined,
+    processDataCallback: ((data: UserDataType) => void) | undefined = undefined,
     ignoreReject: boolean = true
-): ExtendedDialogResult<DataType> {
+): ExtendedDialogResult<UserDataType> {
     const dialog = comp.vue.config.globalProperties.$dialog;
 
-    return new Promise<DataType>((resolve, reject) => {
-        const dialogData: ExtendedDialogData<DataType> = {
+    return new Promise<UserDataType>((resolve, reject) => {
+        const dialogData: ExtendedDialogData<UserDataType> = {
             userData: data,
-            options: options || {} as ExtendedDialogOptions
+            options: options || {} as ExtendedDialogOptions,
+            processData: processDataCallback
         };
 
-        dialogData.accept = (result: DataType) => {
+        dialogData.accept = (result: UserDataType) => {
             resolve(result);
         };
 

@@ -38,13 +38,14 @@ export class MessageService<CtxType extends MessageContext = MessageContext> {
      * Creates a new service context.
      *
      * @param msgMeta - The meta information of the message.
+     * @param msgOrigin - The origin of the message.
      * @param logger - The logger to be used within the new context.
      * @param config - The global component configuration.
      *
      * @returns - The newly created message context.
      */
-    public createContext(msgMeta: MessageMetaInformation, logger: LoggerProxy, config: Configuration): MessageContext {
-        return new this._contextType(msgMeta, this.createMessageBuilder(), logger, config);
+    public createContext(msgMeta: MessageMetaInformation, msgOrigin: UnitID, logger: LoggerProxy, config: Configuration): MessageContext {
+        return new this._contextType(msgMeta, msgOrigin, this.createMessageBuilder(), logger, config);
     }
 
     /**

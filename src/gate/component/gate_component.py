@@ -5,8 +5,9 @@ from common.py.component import (
 )
 from common.py.component.roles import NodeRole
 from common.py.core.logging import debug, error
-from common.py.services import Service
 from common.py.utils import UnitID
+
+from ..backends import Backend
 
 
 class GateComponent(BackendComponent):
@@ -21,12 +22,16 @@ class GateComponent(BackendComponent):
             module_name=__name__,
         )
 
-        self._backend: Service | None = None
+        self._backend: Backend | None = None
 
         self._add_gate_settings()
 
     def run(self) -> None:
         super().run()
+
+        from ..services import create_gate_service
+
+        create_gate_service(self)
 
         self._install_network_filters()
         self._mount_backend()
@@ -52,11 +57,12 @@ class GateComponent(BackendComponent):
         try:
             from ..backends import BackendsCatalog
 
-            creator = BackendsCatalog.find_item(driver)
-            if creator is None:
+            backend_type = BackendsCatalog.find_item(driver)
+            if backend_type is None:
                 raise RuntimeError(f"The backend driver {driver} couldn't be found")
 
-            self._backend = creator(self)
+            self._backend = backend_type(self)
+            debug(f"Mounted backend: {self._backend.name}", scope="gate")
         except Exception as exc:  # pylint: disable=broad-exception-caught
             error(
                 f"Unable to mount the backend: {str(exc)}",

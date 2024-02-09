@@ -12,11 +12,27 @@ export class ExtendedDialogValidator<FormType> {
     }
 
     /**
+     * The `defineField` function.
+     */
+    public get defineField() {
+        // @ts-ignore
+        return this._form.defineField;
+    }
+
+    /**
      * The `defineComponentBinds` function.
      */
     public get defineComponentBinds() {
         // @ts-ignore
         return this._form.defineComponentBinds;
+    }
+
+    /**
+     * The `setFieldValue` function.
+     */
+    public get setFieldValue() {
+        // @ts-ignore
+        return this._form.setFieldValue;
     }
 
     /** Validate the form. */

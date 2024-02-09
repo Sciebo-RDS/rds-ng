@@ -1,14 +1,14 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import { Project, type ProjectID } from "@common/data/entities/Project";
+import { Project, type ProjectID } from "@common/data/entities/project/Project";
 
 /**
  * The projects store for all project-specific data.
  *
  * @param projects - List of all projects.
  */
-export const projectsStore = defineStore("projectStore", () => {
+export const useProjectsStore = defineStore("projectsStore", () => {
     const projects = ref<Project[]>([]);
     const activeProject = ref<ProjectID | null | undefined>(undefined);
 

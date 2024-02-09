@@ -151,7 +151,7 @@ class MessageBus:
                         dispatcher, msg, msg_type, msg_meta, svc
                     )
 
-                if not msg_dispatched:
+                if not msg_dispatched and not msg_meta.is_handled_externally:
                     warning(
                         "A message was dispatched locally but not handled",
                         scope="bus",
@@ -196,10 +196,15 @@ class MessageBus:
     def _create_context(
         self, msg: Message, msg_meta: MessageMetaInformation, svc: MessageService
     ) -> MessageContextType:
+        from ..logging import LoggerProtocol
+
         logger_proxy = LoggerProxy(default_logger())
         logger_proxy.add_param("trace", str(msg.trace))
         return svc.create_context(
-            msg_meta, logger=logger_proxy, config=self._comp_data.config
+            msg_meta,
+            msg.origin,
+            logger=typing.cast(LoggerProtocol, logger_proxy),
+            config=self._comp_data.config,
         )
 
     @property

@@ -1,4 +1,4 @@
-from .server_backend_service import create_server_backend_service
+from .server_backend import ServerBackend
 from .. import BackendsCatalog
 
-BackendsCatalog.register_item("server", create_server_backend_service)
+BackendsCatalog.register_item("server", ServerBackend)

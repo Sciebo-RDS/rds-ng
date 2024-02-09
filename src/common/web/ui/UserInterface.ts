@@ -1,5 +1,6 @@
-import { type Component as VueComponent } from "vue";
 import { type Router, type RouteRecordRaw } from "vue-router";
+
+import { type VueComponent } from "../component/WebComponent";
 
 import { MainView } from "./views/main/MainView";
 import { View } from "./views/View";

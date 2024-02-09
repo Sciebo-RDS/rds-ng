@@ -22,7 +22,7 @@ export class CommandReplyDispatcher extends MessageDispatcher<CommandReply, Comm
         logging.debug(`Dispatching command reply: ${String(msg)}`, "bus");
         super.preDispatch(msg, msgMeta);
 
-        CommandDispatcher.invokeReplyCallbacks(msg.unique, msg);
+        CommandDispatcher.invokeReplyCallbacks(msg.unique, msg, msgMeta);
         MessageDispatcher._metaInformationList.remove(msg.unique);
     }
 }

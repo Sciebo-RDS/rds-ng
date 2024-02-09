@@ -3,8 +3,8 @@
  */
 :root {
     --r-border-color: rgb(209 213 219);
-    --r-shade: color-mix(in srgb, var(--highlight-bg), #fff 95%);
-    --r-shade-dark: color-mix(in srgb, var(--highlight-bg), #fff 90%);
+    --r-shade: color-mix(in srgb, var(--highlight-bg), #fff 50%);
+    --r-shade-dark: color-mix(in srgb, var(--highlight-bg), #fff 25%);
 }
 
 /*
@@ -63,20 +63,31 @@ html {
     @apply text-lg;
 }
 
+.r-text-title {
+    @apply font-bold text-xl mb-2;
+}
+
+.r-text-success,
 .r-text-success * {
     @apply text-green-500 #{!important};
 }
 
+.r-text-warning,
 .r-text-warning * {
     @apply text-orange-500 #{!important};
 }
 
+.r-text-error,
 .r-text-error * {
     @apply text-red-500 #{!important};
 }
 
 .r-border-color {
     color: var(--r-border-color);
+}
+
+.r-border-error {
+    @apply border-rose-500 #{!important};
 }
 
 .r-shade {
@@ -91,6 +102,21 @@ html {
     color: var(--text-color);
 }
 
+.r-shade-gray {
+    @apply bg-slate-50 #{!important};
+}
+
+.r-shade-dark-gray {
+    @apply bg-slate-100 #{!important};
+}
+
 .r-small-caps {
     font-variant: small-caps;
+}
+
+/*
+ * Helper classes.
+ */
+.r-z-index-toplevel {
+    @apply z-[9999] #{!important};
 }

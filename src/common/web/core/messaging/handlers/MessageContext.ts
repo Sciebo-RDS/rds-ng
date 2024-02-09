@@ -1,4 +1,5 @@
 import { Configuration } from "../../../utils/config/Configuration";
+import { UnitID } from "../../../utils/UnitID";
 import { LoggerProxy } from "../../logging/LoggerProxy";
 import { MessageBuilder } from "../composers/MessageBuilder";
 import { CommandReply } from "../CommandReply";
@@ -19,6 +20,7 @@ import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaIn
  */
 export class MessageContext {
     protected readonly _msgMeta: MessageMetaInformation;
+    protected readonly _msgOrigin: UnitID;
     protected readonly _msgBuilder: MessageBuilder;
 
     protected readonly _logger: LoggerProxy;
@@ -28,12 +30,14 @@ export class MessageContext {
 
     /**
      * @param msgMeta - The meta information of the message.
+     * @param msgOrigin - The origin of the message.
      * @param msgBuilder - A ``MessageBuilder`` to be assigned to this context.
      * @param logger - A logger that is configured to automatically print the trace belonging to the message that caused the handler to be executed.
      * @param config - The global component configuration.
      */
-    public constructor(msgMeta: MessageMetaInformation, msgBuilder: MessageBuilder, logger: LoggerProxy, config: Configuration) {
+    public constructor(msgMeta: MessageMetaInformation, msgOrigin: UnitID, msgBuilder: MessageBuilder, logger: LoggerProxy, config: Configuration) {
         this._msgMeta = msgMeta;
+        this._msgOrigin = msgOrigin;
         this._msgBuilder = msgBuilder;
 
         this._logger = logger;
@@ -90,6 +94,13 @@ export class MessageContext {
      */
     public get isEntrypointClient(): boolean {
         return this._msgMeta.entrypoint == MessageEntrypoint.Client;
+    }
+
+    /**
+     * The origin of the message.
+     */
+    public get origin(): UnitID {
+        return this._msgOrigin;
     }
 
     /**

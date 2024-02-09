@@ -1,7 +1,8 @@
 import { Command } from "../../core/messaging/Command";
 import { CommandFailType } from "../../core/messaging/CommandReply";
 import { CommandComposer } from "../../core/messaging/composers/CommandComposer";
-import { Action, ActionState } from "./Action";
+import { Action } from "./Action";
+import { ActionState } from "./ActionBase";
 
 /**
  * Actions specific to ``Command`.

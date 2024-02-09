@@ -1,3 +1,4 @@
+from .backend import Backend
 from .backends_catalog import BackendsCatalog
 
 # Import all backend drivers to automatically add them to the catalog

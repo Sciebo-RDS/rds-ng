@@ -1,13 +1,25 @@
 <script setup lang="ts">
-import ProjectDetails from "@/ui/content/projectdetails/ProjectDetails.vue";
-import ProjectsList from "@/ui/content/projectslist/ProjectsList.vue";
+import { nextTick, onMounted } from "vue";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { GetAllDataAction } from "@/ui/actions/multi/GetAllDataAction";
+import MainContent from "@/ui/content/main/MainContent.vue";
+
+const comp = FrontendComponent.inject();
+
+// When launching the frontend view (after the initial render), get all data first
+onMounted(() => {
+    nextTick(() => {
+        const action = new GetAllDataAction();
+
+        action.prepare(comp);
+        action.execute();
+    });
+});
 </script>
 
 <template>
-    <div class="grid grid-cols-[30rem_1fr] grid-rows-1 gap-0 w-screen h-screen">
-        <ProjectsList class="w-full border-e-2 r-border-color" />
-        <ProjectDetails class="w-full" />
-    </div>
+    <MainContent />
 </template>
 
 <style scoped lang="scss">

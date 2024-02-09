@@ -1,2 +1,2 @@
-from .project_verifier import ProjectVerifier
+from .verifier import Verifier
 from .verification_exception import VerificationException

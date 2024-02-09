@@ -7,9 +7,7 @@ import DynamicDialog from "primevue/dynamicdialog";
 import DialogService from "primevue/dialogservice";
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
-// @ts-ignore
-import { v4 as uuidv4 } from "uuid";
-import { type App, type Component as VueComponent, createApp, inject } from "vue";
+import { type App, type Component as VueComp, createApp, inject } from "vue";
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
@@ -22,6 +20,7 @@ import { Configuration, type SettingsContainer } from "../utils/config/Configura
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
+import { Session } from "./Session";
 import { WebComponentData } from "./WebComponentData";
 
 import createComponentService from "../services/ComponentService";
@@ -39,6 +38,11 @@ import "primeicons/primeicons.css";
 import "../api/API";
 
 /**
+ * Introduce a global type for Vue components.
+ */
+export type VueComponent = VueComp;
+
+/**
  * Base class for all web components.
  *
  * By default, an instance of ``UserInterfaceType`` is used to create the main UI handler. This can be overriden using the corresponding
@@ -51,6 +55,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     private static _instance: WebComponent<any> | null = null;
     private static readonly _injectionKey = Symbol();
 
+    protected readonly _session: Session;
     protected readonly _data: WebComponentData;
 
     protected readonly _core: Core;
@@ -71,12 +76,14 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         }
         WebComponent._instance = this;
 
-        let metaInfo = new MetaInformation();
-        let compInfo = metaInfo.getComponent(compID.unit);
+        const config = this.createConfig(env);
+        const metaInfo = new MetaInformation();
+        const compInfo = metaInfo.getComponent(compID.unit);
 
+        this._session = new Session(compID);
         this._data = new WebComponentData(
-            compID,
-            this.createConfig(env),
+            this.sanitizeComponentID(compID, config),
+            config,
             metaInfo.title,
             compInfo.name,
             metaInfo.version
@@ -202,6 +209,13 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     }
 
     /**
+     * The client session.
+     */
+    public get session(): Session {
+        return this._session;
+    }
+
+    /**
      * A data helper object that stores useful component data and information.
      */
     public get data(): WebComponentData {
@@ -254,11 +268,9 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         return WebComponent._instance;
     }
 
-    private sanitizeComponentID(compID: UnitID): UnitID {
-        let instance: string = compID.instance ? compID.instance : "default";
-        let uniqueID = uuidv4();
-
-        return new UnitID(compID.type, compID.unit, `${instance}::${uniqueID}`);
+    private sanitizeComponentID(compID: UnitID, config: Configuration): UnitID {
+        const instance: string = compID.instance ? compID.instance : "default";
+        return new UnitID(compID.type, compID.unit, `${instance}::${this.session.sessionID}`);
     }
 
     /**

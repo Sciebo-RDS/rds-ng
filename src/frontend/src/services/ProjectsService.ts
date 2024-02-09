@@ -1,9 +1,9 @@
-import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/ProjectCommands";
-import { ProjectsListEvent } from "@common/api/ProjectEvents";
+import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/project/ProjectCommands";
+import { ProjectsListEvent } from "@common/api/project/ProjectEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
-import { ProjectsServiceContext } from "@/services/ProjectsServiceContext";
+import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 
 /**
  * Creates the projects service.
@@ -16,38 +16,38 @@ export default function(comp: WebComponent): Service {
     return comp.createService(
         "Projects service",
         (svc: Service) => {
-            svc.messageHandler(ListProjectsReply, (msg: ListProjectsReply, ctx: ProjectsServiceContext) => {
+            svc.messageHandler(ListProjectsReply, (msg: ListProjectsReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
                     ctx.logger.debug("Retrieved projects list", "projects", { projects: JSON.stringify(msg.projects) });
 
-                    ctx.projectStore.resetPendingDeletions();
+                    ctx.projectsStore.resetPendingDeletions();
                     // @ts-ignore
-                    ctx.projectStore.projects = msg.projects;
+                    ctx.projectsStore.projects = msg.projects;
                 } else {
                     ctx.logger.error("Unable to retrieve the projects list", "projects", { reason: msg.message });
                 }
             });
 
-            svc.messageHandler(ProjectsListEvent, (msg: ProjectsListEvent, ctx: ProjectsServiceContext) => {
+            svc.messageHandler(ProjectsListEvent, (msg: ProjectsListEvent, ctx: FrontendServiceContext) => {
                 ctx.logger.debug("Projects list update received", "projects", { projects: JSON.stringify(msg.projects) });
 
-                ctx.projectStore.resetPendingDeletions();
+                ctx.projectsStore.resetPendingDeletions();
                 // @ts-ignore
-                ctx.projectStore.projects = msg.projects;
+                ctx.projectsStore.projects = msg.projects;
             });
 
-            svc.messageHandler(CreateProjectReply, (msg: CreateProjectReply, ctx: ProjectsServiceContext) => {
+            svc.messageHandler(CreateProjectReply, (msg: CreateProjectReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
                     ctx.logger.debug(`Created project ${msg.project_id}`, "projects");
 
                     // @ts-ignore
-                    ctx.projectStore.activeProject = msg.project_id;
+                    ctx.projectsStore.activeProject = msg.project_id;
                 } else {
                     ctx.logger.error(`Unable to create project ${msg.project_id}`, "projects", { reason: msg.message });
                 }
             });
 
-            svc.messageHandler(UpdateProjectReply, (msg: UpdateProjectReply, ctx: ProjectsServiceContext) => {
+            svc.messageHandler(UpdateProjectReply, (msg: UpdateProjectReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
                     ctx.logger.debug(`Updated project ${msg.project_id}`, "projects");
                 } else {
@@ -55,8 +55,8 @@ export default function(comp: WebComponent): Service {
                 }
             });
 
-            svc.messageHandler(DeleteProjectReply, (msg: DeleteProjectReply, ctx: ProjectsServiceContext) => {
-                ctx.projectStore.unmarkForDeletion(msg.project_id);
+            svc.messageHandler(DeleteProjectReply, (msg: DeleteProjectReply, ctx: FrontendServiceContext) => {
+                ctx.projectsStore.unmarkForDeletion(msg.project_id);
 
                 if (msg.success) {
                     ctx.logger.debug(`Deleted project ${msg.project_id}`, "projects");
@@ -65,6 +65,6 @@ export default function(comp: WebComponent): Service {
                 }
             });
         },
-        ProjectsServiceContext
+        FrontendServiceContext
     );
 }

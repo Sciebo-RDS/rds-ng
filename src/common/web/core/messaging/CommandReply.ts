@@ -1,7 +1,6 @@
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 
-import { Command } from "./Command";
 import { Message, type MessageCategory, type Trace } from "./Message";
 
 /**
@@ -37,5 +36,5 @@ export class CommandReply extends Message {
     }
 }
 
-export type CommandDoneCallback = (cmd: Command, success: boolean, msg: string) => void;
+export type CommandDoneCallback = (reply: CommandReply, success: boolean, msg: string) => void;
 export type CommandFailCallback = (failType: CommandFailType, msg: string) => void;

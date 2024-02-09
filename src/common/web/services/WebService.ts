@@ -1,4 +1,4 @@
-import { ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/NetworkEvents";
+import { ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/network/NetworkEvents";
 import { WebComponent } from "../component/WebComponent";
 import { ComponentState, componentStore } from "../data/stores/ComponentStore";
 import { Service } from "./Service";
