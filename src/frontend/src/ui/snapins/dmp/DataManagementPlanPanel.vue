@@ -21,7 +21,7 @@ const { project } = toRefs(props);
 const exporters: ExporterID[] = ["pdf", "raw"];
 const dmpProfile: PropertySet = new PropertySet(dfgDmp);
 
-const controller = reactive(new DmpController(dmpProfile));
+const controller = reactive(new DmpController(dmpProfile)) as DmpController;
 
 const handleDmpUpdate: Function = (data: any) => {
     logging.debug(`Received update from PropertyEditor: ${JSON.stringify(data)}`, "ProjectDetails");

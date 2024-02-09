@@ -3,10 +3,11 @@ import { ref, inject } from "vue";
 import InputNumber from "primevue/inputnumber";
 
 import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
+import { PropertySet } from "@common/ui/types/PropertySet";
 
 const props = defineProps(["property"]);
 
-const controller: PropertyController = inject("controller");
+const controller: PropertyController<PropertySet | PropertySet[]> = inject("controller");
 const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 

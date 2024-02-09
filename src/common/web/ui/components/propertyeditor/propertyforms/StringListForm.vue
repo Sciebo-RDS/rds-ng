@@ -3,10 +3,11 @@ import { ref, inject } from "vue";
 import Chips from "primevue/chips";
 
 import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
+import { PropertySet } from "@common/ui/types/PropertySet";
 
 const props = defineProps(["property"]);
 
-const controller: PropertyController = inject("controller");
+const controller: PropertyController<PropertySet | PropertySet[]> = inject("controller");
 const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 
@@ -20,12 +21,5 @@ const handleInput = (eValue: Event) => {
 </script>
 
 <template>
-    <Chips
-        @update:modelValue="handleInput"
-        v-model="value"
-        separator=","
-        class="inline"
-        :addOnBlur="true"
-        :placeholder="!value || value.length === 0 ? 'Separate by comma' : null"
-    />
+    <Chips @update:modelValue="handleInput" v-model="value" separator="," class="inline" :addOnBlur="true" placeholder="Separate by comma" />
 </template>

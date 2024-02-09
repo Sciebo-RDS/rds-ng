@@ -11,6 +11,7 @@ import { type Property as PropertyType } from "./PropertyProfile";
 import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
 import PropertyTwoCol from "@common/ui/components/propertyeditor/PropertyTwoCol.vue";
 import PropertyOneCol from "@common/ui/components/propertyeditor/PropertyOneCol.vue";
+import { PropertySet } from "./PropertySet";
 
 const propertyComponents = {
     twoCol: PropertyTwoCol,
@@ -19,7 +20,7 @@ const propertyComponents = {
 
 const props = defineProps(["category", "profileId", "project", "index"]);
 
-const controller: PropertyController = inject("controller");
+const controller: PropertyController<PropertySet | PropertySet[]> = inject("controller");
 const cols = inject("cols");
 const attrs = useAttrs();
 
@@ -50,12 +51,12 @@ const header = `${props.index + 1}. ${props.category.name}`;
 
 <template>
     <Accordion v-if="!attrs.hasOwnProperty('defaultSet')" class="w-full">
-        <AccordionTab :pt="{ headerAction: { class: '!bg-gray-100 !py-4' } }">
+        <AccordionTab :pt="{ header: { class: '!rounded-md !border !border-indigo-200' }, headerAction: { class: '!py-4' } }">
             <template #header>
-                <span class="flex align-items-center w-full"> {{ props.index + 1 }}. {{ props.category.name }} </span>
+                <span class="flex align-items-center w-full !text-gray-800"> {{ header }} </span>
             </template>
             <Card
-                class="border-0 drop-shadow-none"
+                class="drop-shadow-none"
                 :pt="{ root: { class: '!shadow-none' }, content: { class: '!p-0' }, title: { class: '!text-xl' }, body: { class: '!p-0' } }"
             >
                 <template #content>

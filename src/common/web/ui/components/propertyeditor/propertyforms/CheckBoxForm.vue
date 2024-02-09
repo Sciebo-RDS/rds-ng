@@ -5,10 +5,11 @@ import { getRandomId } from "../utils/Ids.ts";
 import Checkbox from "primevue/checkbox";
 
 import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
+import { PropertySet } from "@common/ui/types/PropertySet";
 
 const props = defineProps(["property"]);
 
-const controller: PropertyController = inject("controller");
+const controller: PropertyController<PropertySet | PropertySet[]> = inject("controller");
 const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 

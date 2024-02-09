@@ -9,7 +9,7 @@ export abstract class PropertyController<S extends PropertySet | PropertySet[]> 
     public constructor(propertySets: S, defaultSet?: PropertySet, mergeSets?: PropertySet[]) {}
 
     public abstract getValue(profileId: ProfileID, category: string, id: string): any;
-    public abstract setValue(profileId: ProfileID, debounce: number | null, category: string, id: string, value: any): void;
+    public abstract setValue(profileId: ProfileID, debounce: number | null, category: string, id: string, value: any): number;
     public abstract getProfileIds(): ProfileID[];
     public abstract getProfile(id: ProfileID): PropertyProfile;
     public abstract getCategoryById(id: ProfileID): PropertyCategory[];

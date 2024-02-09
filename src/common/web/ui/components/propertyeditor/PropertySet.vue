@@ -36,7 +36,7 @@ const toggle = (event) => {
 </script>
 
 <template>
-    <Toolbar :pt="{ root: { class: '!py-2' } }">
+    <Toolbar :pt="{ root: { class: '!py-2 !bg-gray-100' } }">
         <template #start>
             <div class="text-xl grow font-bold">
                 {{ `${profileId["name"]} v${profileId["version"]}` }}
