@@ -1,16 +1,16 @@
-import { SemVer } from "semver";
+import * as Vue from "vue";
 
-import StringForm from "@/ui/propeditor/propForms/StringForm.vue";
-import NumberForm from "@/ui/propeditor/propForms/NumberForm.vue";
-import TextAreaForm from "@/ui/propeditor/propForms/TextAreaForm.vue";
-import MultiSelectForm from "@/ui/propeditor/propForms/MultiSelectForm.vue";
-import StringListForm from "@/ui/propeditor/propForms/StringListForm.vue";
-import RadioButtonForm from "@/ui/propeditor/propForms/RadioButtonForm.vue";
-import DateForm from "@/ui/propeditor/propForms/DateForm.vue";
-import DropDownForm from "@/ui/propeditor/propForms/DropdownForm.vue";
-import CheckBoxForm from "@/ui/propeditor/propForms/CheckBoxForm.vue";
+import StringForm from "./propertyforms/StringForm.vue";
+import NumberForm from "./propertyforms/NumberForm.vue";
+import TextAreaForm from "./propertyforms/TextAreaForm.vue";
+import MultiSelectForm from "./propertyforms/MultiSelectForm.vue";
+import StringListForm from "./propertyforms/StringListForm.vue";
+import RadioButtonForm from "./propertyforms/RadioButtonForm.vue";
+import DateForm from "./propertyforms/DateForm.vue";
+import DropDownForm from "./propertyforms/DropdownForm.vue";
+import CheckBoxForm from "./propertyforms/CheckBoxForm.vue";
 
-export type ProfileID = { name: string; version: SemVer };
+export type ProfileID = { name: string; version: string };
 
 export type PropertyProfile = {
     profile_id: ProfileID;
@@ -19,7 +19,7 @@ export type PropertyProfile = {
 
 export type PropertyCategory = {
     id: string;
-    name?: string;
+    name: string;
     description?: string;
     properties: (Property | SelectionProperty)[];
 };

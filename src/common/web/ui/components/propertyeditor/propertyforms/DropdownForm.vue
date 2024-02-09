@@ -2,26 +2,20 @@
 import { ref, inject } from "vue";
 import Dropdown from "primevue/dropdown";
 
+import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
+
 const props = defineProps(["property"]);
 
-const controller = inject("controller");
+const controller: PropertyController = inject("controller");
 const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 
-const value = ref(
-    controller.getValue(profileId, categoryId, props.property.id)
-);
+const value = controller.getValue(profileId, categoryId, props.property.id);
 
 let debounce: number | null = null;
 
 const handleInput = (e: string) => {
-    debounce = controller.setValue(
-        profileId,
-        debounce,
-        categoryId,
-        props.property.id,
-        e.value
-    );
+    debounce = controller.setValue(profileId, debounce, categoryId, props.property.id, e.value);
 };
 </script>
 

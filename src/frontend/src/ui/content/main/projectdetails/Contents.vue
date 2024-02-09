@@ -11,19 +11,17 @@ import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 const props = defineProps({
     project: {
         type: Project,
-        required: true
-    }
+        required: true,
+    },
 });
 const { project } = toRefs(props);
 
 const panels = computed(() => {
     // Select all snap-ins that provide a tab panel and are either non-optional or turned on by the user
-    const panelSnapIns = SnapInsCatalog.allWithTabPanel().filter(
-        (snapIn) => {
-            const uiOptions = project!.value.options.ui as UIOptions;
-            return !snapIn.isOptional() || uiOptions.optional_snapins?.includes(snapIn.snapInID);
-        }
-    );
+    const panelSnapIns = SnapInsCatalog.allWithTabPanel().filter((snapIn) => {
+        const uiOptions = project!.value.options.ui as UIOptions;
+        return !snapIn.isOptional() || uiOptions.optional_snapins?.includes(snapIn.snapInID);
+    });
     return panelSnapIns.map((snapIn) => {
         return { title: snapIn.options.tabPanel!.label, component: defineAsyncComponent(snapIn.options.tabPanel!.loader) };
     });
@@ -32,13 +30,21 @@ const panels = computed(() => {
 
 <template>
     <div>
-        <TabView :pt="{
-            nav: 'tab-view'
-        }">
-            <TabPanel v-for="panel in panels" :key="panel.title" :header="panel.title" :pt="{
-                header: 'tab-view-panel',
-                headerAction: 'tab-view-panel-action'
-            }">
+        <TabView
+            :pt="{
+                nav: 'tab-view',
+                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.6rem)]' /*HACK height*/,
+            }"
+        >
+            <TabPanel
+                v-for="panel in panels"
+                :key="panel.title"
+                :header="panel.title"
+                :pt="{
+                    header: 'tab-view-panel',
+                    headerAction: 'tab-view-panel-action',
+                }"
+            >
                 <component :is="panel.component" :project="project" />
             </TabPanel>
         </TabView>
