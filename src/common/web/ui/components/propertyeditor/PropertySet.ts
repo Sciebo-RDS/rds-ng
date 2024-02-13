@@ -11,6 +11,16 @@ export type PersistedPropertySet = {
     properties: Properties;
 };
 
+export class PersistedSet {
+    public readonly profile_id: ProfileID;
+    public readonly categories: Properties;
+
+    public constructor(profile_id: ProfileID, categories: Properties) {
+        this.profile_id = profile_id;
+        this.categories = categories;
+    }
+}
+
 /**
  * Data for a single **PropertySet**.
  *
@@ -75,10 +85,8 @@ export class PropertySet {
 
     // TODO export Class
     public exportPropertySet() {
-        return {
-            profile_id: this.profile_id,
-            properties: this.properties,
-        };
+        console.log("Exporting PropertySet");
+        return new PersistedSet(this.profile_id, this.properties);
     }
 
     private _validateProfile() {
