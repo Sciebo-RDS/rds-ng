@@ -1,6 +1,6 @@
 import logging from "@common/core/logging/Logging";
 
-import { PropertySet, type PersistedPropertySet } from "./PropertySet";
+import { PropertySet, PersistedSet } from "./PropertySet";
 import { type PropertyProfile, type PropertyCategory, type ProfileID } from "./PropertyProfile";
 
 export abstract class PropertyController<S extends PropertySet | PropertySet[]> {
@@ -13,7 +13,7 @@ export abstract class PropertyController<S extends PropertySet | PropertySet[]> 
     public abstract getProfileIds(): ProfileID[];
     public abstract getProfile(id: ProfileID): PropertyProfile;
     public abstract getCategoryById(id: ProfileID): PropertyCategory[];
-    public abstract exportData(): PersistedPropertySet[];
+    public abstract exportData(): PersistedSet[];
     public abstract setsToWatch(): PropertySet[];
 }
 
@@ -82,7 +82,7 @@ export class MetadataController extends PropertyController<PropertySet | Propert
         return this.propertySets.filter((e) => e.profile_id["name"] === id["name"] && e.profile_id["version"] === id["version"])[0];
     }
 
-    public exportData(): PersistedPropertySet[] {
+    public exportData(): PersistedSet[] {
         if (!this.defaultSet) {
             //is DMP
             return this.propertySets.map((e) => e.exportPropertySet());
@@ -173,7 +173,7 @@ export class DmpController extends PropertyController<PropertySet | PropertySet[
         return new PropertySet({} as PropertyProfile);
     }
 
-    public exportData(): PersistedPropertySet[] {
+    public exportData(): PersistedSet[] {
         return [this.dmpSet.exportPropertySet()];
     }
 

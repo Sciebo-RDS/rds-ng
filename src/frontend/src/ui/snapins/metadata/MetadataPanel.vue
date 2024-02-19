@@ -6,7 +6,7 @@ import { MetadataController } from "@common/ui/components/propertyeditor/Propert
 import { testProfile, testValues } from "@common/ui/components/propertyeditor/DummyData";
 import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
 import { osf } from "@common/ui/components/propertyeditor/profiles/osf";
-import { PropertySet, type PersistedPropertySet, PersistedSet } from "@common/ui/components/propertyeditor/PropertySet";
+import { PropertySet, PersistedSet } from "@common/ui/components/propertyeditor/PropertySet";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import logging from "@common/core/logging/Logging";
 const props = defineProps({
@@ -18,22 +18,11 @@ const props = defineProps({
 
 /* Testdata */
 const baseSet = new PropertySet(dataCite);
-console.log(baseSet);
 const mergeSet = [new PropertySet(osf)];
-console.log(mergeSet);
 
 const profiles: PropertySet[] = [];
 
-/*
- deserialize PersistedSet -> e.g. testvalues = { profile_id = {PersistedSet}.profile_id, {PersistedSet}.categories}
- */
-
-try {
-    profiles.push(new PropertySet(testProfile, testValues));
-} catch (e: any) {
-    logging.error(e, "propertyeditor");
-}
-/* Testdata */
+profiles.push(new PropertySet(testProfile, testValues));
 
 const controller = reactive(new MetadataController(profiles, baseSet, mergeSet)) as MetadataController;
 

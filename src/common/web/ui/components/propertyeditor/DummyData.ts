@@ -1,5 +1,5 @@
 import { type PropertyProfile, PropertyDataType } from "./PropertyProfile";
-import { type PersistedPropertySet } from "./PropertySet";
+import { PersistedSet } from "./PropertySet";
 
 export const testProfile: PropertyProfile = {
     profile_id: { name: "Additional Profile", version: "1.1.1" },
@@ -86,9 +86,9 @@ export const testProfile: PropertyProfile = {
     ],
 };
 
-export const testValues: PersistedPropertySet = {
-    profile_id: { name: "Additional Profile", version: "1.1.1" },
-    properties: {
+export const testValues: PersistedSet = new PersistedSet(
+    { name: "Additional Profile", version: "1.1.1" },
+    {
         General: {
             Author: "John Doee",
         },
@@ -96,4 +96,4 @@ export const testValues: PersistedPropertySet = {
             SomeMultiselect: ["asd", "another thing"],
         },
     },
-};
+);

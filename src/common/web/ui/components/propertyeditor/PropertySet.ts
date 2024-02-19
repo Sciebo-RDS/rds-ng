@@ -6,11 +6,6 @@ export type Properties = {
     };
 };
 
-export type PersistedPropertySet = {
-    profile_id: ProfileID;
-    properties: Properties;
-};
-
 export class PersistedSet {
     public readonly profile_id: ProfileID;
     public readonly categories: Properties;
@@ -34,7 +29,7 @@ export class PropertySet {
 
     public constructor(
         public profile: PropertyProfile,
-        public propertyData: PersistedPropertySet | null = null,
+        public propertyData: PersistedSet | null = null,
     ) {
         if (!this._validateProfile()) {
             throw new Error("PropertyProfile is not valid.");
@@ -53,7 +48,7 @@ export class PropertySet {
             );
         }
 
-        this.properties = propertyData["properties"] as Properties;
+        this.properties = propertyData["categories"] as Properties;
     }
 
     public setProperty(category: string, id: string, value: any): void {
@@ -83,9 +78,7 @@ export class PropertySet {
         return JSON.stringify(this);
     }
 
-    // TODO export Class
     public exportPropertySet() {
-        console.log("Exporting PropertySet");
         return new PersistedSet(this.profile_id, this.properties);
     }
 
@@ -97,5 +90,3 @@ export class PropertySet {
         return propertyDataId["name"] === profileProfileId["name"] && propertyDataId["version"] === profileProfileId["version"];
     }
 }
-
-// TODO Make types -> classes, put class files in /data
