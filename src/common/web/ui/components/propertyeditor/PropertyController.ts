@@ -4,9 +4,11 @@ import { PropertySet, PersistedSet } from "./PropertySet";
 import { type PropertyProfile, type PropertyCategory, type ProfileID } from "./PropertyProfile";
 
 export abstract class PropertyController<S extends PropertySet | PropertySet[]> {
-    defaultSet?: PropertySet;
+    defaultSet: PropertySet;
     mergeSets?: PropertySet[];
-    public constructor(propertySets: S, defaultSet?: PropertySet, mergeSets?: PropertySet[]) {}
+    propertySet?: PropertySet | PropertySet[];
+
+    public constructor(defaultSet: PropertySet, mergeSets?: PropertySet[], propertySets?: S) {}
 
     public abstract getValue(profileId: ProfileID, category: string, id: string): any;
     public abstract setValue(profileId: ProfileID, debounce: number | null, category: string, id: string, value: any): number;
@@ -21,12 +23,20 @@ export class MetadataController extends PropertyController<PropertySet | Propert
     defaultSet: PropertySet;
     propertySets: PropertySet[];
 
-    public constructor(propertySet: PropertySet | PropertySet[], defaultSet: PropertySet, mergeSets?: PropertySet[]) {
-        super(propertySet, defaultSet, mergeSets);
-        if (Array.isArray(propertySet)) {
-            this.propertySets = propertySet;
-        } else {
-            this.propertySets = [propertySet];
+    /**
+     *
+     * @param defaultSet - The default PropertySet (i.e. DataCite)
+     * @param mergeSets - An array of PropertySet to be merged with the defaultSet (i.e. metadata required for a connector like OSF)
+     * @param propertySet - One or more additinal PropertySets that will be displayed in an according (i.e. domain specific Metadata)
+     */
+    public constructor(defaultSet: PropertySet, mergeSets?: PropertySet[], propertySet?: PropertySet | PropertySet[]) {
+        super(defaultSet, mergeSets, propertySet);
+        if (!!propertySet) {
+            if (Array.isArray(propertySet)) {
+                this.propertySets = propertySet;
+            } else {
+                this.propertySets = [propertySet];
+            }
         }
 
         if (mergeSets) {
@@ -36,6 +46,7 @@ export class MetadataController extends PropertyController<PropertySet | Propert
         }
     }
 
+    // FIXME Merge set properties are not covered
     public getValue(profileId: ProfileID, category: string, id: string): any {
         try {
             if (this.defaultSet?.profile_id === profileId) {
@@ -114,7 +125,7 @@ export class MetadataController extends PropertyController<PropertySet | Propert
     }
 
     public getDefaultProfile(): ProfileID {
-        return this.defaultSet.profile.profile_id;
+        return this.defaultSet.profile_id;
     }
 
     public setsToWatch(): PropertySet[] {
@@ -125,10 +136,10 @@ export class MetadataController extends PropertyController<PropertySet | Propert
 export class DmpController extends PropertyController<PropertySet | PropertySet[]> {
     dmpSet: PropertySet;
 
-    public constructor(propertySet: PropertySet) {
-        super(propertySet);
+    public constructor(defaultSet: PropertySet) {
+        super(defaultSet);
 
-        this.dmpSet = propertySet;
+        this.dmpSet = defaultSet;
     }
 
     public getValue(profileId: ProfileID, category: string, id: string): any {

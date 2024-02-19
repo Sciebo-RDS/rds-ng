@@ -24,7 +24,7 @@ const profiles: PropertySet[] = [];
 
 profiles.push(new PropertySet(testProfile, testValues));
 
-const controller = reactive(new MetadataController(profiles, baseSet, mergeSet)) as MetadataController;
+const controller = reactive(new MetadataController(baseSet, mergeSet, profiles)) as MetadataController;
 
 const handleMetadataUpdate: Function = (data: PersistedSet) => {
     logging.debug(`Received update from PropertyEditor: ${JSON.stringify(data)}`, "ProjectDetails");
