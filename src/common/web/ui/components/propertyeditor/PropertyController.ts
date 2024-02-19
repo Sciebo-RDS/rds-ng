@@ -44,6 +44,8 @@ export class MetadataController extends PropertyController<PropertySet | Propert
         } else {
             this.defaultSet = defaultSet;
         }
+
+        this._logLoadedSets(mergeSets);
     }
 
     // FIXME Merge set properties are not covered
@@ -131,6 +133,23 @@ export class MetadataController extends PropertyController<PropertySet | Propert
     public setsToWatch(): PropertySet[] {
         return [...this.propertySets, this.defaultSet];
     }
+
+    private _logLoadedSets(mergeSets: PropertySet[] | null = null): void {
+        if (!this.getDefaultProfile()) {
+            logging.error(`Could not load a default profile.`, "MetadataEditor");
+            return;
+        }
+
+        let log = `Loaded default profile ${JSON.stringify(this.getDefaultProfile())}${
+            !!mergeSets ? ` with extension(s) ${mergeSets.map((e) => JSON.stringify(e.profile_id))}` : "without extensions"
+        }.`;
+
+        if (this.getProfileIds().length) {
+            log += ` Loaded ${this.getProfileIds().length} additional profile(s): ${JSON.stringify(this.getProfileIds())}`;
+        }
+
+        logging.info(log, "MetadataEditor");
+    }
 }
 
 export class DmpController extends PropertyController<PropertySet | PropertySet[]> {
@@ -140,6 +159,8 @@ export class DmpController extends PropertyController<PropertySet | PropertySet[
         super(defaultSet);
 
         this.dmpSet = defaultSet;
+
+        this._logLoadedSets();
     }
 
     public getValue(profileId: ProfileID, category: string, id: string): any {
@@ -190,5 +211,14 @@ export class DmpController extends PropertyController<PropertySet | PropertySet[
 
     public setsToWatch(): PropertySet[] {
         return [this.dmpSet];
+    }
+
+    private _logLoadedSets(): void {
+        if (!this.getProfileIds()) {
+            logging.error(`Could not load a default profile.`, "DmpEditor");
+            return;
+        }
+
+        logging.info(`Loaded DMP profile: ${JSON.stringify(...this.getProfileIds())}`, "DmpEditor");
     }
 }

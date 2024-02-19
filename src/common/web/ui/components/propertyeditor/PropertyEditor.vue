@@ -37,12 +37,6 @@ provide("controller", controller);
 provide("logging", logging);
 provide("cols", cols(attrs));
 
-if (controller.getProfileIds().length) {
-    logging.info(`Loaded ${controller.getProfileIds().length} profiles: ${JSON.stringify(controller.getProfileIds())}`, "propertyeditor");
-} else {
-    logging.warning(`Could not load any metadata Profiles.`, "propertyeditor");
-}
-
 watch(controller.setsToWatch(), () => {
     emit("update", controller.exportData());
 });
