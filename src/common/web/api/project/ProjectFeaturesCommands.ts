@@ -6,8 +6,11 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
-import { type ProjectFeatureID } from "../../data/entities/project/features/ProjectFeature";
+import { DataManagementPlanFeature } from "../../data/entities/project/features/DataManagementPlanFeature";
+import { MetadataFeature } from "../../data/entities/project/features/MetadataFeature";
+import { ProjectFeature, type ProjectFeatureID } from "../../data/entities/project/features/ProjectFeature";
 import { ProjectFeatures } from "../../data/entities/project/features/ProjectFeatures";
+import { ResourcesMetadataFeature } from "../../data/entities/project/features/ResourcesMetadataFeature";
 import { type ProjectID } from "../../data/entities/project/Project";
 
 /**
@@ -34,11 +37,27 @@ export class UpdateProjectFeaturesCommand extends Command {
     public static build(
         messageBuilder: MessageBuilder,
         project_id: ProjectID,
-        updated_features: ProjectFeatureID[],
-        features: ProjectFeatures,
+        updates: ProjectFeature[],
         chain: Message | null = null
     ): CommandComposer<UpdateProjectFeaturesCommand> {
-        return messageBuilder.buildCommand(UpdateProjectFeaturesCommand, { project_id: project_id, updated_features: updated_features, features: features }, chain);
+        const getFeature = <FeatureType>(featureID: ProjectFeatureID): FeatureType | undefined => {
+            for (const feature of updates) {
+                if (feature.featureID == featureID) {
+                    return feature as FeatureType;
+                }
+            }
+            return undefined;
+        };
+
+        return messageBuilder.buildCommand(UpdateProjectFeaturesCommand, {
+            project_id: project_id,
+            updated_features: updates.map((feature) => feature.featureID),
+            features: new ProjectFeatures(
+                getFeature<MetadataFeature>(MetadataFeature.FeatureID),
+                getFeature<ResourcesMetadataFeature>(ResourcesMetadataFeature.FeatureID),
+                getFeature<DataManagementPlanFeature>(DataManagementPlanFeature.FeatureID)
+            )
+        }, chain);
     }
 }
 

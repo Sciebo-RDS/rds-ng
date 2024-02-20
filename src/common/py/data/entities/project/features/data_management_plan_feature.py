@@ -17,4 +17,4 @@ class DataManagementPlanFeature(ProjectFeature):
 
     feature_id: typing.ClassVar[ProjectFeatureID] = "dmp"
 
-    dmp: DataManagementPlan = field(default_factory=dict)
+    plan: DataManagementPlan = field(default_factory=dict)

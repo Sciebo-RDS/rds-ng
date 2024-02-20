@@ -5,4 +5,8 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
  */
 export class ResourcesMetadataFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "resources_metadata";
+
+    public get featureID(): ProjectFeatureID {
+        return ResourcesMetadataFeature.FeatureID;
+    }
 }

@@ -17,10 +17,10 @@ export class ProjectFeatures {
     public readonly metadata: MetadataFeature = new MetadataFeature();
     // @ts-ignore
     @Type(() => ResourcesMetadataFeature)
-    public readonly resources_metadata: ResourcesMetadataFeature = new MetadataFeature();
+    public readonly resources_metadata: ResourcesMetadataFeature = new ResourcesMetadataFeature();
     // @ts-ignore
     @Type(() => DataManagementPlanFeature)
-    public readonly dmp: DataManagementPlanFeature = new MetadataFeature();
+    public readonly dmp: DataManagementPlanFeature = new DataManagementPlanFeature();
 
     public constructor(
         metadata?: MetadataFeature,
