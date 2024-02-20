@@ -1,4 +1,4 @@
-import { type Constructable } from "@common/utils/Types";
+import { type Constructable } from "../../../../utils/Types";
 
 import { Exporter, type ExporterID } from "./Exporter";
 import { ExportersCatalog } from "./ExportersCatalog";

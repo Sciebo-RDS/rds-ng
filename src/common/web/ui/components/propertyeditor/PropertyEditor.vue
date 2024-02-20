@@ -4,7 +4,7 @@ import PropertySet from "./PropertySet.vue";
 import PropertyDefaultSet from "./PropertyDefaultSet.vue";
 import InlineMessage from "primevue/inlinemessage";
 import { Logger } from "./utils/Logging";
-import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
+import { PropertyController } from "./PropertyController";
 import type { ExporterID } from "./exporters/Exporter";
 
 const emit = defineEmits(["update"]);

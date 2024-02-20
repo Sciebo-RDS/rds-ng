@@ -1,4 +1,4 @@
-import { ItemsCatalog } from "@common/utils/ItemsCatalog";
+import { ItemsCatalog } from "../../../../utils/ItemsCatalog";
 
 import { Exporter, type ExporterID } from "./Exporter";
 

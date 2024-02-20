@@ -1,4 +1,4 @@
-import logging from "@common/core/logging/Logging";
+import logging from "../../../core/logging/Logging";
 
 import { PropertySet, PersistedSet } from "./PropertySet";
 import { type PropertyProfile, type PropertyCategory, type ProfileID } from "./PropertyProfile";
@@ -218,6 +218,6 @@ export class DmpController extends PropertyController<PropertySet | PropertySet[
             return;
         }
 
-        logging.info(`Loaded DMP profile: ${JSON.stringify(...this.getProfileIds())}`, "DmpEditor");
+        logging.info(`Loaded DMP profile: ${JSON.stringify(this.getProfileIds())}`, "DmpEditor");
     }
 }

@@ -4,7 +4,7 @@ import Button from "primevue/button";
 import Menu from "primevue/menu";
 import Toolbar from "primevue/toolbar";
 
-import { ExportersCatalog } from "@common/ui/components/propertyeditor/exporters/ExportersCatalog";
+import { ExportersCatalog } from "./exporters/ExportersCatalog";
 import PropertyCategory from "./PropertyCategory.vue";
 
 const props = defineProps(["controller", "profileId", "project", "exporters"]);
