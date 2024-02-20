@@ -1,45 +1,65 @@
 <script setup lang="ts">
-import { toRefs, reactive } from "vue";
+import { reactive, toRefs, unref } from "vue";
 
-import { Project } from "@common/data/entities/project/Project";
-import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
-import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
-import { PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import { WebComponent } from "@common/component/WebComponent";
 import logging from "@common/core/logging/Logging";
-import { type ExporterID } from "@common/ui/components/propertyeditor/Exporter";
+import { Project } from "@common/data/entities/project/Project";
+import { ProjectFeatures } from "@common/data/entities/project/features/ProjectFeatures";
+import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
+import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
+import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
+import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
+import { extractPersistedSetFromArray } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
+import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+
+import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
+
+const comp = WebComponent.injectComponent();
 const props = defineProps({
     project: {
         type: Project,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
-/* Testdata */
+// TODO: Testing data only
 const exporters: ExporterID[] = ["pdf", "raw"];
-const dmpProfile: PropertySet = new PropertySet(dfgDmp);
 
-const controller = reactive(new DmpController(dmpProfile)) as DmpController;
+const dmp = Object.keys(project!.value.features.dmp.dmp).length ? unref<PersistedSet>(project!.value.features.dmp.dmp) : undefined;
+const dmpProfile: PropertySet = new PropertySet(dfgDmp, dmp);
 
-const handleDmpUpdate: Function = (data: any) => {
-    logging.debug(`Received update from PropertyEditor: ${JSON.stringify(data)}`, "ProjectDetails");
+const controller = reactive(new DmpController(dmpProfile));
+
+const handleMetadataUpdate = (data: PersistedSet[]) => {
+    const profileID = dfgDmp.profile_id;
+    const set = extractPersistedSetFromArray(data, profileID);
+
+    if (set) {
+        const action = new UpdateProjectFeaturesAction(comp);
+        action.prepare(project!.value.project_id, project!.value.title, [DataManagementPlanFeature.FeatureID],
+            new ProjectFeatures(
+                undefined,
+                undefined,
+                new DataManagementPlanFeature(set)
+            )
+        );
+        action.execute();
+    }
 };
 </script>
 
 <template>
-    <div v-if="!!controller">
-        <PropertyEditor
-            @update="(data: any) => handleDmpUpdate(data)"
-            :controller="controller"
-            :logging="logging"
-            :exporters="exporters"
-            :project="project"
-            oneCol
-        />
-    </div>
-    <div v-else>... and I am the humble DMP ...</div>
+    <PropertyEditor
+        @update="handleMetadataUpdate"
+        :controller="controller"
+        :logging="logging"
+        :exporters="exporters"
+        :project="project"
+        oneCol
+    />
 </template>
 
 <style scoped lang="scss"></style>
