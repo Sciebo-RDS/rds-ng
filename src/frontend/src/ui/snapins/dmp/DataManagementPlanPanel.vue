@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { reactive, toRefs } from "vue";
 
-import { WebComponent } from "@common/component/WebComponent";
 import logging from "@common/core/logging/Logging";
 import { Project } from "@common/data/entities/project/Project";
 import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
@@ -13,9 +12,10 @@ import { extractPersistedSetFromArray } from "@common/ui/components/propertyedit
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 
-const comp = WebComponent.injectComponent();
+const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,

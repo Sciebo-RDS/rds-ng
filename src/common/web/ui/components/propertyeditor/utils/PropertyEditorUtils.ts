@@ -1,4 +1,4 @@
-import { ProfileID } from "../PropertyProfile";
+import { type ProfileID } from "../PropertyProfile";
 import { PersistedSet } from "../PropertySet";
 
 /**
