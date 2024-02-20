@@ -23,6 +23,6 @@ const handleInput = (eValue: string) => {
 
 <template>
     <div class="">
-        <Calendar @update:modelValue="handleInput" dateFormat="yy/mm/dd" v-model="value" class="w-full" view="year" />
+        <Calendar @update:modelValue="handleInput" dateFormat="yy" v-model="value" class="w-full" view="year" />
     </div>
 </template>

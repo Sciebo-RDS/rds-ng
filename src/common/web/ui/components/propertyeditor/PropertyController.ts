@@ -48,7 +48,6 @@ export class MetadataController extends PropertyController<PropertySet | Propert
         this._logLoadedSets(mergeSets);
     }
 
-    // FIXME Merge set properties are not covered
     public getValue(profileId: ProfileID, category: string, id: string): any {
         try {
             if (this.defaultSet?.profile_id === profileId) {

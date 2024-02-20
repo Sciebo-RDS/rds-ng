@@ -11,7 +11,7 @@ const controller: PropertyController<PropertySet | PropertySet[]> = inject("cont
 const categoryId = inject("categoryId");
 const profileId = inject("profileId");
 
-const value = controller.getValue(profileId, categoryId, props.property.id);
+const value = ref(controller.getValue(profileId, categoryId, props.property.id));
 
 let debounce: number | null = null;
 

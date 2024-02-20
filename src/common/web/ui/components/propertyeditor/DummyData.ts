@@ -46,14 +46,6 @@ export const testProfile: PropertyProfile = {
                     options: ["asd", "something else", "another thing"],
                 },
                 {
-                    id: "Radio",
-                    name: "Some Radio Buttons",
-                    type: PropertyDataType.RADIOBUTTONS,
-                    description: "Here are some Radio Buttons",
-                    showAlways: true,
-                    options: ["asd", "something else", "another thing"],
-                },
-                {
                     id: "Number",
                     name: "Number",
                     type: PropertyDataType.NUMBER,
