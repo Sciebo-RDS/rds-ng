@@ -29,7 +29,7 @@ export class PropertySet {
 
     public constructor(
         public profile: PropertyProfile,
-        public propertyData: PersistedSet | null = null,
+        public propertyData: PersistedSet = {} as PersistedSet,
     ) {
         if (!this._validateProfile()) {
             throw new Error("PropertyProfile is not valid.");
@@ -37,7 +37,7 @@ export class PropertySet {
 
         this.profile_id = profile["profile_id"];
 
-        if (!propertyData) {
+        if (!("profile_id" in Object.keys(propertyData))) {
             this.properties = {} as Properties;
             return;
         }
