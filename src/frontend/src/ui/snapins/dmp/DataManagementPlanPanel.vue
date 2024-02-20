@@ -39,6 +39,10 @@ const handleMetadataUpdate = (data: PersistedSet[]) => {
         action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet)]);
         action.execute();
     }
+
+    // TODO: Just a quick hack, perform update in a better way later
+    // @ts-ignore
+    project!.value.features.dmp.plan = dmpSet;
 };
 </script>
 
