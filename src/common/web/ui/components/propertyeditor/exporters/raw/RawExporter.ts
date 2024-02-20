@@ -1,4 +1,4 @@
-import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
+import { PropertyController } from "../../PropertyController";
 import { Exporter, type ExporterID } from "../Exporter";
 
 export class RawExporter extends Exporter {

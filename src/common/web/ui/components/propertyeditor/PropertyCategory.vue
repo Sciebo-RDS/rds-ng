@@ -8,9 +8,9 @@ import Accordion from "primevue/accordion";
 import AccordionTab from "primevue/accordiontab";
 
 import { type Property as PropertyType } from "./PropertyProfile";
-import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
-import PropertyTwoCol from "@common/ui/components/propertyeditor/PropertyTwoCol.vue";
-import PropertyOneCol from "@common/ui/components/propertyeditor/PropertyOneCol.vue";
+import { PropertyController } from "./PropertyController";
+import PropertyTwoCol from "./PropertyTwoCol.vue";
+import PropertyOneCol from "./PropertyOneCol.vue";
 import { PropertySet } from "./PropertySet";
 
 const propertyComponents = {
@@ -20,7 +20,7 @@ const propertyComponents = {
 
 const props = defineProps(["category", "profileId", "project", "index"]);
 
-const controller: PropertyController<PropertySet | PropertySet[]> = inject("controller");
+const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
 const cols = inject("cols");
 const attrs = useAttrs();
 
@@ -38,13 +38,13 @@ const propsToShow = !attrs.hasOwnProperty("defaultSet")
 
 const propsToSelect = ref(props.category.properties.filter((p: PropertyType) => !propsToShow.value.includes(p)));
 
-function updatePropsToShow(e: Event) {
+function updatePropsToShow(e: any) {
     propsToShow.value = [...propsToShow.value, props.category.properties.filter((p: PropertyType) => p.name === e.value)[0] as PropertyType];
     propsToSelect.value = propsToSelect.value.filter((p: PropertyType) => !propsToShow.value.includes(p));
     showPropertySelector.value = false;
 }
 
-const propertyElement = propertyComponents[cols];
+const propertyElement = propertyComponents[cols as number];
 
 const header = `${props.index + 1}. ${props.category.name}`;
 </script>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import { propertyDataForms } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { propertyDataForms } from "./PropertyProfile";
 
 const props = defineProps(["property"]);
 

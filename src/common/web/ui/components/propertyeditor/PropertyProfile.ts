@@ -1,4 +1,4 @@
-import * as Vue from "vue";
+import type { Component } from "vue";
 
 import StringForm from "./propertyforms/StringForm.vue";
 import NumberForm from "./propertyforms/NumberForm.vue";
@@ -52,7 +52,7 @@ export enum PropertyDataType {
     CHECKBOX = "checkbox",
 }
 
-export const propertyDataForms: { [key in PropertyDataType]?: typeof Vue } = {
+export const propertyDataForms: { [key in PropertyDataType]?: Component } = {
     [PropertyDataType.STRING]: StringForm,
     [PropertyDataType.NUMBER]: NumberForm,
     [PropertyDataType.TEXTAREA]: TextAreaForm,

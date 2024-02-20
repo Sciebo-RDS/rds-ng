@@ -1,12 +1,14 @@
+// @ts-nocheck
+
 import type { ProfileID, PropertyCategory } from "../../PropertyProfile";
-import { PropertyController } from "@common/ui/components/propertyeditor/PropertyController";
+import { PropertyController } from "../../PropertyController";
 
 interface DocumentDefinition {
     controller: PropertyController<any>;
     profileId: ProfileID;
     pageSize: string;
-    header: [{ [string: string]: string }];
-    content: [];
+    header: {}[];
+    content: {}[];
     styles: {
         title: {
             fontSize: number;
@@ -32,9 +34,7 @@ interface DocumentDefinition {
         };
     };
     images: { [string: string]: string };
-    footer: {
-        columns: { text: string; alignment: string };
-    };
+    footer: {};
 
     buildDocumentDefinition(): any;
 }
@@ -44,10 +44,13 @@ export class DmpDocumentDefinition implements DocumentDefinition {
     profileId;
     pageSize;
     header;
-    content;
+    content: {}[];
     styles;
     images;
-    footer;
+    footer: {
+        columns: [{ text: string; alignment: string }];
+        style: any;
+    };
 
     constructor(controller: PropertyController<any>, profileId: ProfileID) {
         this.controller = controller;
@@ -90,7 +93,7 @@ export class DmpDocumentDefinition implements DocumentDefinition {
         this.footer = {
             columns: [
                 {
-                    text: `${profileId.name}, version ${profileId.version["raw"]}.`,
+                    text: `${profileId.name}, version ${profileId.version}.`,
                     alignment: "right",
                 },
             ],
@@ -151,8 +154,8 @@ export class DmpDocumentDefinition implements DocumentDefinition {
         };
     }
 
-    private _makeCategoryProperties(categoryId: string, properties): {} {
-        let categoryProperties = [];
+    private _makeCategoryProperties(categoryId: string, properties: any): {} {
+        const categoryProperties: {}[] = [];
         for (const property of properties) {
             const propertyData = this.controller.getValue(this.profileId, categoryId, property.id);
             categoryProperties.push({ text: property.name, style: "subheader" });

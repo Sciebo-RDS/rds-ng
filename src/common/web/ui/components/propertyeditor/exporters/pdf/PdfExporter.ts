@@ -1,5 +1,5 @@
 import { Exporter, type ExporterID } from "../Exporter";
-import { PdfExporterExport } from "@common/ui/components/propertyeditor/exporters/pdf/_PdfExporter";
+import { PdfExporterExport } from "./_PdfExporter";
 import { DmpDocumentDefinition } from "./DocumentDefinition";
 import { MetadataController } from "../../PropertyController";
 
