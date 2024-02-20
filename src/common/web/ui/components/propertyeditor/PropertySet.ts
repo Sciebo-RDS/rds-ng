@@ -22,14 +22,14 @@ export class PersistedSet {
  * @param profileId - The ID {name: string, version: string} that uniquely identifies the corresponding PropertyProfile.
  * @param properties - Property data values
 
-*/
+ */
 export class PropertySet {
     public readonly properties: Properties;
     public readonly profile_id: ProfileID;
 
     public constructor(
         public profile: PropertyProfile,
-        public propertyData: PersistedSet = {} as PersistedSet,
+        public propertyData: PersistedSet = {} as PersistedSet
     ) {
         if (!this._validateProfile()) {
             throw new Error("PropertyProfile is not valid.");
@@ -37,18 +37,17 @@ export class PropertySet {
 
         this.profile_id = profile["profile_id"];
 
-        if (!("profile_id" in Object.keys(propertyData))) {
+        if (Object.keys(propertyData).includes("profile_id")) {
+            if (!this._dataMatchesProfile(propertyData["profile_id"], profile["profile_id"])) {
+                throw new Error(
+                    `Provided data does not match profile. Data uses profile \"${propertyData["profile_id"]["name"]} ${propertyData["profile_id"]["version"]}\" but profile is \"${profile["profile_id"]["name"]} ${profile["profile_id"]["version"]}\".`
+                );
+            }
+
+            this.properties = propertyData["categories"] as Properties;
+        } else {
             this.properties = {} as Properties;
-            return;
         }
-
-        if (!this._dataMatchesProfile(propertyData["profile_id"], profile["profile_id"])) {
-            throw new Error(
-                `Provided data does not match profile. Data uses profile \"${propertyData["profile_id"]["name"]} ${propertyData["profile_id"]["version"]}\" but profile is \"${profile["profile_id"]["name"]} ${profile["profile_id"]["version"]}\".`,
-            );
-        }
-
-        this.properties = propertyData["categories"] as Properties;
     }
 
     public setProperty(category: string, id: string, value: any): void {
