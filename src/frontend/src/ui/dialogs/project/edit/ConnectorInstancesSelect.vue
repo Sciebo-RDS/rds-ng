@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import Checkbox from "primevue/checkbox";
 import ScrollPanel from "primevue/scrollpanel";
-import { computed, toRefs, unref } from "vue";
+import { computed, toRefs } from "vue";
 
 import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
 
@@ -23,7 +23,7 @@ const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
 const { disabled } = toRefs(props);
 
-const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, unref(connectors.value)));
+const groupedInstances = computed(() => groupConnectorInstances(userSettings.value.connector_instances, connectors.value));
 const model = defineModel({ default: [] });
 </script>
 
