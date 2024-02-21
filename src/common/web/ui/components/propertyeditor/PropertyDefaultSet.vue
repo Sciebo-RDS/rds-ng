@@ -30,7 +30,7 @@ const items = computed(() => {
         : [];
 });
 
-const toggle = (event: any) => {
+const toggle = (event: Event) => {
     menu.value.toggle(event);
 };
 

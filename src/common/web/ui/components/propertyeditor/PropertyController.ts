@@ -3,12 +3,12 @@ import logging from "../../../core/logging/Logging";
 import { PropertySet, PersistedSet } from "./PropertySet";
 import { type PropertyProfile, type PropertyCategory, type ProfileID } from "./PropertyProfile";
 
-export abstract class PropertyController<S extends PropertySet | PropertySet[]> {
-    defaultSet: PropertySet;
-    mergeSets?: PropertySet[];
-    propertySet?: PropertySet | PropertySet[];
+export type S = PropertySet | PropertySet[];
 
-    public constructor(defaultSet: PropertySet, mergeSets?: PropertySet[], propertySets?: S) {}
+export abstract class PropertyController<S> {
+    defaultSet!: PropertySet;
+
+    public constructor(defaultSet: PropertySet) {}
 
     public abstract getValue(profileId: ProfileID, category: string, id: string): any;
     public abstract setValue(profileId: ProfileID, debounce: number | null, category: string, id: string, value: any): number;
@@ -19,18 +19,17 @@ export abstract class PropertyController<S extends PropertySet | PropertySet[]> 
     public abstract setsToWatch(): PropertySet[];
 }
 
-export class MetadataController extends PropertyController<PropertySet | PropertySet[]> {
-    defaultSet: PropertySet;
-    propertySets: PropertySet[];
-
+export class MetadataController extends PropertyController<S> {
+    mergeSets?: PropertySet[];
+    propertySets?: PropertySet[];
     /**
      *
      * @param defaultSet - The default PropertySet (i.e. DataCite)
      * @param mergeSets - An array of PropertySet to be merged with the defaultSet (i.e. metadata required for a connector like OSF)
      * @param propertySet - One or more additinal PropertySets that will be displayed in an according (i.e. domain specific Metadata)
      */
-    public constructor(defaultSet: PropertySet, mergeSets?: PropertySet[], propertySet?: PropertySet | PropertySet[]) {
-        super(defaultSet, mergeSets, propertySet);
+    public constructor(defaultSet: PropertySet, mergeSets?: PropertySet[], propertySet?: S) {
+        super(defaultSet);
         if (!!propertySet) {
             if (Array.isArray(propertySet)) {
                 this.propertySets = propertySet;
@@ -64,7 +63,7 @@ export class MetadataController extends PropertyController<PropertySet | Propert
             clearTimeout(debounce);
         }
 
-        return setTimeout(() => {
+        return window.setTimeout(() => {
             try {
                 if (this.defaultSet?.profile_id === profileId) {
                     this.defaultSet?.setProperty(category, id, value);
@@ -79,7 +78,7 @@ export class MetadataController extends PropertyController<PropertySet | Propert
     }
 
     public getProfileIds(): ProfileID[] {
-        return this.propertySets.map((e) => e.profile_id);
+        return this.propertySets?.map((e) => e.profile_id) || [];
     }
 
     public getProfile(id: ProfileID): PropertyProfile {
@@ -95,14 +94,10 @@ export class MetadataController extends PropertyController<PropertySet | Propert
     }
 
     public exportData(): PersistedSet[] {
-        if (!this.defaultSet) {
-            //is DMP
-            return this.propertySets.map((e) => e.exportPropertySet());
-        }
         const dS = this.defaultSet.exportPropertySet();
-        const pS = this.propertySets.map((e) => e.exportPropertySet());
+        const pS = this.propertySets?.map((e) => e.exportPropertySet());
 
-        return [dS, ...pS];
+        return [dS, ...(pS as PersistedSet[])];
     }
 
     public makeDefaultSet(baseProfile: PropertySet, additionalProfiles: PropertySet[]): PropertySet {
@@ -113,7 +108,7 @@ export class MetadataController extends PropertyController<PropertySet | Propert
             const properties = aP.getProperties();
 
             for (const p of properties) {
-                if (defaultProperties.filter((e) => e.id === p.id).length === 0) {
+                if (!defaultProperties.filter((e) => e.id === p.id).length) {
                     p.name = p.name + ` (${aP.profile_id["name"]})`;
                     dS.profile.categories[0].properties.push(p);
                 }
@@ -132,7 +127,7 @@ export class MetadataController extends PropertyController<PropertySet | Propert
     }
 
     public setsToWatch(): PropertySet[] {
-        return [...this.propertySets, this.defaultSet];
+        return [...(this.propertySets as PropertySet[]), this.defaultSet];
     }
 
     private _logLoadedSets(mergeSets: PropertySet[] | null = null): void {
@@ -153,13 +148,13 @@ export class MetadataController extends PropertyController<PropertySet | Propert
     }
 }
 
-export class DmpController extends PropertyController<PropertySet | PropertySet[]> {
-    dmpSet: PropertySet;
+export class DmpController extends PropertyController<S> {
+    defaultSet: PropertySet;
 
     public constructor(defaultSet: PropertySet) {
         super(defaultSet);
 
-        this.dmpSet = defaultSet;
+        this.defaultSet = defaultSet;
 
         this._logLoadedSets();
     }
@@ -177,7 +172,7 @@ export class DmpController extends PropertyController<PropertySet | PropertySet[
             clearTimeout(debounce);
         }
 
-        return setTimeout(() => {
+        return window.setTimeout(() => {
             try {
                 this._getPropertySet(profileId).setProperty(category, id, value);
             } catch (e) {
@@ -187,7 +182,7 @@ export class DmpController extends PropertyController<PropertySet | PropertySet[
     }
 
     public getProfileIds(): ProfileID[] {
-        return [this.dmpSet.profile_id];
+        return [this.defaultSet.profile_id];
     }
 
     public getProfile(id: ProfileID): PropertyProfile {
@@ -199,19 +194,19 @@ export class DmpController extends PropertyController<PropertySet | PropertySet[
     }
 
     private _getPropertySet(id: ProfileID): PropertySet {
-        if (this.dmpSet.profile_id === id) {
-            return this.dmpSet;
+        if (this.defaultSet.profile_id === id) {
+            return this.defaultSet;
         }
         // log failure
         return new PropertySet({} as PropertyProfile);
     }
 
     public exportData(): PersistedSet[] {
-        return [this.dmpSet.exportPropertySet()];
+        return [this.defaultSet.exportPropertySet()];
     }
 
     public setsToWatch(): PropertySet[] {
-        return [this.dmpSet];
+        return [this.defaultSet];
     }
 
     private _logLoadedSets(): void {

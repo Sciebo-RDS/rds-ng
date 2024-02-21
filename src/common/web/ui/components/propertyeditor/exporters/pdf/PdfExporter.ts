@@ -1,7 +1,7 @@
 import { Exporter, type ExporterID } from "../Exporter";
 import { PdfExporterExport } from "./_PdfExporter";
 import { DmpDocumentDefinition } from "./DocumentDefinition";
-import { MetadataController } from "../../PropertyController";
+import { PropertyController, type S } from "../../PropertyController";
 
 export class PdfExporter extends Exporter {
     public static readonly ExporterID: ExporterID = "pdf";
@@ -21,7 +21,7 @@ export class PdfExporter extends Exporter {
     }
 }
 
-function main(controller: MetadataController, title: string) {
+function main(controller: PropertyController<S>, title: string) {
     const profileIds = controller.getProfileIds();
 
     const documentDefinition = new DmpDocumentDefinition(controller, profileIds[0]);
