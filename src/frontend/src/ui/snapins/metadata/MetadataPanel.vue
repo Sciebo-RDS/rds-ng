@@ -60,7 +60,7 @@ connectors.value.forEach((connector) => {
 
 const baseSet = new PropertySet(dataCite, extractPersistedSetFromArray(project!.value.features.metadata.metadata as PersistedSet[], dataCite.profile_id));
 const profiles: PropertySet[] = [new PropertySet(testProfile, extractPersistedSetFromArray(project!.value.features.metadata.metadata as PersistedSet[], testProfile.profile_id))];
-const controller = reactive(new MetadataController(baseSet, mergeSets, profiles)) as MetadataController;
+const controller = reactive(new MetadataController(baseSet, mergeSets, profiles));
 
 const handleMetadataUpdate = (data: PersistedSet[]) => {
     const metadata = data as ProjectMetadata;

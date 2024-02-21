@@ -28,7 +28,7 @@ const { project } = toRefs(props);
 const exporters: ExporterID[] = ["pdf", "raw"];
 
 const dmpProfile = new PropertySet(dfgDmp, project!.value.features.dmp.plan as PersistedSet);
-const controller = reactive(new DmpController(dmpProfile)) as DmpController;
+const controller = reactive(new DmpController(dmpProfile));
 
 const handleDMPUpdate = (data: PersistedSet[]) => {
     const dmpSet = extractPersistedSetFromArray(data, dfgDmp.profile_id);
