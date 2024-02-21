@@ -14,7 +14,6 @@
         "@vueuse/core": "^10.8.0",
         "autoprefixer": "^10.4.17",
         "material-icons": "^1.13.12",
-        "pdfmake": "^0.2.9",
         "pinia": "^2.1.7",
         "postcss": "^8.4.35",
         "primevue": "^3.48.1",
