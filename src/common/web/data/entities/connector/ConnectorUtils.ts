@@ -71,3 +71,16 @@ export function findConnectorByID(connectors: Connector[], connectorID: Connecto
 export function findConnectorInstanceByID(connectorInstances: ConnectorInstance[], instanceID: ConnectorInstanceID): ConnectorInstance | undefined {
     return connectorInstances.find((inst) => inst.instance_id == instanceID);
 }
+
+/**
+ * Searches for a connector using a connector instance ID.
+ * @param connectors - The list of connectors.
+ * @param connectorInstances - The list of connector instances.
+ * @param instanceID - The connector instance ID.
+ *
+ * @returns - The found connector or **undefined** otherwise.
+ */
+export function findConnectorByInstanceID(connectors: Connector[], connectorInstances: ConnectorInstance[], instanceID: ConnectorInstanceID): Connector | undefined {
+    const instance = findConnectorInstanceByID(connectorInstances, instanceID);
+    return instance ? findConnectorByID(connectors, instance.connector_id) : undefined;
+}
