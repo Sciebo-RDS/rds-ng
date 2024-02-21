@@ -5,7 +5,7 @@ import logging from "@common/core/logging/Logging";
 import { Project } from "@common/data/entities/project/Project";
 import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
-import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
+import { DmpController, MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 import { extractPersistedSetFromArray } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
@@ -45,7 +45,7 @@ const handleDMPUpdate = (data: PersistedSet[]) => {
 <template>
     <PropertyEditor
         @update="handleDMPUpdate"
-        :controller="controller"
+        :controller="controller as MetadataController"
         :logging="logging"
         :exporters="exporters"
         :project="project"

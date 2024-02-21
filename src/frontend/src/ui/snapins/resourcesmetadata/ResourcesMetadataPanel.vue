@@ -70,7 +70,7 @@ const handleMetadataUpdate = (data: PersistedSet[]) => {
                 <div class="r-shade-dark-gray r-text-caption-big p-4 border-b"><span>Object Metadata</span></div>
                 <PropertyEditor
                     @update="handleMetadataUpdate"
-                    :controller="controller"
+                    :controller="controller as MetadataController"
                     :logging="logging"
                     twoCol
                 />
