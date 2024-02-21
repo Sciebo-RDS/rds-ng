@@ -127,7 +127,7 @@ export class MetadataController extends PropertyController<S> {
     }
 
     public setsToWatch(): PropertySet[] {
-        return [...(this.propertySets as PropertySet[]), this.defaultSet];
+        return [...((this.propertySets as PropertySet[]) || []), this.defaultSet];
     }
 
     private _logLoadedSets(mergeSets: PropertySet[] | null = null): void {
