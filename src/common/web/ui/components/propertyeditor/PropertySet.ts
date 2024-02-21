@@ -29,7 +29,7 @@ export class PropertySet {
 
     public constructor(
         public profile: PropertyProfile,
-        public propertyData: PersistedSet = {} as PersistedSet
+        public propertyData: PersistedSet = {} as PersistedSet,
     ) {
         if (!this._validateProfile()) {
             throw new Error("PropertyProfile is not valid.");
@@ -40,7 +40,7 @@ export class PropertySet {
         if (Object.keys(propertyData).includes("profile_id")) {
             if (!this._dataMatchesProfile(propertyData["profile_id"], profile["profile_id"])) {
                 throw new Error(
-                    `Provided data does not match profile. Data uses profile \"${propertyData["profile_id"]["name"]} ${propertyData["profile_id"]["version"]}\" but profile is \"${profile["profile_id"]["name"]} ${profile["profile_id"]["version"]}\".`
+                    `Provided data does not match profile. Data uses profile \"${propertyData["profile_id"]["name"]} ${propertyData["profile_id"]["version"]}\" but profile is \"${profile["profile_id"]["name"]} ${profile["profile_id"]["version"]}\".`,
                 );
             }
 
@@ -77,7 +77,7 @@ export class PropertySet {
         return JSON.stringify(this);
     }
 
-    public exportPropertySet() {
+    public exportPropertySet(): PersistedSet {
         return new PersistedSet(this.profile_id, this.properties);
     }
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { propertyDataForms } from "./PropertyProfile";
+import { propertyDataForms, type Property } from "./PropertyProfile";
 
 const props = defineProps(["property"]);
+const property = props.property as Property;
 </script>
 
 <template>

@@ -4,13 +4,13 @@ import PropertySet from "./PropertySet.vue";
 import PropertyDefaultSet from "./PropertyDefaultSet.vue";
 import InlineMessage from "primevue/inlinemessage";
 import { Logger } from "./utils/Logging";
-import { PropertyController } from "./PropertyController";
+import { MetadataController, PropertyController, type S } from "./PropertyController";
 import type { ExporterID } from "./exporters/Exporter";
 
 const emit = defineEmits(["update"]);
 const { controller, logging, project, exporters } = defineProps({
     controller: {
-        type: Object as PropType<PropertyController<any>>,
+        type: Object as PropType<PropertyController<S>>,
         required: true,
     },
     logging: {
@@ -36,6 +36,7 @@ const attrs = useAttrs();
 provide("controller", controller);
 provide("logging", logging);
 provide("cols", cols(attrs));
+console.log();
 
 watch(controller.setsToWatch(), () => {
     emit("update", controller.exportData());
@@ -44,7 +45,8 @@ watch(controller.setsToWatch(), () => {
 
 <template>
     <div class="overflow-hidden">
-        <PropertyDefaultSet v-if="controller.defaultSet" :controller="controller" :project="project" :exporters="exporters" />
+        <PropertyDefaultSet v-if="controller instanceof MetadataController" :controller="controller" :project="project" :exporters="exporters" />
+
         <div v-for="[i, profileId] of controller.getProfileIds().entries()" :class="i > 0 ? '!mt-5' : ''">
             <PropertySet :controller="controller" :project="project" :exporters="exporters" :profileId="profileId" />
         </div>

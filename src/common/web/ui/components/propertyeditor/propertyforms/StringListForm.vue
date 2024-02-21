@@ -16,7 +16,7 @@ const value = ref(controller.getValue(profileId, categoryId, props.property.id))
 
 let debounce: number | null = null;
 
-const handleInput = (eValue: Event) => {
+const handleInput = (eValue: any) => {
     debounce = controller.setValue(profileId, debounce, categoryId, props.property.id, eValue);
 };
 </script>

@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import { propertyDataForms } from "./PropertyProfile";
+import { propertyDataForms, type Property } from "./PropertyProfile";
 
 const props = defineProps(["property"]);
+const property = props.property as Property;
 
 const showDescription = ref(false);
 
 let overflows = ref(false);
 
 // FIXME Overflow detection is not working within tabs
-const vOverflow = (el) => {
+const vOverflow = (el: HTMLElement) => {
     if (el.offsetWidth < el.scrollWidth) {
         overflows.value = true;
     }

@@ -44,7 +44,7 @@ function updatePropsToShow(e: any) {
     showPropertySelector.value = false;
 }
 
-const propertyElement = propertyComponents[cols as number];
+const propertyElement = propertyComponents[cols as "twoCol" | "oneCol"];
 
 const header = `${props.index + 1}. ${props.category.name}`;
 </script>
