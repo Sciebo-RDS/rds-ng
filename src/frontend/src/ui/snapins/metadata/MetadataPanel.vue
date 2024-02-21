@@ -36,17 +36,17 @@ const { userSettings } = storeToRefs(userStore);
 // TODO: Testing data only
 const mergeSets: PropertySet[] = [];
 connectors.value.forEach((connector) => {
-    if (project!.value.options.use_all_connector_instances) {
-        if (!userSettings.value.connector_instances.filter((instance) => instance.connector_id == connector.connector_id).length) {
-            return;
+    if (!userSettings.value.connector_instances.find((instance) => {
+        if (project!.value.options.use_all_connector_instances) {
+            return instance.connector_id == connector.connector_id;
+        } else {
+            return !!project!.value.options.active_connector_instances.find((instanceID) => {
+                const resolvedConnector = findConnectorByInstanceID(connectors.value, userSettings.value.connector_instances, instanceID);
+                return resolvedConnector && resolvedConnector.connector_id == connector.connector_id;
+            });
         }
-    } else {
-        if (!project!.value.options.active_connector_instances.find((instanceID) => {
-            const resolvedConnector = findConnectorByInstanceID(connectors.value, userSettings.value.connector_instances, instanceID);
-            return resolvedConnector && resolvedConnector.connector_id == connector.connector_id;
-        })) {
-            return;
-        }
+    })) {
+        return;
     }
 
     const metadataProfile = connector.metadata_profile;
