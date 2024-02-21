@@ -3,7 +3,7 @@ import { reactive, toRefs } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { Project } from "@common/data/entities/project/Project";
-import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
+import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
 import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
@@ -30,15 +30,11 @@ const exporters: ExporterID[] = ["pdf", "raw"];
 const dmpProfile = new PropertySet(dfgDmp, project!.value.features.dmp.plan as PersistedSet);
 const controller = reactive(new DmpController(dmpProfile));
 
-const handleMetadataUpdate = (data: PersistedSet[]) => {
-    const profileID = dfgDmp.profile_id;
-    const dmpSet = extractPersistedSetFromArray(data, profileID);
-
-    if (dmpSet) {
-        const action = new UpdateProjectFeaturesAction(comp);
-        action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet)]);
-        action.execute();
-    }
+const handleDMPUpdate = (data: PersistedSet[]) => {
+    const dmpSet = extractPersistedSetFromArray(data, dfgDmp.profile_id);
+    const action = new UpdateProjectFeaturesAction(comp);
+    action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
+    action.execute();
 
     // TODO: Just a quick hack, perform update in a better way later
     // @ts-ignore
@@ -48,7 +44,7 @@ const handleMetadataUpdate = (data: PersistedSet[]) => {
 
 <template>
     <PropertyEditor
-        @update="handleMetadataUpdate"
+        @update="handleDMPUpdate"
         :controller="controller"
         :logging="logging"
         :exporters="exporters"
