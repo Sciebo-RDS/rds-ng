@@ -106,15 +106,17 @@ export class MetadataController extends PropertyController<PropertySet | Propert
     }
 
     public makeDefaultSet(baseProfile: PropertySet, additionalProfiles: PropertySet[]): PropertySet {
-        let dS = baseProfile;
-
+        const dS = baseProfile;
         const defaultProperties = dS.getProperties();
-        const additionalProperties = additionalProfiles.map((e) => e.getProperties())[0];
 
-        for (const p of additionalProperties) {
-            if (!defaultProperties.map((e) => e.id).includes(p.id)) {
-                p.name = p.name + ` (${additionalProfiles[0].profile_id["name"]})`;
-                dS.profile.categories[0].properties.push(p);
+        for (const aP of additionalProfiles) {
+            const properties = aP.getProperties();
+
+            for (const p of properties) {
+                if (defaultProperties.filter((e) => e.id === p.id).length === 0) {
+                    p.name = p.name + ` (${aP.profile_id["name"]})`;
+                    dS.profile.categories[0].properties.push(p);
+                }
             }
         }
 
