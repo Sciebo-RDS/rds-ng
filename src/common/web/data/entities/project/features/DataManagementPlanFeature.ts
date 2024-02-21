@@ -13,7 +13,7 @@ export type DataManagementPlan = Record<string, any>;
 export class DataManagementPlanFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "dmp";
 
-    public readonly plan: DataManagementPlan = {};
+    public readonly plan: DataManagementPlan;
 
     public constructor(plan: DataManagementPlan = {}) {
         super();
