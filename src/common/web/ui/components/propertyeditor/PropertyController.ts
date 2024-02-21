@@ -49,8 +49,8 @@ export class MetadataController extends PropertyController<S> {
 
     public getValue(profileId: ProfileID, category: string, id: string): any {
         try {
-            if (this.defaultSet?.profile_id === profileId) {
-                return this.defaultSet?.getProperty(category, id);
+            if (this.defaultSet.profile_id === profileId) {
+                return this.defaultSet.getProperty(category, id);
             }
             return this._getPropertySet(profileId).getProperty(category, id);
         } catch (e: any) {
@@ -65,8 +65,8 @@ export class MetadataController extends PropertyController<S> {
 
         return window.setTimeout(() => {
             try {
-                if (this.defaultSet?.profile_id === profileId) {
-                    this.defaultSet?.setProperty(category, id, value);
+                if (this.defaultSet.profile_id === profileId) {
+                    this.defaultSet.setProperty(category, id, value);
                 }
                 if (this._getPropertySet(profileId)) {
                     this._getPropertySet(profileId).setProperty(category, id, value);
@@ -90,7 +90,7 @@ export class MetadataController extends PropertyController<S> {
     }
 
     private _getPropertySet(id: ProfileID): PropertySet {
-        return this.propertySets.filter((e) => e.profile_id["name"] === id["name"] && e.profile_id["version"] === id["version"])[0];
+        return this.propertySets!.filter((e) => e.profile_id["name"] === id["name"] && e.profile_id["version"] === id["version"])[0];
     }
 
     public exportData(): PersistedSet[] {
@@ -119,7 +119,7 @@ export class MetadataController extends PropertyController<S> {
     }
 
     public getDefaultCategories(): PropertyCategory[] {
-        return this.defaultSet?.profile.categories as PropertyCategory[];
+        return this.defaultSet.profile.categories as PropertyCategory[];
     }
 
     public getDefaultProfile(): ProfileID {
