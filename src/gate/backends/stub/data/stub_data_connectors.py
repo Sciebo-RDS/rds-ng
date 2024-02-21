@@ -1,9 +1,8 @@
+import json
 import typing
 import uuid
 
 from common.py.data.entities.connector import Connector, ConnectorInstance
-from common.py.data.entities.user import UserSettings
-from common.py.data.storage import StoragePool
 
 
 def get_stub_data_connectors() -> typing.List[Connector]:
@@ -12,6 +11,12 @@ def get_stub_data_connectors() -> typing.List[Connector]:
     """
 
     from common.py.utils.img_conversion import convert_image_to_img_source
+
+    from .stab_data_connector_profiles import (
+        CONNECTOR_OSF_PROFILE,
+        CONNECTOR_ZENODO_PROFILE,
+        CONNECTOR_DATASAFE_PROFILE,
+    )
 
     return [
         Connector(
@@ -26,6 +31,7 @@ def get_stub_data_connectors() -> typing.List[Connector]:
                     "/component/common/assets/img/logos/osf.png"
                 ),
             ),
+            metadata_profile=json.loads(CONNECTOR_OSF_PROFILE),
         ),
         Connector(
             connector_id="datasafe",
@@ -39,6 +45,7 @@ def get_stub_data_connectors() -> typing.List[Connector]:
                     "/component/common/assets/img/logos/datasafe.png"
                 ),
             ),
+            metadata_profile=json.loads(CONNECTOR_DATASAFE_PROFILE),
         ),
         Connector(
             connector_id="zenodo",
@@ -52,6 +59,7 @@ def get_stub_data_connectors() -> typing.List[Connector]:
                     "/component/common/assets/img/logos/zenodo.png"
                 ),
             ),
+            metadata_profile=json.loads(CONNECTOR_ZENODO_PROFILE),
         ),
     ]
 

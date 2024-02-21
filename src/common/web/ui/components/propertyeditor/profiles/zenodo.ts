@@ -1,6 +1,6 @@
 import { type PropertyProfile, PropertyDataType } from "../PropertyProfile";
 
-export const osf: PropertyProfile = {
+export const zenodo: PropertyProfile = {
     profile_id: { name: "Zenodo", version: "0.0.1" },
     categories: [
         {
