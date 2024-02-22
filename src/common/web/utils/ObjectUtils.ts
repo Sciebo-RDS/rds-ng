@@ -60,6 +60,10 @@ export function deepClone<ObjType = object>(source?: CloneObjectType, defaultVal
  * @returns - The intersection object.
  */
 export function intersectObjects<ObjType extends Record<any, any> = object>(obj1: ObjType, obj2: ObjType): ObjType {
+    if (!Object.keys(obj1).length) {
+        return obj1;
+    }
+
     // @ts-ignore
     return Object.assign(...Object.keys(obj1).map(k => {
         let temp;

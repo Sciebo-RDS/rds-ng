@@ -61,6 +61,7 @@ function collapseAll(): void {
     <TreeTable
         :value="data"
         selection-mode="multiple"
+        meta-key-selection
         v-model:selection-keys="selectedNodes"
         v-model:expanded-keys="expandedNodes"
         :filters="filters"

@@ -5,21 +5,19 @@ import { ref, toRefs, watch } from "vue";
 import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
+import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
-import { deepClone } from "@common/utils/ObjectUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
-
-// TODO:
-const values = ref({} as Record<string, PersistedSet>);
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -69,15 +67,21 @@ function handleMetadataUpdate(data: PersistedSet[]): void {
     const resourcesData = extractPersistedSetFromArray(data, resources.profile_id);
     const selectedPaths = Object.keys(selectedNodes.value);
     selectedPaths.forEach((path) => {
-        values.value[path] = deepClone<PersistedSet>(resourcesData);
+        // TODO: Just a quick hack, perform update in a better way later
+        project!.value.features.resources_metadata.resources_metadata[path] = resourcesData;
     });
+
+    const action = new UpdateProjectFeaturesAction(comp);
+    action.prepare(project!.value, [new ResourcesMetadataFeature(project!.value.features.resources_metadata.resources_metadata as ResourcesMetadata)]);
+    action.execute();
 }
 
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
     const persistedSets: PersistedSet[] = [];
     const selectedPaths = Object.keys(nodes);
+    const metadata = project!.value.features.resources_metadata.resources_metadata;
     selectedPaths.forEach((path) => {
-        persistedSets.push(path in values.value ? values.value[path] : new PersistedSet(resources.profile_id, {}));
+        persistedSets.push(path in metadata ? metadata[path] as PersistedSet : new PersistedSet(resources.profile_id, {}));
     });
     const resourcesData = intersectPersistedSets(persistedSets, resources.profile_id);
 
