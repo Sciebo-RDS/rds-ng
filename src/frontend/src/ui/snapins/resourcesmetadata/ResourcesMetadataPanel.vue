@@ -95,7 +95,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
             <ResourcesTreeTable
                 :data="resourcesNodes"
                 v-model:selected-nodes="selectedNodes"
-                class="p-treetable-sm text-sm border border-b-0"
+                class="p-treetable-sm text-sm border border-b-0 mb-auto"
                 refreshable
                 @refresh="refreshResources"
             />
