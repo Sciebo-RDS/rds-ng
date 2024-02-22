@@ -6,6 +6,13 @@ import { Type } from "class-transformer";
 export type ConnectorID = string;
 
 /**
+ * The connector metadata profile.
+ *
+ * TODO: Use proper type
+ */
+export type ConnectorMetadataProfile = Record<string, any>;
+
+/**
  * Base64-encoded image data of the connector logos.
  *
  * @param default_logo - The default logo.
@@ -38,12 +45,16 @@ export class Connector {
     @Type(() => ConnectorLogos)
     public readonly logos: ConnectorLogos;
 
-    public constructor(connectorID: ConnectorID, name: string, description: string = "", logos: ConnectorLogos = new ConnectorLogos()) {
+    metadata_profile: ConnectorMetadataProfile;
+
+    public constructor(connectorID: ConnectorID, name: string, description: string = "", logos: ConnectorLogos = new ConnectorLogos(), metadataProfile: ConnectorMetadataProfile = {}) {
         this.connector_id = connectorID;
 
         this.name = name;
         this.description = description;
 
         this.logos = logos;
+
+        this.metadata_profile = metadataProfile;
     }
 }

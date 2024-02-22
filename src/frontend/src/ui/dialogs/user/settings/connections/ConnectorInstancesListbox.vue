@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
-import { computed, type PropType, toRefs, unref } from "vue";
+import { computed, type PropType, toRefs } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorByID, findConnectorInstanceByID, groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
@@ -26,7 +26,7 @@ const { connectors } = storeToRefs(consStore);
 const { userSettings } = toRefs(props);
 const { editInstance, deleteInstance } = useConnectorInstancesTools(comp);
 
-const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, unref(connectors.value)));
+const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, connectors.value));
 const selectedInstance = defineModel<ConnectorInstanceID | undefined>();
 
 function isInstanceSelected(instance: ConnectorInstance): boolean {
@@ -34,7 +34,7 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
 }
 
 function onEditInstance(instance: ConnectorInstance): void {
-    editInstance(userSettings!.value!.connector_instances, instance, findConnectorByID(unref(connectors.value), instance.connector_id));
+    editInstance(userSettings!.value!.connector_instances, instance, findConnectorByID(connectors.value, instance.connector_id));
 }
 
 function onDeleteKey() {

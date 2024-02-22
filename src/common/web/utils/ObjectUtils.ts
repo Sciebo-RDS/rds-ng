@@ -1,3 +1,5 @@
+import { humanReadableFileSize } from "./Strings";
+
 function isObject(item: any) {
     return item && typeof item === "object" && !Array.isArray(item);
 }
@@ -47,4 +49,23 @@ export function deepClone<ObjType = object>(source?: CloneObjectType, defaultVal
         return defaultValue!;
     }
     return JSON.parse(JSON.stringify(source)) as ObjType;
+}
+
+/**
+ * Shortens data strings in an object for better display.
+ *
+ * @param obj - The object to clean up.
+ */
+export function shortenDataStrings(obj: any): any {
+    for (const [name, value] of Object.entries(obj)) {
+        if (typeof value === "object") {
+            shortenDataStrings(value);
+        } else if (typeof value === "string") {
+            if (value.startsWith("data:")) {
+                obj[name] = value.split(",", 1).join() + `,<data:${humanReadableFileSize(value.length)}>`;
+            }
+        }
+    }
+
+    return obj;
 }

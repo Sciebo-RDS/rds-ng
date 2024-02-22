@@ -1,6 +1,10 @@
 import { UpdateProjectFeaturesCommand } from "@common/api/project/ProjectFeaturesCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
-import { ProjectFeature } from "@common/data/entities/project/features/ProjectFeature";
+import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
+import { MetadataFeature } from "@common/data/entities/project/features/MetadataFeature";
+import { ProjectFeature, type ProjectFeatureID } from "@common/data/entities/project/features/ProjectFeature";
+import { ProjectFeatures } from "@common/data/entities/project/features/ProjectFeatures";
+import { ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
@@ -16,7 +20,16 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
     public prepare(project: Project, updatedFeatures: ProjectFeature[]): CommandComposer<UpdateProjectFeaturesCommand> {
         this.prepareNotifiers(project.title);
 
-        this._composer = UpdateProjectFeaturesCommand.build(this.messageBuilder, project.project_id, updatedFeatures).timeout(this._regularTimeout);
+        this._composer = UpdateProjectFeaturesCommand.build(
+            this.messageBuilder,
+            project.project_id,
+            updatedFeatures.map((feature) => feature.featureID),
+            new ProjectFeatures(
+                this.getFeatureFromArray<MetadataFeature>(updatedFeatures, MetadataFeature.FeatureID),
+                this.getFeatureFromArray<ResourcesMetadataFeature>(updatedFeatures, ResourcesMetadataFeature.FeatureID),
+                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID)
+            )
+        ).timeout(this._regularTimeout);
         return this._composer;
     }
 
@@ -35,5 +48,14 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
                 true
             )
         );
+    }
+
+    private getFeatureFromArray<FeatureType>(features: ProjectFeature[], featureID: ProjectFeatureID): FeatureType | undefined {
+        for (const feature of features) {
+            if (feature.featureID == featureID) {
+                return feature as FeatureType;
+            }
+        }
+        return undefined;
     }
 }

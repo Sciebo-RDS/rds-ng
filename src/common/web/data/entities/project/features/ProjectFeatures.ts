@@ -14,27 +14,21 @@ import { ResourcesMetadataFeature } from "./ResourcesMetadataFeature";
 export class ProjectFeatures {
     // @ts-ignore
     @Type(() => MetadataFeature)
-    public readonly metadata: MetadataFeature = new MetadataFeature();
+    public readonly metadata: MetadataFeature;
     // @ts-ignore
     @Type(() => ResourcesMetadataFeature)
-    public readonly resources_metadata: ResourcesMetadataFeature = new ResourcesMetadataFeature();
+    public readonly resources_metadata: ResourcesMetadataFeature;
     // @ts-ignore
     @Type(() => DataManagementPlanFeature)
-    public readonly dmp: DataManagementPlanFeature = new DataManagementPlanFeature();
+    public readonly dmp: DataManagementPlanFeature;
 
     public constructor(
         metadata?: MetadataFeature,
         resourceMetadata?: ResourcesMetadataFeature,
         dmp?: DataManagementPlanFeature
     ) {
-        if (metadata) {
-            this.metadata = metadata;
-        }
-        if (resourceMetadata) {
-            this.resources_metadata = resourceMetadata;
-        }
-        if (dmp) {
-            this.dmp = dmp;
-        }
+        this.metadata = metadata || new MetadataFeature();
+        this.resources_metadata = resourceMetadata || new ResourcesMetadataFeature();
+        this.dmp = dmp || new DataManagementPlanFeature();
     }
 }

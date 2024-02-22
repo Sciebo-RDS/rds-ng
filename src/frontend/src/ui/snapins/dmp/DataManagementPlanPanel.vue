@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { reactive, toRefs } from "vue";
 
-import { WebComponent } from "@common/component/WebComponent";
 import logging from "@common/core/logging/Logging";
 import { Project } from "@common/data/entities/project/Project";
-import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
+import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
-import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
+import { DmpController, MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 import { extractPersistedSetFromArray } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 
-const comp = WebComponent.injectComponent();
+const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
@@ -28,24 +28,24 @@ const { project } = toRefs(props);
 const exporters: ExporterID[] = ["pdf", "raw"];
 
 const dmpProfile = new PropertySet(dfgDmp, project!.value.features.dmp.plan as PersistedSet);
-const controller = reactive(new DmpController(dmpProfile)) as DmpController;
+const controller = reactive(new DmpController(dmpProfile));
 
-const handleMetadataUpdate = (data: PersistedSet[]) => {
-    const profileID = dfgDmp.profile_id;
-    const dmpSet = extractPersistedSetFromArray(data, profileID);
+const handleDMPUpdate = (data: PersistedSet[]) => {
+    const dmpSet = extractPersistedSetFromArray(data, dfgDmp.profile_id);
+    const action = new UpdateProjectFeaturesAction(comp);
+    action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
+    action.execute();
 
-    if (dmpSet) {
-        const action = new UpdateProjectFeaturesAction(comp);
-        action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet)]);
-        action.execute();
-    }
+    // TODO: Just a quick hack, perform update in a better way later
+    // @ts-ignore
+    project!.value.features.dmp.plan = dmpSet;
 };
 </script>
 
 <template>
     <PropertyEditor
-        @update="handleMetadataUpdate"
-        :controller="controller"
+        @update="handleDMPUpdate"
+        :controller="controller as MetadataController"
         :logging="logging"
         :exporters="exporters"
         :project="project"

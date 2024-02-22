@@ -1,9 +1,11 @@
 import dataclasses
+import typing
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
 
 ConnectorID = str
+ConnectorMetadataProfile = typing.Dict[str, typing.Any]  # TODO: Use proper type
 
 
 @dataclass_json
@@ -39,3 +41,5 @@ class Connector:
     description: str
 
     logos: Logos = dataclasses.field(default_factory=Logos)
+
+    metadata_profile: ConnectorMetadataProfile = dataclasses.field(default_factory=dict)

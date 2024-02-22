@@ -1,5 +1,4 @@
 import time
-import typing
 
 from common.py.component import BackendComponent
 from common.py.services import Service
@@ -151,7 +150,8 @@ def create_stub_projects_service(comp: BackendComponent) -> Service:
             message=message,
         ).emit()
 
-        send_projects_list(msg, ctx)
+        # TODO:
+        # send_projects_list(msg, ctx)
 
     @svc.message_handler(DeleteProjectCommand)
     def delete_project(msg: DeleteProjectCommand, ctx: StubServiceContext) -> None:

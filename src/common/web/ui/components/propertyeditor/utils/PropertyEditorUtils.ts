@@ -19,7 +19,7 @@ export function compareProfileIDs(id1: ProfileID, id2: ProfileID): boolean {
  *
  * @returns - The found persisted set, if any.
  */
-export function extractPersistedSetFromArray(persistedSets: PersistedSet[], profileID: ProfileID): PersistedSet | null {
+export function extractPersistedSetFromArray(persistedSets: PersistedSet[], profileID: ProfileID): PersistedSet {
     const sets = persistedSets.filter((set) => compareProfileIDs(set.profile_id, profileID));
-    return sets.length ? sets[0] : null;
+    return sets.length ? sets[0] : {} as PersistedSet;
 }
