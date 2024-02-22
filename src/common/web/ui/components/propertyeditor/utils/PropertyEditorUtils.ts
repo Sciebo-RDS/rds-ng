@@ -1,5 +1,5 @@
 import { type ProfileID } from "../PropertyProfile";
-import { PersistedSet } from "../PropertySet";
+import { PersistedSet, Properties } from "../PropertySet";
 
 /**
  * Checks whether two profile IDs are the same.
@@ -22,4 +22,21 @@ export function compareProfileIDs(id1: ProfileID, id2: ProfileID): boolean {
 export function extractPersistedSetFromArray(persistedSets: PersistedSet[], profileID: ProfileID): PersistedSet {
     const sets = persistedSets.filter((set) => compareProfileIDs(set.profile_id, profileID));
     return sets.length ? sets[0] : {} as PersistedSet;
+}
+
+/**
+ * Creates an intersection of a list of persisted sets.
+ *
+ * @param persistedSets - The sets to intersect.
+ *
+ * @returns - The combined set.
+ */
+export function intersectPersistedSets(persistedSets: PersistedSet[]): PersistedSet {
+    let profileID: ProfileID = { name: "UnifiedSet", version: "0.0.0" };
+    let properties: Properties = {};
+
+    // Category -> Property
+    for (const persistedSet of persistedSets) {
+        const keys = new Set(Object.keys(persistedSet.categories));
+    }
 }
