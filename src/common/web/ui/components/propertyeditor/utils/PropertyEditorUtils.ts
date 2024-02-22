@@ -1,5 +1,6 @@
+import { intersectObjects } from "../../../../utils/ObjectUtils";
 import { type ProfileID } from "../PropertyProfile";
-import { PersistedSet, Properties } from "../PropertySet";
+import { PersistedSet } from "../PropertySet";
 
 /**
  * Checks whether two profile IDs are the same.
@@ -28,15 +29,20 @@ export function extractPersistedSetFromArray(persistedSets: PersistedSet[], prof
  * Creates an intersection of a list of persisted sets.
  *
  * @param persistedSets - The sets to intersect.
+ * @param profileID - The ID of the combined set.
  *
  * @returns - The combined set.
  */
-export function intersectPersistedSets(persistedSets: PersistedSet[]): PersistedSet {
-    let profileID: ProfileID = { name: "UnifiedSet", version: "0.0.0" };
-    let properties: Properties = {};
-
-    // Category -> Property
-    for (const persistedSet of persistedSets) {
-        const keys = new Set(Object.keys(persistedSet.categories));
+export function intersectPersistedSets(persistedSets: PersistedSet[], profileID: ProfileID): PersistedSet {
+    if (persistedSets.length == 0) {
+        return new PersistedSet(profileID, {});
+    } else if (persistedSets.length == 1) {
+        return persistedSets[0];
     }
+
+    let combinedSet = persistedSets[0];
+    for (let i = 1; i < persistedSets.length; ++i) {
+        combinedSet = intersectObjects(combinedSet, persistedSets[i]);
+    }
+    return new PersistedSet(profileID, combinedSet.categories || {});
 }

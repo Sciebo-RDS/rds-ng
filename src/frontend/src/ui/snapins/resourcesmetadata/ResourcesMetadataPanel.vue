@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BlockUI from "primevue/blockui";
-import { reactive, ref, toRefs, watch } from "vue";
+import { ref, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
@@ -9,7 +9,7 @@ import { resourcesListToTreeNodes } from "@common/data/entities/resource/Resourc
 import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
-import { extractPersistedSetFromArray } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import { deepClone } from "@common/utils/ObjectUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
@@ -19,7 +19,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
 // TODO:
-const values = ref({});
+const values = ref({} as Record<string, PersistedSet>);
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -73,16 +73,13 @@ function handleMetadataUpdate(data: PersistedSet[]): void {
     });
 }
 
-watch(selectedNodes, (nodes) => {
-    let resourcesData: PersistedSet | undefined = undefined;
-
+watch(selectedNodes, (nodes: Record<string, boolean>) => {
+    const persistedSets: PersistedSet[] = [];
     const selectedPaths = Object.keys(nodes);
-    if (selectedPaths.length == 1) {
-        const path = selectedPaths[0];
-        if (path in values.value) {
-            resourcesData = values.value[path] as PersistedSet;
-        }
-    }
+    selectedPaths.forEach((path) => {
+        persistedSets.push(path in values.value ? values.value[path] : new PersistedSet(resources.profile_id, {}));
+    });
+    const resourcesData = intersectPersistedSets(persistedSets, resources.profile_id);
 
     refreshMetadataController(resourcesData);
 });
