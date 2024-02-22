@@ -62,7 +62,7 @@ const baseSet = new PropertySet(dataCite, extractPersistedSetFromArray(project!.
 const profiles: PropertySet[] = [new PropertySet(testProfile, extractPersistedSetFromArray(project!.value.features.metadata.metadata as PersistedSet[], testProfile.profile_id))];
 const controller = reactive(new MetadataController(baseSet, mergeSets, profiles));
 
-const handleMetadataUpdate = (data: PersistedSet[]) => {
+function handleMetadataUpdate(data: PersistedSet[]): void {
     const metadata = data as ProjectMetadata;
     const action = new UpdateProjectFeaturesAction(comp);
     action.prepare(project!.value, [new MetadataFeature(metadata)]);
@@ -71,7 +71,7 @@ const handleMetadataUpdate = (data: PersistedSet[]) => {
     // TODO: Just a quick hack, perform update in a better way later
     // @ts-ignore
     project!.value.features.metadata.metadata = metadata;
-};
+}
 </script>
 
 <template>

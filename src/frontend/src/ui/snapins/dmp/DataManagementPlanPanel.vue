@@ -30,7 +30,7 @@ const exporters: ExporterID[] = ["pdf", "raw"];
 const dmpProfile = new PropertySet(dfgDmp, project!.value.features.dmp.plan as PersistedSet);
 const controller = reactive(new DmpController(dmpProfile));
 
-const handleDMPUpdate = (data: PersistedSet[]) => {
+function handleDMPUpdate(data: PersistedSet[]): void {
     const dmpSet = extractPersistedSetFromArray(data, dfgDmp.profile_id);
     const action = new UpdateProjectFeaturesAction(comp);
     action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
@@ -39,7 +39,7 @@ const handleDMPUpdate = (data: PersistedSet[]) => {
     // TODO: Just a quick hack, perform update in a better way later
     // @ts-ignore
     project!.value.features.dmp.plan = dmpSet;
-};
+}
 </script>
 
 <template>
