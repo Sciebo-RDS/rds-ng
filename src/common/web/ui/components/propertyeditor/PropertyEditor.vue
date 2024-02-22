@@ -50,8 +50,5 @@ watch(controller.setsToWatch(), () => {
         <div v-for="[i, profileId] of controller.getProfileIds().entries()" :class="i > 0 ? '!mt-5' : ''">
             <PropertySet :controller="controller" :project="project" :exporters="exporters" :profileId="profileId" />
         </div>
-        <div v-show="!controller.getProfileIds().length" class="flex justify-center text-2xl w-full">
-            <InlineMessage class="text-2xl" severity="error">Could not load any metadata profiles</InlineMessage>
-        </div>
     </div>
 </template>
