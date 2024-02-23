@@ -8,15 +8,15 @@ import ProjectControls from "@/ui/content/main/projectdetails/ProjectControls.vu
 const props = defineProps({
     project: {
         type: Project,
-        required: true
-    }
+        required: true,
+    },
 });
 const { project } = toRefs(props);
 </script>
 
 <template>
     <div class="grid grid-rows-2 grid-cols-[1fr_max-content] grid-flow-col gap-x-2 place-content-center justify-start r-primary-bg r-primary-text p-3">
-        <div class="text-xl font-bold self-center">
+        <div class="text-xl font-bold self-center truncate text-ellipsis" :title="project!.title">
             {{ project!.title }}
         </div>
         <div class="italic self-center"><b>Data path: </b>{{ project!.resources_path }}</div>
@@ -26,6 +26,4 @@ const { project } = toRefs(props);
     </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>
