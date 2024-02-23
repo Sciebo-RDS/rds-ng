@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import BlockUI from "primevue/blockui";
+import Button from "primevue/button";
+import Image from "primevue/image";
 import { ref, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
@@ -19,6 +21,8 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
+import previewImage from "@assets/img/preview.png";
+
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
@@ -36,6 +40,8 @@ const resourcesError = ref("");
 const resourcesProfile = new PropertySet(resources);
 const controller = ref<MetadataController | undefined>(undefined);
 const controllerKey = ref(0); // TODO: Just a workaround for missing reactivity
+
+const showPreview = ref(true);
 
 function refreshResources(): void {
     resourcesRefreshing.value = true;
@@ -101,15 +107,34 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
             />
 
             <div class="border">
-                <div class="r-shade-dark-gray r-text-caption-big p-4 border-b"><span>Object Metadata</span></div>
-                <PropertyEditor
-                    v-if="Object.keys(selectedNodes).length > 0"
-                    :key="controllerKey"
-                    @update="handleMetadataUpdate"
-                    :controller="controller as MetadataController"
-                    :logging="logging"
-                    twoCol
-                />
+                <div class="grid grid-cols-[1fr_min-content] items-center r-shade-dark-gray r-text-caption-big p-2.5 border-b">
+                    <span>Object Metadata</span>
+                    <span>
+                        <Button
+                            icon="material-icons-outlined mi-visibility"
+                            title="Toggle preview"
+                            size="small"
+                            :severity="showPreview ? '' : 'secondary'"
+                            text
+                            rounded
+                            @click="showPreview = !showPreview;"
+                        />
+                    </span>
+                </div>
+
+                <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
+                    <div id="preview" v-if="showPreview" class="mt-5">
+                        <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
+                    </div>
+                    <PropertyEditor
+                        :key="controllerKey"
+                        @update="handleMetadataUpdate"
+                        :controller="controller as MetadataController"
+                        :logging="logging"
+                        oneCol
+                        class="w-full"
+                    />
+                </div>
                 <div v-else class="r-centered-grid italic pt-8">
                     Select one or more file objects on the left to edit their metadata.
                 </div>
@@ -122,5 +147,4 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
 </template>
 
 <style scoped lang="scss">
-
 </style>

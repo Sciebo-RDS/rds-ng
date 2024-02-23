@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, provide, inject, computed, useAttrs } from "vue";
+import { ref, provide, inject, useAttrs } from "vue";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import Dropdown from "primevue/dropdown";
@@ -15,7 +15,7 @@ import { PropertySet } from "./PropertySet";
 
 const propertyComponents = {
     twoCol: PropertyTwoCol,
-    oneCol: PropertyOneCol,
+    oneCol: PropertyOneCol
 };
 
 const props = defineProps(["category", "profileId", "project", "index"]);
@@ -32,8 +32,8 @@ const selectedProperties = ref<PropertyType>();
 
 const propsToShow = !attrs.hasOwnProperty("defaultSet")
     ? ref<PropertyType[]>(
-          props.category.properties.filter((p: PropertyType) => controller.getValue(props.profileId, props.category.id, p.id) != undefined || p.showAlways),
-      )
+        props.category.properties.filter((p: PropertyType) => controller.getValue(props.profileId, props.category.id, p.id) != undefined || p.showAlways)
+    )
     : ref<PropertyType[]>(props.category.properties);
 
 const propsToSelect = ref(props.category.properties.filter((p: PropertyType) => !propsToShow.value.includes(p)));
@@ -61,7 +61,7 @@ const header = `${props.index + 1}. ${props.category.name}`;
             >
                 <template #content>
                     <div class="text-neutral-700">{{ props.category.description }}</div>
-                    <component :is="propertyElement" v-for="prop in propsToShow" class="mr-2" :property="prop" />
+                    <component :is="propertyElement" v-for="prop in propsToShow" :property="prop" />
                     <!-- Should have its own component -->
                     <div v-show="!showPropertySelector && !!propsToSelect.length" class="flex justify-end">
                         <Button label="Add Property" text size="small" icon="pi pi-plus" @click="showPropertySelector = true" />
@@ -105,7 +105,7 @@ const header = `${props.index + 1}. ${props.category.name}`;
     Should have it's own component
  -->
     <div v-else class="m-5">
-        <component :is="PropertyOneCol" v-for="prop in propsToShow" class="mr-2" :property="prop" />
+        <component :is="PropertyOneCol" v-for="prop in propsToShow" :property="prop" />
         <!-- Should have its own component -->
         <div v-show="!showPropertySelector && !!propsToSelect.length" class="flex justify-end">
             <Button label="Add Property" text size="small" icon="pi pi-plus" @click="showPropertySelector = true" />
