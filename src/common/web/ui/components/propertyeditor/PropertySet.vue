@@ -38,7 +38,7 @@ const toggle = (event: Event) => {
 <template>
     <Toolbar :pt="{ root: { class: '!py-2 !bg-gray-100' } }">
         <template #start>
-            <div class="text-xl grow font-bold">
+            <div class="text-xl font-bold truncate text-clip" :title="profileId['name'] + ' v' + profileId['version']">
                 {{ `${profileId["name"]} v${profileId["version"]}` }}
             </div>
         </template>

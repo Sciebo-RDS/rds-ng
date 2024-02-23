@@ -20,7 +20,7 @@ const vOverflow = (el: HTMLElement) => {
 
 <template>
     <div class="lg:grid grid-rows-1 xl:grid-cols-4 gap-10 my-5">
-        <div class="row-start-1 row-span-1 xl:col-span-2 2xl:col-span-1">
+        <div class="row-start-1 row-span-1 xl:col-span-2 2xl:col-span-1 truncate" :title="props.property.name">
             {{ props.property.name }}
             <div @click="overflows ? (showDescription = !showDescription) : null" class="py-1">
                 <span class="grid grid-rows-1">

@@ -53,7 +53,9 @@ const header = `${props.index + 1}. ${props.category.name}`;
     <Accordion v-if="!attrs.hasOwnProperty('defaultSet')" class="w-full">
         <AccordionTab :pt="{ header: { class: '!rounded-md !border !border-indigo-200' }, headerAction: { class: '!py-4' } }">
             <template #header>
-                <span class="flex align-items-center w-full !text-gray-800"> {{ header }} </span>
+                <span class="flex align-items-center w-full !text-gray-800 truncate text-ellipsis mr-2" :title="header">
+                    {{ header }}
+                </span>
             </template>
             <Card
                 class="drop-shadow-none"

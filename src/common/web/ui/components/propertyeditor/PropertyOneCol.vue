@@ -7,7 +7,7 @@ const property = props.property as Property;
 
 <template>
     <div class="lg:grid grid-rows-1 mt-5">
-        <div class="row-start-1 row-span-1 font-semibold">
+        <div class="row-start-1 row-span-1 font-semibold text-ellipsis truncate" :title="props.property.name">
             {{ props.property.name }}
             <div class="py-1">
                 <span class="grid grid-rows-1">
