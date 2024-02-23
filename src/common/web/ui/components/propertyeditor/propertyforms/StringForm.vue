@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { inject, computed } from "vue";
 import InputText from "primevue/inputtext";
 
 import { PropertyController } from "../PropertyController";
@@ -12,7 +12,7 @@ const controller = inject("controller") as PropertyController<PropertySet | Prop
 const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
-const value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
 
 let debounce: number | null = null;
 
@@ -22,5 +22,7 @@ const handleInput = (e: any) => {
 </script>
 
 <template>
-    <InputText type="text" @input="handleInput" v-model="value" />
+    <div>
+        <InputText type="text" @input="handleInput" :modelValue="value" class="w-full" />
+    </div>
 </template>

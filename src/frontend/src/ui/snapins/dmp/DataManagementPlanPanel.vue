@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, toRefs } from "vue";
+import { reactive, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { Project } from "@common/data/entities/project/Project";
@@ -19,8 +19,8 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true
-    }
+        required: true,
+    },
 });
 const { project } = toRefs(props);
 
@@ -30,25 +30,26 @@ const exporters: ExporterID[] = ["pdf", "raw"];
 const dmpProfile = new PropertySet(dfgDmp, project!.value.features.dmp.plan as PersistedSet);
 const controller = reactive(new DmpController(dmpProfile));
 
-function handleDMPUpdate(data: PersistedSet[]): void {
-    const dmpSet = extractPersistedSetFromArray(data, dfgDmp.profile_id);
+watch(project!.value.features.dmp.plan as PersistedSet, () => {
+    const dmpSet = project!.value.features.dmp.plan;
+
     const action = new UpdateProjectFeaturesAction(comp);
     action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
     action.execute();
 
     // TODO: Just a quick hack, perform update in a better way later
     // @ts-ignore
-    project!.value.features.dmp.plan = dmpSet;
-}
+    //project!.value.features.dmp.plan = dmpSet;
+});
 </script>
 
 <template>
     <PropertyEditor
-        @update="handleDMPUpdate"
-        :controller="controller as MetadataController"
+        :controller="controller as DmpController"
         :logging="logging"
         :exporters="exporters"
         :project="project"
+        v-model="project!.features.dmp.plan"
         oneCol
     />
 </template>

@@ -13,9 +13,9 @@ export const testProfile: PropertyProfile = {
                     name: "Author",
                     type: PropertyDataType.STRING,
                     description: "The Authors name",
-                    showAlways: true
-                }
-            ]
+                    showAlways: true,
+                },
+            ],
         },
         {
             id: "Advanced",
@@ -27,15 +27,15 @@ export const testProfile: PropertyProfile = {
                     type: PropertyDataType.NUMBER,
                     description:
                         "This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! ",
-                    showAlways: true
+                    showAlways: true,
                 },
                 {
                     id: "SomeMultiselect",
                     name: "Some Multiselect",
                     type: PropertyDataType.MULTISELECT,
                     description: "Here are some options",
-                    showAlways: false,
-                    options: ["asd", "something else", "another thing"]
+                    showAlways: true,
+                    options: ["asd", "something else", "another thing"],
                 },
                 {
                     id: "Radio",
@@ -43,49 +43,57 @@ export const testProfile: PropertyProfile = {
                     type: PropertyDataType.RADIOBUTTONS,
                     description: "Here are some Radio Buttons",
                     showAlways: true,
-                    options: ["asd", "something else", "another thing"]
+                    options: ["asd", "something else", "another thing"],
+                },
+                {
+                    id: "checkbox",
+                    name: "A checkbox",
+                    type: PropertyDataType.CHECKBOX,
+                    description: "Here are some Radio Buttons",
+                    showAlways: true,
+                    options: ["asd", "something else", "another thing"],
                 },
                 {
                     id: "Number",
                     name: "Number",
                     type: PropertyDataType.NUMBER,
                     description: "The number of authors",
-                    showAlways: false
+                    showAlways: false,
                 },
                 {
                     id: "Authors",
                     name: "Authors",
                     type: PropertyDataType.TEXTAREA,
                     description: "The Authors name",
-                    showAlways: false
+                    showAlways: true,
                 },
                 {
                     id: "Authorslist",
                     name: "Authors list",
                     type: PropertyDataType.STRINGLIST,
                     description: "Comma separated list of authors",
-                    showAlways: true
+                    showAlways: true,
                 },
                 {
                     id: "Publishdate",
                     name: "Publishing date",
                     type: PropertyDataType.DATE,
                     description: "When was this made publicly available?",
-                    showAlways: true
-                }
-            ]
-        }
-    ]
+                    showAlways: true,
+                },
+            ],
+        },
+    ],
 };
 
 export const testValues: PersistedSet = new PersistedSet(
     { name: "Additional Profile", version: "1.1.1" },
     {
         General: {
-            Author: "John Doee"
+            Author: "John Doee",
         },
         Advanced: {
-            SomeMultiselect: ["asd", "another thing"]
-        }
-    }
+            SomeMultiselect: ["asd", "another thing"],
+        },
+    },
 );

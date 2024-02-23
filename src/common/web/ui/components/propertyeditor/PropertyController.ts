@@ -17,6 +17,8 @@ export abstract class PropertyController<S> {
     public abstract getCategoryById(id: ProfileID): PropertyCategory[];
     public abstract exportData(): PersistedSet[];
     public abstract setsToWatch(): PropertySet[];
+
+    public abstract mountPersistedSets(persistedSets: PersistedSet[] | PersistedSet): void;
 }
 
 export class MetadataController extends PropertyController<S> {
@@ -47,12 +49,25 @@ export class MetadataController extends PropertyController<S> {
         this._logLoadedSets(mergeSets);
     }
 
+    public mountPersistedSets(persistedSets: PersistedSet[]): void {
+        for (const pS of [this.defaultSet, ...(this.propertySets || [])]) {
+            const s = persistedSets.filter((e) => e.profile_id["name"] === pS.profile_id["name"] && e.profile_id["version"] === pS.profile_id["version"]);
+            if (!s.length) {
+                const newSet: PersistedSet = new PersistedSet(pS.profile_id);
+                pS.properties = newSet["categories"];
+                persistedSets.push(newSet);
+            } else {
+                pS.properties = s[0]["categories"];
+            }
+        }
+    }
+
     public getValue(profileId: ProfileID, category: string, id: string): any {
         try {
             if (this.defaultSet.profile_id === profileId) {
-                return this.defaultSet.getProperty(category, id);
+                return this.defaultSet.properties[category]?.[id];
             }
-            return this._getPropertySet(profileId).getProperty(category, id);
+            return this._getPropertySet(profileId).properties[category]?.[id];
         } catch (e: any) {
             logging.error(e, "PropertyController");
         }
@@ -157,6 +172,21 @@ export class DmpController extends PropertyController<S> {
         this.defaultSet = defaultSet;
 
         this._logLoadedSets();
+    }
+
+    public mountPersistedSets(persistedSets: PersistedSet): void {
+        if (
+            Object.keys(persistedSets).includes("profile_id") &&
+            persistedSets.profile_id["name"] === this.defaultSet.profile_id["name"] &&
+            persistedSets.profile_id["version"] === this.defaultSet.profile_id["version"]
+        ) {
+            this.defaultSet.properties = persistedSets["categories"];
+        } else {
+            const newSet: PersistedSet = new PersistedSet(this.defaultSet.profile_id);
+            this.defaultSet.properties = newSet["categories"];
+            persistedSets["profile_id"] = newSet["profile_id"];
+            persistedSets["categories"] = newSet["categories"];
+        }
     }
 
     public getValue(profileId: ProfileID, category: string, id: string): any {

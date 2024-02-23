@@ -8,10 +8,10 @@ export type Properties = {
 };
 
 export class PersistedSet {
-    public readonly profile_id: ProfileID;
-    public readonly categories: Properties;
+    public profile_id: ProfileID;
+    public categories: Properties;
 
-    public constructor(profile_id: ProfileID, categories: Properties) {
+    public constructor(profile_id: ProfileID, categories: Properties = {} as Properties) {
         this.profile_id = profile_id;
         this.categories = categories;
     }
@@ -25,12 +25,12 @@ export class PersistedSet {
 
  */
 export class PropertySet {
-    public readonly properties: Properties;
+    public properties: Properties;
     public readonly profile_id: ProfileID;
 
     public constructor(
         public profile: PropertyProfile,
-        public propertyData: PersistedSet = {} as PersistedSet,
+        propertyData: PersistedSet = {} as PersistedSet,
     ) {
         this.profile = deepClone(profile);
 

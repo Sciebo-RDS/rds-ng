@@ -2,10 +2,11 @@
 import { provide, type PropType, watch, useAttrs, toRefs } from "vue";
 import PropertySet from "./PropertySet.vue";
 import PropertyDefaultSet from "./PropertyDefaultSet.vue";
-import InlineMessage from "primevue/inlinemessage";
 import { Logger } from "./utils/Logging";
+
 import { MetadataController, PropertyController, type S } from "./PropertyController";
 import type { ExporterID } from "./exporters/Exporter";
+import { PersistedSet } from "./PropertySet";
 
 const emit = defineEmits(["update"]);
 const { controller, logging, project, exporters } = defineProps({
@@ -36,7 +37,10 @@ const attrs = useAttrs();
 provide("controller", controller);
 provide("logging", logging);
 provide("cols", cols(attrs));
-console.log();
+
+const model = defineModel();
+
+controller.mountPersistedSets(model.value as PersistedSet[]);
 
 watch(controller.setsToWatch(), () => {
     emit("update", controller.exportData());
