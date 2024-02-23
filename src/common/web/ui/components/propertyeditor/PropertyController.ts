@@ -16,7 +16,6 @@ export abstract class PropertyController<S> {
     public abstract getProfile(id: ProfileID): PropertyProfile;
     public abstract getCategoryById(id: ProfileID): PropertyCategory[];
     public abstract exportData(): PersistedSet[];
-    public abstract setsToWatch(): PropertySet[];
 
     public abstract mountPersistedSets(persistedSets: PersistedSet[] | PersistedSet): void;
 }
@@ -141,10 +140,6 @@ export class MetadataController extends PropertyController<S> {
         return this.defaultSet.profile_id;
     }
 
-    public setsToWatch(): PropertySet[] {
-        return [...((this.propertySets as PropertySet[]) || []), this.defaultSet];
-    }
-
     private _logLoadedSets(mergeSets: PropertySet[] | null = null): void {
         if (!this.getDefaultProfile()) {
             logging.error(`Could not load a default profile.`, "MetadataEditor");
@@ -233,10 +228,6 @@ export class DmpController extends PropertyController<S> {
 
     public exportData(): PersistedSet[] {
         return [this.defaultSet.exportPropertySet()];
-    }
-
-    public setsToWatch(): PropertySet[] {
-        return [this.defaultSet];
     }
 
     private _logLoadedSets(): void {
