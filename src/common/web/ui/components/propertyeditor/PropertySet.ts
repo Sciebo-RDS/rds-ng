@@ -1,3 +1,4 @@
+import { deepClone } from "@common/utils/ObjectUtils";
 import { type PropertyProfile, type ProfileID } from "./PropertyProfile";
 
 export type Properties = {
@@ -31,6 +32,8 @@ export class PropertySet {
         public profile: PropertyProfile,
         public propertyData: PersistedSet = {} as PersistedSet,
     ) {
+        this.profile = deepClone(profile);
+
         if (!this._validateProfile()) {
             throw new Error("PropertyProfile is not valid.");
         }
