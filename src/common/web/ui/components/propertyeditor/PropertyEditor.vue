@@ -41,10 +41,6 @@ provide("cols", cols(attrs));
 const model = defineModel();
 
 controller.mountPersistedSets(model.value as PersistedSet[]);
-
-watch(controller.setsToWatch(), () => {
-    emit("update", controller.exportData());
-});
 </script>
 
 <template>
