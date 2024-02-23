@@ -1,9 +1,13 @@
 import typing
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
 from .project_feature import ProjectFeature, ProjectFeatureID
+
+ResourcesMetadata = typing.Dict[
+    str, typing.Dict[str, typing.Any]
+]  # TODO: Use proper type
 
 
 @dataclass_json
@@ -14,3 +18,5 @@ class ResourcesMetadataFeature(ProjectFeature):
     """
 
     feature_id: typing.ClassVar[ProjectFeatureID] = "resources_metadata"
+
+    resources_metadata: ResourcesMetadata = field(default_factory=dict)

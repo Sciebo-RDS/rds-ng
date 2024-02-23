@@ -1,25 +1,27 @@
 <script setup lang="ts">
 import BlockUI from "primevue/blockui";
-import { reactive, ref, toRefs, watch } from "vue";
+import Button from "primevue/button";
+import Image from "primevue/image";
+import { ref, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
+import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
-import { extractPersistedSetFromArray } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
-import { deepClone } from "@common/utils/ObjectUtils";
+import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
-// TODO:
-const values = ref({});
+import previewImage from "@assets/img/preview.png";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -38,6 +40,8 @@ const resourcesError = ref("");
 const resourcesProfile = new PropertySet(resources);
 const controller = ref<MetadataController | undefined>(undefined);
 const controllerKey = ref(0); // TODO: Just a workaround for missing reactivity
+
+const showPreview = ref(true);
 
 function refreshResources(): void {
     resourcesRefreshing.value = true;
@@ -69,20 +73,23 @@ function handleMetadataUpdate(data: PersistedSet[]): void {
     const resourcesData = extractPersistedSetFromArray(data, resources.profile_id);
     const selectedPaths = Object.keys(selectedNodes.value);
     selectedPaths.forEach((path) => {
-        values.value[path] = deepClone<PersistedSet>(resourcesData);
+        // TODO: Just a quick hack, perform update in a better way later
+        project!.value.features.resources_metadata.resources_metadata[path] = resourcesData;
     });
+
+    const action = new UpdateProjectFeaturesAction(comp);
+    action.prepare(project!.value, [new ResourcesMetadataFeature(project!.value.features.resources_metadata.resources_metadata as ResourcesMetadata)]);
+    action.execute();
 }
 
-watch(selectedNodes, (nodes) => {
-    let resourcesData: PersistedSet | undefined = undefined;
-
+watch(selectedNodes, (nodes: Record<string, boolean>) => {
+    const persistedSets: PersistedSet[] = [];
     const selectedPaths = Object.keys(nodes);
-    if (selectedPaths.length == 1) {
-        const path = selectedPaths[0];
-        if (path in values.value) {
-            resourcesData = values.value[path] as PersistedSet;
-        }
-    }
+    const metadata = project!.value.features.resources_metadata.resources_metadata;
+    selectedPaths.forEach((path) => {
+        persistedSets.push(path in metadata ? metadata[path] as PersistedSet : new PersistedSet(resources.profile_id, {}));
+    });
+    const resourcesData = intersectPersistedSets(persistedSets, resources.profile_id);
 
     refreshMetadataController(resourcesData);
 });
@@ -94,21 +101,40 @@ watch(selectedNodes, (nodes) => {
             <ResourcesTreeTable
                 :data="resourcesNodes"
                 v-model:selected-nodes="selectedNodes"
-                class="p-treetable-sm text-sm border border-b-0"
+                class="p-treetable-sm text-sm border border-b-0 mb-auto"
                 refreshable
                 @refresh="refreshResources"
             />
 
             <div class="border">
-                <div class="r-shade-dark-gray r-text-caption-big p-4 border-b"><span>Object Metadata</span></div>
-                <PropertyEditor
-                    v-if="Object.keys(selectedNodes).length > 0"
-                    :key="controllerKey"
-                    @update="handleMetadataUpdate"
-                    :controller="controller as MetadataController"
-                    :logging="logging"
-                    twoCol
-                />
+                <div class="grid grid-cols-[1fr_min-content] items-center r-shade-dark-gray r-text-caption-big p-2.5 border-b">
+                    <span>Object Metadata</span>
+                    <span>
+                        <Button
+                            icon="material-icons-outlined mi-visibility"
+                            title="Toggle preview"
+                            size="small"
+                            :severity="showPreview ? '' : 'secondary'"
+                            text
+                            rounded
+                            @click="showPreview = !showPreview;"
+                        />
+                    </span>
+                </div>
+
+                <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
+                    <div id="preview" v-if="showPreview" class="mt-5">
+                        <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
+                    </div>
+                    <PropertyEditor
+                        :key="controllerKey"
+                        @update="handleMetadataUpdate"
+                        :controller="controller as MetadataController"
+                        :logging="logging"
+                        oneCol
+                        class="w-full"
+                    />
+                </div>
                 <div v-else class="r-centered-grid italic pt-8">
                     Select one or more file objects on the left to edit their metadata.
                 </div>
@@ -121,5 +147,4 @@ watch(selectedNodes, (nodes) => {
 </template>
 
 <style scoped lang="scss">
-
 </style>
