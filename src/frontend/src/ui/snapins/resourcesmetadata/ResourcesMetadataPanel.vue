@@ -7,7 +7,7 @@ import { reactive, ref, toRefs, watch } from "vue";
 import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
-import { ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
@@ -70,7 +70,7 @@ watch(resourcesData, (metadata) => {
     }
 
     const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
-    const updatedData = deepClone<PersistedSet[]>(resourcesData.value);
+    const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
     const selectedPaths = Object.keys(selectedNodes.value);
     selectedPaths.forEach((path) => {
         updatedData[path] = resourcesSet;
