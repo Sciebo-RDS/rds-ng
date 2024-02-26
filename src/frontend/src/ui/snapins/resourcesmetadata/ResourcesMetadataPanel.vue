@@ -38,8 +38,8 @@ const resourcesRefreshing = ref(false);
 const resourcesError = ref("");
 
 const resourcesProfile = new PropertySet(resources);
-const controller = ref<MetadataController | undefined>(undefined);
-const controllerKey = ref(0); // TODO: Just a workaround for missing reactivity
+const resourcesMetadata = ref<PersistedSet[]>([]);
+const controller = ref(new MetadataController(resourcesProfile, [], []));
 
 const showPreview = ref(true);
 
@@ -61,26 +61,18 @@ function refreshResources(): void {
     action.execute();
 }
 
-function refreshMetadataController(resourcesData?: PersistedSet): void {
-    const resourcesProfile = new PropertySet(resources, resourcesData);
-    controller.value = new MetadataController(resourcesProfile, [], []);
-
-    // TODO: This forces the PropertyEditor to be recreated
-    controllerKey.value += 1;
-}
-
-function handleMetadataUpdate(data: PersistedSet[]): void {
-    const resourcesData = extractPersistedSetFromArray(data, resources.profile_id);
+watch(resourcesMetadata, (metadata) => {
+    const resourcesData: ResourcesMetadata = {};
+    const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
     const selectedPaths = Object.keys(selectedNodes.value);
     selectedPaths.forEach((path) => {
-        // TODO: Just a quick hack, perform update in a better way later
-        project!.value.features.resources_metadata.resources_metadata[path] = resourcesData;
+        resourcesData[path] = resourcesSet;
     });
 
     const action = new UpdateProjectFeaturesAction(comp);
-    action.prepare(project!.value, [new ResourcesMetadataFeature(project!.value.features.resources_metadata.resources_metadata as ResourcesMetadata)]);
+    action.prepare(project!.value, [new ResourcesMetadataFeature(resourcesData)]);
     action.execute();
-}
+});
 
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
     const persistedSets: PersistedSet[] = [];
@@ -89,9 +81,8 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     selectedPaths.forEach((path) => {
         persistedSets.push(path in metadata ? metadata[path] as PersistedSet : new PersistedSet(resources.profile_id, {}));
     });
-    const resourcesData = intersectPersistedSets(persistedSets, resources.profile_id);
 
-    refreshMetadataController(resourcesData);
+    resourcesMetadata.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
 });
 </script>
 
@@ -127,8 +118,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                         <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
                     </div>
                     <PropertyEditor
-                        :key="controllerKey"
-                        @update="handleMetadataUpdate"
+                        v-model="resourcesMetadata"
                         :controller="controller as MetadataController"
                         :logging="logging"
                         oneCol

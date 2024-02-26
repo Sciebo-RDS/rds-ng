@@ -10,8 +10,7 @@ import { testProfile } from "@common/ui/components/propertyeditor/DummyData";
 import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
-import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
-import { extractPersistedSetFromArray } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+import { PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 
@@ -24,8 +23,8 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 const consStore = useConnectorsStore();
@@ -61,17 +60,21 @@ const baseSet = new PropertySet(dataCite);
 const profiles: PropertySet[] = [new PropertySet(testProfile)];
 const controller = reactive(new MetadataController(baseSet, mergeSets, profiles));
 
-watch(project!.value.features.metadata.metadata, () => {
-    const metadata = project!.value.features.metadata.metadata as ProjectMetadata;
+watch(project!.value.features.metadata.metadata, (metadata) => {
     const action = new UpdateProjectFeaturesAction(comp);
-    action.prepare(project!.value, [new MetadataFeature(metadata)]);
+    action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata)]);
     action.execute();
 });
 </script>
 
 <template>
     <div>
-        <PropertyEditor :controller="controller as MetadataController" :logging="logging" twoCol v-model="project!.features.metadata.metadata" />
+        <PropertyEditor
+            v-model="project!.features.metadata.metadata"
+            :controller="controller as MetadataController"
+            :logging="logging"
+            twoCol
+        />
     </div>
 </template>
 
