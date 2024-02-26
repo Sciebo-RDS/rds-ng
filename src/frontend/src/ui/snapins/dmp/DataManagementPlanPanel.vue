@@ -6,7 +6,7 @@ import { Project } from "@common/data/entities/project/Project";
 import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
 import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
-import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
+import { PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
@@ -26,7 +26,7 @@ const { project } = toRefs(props);
 // TODO: Testing data only
 const exporters: ExporterID[] = ["pdf", "raw"];
 
-const dmpProfile = new PropertySet(dfgDmp, project!.value.features.dmp.plan as PersistedSet);
+const dmpProfile = new PropertySet(dfgDmp);
 const controller = reactive(new DmpController(dmpProfile));
 
 watch(project!.value.features.dmp.plan, (dmpSet) => {

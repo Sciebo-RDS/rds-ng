@@ -2,12 +2,12 @@
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
 import Image from "primevue/image";
-import { ref, toRefs, watch } from "vue";
+import { reactive, ref, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
-import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import { ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
@@ -38,8 +38,8 @@ const resourcesRefreshing = ref(false);
 const resourcesError = ref("");
 
 const resourcesProfile = new PropertySet(resources);
-const resourcesMetadata = ref<PersistedSet[]>([]);
-const controller = ref(new MetadataController(resourcesProfile, [], []));
+const resourcesData = ref<PersistedSet[]>([]);
+const controller = reactive(new MetadataController(resourcesProfile, [], []));
 
 const showPreview = ref(true);
 
@@ -61,16 +61,16 @@ function refreshResources(): void {
     action.execute();
 }
 
-watch(resourcesMetadata, (metadata) => {
-    const resourcesData: ResourcesMetadata = {};
+watch(resourcesData, (metadata) => {
     const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
+    const updatedData = resourcesData.value;
     const selectedPaths = Object.keys(selectedNodes.value);
     selectedPaths.forEach((path) => {
-        resourcesData[path] = resourcesSet;
+        updatedData[path] = resourcesSet;
     });
 
     const action = new UpdateProjectFeaturesAction(comp);
-    action.prepare(project!.value, [new ResourcesMetadataFeature(resourcesData)]);
+    action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
     action.execute();
 });
 
@@ -82,7 +82,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
         persistedSets.push(path in metadata ? metadata[path] as PersistedSet : new PersistedSet(resources.profile_id, {}));
     });
 
-    resourcesMetadata.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
+    resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
 });
 </script>
 
@@ -114,11 +114,11 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                 </div>
 
                 <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
-                    <div id="preview" v-if="showPreview" class="mt-5">
+                    <div v-if="showPreview" class="mt-5">
                         <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
                     </div>
                     <PropertyEditor
-                        v-model="resourcesMetadata"
+                        v-model="resourcesData"
                         :controller="controller as MetadataController"
                         :logging="logging"
                         oneCol
