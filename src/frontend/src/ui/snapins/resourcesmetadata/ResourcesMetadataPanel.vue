@@ -13,6 +13,7 @@ import { resources } from "@common/ui/components/propertyeditor/profiles/resourc
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+import { deepClone } from "@common/utils/ObjectUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
@@ -63,7 +64,7 @@ function refreshResources(): void {
 
 watch(resourcesData, (metadata) => {
     const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
-    const updatedData = resourcesData.value;
+    const updatedData = deepClone<PersistedSet[]>(resourcesData.value);
     const selectedPaths = Object.keys(selectedNodes.value);
     selectedPaths.forEach((path) => {
         updatedData[path] = resourcesSet;
