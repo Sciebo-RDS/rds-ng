@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { computed, inject } from "vue";
 import { getRandomId } from "../utils/Ids";
 
 import RadioButton from "primevue/radiobutton";
@@ -15,7 +15,7 @@ const controller = inject("controller") as PropertyController<PropertySet | Prop
 const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
-const value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
 
 let debounce: number | null = null;
 
@@ -31,7 +31,7 @@ const id = getRandomId();
         <Button
             @click="
                 value = null;
-                handleInput(value);
+                handleInput(value as Event);
             "
             icon="pi pi-times"
             severity="secondary"
@@ -42,7 +42,7 @@ const id = getRandomId();
         />
         <div class="flex flex-column gap-3">
             <div v-for="option in property.options" :key="option" class="flex align-items-center">
-                <RadioButton v-model="value" :inputId="option + id" name="dynamic" :value="option" @update:modelValue="handleInput" />
+                <RadioButton :modelValue="value" :inputId="option + id" name="dynamic" :value="option" @update:modelValue="handleInput" />
                 <label :for="option + id" class="ml-2">{{ option }}</label>
             </div>
         </div>

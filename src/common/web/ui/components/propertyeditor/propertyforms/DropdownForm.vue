@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import Dropdown from "primevue/dropdown";
 
 import { PropertyController } from "../PropertyController";
@@ -12,7 +12,7 @@ const controller = inject("controller") as PropertyController<PropertySet | Prop
 const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
-const value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
 
 let debounce: number | null = null;
 
@@ -24,7 +24,7 @@ const handleInput = (e: any) => {
 <template>
     <div class="flex">
         <Dropdown
-            v-model="value"
+            :modelValue="value"
             @change="handleInput"
             :options="property.options"
             class="grow"

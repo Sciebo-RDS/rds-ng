@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, type PropType, watch, useAttrs, toRefs } from "vue";
+import { provide, type PropType, watch, useAttrs } from "vue";
 import PropertySet from "./PropertySet.vue";
 import PropertyDefaultSet from "./PropertyDefaultSet.vue";
 import { Logger } from "./utils/Logging";
@@ -41,6 +41,22 @@ provide("cols", cols(attrs));
 const model = defineModel();
 
 controller.mountPersistedSets(model.value as PersistedSet[]);
+
+watch(
+    () => model.value,
+    (nM) => {
+        controller.mountPersistedSets(model.value as PersistedSet[]);
+    },
+    { deep: true },
+);
+
+watch(
+    () => controller.exportData(),
+    () => {
+        model.value = controller.exportData();
+    },
+    { deep: true },
+);
 </script>
 
 <template>

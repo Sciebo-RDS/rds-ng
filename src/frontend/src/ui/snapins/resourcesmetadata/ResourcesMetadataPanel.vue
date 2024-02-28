@@ -28,8 +28,8 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true
-    }
+        required: true,
+    },
 });
 const { project } = toRefs(props);
 
@@ -70,7 +70,9 @@ watch(resourcesData, (metadata) => {
     }
 
     const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
+    // BUG Hier gehen vorherige updates wieder verloren, weil project!.value.features.resources_metadata.resources_metadata nicht aktualisiert wurde
     const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
+
     const selectedPaths = Object.keys(selectedNodes.value);
     selectedPaths.forEach((path) => {
         updatedData[path] = resourcesSet;
@@ -81,6 +83,7 @@ watch(resourcesData, (metadata) => {
     action.execute();
 });
 
+// BUG isSwitchingSelection does not have any effect, as the watchers are executed sequentially
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
     isSwitchingSelection = true;
 
@@ -88,7 +91,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     const selectedPaths = Object.keys(nodes);
     const metadata = project!.value.features.resources_metadata.resources_metadata;
     selectedPaths.forEach((path) => {
-        persistedSets.push(path in metadata ? metadata[path] as PersistedSet : new PersistedSet(resources.profile_id, {}));
+        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
     });
 
     resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
@@ -119,7 +122,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                             :severity="showPreview ? '' : 'secondary'"
                             text
                             rounded
-                            @click="showPreview = !showPreview;"
+                            @click="showPreview = !showPreview"
                         />
                     </span>
                 </div>
@@ -128,17 +131,9 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                     <div v-if="showPreview" class="mt-5">
                         <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
                     </div>
-                    <PropertyEditor
-                        v-model="resourcesData"
-                        :controller="controller as MetadataController"
-                        :logging="logging"
-                        oneCol
-                        class="w-full"
-                    />
+                    <PropertyEditor v-model="resourcesData" :controller="controller as MetadataController" :logging="logging" oneCol class="w-full" />
                 </div>
-                <div v-else class="r-centered-grid italic pt-8">
-                    Select one or more file objects on the left to edit their metadata.
-                </div>
+                <div v-else class="r-centered-grid italic pt-8">Select one or more file objects on the left to edit their metadata.</div>
             </div>
         </div>
         <div v-else class="r-text-error">
@@ -147,5 +142,4 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     </BlockUI>
 </template>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

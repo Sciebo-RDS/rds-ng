@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { computed, inject } from "vue";
 import Chips from "primevue/chips";
 
 import { PropertyController } from "../PropertyController";
@@ -12,7 +12,7 @@ const controller = inject("controller") as PropertyController<PropertySet | Prop
 const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
-const value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
 
 let debounce: number | null = null;
 
@@ -22,5 +22,5 @@ const handleInput = (eValue: any) => {
 </script>
 
 <template>
-    <Chips @update:modelValue="handleInput" v-model="value" separator="," class="inline" :addOnBlur="true" placeholder="Separate by comma" />
+    <Chips @update:modelValue="handleInput" :modelValue="value" separator="," class="inline" :addOnBlur="true" placeholder="Separate by comma" />
 </template>
