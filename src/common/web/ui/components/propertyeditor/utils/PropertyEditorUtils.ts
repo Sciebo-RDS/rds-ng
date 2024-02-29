@@ -1,4 +1,4 @@
-import { intersectObjects } from "../../../../utils/ObjectUtils";
+import { deepClone, intersectObjects } from "../../../../utils/ObjectUtils";
 import { type ProfileID } from "../PropertyProfile";
 import { PersistedSet } from "../PropertySet";
 
@@ -37,7 +37,7 @@ export function intersectPersistedSets(persistedSets: PersistedSet[], profileID:
     if (persistedSets.length == 0) {
         return new PersistedSet(profileID, {});
     } else if (persistedSets.length == 1) {
-        return persistedSets[0];
+        return deepClone<PersistedSet>(persistedSets[0]);
     }
 
     let combinedSet = persistedSets[0];
