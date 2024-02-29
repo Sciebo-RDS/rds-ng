@@ -82,6 +82,7 @@ watch(resourcesData, (metadata) => {
     action.execute();
 
     // TODO: A hack to update the local data; nedds to be changed later
+    // @ts-ignore
     project!.value.features.resources_metadata.resources_metadata = updatedData;
 });
 
