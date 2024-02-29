@@ -4,7 +4,7 @@ import Button from "primevue/button";
 import Image from "primevue/image";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import { nextTick, reactive, ref, toRefs, watch } from "vue";
+import { nextTick, reactive, ref, toRefs, watch, computed } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
@@ -66,6 +66,28 @@ function refreshResources(): void {
     action.execute();
 }
 
+const propertyHeader = computed(() => {
+    switch (Object.keys(selectedNodes.value).length) {
+        case 0:
+            return "Object Metadata";
+        case 1:
+            return Object.keys(selectedNodes.value)[0];
+        default:
+            return `${Object.keys(selectedNodes.value).length} Objects selected`;
+    }
+});
+
+const propertyTitle = computed(() => {
+    switch (Object.keys(selectedNodes.value).length) {
+        case 0:
+            return "";
+        case 1:
+            return Object.keys(selectedNodes.value)[0];
+        default:
+            return Object.keys(selectedNodes.value).sort().join("\n");
+    }
+});
+
 watch(resourcesData, (metadata) => {
     if (blockResourcesUpdate) {
         return;
@@ -121,10 +143,8 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
 
                 <SplitterPanel :size="50" :min-size="25">
                     <div class="overflow-auto h-full">
-                        <div class="grid grid-cols-[1fr_min-content] items-center r-shade-gray r-text-caption-big p-2.5 border-b sticky top-0 z-10">
-                            <span class="truncate mx-1" :title="Object.keys(selectedNodes)[0]">
-                                {{ Object.keys(selectedNodes).length > 0 ? Object.keys(selectedNodes)[0] : "Object Metadata" }}</span
-                            >
+                        <div class="grid grid-cols-[1fr_min-content] items-center r-shade-gray r-text-caption-big p-2.5 border-b">
+                            <span class="truncate mx-1" :title="propertyTitle"> {{ propertyHeader }}</span>
                             <span>
                                 <Button
                                     icon="material-icons-outlined mi-visibility"

@@ -68,7 +68,7 @@ function collapseAll(): void {
         :loading="isLoading"
         auto-layout
         :pt="{ header: 'r-shade-gray h-fit', footer: 'r-shade-dark-gray sticky top-[100vh]', wrapper: '!overflow-auto' }"
-        class="grid content-start"
+        class="grid content-start border-0 border-t-2 border-slate-50"
     >
         <template #header>
             <div class="text-right">
