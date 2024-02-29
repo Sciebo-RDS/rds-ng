@@ -78,7 +78,7 @@ const propertyHeader = computed(() => {
 });
 
 const resourceTitle = computed(() => {
-    return Object.keys(selectedNodes.value).length > 0 ? Object.keys(selectedNodes.value).sort().join("\n") : "";
+    return Object.keys(selectedNodes.value).sort().join("\n");
 });
 
 watch(resourcesData, (metadata) => {
