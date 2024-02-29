@@ -10,7 +10,7 @@ import { testProfile } from "@common/ui/components/propertyeditor/DummyData";
 import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
-import { PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
+import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 
@@ -35,18 +35,16 @@ const { userSettings } = storeToRefs(userStore);
 // TODO: Testing data only
 const mergeSets: PropertySet[] = [];
 connectors.value.forEach((connector) => {
-    if (
-        !userSettings.value.connector_instances.find((instance) => {
-            if (project!.value.options.use_all_connector_instances) {
-                return instance.connector_id == connector.connector_id;
-            } else {
-                return !!project!.value.options.active_connector_instances.find((instanceID) => {
-                    const resolvedConnector = findConnectorByInstanceID(connectors.value, userSettings.value.connector_instances, instanceID);
-                    return resolvedConnector && resolvedConnector.connector_id == connector.connector_id;
-                });
-            }
-        })
-    ) {
+    if (!userSettings.value.connector_instances.find((instance) => {
+        if (project!.value.options.use_all_connector_instances) {
+            return instance.connector_id == connector.connector_id;
+        } else {
+            return !!project!.value.options.active_connector_instances.find((instanceID) => {
+                const resolvedConnector = findConnectorByInstanceID(connectors.value, userSettings.value.connector_instances, instanceID);
+                return resolvedConnector && resolvedConnector.connector_id == connector.connector_id;
+            });
+        }
+    })) {
         return;
     }
 
@@ -70,7 +68,7 @@ watch(project!.value.features.metadata.metadata, (metadata) => {
 <template>
     <div>
         <PropertyEditor
-            v-model="project!.features.metadata.metadata"
+            v-model="project!.features.metadata.metadata as PersistedSet[]"
             :controller="controller as MetadataController"
             :logging="logging"
             twoCol

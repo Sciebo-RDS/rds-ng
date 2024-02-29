@@ -5,7 +5,7 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
  *
  * TODO: Use proper type
  */
-export type DataManagementPlan = Record<string, any>;
+export type DataManagementPlan = Record<string, any>[];
 
 /**
  * Data class for the data management plan project feature.
@@ -15,7 +15,7 @@ export class DataManagementPlanFeature extends ProjectFeature {
 
     public readonly plan: DataManagementPlan;
 
-    public constructor(plan: DataManagementPlan = {}) {
+    public constructor(plan: DataManagementPlan = []) {
         super();
 
         this.plan = plan;

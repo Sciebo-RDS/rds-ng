@@ -18,8 +18,8 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
@@ -28,19 +28,25 @@ const exporters: ExporterID[] = ["pdf", "raw"];
 
 const dmpProfile = new PropertySet(dfgDmp);
 const controller = reactive(new DmpController(dmpProfile));
-const resourcesData = ref<PersistedSet[]>([]);
-resourcesData.value = [project!.value.features.dmp.plan as PersistedSet];
 
-watch(resourcesData, (dmpSet) => {
+watch(project!.value.features.dmp.plan, (dmpSet: PersistedSet[]) => {
     const action = new UpdateProjectFeaturesAction(comp);
-
-    //TODO Make DataManagementPlanFeature accept Arrays of DataManagementPlan
-    action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet[0] as DataManagementPlan)]);
+    action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
     action.execute();
 });
 </script>
+
 <template>
-    <PropertyEditor v-model="resourcesData" :controller="controller as DmpController" :logging="logging" :exporters="exporters" :project="project" oneCol />
+    <PropertyEditor
+        v-model="project!.features.dmp.plan as PersistedSet[]"
+        :controller="controller as DmpController"
+        :logging="logging"
+        :exporters="exporters"
+        :project="project"
+        oneCol
+    />
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+
+</style>
