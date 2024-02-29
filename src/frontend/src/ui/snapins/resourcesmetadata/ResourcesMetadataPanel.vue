@@ -2,7 +2,7 @@
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
 import Image from "primevue/image";
-import { reactive, ref, toRefs, watch } from "vue";
+import { nextTick, reactive, ref, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
@@ -44,6 +44,8 @@ const controller = reactive(new MetadataController(resourcesProfile, [], []));
 
 const showPreview = ref(true);
 
+let blockResourcesUpdate = false;
+
 function refreshResources(): void {
     resourcesRefreshing.value = true;
     resourcesError.value = "";
@@ -63,6 +65,10 @@ function refreshResources(): void {
 }
 
 watch(resourcesData, (metadata) => {
+    if (blockResourcesUpdate) {
+        return;
+    }
+
     const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
     const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
 
@@ -80,6 +86,8 @@ watch(resourcesData, (metadata) => {
 });
 
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
+    blockResourcesUpdate = true;
+
     const persistedSets: PersistedSet[] = [];
     const selectedPaths = Object.keys(nodes);
     const metadata = project!.value.features.resources_metadata.resources_metadata;
@@ -88,6 +96,9 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     });
 
     resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
+
+    // Unblock only after the resources watcher had a chance to fire
+    nextTick(() => blockResourcesUpdate = false);
 });
 </script>
 
