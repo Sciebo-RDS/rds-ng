@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, toRefs, watch, ref } from "vue";
+import { reactive, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { Project } from "@common/data/entities/project/Project";
@@ -29,7 +29,7 @@ const exporters: ExporterID[] = ["pdf", "raw"];
 const dmpProfile = new PropertySet(dfgDmp);
 const controller = reactive(new DmpController(dmpProfile));
 
-watch(project!.value.features.dmp.plan, (dmpSet: PersistedSet[]) => {
+watch(() => project!.value.features.dmp.plan, (dmpSet: PersistedSet[]) => {
     const action = new UpdateProjectFeaturesAction(comp);
     action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
     action.execute();

@@ -58,7 +58,7 @@ const baseSet = new PropertySet(dataCite);
 const profiles: PropertySet[] = [new PropertySet(testProfile)];
 const controller = reactive(new MetadataController(baseSet, mergeSets, profiles));
 
-watch(project!.value.features.metadata.metadata, (metadata) => {
+watch(() => project!.value.features.metadata.metadata, (metadata) => {
     const action = new UpdateProjectFeaturesAction(comp);
     action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata)]);
     action.execute();
