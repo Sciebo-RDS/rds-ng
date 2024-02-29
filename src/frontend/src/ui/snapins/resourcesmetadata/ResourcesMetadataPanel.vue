@@ -44,8 +44,6 @@ const controller = reactive(new MetadataController(resourcesProfile, [], []));
 
 const showPreview = ref(true);
 
-let isSwitchingSelection = false;
-
 function refreshResources(): void {
     resourcesRefreshing.value = true;
     resourcesError.value = "";
@@ -65,10 +63,6 @@ function refreshResources(): void {
 }
 
 watch(resourcesData, (metadata) => {
-    if (isSwitchingSelection) {
-        return;
-    }
-
     const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
     const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
 
@@ -85,10 +79,7 @@ watch(resourcesData, (metadata) => {
     project!.value.features.resources_metadata.resources_metadata = updatedData;
 });
 
-// BUG isSwitchingSelection does not have any effect, as the watchers are executed sequentially
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
-    isSwitchingSelection = true;
-
     const persistedSets: PersistedSet[] = [];
     const selectedPaths = Object.keys(nodes);
     const metadata = project!.value.features.resources_metadata.resources_metadata;
@@ -97,8 +88,6 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     });
 
     resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
-
-    isSwitchingSelection = false;
 });
 </script>
 
