@@ -2,6 +2,8 @@
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
 import Image from "primevue/image";
+import Splitter from "primevue/splitter";
+import SplitterPanel from "primevue/splitterpanel";
 import { nextTick, reactive, ref, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
@@ -105,49 +107,56 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
 
 <template>
     <BlockUI :blocked="resourcesRefreshing">
-        <div v-if="!resourcesError" class="grid grid-cols-2 gap-2 w-full h-full">
-            <ResourcesTreeTable
-                :data="resourcesNodes"
-                v-model:selected-nodes="selectedNodes"
-                class="p-treetable-sm text-sm border border-b-0 mb-auto"
-                refreshable
-                @refresh="refreshResources"
-            />
-
-            <div class="border">
-                <div class="grid grid-cols-[1fr_min-content] items-center r-shade-dark-gray r-text-caption-big p-2.5 border-b">
-                    <span>Object Metadata</span>
-                    <span>
-                        <Button
-                            icon="material-icons-outlined mi-visibility"
-                            title="Toggle preview"
-                            size="small"
-                            :severity="showPreview ? '' : 'secondary'"
-                            text
-                            rounded
-                            @click="showPreview = !showPreview"
-                        />
-                    </span>
-                </div>
-
-                <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
-                    <div v-if="showPreview" class="mt-5">
-                        <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
-                    </div>
-                    <PropertyEditor
-                        v-model="resourcesData"
-                        :controller="controller as MetadataController"
-                        :logging="logging"
-                        oneCol
-                        class="w-full"
+        <div v-if="!resourcesError" class="w-full h-full">
+            <Splitter state-key="resources-splitter-state">
+                <SplitterPanel :size="50" :min-size="35">
+                    <ResourcesTreeTable
+                        :data="resourcesNodes"
+                        v-model:selected-nodes="selectedNodes"
+                        class="p-treetable-sm text-sm border border-b-0 mb-auto"
+                        refreshable
+                        @refresh="refreshResources"
                     />
-                </div>
-                <div v-else class="r-centered-grid italic pt-8">Select one or more file objects on the left to edit their metadata.</div>
-            </div>
+                </SplitterPanel>
+
+                <SplitterPanel :size="50" :min-size="25">
+                    <div>
+                        <div class="grid grid-cols-[1fr_min-content] items-center r-shade-dark-gray r-text-caption-big p-2.5 border-b">
+                            <span>Object Metadata</span>
+                            <span>
+                                <Button
+                                    icon="material-icons-outlined mi-visibility"
+                                    title="Toggle preview"
+                                    size="small"
+                                    :severity="showPreview ? '' : 'secondary'"
+                                    text
+                                    rounded
+                                    @click="showPreview = !showPreview"
+                                />
+                            </span>
+                        </div>
+
+                        <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
+                            <div v-if="showPreview" class="mt-5">
+                                <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
+                            </div>
+                            <PropertyEditor
+                                v-model="resourcesData"
+                                :controller="controller as MetadataController"
+                                :logging="logging"
+                                oneCol
+                                class="w-full"
+                            />
+                        </div>
+                        <div v-else class="r-centered-grid italic pt-8">Select one or more file objects on the left to edit their metadata.</div>
+                    </div>
+                </SplitterPanel>
+            </Splitter>
         </div>
         <div v-else class="r-text-error">
             The list of objects could not be retrieved from the remote storage: <em>{{ resourcesError }}</em>
         </div>
+
     </BlockUI>
 </template>
 

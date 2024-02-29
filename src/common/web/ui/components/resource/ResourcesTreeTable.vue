@@ -92,7 +92,7 @@ function collapseAll(): void {
             </template>
         </Column>
 
-        <Column field="resource" header="Files in folder" class="w-40 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column field="resource" header="Files in folder" class="w-32 text-right" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 <span v-if="entry.node.data.type === ResourceType.Folder">{{ entry.node.children.length }}</span>
             </template>
