@@ -73,7 +73,7 @@ function collapseAll(): void {
             <div class="text-right">
                 <IconField iconPosition="left">
                     <InputIcon>
-                        <i class="material-icons-outlined mi-search mt-[-12px]" />
+                        <i class="material-icons-outlined mi-search mt-[-4px]" />
                     </InputIcon>
                     <InputText v-model="filters['global']" placeholder="Search objects" class="w-full" />
                 </IconField>

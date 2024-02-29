@@ -55,7 +55,7 @@ function performLogin(): void {
                     <label>Enter your username:</label>
                     <IconField iconPosition="left">
                         <InputIcon>
-                            <i class="material-icons-outlined mi-account-circle mt-[-12px]" />
+                            <i class="material-icons-outlined mi-account-circle mt-[-4px]" />
                         </InputIcon>
                         <InputText v-model.trim="userName" placeholder="Username" v-focus class="w-full" />
                     </IconField>
