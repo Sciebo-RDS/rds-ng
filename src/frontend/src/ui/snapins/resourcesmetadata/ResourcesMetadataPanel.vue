@@ -77,15 +77,8 @@ const propertyHeader = computed(() => {
     }
 });
 
-const propertyTitle = computed(() => {
-    switch (Object.keys(selectedNodes.value).length) {
-        case 0:
-            return "";
-        case 1:
-            return Object.keys(selectedNodes.value)[0];
-        default:
-            return Object.keys(selectedNodes.value).sort().join("\n");
-    }
+const resourceTitle = computed(() => {
+    return Object.keys(selectedNodes.value).length > 0 ? Object.keys(selectedNodes.value).sort().join("\n") : "";
 });
 
 watch(resourcesData, (metadata) => {
@@ -144,7 +137,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                 <SplitterPanel :size="50" :min-size="25">
                     <div class="overflow-auto h-full">
                         <div class="grid grid-cols-[1fr_min-content] items-center r-shade-gray r-text-caption-big p-2.5 border-b">
-                            <span class="truncate mx-1" :title="propertyTitle"> {{ propertyHeader }}</span>
+                            <span class="truncate mx-1" :title="resourceTitle"> {{ propertyHeader }}</span>
                             <span>
                                 <Button
                                     icon="material-icons-outlined mi-visibility"
