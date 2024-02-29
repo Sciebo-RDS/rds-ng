@@ -14,12 +14,12 @@ import { humanReadableFileSize } from "../../../utils/Strings";
 const props = defineProps({
     data: {
         type: Object as PropType<Object[]>,
-        required: true
+        required: true,
     },
     refreshable: {
         type: Boolean,
-        default: false
-    }
+        default: false,
+    },
 });
 const { data, refreshable } = toRefs(props);
 const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
@@ -47,7 +47,7 @@ function refresh(): void {
 function expandAll(): void {
     if (data!.value) {
         const allResources: Record<string, boolean> = {};
-        flattenResourcesTreeNodes(data!.value).forEach((resource) => allResources[resource] = true);
+        flattenResourcesTreeNodes(data!.value).forEach((resource) => (allResources[resource] = true));
         expandedNodes.value = allResources;
     }
 }
@@ -67,7 +67,8 @@ function collapseAll(): void {
         :filters="filters"
         :loading="isLoading"
         auto-layout
-        :pt="{ header: 'r-shade-dark-gray', footer: 'r-shade-gray' }"
+        :pt="{ header: 'r-shade-gray h-fit', footer: 'r-shade-dark-gray sticky top-[100vh]', wrapper: '!overflow-auto' }"
+        class="grid content-start"
     >
         <template #header>
             <div class="text-right">
@@ -108,6 +109,4 @@ function collapseAll(): void {
     </TreeTable>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

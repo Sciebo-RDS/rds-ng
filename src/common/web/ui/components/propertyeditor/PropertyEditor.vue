@@ -63,7 +63,7 @@ watch(
     <div class="overflow-hidden">
         <PropertyDefaultSet v-if="controller instanceof MetadataController" :controller="controller" :project="project" :exporters="exporters" />
 
-        <div v-for="[i, profileId] of controller.getProfileIds().entries()" :class="i > 0 ? '!mt-5' : ''">
+        <div v-for="[i, profileId] of controller.getProfileIds().entries()" :class="i > 0 ? '!mt-5' : ''" class="mx-4 mt-4">
             <PropertySet :controller="controller" :project="project" :exporters="exporters" :profileId="profileId" />
         </div>
     </div>

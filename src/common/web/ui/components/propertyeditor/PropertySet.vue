@@ -65,6 +65,6 @@ const toggle = (event: Event) => {
         :category="category"
         :profileId="profileId"
         :index="i"
-        class="mt-5"
+        class="mt-5 mb-4"
     />
 </template>

@@ -33,8 +33,9 @@ const panels = computed(() => {
         <TabView
             :pt="{
                 nav: 'tab-view',
-                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.6rem)]' /*HACK height*/,
+                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.2rem)] p-0 h-full' /*HACK height*/,
             }"
+            class="h-full"
         >
             <TabPanel
                 v-for="panel in panels"
@@ -43,6 +44,7 @@ const panels = computed(() => {
                 :pt="{
                     header: 'tab-view-panel',
                     headerAction: 'tab-view-panel-action',
+                    content: 'h-full',
                 }"
             >
                 <component :is="panel.component" :project="project" />
