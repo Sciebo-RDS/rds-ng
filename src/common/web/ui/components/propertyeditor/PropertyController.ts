@@ -11,7 +11,7 @@ export abstract class PropertyController<S> {
     public constructor(defaultSet: PropertySet) {}
 
     public abstract getValue(profileId: ProfileID, category: string, id: string): any;
-    public abstract setValue(profileId: ProfileID, debounce: number | null, category: string, id: string, value: any): number;
+    public abstract setValue(profileId: ProfileID, category: string, id: string, value: any): void;
     public abstract getProfileIds(): ProfileID[];
     public abstract getProfile(id: ProfileID): PropertyProfile;
     public abstract getCategoryById(id: ProfileID): PropertyCategory[];
@@ -61,7 +61,7 @@ export class MetadataController extends PropertyController<S> {
     public mountPersistedSets(persistedSets: any): void {
         for (const pS of [this.defaultSet, ...(this.propertySets || [])]) {
             const s = persistedSets.filter(
-                (e: PersistedSet) => e.profile_id["name"] === pS.profile_id["name"] && e.profile_id["version"] === pS.profile_id["version"],
+                (e: PersistedSet) => e.profile_id["name"] === pS.profile_id["name"] && e.profile_id["version"] === pS.profile_id["version"]
             );
             if (!s.length) {
                 const newSet: PersistedSet = new PersistedSet(pS.profile_id);
@@ -103,23 +103,17 @@ export class MetadataController extends PropertyController<S> {
      * @param value - The new value of the property.
      * @returns The timeout ID.
      */
-    public setValue(profileId: ProfileID, debounce: number | null, category: string, id: string, value: any): number {
-        if (debounce) {
-            clearTimeout(debounce);
-        }
-
-        return window.setTimeout(() => {
-            try {
-                if (this.defaultSet.profile_id === profileId) {
-                    this.defaultSet.setProperty(category, id, value);
-                }
-                if (this._getPropertySet(profileId)) {
-                    this._getPropertySet(profileId).setProperty(category, id, value);
-                }
-            } catch (e: any) {
-                logging.error(e, "PropertyController");
+    public setValue(profileId: ProfileID, category: string, id: string, value: any): void {
+        try {
+            if (this.defaultSet.profile_id === profileId) {
+                this.defaultSet.setProperty(category, id, value);
             }
-        }, 500);
+            if (this._getPropertySet(profileId)) {
+                this._getPropertySet(profileId).setProperty(category, id, value);
+            }
+        } catch (e: any) {
+            logging.error(e, "PropertyController");
+        }
     }
 
     /**
@@ -252,7 +246,7 @@ export class DmpController extends PropertyController<S> {
             (e: PersistedSet) =>
                 Object.keys(e).includes("profile_id") &&
                 e.profile_id["name"] === this.defaultSet.profile_id["name"] &&
-                e.profile_id["version"] === this.defaultSet.profile_id["version"],
+                e.profile_id["version"] === this.defaultSet.profile_id["version"]
         )[0];
         if (!!persistedSet) {
             this.defaultSet.properties = persistedSet["categories"];
@@ -287,19 +281,13 @@ export class DmpController extends PropertyController<S> {
      * @param value - The new value of the property.
      * @returns The timeout ID.
      */
-    public setValue(profileId: ProfileID, debounce: number | null, category: string, id: string, value: any): number {
-        if (debounce) {
-            clearTimeout(debounce);
+    public setValue(profileId: ProfileID, category: string, id: string, value: any): void {
+        if (this.defaultSet["profile_id"]["name"] === profileId["name"] && this.defaultSet["profile_id"]["version"] === profileId["version"]) {
+            category in this.defaultSet.properties || (this.defaultSet.properties[category] = {});
+            this.defaultSet.properties[category][id] = value;
+        } else {
+            logging.error(`Profile ID ${profileId} not found.`, "DmpEditor");
         }
-
-        return window.setTimeout(() => {
-            try {
-                category in this.defaultSet.properties || (this.defaultSet.properties[category] = {});
-                this.defaultSet.properties[category][id] = value;
-            } catch (e) {
-                console.log(e);
-            }
-        }, 500);
     }
 
     /**

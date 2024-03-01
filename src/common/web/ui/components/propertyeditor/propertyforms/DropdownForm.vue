@@ -14,10 +14,8 @@ const profileId = inject("profileId") as ProfileID;
 
 const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
 
-let debounce: number | null = null;
-
 const handleInput = (e: any) => {
-    debounce = controller.setValue(profileId, debounce, categoryId, props.property.id, e.value);
+    controller.setValue(profileId, categoryId, props.property.id, e.value);
 };
 </script>
 
@@ -32,8 +30,8 @@ const handleInput = (e: any) => {
             filter
             :pt="{
                 panel: {
-                    class: 'w-0',
-                },
+                    class: 'w-0'
+                }
             }"
         />
     </div>

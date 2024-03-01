@@ -5,6 +5,7 @@ import InputText from "primevue/inputtext";
 import { PropertyController } from "../PropertyController";
 import { PropertySet } from "../PropertySet";
 import { type ProfileID } from "../PropertyProfile";
+import type { NestedView } from "@common/ui/views/NestedView";
 
 const props = defineProps(["property"]);
 
@@ -14,10 +15,8 @@ const profileId = inject("profileId") as ProfileID;
 
 const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
 
-let debounce: number | null = null;
-
 const handleInput = (e: any) => {
-    debounce = controller.setValue(profileId, debounce, categoryId, props.property.id, e.target.value);
+    controller.setValue(profileId, categoryId, props.property.id, e.target.value);
 };
 </script>
 

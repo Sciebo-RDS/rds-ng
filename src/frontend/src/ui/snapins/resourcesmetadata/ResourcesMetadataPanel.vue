@@ -16,6 +16,7 @@ import { MetadataController } from "@common/ui/components/propertyeditor/Propert
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import { deepClone } from "@common/utils/ObjectUtils";
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
@@ -77,26 +78,29 @@ const propertyHeader = computed(() => {
     }
 });
 
+const debounce = makeDebounce(500);
+
 watch(resourcesData, (metadata) => {
     if (blockResourcesUpdate) {
         return;
     }
+    debounce(() => {
+        const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
+        const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
 
-    const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
-    const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
+        const selectedPaths = Object.keys(selectedNodes.value);
+        selectedPaths.forEach((path) => {
+            updatedData[path] = resourcesSet;
+        });
 
-    const selectedPaths = Object.keys(selectedNodes.value);
-    selectedPaths.forEach((path) => {
-        updatedData[path] = resourcesSet;
+        const action = new UpdateProjectFeaturesAction(comp);
+        action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
+        action.execute();
+
+        // TODO: A hack to update the local data; nedds to be changed later
+        // @ts-ignore
+        project!.value.features.resources_metadata.resources_metadata = updatedData;
     });
-
-    const action = new UpdateProjectFeaturesAction(comp);
-    action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
-    action.execute();
-
-    // TODO: A hack to update the local data; nedds to be changed later
-    // @ts-ignore
-    project!.value.features.resources_metadata.resources_metadata = updatedData;
 });
 
 watch(selectedNodes, (nodes: Record<string, boolean>) => {

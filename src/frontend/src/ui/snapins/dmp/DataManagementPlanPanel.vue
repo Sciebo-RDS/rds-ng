@@ -7,6 +7,7 @@ import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
 import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
 import { PropertySet, PersistedSet } from "@common/ui/components/propertyeditor/PropertySet";
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
@@ -29,11 +30,18 @@ const exporters: ExporterID[] = ["pdf", "raw"];
 const dmpProfile = new PropertySet(dfgDmp);
 const controller = reactive(new DmpController(dmpProfile));
 
-watch(() => project!.value.features.dmp.plan, (dmpSet: PersistedSet[]) => {
-    const action = new UpdateProjectFeaturesAction(comp);
-    action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
-    action.execute();
-});
+const debounce = makeDebounce(500);
+
+watch(
+    () => project!.value.features.dmp.plan,
+    (dmpSet: PersistedSet[]) => {
+        debounce(() => {
+            const action = new UpdateProjectFeaturesAction(comp);
+            action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
+            action.execute();
+        });
+    }
+);
 </script>
 
 <template>
@@ -47,6 +55,4 @@ watch(() => project!.value.features.dmp.plan, (dmpSet: PersistedSet[]) => {
     />
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

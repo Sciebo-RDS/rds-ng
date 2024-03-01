@@ -14,10 +14,8 @@ const profileId = inject("profileId") as ProfileID;
 
 const value = ref(controller.getValue(profileId, categoryId, props.property.id));
 
-let debounce: number | null = null;
-
 const handleInput = (e: any) => {
-    debounce = controller.setValue(profileId, debounce, categoryId, props.property.id, e.value);
+    controller.setValue(profileId, categoryId, props.property.id, e.value);
 };
 </script>
 

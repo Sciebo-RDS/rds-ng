@@ -16,11 +16,8 @@ const profileId = inject("profileId") as ProfileID;
 
 const value = ref(controller.getValue(profileId, categoryId, props.property.id));
 
-// BUG the debounce only works for the first checked box, might be a library bug or some js quirks
-let debounce: number | null = null;
-
 const handleInput = () => {
-    debounce = controller.setValue(profileId, debounce, categoryId, props.property.id, value);
+    controller.setValue(profileId, categoryId, props.property.id, value);
 };
 
 const id = getRandomId();

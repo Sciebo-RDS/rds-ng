@@ -22,7 +22,7 @@ export function compareProfileIDs(id1: ProfileID, id2: ProfileID): boolean {
  */
 export function extractPersistedSetFromArray(persistedSets: PersistedSet[], profileID: ProfileID): PersistedSet {
     const sets = persistedSets.filter((set) => compareProfileIDs(set.profile_id, profileID));
-    return sets.length ? sets[0] : {} as PersistedSet;
+    return sets.length ? sets[0] : ({} as PersistedSet);
 }
 
 /**
@@ -45,4 +45,23 @@ export function intersectPersistedSets(persistedSets: PersistedSet[], profileID:
         combinedSet = intersectObjects(combinedSet, persistedSets[i]);
     }
     return new PersistedSet(profileID, combinedSet.categories || {});
+}
+
+/**
+ * Creates a debounced wrapper for arbitrary functions.
+ *
+ * @param waitFor The number of milliseconds to wait before invoking the wrapped function.
+ * @returns A debounce wrapper.
+ */
+export function makeDebounce(waitFor: number) {
+    let t: number;
+
+    return <F extends (...args: any[]) => any>(func: F): Promise<ReturnType<F>> =>
+        new Promise((resolve) => {
+            if (t) {
+                clearTimeout(t);
+            }
+
+            t = window.setTimeout(() => resolve(func()), waitFor);
+        });
 }

@@ -11,6 +11,7 @@ import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 
@@ -35,16 +36,18 @@ const { userSettings } = storeToRefs(userStore);
 // TODO: Testing data only
 const mergeSets: PropertySet[] = [];
 connectors.value.forEach((connector) => {
-    if (!userSettings.value.connector_instances.find((instance) => {
-        if (project!.value.options.use_all_connector_instances) {
-            return instance.connector_id == connector.connector_id;
-        } else {
-            return !!project!.value.options.active_connector_instances.find((instanceID) => {
-                const resolvedConnector = findConnectorByInstanceID(connectors.value, userSettings.value.connector_instances, instanceID);
-                return resolvedConnector && resolvedConnector.connector_id == connector.connector_id;
-            });
-        }
-    })) {
+    if (
+        !userSettings.value.connector_instances.find((instance) => {
+            if (project!.value.options.use_all_connector_instances) {
+                return instance.connector_id == connector.connector_id;
+            } else {
+                return !!project!.value.options.active_connector_instances.find((instanceID) => {
+                    const resolvedConnector = findConnectorByInstanceID(connectors.value, userSettings.value.connector_instances, instanceID);
+                    return resolvedConnector && resolvedConnector.connector_id == connector.connector_id;
+                });
+            }
+        })
+    ) {
         return;
     }
 
@@ -58,11 +61,18 @@ const baseSet = new PropertySet(dataCite);
 const profiles: PropertySet[] = [new PropertySet(testProfile)];
 const controller = reactive(new MetadataController(baseSet, mergeSets, profiles));
 
-watch(() => project!.value.features.metadata.metadata, (metadata) => {
-    const action = new UpdateProjectFeaturesAction(comp);
-    action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata)]);
-    action.execute();
-});
+const debounce = makeDebounce(500);
+
+watch(
+    () => project!.value.features.metadata.metadata,
+    (metadata) => {
+        debounce(() => {
+            const action = new UpdateProjectFeaturesAction(comp);
+            action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata)]);
+            action.execute();
+        });
+    }
+);
 </script>
 
 <template>
