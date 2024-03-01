@@ -11,8 +11,8 @@ import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 const props = defineProps({
     project: {
         type: Project,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
@@ -33,7 +33,7 @@ const panels = computed(() => {
         <TabView
             :pt="{
                 nav: 'tab-view',
-                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.2rem)] p-0 h-full' /*HACK height*/,
+                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full', // TODO: Hacky height
             }"
             class="h-full"
         >

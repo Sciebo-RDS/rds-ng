@@ -14,12 +14,12 @@ import { humanReadableFileSize } from "../../../utils/Strings";
 const props = defineProps({
     data: {
         type: Object as PropType<Object[]>,
-        required: true,
+        required: true
     },
     refreshable: {
         type: Boolean,
-        default: false,
-    },
+        default: false
+    }
 });
 const { data, refreshable } = toRefs(props);
 const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
@@ -67,8 +67,13 @@ function collapseAll(): void {
         :filters="filters"
         :loading="isLoading"
         auto-layout
-        :pt="{ header: 'r-shade-gray h-fit', footer: 'r-shade-dark-gray sticky top-[100vh]', wrapper: '!overflow-auto' }"
         class="grid content-start border-0 border-t-2 border-slate-50"
+        :pt="{
+            header: 'r-shade-gray h-fit',
+             footer: 'r-shade-dark-gray sticky top-[100vh] border-0',
+             wrapper: '!overflow-auto'
+        }"
+
     >
         <template #header>
             <div class="text-right">
@@ -81,19 +86,19 @@ function collapseAll(): void {
             </div>
         </template>
 
-        <Column field="label" header="Name" class="p-0 pl-2" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
+        <Column field="basename" header="Name" class="p-0 pl-2" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 <span :class="entry.node.icon" class="opacity-75 relative top-1.5 mr-1" /><span>{{ entry.node.data.basename }}</span>
             </template>
         </Column>
 
-        <Column field="resource" header="Size" class="w-48 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column header="Size" class="w-48 text-right" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 {{ humanReadableFileSize(entry.node.data.size) }}
             </template>
         </Column>
 
-        <Column field="resource" header="Files in folder" class="w-32 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column header="Files in folder" class="w-32 text-right" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 <span v-if="entry.node.data.type === ResourceType.Folder">{{ entry.node.children.length }}</span>
             </template>
