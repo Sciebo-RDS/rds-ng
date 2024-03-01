@@ -13,14 +13,12 @@ const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
 const value = ref(controller.getValue(profileId, categoryId, props.property.id));
-
-// BUG check what Calendar actually expects
 </script>
 
 <template>
     <div>
         <Calendar
-            @update:modelValue="(eValue: string) => controller.setValue(profileId, categoryId, props.property.id, new Date(eValue).getTime())"
+            @date-select="(date: Date) => controller.setValue(profileId, categoryId, props.property.id, date)"
             dateFormat="yy"
             v-model="value"
             class="w-full"
