@@ -4,6 +4,7 @@ import Button from "primevue/button";
 import Image from "primevue/image";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
+import Panel from "primevue/panel";
 import { nextTick, reactive, ref, toRefs, watch, computed } from "vue";
 
 import logging from "@common/core/logging/Logging";
@@ -151,7 +152,18 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                             </span>
                         </div>
                         <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
-                            <div v-if="showPreview" class="mt-5">
+                            <div v-if="Object.keys(selectedNodes).length > 1" class="w-full">
+                                <Panel class="mx-5 mt-5">
+                                    <template #header>
+                                        <span class="font-bold"
+                                            ><i class="pi pi-exclamation-circle mx-2"></i> Changes will apply to
+                                            {{ Object.keys(selectedNodes).length }} objects.</span
+                                        >
+                                    </template>
+                                    <p v-for="path of Object.keys(selectedNodes).sort()" class="m-0 font-mono">{{ path }}</p>
+                                </Panel>
+                            </div>
+                            <div v-else-if="showPreview" class="mt-5">
                                 <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
                             </div>
                             <PropertyEditor v-model="resourcesData" :controller="controller as MetadataController" :logging="logging" oneCol class="w-full" />
