@@ -14,14 +14,17 @@ const profileId = inject("profileId") as ProfileID;
 
 const value = ref(controller.getValue(profileId, categoryId, props.property.id));
 
-const handleInput = (eValue: string) => {
-    const ms: number = new Date(eValue).getTime();
-    controller.setValue(profileId, categoryId, props.property.id, ms);
-};
+// BUG check what Calendar actually expects
 </script>
 
 <template>
-    <div class="">
-        <Calendar @update:modelValue="handleInput" dateFormat="yy" v-model="value" class="w-full" view="year" />
+    <div>
+        <Calendar
+            @update:modelValue="(eValue: string) => controller.setValue(profileId, categoryId, props.property.id, new Date(eValue).getTime())"
+            dateFormat="yy"
+            v-model="value"
+            class="w-full"
+            view="year"
+        />
     </div>
 </template>

@@ -13,12 +13,15 @@ const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
 const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
-
-const handleInput = (eValue: any) => {
-    controller.setValue(profileId, categoryId, props.property.id, eValue);
-};
 </script>
 
 <template>
-    <Chips @update:modelValue="handleInput" :modelValue="value" separator="," class="inline" :addOnBlur="true" placeholder="Separate by comma" />
+    <Chips
+        @update:modelValue="(eValue: any) => controller.setValue(profileId, categoryId, props.property.id, eValue)"
+        :modelValue="value"
+        separator=","
+        class="inline"
+        :addOnBlur="true"
+        placeholder="Separate by comma"
+    />
 </template>

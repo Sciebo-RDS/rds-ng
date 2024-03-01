@@ -13,14 +13,15 @@ const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
 const value = ref(controller.getValue(profileId, categoryId, props.property.id));
-
-const handleInput = (e: any) => {
-    controller.setValue(profileId, categoryId, props.property.id, e.value);
-};
 </script>
 
 <template>
-    <div class="">
-        <MultiSelect @change="handleInput" v-model="value" :options="property.options" class="w-full relative" />
+    <div>
+        <MultiSelect
+            @change="(e: any) => controller.setValue(profileId, categoryId, props.property.id, e.value)"
+            v-model="value"
+            :options="property.options"
+            class="w-full relative"
+        />
     </div>
 </template>

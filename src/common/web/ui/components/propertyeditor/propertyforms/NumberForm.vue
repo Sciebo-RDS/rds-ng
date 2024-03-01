@@ -14,14 +14,15 @@ const profileId = inject("profileId") as ProfileID;
 
 // TODO: Handle overflows
 const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
-
-const handleInput = (e: any) => {
-    controller.setValue(profileId, categoryId, props.property.id, e.value);
-};
 </script>
 
 <template>
-    <div class="">
-        <InputNumber @input="handleInput" :modelValue="value" :useGrouping="false" class="w-full" />
+    <div>
+        <InputNumber
+            @input="(e: any) => controller.setValue(profileId, categoryId, props.property.id, e.value)"
+            :modelValue="value"
+            :useGrouping="false"
+            class="w-full"
+        />
     </div>
 </template>

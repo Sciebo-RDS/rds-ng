@@ -13,17 +13,13 @@ const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
 const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
-
-const handleInput = (e: any) => {
-    controller.setValue(profileId, categoryId, props.property.id, e.value);
-};
 </script>
 
 <template>
     <div class="flex">
         <Dropdown
             :modelValue="value"
-            @change="handleInput"
+            @change="(e: any) => controller.setValue(profileId, categoryId, props.property.id, e.value)"
             :options="property.options"
             class="grow"
             placeholder="Select"

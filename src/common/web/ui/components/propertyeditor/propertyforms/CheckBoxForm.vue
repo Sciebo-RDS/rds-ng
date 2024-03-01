@@ -15,18 +15,20 @@ const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
 const value = ref(controller.getValue(profileId, categoryId, props.property.id));
-
-const handleInput = () => {
-    controller.setValue(profileId, categoryId, props.property.id, value);
-};
-
 const id = getRandomId();
 </script>
 
 <template>
     <div class="grid grid-cols-2 gap-4 place-content-stretch">
         <div v-for="option of property.options" :key="option">
-            <Checkbox v-model="value" :inputId="option + id" :name="option" :value="option" @change="handleInput" class="mr-2" />
+            <Checkbox
+                v-model="value"
+                :inputId="option + id"
+                :name="option"
+                :value="option"
+                @change="controller.setValue(profileId, categoryId, props.property.id, value)"
+                class="mr-2"
+            />
             <label class="break-all" :for="option + id">{{ option }}</label>
         </div>
     </div>

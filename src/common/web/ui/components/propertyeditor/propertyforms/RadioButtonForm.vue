@@ -17,20 +17,13 @@ const profileId = inject("profileId") as ProfileID;
 
 const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
 
-const handleInput = (eValue: Event) => {
-    controller.setValue(profileId, categoryId, props.property.id, eValue);
-};
-
 const id = getRandomId();
 </script>
 
 <template>
     <div class="card flex justify-content-center">
         <Button
-            @click="
-                value = null;
-                handleInput(value as Event);
-            "
+            @click="controller.setValue(profileId, categoryId, props.property.id, '')"
             icon="pi pi-times"
             severity="secondary"
             text
@@ -40,10 +33,15 @@ const id = getRandomId();
         />
         <div class="flex flex-column gap-3">
             <div v-for="option in property.options" :key="option" class="flex align-items-center">
-                <RadioButton :modelValue="value" :inputId="option + id" name="dynamic" :value="option" @update:modelValue="handleInput" />
+                <RadioButton
+                    :modelValue="value"
+                    :inputId="option + id"
+                    name="dynamic"
+                    :value="option"
+                    @update:modelValue="(eValue: Event) => controller.setValue(profileId, categoryId, props.property.id, eValue)"
+                />
                 <label :for="option + id" class="ml-2">{{ option }}</label>
             </div>
         </div>
     </div>
 </template>
-../utils/Ids.js

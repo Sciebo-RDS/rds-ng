@@ -13,14 +13,15 @@ const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
 const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
-
-const handleInput = (e: any) => {
-    controller.setValue(profileId, categoryId, props.property.id, e.target.value);
-};
 </script>
 
 <template>
     <div>
-        <Textarea @input="handleInput" :modelValue="value" autoResize class="w-full" />
+        <Textarea
+            @input="(e: any) => controller.setValue(profileId, categoryId, props.property.id, e.target.value)"
+            :modelValue="value"
+            autoResize
+            class="w-full"
+        />
     </div>
 </template>
