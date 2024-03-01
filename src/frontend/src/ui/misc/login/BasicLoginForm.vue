@@ -5,7 +5,7 @@ import Button from "primevue/button";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
-import { ref, unref } from "vue";
+import { ref } from "vue";
 
 import { useDirectives } from "@common/ui/Directives";
 
@@ -26,8 +26,7 @@ function performLogin(): void {
     blockInput.value = true;
     errorMessage.value = "";
 
-
-    const token = unref(userName.value);
+    const token = userName.value;
     const action = new SetSessionValueAction(comp, true);
     action.prepare("user-token", token).done((_, success, msg) => {
         // Wait till the server has actually stored the user token
@@ -56,7 +55,7 @@ function performLogin(): void {
                     <label>Enter your username:</label>
                     <IconField iconPosition="left">
                         <InputIcon>
-                            <i class="material-icons-outlined mi-account-circle mt-[-12px]" />
+                            <i class="material-icons-outlined mi-account-circle mt-[-4px]" />
                         </InputIcon>
                         <InputText v-model.trim="userName" placeholder="Username" v-focus class="w-full" />
                     </IconField>

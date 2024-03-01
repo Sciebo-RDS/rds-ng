@@ -13,6 +13,7 @@ import { getFrontendSettings } from "@/settings/FrontendSettings";
 import Frontend from "@/ui/Frontend.vue";
 import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
+import { registerExporters } from "@common/ui/components/propertyeditor/exporters/Exporters";
 
 /**
  * The main frontend component class.
@@ -34,6 +35,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
 
         // Reigster snap-ins
         registerSnapIns();
+        registerExporters();
 
         // Create frontend-specific services
         this._frontendService = createFrontendService(this);

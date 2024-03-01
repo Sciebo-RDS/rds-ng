@@ -1,3 +1,5 @@
+import { humanReadableFileSize } from "./Strings";
+
 function isObject(item: any) {
     return item && typeof item === "object" && !Array.isArray(item);
 }
@@ -47,4 +49,54 @@ export function deepClone<ObjType = object>(source?: CloneObjectType, defaultVal
         return defaultValue!;
     }
     return JSON.parse(JSON.stringify(source)) as ObjType;
+}
+
+/**
+ * Intersects two objects, creating a new one containing only values shared by both objects.
+ *
+ * @param obj1 - The first object.
+ * @param obj2 - The second object.
+ *
+ * @returns - The intersection object.
+ */
+export function intersectObjects<ObjType extends Record<any, any> = object>(obj1: ObjType, obj2: ObjType): ObjType {
+    if (!Object.keys(obj1).length) {
+        return obj1;
+    }
+
+    // @ts-ignore
+    return Object.assign(...Object.keys(obj1).map(k => {
+        let temp;
+        if (!(k in obj2)) {
+            return {} as ObjType;
+        }
+        if (obj1[k] && typeof obj1[k] === "object" &&
+            obj2[k] && typeof obj2[k] === "object") {
+            temp = intersectObjects<ObjType>(obj1[k], obj2[k]);
+            return (Object.keys(temp).length ? { [k]: temp } : {}) as ObjType;
+        }
+        if (obj1[k] === obj2[k]) {
+            return { [k]: obj1[k] } as ObjType;
+        }
+        return {} as ObjType;
+    })) as ObjType;
+}
+
+/**
+ * Shortens data strings in an object for better display.
+ *
+ * @param obj - The object to clean up.
+ */
+export function shortenDataStrings(obj: any): any {
+    for (const [name, value] of Object.entries(obj)) {
+        if (typeof value === "object") {
+            shortenDataStrings(value);
+        } else if (typeof value === "string") {
+            if (value.startsWith("data:")) {
+                obj[name] = value.split(",", 1).join() + `,<data:${humanReadableFileSize(value.length)}>`;
+            }
+        }
+    }
+
+    return obj;
 }

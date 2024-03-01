@@ -47,7 +47,7 @@ function refresh(): void {
 function expandAll(): void {
     if (data!.value) {
         const allResources: Record<string, boolean> = {};
-        flattenResourcesTreeNodes(data!.value).forEach((resource) => allResources[resource] = true);
+        flattenResourcesTreeNodes(data!.value).forEach((resource) => (allResources[resource] = true));
         expandedNodes.value = allResources;
     }
 }
@@ -61,37 +61,44 @@ function collapseAll(): void {
     <TreeTable
         :value="data"
         selection-mode="multiple"
+        meta-key-selection
         v-model:selection-keys="selectedNodes"
         v-model:expanded-keys="expandedNodes"
         :filters="filters"
         :loading="isLoading"
         auto-layout
-        :pt="{ header: 'r-shade-dark-gray', footer: 'r-shade-gray' }"
+        class="grid content-start border-0 border-t-2 border-slate-50"
+        :pt="{
+            header: 'r-shade-gray h-fit',
+             footer: 'r-shade-dark-gray sticky top-[100vh] border-0',
+             wrapper: '!overflow-auto'
+        }"
+
     >
         <template #header>
             <div class="text-right">
                 <IconField iconPosition="left">
                     <InputIcon>
-                        <i class="material-icons-outlined mi-search mt-[-12px]" />
+                        <i class="material-icons-outlined mi-search mt-[-4px]" />
                     </InputIcon>
                     <InputText v-model="filters['global']" placeholder="Search objects" class="w-full" />
                 </IconField>
             </div>
         </template>
 
-        <Column field="label" header="Name" class="p-0 pl-2" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
+        <Column field="basename" header="Name" class="p-0 pl-2" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 <span :class="entry.node.icon" class="opacity-75 relative top-1.5 mr-1" /><span>{{ entry.node.data.basename }}</span>
             </template>
         </Column>
 
-        <Column field="resource" header="Size" class="w-48 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column header="Size" class="w-48 text-right" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 {{ humanReadableFileSize(entry.node.data.size) }}
             </template>
         </Column>
 
-        <Column field="resource" header="Files in folder" class="w-40 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column header="Files in folder" class="w-32 text-right" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 <span v-if="entry.node.data.type === ResourceType.Folder">{{ entry.node.children.length }}</span>
             </template>
@@ -107,6 +114,4 @@ function collapseAll(): void {
     </TreeTable>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

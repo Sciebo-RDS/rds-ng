@@ -26,6 +26,7 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
     )
 
     from .stub_service_context import StubServiceContext
+    from ..stub_utils import send_projects_list
 
     svc = comp.create_service("Users service", context_type=StubServiceContext)
 
@@ -80,5 +81,7 @@ def create_stub_users_service(comp: BackendComponent) -> Service:
             message=message,
             settings=user_settings,
         ).emit()
+
+        send_projects_list(msg, ctx)
 
     return svc

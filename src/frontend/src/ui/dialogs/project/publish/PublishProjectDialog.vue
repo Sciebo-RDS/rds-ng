@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
-import { computed, unref } from "vue";
+import { computed } from "vue";
 
 import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
 
@@ -16,7 +16,7 @@ const userStore = useUserStore();
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
 
-const groupedInstances = computed(() => groupConnectorInstances(userSettings.value.connector_instances, unref(connectors.value)));
+const groupedInstances = computed(() => groupConnectorInstances(userSettings.value.connector_instances, connectors.value));
 </script>
 
 <template>

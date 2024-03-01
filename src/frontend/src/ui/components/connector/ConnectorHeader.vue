@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRefs, unref } from "vue";
+import { computed, toRefs } from "vue";
 
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 
@@ -14,7 +14,7 @@ const props = defineProps({
 });
 
 const { connectorId } = toRefs(props);
-const connector = computed(() => findConnectorByID(unref(consStore.connectors), connectorId!.value));
+const connector = computed(() => findConnectorByID(consStore.connectors, connectorId!.value));
 </script>
 
 <template>

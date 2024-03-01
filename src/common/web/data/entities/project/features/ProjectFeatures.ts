@@ -23,12 +23,12 @@ export class ProjectFeatures {
     public readonly dmp: DataManagementPlanFeature;
 
     public constructor(
-        metadata: MetadataFeature = new MetadataFeature(),
-        resourceMetadata: ResourcesMetadataFeature = new ResourcesMetadataFeature(),
-        dmp: DataManagementPlanFeature = new DataManagementPlanFeature()
+        metadata?: MetadataFeature,
+        resourceMetadata?: ResourcesMetadataFeature,
+        dmp?: DataManagementPlanFeature
     ) {
-        this.metadata = metadata;
-        this.resources_metadata = resourceMetadata;
-        this.dmp = dmp;
+        this.metadata = metadata || new MetadataFeature();
+        this.resources_metadata = resourceMetadata || new ResourcesMetadataFeature();
+        this.dmp = dmp || new DataManagementPlanFeature();
     }
 }

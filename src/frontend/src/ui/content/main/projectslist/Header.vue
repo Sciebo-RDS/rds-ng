@@ -3,7 +3,6 @@ import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserTools } from "@/ui/tools/UserTools";
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
-import { unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -16,7 +15,7 @@ const { userToken, userSettings } = storeToRefs(userStore);
 const { editUserSettings } = useUserTools(comp);
 
 function onEditUserSettings(): void {
-    editUserSettings(unref(userSettings.value));
+    editUserSettings(userSettings.value);
 }
 </script>
 

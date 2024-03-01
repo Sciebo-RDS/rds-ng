@@ -34,11 +34,15 @@ export class UpdateProjectFeaturesCommand extends Command {
     public static build(
         messageBuilder: MessageBuilder,
         project_id: ProjectID,
-        updated_features: ProjectFeatureID[],
+        updatedFeatures: ProjectFeatureID[],
         features: ProjectFeatures,
         chain: Message | null = null
     ): CommandComposer<UpdateProjectFeaturesCommand> {
-        return messageBuilder.buildCommand(UpdateProjectFeaturesCommand, { project_id: project_id, updated_features: updated_features, features: features }, chain);
+        return messageBuilder.buildCommand(UpdateProjectFeaturesCommand, {
+            project_id: project_id,
+            updated_features: updatedFeatures,
+            features: features
+        }, chain);
     }
 }
 
