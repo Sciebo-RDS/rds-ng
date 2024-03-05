@@ -34,7 +34,7 @@ export type Property = {
     filter?: string[];
 };
 
-type SelectionProperty = Property & {
+export type SelectionProperty = Property & {
     options: string[];
 };
 

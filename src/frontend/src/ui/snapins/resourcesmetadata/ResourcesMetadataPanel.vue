@@ -156,7 +156,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                                 <Panel class="mx-5 mt-5">
                                     <template #header>
                                         <span class="font-bold"
-                                            ><i class="pi pi-exclamation-circle mx-2"></i> Changes will apply to
+                                            ><i class="pi pi-exclamation-circle mr-2"></i> Changes will apply to
                                             {{ Object.keys(selectedNodes).length }} objects.</span
                                         >
                                     </template>
