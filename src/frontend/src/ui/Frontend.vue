@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useUrlSearchParams } from "@vueuse/core";
-import { useAxios } from "@vueuse/integrations/useAxios";
-import * as jwt from "jsonwebtoken";
 import { storeToRefs } from "pinia";
-import { computed, onMounted, unref, watch } from "vue";
+import { computed, onMounted } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { useHostIntegration } from "@/integration/HostIntegration";
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 import BasicLoginForm from "@/ui/misc/login/BasicLoginForm.vue";
@@ -19,19 +17,11 @@ const { userToken } = storeToRefs(userStore);
 const showLoginPage = computed(() => comp.data.config.value<boolean>(FrontendSettingIDs.UseLoginPage) && !userToken.value);
 
 onMounted(() => {
-    const pubKeyURL = comp.data.config.value<string>(FrontendSettingIDs.PublicKeyURL);
-    console.log(pubKeyURL);
-
-    const { data, isFinished } = useAxios(pubKeyURL);
-
-    watch(isFinished, (f) => {
-        if (f) {
-            const key = JSON.parse(unref(data)["public-key"]);
-            console.log(key);
-            const queryParams = useUrlSearchParams("history");
-            console.log(queryParams["user-token"]);
-            jwt.verify(queryParams["user-token"], key);
-        }
+    const { getUserToken } = useHostIntegration(comp);
+    getUserToken().then((userToken) => {
+        console.log(userToken);
+    }).catch((error) => {
+        console.log(error);
     });
 });
 
