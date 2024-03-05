@@ -34,7 +34,7 @@ export function useHostIntegration(comp: FrontendComponent) {
 
                     try {
                         const pubKey = await jose.importJWK(key);
-                        const { payload } = await jose.compactVerify(queryParams["user-token"], pubKey);
+                        const { payload } = await jose.compactVerify(queryParams["user-token"] as string, pubKey);
 
                         const jwtData = JSON.parse(new TextDecoder().decode(payload));
                         if (!jwtData.hasOwnProperty("user-token")) {
