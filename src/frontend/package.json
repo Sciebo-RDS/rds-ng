@@ -12,7 +12,10 @@
     "dependencies": {
         "@vee-validate/yup": "^4.12.5",
         "@vueuse/core": "^10.9.0",
+        "@vueuse/integrations": "^10.9.0",
         "autoprefixer": "^10.4.17",
+        "axios": "^1.6.7",
+        "jsonwebtoken": "^9.0.2",
         "material-icons": "^1.13.12",
         "pinia": "^2.1.7",
         "postcss": "^8.4.35",
