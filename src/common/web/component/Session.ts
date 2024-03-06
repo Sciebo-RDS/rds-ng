@@ -1,5 +1,4 @@
-import { useSessionStorage } from "@vueuse/core";
-import { type RemovableRef } from "@vueuse/core";
+import { useSessionStorage, type RemovableRef, StorageSerializers } from "@vueuse/core";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 
@@ -25,11 +24,12 @@ export class Session {
      *
      * @param key - The value key.
      * @param defaultValue - A default value used if the value doesn't exist yet.
+     * @param enforceObject - If set, the value is assumed to be an object (useful if the default value is undefined).
      *
      * @returns - The stored value or the default one otherwise.
      */
-    public sessionValue<ValueType>(key: string, defaultValue: ValueType): RemovableRef<ValueType> {
-        return useSessionStorage<ValueType>(`${this._compID}:${key}`, defaultValue);
+    public sessionValue<ValueType>(key: string, defaultValue: ValueType, enforceObject: boolean = false): RemovableRef<ValueType> {
+        return useSessionStorage<ValueType>(`${this._compID}:${key}`, defaultValue, enforceObject ? { serializer: StorageSerializers.object } : undefined);
     }
 
     /**

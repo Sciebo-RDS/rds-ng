@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { UserToken } from "@/integration/UserToken";
 
 /**
  * The user store for all user-specific data.
@@ -13,7 +14,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 export const useUserStore = defineStore("userStore", () => {
     const comp = FrontendComponent.inject();
 
-    const userToken = comp.session.sessionValue<string | undefined>("user-token", undefined);
+    const userToken = comp.session.sessionValue<UserToken | undefined>("user-token", undefined, true);
     const userSettings = ref(new UserSettings());
 
     function reset(): void {

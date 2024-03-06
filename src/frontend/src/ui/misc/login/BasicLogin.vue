@@ -11,6 +11,7 @@ import { useDirectives } from "@common/ui/Directives";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { useLogin } from "@/integration/Login";
+import { UserToken } from "@/integration/UserToken";
 
 const comp = FrontendComponent.inject();
 const userStore = useUserStore();
@@ -26,7 +27,7 @@ function performLogin(): void {
     blockInput.value = true;
     errorMessage.value = "";
 
-    login(userName.value, () => {
+    login(new UserToken(userName.value), () => {
         blockInput.value = false;
     }, (msg) => {
         blockInput.value = false;

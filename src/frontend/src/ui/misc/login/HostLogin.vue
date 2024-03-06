@@ -8,6 +8,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { useHostIntegration } from "@/integration/HostIntegration";
 import { useLogin } from "@/integration/Login";
+import { UserToken } from "@/integration/UserToken";
 
 const comp = FrontendComponent.inject();
 const userStore = useUserStore();
@@ -19,7 +20,7 @@ onMounted(async () => {
     const { login } = useLogin(comp);
 
     extractUserToken().then((userToken) => {
-        login(userToken.userID, undefined, (msg) => {
+        login(new UserToken(userToken.userID, userToken.userName), undefined, (msg) => {
                 errorMessage.value = msg;
             }
         );
