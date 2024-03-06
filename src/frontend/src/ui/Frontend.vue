@@ -1,42 +1,31 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { useHostIntegration } from "@/integration/HostIntegration";
+import { LoginType } from "@/integration/Login";
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
-import BasicLoginForm from "@/ui/misc/login/BasicLoginForm.vue";
+import BasicLogin from "@/ui/misc/login/BasicLogin.vue";
+import HostLogin from "@/ui/misc/login/HostLogin.vue";
 
 const comp = FrontendComponent.inject();
 const userStore = useUserStore();
 const { userToken } = storeToRefs(userStore);
 
-// If enabled, show the dummy login page to get a user ID token
-const showLoginPage = computed(() => comp.data.config.value<boolean>(FrontendSettingIDs.UseLoginPage) && !userToken.value);
+const loginForms = {
+    [LoginType.Basic]: BasicLogin,
+    [LoginType.Host]: HostLogin
+};
 
-// TODO:
-// 1. Check if Token is provided (-> func in HostIntegration)
-// 2. If so, get user credentials, use those
-//      -> Show spinner
-// 3. If not 1 or 2, use basic login form instead
-
-onMounted(async () => {
-    const { extractUserToken } = useHostIntegration(comp);
-    extractUserToken().then((userToken) => {
-        console.log("WORKED");
-        console.log(userToken);
-    }).catch((error) => {
-        console.log(error);
-    });
-});
-
+const loginType = comp.data.config.value<LoginType>(FrontendSettingIDs.LoginType);
+const isLoggedIn = computed(() => !!userToken.value);
 </script>
 
 <template>
-    <BasicLoginForm v-if="showLoginPage" />
-    <RouterView v-else />
+    <RouterView v-if="isLoggedIn" />
+    <component v-else :is="loginForms[loginType]" />
 </template>
 
 <style scoped lang="scss">

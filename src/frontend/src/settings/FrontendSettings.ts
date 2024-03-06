@@ -1,5 +1,6 @@
 import { SettingID } from "@common/utils/config/SettingID";
 
+import { LoginType } from "@/integration/Login";
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 /**
@@ -14,7 +15,7 @@ export function getFrontendSettings(): Map<SettingID, any> {
 
     settings.set(FrontendSettingIDs.PublicKeyURL, "");
 
-    settings.set(FrontendSettingIDs.UseLoginPage, true);
+    settings.set(FrontendSettingIDs.LoginType, LoginType.Basic);
 
     return settings;
 }

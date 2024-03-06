@@ -33,7 +33,7 @@ export function useHostIntegration(comp: FrontendComponent) {
 
     function getUserToken(): string | undefined {
         const queryParams = useUrlSearchParams("history");
-        return queryParams.hasOwnProperty("user-token") ? queryParams["user-token"] : undefined;
+        return queryParams.hasOwnProperty("user-token") ? queryParams["user-token"] as string : undefined;
     }
 
     async function extractUserToken(): Promise<HostUserToken> {
