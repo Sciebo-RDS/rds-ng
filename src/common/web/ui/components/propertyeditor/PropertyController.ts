@@ -118,6 +118,9 @@ export class MetadataController extends PropertyController<S> {
                 pS.properties = newSet["categories"];
                 persistedSets.push(newSet);
             } else {
+                if (s.length > 1) {
+                    logging.warning(`Multiple persisted sets found for profile ${JSON.stringify(pS.profile_id)}. Choosing first.`, "MetadataEditor");
+                }
                 pS.properties = s[0]["categories"];
             }
         }
@@ -229,15 +232,18 @@ export class DmpController extends PropertyController<S> {
      * @param persistedSets[] - The persisted set(s) to mount.
      */
     public mountPersistedSets(persistedSets: PersistedSet[]): void {
-        const persistedSet: PersistedSet = persistedSets.filter(
+        const s: PersistedSet[] = persistedSets.filter(
             (e: PersistedSet) => Object.keys(e).includes("profile_id") && compareProfileIDs(e.profile_id, this.defaultSet.profile_id)
-        )[0];
-        if (!!persistedSet) {
-            this.defaultSet.properties = persistedSet["categories"];
-        } else {
+        );
+        if (!s.length) {
             const newSet: PersistedSet = new PersistedSet(this.defaultSet.profile_id);
             this.defaultSet.properties = newSet["categories"];
             persistedSets = [newSet];
+        } else {
+            if (s.length > 1) {
+                logging.warning(`Multiple persisted sets found for profile ${JSON.stringify(this.defaultSet.profile_id)}. Choosing first.`, "DmpEditor");
+            }
+            this.defaultSet.properties = s[0]["categories"];
         }
     }
 

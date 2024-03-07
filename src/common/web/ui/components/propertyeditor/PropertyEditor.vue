@@ -12,20 +12,20 @@ const emit = defineEmits(["update"]);
 const { controller, logging, project, exporters } = defineProps({
     controller: {
         type: Object as PropType<PropertyController<S>>,
-        required: true,
+        required: true
     },
     logging: {
         type: Object as PropType<Logger>,
-        default: Logger,
+        default: Logger
     },
     project: {
         type: Object as PropType<any>,
-        default: null,
+        default: null
     },
     exporters: {
         type: Array as PropType<ExporterID[]>,
-        default: () => [],
-    },
+        default: () => []
+    }
 });
 
 const cols = (attr: {}) => {
@@ -44,10 +44,10 @@ controller.mountPersistedSets(model.value as PersistedSet[]);
 
 watch(
     () => model.value,
-    (nM) => {
+    () => {
         controller.mountPersistedSets(model.value as PersistedSet[]);
     },
-    { deep: true },
+    { deep: true }
 );
 
 watch(
@@ -55,7 +55,7 @@ watch(
     () => {
         model.value = controller.exportData();
     },
-    { deep: true },
+    { deep: true }
 );
 </script>
 

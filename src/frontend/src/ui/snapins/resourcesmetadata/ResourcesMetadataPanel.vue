@@ -111,7 +111,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     const selectedPaths = Object.keys(nodes);
     const metadata = project!.value.features.resources_metadata.resources_metadata;
     selectedPaths.forEach((path) => {
-        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
+        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id));
     });
 
     resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];

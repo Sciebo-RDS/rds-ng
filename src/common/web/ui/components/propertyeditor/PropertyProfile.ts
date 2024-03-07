@@ -10,7 +10,12 @@ import DateForm from "./propertyforms/DateForm.vue";
 import DropDownForm from "./propertyforms/DropdownForm.vue";
 import CheckBoxForm from "./propertyforms/CheckBoxForm.vue";
 
-export type ProfileID = { name: string; version: string };
+export class ProfileID {
+    public constructor(
+        public readonly name: string,
+        public readonly version: string
+    ) {}
+}
 
 export type PropertyProfile = {
     profile_id: ProfileID;
