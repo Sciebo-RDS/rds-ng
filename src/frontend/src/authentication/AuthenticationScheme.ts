@@ -7,14 +7,14 @@ import { FrontendComponent } from "@/component/FrontendComponent";
  * Base class for authentication themes.
  */
 export abstract class AuthenticationScheme {
-    protected readonly _comp: FrontendComponent;
+    protected readonly _component: FrontendComponent;
 
     private readonly _scheme: string;
 
     private readonly _authComponent: VueComponent;
 
     protected constructor(comp: FrontendComponent, scheme: string, authComponent: VueComponent) {
-        this._comp = comp;
+        this._component = comp;
 
         this._scheme = scheme;
 

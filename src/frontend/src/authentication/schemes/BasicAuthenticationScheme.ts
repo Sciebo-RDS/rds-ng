@@ -20,6 +20,6 @@ export class BasicAuthenticationScheme extends AuthenticationScheme {
     }
 
     public authenticator(userName: string): Authenticator {
-        return new Authenticator(this._comp, createUserToken(userName, userName));
+        return new Authenticator(this._component, createUserToken(userName, userName));
     }
 }

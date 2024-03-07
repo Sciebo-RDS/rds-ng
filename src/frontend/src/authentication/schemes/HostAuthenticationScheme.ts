@@ -21,6 +21,6 @@ export class HostAuthenticationScheme extends AuthenticationScheme {
     }
 
     public authenticator(token: HostUserToken): Authenticator {
-        return new Authenticator(this._comp, createUserToken(token.userID, token.userName));
+        return new Authenticator(this._component, createUserToken(token.userID, token.userName));
     }
 }
