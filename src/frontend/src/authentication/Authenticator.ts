@@ -54,7 +54,7 @@ export class Authenticator {
             throw new Error("Invalid user token used for authentication");
         }
 
-        const action = new SetSessionValueAction(this._comp, true);
+        const action = new SetSessionValueAction(this._comp);
         action.prepare("user-token", this._userToken.userID).done((_, success, msg) => {
             if (success) {
                 const userStore = useUserStore();
