@@ -44,7 +44,7 @@ function performLogin(): void {
     <div class="r-centered-grid grid-cols-[auto_32rem_auto] grid-flow-row mt-2">
         <div></div>
         <BlockUI class="r-centered-grid grid-cols-1 grid-flow-row w-full p-10" :blocked="blockInput">
-            <img src="../../../../common/assets/img/rds_ng-octopus-blue.png" alt="RDS-NG Logo" class="logo">
+            <img src="@assets/img/rds_ng-octopus-blue.png" alt="RDS-NG Logo" class="logo">
             <form @submit.prevent="performLogin" class="r-form w-full">
                 <span>
                     <label>Enter your username:</label>

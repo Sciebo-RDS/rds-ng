@@ -25,9 +25,17 @@ export class HostAuthenticationScheme extends AuthenticationScheme {
         return new Authenticator(this._component, createUserToken(token.userID, token.userName));
     }
 
+    public enter(): void {
+        super.enter();
+        this.resetUserToken();
+    }
+
     public leave(): void {
         super.leave();
+        this.resetUserToken();
+    }
 
+    private resetUserToken(): void {
         // Enforce a re-authentication on each refresh to avoid user hijacking
         const { resetUserToken } = useUserStore();
         resetUserToken();
