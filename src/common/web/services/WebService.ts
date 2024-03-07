@@ -1,6 +1,6 @@
 import { ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/network/NetworkEvents";
 import { WebComponent } from "../component/WebComponent";
-import { ComponentState, componentStore } from "../data/stores/ComponentStore";
+import { ComponentState, useComponentStore } from "../data/stores/ComponentStore";
 import { Service } from "./Service";
 import { ServiceContext } from "./ServiceContext";
 
@@ -13,7 +13,7 @@ import { ServiceContext } from "./ServiceContext";
  */
 export default function(comp: WebComponent): Service {
     return comp.createService("Web service", (svc: Service) => {
-        const compStore = componentStore();
+        const compStore = useComponentStore();
 
         svc.messageHandler(ClientDisconnectedEvent, (msg: ClientDisconnectedEvent, ctx: ServiceContext) => {
             compStore.componentState = ComponentState.ConnectionLost;

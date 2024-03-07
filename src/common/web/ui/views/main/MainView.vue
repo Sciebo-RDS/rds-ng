@@ -2,10 +2,10 @@
 import { ref, watch } from "vue";
 
 import { WebComponent } from "../../../component/WebComponent";
-import { ComponentState, componentStore } from "../../../data/stores/ComponentStore";
+import { ComponentState, useComponentStore } from "../../../data/stores/ComponentStore";
 
 const comp = WebComponent.injectComponent();
-const compStore = componentStore();
+const compStore = useComponentStore();
 
 let activeState = ref(compStore.componentState);
 watch(() => compStore.componentState, (state: ComponentState, prevState: ComponentState) => {

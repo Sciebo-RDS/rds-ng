@@ -9,10 +9,12 @@ import { FrontendComponent } from "@/component/FrontendComponent";
  * Basic authentication using a simple username.
  */
 export class BasicAuthenticationScheme extends AuthenticationScheme {
+    public static readonly Scheme = "basic";
+
     public constructor(comp: FrontendComponent) {
         super(
             comp,
-            "basic",
+            BasicAuthenticationScheme.Scheme,
             defineAsyncComponent(() => import("@/ui/misc/authentication/BasicAuthentication.vue"))
         );
     }

@@ -40,7 +40,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         super.run();
 
         // Reigster global items
-        registerAuthenticationSchemes(this);
+        registerAuthenticationSchemes();
         registerSnapIns();
 
         // Mount the authentication scheme
@@ -70,7 +70,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
             return;
         }
 
-        this._authenticationScheme = authScheme;
+        this._authenticationScheme = new authScheme(this);
 
         debug(`Using authentication scheme: ${scheme}`, "frontend");
     }

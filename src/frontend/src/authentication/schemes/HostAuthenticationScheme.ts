@@ -10,10 +10,12 @@ import { type HostUserToken } from "@/integration/HostUserToken";
  * Basic authentication using a simple username.
  */
 export class HostAuthenticationScheme extends AuthenticationScheme {
+    public static readonly Scheme = "host";
+
     public constructor(comp: FrontendComponent) {
         super(
             comp,
-            "host",
+            HostAuthenticationScheme.Scheme,
             defineAsyncComponent(() => import("@/ui/misc/authentication/HostAuthentication.vue"))
         );
     }

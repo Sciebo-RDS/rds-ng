@@ -1,15 +1,17 @@
 import { storeToRefs } from "pinia";
 
+import { SetSessionValueCommand } from "@common/api/session/SessionCommands";
+import { useNetworkStore } from "@common/data/stores/NetworkStore";
+
 import { isUserTokenValid, type UserToken } from "@/authentication/UserToken";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { SetSessionValueAction } from "@/ui/actions/session/SetSessionValueAction";
 
 export type AuthDoneCallback = () => void;
 export type AuthFailCallback = (msg: string) => void;
 
 export class Authenticator {
-    private readonly _comp: FrontendComponent;
+    private readonly _component: FrontendComponent;
 
     private readonly _userToken: UserToken;
 
@@ -17,7 +19,7 @@ export class Authenticator {
     private _failCallbacks: AuthFailCallback[] = [];
 
     public constructor(comp: FrontendComponent, token: UserToken) {
-        this._comp = comp;
+        this._component = comp;
 
         this._userToken = token;
     }
@@ -54,8 +56,13 @@ export class Authenticator {
             throw new Error("Invalid user token used for authentication");
         }
 
-        const action = new SetSessionValueAction(this._comp);
-        action.prepare("user-token", this._userToken.userID).done((_, success, msg) => {
+        const nwStore = useNetworkStore();
+
+        SetSessionValueCommand.build(
+            this._component.frontendService.messageBuilder,
+            "user-token",
+            this._userToken.userID
+        ).done((_, success, msg) => {
             if (success) {
                 const userStore = useUserStore();
                 const { userToken } = storeToRefs(userStore);
@@ -68,8 +75,7 @@ export class Authenticator {
             }
         }).failed((_, msg: string) => {
             this.callFailCallbacks(msg);
-        });
-        action.execute();
+        }).emit(nwStore.serverChannel);
     }
 
     private callDoneCallbacks(): void {

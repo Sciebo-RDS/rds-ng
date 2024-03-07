@@ -22,7 +22,7 @@ export const enum ConnectionState {
  * @param serverInfo - If connected, general information about the server connection.
  * @param serverChannel - If connected, a ``Channel`` to directly target the connected server.
  */
-export const networkStore = defineStore("networkStore", () => {
+export const useNetworkStore = defineStore("networkStore", () => {
     const connectionState = ref(ConnectionState.Disconnected);
 
     const serverInfo = ref({} as ComponentInformation);

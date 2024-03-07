@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { componentStore } from "../../../../data/stores/ComponentStore";
+import { useComponentStore } from "../../../../data/stores/ComponentStore";
 
 import Header from "./Header.vue";
 
-const compStore = componentStore();
+const compStore = useComponentStore();
 </script>
 
 <template>
