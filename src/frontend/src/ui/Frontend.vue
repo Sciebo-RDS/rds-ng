@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { computed, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { LoginType } from "@/integration/Login";
+import { isUserTokenValid } from "@/integration/UserToken";
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 import BasicLogin from "@/ui/misc/login/BasicLogin.vue";
@@ -20,7 +21,7 @@ const loginForms = {
 };
 
 const loginType = comp.data.config.value<LoginType>(FrontendSettingIDs.LoginType);
-const isLoggedIn = computed(() => !!userToken.value);
+const isLoggedIn = computed(() => isUserTokenValid(unref(userToken)));
 </script>
 
 <template>

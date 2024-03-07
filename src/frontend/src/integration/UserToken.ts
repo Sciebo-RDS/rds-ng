@@ -1,26 +1,29 @@
 /**
- * A class representing the currently logged-in user.
+ * A token identifying the currently authenticated user.
  */
-export class UserToken {
-    private readonly _userID: string;
-    private readonly _userName: string;
+export interface UserToken {
+    userID: string;
+    userName: string;
+}
 
-    public constructor(userID: string, userName?: string) {
-        this._userID = userID;
-        this._userName = userName || userID;
-    }
+/**
+ * Creates a new user token.
+ *
+ * @param userID - The user ID.
+ * @param userName - The username.
+ */
+export function createUserToken(userID: string, userName?: string): UserToken {
+    return {
+        userID: userID,
+        userName: userName || userID
+    } as UserToken;
+}
 
-    /**
-     * The user ID.
-     */
-    public get userID(): string {
-        return this._userID;
-    }
-
-    /**
-     * The username.
-     */
-    public get userName(): string {
-        return this._userName;
-    }
+/**
+ * Checks whether a user token is valid.
+ *
+ * @param token - The user token.
+ */
+export function isUserTokenValid(token: UserToken): boolean {
+    return !!token.userID;
 }

@@ -2,7 +2,7 @@ import { storeToRefs } from "pinia";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { UserToken } from "@/integration/UserToken";
+import { type UserToken } from "@/integration/UserToken";
 import { SetSessionValueAction } from "@/ui/actions/session/SetSessionValueAction";
 
 /**
