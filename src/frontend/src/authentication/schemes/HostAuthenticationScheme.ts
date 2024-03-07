@@ -17,7 +17,7 @@ export class HostAuthenticationScheme extends AuthenticationScheme {
         super(
             comp,
             HostAuthenticationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/misc/authentication/HostAuthentication.vue"))
+            defineAsyncComponent(() => import("@/ui/authentication/HostAuthentication.vue"))
         );
     }
 

@@ -15,7 +15,7 @@ export class BasicAuthenticationScheme extends AuthenticationScheme {
         super(
             comp,
             BasicAuthenticationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/misc/authentication/BasicAuthentication.vue"))
+            defineAsyncComponent(() => import("@/ui/authentication/BasicAuthentication.vue"))
         );
     }
 
