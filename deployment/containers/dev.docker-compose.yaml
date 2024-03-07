@@ -64,4 +64,4 @@ services:
         environment:
             - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200
             - RDS_FRONTEND_PUBLIC_KEY_URL=http://localhost:8080/apps/rdsng/api/publickey
-            - RDS_FRONTEND_LOGIN_TYPE=basic
+            - RDS_FRONTEND_AUTHENTICATION_SCHEME=host

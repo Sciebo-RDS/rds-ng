@@ -1,29 +1,33 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { onMounted, ref } from "vue";
+import { onMounted, type PropType, ref, toRefs } from "vue";
 
 import Header from "@common/ui/views/main/states/Header.vue";
 
+import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { useHostIntegration } from "@/integration/HostIntegration";
-import { useLogin } from "@/integration/Login";
-import { createUserToken } from "@/integration/UserToken";
 
 const comp = FrontendComponent.inject();
+const props = defineProps({
+    authScheme: {
+        type: Object as PropType<AuthenticationScheme>,
+        required: true
+    }
+});
+const { authScheme } = toRefs(props);
 const userStore = useUserStore();
 const { userToken } = storeToRefs(userStore);
 
 const errorMessage = ref("");
 onMounted(async () => {
     const { extractUserToken } = useHostIntegration(comp);
-    const { login } = useLogin(comp);
 
     extractUserToken().then((userToken) => {
-        login(createUserToken(userToken.userID, userToken.userName), undefined, (msg) => {
-                errorMessage.value = msg;
-            }
-        );
+        authScheme!.value.authenticator(userToken).failed((msg) => {
+            errorMessage.value = msg;
+        }).authenticate();
     }).catch((error) => {
         errorMessage.value = error;
     });

@@ -1,5 +1,6 @@
 import { ComponentType, ComponentUnit } from "@common/component/ComponentIDs";
 import { WebComponent } from "@common/component/WebComponent";
+import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
@@ -9,16 +10,21 @@ import createConnectorsService from "@/services/ConnectorsService";
 import createProjectsService from "@/services/ProjectsService";
 
 import { getFrontendSettings } from "@/settings/FrontendSettings";
+import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 import Frontend from "@/ui/Frontend.vue";
 import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
+import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
+import { registerAuthenticationSchemes } from "@/authentication/AuthenticationSchemes";
+import { AuthenticationSchemesCatalog } from "@/authentication/AuthenticationSchemesCatalog";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
-import { registerExporters } from "@common/ui/components/propertyeditor/exporters/Exporters";
 
 /**
  * The main frontend component class.
  */
 export class FrontendComponent extends WebComponent<FrontendUserInterface> {
+    private _authenticationScheme: AuthenticationScheme | null = null;
+
     private _frontendService: Service | null = null;
     private _userService: Service | null = null;
     private _connectorsService: Service | null = null;
@@ -33,9 +39,12 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     public run(): void {
         super.run();
 
-        // Reigster snap-ins
+        // Reigster global items
+        registerAuthenticationSchemes(this);
         registerSnapIns();
-        registerExporters();
+
+        // Mount the authentication scheme
+        this.mountAuthenticationScheme();
 
         // Create frontend-specific services
         this._frontendService = createFrontendService(this);
@@ -46,6 +55,34 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
 
     private addFrontendSettings(): void {
         this.data.config.addDefaults(getFrontendSettings());
+    }
+
+    private mountAuthenticationScheme(): void {
+        const scheme = this._data.config.value<string>(FrontendSettingIDs.AuthenticationScheme);
+        if (!scheme) {
+            error("No authentication theme has been configured");
+            return;
+        }
+
+        const authScheme = AuthenticationSchemesCatalog.findItem(scheme);
+        if (!authScheme) {
+            error(`The authentication scheme '${scheme}' couldn't be found`);
+            return;
+        }
+
+        this._authenticationScheme = authScheme;
+
+        debug(`Using authentication scheme: ${scheme}`, "frontend");
+    }
+
+    /**
+     * The active authentication scheme.
+     */
+    public get authenticationScheme(): AuthenticationScheme {
+        if (!this._authenticationScheme) {
+            throw new Error("Tried to access the authentication scheme before its creation");
+        }
+        return this._authenticationScheme;
     }
 
     /**

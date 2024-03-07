@@ -4,7 +4,7 @@ import { ref } from "vue";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { type UserToken } from "@/integration/UserToken";
+import { type UserToken } from "@/authentication/UserToken";
 
 /**
  * The user store for all user-specific data.

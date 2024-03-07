@@ -4,29 +4,19 @@ import { computed, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { LoginType } from "@/integration/Login";
-import { isUserTokenValid } from "@/integration/UserToken";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
-
-import BasicLogin from "@/ui/misc/login/BasicLogin.vue";
-import HostLogin from "@/ui/misc/login/HostLogin.vue";
+import { isUserTokenValid } from "@/authentication/UserToken";
 
 const comp = FrontendComponent.inject();
 const userStore = useUserStore();
 const { userToken } = storeToRefs(userStore);
 
-const loginForms = {
-    [LoginType.Basic]: BasicLogin,
-    [LoginType.Host]: HostLogin
-};
-
-const loginType = comp.data.config.value<LoginType>(FrontendSettingIDs.LoginType);
+const authScheme = computed(() => comp.authenticationScheme);
 const isLoggedIn = computed(() => isUserTokenValid(unref(userToken)));
 </script>
 
 <template>
     <RouterView v-if="isLoggedIn" />
-    <component v-else :is="loginForms[loginType]" />
+    <component v-else :is="authScheme.authComponent" :auth-scheme="authScheme" />
 </template>
 
 <style scoped lang="scss">

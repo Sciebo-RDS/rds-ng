@@ -4,16 +4,22 @@ import Button from "primevue/button";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
-import { ref } from "vue";
+import { type PropType, ref, toRefs } from "vue";
 
 import { useDirectives } from "@common/ui/Directives";
 
+import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { useLogin } from "@/integration/Login";
-import { createUserToken } from "@/integration/UserToken";
 
 const comp = FrontendComponent.inject();
+const props = defineProps({
+    authScheme: {
+        type: Object as PropType<AuthenticationScheme>,
+        required: true
+    }
+});
+const { authScheme } = toRefs(props);
 const userStore = useUserStore();
 const { vFocus } = useDirectives();
 
@@ -22,17 +28,15 @@ const blockInput = ref(false);
 const errorMessage = ref("");
 
 function performLogin(): void {
-    const { login } = useLogin(comp);
-
     blockInput.value = true;
     errorMessage.value = "";
 
-    login(createUserToken(userName.value), () => {
+    authScheme!.value.authenticator(userName.value).done(() => {
         blockInput.value = false;
-    }, (msg) => {
+    }).failed((msg) => {
         blockInput.value = false;
         errorMessage.value = msg;
-    });
+    }).authenticate();
 }
 </script>
 
