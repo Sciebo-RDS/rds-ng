@@ -27,6 +27,12 @@ export abstract class AuthenticationScheme {
     public abstract authenticator(...args: any[]): Authenticator;
 
     /**
+     * Called when the user leaves the app (e.g., by closing or refreshing it).
+     */
+    public leave(): void {
+    }
+
+    /**
      * The scheme identifier.
      */
     public get scheme(): string {

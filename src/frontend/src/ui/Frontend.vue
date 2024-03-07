@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed, unref } from "vue";
+import { computed, onUnmounted, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -12,6 +12,11 @@ const { userToken } = storeToRefs(userStore);
 
 const authScheme = computed(() => comp.authenticationScheme);
 const isLoggedIn = computed(() => isUserTokenValid(unref(userToken)));
+
+onUnmounted(() => {
+    // The app has been closed or refreshed; notify the authentication scheme about this
+    authScheme.value.leave();
+});
 </script>
 
 <template>
