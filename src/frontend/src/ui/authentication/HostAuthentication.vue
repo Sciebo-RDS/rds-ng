@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SetSessionValueAction } from "@/ui/actions/session/SetSessionValueAction";
 import { storeToRefs } from "pinia";
 import { onMounted, type PropType, ref, toRefs } from "vue";
 
@@ -18,14 +19,19 @@ const props = defineProps({
 });
 const { authScheme } = toRefs(props);
 const userStore = useUserStore();
-const { userToken } = storeToRefs(userStore);
+const { userToken, userResources } = storeToRefs(userStore);
 
 const errorMessage = ref("");
 onMounted(async () => {
-    const { extractUserToken } = useHostIntegration(comp);
+    const { extractUserToken, getResourcesList } = useHostIntegration(comp);
 
     extractUserToken().then((userToken) => {
-        authScheme!.value.authenticator(userToken).failed((msg) => {
+        authScheme!.value.authenticator(userToken).done(() => {
+            // TODO: Temporary only
+            const action = new SetSessionValueAction(comp);
+            action.prepare("resources", JSON.stringify(getResourcesList()));
+            action.execute();
+        }).failed((msg) => {
             errorMessage.value = msg;
         }).authenticate();
     }).catch((error) => {

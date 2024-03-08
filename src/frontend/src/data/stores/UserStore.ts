@@ -19,7 +19,6 @@ export const useUserStore = defineStore("userStore", () => {
 
     function reset(): void {
         userToken.value = {} as UserToken;
-
         userSettings.value = new UserSettings();
     }
 

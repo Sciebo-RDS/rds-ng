@@ -1,8 +1,11 @@
 import { useUrlSearchParams } from "@vueuse/core";
 import { useAxios } from "@vueuse/integrations/useAxios";
+import { plainToInstance } from "class-transformer";
 import { type KeyLike } from "jose";
 import * as jose from "jose";
 import { unref } from "vue";
+
+import { ResourcesList } from "@common/data/entities/resource/ResourcesList";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type HostUserToken } from "@/integration/HostUserToken";
@@ -34,6 +37,13 @@ export function useHostIntegration(comp: FrontendComponent) {
     function getUserToken(): string | undefined {
         const queryParams = useUrlSearchParams("history");
         return queryParams.hasOwnProperty("user-token") ? queryParams["user-token"] as string : undefined;
+    }
+
+    // TODO: Temporary only
+    function getResourcesList(): ResourcesList | undefined {
+        const queryParams = useUrlSearchParams("history");
+        const resouresData = queryParams.hasOwnProperty("resources") ? JSON.parse(queryParams["resources"]) as string : undefined;
+        return resouresData ? plainToInstance(ResourcesList, resouresData) as ResourcesList : undefined;
     }
 
     async function extractUserToken(): Promise<HostUserToken> {
@@ -70,6 +80,7 @@ export function useHostIntegration(comp: FrontendComponent) {
     return {
         getHostPublicKey,
         getUserToken,
+        getResourcesList,
         extractUserToken
     };
 }
