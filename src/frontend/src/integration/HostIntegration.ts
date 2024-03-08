@@ -42,7 +42,7 @@ export function useHostIntegration(comp: FrontendComponent) {
     // TODO: Temporary only
     function getResourcesList(): ResourcesList | undefined {
         const queryParams = useUrlSearchParams("history");
-        const resouresData = queryParams.hasOwnProperty("resources") ? JSON.parse(queryParams["resources"]) as string : undefined;
+        const resouresData = queryParams.hasOwnProperty("resources") ? JSON.parse(queryParams["resources"] as string) : undefined;
         return resouresData ? plainToInstance(ResourcesList, resouresData) as ResourcesList : undefined;
     }
 

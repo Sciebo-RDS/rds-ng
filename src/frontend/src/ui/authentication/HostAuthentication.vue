@@ -19,7 +19,7 @@ const props = defineProps({
 });
 const { authScheme } = toRefs(props);
 const userStore = useUserStore();
-const { userToken, userResources } = storeToRefs(userStore);
+const { userToken } = storeToRefs(userStore);
 
 const errorMessage = ref("");
 onMounted(async () => {
