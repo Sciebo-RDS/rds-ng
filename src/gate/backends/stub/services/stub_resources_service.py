@@ -1,3 +1,4 @@
+import json
 import os.path
 
 from common.py.component import BackendComponent
@@ -41,12 +42,20 @@ def create_stub_resources_service(comp: BackendComponent) -> Service:
             from common.py.data.entities.resource.resource_utils import (
                 resources_list_from_syspath,
             )
+            from ....data.storage.session import SessionStorage
 
-            resources = resources_list_from_syspath(
-                root,
-                include_folders=msg.include_folders,
-                include_files=msg.include_files,
-                recursive=msg.recursive,
+            # TODO: Temporary only
+            stored_resources = SessionStorage().get_data(msg.origin, "resources", "")
+
+            resources = (
+                json.loads(stored_resources)
+                if stored_resources != ""
+                else resources_list_from_syspath(
+                    root,
+                    include_folders=msg.include_folders,
+                    include_files=msg.include_files,
+                    recursive=msg.recursive,
+                )
             )
 
             success = True
