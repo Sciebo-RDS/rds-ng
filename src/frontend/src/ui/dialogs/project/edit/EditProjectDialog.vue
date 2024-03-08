@@ -5,24 +5,26 @@ import InputText from "primevue/inputtext";
 import RadioButton from "primevue/radiobutton";
 import Textarea from "primevue/textarea";
 import { onMounted, ref, watch } from "vue";
-import { string as ystring, array as yarray } from "yup";
+import { array as yarray, string as ystring } from "yup";
 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
+import { ResourceType } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
 
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 import ResourcesTreeSelect from "@common/ui/components/resource/ResourcesTreeSelect.vue";
-import ConnectorInstancesSelect from "@/ui/dialogs/project/edit/ConnectorInstancesSelect.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/UIOptions";
 import { useUserStore } from "@/data/stores/UserStore";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
+
+import ConnectorInstancesSelect from "@/ui/dialogs/project/edit/ConnectorInstancesSelect.vue";
 
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { vFocus } = useDirectives();
@@ -57,7 +59,7 @@ onMounted(() => {
         const action = new ListResourcesAction(comp, true);
         action.prepare("", true, false).done((reply: ListResourcesReply, success, msg) => {
             if (success) {
-                resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
+                resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true, [ResourceType.File]);
             }
         });
         action.execute();
