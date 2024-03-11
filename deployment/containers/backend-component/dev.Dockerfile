@@ -10,7 +10,7 @@ ARG     COMPONENT_PORT=6969
 ARG     COMPONENT_THREADS=9
 
 # Copy testing data
-WORKDIR /data
+WORKDIR /files
 
 COPY    /deployment/testing_data/ .
 
