@@ -1,5 +1,6 @@
 import json
 import os.path
+from typing import cast
 
 from common.py.component import BackendComponent
 from common.py.services import Service
@@ -26,10 +27,16 @@ def create_stub_resources_service(comp: BackendComponent) -> Service:
     def list_resources(msg: ListResourcesCommand, ctx: StubServiceContext) -> None:
         from common.py.data.entities.resource import Resource, ResourcesList
 
+        from ....settings import BackendSettingIDs
+
         success = False
         message = ""
 
-        root = msg.root if msg.root != "" else "/data"
+        root = (
+            msg.root
+            if msg.root != ""
+            else ctx.config.value(BackendSettingIDs.DEFAULT_ROOT_PATH)
+        )
         resources = ResourcesList(
             resource=Resource(
                 filename=root,
@@ -39,8 +46,10 @@ def create_stub_resources_service(comp: BackendComponent) -> Service:
         )
 
         try:
-            from common.py.data.entities.resource.resource_utils import (
+            from common.py.data.entities.resource import (
                 resources_list_from_syspath,
+                search_resources_list,
+                filter_resources_list,
             )
             from ....data.storage.session import SessionStorage
 
@@ -48,7 +57,17 @@ def create_stub_resources_service(comp: BackendComponent) -> Service:
             stored_resources = SessionStorage().get_data(msg.origin, "resources", "")
 
             resources = (
-                json.loads(stored_resources)
+                filter_resources_list(
+                    search_resources_list(
+                        cast(
+                            ResourcesList,
+                            ResourcesList.schema().loads(stored_resources),
+                        ),
+                        root,
+                    ),
+                    include_folders=msg.include_folders,
+                    include_files=msg.include_files,
+                )
                 if stored_resources != ""
                 else resources_list_from_syspath(
                     root,

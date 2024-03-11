@@ -1,3 +1,4 @@
+import logging
 import pathlib
 
 from .resource import Resource
@@ -9,7 +10,7 @@ def resources_list_from_syspath(
     *,
     include_folders: bool = True,
     include_files: bool = True,
-    recursive: bool = True
+    recursive: bool = True,
 ) -> ResourcesList:
     """
     Generates a *ResourcesList* from a system path.
@@ -63,3 +64,73 @@ def resources_list_from_syspath(
         )
 
     return _process_path(pathlib.Path(path).resolve(), process_resource=True)
+
+
+def search_resources_list(resources: ResourcesList, path: str) -> ResourcesList:
+    """
+    Searches for a folder path within a resources list.
+
+    Args:
+        resources: The resources list to search.
+        path: The path to search for.
+
+    Returns:
+        The found (nested) resources list, if any.
+
+    Raises:
+        ValueError: If the path could not be found.
+    """
+    if path == "":
+        return resources
+
+    root = pathlib.Path(path)
+
+    def _search(resources_list: ResourcesList) -> ResourcesList | None:
+        if pathlib.Path(resources_list.resource.filename) == root:
+            return resources_list
+
+        for folder in resources_list.folders:
+            if found := _search(folder):
+                return found
+        else:
+            return None
+
+    if sublist := _search(resources):
+        return sublist
+    else:
+        raise ValueError(f"The path '{path}' could not be found")
+
+
+def filter_resources_list(
+    resources: ResourcesList,
+    *,
+    include_folders: bool = True,
+    include_files: bool = True,
+) -> ResourcesList:
+    """
+    Filters a resource list.
+
+    Args:
+        resources: The list to filter.
+        include_folders: Whether to include folders.
+        include_files: Whether to include files.
+
+    Returns:
+        The filtered list.
+    """
+    from .. import clone_entity
+
+    filtered_resources = clone_entity(resources)
+
+    def _filter(resources_list: ResourcesList):
+        if not include_files:
+            resources_list.files.clear()
+
+        if include_folders:
+            for folder in resources_list.folders:
+                _filter(folder)
+        else:
+            resources_list.folders.clear()
+
+    _filter(filtered_resources)
+    return filtered_resources

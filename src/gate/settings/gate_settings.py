@@ -13,6 +13,4 @@ def get_gate_settings() -> typing.Dict[SettingID, typing.Any]:
     """
     from gate.settings import BackendSettingIDs
 
-    return {
-        BackendSettingIDs.DRIVER: "",
-    }
+    return {BackendSettingIDs.DRIVER: "", BackendSettingIDs.DEFAULT_ROOT_PATH: "/"}

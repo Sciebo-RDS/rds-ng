@@ -59,7 +59,7 @@ onMounted(() => {
         const action = new ListResourcesAction(comp, true);
         action.prepare("", true, false).done((reply: ListResourcesReply, success, msg) => {
             if (success) {
-                resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true, [ResourceType.File]);
+                resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
             }
         });
         action.execute();
