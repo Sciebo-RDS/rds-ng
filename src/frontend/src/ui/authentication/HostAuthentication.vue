@@ -27,14 +27,18 @@ onMounted(async () => {
 
     extractUserToken().then((userToken) => {
         // TODO: Temporary only
-        const action = new SetSessionValueAction(comp);
-        action.prepare("resources", JSON.stringify(getResourcesList())).done(() => {
-            // Authenticate only after the resources list has been sent to the backend
-            authScheme!.value.authenticator(userToken).failed((msg) => {
-                errorMessage.value = msg;
-            }).authenticate();
+        getResourcesList(userToken.systemID).then((resources) => {
+            const action = new SetSessionValueAction(comp);
+            action.prepare("resources", JSON.stringify(resources)).done(() => {
+                // Authenticate only after the resources list has been sent to the backend
+                authScheme!.value.authenticator(userToken).failed((msg) => {
+                    errorMessage.value = msg;
+                }).authenticate();
+            });
+            action.execute();
+        }).catch((msg) => {
+            errorMessage.value = msg;
         });
-        action.execute();
     }).catch((error) => {
         errorMessage.value = error;
     });

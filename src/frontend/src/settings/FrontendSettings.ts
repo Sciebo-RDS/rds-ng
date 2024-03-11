@@ -12,7 +12,7 @@ export function getFrontendSettings(): Map<SettingID, any> {
 
     settings.set(FrontendSettingIDs.RegularCommandTimeout, 10.0);
 
-    settings.set(FrontendSettingIDs.PublicKeyURL, "");
+    settings.set(FrontendSettingIDs.HostAPIURL, "");
 
     settings.set(FrontendSettingIDs.AuthenticationScheme, "");
 

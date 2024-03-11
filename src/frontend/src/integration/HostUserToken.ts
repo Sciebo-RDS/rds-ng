@@ -3,5 +3,6 @@
  */
 export interface HostUserToken {
     userID: string;
+    systemID: string;
     userName: string;
 }

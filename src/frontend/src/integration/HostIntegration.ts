@@ -8,19 +8,14 @@ import { unref } from "vue";
 import { ResourcesList } from "@common/data/entities/resource/ResourcesList";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { HostAPIEndpoints, resolveHostAPIEndpoint } from "@/integration/HostAPI";
 import { type HostUserToken } from "@/integration/HostUserToken";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 export function useHostIntegration(comp: FrontendComponent) {
     // TODO: Many fixed & magic things, variables etc.; improve later
     async function getHostPublicKey(): Promise<KeyLike> { // TODO: Single Host only; must be extended later
         return new Promise<KeyLike>(async (resolve, reject) => {
-            const pubKeyURL = comp.data.config.value<string>(FrontendSettingIDs.PublicKeyURL);
-            if (pubKeyURL == "") {
-                reject("No public key URL has been configured");
-                return;
-            }
-
+            const pubKeyURL = resolveHostAPIEndpoint(comp, HostAPIEndpoints.PublicKey);
             useAxios(pubKeyURL).then(async (response) => {
                 if (response.isFinished) {
                     const data = unref(response.data);
@@ -34,16 +29,27 @@ export function useHostIntegration(comp: FrontendComponent) {
         });
     }
 
+    // TODO: Temporary only
+    async function getResourcesList(systemID: string): Promise<ResourcesList> {
+        return new Promise<ResourcesList>(async (resolve, reject) => {
+            const resourcesURL = resolveHostAPIEndpoint(comp, `${HostAPIEndpoints.Resources}?uid=${systemID}`);
+            useAxios(resourcesURL).then(async (response) => {
+                if (response.isFinished) {
+                    const data = unref(response.data);
+                    if (!data.hasOwnProperty("resources")) {
+                        reject("The configured host doesn't provide a resources list");
+                        return;
+                    }
+                    const resourcesData = JSON.parse(data["resources"] as string);
+                    resolve(plainToInstance(ResourcesList, resourcesData) as ResourcesList);
+                }
+            });
+        });
+    }
+
     function getUserToken(): string | undefined {
         const queryParams = useUrlSearchParams("history");
         return queryParams.hasOwnProperty("user-token") ? queryParams["user-token"] as string : undefined;
-    }
-
-    // TODO: Temporary only
-    function getResourcesList(): ResourcesList | undefined {
-        const queryParams = useUrlSearchParams("history");
-        const resouresData = queryParams.hasOwnProperty("resources") ? JSON.parse(queryParams["resources"] as string) : undefined;
-        return resouresData ? plainToInstance(ResourcesList, resouresData) as ResourcesList : undefined;
     }
 
     async function extractUserToken(): Promise<HostUserToken> {
@@ -68,6 +74,7 @@ export function useHostIntegration(comp: FrontendComponent) {
                     const tokenData = jwtData["user-token"];
                     resolve({
                         userID: tokenData["user-id"],
+                        systemID: tokenData["system-id"],
                         userName: tokenData["user-name"]
                     } as HostUserToken);
                 } catch (exc) {
