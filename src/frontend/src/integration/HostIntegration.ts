@@ -62,8 +62,6 @@ export function useHostIntegration(comp: FrontendComponent) {
                 }
 
                 try {
-                    console.log("MORE JOSEEEEEE!!");
-                    console.log(pubKey);
                     const key = await jose.importJWK(pubKey);
                     const { payload } = await jose.compactVerify(userToken, key);
 
@@ -80,6 +78,7 @@ export function useHostIntegration(comp: FrontendComponent) {
                         userName: tokenData["user-name"]
                     } as HostUserToken);
                 } catch (exc) {
+                    console.trace();
                     reject(`The provided JWT is invalid: ${String(exc)}`);
                 }
             });
