@@ -78,7 +78,6 @@ export function useHostIntegration(comp: FrontendComponent) {
                         userName: tokenData["user-name"]
                     } as HostUserToken);
                 } catch (exc) {
-                    console.trace();
                     reject(`The provided JWT is invalid: ${String(exc)}`);
                 }
             });
