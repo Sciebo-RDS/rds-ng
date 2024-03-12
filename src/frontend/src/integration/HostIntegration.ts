@@ -62,28 +62,23 @@ export function useHostIntegration(comp: FrontendComponent) {
                 }
 
                 try {
-                    console.log("JOSE!!! 1");
+                    console.log("MORE JOSEEEEEE!!");
+                    console.log(pubKey);
                     const key = await jose.importJWK(pubKey);
-                    console.log("JOSE!!! 2");
                     const { payload } = await jose.compactVerify(userToken, key);
 
-                    console.log("JOSE!!! 3");
                     const jwtData = JSON.parse(new TextDecoder().decode(payload));
-                    console.log("JOSE!!! 4");
                     if (!jwtData.hasOwnProperty("user-token")) {
                         reject("The provided JWT doesn't contain any user token");
                         return;
                     }
-                    console.log("JOSE!!! 5");
 
                     const tokenData = jwtData["user-token"];
-                    console.log("JOSE!!! 6");
                     resolve({
                         userID: tokenData["user-id"],
                         systemID: tokenData["system-id"],
                         userName: tokenData["user-name"]
                     } as HostUserToken);
-                    console.log("JOSE!!! 7");
                 } catch (exc) {
                     reject(`The provided JWT is invalid: ${String(exc)}`);
                 }
