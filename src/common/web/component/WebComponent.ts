@@ -15,6 +15,7 @@ import logging from "../core/logging/Logging";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
+import { registerExporters } from "../ui/components/propertyeditor/exporters/Exporters";
 import { UserInterface } from "../ui/UserInterface";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
@@ -180,6 +181,9 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      */
     public run(): void {
         logging.info("Running component");
+
+        // Reigster global items
+        registerExporters();
 
         // Create all basic services
         createComponentService(this);

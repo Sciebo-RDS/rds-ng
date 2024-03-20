@@ -53,7 +53,9 @@ export class Client {
             auth: this.getAuthentication(),
             autoConnect: false,
             reconnection: false,
-            timeout: this._connectionTimeout * 1000
+            timeout: this._connectionTimeout * 1000,
+            rememberUpgrade: true,
+            rejectUnauthorized: false
         });
     }
 

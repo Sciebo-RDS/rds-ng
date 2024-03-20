@@ -2,7 +2,7 @@ import { Channel } from "../../core/messaging/Channel";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { MessageComposer } from "../../core/messaging/composers/MessageComposer";
 import { Message } from "../../core/messaging/Message";
-import { networkStore } from "../../data/stores/NetworkStore";
+import { useNetworkStore } from "../../data/stores/NetworkStore";
 import { Service } from "../../services/Service";
 import { ActionBase, ActionState } from "./ActionBase";
 
@@ -25,7 +25,7 @@ export abstract class Action<MsgType extends Message, CompType extends MessageCo
     public constructor(service: Service, suppressDefaultNotifiers: boolean = false) {
         super(suppressDefaultNotifiers);
 
-        const nwStore = networkStore();
+        const nwStore = useNetworkStore();
 
         this._service = service;
         this._serverChannel = nwStore.serverChannel;

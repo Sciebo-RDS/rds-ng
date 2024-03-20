@@ -63,3 +63,5 @@ services:
             - "8000:6969"
         environment:
             - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200
+            - RDS_FRONTEND_AUTHENTICATION_SCHEME=basic
+            - RDS_FRONTEND_HOST_API_URL=http://localhost:8080/apps/rdsng/api/

@@ -28,8 +28,7 @@ function onEditUserSettings(): void {
         </div>
 
         <div class="font-bold self-center pt-3">
-            <!-- TODO: Display actual user name, not his ID -->
-            <div v-if="userToken">{{ userToken }}</div>
+            <div v-if="userToken" :title="userToken.userID">{{ userToken.userName }}</div>
             <div v-else>(No user logged in)</div>
         </div>
 

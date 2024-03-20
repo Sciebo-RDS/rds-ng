@@ -28,7 +28,6 @@ class StubServiceContext(GateServiceContext):
         logger: LoggerProtocol,
         config: Configuration,
     ):
-        from ..data import get_stub_data_projects
         from ....data.storage.memory import MemoryStoragePool
         from ....data.storage.session import SessionStorage
 

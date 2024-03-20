@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { onMounted, onUnmounted, ref, shallowRef, watch } from "vue";
+import { RouterView } from "vue-router";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { useUserStore } from "@/data/stores/UserStore";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
-
-import BasicLoginForm from "@/ui/misc/login/BasicLoginForm.vue";
 
 const comp = FrontendComponent.inject();
-const userStore = useUserStore();
-const { userToken } = storeToRefs(userStore);
+const authScheme = shallowRef(comp.authenticationScheme);
+const isAuthenticated = ref(authScheme.value.isAuthenticated);
 
-// If enabled, show the dummy login page to get a user ID token
-const showLoginPage = computed(() => comp.data.config.value<boolean>(FrontendSettingIDs.UseLoginPage) && !userToken.value);
+// Circumvent Vue warnings arising from using AuthorizationScheme.isAuthenticated directly
+watch(() => authScheme.value.isAuthenticated, (authenticated) => {
+    isAuthenticated.value = authenticated;
+});
 
+onMounted(() => {
+    // The app has been loaded; notify the authentication scheme about this
+    authScheme.value.enter();
+});
+onUnmounted(() => {
+    // The app has been closed or refreshed; notify the authentication scheme about this
+    authScheme.value.leave();
+});
 </script>
 
 <template>
-    <BasicLoginForm v-if="showLoginPage" />
-    <RouterView v-else />
+    <RouterView v-if="isAuthenticated" />
+    <component v-else :is="authScheme.authComponent" :auth-scheme="authScheme" />
 </template>
 
 <style scoped lang="scss">

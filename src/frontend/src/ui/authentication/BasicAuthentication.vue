@@ -1,21 +1,26 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
-import { ref } from "vue";
+import { type PropType, ref, toRefs } from "vue";
 
 import { useDirectives } from "@common/ui/Directives";
 
+import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { SetSessionValueAction } from "@/ui/actions/session/SetSessionValueAction";
 
 const comp = FrontendComponent.inject();
+const props = defineProps({
+    authScheme: {
+        type: Object as PropType<AuthenticationScheme>,
+        required: true
+    }
+});
+const { authScheme } = toRefs(props);
 const userStore = useUserStore();
-const { userToken } = storeToRefs(userStore);
 const { vFocus } = useDirectives();
 
 const userName = ref("");
@@ -26,22 +31,12 @@ function performLogin(): void {
     blockInput.value = true;
     errorMessage.value = "";
 
-    const token = userName.value;
-    const action = new SetSessionValueAction(comp, true);
-    action.prepare("user-token", token).done((_, success, msg) => {
-        // Wait till the server has actually stored the user token
+    authScheme!.value.authenticator(userName.value).done(() => {
         blockInput.value = false;
-
-        if (success) {
-            userToken.value = token;
-        } else {
-            errorMessage.value = msg;
-        }
-    }).failed((_, msg: string) => {
+    }).failed((msg) => {
         blockInput.value = false;
         errorMessage.value = msg;
-    });
-    action.execute();
+    }).authenticate();
 }
 </script>
 

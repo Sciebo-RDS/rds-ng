@@ -1,4 +1,4 @@
-import { type VueComponent } from "common/web/component/WebComponent";
+import { type VueComponent } from "../../../component/WebComponent";
 
 /**
  * The definition of a tab for the vertical tab view.
