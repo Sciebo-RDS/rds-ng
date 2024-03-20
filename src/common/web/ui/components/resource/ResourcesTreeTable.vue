@@ -86,19 +86,19 @@ function collapseAll(): void {
             </div>
         </template>
 
-        <Column field="basename" header="Name" class="p-0 pl-2" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
+        <Column field="basename" header="Name" class="p-0 pl-2 truncate" expander :pt="{ rowToggler: 'mb-1', headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 <span :class="entry.node.icon" class="opacity-75 relative top-1.5 mr-1" /><span>{{ entry.node.data.basename }}</span>
             </template>
         </Column>
 
-        <Column header="Size" class="w-48 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column header="Size" class="w-48 text-right truncate" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 {{ humanReadableFileSize(entry.node.data.size) }}
             </template>
         </Column>
 
-        <Column header="Files in folder" class="w-32 text-right" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column header="Files in folder" class="w-32 text-right truncate" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 <span v-if="entry.node.data.type === ResourceType.Folder">{{ entry.node.children.length }}</span>
             </template>
