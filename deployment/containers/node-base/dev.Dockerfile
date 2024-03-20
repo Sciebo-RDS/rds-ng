@@ -1,6 +1,6 @@
 # Base image for all Node-based components (development mode)
 # --
-FROM    node:18
+FROM    node:20
 
 # Update the image first (and install some helpful tools)
 RUN     apt-get update \
