@@ -37,7 +37,7 @@ class GateComponent(BackendComponent):
         self._mount_backend()
 
     def _add_gate_settings(self) -> None:
-        from gate.settings.gate_settings import get_gate_settings
+        from gate.settings import get_gate_settings
 
         self.data.config.add_defaults(get_gate_settings())
 

@@ -1,9 +1,14 @@
 {
     "global": {
         "title": "RDS-NG",
-        "version": "0.0.1"
+        "version": "0.1.0"
     },
     "components": {
+        "server": {
+            "name": "Server service",
+            "directory": "server",
+            "tech": "py"
+        },
         "gate": {
             "name": "Gate service",
             "directory": "gate",
