@@ -22,11 +22,11 @@ class ServerComponent(BackendComponent):
         self._add_server_settings()
 
     def run(self) -> None:
-        super().run()
-
         from ..services import create_server_service
 
         create_server_service(self)
+
+        super().run()
 
     def _add_server_settings(self) -> None:
         from server.settings import get_server_settings

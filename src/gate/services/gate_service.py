@@ -1,4 +1,9 @@
-from common.py.api.network import ServerTimeoutEvent
+from common.py.api.network import (
+    ServerTimeoutEvent,
+    ClientConnectedEvent,
+    ClientDisconnectedEvent,
+    ClientConnectionErrorEvent,
+)
 from common.py.api.session import (
     GetSessionValueCommand,
     GetSessionValueReply,
@@ -24,6 +29,26 @@ def create_gate_service(comp: BackendComponent) -> Service:
     """
 
     svc = comp.create_service("Gate service", context_type=GateServiceContext)
+
+    @svc.message_handler(ClientConnectedEvent)
+    def client_connected(msg: ClientConnectedEvent, ctx: GateServiceContext) -> None:
+        ctx.logger.debug("Server connection established", scope="gate")
+
+    @svc.message_handler(ClientDisconnectedEvent)
+    def client_disconnected(
+        msg: ClientDisconnectedEvent, ctx: GateServiceContext
+    ) -> None:
+        ctx.logger.debug("Server connection terminated", scope="gate")
+
+    @svc.message_handler(ClientConnectionErrorEvent)
+    def client_connection_error(
+        msg: ClientConnectionErrorEvent, ctx: GateServiceContext
+    ) -> None:
+        ctx.logger.debug(
+            "Unable to establish a connection to the server",
+            scope="gate",
+            reason=msg.reason,
+        )
 
     @svc.message_handler(ServerTimeoutEvent)
     def server_timeout(msg: ServerTimeoutEvent, ctx: GateServiceContext) -> None:

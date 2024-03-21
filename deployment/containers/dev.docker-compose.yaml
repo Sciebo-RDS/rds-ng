@@ -60,6 +60,7 @@ services:
             - "4200:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+            - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://rds-server-1:6969
 
     # Web frontend
     frontend:
