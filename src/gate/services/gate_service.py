@@ -57,7 +57,7 @@ def create_gate_service(comp: BackendComponent) -> Service:
         )
 
         # A timeout automatically clears the session data of that client
-        ctx.session_storage.clear_data(msg.comp_id)
+        ctx.session_storage.clear_session(msg.comp_id)
 
     @svc.message_handler(GetSessionValueCommand)
     def get_session_value(msg: GetSessionValueCommand, ctx: GateServiceContext) -> None:

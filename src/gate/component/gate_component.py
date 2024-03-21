@@ -31,10 +31,10 @@ class GateComponent(BackendComponent):
 
         create_gate_service(self)
 
-        super().run()
-
         self._install_network_filters()
         self._mount_backend()
+
+        super().run()
 
     def _add_gate_settings(self) -> None:
         from gate.settings import get_gate_settings

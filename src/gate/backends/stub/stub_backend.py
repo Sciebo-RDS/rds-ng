@@ -9,7 +9,6 @@ class StubBackend(Backend):
         from .data import get_stub_data_connectors, get_stub_data_projects
         from ...data.storage.memory import MemoryConnectorStorage, MemoryProjectStorage
 
-        # Add default data to all storages
         MemoryConnectorStorage.default_connectors = get_stub_data_connectors()
         MemoryProjectStorage.default_projects = get_stub_data_projects()
 

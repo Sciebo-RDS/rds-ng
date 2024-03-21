@@ -16,6 +16,8 @@ class SessionStorage:
         The data is shared among all instances of this class.
     """
 
+    GLOBAL_SESSION: SessionID = UnitID("__session__", "__global__")
+
     _sessions: typing.Dict[SessionID, SessionData] = {}
     _lock = threading.RLock()
 
@@ -64,7 +66,20 @@ class SessionStorage:
             data = self._session_data(session)
             return key in data
 
-    def clear_data(self, session: SessionID) -> None:
+    def clear_data(self, session: SessionID, key: str) -> None:
+        """
+        Clears a single data entry of a session.
+
+        Args:
+            session: The session ID.
+            key: The value name.
+        """
+        with SessionStorage._lock:
+            data = self._session_data(session)
+            if key in data:
+                del data[key]
+
+    def clear_session(self, session: SessionID) -> None:
         """
         Clears data of a session.
 

@@ -1,5 +1,5 @@
 [backend]
-driver = "stub"
+driver = "server"
 default_root_path = "/files"
 
 [network.server]
