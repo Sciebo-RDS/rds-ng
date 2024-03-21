@@ -11,9 +11,6 @@ SessionDataType = typing.TypeVar("SessionDataType")
 class SessionStorage:
     """
     Manages in-memory session storage (i.e., a per-session key-value storage).
-
-    Notes:
-        The data is shared among all instances of this class.
     """
 
     GLOBAL_SESSION: SessionID = UnitID("__session__", "__global__")
@@ -21,8 +18,9 @@ class SessionStorage:
     _sessions: typing.Dict[SessionID, SessionData] = {}
     _lock = threading.RLock()
 
+    @staticmethod
     def get_data(
-        self, session: SessionID, key: str, default: SessionDataType = None
+        session: SessionID, key: str, default: SessionDataType = None
     ) -> SessionDataType:
         """
         Retrieves a value of a session.
@@ -36,12 +34,13 @@ class SessionStorage:
             The stored value or the default value otherwise.
         """
         with SessionStorage._lock:
-            data = self._session_data(session)
+            data = SessionStorage._session_data(session)
             if key not in data:
                 data[key] = default
             return typing.cast(SessionDataType, data[key])
 
-    def set_data(self, session: SessionID, key: str, value: SessionDataType) -> None:
+    @staticmethod
+    def set_data(session: SessionID, key: str, value: SessionDataType) -> None:
         """
         Stores a value for a session.
 
@@ -51,10 +50,11 @@ class SessionStorage:
             value: The value.
         """
         with SessionStorage._lock:
-            data = self._session_data(session)
+            data = SessionStorage._session_data(session)
             data[key] = value
 
-    def has_data(self, session: SessionID, key: str) -> bool:
+    @staticmethod
+    def has_data(session: SessionID, key: str) -> bool:
         """
         Checks if a certain value is stored for the session.
 
@@ -63,10 +63,11 @@ class SessionStorage:
             key: The value name.
         """
         with SessionStorage._lock:
-            data = self._session_data(session)
+            data = SessionStorage._session_data(session)
             return key in data
 
-    def clear_data(self, session: SessionID, key: str) -> None:
+    @staticmethod
+    def clear_data(session: SessionID, key: str) -> None:
         """
         Clears a single data entry of a session.
 
@@ -75,11 +76,12 @@ class SessionStorage:
             key: The value name.
         """
         with SessionStorage._lock:
-            data = self._session_data(session)
+            data = SessionStorage._session_data(session)
             if key in data:
                 del data[key]
 
-    def clear_session(self, session: SessionID) -> None:
+    @staticmethod
+    def clear_session(session: SessionID) -> None:
         """
         Clears data of a session.
 
@@ -87,10 +89,11 @@ class SessionStorage:
             session: The session ID.
         """
         with SessionStorage._lock:
-            if session in self._sessions:
-                self._sessions.pop(session)
+            if session in SessionStorage._sessions:
+                SessionStorage._sessions.pop(session)
 
-    def _session_data(self, session: SessionID) -> SessionData:
+    @staticmethod
+    def _session_data(session: SessionID) -> SessionData:
         if session not in SessionStorage._sessions:
             SessionStorage._sessions[session] = {}
         return SessionStorage._sessions[session]

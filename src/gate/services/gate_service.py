@@ -14,6 +14,7 @@ from common.py.component import BackendComponent
 from common.py.services import Service
 
 from .gate_service_context import GateServiceContext
+from ..data.storage.session import SessionStorage
 
 
 def create_gate_service(comp: BackendComponent) -> Service:
@@ -57,7 +58,7 @@ def create_gate_service(comp: BackendComponent) -> Service:
         )
 
         # A timeout automatically clears the session data of that client
-        ctx.session_storage.clear_session(msg.comp_id)
+        SessionStorage.clear_session(msg.comp_id)
 
     @svc.message_handler(GetSessionValueCommand)
     def get_session_value(msg: GetSessionValueCommand, ctx: GateServiceContext) -> None:
@@ -65,7 +66,7 @@ def create_gate_service(comp: BackendComponent) -> Service:
             "Retrieving session value", scope="gate", session=msg.origin, key=msg.key
         )
 
-        value = ctx.session_storage.get_data(msg.origin, msg.key)
+        value = SessionStorage.get_data(msg.origin, msg.key)
         GetSessionValueReply.build(ctx.message_builder, msg, value=value).emit()
 
     @svc.message_handler(SetSessionValueCommand)
@@ -78,7 +79,7 @@ def create_gate_service(comp: BackendComponent) -> Service:
             value=msg.value,
         )
 
-        ctx.session_storage.set_data(msg.origin, msg.key, msg.value)
+        SessionStorage.set_data(msg.origin, msg.key, msg.value)
         SetSessionValueReply.build(ctx.message_builder, msg).emit()
 
     return svc

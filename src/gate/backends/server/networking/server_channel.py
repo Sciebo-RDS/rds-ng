@@ -16,7 +16,7 @@ def set_server_channel(server_id: UnitID) -> None:
     Args:
         server_id: The server ID.
     """
-    SessionStorage().set_data(
+    SessionStorage.set_data(
         SessionStorage.GLOBAL_SESSION, SERVER_CHANNEL_KEY, Channel.direct(server_id)
     )
 
@@ -27,7 +27,7 @@ def reset_server_channel() -> None:
     """
     Resets the global server channel.
     """
-    SessionStorage().clear_data(SessionStorage.GLOBAL_SESSION, SERVER_CHANNEL_KEY)
+    SessionStorage.clear_data(SessionStorage.GLOBAL_SESSION, SERVER_CHANNEL_KEY)
 
     debug("Reset server channel", scope="network")
 
@@ -36,7 +36,7 @@ def has_server_channel() -> bool:
     """
     Checks whether a global server channel is available.
     """
-    return SessionStorage().has_data(SessionStorage.GLOBAL_SESSION, SERVER_CHANNEL_KEY)
+    return SessionStorage.has_data(SessionStorage.GLOBAL_SESSION, SERVER_CHANNEL_KEY)
 
 
 def server_channel() -> Channel:
@@ -54,5 +54,5 @@ def server_channel() -> Channel:
 
     return typing.cast(
         Channel,
-        SessionStorage().get_data(SessionStorage.GLOBAL_SESSION, SERVER_CHANNEL_KEY),
+        SessionStorage.get_data(SessionStorage.GLOBAL_SESSION, SERVER_CHANNEL_KEY),
     )

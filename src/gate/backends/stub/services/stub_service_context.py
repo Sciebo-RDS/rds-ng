@@ -36,7 +36,7 @@ class StubServiceContext(GateServiceContext):
         )
 
         # The user token is sent by the client and stored in the session of the user
-        self._user_token = SessionStorage().get_data(
+        self._user_token = SessionStorage.get_data(
             msg_origin, "user-token", "default_user"
         )
 

@@ -54,7 +54,7 @@ def create_stub_resources_service(comp: BackendComponent) -> Service:
             from ....data.storage.session import SessionStorage
 
             # TODO: Temporary only
-            stored_resources = SessionStorage().get_data(msg.origin, "resources", "")
+            stored_resources = SessionStorage.get_data(msg.origin, "resources", "")
 
             resources = (
                 filter_resources_list(
