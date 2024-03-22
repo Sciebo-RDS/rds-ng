@@ -11,6 +11,6 @@ def get_gate_settings() -> typing.Dict[SettingID, typing.Any]:
     Returns:
         A dictionary mapping the setting identifiers to their default values.
     """
-    from gate.settings import BackendSettingIDs
+    from .backend_setting_ids import BackendSettingIDs
 
     return {BackendSettingIDs.DRIVER: "", BackendSettingIDs.DEFAULT_ROOT_PATH: "/"}

@@ -10,6 +10,20 @@ class StoragePool(abc.ABC):
     A collection of all data storages.
     """
 
+    def __init__(self, name: str):
+        """
+        Args:
+            name: The name of the storage pool.
+        """
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        """
+        The name of this backend.
+        """
+        return self._name
+
     @property
     @abc.abstractmethod
     def connector_storage(self) -> ConnectorStorage:

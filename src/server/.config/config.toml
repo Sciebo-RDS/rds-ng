@@ -1,2 +1,5 @@
 [network.server]
 # idle_timeout = 5
+
+[storage]
+driver = "memory"
