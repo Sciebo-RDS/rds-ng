@@ -22,9 +22,10 @@ class ServerComponent(BackendComponent):
         self._add_server_settings()
 
     def run(self) -> None:
-        from ..services import create_session_service
+        from ..services import create_session_service, create_connectors_service
 
         create_session_service(self)
+        create_connectors_service(self)
 
         self._install_network_filters()
 
