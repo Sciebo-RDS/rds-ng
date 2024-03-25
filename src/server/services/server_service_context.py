@@ -6,6 +6,8 @@ from common.py.services import ServiceContext
 from common.py.utils import UnitID
 from common.py.utils.config import Configuration
 
+from ..networking.session import SessionManager
+
 
 class ServerServiceContext(ServiceContext):
     """
@@ -46,6 +48,13 @@ class ServerServiceContext(ServiceContext):
             )
 
             raise exc
+
+    @property
+    def session_manager(self) -> SessionManager:
+        """
+        The global session manager.
+        """
+        return SessionManager()
 
     @property
     def storage_pool(self) -> StoragePool:

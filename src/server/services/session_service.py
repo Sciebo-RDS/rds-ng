@@ -9,7 +9,6 @@ from common.py.component import BackendComponent
 from common.py.services import Service
 
 from .server_service_context import ServerServiceContext
-from ..networking.session import SessionStorage
 
 
 def create_session_service(comp: BackendComponent) -> Service:
@@ -31,8 +30,8 @@ def create_session_service(comp: BackendComponent) -> Service:
             "Clearing session data due to timeout", scope="session", session=msg.comp_id
         )
 
-        # A timeout automatically clears the session data of that client
-        SessionStorage.clear_session(msg.comp_id)
+        # A timeout automatically deletes the session for that client
+        del ctx.session_manager[msg.comp_id]
 
     @svc.message_handler(GetSessionValueCommand)
     def get_session_value(
@@ -42,7 +41,7 @@ def create_session_service(comp: BackendComponent) -> Service:
             "Retrieving session value", scope="session", session=msg.origin, key=msg.key
         )
 
-        value = SessionStorage.get_data(msg.origin, msg.key)
+        value = ctx.session_manager[msg.origin][msg.key]
         GetSessionValueReply.build(ctx.message_builder, msg, value=value).emit()
 
     @svc.message_handler(SetSessionValueCommand)
@@ -57,7 +56,7 @@ def create_session_service(comp: BackendComponent) -> Service:
             value=msg.value,
         )
 
-        SessionStorage.set_data(msg.origin, msg.key, msg.value)
+        ctx.session_manager[msg.origin][msg.key] = msg.value
         SetSessionValueReply.build(ctx.message_builder, msg).emit()
 
     return svc
