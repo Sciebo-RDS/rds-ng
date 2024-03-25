@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
-from common.py.data.entities.user import UserSettings
+from .user_settings import UserSettings
 
 UserID = str
 

@@ -1,5 +1,6 @@
 from common.py.api.user import AuthenticateUserCommand, AuthenticateUserReply
 from common.py.component import BackendComponent
+from common.py.data.entities.user import User
 from common.py.services import Service
 
 
@@ -25,13 +26,20 @@ def create_users_service(comp: BackendComponent) -> Service:
         success = ctx.session_manager[msg.origin].authenticate(msg.user_token)
 
         if success:
+            user_id = msg.user_token.user_id
+
             ctx.logger.info(
                 "User authenticated",
                 scope="users",
                 origin=msg.origin,
-                user_id=msg.user_token.user_id,
+                user_id=user_id,
                 user_name=msg.user_token.user_name,
             )
+
+            # Create a new user object if none exists yet
+            if ctx.storage_pool.user_storage.get(user_id) is None:
+                user = User(user_id=user_id)
+                ctx.storage_pool.user_storage.add(user)
         else:
             ctx.logger.warning(
                 "Unable to authenticate user",

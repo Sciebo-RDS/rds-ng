@@ -17,7 +17,7 @@ class Session:
         Values are accessed and handled like dictionary items.
     """
 
-    class State(Enum):
+    class Status(Enum):
         """
         The state of a session.
         """
@@ -94,12 +94,12 @@ class Session:
                 del self._data[key]
 
     @property
-    def status(self) -> State:
+    def status(self) -> Status:
         with self._lock:
             if self._user_token is not None and self._user_token.user_id != "":
-                return Session.State.AUTHENTICATED
+                return Session.Status.AUTHENTICATED
 
-            return Session.State.DEFAULT
+            return Session.Status.DEFAULT
 
     @property
     def session_id(self) -> UnitID:
