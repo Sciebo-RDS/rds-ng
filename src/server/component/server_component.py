@@ -6,6 +6,9 @@ from common.py.component import (
 from common.py.component.roles import ServerRole
 from common.py.utils import UnitID
 
+# Make the entire API known
+from common.py.api import *
+
 
 class ServerComponent(BackendComponent):
     """
@@ -22,10 +25,15 @@ class ServerComponent(BackendComponent):
         self._add_server_settings()
 
     def run(self) -> None:
-        from ..services import create_session_service, create_connectors_service
+        from ..services import (
+            create_session_service,
+            create_connectors_service,
+            create_users_service,
+        )
 
         create_session_service(self)
         create_connectors_service(self)
+        create_users_service(self)
 
         self._install_network_filters()
 

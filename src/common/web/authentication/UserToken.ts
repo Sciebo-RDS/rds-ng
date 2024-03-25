@@ -2,8 +2,8 @@
  * A token identifying the currently authenticated user.
  */
 export interface UserToken {
-    userID: string;
-    userName: string;
+    user_id: string;
+    user_name: string;
 }
 
 /**
@@ -14,8 +14,8 @@ export interface UserToken {
  */
 export function createUserToken(userID: string, userName?: string): UserToken {
     return {
-        userID: userID,
-        userName: userName || userID
+        user_id: userID,
+        user_name: userName || userID,
     } as UserToken;
 }
 
@@ -25,5 +25,5 @@ export function createUserToken(userID: string, userName?: string): UserToken {
  * @param token - The user token.
  */
 export function isUserTokenValid(token: UserToken): boolean {
-    return !!token.userID;
+    return !!token.user_id;
 }

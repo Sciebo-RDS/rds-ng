@@ -33,21 +33,6 @@ services:
         depends_on:
             - py-base
         ports:
-            - "4100:6969"
-        environment:
-            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
-
-    # Gate service
-    gate:
-        image: rds-ng/gate:latest
-        build:
-            context: ../../
-            dockerfile: deployment/containers/backend-component/Dockerfile
-            args:
-                COMPONENT_NAME: "gate"
-        depends_on:
-            - py-base
-        ports:
             - "4200:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*

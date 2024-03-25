@@ -1,6 +1,8 @@
 import threading
 import typing
+from enum import Enum, auto
 
+from common.py.authentication import UserToken
 from common.py.utils import UnitID
 
 SessionID = UnitID
@@ -15,11 +17,34 @@ class Session:
         Values are accessed and handled like dictionary items.
     """
 
+    class State(Enum):
+        """
+        The state of a session.
+        """
+
+        DEFAULT = auto()
+        AUTHENTICATED = auto()
+
     def __init__(self, session_id: UnitID):
         self._session_id = session_id
 
+        self._user_token: UserToken | None = None
+
         self._data: SessionData = {}
         self._lock = threading.RLock()
+
+    def authenticate(self, user_token: UserToken) -> bool:
+        """
+        Assigns a user token to this session.
+
+        Args:
+            user_token: The user token.
+        """
+        if user_token.user_id == "":
+            return False
+
+        self._user_token = user_token
+        return True
 
     def __getitem__(self, key: str) -> typing.Any:
         """
@@ -69,8 +94,23 @@ class Session:
                 del self._data[key]
 
     @property
+    def status(self) -> State:
+        with self._lock:
+            if self._user_token is not None and self._user_token.user_id != "":
+                return Session.State.AUTHENTICATED
+
+            return Session.State.DEFAULT
+
+    @property
     def session_id(self) -> UnitID:
         """
         The ID of this session.
         """
         return self._session_id
+
+    @property
+    def user_token(self) -> UserToken | None:
+        """
+        The current authentication user token, if any.
+        """
+        return self._user_token

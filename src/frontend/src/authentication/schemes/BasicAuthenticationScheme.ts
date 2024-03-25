@@ -1,8 +1,9 @@
 import { defineAsyncComponent } from "vue";
 
+import { createUserToken } from "@common/authentication/UserToken";
+
 import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { Authenticator } from "@/authentication/Authenticator";
-import { createUserToken } from "@/authentication/UserToken";
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 /**
@@ -15,7 +16,7 @@ export class BasicAuthenticationScheme extends AuthenticationScheme {
         super(
             comp,
             BasicAuthenticationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/authentication/BasicAuthentication.vue"))
+            defineAsyncComponent(() => import("@/ui/authentication/BasicAuthentication.vue")),
         );
     }
 
