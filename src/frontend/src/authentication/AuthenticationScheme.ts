@@ -1,4 +1,4 @@
-import { isUserTokenValid } from "@common/authentication/UserToken";
+import { isUserTokenValid } from "@common/data/entities/user/UserToken";
 import { type VueComponent } from "@common/component/WebComponent";
 
 import { Authenticator } from "@/authentication/Authenticator";

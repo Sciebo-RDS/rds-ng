@@ -1,6 +1,5 @@
 import { Type } from "class-transformer";
 
-import { type UserToken } from "../../authentication/UserToken";
 import { Command } from "../../core/messaging/Command";
 import { CommandReply } from "../../core/messaging/CommandReply";
 import { CommandComposer } from "../../core/messaging/composers/CommandComposer";
@@ -8,13 +7,14 @@ import { CommandReplyComposer } from "../../core/messaging/composers/CommandRepl
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
 import { UserSettings } from "../../data/entities/user/UserSettings";
+import { type UserToken } from "../../data/entities/user/UserToken";
 
 /**
  * Command to authenticate a user. Note that the actual login/authentication is performed by the underlying host system. Requires a ``AuthenticateUserReply`` reply.
  */
 @Message.define("command/user/authenticate")
 export class AuthenticateUserCommand extends Command {
-    public readonly user_token: UserToken = { userID: "", userName: "" } as UserToken;
+    public readonly user_token: UserToken = { user_id: "", user_name: "" } as UserToken;
 
     /**
      * Helper function to easily build this message.

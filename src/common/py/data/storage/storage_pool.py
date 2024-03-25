@@ -2,6 +2,7 @@ import abc
 
 from .connector_storage import ConnectorStorage
 from .project_storage import ProjectStorage
+from .user_storage import UserStorage
 
 
 class StoragePool(abc.ABC):
@@ -29,6 +30,14 @@ class StoragePool(abc.ABC):
     def connector_storage(self) -> ConnectorStorage:
         """
         The connector storage.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
+    def user_storage(self) -> UserStorage:
+        """
+        The user storage.
         """
         raise NotImplementedError()
 

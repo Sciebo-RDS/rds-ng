@@ -1,6 +1,6 @@
 import { defineAsyncComponent } from "vue";
 
-import { createUserToken } from "@common/authentication/UserToken";
+import { createUserToken } from "@common/data/entities/user/UserToken";
 
 import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { Authenticator } from "@/authentication/Authenticator";

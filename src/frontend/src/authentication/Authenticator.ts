@@ -1,7 +1,7 @@
 import { storeToRefs } from "pinia";
 
 import { AuthenticateUserCommand } from "@common/api/user/UserCommands";
-import { isUserTokenValid, type UserToken } from "@common/authentication/UserToken";
+import { isUserTokenValid, type UserToken } from "@common/data/entities/user/UserToken";
 import { useNetworkStore } from "@common/data/stores/NetworkStore";
 
 import { FrontendComponent } from "@/component/FrontendComponent";

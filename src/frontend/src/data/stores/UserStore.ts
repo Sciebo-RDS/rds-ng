@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import { type UserToken } from "@common/authentication/UserToken";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
+import { type UserToken } from "@common/data/entities/user/UserToken";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 

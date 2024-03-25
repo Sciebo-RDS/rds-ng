@@ -2,7 +2,7 @@ import threading
 import typing
 from enum import Enum, auto
 
-from common.py.authentication import UserToken
+from common.py.data.entities.user import UserToken
 from common.py.utils import UnitID
 
 SessionID = UnitID

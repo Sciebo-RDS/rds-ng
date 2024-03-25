@@ -1,6 +1,5 @@
 import dataclasses
 
-from ...authentication import UserToken
 from ...core.messaging import (
     Command,
     CommandReply,
@@ -11,7 +10,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities.user import UserSettings
+from ...data.entities.user import UserSettings, UserToken
 
 
 @Message.define("command/user/authenticate")

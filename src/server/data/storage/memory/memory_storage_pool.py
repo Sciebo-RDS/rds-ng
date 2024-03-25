@@ -2,6 +2,7 @@ from common.py.data.storage import StoragePool
 
 from .memory_connector_storage import MemoryConnectorStorage
 from .memory_project_storage import MemoryProjectStorage
+from .memory_user_storage import MemoryUserStorage
 
 
 class MemoryStoragePool(StoragePool):
@@ -16,6 +17,10 @@ class MemoryStoragePool(StoragePool):
     @property
     def connector_storage(self) -> MemoryConnectorStorage:
         return MemoryConnectorStorage()
+
+    @property
+    def user_storage(self) -> MemoryUserStorage:
+        return MemoryUserStorage()
 
     @property
     def project_storage(self) -> MemoryProjectStorage:
