@@ -11,8 +11,19 @@ class MemoryStoragePool(StoragePool):
     A simple, non-persistent in-memory storage pool.
     """
 
+    _connectors_added: bool = False
+
     def __init__(self):
         super().__init__("Memory")
+
+        # TODO: Remove later
+        if not MemoryStoragePool._connectors_added:
+            from ...._stub_.data import get_stub_data_connectors
+
+            for con in get_stub_data_connectors():
+                self.connector_storage.add(con)
+
+            MemoryStoragePool._connectors_added = True
 
     @property
     def connector_storage(self) -> MemoryConnectorStorage:
