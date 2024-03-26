@@ -1,6 +1,7 @@
+import { useUserStore } from "@/data/stores/UserStore";
 import { defineAsyncComponent } from "vue";
 
-import { createUserToken } from "@common/data/entities/user/UserToken";
+import { createUserToken, isUserTokenValid } from "@common/data/entities/user/UserToken";
 
 import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { Authenticator } from "@/authentication/Authenticator";
@@ -22,5 +23,20 @@ export class BasicAuthenticationScheme extends AuthenticationScheme {
 
     public authenticator(userName: string): Authenticator {
         return new Authenticator(this._component, createUserToken(userName, userName));
+    }
+
+    public enter(): void {
+        super.enter();
+
+        this.reauthenticate();
+    }
+
+    private reauthenticate(): void {
+        // Resend the user authentication information
+        const { userToken } = useUserStore();
+
+        if (isUserTokenValid(userToken)) {
+            this.authenticator(userToken.user_id).authenticate();
+        }
     }
 }

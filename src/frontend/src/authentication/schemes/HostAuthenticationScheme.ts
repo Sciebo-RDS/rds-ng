@@ -28,11 +28,13 @@ export class HostAuthenticationScheme extends AuthenticationScheme {
 
     public enter(): void {
         super.enter();
+
         this.resetUserToken();
     }
 
     public leave(): void {
         super.leave();
+
         this.resetUserToken();
     }
 
