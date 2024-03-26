@@ -23,12 +23,12 @@ function onEditUserSettings(): void {
     <div class="grid grid-rows-2 grid-cols-[min-content_1fr_min-content] grid-flow-col gap-x-2 content-center items-center r-primary-bg r-primary-text">
         <div class="row-span-2">
             <a href="https://www.research-data-services.org" target="_blank">
-                <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-1.5" title="Visit the RDS website">
+                <img id="logo" src="@assets/img/rds-octopus-wh.svg" alt="RDS Logo" class="p-1.5" title="Visit the RDS website" />
             </a>
         </div>
 
         <div class="font-bold self-center pt-3">
-            <div v-if="userToken" :title="userToken.userID">{{ userToken.userName }}</div>
+            <div v-if="userToken" :title="userToken.user_id">{{ userToken.user_name }}</div>
             <div v-else>(No user logged in)</div>
         </div>
 
@@ -40,7 +40,7 @@ function onEditUserSettings(): void {
         <div class="row-span-2 pr-2">
             <Button plain rounded aria-label="Settings" title="Settings" @click="onEditUserSettings">
                 <template #icon>
-                    <span class="material-icons-outlined mi-settings r-primary-text" style="font-size: 40px;" />
+                    <span class="material-icons-outlined mi-settings r-primary-text" style="font-size: 40px" />
                 </template>
             </Button>
         </div>

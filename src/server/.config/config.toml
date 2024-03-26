@@ -3,3 +3,4 @@
 
 [storage]
 driver = "memory"
+default_root_path = "/files"

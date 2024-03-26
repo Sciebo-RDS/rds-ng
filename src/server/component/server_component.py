@@ -26,14 +26,18 @@ class ServerComponent(BackendComponent):
 
     def run(self) -> None:
         from ..services import (
-            create_session_service,
             create_connectors_service,
+            create_projects_service,
+            create_resources_service,
+            create_session_service,
             create_users_service,
         )
 
         create_session_service(self)
         create_connectors_service(self)
         create_users_service(self)
+        create_projects_service(self)
+        create_resources_service(self)
 
         self._install_network_filters()
 

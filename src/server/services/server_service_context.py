@@ -1,4 +1,8 @@
+import typing
+from contextlib import contextmanager
+
 from common.py.core.logging import LoggerProtocol, error
+from common.py.core.messaging import Command, CommandReplyType
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.core.messaging.meta import MessageMetaInformation
 from common.py.data.entities.user import User
@@ -49,6 +53,36 @@ class ServerServiceContext(ServiceContext):
             )
 
             raise exc
+
+    def ensure_user(
+        self,
+        msg: Command,
+        reply_type: type[CommandReplyType],
+        **kwargs,
+    ) -> bool:
+        """
+        Ensures that a user is authenticated; if not, a default reply (of type `reply_type`) is automatically sent.
+
+        Args:
+            msg: The incoming message.
+            reply_type: The reply type.
+            **kwargs: Arbitrary parameters passed to build the reply.
+
+        Returns:
+            Whether a user is currently authenticated.
+        """
+
+        if user := self.user is None:
+            reply_type.build(
+                self.message_builder,
+                msg,
+                success=False,
+                message="No user authenticated",
+                **kwargs,
+            ).emit()
+            return False
+
+        return True
 
     @property
     def user(self) -> User | None:

@@ -4,6 +4,8 @@ from common.py.data.entities.connector import ConnectorInstance
 from common.py.data.entities.user import User, UserSettings
 from common.py.services import Service
 
+from .tools import send_projects_list
+
 
 def create_users_service(comp: BackendComponent) -> Service:
     """
@@ -73,25 +75,22 @@ def create_users_service(comp: BackendComponent) -> Service:
     def get_user_settings(
         msg: GetUserSettingsCommand, ctx: ServerServiceContext
     ) -> None:
-        if user := ctx.user:
-            GetUserSettingsReply.build(
-                ctx.message_builder,
-                msg,
-                settings=user.user_settings,
-            ).emit()
-        else:
-            GetUserSettingsReply.build(
-                ctx.message_builder,
-                msg,
-                settings=UserSettings(),
-                success=False,
-                message="No user authenticated",
-            ).emit()
+        if not ctx.ensure_user(msg, GetUserSettingsReply, settings=UserSettings()):
+            return
+
+        GetUserSettingsReply.build(
+            ctx.message_builder,
+            msg,
+            settings=ctx.user.user_settings,
+        ).emit()
 
     @svc.message_handler(SetUserSettingsCommand)
     def set_user_settings(
         msg: SetUserSettingsCommand, ctx: ServerServiceContext
     ) -> None:
+        if not ctx.ensure_user(msg, SetUserSettingsReply, settings=UserSettings()):
+            return
+
         success = False
         message = ""
 
@@ -111,12 +110,9 @@ def create_users_service(comp: BackendComponent) -> Service:
                 user_settings, connectors=ctx.storage_pool.connector_storage.list()
             ).verify_update()
 
-            if user := ctx.user:
-                user_upd = clone_entity(user, user_settings=user_settings)
-                ctx.storage_pool.user_storage.add(user_upd)
-                success = True
-            else:
-                message = "No user authenticated"
+            user_upd = clone_entity(user, user_settings=user_settings)
+            ctx.storage_pool.user_storage.add(user_upd)
+            success = True
         except Exception as exc:  # pylint: disable=broad-exception-caught
             message = str(exc)
 
@@ -128,6 +124,6 @@ def create_users_service(comp: BackendComponent) -> Service:
             settings=user_settings,
         ).emit()
 
-        # TODO: send_projects_list(msg, ctx)
+        send_projects_list(msg, ctx)
 
     return svc

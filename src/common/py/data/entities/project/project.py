@@ -5,6 +5,7 @@ from dataclasses_json import dataclass_json
 
 from .features import ProjectFeatures
 from .project_options import ProjectOptions
+from ..user import UserID
 
 ProjectID = int
 
@@ -17,6 +18,7 @@ class Project:
 
     Attributes:
         project_id: The unique project identifier.
+        user_id: The ID of the user this project belongs to.
         creation_time: A UNIX timestamp of the project creation time.
         resources_path: The resources path of the project.
         title: The title of the project.
@@ -35,6 +37,7 @@ class Project:
         DELETED = 0xFF
 
     project_id: ProjectID
+    user_id: UserID
 
     creation_time: float
 

@@ -13,4 +13,7 @@ def get_server_settings() -> typing.Dict[SettingID, typing.Any]:
     """
     from .storage_setting_ids import StorageSettingIDs
 
-    return {StorageSettingIDs.DRIVER: "memory"}
+    return {
+        StorageSettingIDs.DRIVER: "memory",
+        StorageSettingIDs.DEFAULT_ROOT_PATH: "/",
+    }

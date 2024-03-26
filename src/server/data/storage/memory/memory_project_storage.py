@@ -2,6 +2,7 @@ import threading
 import typing
 
 from common.py.data.entities.project import Project, ProjectID
+from common.py.data.entities.user import UserID
 from common.py.data.storage import ProjectStorage
 
 
@@ -56,3 +57,9 @@ class MemoryProjectStorage(ProjectStorage):
     def list(self) -> typing.List[Project]:
         with MemoryProjectStorage._lock:
             return list(self._projects.values())
+
+    def filter_by_user(self, user_id: UserID) -> typing.List[Project]:
+        with MemoryProjectStorage._lock:
+            return list(
+                filter(lambda proj: proj.user_id == user_id, self._projects.values())
+            )
