@@ -42,7 +42,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(ListProjectsCommand)
     def list_projects(msg: ListProjectsCommand, ctx: ServerServiceContext) -> None:
-        if not ctx.ensure_user(msg, ListProjectsReply):
+        if not ctx.ensure_user(msg, ListProjectsReply, projects=[]):
             return
 
         ListProjectsReply.build(

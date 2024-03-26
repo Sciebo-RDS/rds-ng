@@ -34,6 +34,8 @@ class ServerServiceContext(ServiceContext):
 
         self._storage_pool = self._create_storage_pool()
 
+        self._session_manager = SessionManager()
+
     def _create_storage_pool(self) -> StoragePool:
         from ..settings import StorageSettingIDs
 
@@ -103,14 +105,14 @@ class ServerServiceContext(ServiceContext):
         """
         The session for this context.
         """
-        return self.session_manager[self.origin]
+        return self._session_manager[self.origin]
 
     @property
     def session_manager(self) -> SessionManager:
         """
         The global session manager.
         """
-        return SessionManager()
+        return self._session_manager
 
     @property
     def storage_pool(self) -> StoragePool:
