@@ -5,6 +5,8 @@ from sqlalchemy import Engine, Table
 from common.py.data.entities.user import UserID, User
 from common.py.data.storage import UserStorage
 
+from .database_storage_accessor import DatabaseStorageAccessor
+
 
 class DatabaseUserStorage(UserStorage):
     """
@@ -17,17 +19,21 @@ class DatabaseUserStorage(UserStorage):
         self._engine = engine
         self._table = table
 
+        self._accessor = DatabaseStorageAccessor[User, UserID](
+            User, self._engine, self._lock
+        )
+
     def next_id(self) -> UserID:
         raise NotImplementedError("Users do not support automatic IDs")
 
     def add(self, entity: User) -> None:
-        pass
+        self._accessor.add(entity)
 
     def remove(self, entity: User) -> None:
-        pass
+        self._accessor.remove(entity)
 
     def get(self, key: UserID) -> User | None:
-        pass
+        return self._accessor.get(key)
 
     def list(self) -> typing.List[User]:
-        pass
+        return self._accessor.list()

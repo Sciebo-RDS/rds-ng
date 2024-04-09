@@ -2,6 +2,8 @@ from sqlalchemy import MetaData, Engine, Table
 from sqlalchemy.orm import registry
 
 from .table_connectors import register_connectors_table
+from .table_users import register_users_table
+from .table_projects import register_projects_table
 
 
 class DatabaseSchema:
@@ -19,8 +21,8 @@ class DatabaseSchema:
         self._connectors_table = register_connectors_table(
             self._metadata, self._registry
         )
-        self._users_table = Table("dummy", self._metadata)
-        self._projects_table = Table("dummy_2", self._metadata)
+        self._users_table = register_users_table(self._metadata, self._registry)
+        self._projects_table = register_projects_table(self._metadata, self._registry)
 
         # Create all registered tables
         self._metadata.create_all(self._engine)
