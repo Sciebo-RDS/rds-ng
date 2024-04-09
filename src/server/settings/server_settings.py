@@ -11,9 +11,12 @@ def get_server_settings() -> typing.Dict[SettingID, typing.Any]:
     Returns:
         A dictionary mapping the setting identifiers to their default values.
     """
-    from .storage_setting_ids import StorageSettingIDs
+    from .storage_setting_ids import StorageSettingIDs, DatabaseStorageSettingIDs
 
     return {
+        # Storage
         StorageSettingIDs.DRIVER: "memory",
         StorageSettingIDs.DEFAULT_ROOT_PATH: "/",
+        # Database storage
+        DatabaseStorageSettingIDs.DUMP_SQL: False,
     }

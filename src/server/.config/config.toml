@@ -4,3 +4,6 @@
 [storage]
 driver = "database"
 default_root_path = "/files"
+
+[storage.database]
+dump_sql = true

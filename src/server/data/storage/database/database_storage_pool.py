@@ -17,14 +17,14 @@ class DatabaseStoragePool(StoragePool):
     def __init__(self, config: Configuration):
         super().__init__("Database", config)
 
-        from common.py.settings import GeneralSettingIDs
+        from server.settings.storage_setting_ids import DatabaseStorageSettingIDs
 
         # TODO: Config/Driver
         from sqlalchemy import StaticPool
 
         self._engine = create_engine(
             "sqlite:///:memory:",
-            echo=config.value(GeneralSettingIDs.DEBUG),
+            echo=config.value(DatabaseStorageSettingIDs.DUMP_SQL),
             connect_args={"check_same_thread": False},
             poolclass=StaticPool,
         )
@@ -33,8 +33,10 @@ class DatabaseStoragePool(StoragePool):
         self._connector_storage = DatabaseConnectorStorage(
             self._engine, self._schema.connectors_table
         )
-        self._project_storage = DatabaseProjectStorage(self._engine)
-        self._user_storage = DatabaseUserStorage(self._engine)
+        self._user_storage = DatabaseUserStorage(self._engine, self._schema.users_table)
+        self._project_storage = DatabaseProjectStorage(
+            self._engine, self._schema.projects_table
+        )
 
         # TODO: Remove later
         from ...._stub_.data import get_stub_data_connectors
