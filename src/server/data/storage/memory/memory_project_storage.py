@@ -11,17 +11,15 @@ class MemoryProjectStorage(ProjectStorage):
     In-memory storage for projects.
     """
 
-    _global_projects: typing.Dict[ProjectID, Project] = {}
-
-    _lock = threading.RLock()
-
     def __init__(self):
         super().__init__()
 
-        self._projects = MemoryProjectStorage._global_projects
+        self._projects: typing.Dict[ProjectID, Project] = {}
+
+        self._lock = threading.RLock()
 
     def next_id(self) -> ProjectID:
-        with MemoryProjectStorage._lock:
+        with self._lock:
             ids = self._projects.keys()
             if len(ids) > 0:
                 return max(ids) + 1
@@ -29,11 +27,11 @@ class MemoryProjectStorage(ProjectStorage):
                 return 1000
 
     def add(self, entity: Project) -> None:
-        with MemoryProjectStorage._lock:
+        with self._lock:
             self._projects[entity.project_id] = entity
 
     def remove(self, entity: Project) -> None:
-        with MemoryProjectStorage._lock:
+        with self._lock:
             from common.py.data.entities import clone_entity
 
             proj_deleted = clone_entity(entity, status=Project.Status.DELETED)
@@ -49,17 +47,17 @@ class MemoryProjectStorage(ProjectStorage):
                 ) from exc
 
     def get(self, key: ProjectID) -> Project | None:
-        with MemoryProjectStorage._lock:
+        with self._lock:
             if key in self._projects:
                 return self._projects[key]
             return None
 
     def list(self) -> typing.List[Project]:
-        with MemoryProjectStorage._lock:
+        with self._lock:
             return list(self._projects.values())
 
     def filter_by_user(self, user_id: UserID) -> typing.List[Project]:
-        with MemoryProjectStorage._lock:
+        with self._lock:
             return list(
                 filter(lambda proj: proj.user_id == user_id, self._projects.values())
             )

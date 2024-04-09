@@ -3,20 +3,22 @@ import abc
 from .connector_storage import ConnectorStorage
 from .project_storage import ProjectStorage
 from .user_storage import UserStorage
+from ...utils.config import Configuration
 
 
 class StoragePool(abc.ABC):
-    # pylint: disable=too-few-public-methods
     """
     A collection of all data storages.
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, config: Configuration):
         """
         Args:
             name: The name of the storage pool.
+            config: The global configuration.
         """
         self._name = name
+        self._config = config
 
     @property
     def name(self) -> str:
