@@ -11,7 +11,7 @@ ResourcesMetadata = typing.Dict[
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class ResourcesMetadataFeature(ProjectFeature):
     """
     Data class for the resources metadata project feature.

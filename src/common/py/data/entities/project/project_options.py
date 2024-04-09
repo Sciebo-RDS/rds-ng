@@ -10,7 +10,7 @@ UIOptions = typing.Dict[str, typing.Any]
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class ProjectOptions:
     """
     Class holding all options of a **Project**.

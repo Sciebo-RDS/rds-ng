@@ -11,7 +11,7 @@ ProjectID = int
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class Project:
     """
     Data for a single **Project**.

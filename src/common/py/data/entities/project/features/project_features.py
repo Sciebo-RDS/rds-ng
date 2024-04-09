@@ -10,7 +10,7 @@ from .resources_metadata_feature import ResourcesMetadataFeature
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class ProjectFeatures:
     """
     Superordinate data for all **Project** features.

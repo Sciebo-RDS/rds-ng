@@ -7,7 +7,7 @@ from ..connector import ConnectorInstance
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class UserSettings:
     """
     User settings (i.e., the settings a user configures in the UI) data.

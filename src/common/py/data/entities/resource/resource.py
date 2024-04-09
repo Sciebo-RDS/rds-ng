@@ -5,7 +5,7 @@ from dataclasses_json import dataclass_json
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class Resource:
     """
     A single file or folder resource.

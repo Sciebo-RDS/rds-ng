@@ -6,7 +6,7 @@ from .user import UserID
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class UserToken:
     """
     A token identifying the currently authenticated user.

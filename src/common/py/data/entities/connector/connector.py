@@ -9,7 +9,7 @@ ConnectorMetadataProfile = typing.Dict[str, typing.Any]  # TODO: Use proper type
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class Connector:
     """
     Data for a single **Connector**.
@@ -22,7 +22,7 @@ class Connector:
     """
 
     @dataclass_json
-    @dataclass(frozen=True, kw_only=True)
+    @dataclass(kw_only=True)
     class Logos:
         """
         Base64-encoded image data of the connector logos.

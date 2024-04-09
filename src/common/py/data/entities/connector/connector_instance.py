@@ -9,7 +9,7 @@ ConnectorInstanceID = uuid.UUID
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class ConnectorInstance:
     """
     A configured connector instance (i.e., a connector the user has added to his configuration).
