@@ -1,4 +1,3 @@
-import threading
 import typing
 
 from sqlalchemy import Engine, select, Table
@@ -18,8 +17,6 @@ class DatabaseConnectorStorage(ConnectorStorage):
 
         self._engine = engine
         self._table = table
-
-        self._lock = threading.RLock()
 
     def next_id(self) -> ConnectorID:
         raise NotImplementedError("Connectors do not support automatic IDs")

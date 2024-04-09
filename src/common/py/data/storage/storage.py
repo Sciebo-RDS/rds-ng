@@ -1,4 +1,5 @@
 import abc
+import threading
 import typing
 
 EntityType = typing.TypeVar("EntityType")  # pylint: disable=invalid-name
@@ -9,6 +10,9 @@ class Storage(typing.Generic[EntityType, EntityKeyType], abc.ABC):
     """
     Defines a general storage interface for basic CRUD operations.
     """
+
+    def __init__(self):
+        self._lock = threading.RLock()
 
     @abc.abstractmethod
     def next_id(self) -> EntityKeyType:

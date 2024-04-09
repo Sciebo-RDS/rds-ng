@@ -1,4 +1,3 @@
-import threading
 import typing
 
 from common.py.data.entities.project import Project, ProjectID
@@ -15,8 +14,6 @@ class MemoryProjectStorage(ProjectStorage):
         super().__init__()
 
         self._projects: typing.Dict[ProjectID, Project] = {}
-
-        self._lock = threading.RLock()
 
     def next_id(self) -> ProjectID:
         with self._lock:

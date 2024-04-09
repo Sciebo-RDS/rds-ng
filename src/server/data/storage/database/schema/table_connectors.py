@@ -47,8 +47,6 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         Column("metadata_profile", JSONEncodedDataType),
     )
 
-    from common.py.data.entities.connector import Connector
-
     reg.map_imperatively(Connector, table)
 
     return table

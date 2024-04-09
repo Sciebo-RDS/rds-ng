@@ -1,4 +1,3 @@
-import threading
 import typing
 
 from common.py.data.entities.connector import ConnectorID, Connector
@@ -14,8 +13,6 @@ class MemoryConnectorStorage(ConnectorStorage):
         super().__init__()
 
         self._connectors: typing.Dict[ConnectorID, Connector] = {}
-
-        self._lock = threading.RLock()
 
     def next_id(self) -> ConnectorID:
         raise NotImplementedError("Connectors do not support automatic IDs")

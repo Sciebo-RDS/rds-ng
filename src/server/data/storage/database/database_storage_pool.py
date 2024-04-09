@@ -11,7 +11,7 @@ from .schema import DatabaseSchema
 
 class DatabaseStoragePool(StoragePool):
     """
-    A generic database storage pool, based on SQLAlchemy.
+    Multie-backend database storage pool, based on SQLAlchemy.
     """
 
     def __init__(self, config: Configuration):

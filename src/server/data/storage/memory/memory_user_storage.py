@@ -1,4 +1,3 @@
-import threading
 import typing
 
 from common.py.data.entities.user import UserID, User
@@ -14,8 +13,6 @@ class MemoryUserStorage(UserStorage):
         super().__init__()
 
         self._users: typing.Dict[UserID, User] = {}
-
-        self._lock = threading.RLock()
 
     def next_id(self) -> UserID:
         raise NotImplementedError("Users do not support automatic IDs")
