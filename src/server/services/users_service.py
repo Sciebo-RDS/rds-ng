@@ -94,24 +94,19 @@ def create_users_service(comp: BackendComponent) -> Service:
         success = False
         message = ""
 
-        user_settings = msg.settings
-
-        # Strip string values
-        for index, instance in enumerate(user_settings.connector_instances):
-            user_settings.connector_instances[index] = ConnectorInstance(
-                instance_id=instance.instance_id,
-                connector_id=instance.connector_id,
-                name=instance.name.strip(),
-                description=instance.description.strip(),
-            )
-
         try:
+            user_settings_upd = clone_entity(msg.settings)
+
+            # Strip string values
+            for index, instance in enumerate(user_settings_upd.connector_instances):
+                instance.name = instance.name.strip()
+                instance.description = instance.description.strip()
+
             UserSettingsVerifier(
-                user_settings, connectors=ctx.storage_pool.connector_storage.list()
+                user_settings_upd, connectors=ctx.storage_pool.connector_storage.list()
             ).verify_update()
 
-            user_upd = clone_entity(user, user_settings=user_settings)
-            ctx.storage_pool.user_storage.add(user_upd)
+            ctx.user.user_settings = user_settings_upd
             success = True
         except Exception as exc:  # pylint: disable=broad-exception-caught
             message = str(exc)
@@ -121,7 +116,7 @@ def create_users_service(comp: BackendComponent) -> Service:
             msg,
             success=success,
             message=message,
-            settings=user_settings,
+            settings=ctx.user.user_settings,
         ).emit()
 
         send_projects_list(msg, ctx)

@@ -25,7 +25,13 @@ class DatabaseStorageAccessor(typing.Generic[EntityType, EntityKeyType]):
         with self._lock:
             with Session(self._engine) as session:
                 with session.begin():
-                    session.add(entity)
+                    try:
+                        session.delete(entity)
+                    except:
+                        pass
+                    finally:
+                        session.flush()
+                        session.add(entity)
 
     def remove(self, entity: EntityType) -> None:
         with self._lock:

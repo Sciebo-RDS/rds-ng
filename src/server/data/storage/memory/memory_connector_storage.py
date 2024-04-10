@@ -34,9 +34,7 @@ class MemoryConnectorStorage(ConnectorStorage):
 
     def get(self, key: ConnectorID) -> Connector | None:
         with self._lock:
-            if key in self._connectors:
-                return self._connectors[key]
-            return None
+            return self._connectors[key] if key in self._connectors else None
 
     def list(self) -> typing.List[Connector]:
         with self._lock:

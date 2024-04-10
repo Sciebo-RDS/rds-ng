@@ -34,9 +34,7 @@ class MemoryUserStorage(UserStorage):
 
     def get(self, key: UserID) -> User | None:
         with self._lock:
-            if key in self._users:
-                return self._users[key]
-            return None
+            return self._users[key] if key in self._users else None
 
     def list(self) -> typing.List[User]:
         with self._lock:

@@ -29,11 +29,6 @@ class MemoryProjectStorage(ProjectStorage):
 
     def remove(self, entity: Project) -> None:
         with self._lock:
-            from common.py.data.entities import clone_entity
-
-            proj_deleted = clone_entity(entity, status=Project.Status.DELETED)
-            self.add(proj_deleted)
-
             try:
                 del self._projects[entity.project_id]
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -45,9 +40,7 @@ class MemoryProjectStorage(ProjectStorage):
 
     def get(self, key: ProjectID) -> Project | None:
         with self._lock:
-            if key in self._projects:
-                return self._projects[key]
-            return None
+            return self._projects[key] if key in self._projects else None
 
     def list(self) -> typing.List[Project]:
         with self._lock:

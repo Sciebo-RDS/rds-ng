@@ -98,16 +98,19 @@ def create_projects_service(comp: BackendComponent) -> Service:
         if (
             project := ctx.storage_pool.project_storage.get(msg.project_id)
         ) is not None:
+
+            def _apply_update(proj: Project) -> Project:
+                proj.title = msg.title.strip()
+                proj.description = msg.description.strip()
+                proj.options = msg.options
+                return proj
+
             try:
-                project_upd = clone_entity(
-                    project,
-                    title=msg.title.strip(),
-                    description=msg.description.strip(),
-                    options=msg.options,
-                )
+                # Clone the project, applying the new settings, to only update the actual instance if everything is fine
+                project_upd = _apply_update(clone_entity(project))
                 ProjectVerifier(project_upd).verify_update()
 
-                ctx.storage_pool.project_storage.add(project_upd)
+                _apply_update(project)
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 message = str(exc)
@@ -150,9 +153,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
                     project_features_upd, selected_features=msg.updated_features
                 ).verify_update()
 
-                project_upd = clone_entity(project, features=project_features_upd)
-
-                ctx.storage_pool.project_storage.add(project_upd)
+                project.features = project_features_upd
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 message = str(exc)
