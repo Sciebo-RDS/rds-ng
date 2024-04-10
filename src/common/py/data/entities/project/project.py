@@ -34,6 +34,7 @@ class Project:
         """
 
         ACTIVE = 0x0
+        DELETED = 0xFF
 
     project_id: ProjectID
     user_id: UserID
