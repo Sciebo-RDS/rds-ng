@@ -11,14 +11,31 @@ class StoragePool(abc.ABC):
     A collection of all data storages.
     """
 
-    def __init__(self, name: str, config: Configuration):
+    @staticmethod
+    def prepare(config: Configuration) -> None:
+        """
+        Performs initial preparation of the storage pool.
+
+        Args:
+            config: The global configuration.
+        """
+
+    def __init__(self, name: str):
         """
         Args:
             name: The name of the storage pool.
-            config: The global configuration.
         """
         self._name = name
-        self._config = config
+
+    def begin(self) -> None:
+        """
+        Called initially when a new pool instance is being used.
+        """
+
+    def close(self, save_changes: bool = True) -> None:
+        """
+        Closes a single pool instance.
+        """
 
     @property
     def name(self) -> str:

@@ -1,4 +1,6 @@
-from common.py.core.logging import LoggerProtocol
+import typing
+
+from common.py.core.logging import LoggerProtocol, error
 from common.py.core.messaging import Command, CommandReplyType
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.core.messaging.meta import MessageMetaInformation
@@ -29,11 +31,36 @@ class ServerServiceContext(ServiceContext):
             msg_meta, msg_origin, msg_builder, logger=logger, config=config
         )
 
-        from ..component import ServerComponent
-
-        self._storage_pool = ServerComponent.instance().storage_pool
-
         self._session_manager = SessionManager()
+        self._storage_pool = self._create_storage_pool()
+
+    def _create_storage_pool(self) -> StoragePool:
+        from ..settings import StorageSettingIDs
+
+        driver = self.config.value(StorageSettingIDs.DRIVER)
+        try:
+            from ..data.storage import StoragePoolsCatalog
+
+            storage_type = StoragePoolsCatalog.find_item(driver)
+            if storage_type is None:
+                raise RuntimeError(f"The storage driver {driver} couldn't be found")
+
+            return typing.cast(StoragePool, storage_type())
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error(
+                f"Unable to create storage: {str(exc)}",
+                driver=driver,
+            )
+
+            raise exc
+
+    def __enter__(self) -> typing.Self:
+        self._storage_pool.begin()
+        return super().__enter__()
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        self._storage_pool.close(exc_type is None)
+        return super().__exit__(exc_type, exc_val, exc_tb)
 
     def ensure_user(
         self,

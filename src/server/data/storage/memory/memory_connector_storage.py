@@ -1,3 +1,4 @@
+import threading
 import typing
 
 from common.py.data.entities.connector import ConnectorID, Connector
@@ -9,22 +10,20 @@ class MemoryConnectorStorage(ConnectorStorage):
     In-memory storage for connectors.
     """
 
-    def __init__(self):
-        super().__init__()
-
-        self._connectors: typing.Dict[ConnectorID, Connector] = {}
+    _connectors: typing.Dict[ConnectorID, Connector] = {}
+    _lock = threading.RLock()
 
     def next_id(self) -> ConnectorID:
         raise NotImplementedError("Connectors do not support automatic IDs")
 
     def add(self, entity: Connector) -> None:
-        with self._lock:
-            self._connectors[entity.connector_id] = entity
+        with MemoryConnectorStorage._lock:
+            MemoryConnectorStorage._connectors[entity.connector_id] = entity
 
     def remove(self, entity: Connector) -> None:
-        with self._lock:
+        with MemoryConnectorStorage._lock:
             try:
-                del self._connectors[entity.connector_id]
+                del MemoryConnectorStorage._connectors[entity.connector_id]
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 from common.py.data.storage import StorageException
 
@@ -33,9 +32,13 @@ class MemoryConnectorStorage(ConnectorStorage):
                 ) from exc
 
     def get(self, key: ConnectorID) -> Connector | None:
-        with self._lock:
-            return self._connectors[key] if key in self._connectors else None
+        with MemoryConnectorStorage._lock:
+            return (
+                MemoryConnectorStorage._connectors[key]
+                if key in MemoryConnectorStorage._connectors
+                else None
+            )
 
     def list(self) -> typing.List[Connector]:
-        with self._lock:
-            return list(self._connectors.values())
+        with MemoryConnectorStorage._lock:
+            return list(MemoryConnectorStorage._connectors.values())

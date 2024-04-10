@@ -1,6 +1,8 @@
+import threading
 import typing
 
-from sqlalchemy import Engine, Table
+from sqlalchemy import Table
+from sqlalchemy.orm import Session
 
 from common.py.data.entities.connector import ConnectorID, Connector
 from common.py.data.storage import ConnectorStorage
@@ -13,14 +15,16 @@ class DatabaseConnectorStorage(ConnectorStorage):
     Database storage for connectors.
     """
 
-    def __init__(self, engine: Engine, table: Table):
+    _lock = threading.RLock()
+
+    def __init__(self, session: Session, table: Table):
         super().__init__()
 
-        self._engine = engine
+        self._session = session
         self._table = table
 
         self._accessor = DatabaseStorageAccessor[Connector, ConnectorID](
-            Connector, self._engine, self._lock
+            Connector, self._session, self._lock
         )
 
     def next_id(self) -> ConnectorID:

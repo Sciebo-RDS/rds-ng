@@ -1,4 +1,5 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import Session
 
 from common.py.data.storage import StoragePool
 from common.py.utils.config import Configuration
@@ -11,38 +12,57 @@ from .schema import DatabaseSchema
 
 class DatabaseStoragePool(StoragePool):
     """
-    Multie-backend database storage pool, based on SQLAlchemy.
+    Multi-backend database storage pool, based on SQLAlchemy.
     """
 
-    def __init__(self, config: Configuration):
-        super().__init__("Database", config)
+    _engine: Engine
+    _schema: DatabaseSchema
 
-        from server.settings.storage_setting_ids import DatabaseStorageSettingIDs
+    @staticmethod
+    def prepare(config: Configuration) -> None:
+        from ....settings.storage_setting_ids import DatabaseStorageSettingIDs
 
         # TODO: Config/Driver
         from sqlalchemy import StaticPool
 
-        self._engine = create_engine(
+        DatabaseStoragePool._engine = create_engine(
             "sqlite:///:memory:",
             echo=config.value(DatabaseStorageSettingIDs.DUMP_SQL),
             connect_args={"check_same_thread": False},
             poolclass=StaticPool,
         )
-        self._schema = DatabaseSchema(self._engine)
-
-        self._connector_storage = DatabaseConnectorStorage(
-            self._engine, self._schema.connectors_table
-        )
-        self._user_storage = DatabaseUserStorage(self._engine, self._schema.users_table)
-        self._project_storage = DatabaseProjectStorage(
-            self._engine, self._schema.projects_table
-        )
+        DatabaseStoragePool._schema = DatabaseSchema(DatabaseStoragePool._engine)
 
         # TODO: Remove later
         from ...._stub_.data import get_stub_data_connectors
 
-        for con in get_stub_data_connectors():
-            self._connector_storage.add(con)
+        with Session(DatabaseStoragePool._engine) as session, session.begin():
+            connectors = DatabaseConnectorStorage(
+                session,
+                DatabaseStoragePool._schema.connectors_table,
+            )
+
+            for con in get_stub_data_connectors():
+                connectors.add(con)
+
+    def __init__(self):
+        super().__init__("Database")
+
+        self._session = Session(DatabaseStoragePool._engine)
+
+        self._connector_storage = DatabaseConnectorStorage(
+            self._session, DatabaseStoragePool._schema.connectors_table
+        )
+        self._user_storage = DatabaseUserStorage(
+            self._session, DatabaseStoragePool._schema.users_table
+        )
+        self._project_storage = DatabaseProjectStorage(
+            self._session, DatabaseStoragePool._schema.projects_table
+        )
+
+    def close(self, save_changes: bool = True) -> None:
+        self._session.commit() if save_changes else self._session.rollback()
+        self._session.close()
 
     @property
     def connector_storage(self) -> DatabaseConnectorStorage:

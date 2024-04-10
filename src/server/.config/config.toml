@@ -2,7 +2,7 @@
 # idle_timeout = 5
 
 [storage]
-driver = "memory"
+driver = "database"
 default_root_path = "/files"
 
 [storage.database]

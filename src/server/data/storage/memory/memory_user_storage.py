@@ -1,3 +1,4 @@
+import threading
 import typing
 
 from common.py.data.entities.user import UserID, User
@@ -9,22 +10,20 @@ class MemoryUserStorage(UserStorage):
     In-memory storage for users.
     """
 
-    def __init__(self):
-        super().__init__()
-
-        self._users: typing.Dict[UserID, User] = {}
+    _users: typing.Dict[UserID, User] = {}
+    _lock = threading.RLock()
 
     def next_id(self) -> UserID:
         raise NotImplementedError("Users do not support automatic IDs")
 
     def add(self, entity: User) -> None:
-        with self._lock:
-            self._users[entity.user_id] = entity
+        with MemoryUserStorage._lock:
+            MemoryUserStorage._users[entity.user_id] = entity
 
     def remove(self, entity: User) -> None:
-        with self._lock:
+        with MemoryUserStorage._lock:
             try:
-                del self._users[entity.user_id]
+                del MemoryUserStorage._users[entity.user_id]
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 from common.py.data.storage import StorageException
 
@@ -33,9 +32,13 @@ class MemoryUserStorage(UserStorage):
                 ) from exc
 
     def get(self, key: UserID) -> User | None:
-        with self._lock:
-            return self._users[key] if key in self._users else None
+        with MemoryUserStorage._lock:
+            return (
+                MemoryUserStorage._users[key]
+                if key in MemoryUserStorage._users
+                else None
+            )
 
     def list(self) -> typing.List[User]:
-        with self._lock:
-            return list(self._users.values())
+        with MemoryUserStorage._lock:
+            return list(MemoryUserStorage._users.values())
