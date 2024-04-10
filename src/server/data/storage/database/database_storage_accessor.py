@@ -37,3 +37,12 @@ class DatabaseStorageAccessor(typing.Generic[EntityType, EntityKeyType]):
                 typing.List[EntityType],
                 self._session.execute(select(self._entity_type)).scalars().all(),
             )
+
+    def filter(self, predicate: typing.Any) -> typing.List[EntityType]:
+        with self._lock:
+            return typing.cast(
+                typing.List[EntityType],
+                self._session.execute(select(self._entity_type).where(predicate))
+                .scalars()
+                .all(),
+            )

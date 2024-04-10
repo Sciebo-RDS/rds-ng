@@ -1,7 +1,7 @@
 import threading
 import typing
 
-from sqlalchemy import Table
+from sqlalchemy import Table, select
 from sqlalchemy.orm import Session
 
 from common.py.data.entities.project import Project, ProjectID
@@ -29,8 +29,13 @@ class DatabaseProjectStorage(ProjectStorage):
         )
 
     def next_id(self) -> ProjectID:
-        # TODO
-        pass
+        from sqlalchemy import func
+
+        statement = select(func.max(self._table.c.project_id))
+        if proj_id := self._session.execute(statement).scalar_one() is not None:
+            return typing.cast(ProjectID, proj_id + 1)
+
+        return 1
 
     def add(self, entity: Project) -> None:
         self._accessor.add(entity)
@@ -45,5 +50,4 @@ class DatabaseProjectStorage(ProjectStorage):
         return self._accessor.list()
 
     def filter_by_user(self, user_id: UserID) -> typing.List[Project]:
-        # TODO
-        pass
+        return self._accessor.filter(self._table.c.user_id == user_id)
