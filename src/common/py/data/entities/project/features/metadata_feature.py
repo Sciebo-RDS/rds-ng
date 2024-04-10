@@ -9,7 +9,7 @@ ProjectMetadata = typing.List[typing.Dict[str, typing.Any]]  # TODO: Use proper 
 
 
 @dataclass_json
-@dataclass(kw_only=True)
+@dataclass
 class MetadataFeature(ProjectFeature):
     """
     Data class for the metadata project feature.

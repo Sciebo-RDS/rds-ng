@@ -8,7 +8,7 @@ UserID = str
 
 
 @dataclass_json
-@dataclass(kw_only=True)
+@dataclass
 class User:
     """
     A user account.

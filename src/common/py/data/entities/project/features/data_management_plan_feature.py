@@ -9,7 +9,7 @@ DataManagementPlan = typing.List[typing.Dict[str, typing.Any]]  # TODO: Use prop
 
 
 @dataclass_json
-@dataclass(kw_only=True)
+@dataclass
 class DataManagementPlanFeature(ProjectFeature):
     """
     Data class for the data management plan project feature.

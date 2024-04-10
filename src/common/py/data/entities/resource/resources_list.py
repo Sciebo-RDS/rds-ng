@@ -10,7 +10,7 @@ ResourceFiles = typing.List[Resource]
 
 
 @dataclass_json
-@dataclass(kw_only=True)
+@dataclass
 class ResourcesList:
     """
     A recursive list of resources.
