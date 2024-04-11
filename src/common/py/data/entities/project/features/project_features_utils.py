@@ -1,8 +1,8 @@
 import typing
 
 from .data_management_plan_feature import DataManagementPlanFeature
-from .metadata_feature import MetadataFeature
-from .project_features import ProjectFeatures, ProjectFeatureID
+from .metadata_feature import MetadataFeature, ProjectFeatureID
+from .project_features import ProjectFeatures
 from .resources_metadata_feature import ResourcesMetadataFeature
 
 

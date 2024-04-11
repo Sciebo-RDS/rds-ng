@@ -9,7 +9,7 @@ ConnectorMetadataProfile = typing.Dict[str, typing.Any]  # TODO: Use proper type
 
 
 @dataclass_json
-@dataclass
+@dataclass(kw_only=True)
 class Connector:
     """
     Data for a single **Connector**.

@@ -14,7 +14,6 @@ from ...core.messaging.composers import (
 from ...data.entities.project import (
     Project,
     ProjectID,
-    ProjectOptions,
 )
 
 
@@ -85,7 +84,7 @@ class CreateProjectCommand(Command):
     title: str
     description: str
 
-    options: ProjectOptions = dataclasses.field(default_factory=ProjectOptions)
+    options: Project.Options = dataclasses.field(default_factory=Project.Options)
 
     @staticmethod
     def build(
@@ -94,7 +93,7 @@ class CreateProjectCommand(Command):
         resources_path: str,
         title: str,
         description: str,
-        options: ProjectOptions,
+        options: Project.Options,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -159,7 +158,7 @@ class UpdateProjectCommand(Command):
     title: str
     description: str
 
-    options: ProjectOptions = dataclasses.field(default_factory=ProjectOptions)
+    options: Project.Options = dataclasses.field(default_factory=Project.Options)
 
     @staticmethod
     def build(
@@ -168,7 +167,7 @@ class UpdateProjectCommand(Command):
         project_id: ProjectID,
         title: str,
         description: str,
-        options: ProjectOptions,
+        options: Project.Options,
         chain: Message | None = None,
     ) -> CommandComposer:
         """

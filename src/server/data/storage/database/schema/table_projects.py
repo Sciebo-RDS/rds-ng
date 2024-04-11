@@ -15,7 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import registry, composite, relationship
 
 from common.py.data.entities.connector import ConnectorInstanceID
-from common.py.data.entities.project import Project, ProjectOptions
+from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
     ProjectFeatureID,
     ProjectFeatures,
@@ -148,11 +148,12 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
                 ProjectFeatures, backref="projects", uselist=False
             ),
             "options": composite(
-                ProjectOptions,
+                Project.Options,
                 table_projects.c.options_optional_features,
                 table_projects.c.options_use_all_connector_instances,
                 table_projects.c.options_active_connector_instances,
                 table_projects.c.options_ui,
+                kw_only=True,
             ),
         },
     )
