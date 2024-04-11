@@ -36,7 +36,9 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
     table = Table(
         "users",
         metadata,
+        # Main
         Column("user_id", Unicode, primary_key=True),
+        # Settings
         Column("user_settings", UserSettingsType),
     )
 

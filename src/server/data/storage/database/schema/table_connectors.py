@@ -22,11 +22,14 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
     table = Table(
         "connectors",
         metadata,
+        # Main
         Column("connector_id", Unicode, primary_key=True),
         Column("name", Unicode),
         Column("description", Unicode),
-        Column("logo_default", Text),
-        Column("logo_horizontal", Text),
+        # Logos
+        Column("logos_default", Text),
+        Column("logos_horizontal", Text),
+        # Metadata
         Column("metadata_profile", JSONEncodedDataType),
     )
 
@@ -36,8 +39,8 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         properties={
             "logos": composite(
                 Connector.Logos,
-                table.c.logo_default,
-                table.c.logo_horizontal,
+                table.c.logos_default,
+                table.c.logos_horizontal,
             ),
         },
     )
