@@ -4,7 +4,12 @@ from typing import List, Dict, Any
 
 from dataclasses_json import dataclass_json
 
-from .features import ProjectFeatures, ProjectFeatureID
+from .features import (
+    ProjectFeatureID,
+    MetadataFeature,
+    ResourcesMetadataFeature,
+    DataManagementPlanFeature,
+)
 from ..connector import ConnectorInstanceID
 from ..user import UserID
 
@@ -41,6 +46,26 @@ class Project:
 
     @dataclass_json
     @dataclass
+    class Features:
+        """
+        Data for all **Project** features.
+
+        Attributes:
+            metadata: The metadata project feature.
+            resources_metadata: The resources metadata project feature.
+            dmp: The data management plan feature.
+        """
+
+        metadata: MetadataFeature = field(default_factory=MetadataFeature)
+        resources_metadata: ResourcesMetadataFeature = field(
+            default_factory=ResourcesMetadataFeature
+        )
+        dmp: DataManagementPlanFeature = field(
+            default_factory=DataManagementPlanFeature
+        )
+
+    @dataclass_json
+    @dataclass
     class Options:
         """
         Class holding all options of a **Project**.
@@ -73,5 +98,5 @@ class Project:
 
     status: Status = Status.ACTIVE
 
-    features: ProjectFeatures = field(default_factory=ProjectFeatures)
+    features: Features = field(default_factory=Features)
     options: Options = field(default_factory=Options)

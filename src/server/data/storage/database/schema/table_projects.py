@@ -18,26 +18,11 @@ from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
     ProjectFeatureID,
-    ProjectFeatures,
     MetadataFeature,
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
 from .types import JSONEncodedDataType, ArrayType
-
-
-class ProjectFeaturesType(TypeDecorator):
-    impl = Unicode
-
-    cache_ok = True
-
-    def process_bind_param(self, value: ProjectFeatures, dialect) -> str | None:
-        return value.to_json() if value is not None else None
-
-    def process_result_value(
-        self, value: str | None, dialect
-    ) -> ProjectFeatures | None:
-        return ProjectFeatures.schema().loads(value) if value is not None else None
 
 
 class MetadataFeatureType(TypeDecorator):
@@ -145,7 +130,7 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         table_projects,
         properties={
             "features": relationship(
-                ProjectFeatures, backref="projects", uselist=False
+                Project.Features, backref="projects", uselist=False
             ),
             "options": composite(
                 Project.Options,
@@ -157,6 +142,6 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
             ),
         },
     )
-    reg.map_imperatively(ProjectFeatures, table_project_features)
+    reg.map_imperatively(Project.Features, table_project_features)
 
     return table_projects
