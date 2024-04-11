@@ -19,7 +19,7 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
     """
     from sqlalchemy import Unicode
 
-    table = Table(
+    table_connectors = Table(
         "connectors",
         metadata,
         # Main
@@ -35,14 +35,14 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
 
     reg.map_imperatively(
         Connector,
-        table,
+        table_connectors,
         properties={
             "logos": composite(
                 Connector.Logos,
-                table.c.logos_default,
-                table.c.logos_horizontal,
+                table_connectors.c.logos_default,
+                table_connectors.c.logos_horizontal,
             ),
         },
     )
 
-    return table
+    return table_connectors

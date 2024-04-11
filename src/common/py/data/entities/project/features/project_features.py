@@ -21,6 +21,8 @@ class ProjectFeatures:
         dmp: The data management plan feature.
     """
 
+    project_id: int = 0  # TODO
+
     metadata: MetadataFeature = field(default_factory=MetadataFeature)
     resources_metadata: ResourcesMetadataFeature = field(
         default_factory=ResourcesMetadataFeature

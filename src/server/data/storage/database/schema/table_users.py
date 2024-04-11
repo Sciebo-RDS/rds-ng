@@ -33,7 +33,7 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
     """
     from sqlalchemy import Unicode
 
-    table = Table(
+    table_users = Table(
         "users",
         metadata,
         # Main
@@ -42,6 +42,6 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
         Column("user_settings", UserSettingsType),
     )
 
-    reg.map_imperatively(User, table)
+    reg.map_imperatively(User, table_users)
 
-    return table
+    return table_users

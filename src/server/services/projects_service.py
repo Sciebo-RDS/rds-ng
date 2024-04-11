@@ -142,18 +142,18 @@ def create_projects_service(comp: BackendComponent) -> Service:
         if (
             project := ctx.storage_pool.project_storage.get(msg.project_id)
         ) is not None:
+            from common.py.data.entities.project.features import (
+                apply_project_features_update,
+            )
+
             try:
-                project_features_upd = clone_entity(
-                    project.features,
-                    **msg.features.features_dict(
-                        selected_features=msg.updated_features
-                    ),
-                )
                 ProjectFeaturesVerifier(
-                    project_features_upd, selected_features=msg.updated_features
+                    msg.features, selected_features=msg.updated_features
                 ).verify_update()
 
-                project.features = project_features_upd
+                apply_project_features_update(
+                    project.features, msg.features, msg.updated_features
+                )
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 message = str(exc)

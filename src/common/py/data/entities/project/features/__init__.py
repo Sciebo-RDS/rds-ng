@@ -4,3 +4,5 @@ from .project_features import ProjectFeatures
 from .data_management_plan_feature import DataManagementPlanFeature
 from .metadata_feature import MetadataFeature
 from .resources_metadata_feature import ResourcesMetadataFeature
+
+from .project_features_utils import apply_project_features_update
