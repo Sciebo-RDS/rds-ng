@@ -1,6 +1,0 @@
-[backend]
-driver = "stub"
-default_root_path = "/files"
-
-[network.server]
-# idle_timeout = 5

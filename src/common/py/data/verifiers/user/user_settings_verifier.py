@@ -5,7 +5,7 @@ from ..connector import (
 )
 from .. import Verifier
 from ...entities.connector import Connector
-from ...entities.user import UserSettings
+from ...entities.user import User
 
 
 class UserSettingsVerifier(Verifier):
@@ -13,7 +13,7 @@ class UserSettingsVerifier(Verifier):
     Verifies user settings.
     """
 
-    def __init__(self, settings: UserSettings, *, connectors: typing.List[Connector]):
+    def __init__(self, settings: User.Settings, *, connectors: typing.List[Connector]):
         self._settings = settings
 
         self._connectors = connectors

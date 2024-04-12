@@ -1,23 +1,9 @@
-from sqlalchemy import MetaData, Table, Column, TypeDecorator, Unicode
+from sqlalchemy import MetaData, Table, Column
 from sqlalchemy.orm import registry
 
-from common.py.data.entities.user import User, UserSettings
+from common.py.data.entities.user import User
 
-
-class UserSettingsType(TypeDecorator):
-    """
-    Database type for user settings.
-    """
-
-    impl = Unicode
-
-    cache_ok = True
-
-    def process_bind_param(self, value: UserSettings, dialect) -> str | None:
-        return value.to_json() if value is not None else None
-
-    def process_result_value(self, value: str | None, dialect) -> UserSettings | None:
-        return UserSettings.schema().loads(value) if value is not None else None
+from .types import DataclassDataType
 
 
 def register_users_table(metadata: MetaData, reg: registry) -> Table:
@@ -39,7 +25,10 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
         # Main
         Column("user_id", Unicode, primary_key=True),
         # Settings
-        Column("user_settings", UserSettingsType),
+        Column(
+            "user_settings",
+            DataclassDataType[User.Settings](dataclass_type=User.Settings),
+        ),
     )
 
     reg.map_imperatively(User, table_users)

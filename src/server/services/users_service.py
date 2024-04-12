@@ -1,7 +1,6 @@
 from common.py.component import BackendComponent
 from common.py.data.entities import clone_entity
-from common.py.data.entities.connector import ConnectorInstance
-from common.py.data.entities.user import User, UserSettings
+from common.py.data.entities.user import User
 from common.py.services import Service
 
 from .tools import send_projects_list
@@ -75,7 +74,7 @@ def create_users_service(comp: BackendComponent) -> Service:
     def get_user_settings(
         msg: GetUserSettingsCommand, ctx: ServerServiceContext
     ) -> None:
-        if not ctx.ensure_user(msg, GetUserSettingsReply, settings=UserSettings()):
+        if not ctx.ensure_user(msg, GetUserSettingsReply, settings=User.Settings()):
             return
 
         GetUserSettingsReply.build(
@@ -88,7 +87,7 @@ def create_users_service(comp: BackendComponent) -> Service:
     def set_user_settings(
         msg: SetUserSettingsCommand, ctx: ServerServiceContext
     ) -> None:
-        if not ctx.ensure_user(msg, SetUserSettingsReply, settings=UserSettings()):
+        if not ctx.ensure_user(msg, SetUserSettingsReply, settings=User.Settings()):
             return
 
         success = False

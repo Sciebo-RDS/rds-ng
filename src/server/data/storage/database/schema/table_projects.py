@@ -9,10 +9,9 @@ from sqlalchemy import (
     Float,
     Text,
     Boolean,
-    TypeDecorator,
     ForeignKey,
 )
-from sqlalchemy.orm import registry, composite, relationship
+from sqlalchemy.orm import registry, composite, relationship, mapped_column
 
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
@@ -23,60 +22,6 @@ from common.py.data.entities.project.features import (
     DataManagementPlanFeature,
 )
 from .types import JSONEncodedDataType, ArrayType
-
-
-class MetadataFeatureType(TypeDecorator):
-    impl = Unicode
-
-    cache_ok = True
-
-    def process_bind_param(self, value: MetadataFeature, dialect) -> str | None:
-        return value.to_json() if value is not None else None
-
-    def process_result_value(
-        self, value: str | None, dialect
-    ) -> MetadataFeature | None:
-        return MetadataFeature.schema().loads(value) if value is not None else None
-
-
-class ResourcesMetadataFeatureType(TypeDecorator):
-    impl = Unicode
-
-    cache_ok = True
-
-    def process_bind_param(
-        self, value: ResourcesMetadataFeature, dialect
-    ) -> str | None:
-        return value.to_json() if value is not None else None
-
-    def process_result_value(
-        self, value: str | None, dialect
-    ) -> ResourcesMetadataFeature | None:
-        return (
-            ResourcesMetadataFeature.schema().loads(value)
-            if value is not None
-            else None
-        )
-
-
-class DataManagementPlanFeatureType(TypeDecorator):
-    impl = Unicode
-
-    cache_ok = True
-
-    def process_bind_param(
-        self, value: DataManagementPlanFeature, dialect
-    ) -> str | None:
-        return value.to_json() if value is not None else None
-
-    def process_result_value(
-        self, value: str | None, dialect
-    ) -> DataManagementPlanFeature | None:
-        return (
-            DataManagementPlanFeature.schema().loads(value)
-            if value is not None
-            else None
-        )
 
 
 def register_projects_table(metadata: MetaData, reg: registry) -> Table:
@@ -102,16 +47,14 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         Column("title", Unicode),
         Column("description", Unicode),
         Column("status", Integer),
-        # Features
-        # Column("features", ProjectFeaturesType),
         # Options
-        Column("options_optional_features", ArrayType[ProjectFeatureID]),
-        Column("options_use_all_connector_instances", Boolean),
+        Column("opt__optional_features", ArrayType[ProjectFeatureID]),
+        Column("opt__use_all_connector_instances", Boolean),
         Column(
-            "options_active_connector_instances",
+            "opt__active_connector_instances",
             ArrayType[ConnectorInstanceID](value_conv=uuid.UUID),
         ),
-        Column("options_ui", JSONEncodedDataType),
+        Column("opt__ui", JSONEncodedDataType),
     )
 
     table_project_features = Table(
@@ -120,9 +63,12 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
-        Column("metadata", MetadataFeatureType),
-        Column("resources_metadata", ResourcesMetadataFeatureType),
-        Column("dmp", DataManagementPlanFeatureType),
+        # Metadata
+        Column("meta__metadata", JSONEncodedDataType),
+        # Resources metadata
+        Column("resmeta__resources_metadata", JSONEncodedDataType),
+        # Data management plan
+        Column("dmp__plan", JSONEncodedDataType),
     )
 
     reg.map_imperatively(
@@ -134,14 +80,31 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
             ),
             "options": composite(
                 Project.Options,
-                table_projects.c.options_optional_features,
-                table_projects.c.options_use_all_connector_instances,
-                table_projects.c.options_active_connector_instances,
-                table_projects.c.options_ui,
-                kw_only=True,
+                table_projects.c.opt__optional_features,
+                table_projects.c.opt__use_all_connector_instances,
+                table_projects.c.opt__active_connector_instances,
+                table_projects.c.opt__ui,
             ),
         },
     )
-    reg.map_imperatively(Project.Features, table_project_features)
+
+    reg.map_imperatively(
+        Project.Features,
+        table_project_features,
+        properties={
+            "metadata": composite(
+                MetadataFeature,
+                table_project_features.c.meta__metadata,
+            ),
+            "resources_metadata": composite(
+                ResourcesMetadataFeature,
+                table_project_features.c.resmeta__resources_metadata,
+            ),
+            "dmp": composite(
+                DataManagementPlanFeature,
+                table_project_features.c.dmp__plan,
+            ),
+        },
+    )
 
     return table_projects

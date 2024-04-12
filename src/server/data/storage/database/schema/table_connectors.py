@@ -27,8 +27,8 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         Column("name", Unicode),
         Column("description", Unicode),
         # Logos
-        Column("logos_default", Text),
-        Column("logos_horizontal", Text),
+        Column("logos__default", Text),
+        Column("logos__horizontal", Text),
         # Metadata
         Column("metadata_profile", JSONEncodedDataType),
     )
@@ -39,8 +39,8 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         properties={
             "logos": composite(
                 Connector.Logos,
-                table_connectors.c.logos_default,
-                table_connectors.c.logos_horizontal,
+                table_connectors.c.logos__default,
+                table_connectors.c.logos__horizontal,
             ),
         },
     )

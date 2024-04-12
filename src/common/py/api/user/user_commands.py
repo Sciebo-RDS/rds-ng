@@ -10,7 +10,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities.user import UserSettings, UserToken
+from ...data.entities.user import User, UserToken
 
 
 @Message.define("command/user/authenticate")
@@ -95,14 +95,14 @@ class GetUserSettingsReply(CommandReply):
         settings: The user settings.
     """
 
-    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
+    settings: User.Settings = dataclasses.field(default_factory=User.Settings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         cmd: GetUserSettingsCommand,
         *,
-        settings: UserSettings,
+        settings: User.Settings,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -130,13 +130,13 @@ class SetUserSettingsCommand(Command):
         Requires a ``SetUserSettingsReply`` reply.
     """
 
-    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
+    settings: User.Settings = dataclasses.field(default_factory=User.Settings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
-        settings: UserSettings,
+        settings: User.Settings,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -156,14 +156,14 @@ class SetUserSettingsReply(CommandReply):
         settings: The new user settings (note that these might have been adjusted by the server).
     """
 
-    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
+    settings: User.Settings = dataclasses.field(default_factory=User.Settings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         cmd: SetUserSettingsCommand,
         *,
-        settings: UserSettings,
+        settings: User.Settings,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
