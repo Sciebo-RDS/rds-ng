@@ -9,11 +9,6 @@
             "directory": "server",
             "tech": "py"
         },
-        "gate": {
-            "name": "Gate service",
-            "directory": "gate",
-            "tech": "py"
-        },
         "frontend": {
             "name": "Web Frontend",
             "directory": "frontend",

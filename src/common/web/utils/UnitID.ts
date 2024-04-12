@@ -2,7 +2,7 @@
  * A general unit identifier.
  *
  * A *unit* basically is something that has a unique identifier consisting of three parts: The general ``type`` (e.g., *'infra'* for components
- * belonging to the overall infrastructure), the ``unit`` name itself (e.g., *'gate'* or *'server'*), and an ``instance`` specifier (used to
+ * belonging to the overall infrastructure), the ``unit`` name itself (e.g., *'server'*), and an ``instance`` specifier (used to
  * distinguish multiple instances of the same unit).
  */
 export class UnitID {
@@ -13,8 +13,11 @@ export class UnitID {
      * @param unit - The unit name.
      * @param instance - The instance specifier.
      */
-    public constructor(readonly type: string, readonly unit: string, readonly instance?: string) {
-    }
+    public constructor(
+        readonly type: string,
+        readonly unit: string,
+        readonly instance?: string,
+    ) {}
 
     /**
      * Compares this identifier to another one.
