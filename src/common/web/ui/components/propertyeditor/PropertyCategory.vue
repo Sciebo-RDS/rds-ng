@@ -32,8 +32,8 @@ const selectedProperties = ref<PropertyType>();
 
 const propsToShow = !attrs.hasOwnProperty("defaultSet")
     ? ref<PropertyType[]>(
-        props.category.properties.filter((p: PropertyType) => controller.getValue(props.profileId, props.category.id, p.id) != undefined || p.showAlways)
-    )
+          props.category.properties.filter((p: PropertyType) => controller.getValue(props.profileId, props.category.id, p.id) != undefined || p.showAlways)
+      )
     : ref<PropertyType[]>(props.category.properties);
 
 const propsToSelect = ref(props.category.properties.filter((p: PropertyType) => !propsToShow.value.includes(p)));
@@ -51,7 +51,7 @@ const header = `${props.index + 1}. ${props.category.name}`;
 
 <template>
     <Accordion v-if="!attrs.hasOwnProperty('defaultSet')" class="w-full">
-        <AccordionTab :pt="{ header: { class: '!rounded-md !border !border-indigo-200' }, headerAction: { class: '!py-4' } }">
+        <AccordionTab :pt="{ header: { class: ['border-indigo-200', { 'border-t': index !== 0 }] }, headerAction: { class: 'pb-0 pt-5' } }">
             <template #header>
                 <span class="flex align-items-center w-full !text-gray-800 truncate text-ellipsis mr-2" :title="header">
                     {{ header }}
@@ -82,8 +82,8 @@ const header = `${props.index + 1}. ${props.category.name}`;
                                 filter
                                 :pt="{
                                     panel: {
-                                        class: 'w-0',
-                                    },
+                                        class: 'w-0'
+                                    }
                                 }"
                             >
                                 <template #option="slotprops">
@@ -126,8 +126,8 @@ const header = `${props.index + 1}. ${props.category.name}`;
                     filter
                     :pt="{
                         panel: {
-                            class: 'w-0',
-                        },
+                            class: 'w-0'
+                        }
                     }"
                 >
                     <template #option="slotprops">

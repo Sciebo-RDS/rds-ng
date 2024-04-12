@@ -17,15 +17,15 @@ const items = computed(() => {
             icon: e.options.menuItem.icon,
             command: () => {
                 e.options.menuItem.command(props.controller, props.project?.title);
-            },
+            }
         };
     });
     return !!downloadItems.length
         ? [
               {
                   label: "Download",
-                  items: downloadItems,
-              },
+                  items: downloadItems
+              }
           ]
         : [];
 });
@@ -36,7 +36,7 @@ const toggle = (event: Event) => {
 </script>
 
 <template>
-    <Toolbar :pt="{ root: { class: '!py-2 !bg-gray-100' } }">
+    <Toolbar :pt="{ root: { class: '!py-2 border-0 border-y-4 rounded-none' } }">
         <template #start>
             <div class="text-xl font-bold truncate text-clip" :title="profileId['name'] + ' v' + profileId['version']">
                 {{ `${profileId["name"]} v${profileId["version"]}` }}
@@ -65,6 +65,6 @@ const toggle = (event: Event) => {
         :category="category"
         :profileId="profileId"
         :index="i"
-        class="mt-5 mb-4"
+        class="mt-2 mb-4"
     />
 </template>

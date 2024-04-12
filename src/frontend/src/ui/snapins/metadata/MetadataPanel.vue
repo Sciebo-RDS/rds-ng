@@ -77,12 +77,7 @@ watch(
 
 <template>
     <div>
-        <PropertyEditor
-            v-model="project!.features.metadata.metadata as PersistedSet[]"
-            :controller="controller as MetadataController"
-            :logging="logging"
-            twoCol
-        />
+        <PropertyEditor v-model="project!.features.metadata.metadata as PersistedSet[]" :controller="controller as MetadataController" :logging="logging" />
     </div>
 </template>
 
