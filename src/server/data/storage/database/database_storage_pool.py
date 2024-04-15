@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
 from common.py.data.storage import StoragePool
@@ -20,17 +20,9 @@ class DatabaseStoragePool(StoragePool):
 
     @staticmethod
     def prepare(config: Configuration) -> None:
-        from ....settings.storage_setting_ids import DatabaseStorageSettingIDs
+        from .database_engines import create_database_engine
 
-        # TODO: Config/Driver
-        from sqlalchemy import StaticPool
-
-        DatabaseStoragePool._engine = create_engine(
-            "sqlite:///:memory:",
-            echo=config.value(DatabaseStorageSettingIDs.DUMP_SQL),
-            connect_args={"check_same_thread": False},
-            poolclass=StaticPool,
-        )
+        DatabaseStoragePool._engine = create_database_engine(config)
         DatabaseStoragePool._schema = DatabaseSchema(DatabaseStoragePool._engine)
 
         # TODO: Remove later
@@ -42,8 +34,9 @@ class DatabaseStoragePool(StoragePool):
                 DatabaseStoragePool._schema.connectors_table,
             )
 
-            for con in get_stub_data_connectors():
-                connectors.add(con)
+            if len(connectors.list()) == 0:
+                for con in get_stub_data_connectors():
+                    connectors.add(con)
 
     def __init__(self):
         super().__init__("Database")

@@ -6,4 +6,8 @@ driver = "database"
 default_root_path = "/files"
 
 [storage.database]
+engine = "sqlite"
 dump_sql = true
+
+[storage.database.sqlite]
+file = "/data/rds.db"
