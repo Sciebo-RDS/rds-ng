@@ -21,7 +21,7 @@ def get_server_settings() -> typing.Dict[SettingID, typing.Any]:
         DatabaseStorageSettingIDs.ENGINE: "sqlite",
         DatabaseStorageSettingIDs.DUMP_SQL: False,
         # Database storage: SQLite
-        DatabaseStorageSettingIDs.SQLite.FILE: "/:memory:",
+        DatabaseStorageSettingIDs.SQLite.FILE: ":memory:",
         # Database storage: PostgreSQL
         DatabaseStorageSettingIDs.PostgreSQL.HOST: "",
         DatabaseStorageSettingIDs.PostgreSQL.PORT: 0,

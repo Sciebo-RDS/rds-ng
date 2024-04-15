@@ -31,7 +31,7 @@ def create_database_engine(config: Configuration) -> Engine:
     if engine == "sqlite":
         from sqlalchemy import StaticPool
 
-        db_url = f"sqlite://{config.value(DatabaseStorageSettingIDs.SQLite.FILE)}"
+        db_url = f"sqlite:///{config.value(DatabaseStorageSettingIDs.SQLite.FILE)}"
         connect_args = {"check_same_thread": False}
         engine_args = {"poolclass": StaticPool}
     elif engine == "postgresql":

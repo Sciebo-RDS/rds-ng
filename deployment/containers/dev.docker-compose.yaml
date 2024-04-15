@@ -30,6 +30,9 @@ services:
             -   type: bind
                 source: ../../src
                 target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
