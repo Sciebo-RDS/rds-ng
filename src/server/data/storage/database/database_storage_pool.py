@@ -20,7 +20,7 @@ class DatabaseStoragePool(StoragePool):
 
     @staticmethod
     def prepare(config: Configuration) -> None:
-        from .database_engines import create_database_engine
+        from .engines import create_database_engine
 
         DatabaseStoragePool._engine = create_database_engine(config)
         DatabaseStoragePool._schema = DatabaseSchema(DatabaseStoragePool._engine)
