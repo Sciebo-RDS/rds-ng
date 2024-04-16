@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Table, Column
+from sqlalchemy import MetaData, Table, Column, String
 from sqlalchemy.orm import registry
 
 from common.py.data.entities.user import User
@@ -17,13 +17,12 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
     Returns:
         The newly created table.
     """
-    from sqlalchemy import Unicode
 
     table_users = Table(
         "users",
         metadata,
         # Main
-        Column("user_id", Unicode, primary_key=True),
+        Column("user_id", String(1024), primary_key=True),
         # Settings
         Column(
             "user_settings",

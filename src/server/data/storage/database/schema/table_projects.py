@@ -5,13 +5,13 @@ from sqlalchemy import (
     Table,
     Column,
     Integer,
-    Unicode,
     Float,
     Text,
     Boolean,
     ForeignKey,
+    String,
 )
-from sqlalchemy.orm import registry, composite, relationship, mapped_column
+from sqlalchemy.orm import registry, composite, relationship
 
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
@@ -41,11 +41,11 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         metadata,
         # Main
         Column("project_id", Integer, primary_key=True),
-        Column("user_id", Unicode),
+        Column("user_id", String(1024)),
         Column("creation_time", Float),
         Column("resources_path", Text),
-        Column("title", Unicode),
-        Column("description", Unicode),
+        Column("title", Text),
+        Column("description", Text),
         Column("status", Integer),
         # Options
         Column("opt__optional_features", ArrayType[ProjectFeatureID]),

@@ -1,7 +1,7 @@
 import json
 import typing
 
-from sqlalchemy import TypeDecorator, Unicode
+from sqlalchemy import TypeDecorator, Text
 
 ArrayValueType = typing.TypeVar("ArrayValueType")
 DataclassType = typing.TypeVar("DataclassType")
@@ -12,7 +12,7 @@ class ArrayType(TypeDecorator, typing.Generic[ArrayValueType]):
     Arbitrary array data type.
     """
 
-    impl = Unicode
+    impl = Text
 
     cache_ok = True
 
@@ -45,7 +45,7 @@ class JSONEncodedDataType(TypeDecorator):
     Generic JSON-encoded data.
     """
 
-    impl = Unicode
+    impl = Text
 
     cache_ok = True
 
@@ -61,7 +61,7 @@ class DataclassDataType(TypeDecorator, typing.Generic[DataclassType]):
     Dataclass type.
     """
 
-    impl = Unicode
+    impl = Text
 
     cache_ok = True
 

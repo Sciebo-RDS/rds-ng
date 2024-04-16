@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column, Text
+from sqlalchemy import Table, MetaData, Column, Text, String
 from sqlalchemy.orm import registry, composite
 
 from common.py.data.entities.connector import Connector
@@ -23,9 +23,9 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         "connectors",
         metadata,
         # Main
-        Column("connector_id", Unicode, primary_key=True),
-        Column("name", Unicode),
-        Column("description", Unicode),
+        Column("connector_id", String(64), primary_key=True),
+        Column("name", Text),
+        Column("description", Text),
         # Logos
         Column("logos__default", Text),
         Column("logos__horizontal", Text),

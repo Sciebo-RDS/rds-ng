@@ -6,13 +6,8 @@ driver = "database"
 default_root_path = "/files"
 
 [storage.database]
-engine = "mysql"
-dump_sql = true
+engine = "sqlite"
+dump_sql = false
 
 [storage.database.sqlite]
 file = "/data/rds.db"
-
-[storage.database.mysql]
-host = "10.0.2.15"
-user = "root"
-password = "root"

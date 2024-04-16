@@ -1,4 +1,5 @@
 from sqlalchemy import Engine, create_engine
+from sqlalchemy_utils import database_exists, create_database
 
 from common.py.core.logging import debug
 from common.py.utils.config import Configuration
@@ -52,6 +53,9 @@ def create_database_engine(config: Configuration) -> Engine:
         raise RuntimeError("No database URL was generated")
 
     debug("Creating database engine", scope="database", engine=engine, url=db_url)
+
+    if not database_exists(db_url):
+        create_database(db_url)
 
     return create_engine(
         db_url,
