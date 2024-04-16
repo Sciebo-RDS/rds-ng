@@ -2,9 +2,9 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
+import { type UserToken } from "@common/data/entities/user/UserToken";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { type UserToken } from "@/authentication/UserToken";
 
 /**
  * The user store for all user-specific data.
@@ -30,6 +30,6 @@ export const useUserStore = defineStore("userStore", () => {
         userToken,
         userSettings,
         reset,
-        resetUserToken
+        resetUserToken,
     };
 });

@@ -1,8 +1,9 @@
 import { defineAsyncComponent } from "vue";
 
+import { createUserToken } from "@common/data/entities/user/UserToken";
+
 import { Authenticator } from "@/authentication/Authenticator";
 import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
-import { createUserToken } from "@/authentication/UserToken";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { type HostUserToken } from "@/integration/HostUserToken";
@@ -17,7 +18,7 @@ export class HostAuthenticationScheme extends AuthenticationScheme {
         super(
             comp,
             HostAuthenticationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/authentication/HostAuthentication.vue"))
+            defineAsyncComponent(() => import("@/ui/authentication/HostAuthentication.vue")),
         );
     }
 
@@ -27,11 +28,13 @@ export class HostAuthenticationScheme extends AuthenticationScheme {
 
     public enter(): void {
         super.enter();
+
         this.resetUserToken();
     }
 
     public leave(): void {
         super.leave();
+
         this.resetUserToken();
     }
 

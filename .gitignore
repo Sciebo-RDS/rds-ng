@@ -8,6 +8,9 @@ package-lock.json
 # Distribution files
 dist
 
+# Data
+.data
+
 # IDE specific files
 .idea
 .vscode

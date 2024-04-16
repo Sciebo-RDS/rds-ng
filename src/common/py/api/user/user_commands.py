@@ -10,7 +10,61 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities.user import UserSettings
+from ...data.entities.user import User, UserToken
+
+
+@Message.define("command/user/authenticate")
+class AuthenticateUserCommand(Command):
+    """
+    Command to authenticate a user. Note that the actual login/authentication is performed by the underlying host system.
+
+    Args:
+        user_token: The user token.
+
+    Notes:
+        Requires a ``AuthenticateUserReply`` reply.
+    """
+
+    user_token: UserToken = dataclasses.field(default_factory=UserToken)
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        user_token: UserToken,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            AuthenticateUserCommand, chain, user_token=user_token
+        )
+
+
+@Message.define("command/user/authenticate/reply")
+class AuthenticateUserReply(CommandReply):
+    """
+    Reply to ``AuthenticateUserCommand``.
+    """
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: AuthenticateUserCommand,
+        *,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            AuthenticateUserReply,
+            cmd,
+            success,
+            message,
+        )
 
 
 @Message.define("command/user/settings/get")
@@ -41,14 +95,14 @@ class GetUserSettingsReply(CommandReply):
         settings: The user settings.
     """
 
-    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
+    settings: User.Settings = dataclasses.field(default_factory=User.Settings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         cmd: GetUserSettingsCommand,
         *,
-        settings: UserSettings,
+        settings: User.Settings,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -76,13 +130,13 @@ class SetUserSettingsCommand(Command):
         Requires a ``SetUserSettingsReply`` reply.
     """
 
-    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
+    settings: User.Settings = dataclasses.field(default_factory=User.Settings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
-        settings: UserSettings,
+        settings: User.Settings,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -102,14 +156,14 @@ class SetUserSettingsReply(CommandReply):
         settings: The new user settings (note that these might have been adjusted by the server).
     """
 
-    settings: UserSettings = dataclasses.field(default_factory=UserSettings)
+    settings: User.Settings = dataclasses.field(default_factory=User.Settings)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         cmd: SetUserSettingsCommand,
         *,
-        settings: UserSettings,
+        settings: User.Settings,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:

@@ -7,6 +7,40 @@ import { CommandReplyComposer } from "../../core/messaging/composers/CommandRepl
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
 import { UserSettings } from "../../data/entities/user/UserSettings";
+import { type UserToken } from "../../data/entities/user/UserToken";
+
+/**
+ * Command to authenticate a user. Note that the actual login/authentication is performed by the underlying host system. Requires a ``AuthenticateUserReply`` reply.
+ */
+@Message.define("command/user/authenticate")
+export class AuthenticateUserCommand extends Command {
+    public readonly user_token: UserToken = { user_id: "", user_name: "" } as UserToken;
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(messageBuilder: MessageBuilder, userToken: UserToken, chain: Message | null = null): CommandComposer<AuthenticateUserCommand> {
+        return messageBuilder.buildCommand(AuthenticateUserCommand, { user_token: userToken }, chain);
+    }
+}
+
+/**
+ * Reply to ``AuthenticateUserCommand``.
+ */
+@Message.define("command/user/authenticate/reply")
+export class AuthenticateUserReply extends CommandReply {
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: AuthenticateUserCommand,
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<AuthenticateUserReply> {
+        return messageBuilder.buildCommandReply(AuthenticateUserReply, cmd, success, message);
+    }
+}
 
 /**
  * Command to get the settings of the current user. Requires a ``GetUserSettingsReply`` reply.
@@ -40,7 +74,7 @@ export class GetUserSettingsReply extends CommandReply {
         cmd: GetUserSettingsCommand,
         settings: UserSettings,
         success: boolean = true,
-        message: string = ""
+        message: string = "",
     ): CommandReplyComposer<GetUserSettingsReply> {
         return messageBuilder.buildCommandReply(GetUserSettingsReply, cmd, success, message, { settings: settings });
     }
@@ -84,7 +118,7 @@ export class SetUserSettingsReply extends CommandReply {
         cmd: SetUserSettingsCommand,
         settings: UserSettings,
         success: boolean = true,
-        message: string = ""
+        message: string = "",
     ): CommandReplyComposer<SetUserSettingsReply> {
         return messageBuilder.buildCommandReply(SetUserSettingsReply, cmd, success, message, { settings: settings });
     }

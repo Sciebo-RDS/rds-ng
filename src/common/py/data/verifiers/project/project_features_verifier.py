@@ -1,7 +1,8 @@
 import typing
 
 from .. import Verifier
-from ...entities.project.features import ProjectFeatures, ProjectFeatureID
+from ...entities.project import Project
+from ...entities.project.features import ProjectFeatureID
 
 
 class ProjectFeaturesVerifier(Verifier):
@@ -11,7 +12,7 @@ class ProjectFeaturesVerifier(Verifier):
 
     def __init__(
         self,
-        project_features: ProjectFeatures,
+        project_features: Project.Features,
         *,
         selected_features: typing.List[ProjectFeatureID] | None = None,
     ):

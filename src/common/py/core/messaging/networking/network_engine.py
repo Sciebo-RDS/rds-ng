@@ -167,7 +167,10 @@ class NetworkEngine:
                 else NetworkFilter.ConnectionType.CLIENT
             )
 
-            if not self._filters.filter_incoming_message(con_type, msg, msg_meta):
+            if (
+                self._filters.filter_incoming_message(con_type, msg, msg_meta)
+                == NetworkFilter.Action.PASS
+            ):
                 if self._router.check_local_routing(
                     NetworkRouter.Direction.IN, msg, msg_meta
                 ):
@@ -209,8 +212,12 @@ class NetworkEngine:
         send_to_client = True
 
         if self._router.check_server_routing(direction, msg, msg_meta):
-            if not apply_filter or not self._filters.filter_outgoing_message(
-                NetworkFilter.ConnectionType.SERVER, msg, msg_meta
+            if (
+                not apply_filter
+                or self._filters.filter_outgoing_message(
+                    NetworkFilter.ConnectionType.SERVER, msg, msg_meta
+                )
+                == NetworkFilter.Action.PASS
             ):
                 send_to_client = (
                     self._server.send_message(msg, skip_components=skip_components)
@@ -220,8 +227,12 @@ class NetworkEngine:
         if send_to_client and self._router.check_client_routing(
             direction, msg, msg_meta
         ):
-            if not apply_filter or not self._filters.filter_outgoing_message(
-                NetworkFilter.ConnectionType.CLIENT, msg, msg_meta
+            if (
+                not apply_filter
+                or self._filters.filter_outgoing_message(
+                    NetworkFilter.ConnectionType.CLIENT, msg, msg_meta
+                )
+                == NetworkFilter.Action.PASS
             ):
                 self._client.send_message(msg)
 

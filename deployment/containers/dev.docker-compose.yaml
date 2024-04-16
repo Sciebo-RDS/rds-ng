@@ -23,18 +23,21 @@ services:
             replicas: 0
 
     # -- Component images --
-    # Gate service
-    gate:
-        image: rds-ng/gate:develop
+    # Server service
+    server:
+        image: rds-ng/server:develop
         volumes:
             -   type: bind
                 source: ../../src
                 target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
             args:
-                COMPONENT_NAME: "gate"
+                COMPONENT_NAME: "server"
         depends_on:
             - py-base
         ports:

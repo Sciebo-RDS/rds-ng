@@ -7,6 +7,7 @@ from .logger_proxy import LoggerProxy
 
 logging.setLoggerClass(Logger)
 _logger = typing.cast(Logger, logging.getLogger("rds_logger"))
+logging.setLoggerClass(logging.Logger)
 
 
 def set_level(level: int) -> None:

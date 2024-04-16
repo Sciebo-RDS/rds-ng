@@ -1,9 +1,9 @@
 import { storeToRefs } from "pinia";
 
-import { SetSessionValueCommand } from "@common/api/session/SessionCommands";
+import { AuthenticateUserCommand } from "@common/api/user/UserCommands";
+import { isUserTokenValid, type UserToken } from "@common/data/entities/user/UserToken";
 import { useNetworkStore } from "@common/data/stores/NetworkStore";
 
-import { isUserTokenValid, type UserToken } from "@/authentication/UserToken";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 
@@ -58,24 +58,23 @@ export class Authenticator {
 
         const nwStore = useNetworkStore();
 
-        SetSessionValueCommand.build(
-            this._component.frontendService.messageBuilder,
-            "user-token",
-            this._userToken.userID
-        ).done((_, success, msg) => {
-            if (success) {
-                const userStore = useUserStore();
-                const { userToken } = storeToRefs(userStore);
+        AuthenticateUserCommand.build(this._component.frontendService.messageBuilder, this._userToken)
+            .done((_, success, msg) => {
+                if (success) {
+                    const userStore = useUserStore();
+                    const { userToken } = storeToRefs(userStore);
 
-                userToken.value = this._userToken;
+                    userToken.value = this._userToken;
 
-                this.callDoneCallbacks();
-            } else {
+                    this.callDoneCallbacks();
+                } else {
+                    this.callFailCallbacks(msg);
+                }
+            })
+            .failed((_, msg: string) => {
                 this.callFailCallbacks(msg);
-            }
-        }).failed((_, msg: string) => {
-            this.callFailCallbacks(msg);
-        }).emit(nwStore.serverChannel);
+            })
+            .emit(nwStore.serverChannel);
     }
 
     private callDoneCallbacks(): void {

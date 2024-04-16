@@ -7,7 +7,7 @@ ProjectFeatureID = str
 
 
 @dataclass_json
-@dataclass(frozen=True, kw_only=True)
+@dataclass
 class ProjectFeature(abc.ABC):
     """
     Base data class for a project feature.

@@ -1,1 +1,3 @@
-from .user_settings import UserSettings
+from .user import User, UserID
+
+from .user_token import UserToken

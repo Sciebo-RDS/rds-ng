@@ -1,0 +1,13 @@
+[network.server]
+# idle_timeout = 5
+
+[storage]
+driver = "database"
+default_root_path = "/files"
+
+[storage.database]
+engine = "sqlite"
+dump_sql = false
+
+[storage.database.sqlite]
+file = "/data/rds.db"
