@@ -1,6 +1,8 @@
+import json
 import typing
 
 from common.py.data.entities.connector import Connector, ConnectorMetadataProfile
+from common.py.utils.img_conversion import convert_image_to_img_source
 
 
 class ConnectorInformation:
@@ -20,7 +22,7 @@ class ConnectorInformation:
         }
 
     Notes:
-        The logos and metadata profile are loaded from other files.
+        The logos and metadata profile are loaded from other external files, referenced in the information file.
     """
 
     def __init__(
@@ -48,7 +50,8 @@ class ConnectorInformation:
 
             data = json.load(file)
             self._name, self._description = self._read_general_info(data)
-            # TODO: Logos, metadata profile
+            self._logos = self._load_logos(data)
+            self._metadata_profile = self._load_metadata_profile(data)
 
     def _read_general_info(self, data: typing.Any) -> tuple[str, str]:
         try:
@@ -58,6 +61,33 @@ class ConnectorInformation:
             return "<invalid>", "<invalid>"
 
         return name, desc
+
+    def _load_logos(self, data: typing.Any) -> Connector.Logos:
+        try:
+            logo_default = None
+            logo_horizontal = None
+
+            logo_files = data["logos"]
+
+            if "default" in logo_files and (filename := logo_files["default"]) != "":
+                logo_default = convert_image_to_img_source(filename)
+
+            if (
+                "horizontal" in logo_files
+                and (filename := logo_files["horizontal"]) != ""
+            ):
+                logo_horizontal = convert_image_to_img_source(filename)
+        except:  # pylint: disable=bare-except
+            return Connector.Logos()
+
+        return Connector.Logos(logo_default, logo_horizontal)
+
+    def _load_metadata_profile(self, data: typing.Any) -> ConnectorMetadataProfile:
+        try:
+            with open(data["metadata_profile"], encoding="utf-8") as file:
+                return json.load(file)
+        except:  # pylint: disable=bare-except
+            return {}
 
     @property
     def connector_id(self) -> str:
@@ -82,11 +112,11 @@ class ConnectorInformation:
         """
         The connector logos.
         """
-        raise NotImplementedError()
+        return self._logos
 
     @property
     def metadata_profile(self) -> ConnectorMetadataProfile:
         """
         The metadata profile.
         """
-        raise NotImplementedError()
+        return self._metadata_profile

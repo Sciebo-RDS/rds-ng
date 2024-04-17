@@ -2,8 +2,8 @@
     "name": "Stub connector",
     "description": "A connector that acts like a real one but actually doesn't do anything.",
     "logos": {
-        "default": "",
-        "horizontal": ""
+        "default": "/component/common/assets/img/logos/stub.png",
+        "horizontal": "/component/common/assets/img/logos/stub.png"
     },
-    "metadata_profile": ""
+    "metadata_profile": "/component/common/assets/profiles/stub.json"
 }
