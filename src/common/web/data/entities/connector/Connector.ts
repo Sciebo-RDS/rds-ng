@@ -45,9 +45,15 @@ export class Connector {
     @Type(() => ConnectorLogos)
     public readonly logos: ConnectorLogos;
 
-    metadata_profile: ConnectorMetadataProfile;
+    public readonly metadata_profile: ConnectorMetadataProfile;
 
-    public constructor(connectorID: ConnectorID, name: string, description: string = "", logos: ConnectorLogos = new ConnectorLogos(), metadataProfile: ConnectorMetadataProfile = {}) {
+    public constructor(
+        connectorID: ConnectorID,
+        name: string,
+        description: string = "",
+        logos: ConnectorLogos = new ConnectorLogos(),
+        metadataProfile: ConnectorMetadataProfile = {},
+    ) {
         this.connector_id = connectorID;
 
         this.name = name;
