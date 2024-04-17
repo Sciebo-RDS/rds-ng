@@ -17,13 +17,13 @@ export default function(comp: WebComponent): Service {
         const nwStore = useNetworkStore();
 
         svc.messageHandler(PingCommand, (msg: PingCommand, ctx: ServiceContext) => {
-            ctx.logger.debug("Received PING", "component", { payload: msg.payload });
+            ctx.logger.debug("Received PING", "network", { payload: msg.payload });
 
             PingReply.build(ctx.messageBuilder, msg).emit();
         });
 
         svc.messageHandler(PingReply, (msg: PingReply, ctx: ServiceContext) => {
-            ctx.logger.debug("Received PING reply", "component", { payload: msg.payload });
+            ctx.logger.debug("Received PING reply", "network", { payload: msg.payload });
         });
 
         svc.messageHandler(ClientConnectedEvent, (msg: ClientConnectedEvent, ctx: ServiceContext) => {

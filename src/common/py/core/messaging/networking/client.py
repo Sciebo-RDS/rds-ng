@@ -89,6 +89,7 @@ class Client(socketio.Client):
                     auth=self._get_authentication(),
                     wait=True,
                     wait_timeout=self._connection_timeout,
+                    retry=True,
                 )
             except sioexc.ConnectionError as exc:
                 error(f"Failed to connect to server: {str(exc)}", scope="client")

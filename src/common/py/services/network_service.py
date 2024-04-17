@@ -18,6 +18,10 @@ def create_network_service(comp: BackendComponent) -> Service:
         PingCommand,
         PingReply,
         ServerConnectedEvent,
+        ServerDisconnectedEvent,
+        ClientConnectedEvent,
+        ClientDisconnectedEvent,
+        ClientConnectionErrorEvent,
     )
     from ..api.component import ComponentInformationEvent
 
@@ -25,13 +29,13 @@ def create_network_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(PingCommand)
     def ping(msg: PingCommand, ctx: ServiceContext) -> None:
-        ctx.logger.debug("Received PING", scope="component", payload=msg.payload)
+        ctx.logger.debug("Received PING", scope="network", payload=msg.payload)
 
         PingReply.build(ctx.message_builder, msg).emit()
 
     @svc.message_handler(PingReply)
     def ping_reply(msg: PingReply, ctx: ServiceContext) -> None:
-        ctx.logger.debug("Received PING reply", scope="component", payload=msg.payload)
+        ctx.logger.debug("Received PING reply", scope="network", payload=msg.payload)
 
     @svc.message_handler(ServerConnectedEvent)
     def server_connected(msg: ServerConnectedEvent, ctx: ServiceContext) -> None:
@@ -45,5 +49,23 @@ def create_network_service(comp: BackendComponent) -> Service:
             comp_version=str(data.version),
             chain=msg,
         ).emit(Channel.direct(msg.comp_id))
+
+    @svc.message_handler(ServerDisconnectedEvent)
+    def server_disconnected(msg: ServerDisconnectedEvent, ctx: ServiceContext) -> None:
+        pass
+
+    @svc.message_handler(ClientConnectedEvent)
+    def client_connected(msg: ClientConnectedEvent, ctx: ServiceContext) -> None:
+        pass
+
+    @svc.message_handler(ClientDisconnectedEvent)
+    def client_disconnected(msg: ClientDisconnectedEvent, ctx: ServiceContext) -> None:
+        pass
+
+    @svc.message_handler(ClientConnectionErrorEvent)
+    def client_connection_error(
+        msg: ClientConnectionErrorEvent, ctx: ServiceContext
+    ) -> None:
+        pass
 
     return svc
