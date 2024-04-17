@@ -27,6 +27,10 @@ class ConnectorComponent(BackendComponent):
         self._add_connector_settings()
 
     def run(self) -> None:
+        from ..services.connector_service import create_connector_service
+
+        create_connector_service(self)
+
         super().run()
 
     def _add_connector_settings(self) -> None:

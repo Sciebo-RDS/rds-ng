@@ -1,3 +1,4 @@
+from .client_service_context import ClientServiceContext
 from .service import Service, ServiceContext
 from ..component import BackendComponent
 
@@ -60,12 +61,12 @@ def create_network_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(ClientDisconnectedEvent)
     def client_disconnected(msg: ClientDisconnectedEvent, ctx: ServiceContext) -> None:
-        pass
+        ClientServiceContext.set_remote_channel(None)
 
     @svc.message_handler(ClientConnectionErrorEvent)
     def client_connection_error(
         msg: ClientConnectionErrorEvent, ctx: ServiceContext
     ) -> None:
-        pass
+        ClientServiceContext.set_remote_channel(None)
 
     return svc

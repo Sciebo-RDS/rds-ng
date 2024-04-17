@@ -45,6 +45,8 @@ class Service(MessageService):
 
         self._name = name
 
+        self._state = type("", (), {})()
+
     def message_handler(
         self,
         /,
@@ -92,6 +94,13 @@ class Service(MessageService):
         The service's message builder.
         """
         return self.create_message_builder()
+
+    @property
+    def state(self) -> typing.Any:
+        """
+        The service's state (i.e., arbitrary data associated with the service).
+        """
+        return self._state
 
     def __str__(self) -> str:
         return self._name

@@ -4,7 +4,7 @@ from common.py.services import Service
 
 def create_connectors_service(comp: BackendComponent) -> Service:
     """
-    Creates the stub backend connectors service.
+    Creates the connectors service.
 
     Args:
         comp: The main component instance.
