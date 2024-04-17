@@ -28,15 +28,17 @@ def create_connector_service(comp: BackendComponent) -> Service:
         if ctx.is_connected:
             if msg.timestamp - svc.state.last_announce >= _ANNOUNCE_INTERVAL:
                 from common.py.api.connector import ConnectorAnnounceEvent
-                from common.py.data.entities.connector import Connector
 
+                from ..component import ConnectorComponent
+
+                info = ConnectorComponent.instance().connector_info
                 ConnectorAnnounceEvent.build(
                     ctx.message_builder,
-                    connector_id="hmm",
-                    name="Hmmmm",
-                    description="huhu",
-                    logos=Connector.Logos(),
-                    metadata_profile={},
+                    connector_id=info.connector_id,
+                    name=info.name,
+                    description=info.description,
+                    logos=info.logos,
+                    metadata_profile=info.metadata_profile,
                 ).emit(ctx.remote_channel)
 
                 svc.state.last_announce = msg.timestamp

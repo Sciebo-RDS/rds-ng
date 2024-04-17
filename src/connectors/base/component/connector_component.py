@@ -8,23 +8,27 @@ from common.py.component import (
 from common.py.component.roles import LeafRole
 from common.py.utils import UnitID
 
+from .connector_information import ConnectorInformation
+
 
 class ConnectorComponent(BackendComponent):
     """
     The base connector component class.
     """
 
-    def __init__(self, connector_name: str, *, module_name: str):
+    def __init__(self, connector_id: str, *, module_name: str):
         super().__init__(
             UnitID(
                 ComponentType.INFRASTRUCTURE,
-                f"{ComponentUnit.CONNECTOR}:{connector_name}",
+                f"{ComponentUnit.CONNECTOR}:{connector_id}",
             ),
             LeafRole(),
             module_name=module_name,
         )
 
         self._add_connector_settings()
+
+        self._connector_info = ConnectorInformation(connector_id)
 
     def run(self) -> None:
         from ..services.connector_service import create_connector_service
@@ -35,6 +39,13 @@ class ConnectorComponent(BackendComponent):
 
     def _add_connector_settings(self) -> None:
         pass
+
+    @property
+    def connector_info(self) -> ConnectorInformation:
+        """
+        The global connector information.
+        """
+        return self._connector_info
 
     @staticmethod
     def instance() -> "ConnectorComponent":
