@@ -58,17 +58,18 @@ class MessageComposer(abc.ABC):
         self._before_callbacks.append(callback)
         return self
 
-    def emit(self, target: Channel) -> None:
+    def emit(self, target: Channel, *, suppress_logging: bool = False) -> None:
         """
         Sends the built message through the message bus.
 
         Args:
             target: The target of the message.
+            suppress_logging: Suppresses debug logging.
         """
         self._verify()
         self._compose()
 
-        msg_meta = self._create_meta_information()
+        msg_meta = self._create_meta_information(suppress_logging)
         msg = self._create_message(target)
 
         for callback in self._before_callbacks:
@@ -83,8 +84,9 @@ class MessageComposer(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def _create_meta_information(self) -> MessageMetaInformation:
-        ...
+    def _create_meta_information(
+        self, suppress_logging: bool
+    ) -> MessageMetaInformation: ...
 
     def _create_message(self, target: Channel) -> MessageType:
         return self._msg_type(

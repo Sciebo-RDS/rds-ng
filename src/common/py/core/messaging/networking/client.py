@@ -144,3 +144,8 @@ class Client(socketio.Client):
 
     def _get_authentication(self) -> typing.Dict[str, str]:
         return {"component_id": str(self._comp_id)}
+
+    @property
+    def is_connected(self) -> bool:
+        with self._lock:
+            return self.connected

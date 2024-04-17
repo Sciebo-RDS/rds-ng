@@ -132,6 +132,14 @@ class MessageBus:
         for _, dispatcher in self._dispatchers.items():
             dispatcher.process()
 
+        from ..messaging import Channel
+        from ..messaging.composers import MessageBuilder
+        from ...api.component.component_events import ComponentProcessEvent
+
+        ComponentProcessEvent.build(MessageBuilder(self._comp_data.comp_id, self)).emit(
+            Channel.local(), suppress_logging=True
+        )
+
         threading.Timer(1.0, self._process).start()
 
     def _local_dispatch(

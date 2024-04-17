@@ -40,7 +40,9 @@ class CommandDispatcher(MessageDispatcher[Command]):
         """
         from ...logging import debug
 
-        debug(f"Dispatching command: {msg}", scope="bus")
+        if not msg_meta.suppress_logging:
+            debug(f"Dispatching command: {msg}", scope="bus")
+
         super().pre_dispatch(msg, msg_meta)
 
         MessageDispatcher._meta_information_list.add(

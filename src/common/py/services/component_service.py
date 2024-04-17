@@ -13,7 +13,7 @@ def create_component_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
     from ..core.messaging import Channel
-    from ..api.component import ComponentInformationEvent
+    from ..api.component import ComponentInformationEvent, ComponentProcessEvent
 
     svc = comp.create_service("Component service")
 
@@ -32,5 +32,10 @@ def create_component_service(comp: BackendComponent) -> Service:
                 comp_version=str(data.version),
                 chain=msg,
             ).emit(Channel.direct(msg.comp_id))
+
+    @svc.message_handler(ComponentProcessEvent)
+    def component_process(msg: ComponentProcessEvent, ctx: ServiceContext) -> None:
+        # Listen to this event to avoid complains about unhandled messages
+        pass
 
     return svc

@@ -7,7 +7,12 @@ class EventComposer(MessageComposer):
     Composer for ``Event`` messages.
     """
 
-    def _create_meta_information(self) -> MessageMetaInformation:
+    def _create_meta_information(
+        self, suppress_logging: bool
+    ) -> MessageMetaInformation:
         from ..meta import EventMetaInformation
 
-        return EventMetaInformation(entrypoint=MessageMetaInformation.Entrypoint.LOCAL)
+        return EventMetaInformation(
+            entrypoint=MessageMetaInformation.Entrypoint.LOCAL,
+            suppress_logging=suppress_logging,
+        )
