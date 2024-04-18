@@ -46,7 +46,7 @@ class ConnectorAnnounceEvent(Event):
 
     connector_id: ConnectorID
 
-    name: str
+    display_name: str
     description: str
 
     logos: Connector.Logos = dataclasses.field(default_factory=Connector.Logos)
@@ -71,7 +71,7 @@ class ConnectorAnnounceEvent(Event):
             ConnectorAnnounceEvent,
             chain,
             connector_id=connector_id,
-            name=name,
+            display_name=name,
             description=description,
             logos=logos,
             metadata_profile=metadata_profile,

@@ -25,19 +25,6 @@ class DatabaseStoragePool(StoragePool):
         DatabaseStoragePool._engine = create_database_engine(config)
         DatabaseStoragePool._schema = DatabaseSchema(DatabaseStoragePool._engine)
 
-        # TODO: Remove later
-        from ...._stub_.data import get_stub_data_connectors
-
-        with Session(DatabaseStoragePool._engine) as session, session.begin():
-            connectors = DatabaseConnectorStorage(
-                session,
-                DatabaseStoragePool._schema.connectors_table,
-            )
-
-            if len(connectors.list()) == 0:
-                for con in get_stub_data_connectors():
-                    connectors.add(con)
-
     def __init__(self):
         super().__init__("Database")
 

@@ -32,7 +32,7 @@ export class ConnectorsListEvent extends Event {
 export class ConnectorAnnounceEvent extends Event {
     public readonly connector_id: ConnectorID = "";
 
-    public readonly name: string = "";
+    public readonly display_name: string = "";
     public readonly description: string = "";
 
     // @ts-ignore
@@ -55,7 +55,7 @@ export class ConnectorAnnounceEvent extends Event {
     ): EventComposer<ConnectorAnnounceEvent> {
         return messageBuilder.buildEvent(
             ConnectorAnnounceEvent,
-            { connector_id: connectorID, name: name, description: description, logos: logos, metadata_profile: metadataProfile },
+            { connector_id: connectorID, display_name: name, description: description, logos: logos, metadata_profile: metadataProfile },
             chain,
         );
     }

@@ -1,5 +1,4 @@
 from common.py.data.storage import StoragePool
-from common.py.utils.config import Configuration
 
 from .memory_connector_storage import MemoryConnectorStorage
 from .memory_project_storage import MemoryProjectStorage
@@ -10,16 +9,6 @@ class MemoryStoragePool(StoragePool):
     """
     A simple, non-persistent in-memory storage pool.
     """
-
-    @staticmethod
-    def prepare(config: Configuration) -> None:
-        # TODO: Remove later
-        from ...._stub_.data import get_stub_data_connectors
-
-        connectors = MemoryConnectorStorage()
-
-        for con in get_stub_data_connectors():
-            connectors.add(con)
 
     def __init__(self):
         super().__init__("Memory")

@@ -40,7 +40,7 @@ class CommandReplyComposer(MessageComposer):
             if self._command.origin.equals(self._origin_id)
             else Channel.direct(self._command.origin)
         )
-        super().emit(target, suppress_logging)
+        super().emit(target, suppress_logging=suppress_logging)
 
     def _create_meta_information(
         self, suppress_logging: bool
