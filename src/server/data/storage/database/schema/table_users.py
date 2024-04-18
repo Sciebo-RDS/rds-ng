@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Table, Column, String
+from sqlalchemy import MetaData, Table, Column, String, Text
 from sqlalchemy.orm import registry
 
 from common.py.data.entities.user import User
@@ -23,6 +23,7 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
         metadata,
         # Main
         Column("user_id", String(1024), primary_key=True),
+        Column("name", Text),
         # Settings
         Column(
             "user_settings",

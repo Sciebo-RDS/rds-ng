@@ -41,18 +41,21 @@ def create_users_service(comp: BackendComponent) -> Service:
 
         if success:
             user_id = msg.user_token.user_id
+            user_name = msg.user_token.user_name
 
             ctx.logger.info(
                 "User authenticated",
                 scope="users",
                 origin=msg.origin,
                 user_id=user_id,
-                user_name=msg.user_token.user_name,
+                user_name=user_name,
             )
 
-            # Create a new user object if none exists yet
-            if ctx.storage_pool.user_storage.get(user_id) is None:
-                user = User(user_id=user_id)
+            # Update or create the authenticated user in the storage
+            if (user := ctx.storage_pool.user_storage.get(user_id)) is not None:
+                user.name = user_name
+            else:
+                user = User(user_id=user_id, name=user_name)
                 ctx.storage_pool.user_storage.add(user)
         else:
             ctx.logger.warning(
