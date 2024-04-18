@@ -19,6 +19,8 @@ class Connector:
         name: The name of the connector.
         description: An optional connector description.
         logos: Image data of the connector logos.
+        metadata_profile: The profile for connector-specific data.
+        announce_timestamp: The timestamp when the connector was last announced.
     """
 
     @dataclass_json
@@ -43,3 +45,5 @@ class Connector:
     logos: Logos = dataclasses.field(default_factory=Logos)
 
     metadata_profile: ConnectorMetadataProfile = dataclasses.field(default_factory=dict)
+
+    announce_timestamp: float = 0.0

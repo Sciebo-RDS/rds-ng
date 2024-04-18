@@ -34,6 +34,9 @@ export class ConnectorLogos {
  * @param connector_id - The unique connector identifier.
  * @param name - The name of the connector.
  * @param description - An optional connector description.
+ * @param logos - Image data of the connector logos.
+ * @param metadata_profile - The profile for connector-specific data.
+ * @param announce_timestamp - The timestamp when the connector was last announced.
  */
 export class Connector {
     public readonly connector_id: ConnectorID;
@@ -46,6 +49,8 @@ export class Connector {
     public readonly logos: ConnectorLogos;
 
     public readonly metadata_profile: ConnectorMetadataProfile;
+
+    public readonly announce_timestamp: Number;
 
     public constructor(
         connectorID: ConnectorID,

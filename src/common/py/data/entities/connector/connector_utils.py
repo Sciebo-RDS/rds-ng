@@ -26,7 +26,7 @@ def apply_connector_update(
     updated_connector: Connector,
 ) -> None:
     """
-    Applies updates to project features.
+    Applies an update to a connector.
 
     Args:
         connector: The connector to apply the update to.
@@ -37,3 +37,4 @@ def apply_connector_update(
     connector.description = updated_connector.description
     connector.logos = clone_entity(updated_connector.logos)
     connector.metadata_profile = updated_connector.metadata_profile.copy()
+    connector.announce_timestamp = updated_connector.announce_timestamp

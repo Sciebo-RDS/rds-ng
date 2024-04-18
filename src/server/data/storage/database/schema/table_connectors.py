@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column, Text, String
+from sqlalchemy import Table, MetaData, Column, Text, String, Float
 from sqlalchemy.orm import registry, composite
 
 from common.py.data.entities.connector import Connector
@@ -31,6 +31,8 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         Column("logos__horizontal", Text),
         # Metadata
         Column("metadata_profile", JSONEncodedDataType),
+        # Miscellaneous
+        Column("announce_timestamp", Float),
     )
 
     reg.map_imperatively(
