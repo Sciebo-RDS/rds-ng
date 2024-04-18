@@ -25,6 +25,10 @@ class DatabaseStoragePool(StoragePool):
         DatabaseStoragePool._engine = create_database_engine(config)
         DatabaseStoragePool._schema = DatabaseSchema(DatabaseStoragePool._engine)
 
+        # Delete all connectors from the table, as they are always added anew on restart
+        with Session(DatabaseStoragePool._engine) as session, session.begin():
+            session.execute(DatabaseStoragePool._schema.connectors_table.delete())
+
     def __init__(self):
         super().__init__("Database")
 
