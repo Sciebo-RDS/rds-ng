@@ -9,19 +9,12 @@ import AccordionTab from "primevue/accordiontab";
 
 import { type Property as PropertyType } from "./PropertyProfile";
 import { PropertyController } from "./PropertyController";
-import PropertyTwoCol from "./PropertyTwoCol.vue";
 import PropertyOneCol from "./PropertyOneCol.vue";
 import { PropertySet } from "./PropertySet";
-
-const propertyComponents = {
-    twoCol: PropertyTwoCol,
-    oneCol: PropertyOneCol
-};
 
 const props = defineProps(["category", "profileId", "project", "index"]);
 
 const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
-const cols = inject("cols");
 const attrs = useAttrs();
 
 provide("categoryId", props.category.id);
@@ -44,8 +37,6 @@ function updatePropsToShow(e: any) {
     showPropertySelector.value = false;
 }
 
-const propertyElement = propertyComponents[cols as "twoCol" | "oneCol"];
-
 const header = `${props.index + 1}. ${props.category.name}`;
 </script>
 
@@ -63,10 +54,12 @@ const header = `${props.index + 1}. ${props.category.name}`;
             >
                 <template #content>
                     <div class="text-neutral-700">{{ props.category.description }}</div>
-                    <component :is="propertyElement" v-for="prop in propsToShow" :property="prop" />
+                    <div class="divide-y">
+                        <PropertyOneCol v-for="prop in propsToShow" :property="prop" class="mt-2 pt-5" />
+                    </div>
                     <!-- Should have its own component -->
                     <div v-show="!showPropertySelector && !!propsToSelect.length" class="flex justify-end">
-                        <Button label="Add Property" text size="small" icon="pi pi-plus" @click="showPropertySelector = true" />
+                        <Button label="Add Property" outlined size="small" icon="pi pi-plus" @click="showPropertySelector = true" severity="contrast" />
                     </div>
 
                     <Fieldset v-show="showPropertySelector" legend="Add Property">
@@ -107,7 +100,9 @@ const header = `${props.index + 1}. ${props.category.name}`;
     Should have it's own component
  -->
     <div v-else class="m-5">
-        <component :is="PropertyOneCol" v-for="prop in propsToShow" :property="prop" />
+        <div class="divide-y">
+            <component :is="PropertyOneCol" v-for="prop in propsToShow" :property="prop" class="[&:not(:first-child)]:mt-2 [&:not(:first-child)]:pt-5" />
+        </div>
         <!-- Should have its own component -->
         <div v-show="!showPropertySelector && !!propsToSelect.length" class="flex justify-end">
             <Button label="Add Property" text size="small" icon="pi pi-plus" @click="showPropertySelector = true" />

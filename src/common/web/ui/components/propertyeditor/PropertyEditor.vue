@@ -28,15 +28,8 @@ const { controller, logging, project, exporters } = defineProps({
     }
 });
 
-const cols = (attr: {}) => {
-    return "twoCol" in attr && !("oneCol" in attr) ? "twoCol" : "oneCol";
-};
-
-const attrs = useAttrs();
-
 provide("controller", controller);
 provide("logging", logging);
-provide("cols", cols(attrs));
 
 const model = defineModel();
 
