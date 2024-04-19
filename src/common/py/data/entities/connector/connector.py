@@ -1,9 +1,11 @@
 import dataclasses
 import typing
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import IntFlag
 
 from dataclasses_json import dataclass_json
+
+from .categories import ConnectorCategoryID
 
 ConnectorID = str
 ConnectorMetadataProfile = typing.Dict[str, typing.Any]  # TODO: Use proper type
@@ -17,22 +19,25 @@ class Connector:
 
     Attributes:
         connector_id: The unique connector identifier.
-        type: The connector type.
+        category: The connector category.
         name: The name of the connector.
         description: An optional connector description.
+        options: The connector options.
         logos: Image data of the connector logos.
         metadata_profile: The profile for connector-specific data.
         announce_timestamp: The timestamp when the connector was last announced.
     """
 
-    class Type(StrEnum):
+    class Options(IntFlag):
         """
-        The different connector types.
+        Options of a connector.
+
+        Attributes:
+            PUBLISH_ONCE: If set, the project may only be published once.
         """
 
-        UNKNOWN = ""
-        REPOSITORY = "repository"
-        ARCHIVE = "archive"
+        DEFAULT = 0x0000
+        PUBLISH_ONCE = 0x0001
 
     @dataclass_json
     @dataclass
@@ -49,10 +54,12 @@ class Connector:
         horizontal_logo: str | None = None
 
     connector_id: ConnectorID
-    type: Type
+    category: ConnectorCategoryID
 
     name: str
     description: str
+
+    options: Options = Options.DEFAULT
 
     logos: Logos = dataclasses.field(default_factory=Logos)
 

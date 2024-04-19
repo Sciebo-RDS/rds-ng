@@ -1,4 +1,5 @@
 import { Type } from "class-transformer";
+import { type ConnectorCategoryID } from "./categories/ConnectorCategory";
 
 /**
  * The connector ID type.
@@ -6,19 +7,13 @@ import { Type } from "class-transformer";
 export type ConnectorID = string;
 
 /**
- * The connector metadata profile.
+ * Various options of a category.
  *
- * TODO: Use proper type
+ * @param PublishOnce - If set, the project may only be published once.
  */
-export type ConnectorMetadataProfile = Record<string, any>;
-
-/**
- * The different connectortypes.
- */
-export const enum ConnectorType {
-    Unknown = "",
-    Repository = "repository",
-    Archive = "archive",
+export const enum ConnectorOptions {
+    Default = 0x0000,
+    PublishOnce = 0x0001,
 }
 
 /**
@@ -38,21 +33,32 @@ export class ConnectorLogos {
 }
 
 /**
+ * The connector metadata profile.
+ *
+ * TODO: Use proper type
+ */
+export type ConnectorMetadataProfile = Record<string, any>;
+
+/**
  * Data for a single **Connector**.
  *
  * @param connector_id - The unique connector identifier.
+ * @param category - The connector category.
  * @param name - The name of the connector.
  * @param description - An optional connector description.
+ * @param options - The connector options.
  * @param logos - Image data of the connector logos.
  * @param metadata_profile - The profile for connector-specific data.
  * @param announce_timestamp - The timestamp when the connector was last announced.
  */
 export class Connector {
     public readonly connector_id: ConnectorID;
-    public readonly type: ConnectorType;
+    public readonly category: ConnectorCategoryID;
 
     public readonly name: string;
     public readonly description: string;
+
+    public readonly options: ConnectorOptions;
 
     // @ts-ignore
     @Type(() => ConnectorLogos)
@@ -60,21 +66,24 @@ export class Connector {
 
     public readonly metadata_profile: ConnectorMetadataProfile;
 
-    public readonly announce_timestamp: Number;
+    public readonly announce_timestamp: Number = 0.0;
 
     public constructor(
         connectorID: ConnectorID,
         name: string,
-        type: ConnectorType,
+        category: ConnectorCategoryID,
         description: string = "",
+        options: ConnectorOptions = ConnectorOptions.Default,
         logos: ConnectorLogos = new ConnectorLogos(),
         metadataProfile: ConnectorMetadataProfile = {},
     ) {
         this.connector_id = connectorID;
-        this.type = type;
+        this.category = category;
 
         this.name = name;
         this.description = description;
+
+        this.options = options;
 
         this.logos = logos;
 

@@ -4,7 +4,8 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
-import { Connector, type ConnectorID, ConnectorLogos, type ConnectorMetadataProfile, ConnectorType } from "../../data/entities/connector/Connector";
+import { type ConnectorCategoryID } from "../../data/entities/connector/categories/ConnectorCategory";
+import { Connector, type ConnectorID, ConnectorLogos, type ConnectorMetadataProfile, ConnectorOptions } from "../../data/entities/connector/Connector";
 
 /**
  * Emitted whenever the list of available connectors has been updated.
@@ -31,10 +32,12 @@ export class ConnectorsListEvent extends Event {
 @Message.define("event/connector/announce")
 export class ConnectorAnnounceEvent extends Event {
     public readonly connector_id: ConnectorID = "";
-    public readonly type: ConnectorType = ConnectorType.Unknown;
+    public readonly connector_category: ConnectorCategoryID = "";
 
     public readonly display_name: string = "";
     public readonly description: string = "";
+
+    public readonly options: ConnectorOptions = ConnectorOptions.Default;
 
     // @ts-ignore
     @Type(() => ConnectorLogos)
@@ -48,16 +51,25 @@ export class ConnectorAnnounceEvent extends Event {
     public static build(
         messageBuilder: MessageBuilder,
         connectorID: ConnectorID,
-        type: ConnectorType,
+        category: ConnectorCategoryID,
         name: string,
         description: string,
+        options: ConnectorOptions,
         logos: ConnectorLogos,
         metadataProfile: ConnectorMetadataProfile,
         chain: Message | null = null,
     ): EventComposer<ConnectorAnnounceEvent> {
         return messageBuilder.buildEvent(
             ConnectorAnnounceEvent,
-            { connector_id: connectorID, type: type, display_name: name, description: description, logos: logos, metadata_profile: metadataProfile },
+            {
+                connector_id: connectorID,
+                connector_category: category,
+                display_name: name,
+                description: description,
+                options: options,
+                logos: logos,
+                metadata_profile: metadataProfile,
+            },
             chain,
         );
     }

@@ -1,7 +1,11 @@
 import json
 import typing
 
-from common.py.data.entities.connector import Connector, ConnectorMetadataProfile
+from common.py.data.entities.connector import (
+    Connector,
+    ConnectorMetadataProfile,
+)
+from common.py.data.entities.connector.categories import ConnectorCategoryID
 from common.py.utils.img_conversion import convert_image_to_img_source
 
 
@@ -12,9 +16,12 @@ class ConnectorInformation:
     The JSON file needs to be structured like this::
 
         {
-            "type": "repository",
+            "category": "repository",
             "name": "Zenodo",
             "description": "Connector for Zenodo",
+            "options": {
+                "publish_once": true
+            },
             "logos": {
                 "default": "/some/file.png",
                 "horizontal": "/some/other/file.png"
@@ -50,19 +57,36 @@ class ConnectorInformation:
             import json
 
             data = json.load(file)
-            self._type, self._name, self._description = self._read_general_info(data)
+            self._category, self._name, self._description = self._read_general_info(
+                data
+            )
+            self._options = self._read_options(data)
             self._logos = self._load_logos(data)
             self._metadata_profile = self._load_metadata_profile(data)
 
-    def _read_general_info(self, data: typing.Any) -> tuple[Connector.Type, str, str]:
+    def _read_general_info(
+        self, data: typing.Any
+    ) -> tuple[ConnectorCategoryID, str, str]:
         try:
-            ctype: Connector.Type = data["type"]
+            category: ConnectorCategoryID = data["category"]
             name: str = data["name"]
             desc: str = data["description"]
         except Exception:  # pylint: disable=broad-exception-caught
             return "<invalid>", "<invalid>", "<invalid>"
 
-        return ctype, name, desc
+        return category, name, desc
+
+    def _read_options(self, data: typing.Any) -> Connector.Options:
+        try:
+            options = Connector.Options.DEFAULT
+            options_data = data["options"]
+
+            if "publish_once" in options_data and options_data["publish_once"] is True:
+                options |= Connector.Options.PUBLISH_ONCE
+        except Exception:  # pylint: disable=broad-exception-caught
+            return Connector.Options.DEFAULT
+
+        return options
 
     def _load_logos(self, data: typing.Any) -> Connector.Logos:
         try:
@@ -93,11 +117,17 @@ class ConnectorInformation:
 
     @property
     def connector_id(self) -> str:
+        """
+        The connector ID.
+        """
         return self._connector_id
 
     @property
-    def type(self) -> Connector.Type:
-        return self._type
+    def category(self) -> ConnectorCategoryID:
+        """
+        The connector category.
+        """
+        return self._category
 
     @property
     def name(self) -> str:
@@ -112,6 +142,13 @@ class ConnectorInformation:
         The connector description.
         """
         return self._description
+
+    @property
+    def options(self) -> Connector.Options:
+        """
+        The connector options.
+        """
+        return self._options
 
     @property
     def logos(self) -> Connector.Logos:

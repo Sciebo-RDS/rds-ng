@@ -10,7 +10,6 @@ import { array as yarray, string as ystring } from "yup";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
-import { ResourceType } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
 import { useDirectives } from "@common/ui/Directives";
@@ -19,7 +18,7 @@ import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 import ResourcesTreeSelect from "@common/ui/components/resource/ResourcesTreeSelect.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { type UIOptions } from "@/data/entities/UIOptions";
+import { type UIOptions } from "@/data/entities/ui/UIOptions";
 import { useUserStore } from "@/data/stores/UserStore";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
@@ -36,19 +35,20 @@ const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
 const showDataPathSelector = dialogData.options["showDataPathSelector"];
 
 const validator = useValidator({
-        title: ystring().trim().required().label("Title").default(dialogData.userData.title),
-        description: ystring().label("Description").default(dialogData.userData.description),
-        datapath: ystring().trim().required().label("Data path").default(dialogData.userData.datapath),
-        activeInstances: yarray().label("Active connections").default(dialogData.userData.options.active_connector_instances).test(
-            "active-instances",
-            "Select at least one connection to use",
-            (value: ConnectorInstanceID[]) => {
-                return dialogData.userData.options.use_all_connector_instances ||
-                    (Array.isArray(value) && value.filter((instance) => !!findConnectorInstanceByID(userStore.userSettings.connector_instances, instance)).length > 0);
-            }
-        )
-    }
-);
+    title: ystring().trim().required().label("Title").default(dialogData.userData.title),
+    description: ystring().label("Description").default(dialogData.userData.description),
+    datapath: ystring().trim().required().label("Data path").default(dialogData.userData.datapath),
+    activeInstances: yarray()
+        .label("Active connections")
+        .default(dialogData.userData.options.active_connector_instances)
+        .test("active-instances", "Select at least one connection to use", (value: ConnectorInstanceID[]) => {
+            return (
+                dialogData.userData.options.use_all_connector_instances ||
+                (Array.isArray(value) &&
+                    value.filter((instance) => !!findConnectorInstanceByID(userStore.userSettings.connector_instances, instance)).length > 0)
+            );
+        }),
+});
 const title = validator.defineComponentBinds("title");
 const datapath = validator.defineComponentBinds("datapath");
 const activeInstances = validator.defineComponentBinds("activeInstances");
@@ -67,13 +67,14 @@ onMounted(() => {
 });
 
 // Reflect selected features based on snap-ins with associated project features
-watch(() => uiOptions.value.optional_snapins, (snapIns) => {
-    dialogData.userData.options.optional_features = SnapInsCatalog.filter(
-        (snapIn) => snapIns.includes(snapIn.snapInID) && !!snapIn.options.optional?.feature
-    ).map(
-        (snapIn) => snapIn.options.optional!.feature
-    );
-});
+watch(
+    () => uiOptions.value.optional_snapins,
+    (snapIns) => {
+        dialogData.userData.options.optional_features = SnapInsCatalog.filter(
+            (snapIn) => snapIns.includes(snapIn.snapInID) && !!snapIn.options.optional?.feature,
+        ).map((snapIn) => snapIn.options.optional!.feature);
+    },
+);
 </script>
 
 <template>
@@ -81,7 +82,14 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
         <Fieldset legend="General">
             <span class="r-form-field">
                 <label>Title <MandatoryMark /></label>
-                <InputText name="title" v-bind="title" v-model="dialogData.userData.title" placeholder="Title" :class="{ 'p-invalid': validator.errors.title }" v-focus />
+                <InputText
+                    name="title"
+                    v-bind="title"
+                    v-model="dialogData.userData.title"
+                    placeholder="Title"
+                    :class="{ 'p-invalid': validator.errors.title }"
+                    v-focus
+                />
                 <small>The title of the project.</small>
             </span>
 
@@ -127,12 +135,24 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
             <div class="r-form-field">
                 <div class="grid grid-flow-row">
                     <div class="flex align-items-center">
-                        <RadioButton v-model="dialogData.userData.options.use_all_connector_instances" inputId="useAllConnectorInstances" :value="true" @change="validator.validate()" class="self-center" />
+                        <RadioButton
+                            v-model="dialogData.userData.options.use_all_connector_instances"
+                            inputId="useAllConnectorInstances"
+                            :value="true"
+                            @change="validator.validate()"
+                            class="self-center"
+                        />
                         <label for="useAllConnectorInstances" class="pl-1.5">Use all available connections</label>
                     </div>
 
                     <div class="flex align-items-center">
-                        <RadioButton v-model="dialogData.userData.options.use_all_connector_instances" inputId="useSelectConnectorInstances" :value="false" @change="validator.validate()" class="self-center" />
+                        <RadioButton
+                            v-model="dialogData.userData.options.use_all_connector_instances"
+                            inputId="useSelectConnectorInstances"
+                            :value="false"
+                            @change="validator.validate()"
+                            class="self-center"
+                        />
                         <label for="useSelectConnectorInstances" class="pl-1.5">Use only the following connections:</label>
                     </div>
 
@@ -150,6 +170,4 @@ watch(() => uiOptions.value.optional_snapins, (snapIns) => {
     </form>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

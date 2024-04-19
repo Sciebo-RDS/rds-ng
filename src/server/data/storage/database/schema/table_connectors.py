@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column, Text, String, Float
+from sqlalchemy import Table, MetaData, Column, Text, String, Float, Integer
 from sqlalchemy.orm import registry, composite
 
 from common.py.data.entities.connector import Connector
@@ -24,9 +24,10 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         metadata,
         # Main
         Column("connector_id", String(64), primary_key=True),
-        Column("type", Text),
+        Column("category", Text),
         Column("name", Text),
         Column("description", Text),
+        Column("options", Integer),
         # Logos
         Column("logos__default", Text),
         Column("logos__horizontal", Text),

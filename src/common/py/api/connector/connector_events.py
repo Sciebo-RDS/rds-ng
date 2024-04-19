@@ -9,7 +9,12 @@ from ...core.messaging.composers import (
     MessageBuilder,
     EventComposer,
 )
-from ...data.entities.connector import Connector, ConnectorID, ConnectorMetadataProfile
+from ...data.entities.connector import (
+    Connector,
+    ConnectorID,
+    ConnectorMetadataProfile,
+)
+from ...data.entities.connector.categories import ConnectorCategoryID
 
 
 @Message.define("event/connector/list")
@@ -45,10 +50,12 @@ class ConnectorAnnounceEvent(Event):
     """
 
     connector_id: ConnectorID
-    type: Connector.Type
+    connector_category: ConnectorCategoryID
 
     display_name: str
     description: str
+
+    options: Connector.Options = Connector.Options.DEFAULT
 
     logos: Connector.Logos = dataclasses.field(default_factory=Connector.Logos)
 
@@ -59,9 +66,10 @@ class ConnectorAnnounceEvent(Event):
         message_builder: MessageBuilder,
         *,
         connector_id: ConnectorID,
-        connector_type: Connector.Type,
+        category: ConnectorCategoryID,
         name: str,
         description: str,
+        options: Connector.Options,
         logos: Connector.Logos,
         metadata_profile: ConnectorMetadataProfile,
         chain: Message | None = None
@@ -73,9 +81,10 @@ class ConnectorAnnounceEvent(Event):
             ConnectorAnnounceEvent,
             chain,
             connector_id=connector_id,
-            type=connector_type,
+            connector_category=category,
             display_name=name,
             description=description,
+            options=options,
             logos=logos,
             metadata_profile=metadata_profile,
         )
