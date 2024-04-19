@@ -1,4 +1,5 @@
 {
+    "type": "repository",
     "name": "Stub connector",
     "description": "A connector that acts like a real one but actually doesn't do anything.",
     "logos": {

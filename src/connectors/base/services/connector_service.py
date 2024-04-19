@@ -34,6 +34,7 @@ def create_connector_service(comp: BackendComponent) -> Service:
             ConnectorAnnounceEvent.build(
                 ctx.message_builder,
                 connector_id=info.connector_id,
+                connector_type=info.type,
                 name=info.name,
                 description=info.description,
                 logos=info.logos,

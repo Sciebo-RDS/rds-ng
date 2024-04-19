@@ -45,6 +45,7 @@ class ConnectorAnnounceEvent(Event):
     """
 
     connector_id: ConnectorID
+    type: Connector.Type
 
     display_name: str
     description: str
@@ -58,6 +59,7 @@ class ConnectorAnnounceEvent(Event):
         message_builder: MessageBuilder,
         *,
         connector_id: ConnectorID,
+        connector_type: Connector.Type,
         name: str,
         description: str,
         logos: Connector.Logos,
@@ -71,6 +73,7 @@ class ConnectorAnnounceEvent(Event):
             ConnectorAnnounceEvent,
             chain,
             connector_id=connector_id,
+            type=connector_type,
             display_name=name,
             description=description,
             logos=logos,

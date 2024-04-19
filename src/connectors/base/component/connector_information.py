@@ -12,6 +12,7 @@ class ConnectorInformation:
     The JSON file needs to be structured like this::
 
         {
+            "type": "repository",
             "name": "Zenodo",
             "description": "Connector for Zenodo",
             "logos": {
@@ -49,18 +50,19 @@ class ConnectorInformation:
             import json
 
             data = json.load(file)
-            self._name, self._description = self._read_general_info(data)
+            self._type, self._name, self._description = self._read_general_info(data)
             self._logos = self._load_logos(data)
             self._metadata_profile = self._load_metadata_profile(data)
 
-    def _read_general_info(self, data: typing.Any) -> tuple[str, str]:
+    def _read_general_info(self, data: typing.Any) -> tuple[Connector.Type, str, str]:
         try:
+            ctype: Connector.Type = data["type"]
             name: str = data["name"]
             desc: str = data["description"]
         except Exception:  # pylint: disable=broad-exception-caught
-            return "<invalid>", "<invalid>"
+            return "<invalid>", "<invalid>", "<invalid>"
 
-        return name, desc
+        return ctype, name, desc
 
     def _load_logos(self, data: typing.Any) -> Connector.Logos:
         try:
@@ -92,6 +94,10 @@ class ConnectorInformation:
     @property
     def connector_id(self) -> str:
         return self._connector_id
+
+    @property
+    def type(self) -> Connector.Type:
+        return self._type
 
     @property
     def name(self) -> str:

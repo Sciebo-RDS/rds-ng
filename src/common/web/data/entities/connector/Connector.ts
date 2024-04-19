@@ -13,6 +13,15 @@ export type ConnectorID = string;
 export type ConnectorMetadataProfile = Record<string, any>;
 
 /**
+ * The different connectortypes.
+ */
+export const enum ConnectorType {
+    Unknown = "",
+    Repository = "repository",
+    Archive = "archive",
+}
+
+/**
  * Base64-encoded image data of the connector logos.
  *
  * @param default_logo - The default logo.
@@ -40,6 +49,7 @@ export class ConnectorLogos {
  */
 export class Connector {
     public readonly connector_id: ConnectorID;
+    public readonly type: ConnectorType;
 
     public readonly name: string;
     public readonly description: string;
@@ -55,11 +65,13 @@ export class Connector {
     public constructor(
         connectorID: ConnectorID,
         name: string,
+        type: ConnectorType,
         description: string = "",
         logos: ConnectorLogos = new ConnectorLogos(),
         metadataProfile: ConnectorMetadataProfile = {},
     ) {
         this.connector_id = connectorID;
+        this.type = type;
 
         this.name = name;
         this.description = description;

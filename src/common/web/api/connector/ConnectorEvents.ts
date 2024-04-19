@@ -4,7 +4,7 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
-import { Connector, type ConnectorID, ConnectorLogos, type ConnectorMetadataProfile } from "../../data/entities/connector/Connector";
+import { Connector, type ConnectorID, ConnectorLogos, type ConnectorMetadataProfile, ConnectorType } from "../../data/entities/connector/Connector";
 
 /**
  * Emitted whenever the list of available connectors has been updated.
@@ -31,6 +31,7 @@ export class ConnectorsListEvent extends Event {
 @Message.define("event/connector/announce")
 export class ConnectorAnnounceEvent extends Event {
     public readonly connector_id: ConnectorID = "";
+    public readonly type: ConnectorType = ConnectorType.Unknown;
 
     public readonly display_name: string = "";
     public readonly description: string = "";
@@ -47,6 +48,7 @@ export class ConnectorAnnounceEvent extends Event {
     public static build(
         messageBuilder: MessageBuilder,
         connectorID: ConnectorID,
+        type: ConnectorType,
         name: string,
         description: string,
         logos: ConnectorLogos,
@@ -55,7 +57,7 @@ export class ConnectorAnnounceEvent extends Event {
     ): EventComposer<ConnectorAnnounceEvent> {
         return messageBuilder.buildEvent(
             ConnectorAnnounceEvent,
-            { connector_id: connectorID, display_name: name, description: description, logos: logos, metadata_profile: metadataProfile },
+            { connector_id: connectorID, type: type, display_name: name, description: description, logos: logos, metadata_profile: metadataProfile },
             chain,
         );
     }
