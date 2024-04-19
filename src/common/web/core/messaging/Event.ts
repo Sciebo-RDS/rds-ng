@@ -11,7 +11,7 @@ export class Event extends Message {
     /**
      * Gets the global message category.
      */
-    public get category(): MessageCategory {
+    public get messageCategory(): MessageCategory {
         return Event.Category;
     }
 }

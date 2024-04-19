@@ -4,19 +4,21 @@ import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
-import createFrontendService from "@/services/FrontendService";
-import createUserService from "@/services/UserService";
-import createConnectorsService from "@/services/ConnectorsService";
-import createProjectsService from "@/services/ProjectsService";
-
-import { getFrontendSettings } from "@/settings/FrontendSettings";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
-
-import Frontend from "@/ui/Frontend.vue";
-import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { registerAuthenticationSchemes } from "@/authentication/AuthenticationSchemes";
 import { AuthenticationSchemesCatalog } from "@/authentication/AuthenticationSchemesCatalog";
+
+import createConnectorsService from "@/services/ConnectorsService";
+import createFrontendService from "@/services/FrontendService";
+import createProjectsService from "@/services/ProjectsService";
+import createUserService from "@/services/UserService";
+
+import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
+import { getFrontendSettings } from "@/settings/FrontendSettings";
+
+import Frontend from "@/ui/Frontend.vue";
+import { registerConnectorCategories } from "@/ui/connectors/categories/ConnectorCategories";
+import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
 /**
@@ -41,6 +43,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
 
         // Reigster global items
         registerAuthenticationSchemes();
+        registerConnectorCategories();
         registerSnapIns();
 
         // Mount the authentication scheme

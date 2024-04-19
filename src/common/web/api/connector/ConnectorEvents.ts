@@ -32,10 +32,10 @@ export class ConnectorsListEvent extends Event {
 @Message.define("event/connector/announce")
 export class ConnectorAnnounceEvent extends Event {
     public readonly connector_id: ConnectorID = "";
-    public readonly connector_category: ConnectorCategoryID = "";
 
     public readonly display_name: string = "";
     public readonly description: string = "";
+    public readonly category: ConnectorCategoryID = "";
 
     public readonly options: ConnectorOptions = ConnectorOptions.Default;
 
@@ -51,9 +51,9 @@ export class ConnectorAnnounceEvent extends Event {
     public static build(
         messageBuilder: MessageBuilder,
         connectorID: ConnectorID,
-        category: ConnectorCategoryID,
         name: string,
         description: string,
+        category: ConnectorCategoryID,
         options: ConnectorOptions,
         logos: ConnectorLogos,
         metadataProfile: ConnectorMetadataProfile,
@@ -63,9 +63,9 @@ export class ConnectorAnnounceEvent extends Event {
             ConnectorAnnounceEvent,
             {
                 connector_id: connectorID,
-                connector_category: category,
                 display_name: name,
                 description: description,
+                category: category,
                 options: options,
                 logos: logos,
                 metadata_profile: metadataProfile,

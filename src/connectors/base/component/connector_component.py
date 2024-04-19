@@ -31,8 +31,13 @@ class ConnectorComponent(BackendComponent):
         self._connector_info = ConnectorInformation(connector_id)
 
     def run(self) -> None:
+        from ..categories import register_connector_categories
         from ..services.connector_service import create_connector_service
 
+        # Register global items
+        register_connector_categories()
+
+        # Create connector-specific services
         create_connector_service(self)
 
         super().run()

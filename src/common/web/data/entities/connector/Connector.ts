@@ -1,10 +1,14 @@
 import { Type } from "class-transformer";
-import { type ConnectorCategoryID } from "./categories/ConnectorCategory";
 
 /**
  * The connector ID type.
  */
 export type ConnectorID = string;
+
+/**
+ * The connector category type.
+ */
+export type ConnectorCategoryID = string;
 
 /**
  * Various options of a category.
@@ -53,10 +57,10 @@ export type ConnectorMetadataProfile = Record<string, any>;
  */
 export class Connector {
     public readonly connector_id: ConnectorID;
-    public readonly category: ConnectorCategoryID;
 
     public readonly name: string;
     public readonly description: string;
+    public readonly category: ConnectorCategoryID;
 
     public readonly options: ConnectorOptions;
 
@@ -71,17 +75,17 @@ export class Connector {
     public constructor(
         connectorID: ConnectorID,
         name: string,
-        category: ConnectorCategoryID,
         description: string = "",
+        category: ConnectorCategoryID,
         options: ConnectorOptions = ConnectorOptions.Default,
         logos: ConnectorLogos = new ConnectorLogos(),
         metadataProfile: ConnectorMetadataProfile = {},
     ) {
         this.connector_id = connectorID;
-        this.category = category;
 
         this.name = name;
         this.description = description;
+        this.category = category;
 
         this.options = options;
 

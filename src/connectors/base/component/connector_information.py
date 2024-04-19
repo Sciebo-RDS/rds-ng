@@ -4,8 +4,8 @@ import typing
 from common.py.data.entities.connector import (
     Connector,
     ConnectorMetadataProfile,
+    ConnectorCategoryID,
 )
-from common.py.data.entities.connector.categories import ConnectorCategoryID
 from common.py.utils.img_conversion import convert_image_to_img_source
 
 
@@ -16,9 +16,9 @@ class ConnectorInformation:
     The JSON file needs to be structured like this::
 
         {
-            "category": "repository",
             "name": "Zenodo",
             "description": "Connector for Zenodo",
+            "category": "repository",
             "options": {
                 "publish_once": true
             },
@@ -57,7 +57,7 @@ class ConnectorInformation:
             import json
 
             data = json.load(file)
-            self._category, self._name, self._description = self._read_general_info(
+            self._name, self._description, self._category = self._read_general_info(
                 data
             )
             self._options = self._read_options(data)
@@ -66,15 +66,15 @@ class ConnectorInformation:
 
     def _read_general_info(
         self, data: typing.Any
-    ) -> tuple[ConnectorCategoryID, str, str]:
+    ) -> tuple[str, str, ConnectorCategoryID]:
         try:
-            category: ConnectorCategoryID = data["category"]
             name: str = data["name"]
             desc: str = data["description"]
+            category: ConnectorCategoryID = data["category"]
         except Exception:  # pylint: disable=broad-exception-caught
             return "<invalid>", "<invalid>", "<invalid>"
 
-        return category, name, desc
+        return name, desc, category
 
     def _read_options(self, data: typing.Any) -> Connector.Options:
         try:

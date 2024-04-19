@@ -1,4 +1,6 @@
-import { ConnectorCategory, type ConnectorCategoryID } from "./ConnectorCategory";
+import { type ConnectorCategoryID } from "@common/data/entities/connector/Connector";
+
+import { ConnectorCategory } from "./ConnectorCategory";
 
 export class ArchiveConnectorCategory extends ConnectorCategory {
     public static readonly CategoryID: ConnectorCategoryID = "archive";

@@ -33,9 +33,9 @@ def apply_connector_update(
         updated_connector: The updated connector.
     """
 
-    connector.category = updated_connector.category
     connector.name = updated_connector.name
     connector.description = updated_connector.description
+    connector.category = updated_connector.category
     connector.options = updated_connector.options
     connector.logos = clone_entity(updated_connector.logos)
     connector.metadata_profile = updated_connector.metadata_profile.copy()

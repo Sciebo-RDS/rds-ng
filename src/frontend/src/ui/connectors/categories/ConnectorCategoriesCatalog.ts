@@ -1,4 +1,5 @@
-import { ItemsCatalog } from "../../../../utils/ItemsCatalog";
+import { ItemsCatalog } from "@common/utils/ItemsCatalog";
+
 import { ConnectorCategory } from "./ConnectorCategory";
 
 /**

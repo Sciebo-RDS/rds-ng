@@ -24,9 +24,9 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         metadata,
         # Main
         Column("connector_id", String(64), primary_key=True),
-        Column("category", Text),
         Column("name", Text),
         Column("description", Text),
+        Column("category", Text),
         Column("options", Integer),
         # Logos
         Column("logos__default", Text),

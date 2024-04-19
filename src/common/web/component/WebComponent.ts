@@ -14,7 +14,6 @@ import { Session } from "./Session";
 import { WebComponentData } from "./WebComponentData";
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
-import { registerConnectorCategories } from "../data/entities/connector/categories/ConnectorCategories";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
@@ -183,7 +182,6 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         logging.info("Running component");
 
         // Reigster global items
-        registerConnectorCategories();
         registerExporters();
 
         // Create all basic services

@@ -1,5 +1,5 @@
 from .connector_category import ConnectorCategory
-from .....utils import ItemsCatalog
+from common.py.utils import ItemsCatalog
 
 
 @ItemsCatalog.define()

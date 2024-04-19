@@ -1,9 +1,4 @@
 /**
- * The connector category identifier type.
- */
-export type ConnectorCategoryID = string;
-
-/**
  * Descriptor for a connector category.
  *
  * @param name - The category name.
