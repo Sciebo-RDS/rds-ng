@@ -33,7 +33,7 @@ const category = unref(connector) ? getConnectorCategory(unref(connector)!) : un
                 :aria-label="category.verbAction"
                 :label="category.verbAction"
                 icon="material-icons-outlined mi-rocket-launch"
-                :pt="{ root: 'category.buttonClass ' }"
+                :pt="{ root: category.buttonClass }"
             />
         </div>
 
