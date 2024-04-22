@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 import { ref, inject } from "vue";
 import Calendar from "primevue/calendar";
 

@@ -4,8 +4,14 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
-import { type ConnectorCategoryID } from "../../../../frontend/src/ui/connector/categories/ConnectorCategory";
-import { Connector, type ConnectorID, ConnectorLogos, type ConnectorMetadataProfile, ConnectorOptions } from "../../data/entities/connector/Connector";
+import {
+    Connector,
+    type ConnectorCategoryID,
+    type ConnectorID,
+    ConnectorLogos,
+    type ConnectorMetadataProfile,
+    ConnectorOptions,
+} from "../../data/entities/connector/Connector";
 
 /**
  * Emitted whenever the list of available connectors has been updated.
