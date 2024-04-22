@@ -4,7 +4,7 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
-import { type ConnectorCategoryID } from "../../data/entities/connector/categories/ConnectorCategory";
+import { type ConnectorCategoryID } from "../../../../frontend/src/ui/connector/categories/ConnectorCategory";
 import { Connector, type ConnectorID, ConnectorLogos, type ConnectorMetadataProfile, ConnectorOptions } from "../../data/entities/connector/Connector";
 
 /**
