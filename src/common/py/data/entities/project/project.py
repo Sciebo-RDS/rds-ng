@@ -10,6 +10,7 @@ from .features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
+from .history import ProjectHistoryRecord
 from ..connector import ConnectorInstanceID
 from ..user import UserID
 
@@ -34,6 +35,7 @@ class Project:
         status: The project status.
         features: All project features.
         options: All project options.
+        history: The project's publishing history.
     """
 
     class Status(IntEnum):
@@ -86,6 +88,18 @@ class Project:
 
         ui: UIOptions = field(default_factory=dict)
 
+    @dataclass_json
+    @dataclass
+    class History:
+        """
+        Class holding all publishing records of a project.
+
+        Attributes:
+            records: All history records.
+        """
+
+        records: List[ProjectHistoryRecord] = field(default=list)
+
     project_id: ProjectID
     user_id: UserID
 
@@ -100,3 +114,5 @@ class Project:
 
     features: Features = field(default_factory=Features)
     options: Options = field(default_factory=Options)
+
+    history: History = field(default_factory=History)
