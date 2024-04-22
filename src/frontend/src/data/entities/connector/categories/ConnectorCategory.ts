@@ -8,12 +8,18 @@ export class ConnectorCategory {
     public readonly name: string;
     public readonly description: string;
 
-    public readonly tagClass: string | undefined;
+    public readonly verbAction: string;
 
-    protected constructor(name: string, description: string, tagClass?: string) {
+    public readonly tagClass: string | undefined;
+    public readonly buttonClass: string | undefined;
+
+    protected constructor(name: string, description: string, verbAction: string, tagClass?: string, buttonClass?: string) {
         this.name = name;
         this.description = description;
 
+        this.verbAction = verbAction;
+
         this.tagClass = tagClass;
+        this.buttonClass = buttonClass;
     }
 }
