@@ -8,6 +8,8 @@ import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { registerAuthenticationSchemes } from "@/authentication/AuthenticationSchemes";
 import { AuthenticationSchemesCatalog } from "@/authentication/AuthenticationSchemesCatalog";
 
+import { registerConnectorCategories } from "@/data/entities/connector/categories/ConnectorCategories";
+
 import createConnectorsService from "@/services/ConnectorsService";
 import createFrontendService from "@/services/FrontendService";
 import createProjectsService from "@/services/ProjectsService";
@@ -17,7 +19,6 @@ import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 import { getFrontendSettings } from "@/settings/FrontendSettings";
 
 import Frontend from "@/ui/Frontend.vue";
-import { registerConnectorCategories } from "@/ui/connectors/categories/ConnectorCategories";
 import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
