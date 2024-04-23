@@ -47,7 +47,7 @@ class Project:
         DELETED = 0xFF
 
     @dataclass_json
-    @dataclass
+    @dataclass(kw_only=True)
     class Features:
         """
         Data for all **Project** features.
@@ -89,7 +89,7 @@ class Project:
         ui: UIOptions = field(default_factory=dict)
 
     @dataclass_json
-    @dataclass
+    @dataclass(kw_only=True)
     class History:
         """
         Class holding all history records of a project.
