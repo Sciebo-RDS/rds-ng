@@ -140,7 +140,10 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         table_projects,
         properties={
             "features": relationship(
-                Project.Features, backref="projects", uselist=False
+                Project.Features,
+                backref="projects",
+                uselist=False,
+                cascade="all, delete",
             ),
             "options": composite(
                 Project.Options,
@@ -149,7 +152,12 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
                 table_projects.c.opt__active_connector_instances,
                 table_projects.c.opt__ui,
             ),
-            "history": relationship(Project.History, backref="projects", uselist=False),
+            "history": relationship(
+                Project.History,
+                backref="projects",
+                uselist=False,
+                cascade="all, delete",
+            ),
         },
     )
 
@@ -161,12 +169,19 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
                 MetadataFeature,
                 backref="project_features",
                 uselist=False,
+                cascade="all, delete",
             ),
             "resources_metadata": relationship(
-                ResourcesMetadataFeature, backref="project_features", uselist=False
+                ResourcesMetadataFeature,
+                backref="project_features",
+                uselist=False,
+                cascade="all, delete",
             ),
             "dmp": relationship(
-                DataManagementPlanFeature, backref="project_features", uselist=False
+                DataManagementPlanFeature,
+                backref="project_features",
+                uselist=False,
+                cascade="all, delete",
             ),
         },
     )
@@ -191,7 +206,9 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         table_project_history,
         properties={
             "publishing": relationship(
-                PublishingHistoryRecord, backref="project_history"
+                PublishingHistoryRecord,
+                backref="project_history",
+                cascade="all, delete",
             )
         },
     )
