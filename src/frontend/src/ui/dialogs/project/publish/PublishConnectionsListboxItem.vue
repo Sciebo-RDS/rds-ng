@@ -4,21 +4,29 @@ import { computed, type PropType, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { Project } from "@common/data/entities/project/Project";
 
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { ProjectStatistics } from "@/ui/tools/project/ProjectStatistics";
 
 const consStore = useConnectorsStore();
 const props = defineProps({
+    project: {
+        type: Object as PropType<Project>,
+        required: true,
+    },
     instance: {
         type: Object as PropType<ConnectorInstance>,
         required: true,
     },
 });
 
-const { instance } = toRefs(props);
-const connector = computed(() => findConnectorByID(consStore.connectors, instance.value.connector_id));
+const { project, instance } = toRefs(props);
+const connector = computed(() => findConnectorByID(consStore.connectors, unref(instance)!.connector_id));
 const category = unref(connector) ? getConnectorCategory(unref(connector)!) : undefined;
+
+const publishStats = new ProjectStatistics(unref(project)!).getPublicationStatistics(unref(instance)!.instance_id);
 </script>
 
 <template>
@@ -39,14 +47,17 @@ const category = unref(connector) ? getConnectorCategory(unref(connector)!) : un
 
         <div class="truncate" :title="instance!.description">{{ instance!.description }}</div>
 
-        <div class="grid grid-cols-[1fr_max-content] grid-flow-col pt-5 col-span-2">
-            <span>
-                <b>Status: </b>
-                <span class="italic">
-                    <span v-if="connector">We don't have that yet...</span>
-                    <span v-else class="r-text-error">Connector not found</span>
+        <div class="grid grid-cols-[1fr_max-content] grid-flow-col pt-5 col-span-2 text-sm">
+            <div v-if="category" class="grid grid-flow-col auto-cols-max gap-2 r-text-secondary italic">
+                <b>Last {{ category.verbStatus }}: </b>
+                <span class="pr-3">{{ publishStats.lastPublication > 0 ? new Date(publishStats.lastPublication * 1000).toLocaleString() : "Never" }}</span>
+                <b>Total {{ category.verbNounPlural }}:</b>
+                <span>
+                    {{ publishStats.totalCount.done }}
+                    <span v-if="publishStats.totalCount.failed > 0">(+ {{ publishStats.totalCount.failed }} failed)</span>
                 </span>
-            </span>
+            </div>
+            <div v-else class="italic r-text-error">Unknown connector category</div>
             <img
                 v-if="connector && connector.logos.horizontal_logo"
                 :src="connector.logos.horizontal_logo"

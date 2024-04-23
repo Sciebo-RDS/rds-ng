@@ -9,7 +9,7 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-import { useConnectorInstancesTools } from "@/ui/tools/ConnectorInstancesTools";
+import { useConnectorInstancesTools } from "@/ui/tools/connector/ConnectorInstancesTools";
 
 import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
 import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxItem.vue";

@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { Project } from "@common/data/entities/project/Project";
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
-import { computed, type PropType, toRefs } from "vue";
+import { computed, type PropType, toRefs, unref } from "vue";
 
 import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
@@ -13,15 +14,19 @@ import PublishConnectionsListboxItem from "@/ui/dialogs/project/publish/PublishC
 
 const consStore = useConnectorsStore();
 const props = defineProps({
+    project: {
+        type: Object as PropType<Project>,
+        required: true,
+    },
     userSettings: {
         type: Object as PropType<UserSettings>,
         required: true,
     },
 });
 const { connectors } = storeToRefs(consStore);
-const { userSettings } = toRefs(props);
+const { project, userSettings } = toRefs(props);
 
-const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, connectors.value));
+const groupedInstances = computed(() => groupConnectorInstances(unref(userSettings)!.connector_instances, unref(connectors)!));
 </script>
 
 <template>
@@ -43,7 +48,7 @@ const groupedInstances = computed(() => groupConnectorInstances(userSettings!.va
         </template>
 
         <template #option="instanceEntry">
-            <PublishConnectionsListboxItem :instance="instanceEntry.option" />
+            <PublishConnectionsListboxItem :project="project" :instance="instanceEntry.option" />
         </template>
 
         <template #empty>

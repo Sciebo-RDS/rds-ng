@@ -10,6 +10,9 @@ export class RepositoryConnectorCategory extends ConnectorCategory {
             "Repository",
             "Publish your project to make it available to the public.",
             "Publish",
+            "Publication",
+            "Publications",
+            "Published",
             "r-connector-category-repository-tag",
             "r-connector-category-repository-button",
         );

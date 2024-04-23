@@ -10,6 +10,9 @@ export class ArchiveConnectorCategory extends ConnectorCategory {
             "Archive",
             "Store your project data in a long-term external storage archive.",
             "Export",
+            "Export",
+            "Exports",
+            "Exported",
             "r-connector-category-archive-tag",
             "r-connector-category-archive-button",
         );

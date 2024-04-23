@@ -4,6 +4,7 @@ from enum import IntEnum
 from dataclasses_json import dataclass_json
 
 from .project_history_record import ProjectHistoryRecord
+from ...connector import ConnectorInstanceID
 
 
 @dataclass_json
@@ -24,6 +25,8 @@ class PublishingHistoryRecord(ProjectHistoryRecord):
 
         DONE = 0
         FAILED = -1
+
+    connector_instance: ConnectorInstanceID
 
     status: Status
     message: str

@@ -9,7 +9,7 @@ import { scrollElementIntoView } from "@common/utils/HTMLUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-import { useConnectorInstancesTools } from "@/ui/tools/ConnectorInstancesTools";
+import { useConnectorInstancesTools } from "@/ui/tools/connector/ConnectorInstancesTools";
 
 import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
 
@@ -18,8 +18,8 @@ const consStore = useConnectorsStore();
 const props = defineProps({
     userSettings: {
         type: Object as PropType<UserSettings>,
-        required: true
-    }
+        required: true,
+    },
 });
 const emits = defineEmits<{
     (e: "create-instance", instance: ConnectorInstance): void;
@@ -49,7 +49,7 @@ function onSelectConnector(connector: Connector): void {
             :autoOptionFocus="false"
             @change="(event) => onSelectConnector(event.value as Connector)"
             :pt="{
-                panel: 'r-z-index-toplevel'
+                panel: 'r-z-index-toplevel',
             }"
         >
             <template #option="connectorItem">
@@ -59,6 +59,4 @@ function onSelectConnector(connector: Connector): void {
     </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

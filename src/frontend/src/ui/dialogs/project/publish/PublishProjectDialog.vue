@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
+import { Project } from "@common/data/entities/project/Project";
+import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
+
 import { useUserStore } from "@/data/stores/UserStore";
 import PublishConnectionsListbox from "@/ui/dialogs/project/publish/PublishConnectionsListbox.vue";
+import { ref } from "vue";
 
+const { dialogData } = useExtendedDialogTools();
+
+const project = ref<Project>(dialogData.userData.project);
 const userStore = useUserStore();
 const { userSettings } = storeToRefs(userStore);
 </script>
@@ -12,7 +19,7 @@ const { userSettings } = storeToRefs(userStore);
     <div class="grid grid-rows-auto grid-flow-row grid-cols-[1fr] gap-1.5 w-full h-full">
         <div>To publish or export a project to a service, click on its corresponding button.</div>
 
-        <PublishConnectionsListbox :user-settings="userSettings" />
+        <PublishConnectionsListbox :project="project" :user-settings="userSettings" />
     </div>
 </template>
 

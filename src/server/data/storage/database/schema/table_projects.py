@@ -129,6 +129,7 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
             primary_key=True,
         ),
         Column("timestamp", Float, primary_key=True),
+        Column("connector_instance", String(64), primary_key=True),
         Column("status", Integer),
         Column("message", Text),
     )

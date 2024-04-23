@@ -8,7 +8,9 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 /**
  * The data used by the ``publishProjectDialog`` function.
  */
-export interface PublishProjectDialogData {}
+export interface PublishProjectDialogData {
+    project: Project;
+}
 
 /**
  * Shows the publish dialog for a project.
@@ -25,7 +27,9 @@ export async function publishProjectDialog(comp: FrontendComponent, project: Pro
             modal: true,
             contentClass: "w-[25vw] min-w-[40rem]",
         },
-        {},
+        {
+            project: project,
+        },
         {
             hasRejectButton: true,
             rejectLabel: "Close",
