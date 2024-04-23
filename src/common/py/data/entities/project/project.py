@@ -10,7 +10,7 @@ from .features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from .history import ProjectHistoryRecord
+from .history import PublishingHistoryRecord
 from ..connector import ConnectorInstanceID
 from ..user import UserID
 
@@ -92,13 +92,13 @@ class Project:
     @dataclass
     class History:
         """
-        Class holding all publishing records of a project.
+        Class holding all history records of a project.
 
         Attributes:
-            records: All history records.
+            publishing: All publishing history records.
         """
 
-        records: List[ProjectHistoryRecord] = field(default=list)
+        publishing: List[PublishingHistoryRecord] = field(default=list)
 
     project_id: ProjectID
     user_id: UserID
