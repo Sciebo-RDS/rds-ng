@@ -11,3 +11,8 @@ dump_sql = false
 
 [storage.database.sqlite]
 file = "/data/rds.db"
+
+[storage.database.mysql]
+host = "10.0.2.15"
+user = "test"
+password = "test"

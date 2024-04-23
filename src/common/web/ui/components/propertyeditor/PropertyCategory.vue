@@ -15,7 +15,7 @@ import { PropertySet } from "./PropertySet";
 
 const propertyComponents = {
     twoCol: PropertyTwoCol,
-    oneCol: PropertyOneCol
+    oneCol: PropertyOneCol,
 };
 
 const props = defineProps(["category", "profileId", "project", "index"]);
@@ -30,10 +30,10 @@ provide("profileId", props.profileId);
 const showPropertySelector = ref(false);
 const selectedProperties = ref<PropertyType>();
 
-const propsToShow = !attrs.hasOwnProperty("defaultSet")
+const propsToShow = !("defaultSet" in attrs)
     ? ref<PropertyType[]>(
-        props.category.properties.filter((p: PropertyType) => controller.getValue(props.profileId, props.category.id, p.id) != undefined || p.showAlways)
-    )
+          props.category.properties.filter((p: PropertyType) => controller.getValue(props.profileId, props.category.id, p.id) != undefined || p.showAlways),
+      )
     : ref<PropertyType[]>(props.category.properties);
 
 const propsToSelect = ref(props.category.properties.filter((p: PropertyType) => !propsToShow.value.includes(p)));
@@ -50,7 +50,7 @@ const header = `${props.index + 1}. ${props.category.name}`;
 </script>
 
 <template>
-    <Accordion v-if="!attrs.hasOwnProperty('defaultSet')" class="w-full">
+    <Accordion v-if="!('defaultSet' in attrs)" class="w-full">
         <AccordionTab :pt="{ header: { class: '!rounded-md !border !border-indigo-200' }, headerAction: { class: '!py-4' } }">
             <template #header>
                 <span class="flex align-items-center w-full !text-gray-800 truncate text-ellipsis mr-2" :title="header">

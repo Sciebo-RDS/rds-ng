@@ -21,6 +21,8 @@ from common.py.data.entities.project.features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
+from common.py.data.entities.project.history import PublishingHistoryRecord
+
 from .types import JSONEncodedDataType, ArrayType
 
 
@@ -35,6 +37,10 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
     Returns:
         The newly created table.
     """
+
+    # Define tables
+
+    # -- Main
 
     table_projects = Table(
         "projects",
@@ -57,19 +63,77 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         Column("opt__ui", JSONEncodedDataType),
     )
 
+    # -- Features
+
     table_project_features = Table(
         "project_features",
         metadata,
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
-        # Metadata
-        Column("meta__metadata", JSONEncodedDataType),
-        # Resources metadata
-        Column("resmeta__resources_metadata", JSONEncodedDataType),
-        # Data management plan
-        Column("dmp__plan", JSONEncodedDataType),
     )
+
+    table_feature_metadata = Table(
+        "project_feature_metadata",
+        metadata,
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_features.project_id"),
+            primary_key=True,
+        ),
+        Column("metadata", JSONEncodedDataType),
+    )
+
+    table_feature_resources_metadata = Table(
+        "project_feature_resources_metadata",
+        metadata,
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_features.project_id"),
+            primary_key=True,
+        ),
+        Column("resources_metadata", JSONEncodedDataType),
+    )
+
+    table_feature_dmp = Table(
+        "project_feature_dmp",
+        metadata,
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_features.project_id"),
+            primary_key=True,
+        ),
+        Column("plan", JSONEncodedDataType),
+    )
+
+    # -- History
+
+    table_project_history = Table(
+        "project_history",
+        metadata,
+        Column(
+            "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
+        ),
+    )
+
+    table_history_publishing = Table(
+        "project_history_publishing",
+        metadata,
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_history.project_id"),
+            primary_key=True,
+        ),
+        Column("timestamp", Float, primary_key=True),
+        Column("status", Integer),
+        Column("message", Text),
+    )
+
+    # Map all tables
 
     reg.map_imperatively(
         Project,
@@ -85,6 +149,7 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
                 table_projects.c.opt__active_connector_instances,
                 table_projects.c.opt__ui,
             ),
+            "history": relationship(Project.History, backref="projects", uselist=False),
         },
     )
 
@@ -92,19 +157,48 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         Project.Features,
         table_project_features,
         properties={
-            "metadata": composite(
+            "metadata": relationship(
                 MetadataFeature,
-                table_project_features.c.meta__metadata,
+                backref="project_features",
+                uselist=False,
             ),
-            "resources_metadata": composite(
-                ResourcesMetadataFeature,
-                table_project_features.c.resmeta__resources_metadata,
+            "resources_metadata": relationship(
+                ResourcesMetadataFeature, backref="project_features", uselist=False
             ),
-            "dmp": composite(
-                DataManagementPlanFeature,
-                table_project_features.c.dmp__plan,
+            "dmp": relationship(
+                DataManagementPlanFeature, backref="project_features", uselist=False
             ),
         },
+    )
+
+    reg.map_imperatively(
+        MetadataFeature,
+        table_feature_metadata,
+    )
+
+    reg.map_imperatively(
+        ResourcesMetadataFeature,
+        table_feature_resources_metadata,
+    )
+
+    reg.map_imperatively(
+        DataManagementPlanFeature,
+        table_feature_dmp,
+    )
+
+    reg.map_imperatively(
+        Project.History,
+        table_project_history,
+        properties={
+            "publishing": relationship(
+                PublishingHistoryRecord, backref="project_history"
+            )
+        },
+    )
+
+    reg.map_imperatively(
+        PublishingHistoryRecord,
+        table_history_publishing,
     )
 
     return table_projects

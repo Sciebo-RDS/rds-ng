@@ -98,7 +98,7 @@ class Project:
             publishing: All publishing history records.
         """
 
-        publishing: List[PublishingHistoryRecord] = field(default=list)
+        publishing: List[PublishingHistoryRecord] = field(default_factory=list)
 
     project_id: ProjectID
     user_id: UserID

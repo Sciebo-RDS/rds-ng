@@ -12,7 +12,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function(comp: WebComponent): Service {
+export default function (comp: WebComponent): Service {
     return comp.createService(
         "Projects service",
         (svc: Service) => {
@@ -65,6 +65,6 @@ export default function(comp: WebComponent): Service {
                 }
             });
         },
-        FrontendServiceContext
+        FrontendServiceContext,
     );
 }
