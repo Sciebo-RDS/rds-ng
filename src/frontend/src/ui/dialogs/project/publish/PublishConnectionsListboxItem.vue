@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ConnectorOptions } from "@common/data/entities/connector/Connector";
 import Button from "primevue/button";
 import { computed, type PropType, toRefs, unref } from "vue";
 
@@ -27,6 +28,13 @@ const connector = computed(() => findConnectorByID(consStore.connectors, unref(i
 const category = unref(connector) ? getConnectorCategory(unref(connector)!) : undefined;
 
 const publishStats = new ProjectStatistics(unref(project)!).getPublicationStatistics(unref(instance)!.instance_id);
+const disablePublish = computed(() => {
+    if (unref(connector)) {
+        const publishOnce = (unref(connector)!.options & ConnectorOptions.PublishOnce) == ConnectorOptions.PublishOnce;
+        return publishOnce && publishStats.totalCount.done >= 1;
+    }
+    return true;
+});
 </script>
 
 <template>
@@ -36,6 +44,8 @@ const publishStats = new ProjectStatistics(unref(project)!).getPublicationStatis
         <div class="row-span-2 pl-1 content-center">
             <Button
                 v-if="category"
+                :disabled="disablePublish"
+                :title="disablePublish ? 'The project has already been ' + category.verbStatus.toLowerCase() : category.verbAction + ' the project'"
                 rounded
                 size="small"
                 :aria-label="category.verbAction"
