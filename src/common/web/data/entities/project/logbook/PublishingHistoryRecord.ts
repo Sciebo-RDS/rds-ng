@@ -1,9 +1,9 @@
-/*
- * The status of the publishing operation.
- */
 import { type ConnectorInstanceID } from "../../connector/ConnectorInstance";
 import { ProjectLogbookRecord } from "./ProjectLogbookRecord";
 
+/*
+ * The status of the publishing operation.
+ */
 export const enum PublishingHistoryRecordStatus {
     Done = 0,
     Failed = -1,
@@ -12,6 +12,7 @@ export const enum PublishingHistoryRecordStatus {
 /**
  * A single record of a project's publishing history.
  *
+ * @param connector_instance - The connector instance ID.
  * @param status - The status (done or failed).
  * @param message - An optional message (usually in case of an error).
  */

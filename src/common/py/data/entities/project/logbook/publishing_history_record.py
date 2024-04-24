@@ -14,6 +14,7 @@ class PublishingHistoryRecord(ProjectLogbookRecord):
     A single record of a project's publishing history.
 
     Attributes:
+        connector_instance: The connector instance ID.
         status: The status (done or failed).
         message: An optional message (usually in case of an error).
     """

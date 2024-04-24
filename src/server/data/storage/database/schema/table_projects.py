@@ -21,7 +21,10 @@ from common.py.data.entities.project.features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from common.py.data.entities.project.logbook import PublishingHistoryRecord
+from common.py.data.entities.project.logbook import (
+    PublishingHistoryRecord,
+    PublishingJobRecord,
+)
 
 from .types import JSONEncodedDataType, ArrayType
 
@@ -119,6 +122,21 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         ),
     )
 
+    table_logbook_publishing_jobs = Table(
+        "project_logbook_publishing_jobs",
+        metadata,
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_logbook.project_id"),
+            primary_key=True,
+        ),
+        Column("timestamp", Float, primary_key=True),
+        Column("connector_instance", String(64), primary_key=True),
+        Column("progress", Float),
+        Column("message", Text),
+    )
+
     table_logbook_publishing_history = Table(
         "project_logbook_publishing_history",
         metadata,
@@ -206,12 +224,22 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         Project.Logbook,
         table_project_logbook,
         properties={
+            "publishing_jobs": relationship(
+                PublishingJobRecord,
+                backref="project_logbook",
+                cascade="all, delete",
+            ),
             "publishing_history": relationship(
                 PublishingHistoryRecord,
                 backref="project_logbook",
                 cascade="all, delete",
-            )
+            ),
         },
+    )
+
+    reg.map_imperatively(
+        PublishingJobRecord,
+        table_logbook_publishing_jobs,
     )
 
     reg.map_imperatively(
