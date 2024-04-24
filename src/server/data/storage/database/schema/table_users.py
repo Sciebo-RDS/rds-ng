@@ -13,7 +13,7 @@ class UsersTables:
     main: Table
 
 
-def register_users_table(metadata: MetaData, reg: registry) -> UsersTables:
+def register_users_tables(metadata: MetaData, reg: registry) -> UsersTables:
     """
     Registers the users table.
 
@@ -22,7 +22,7 @@ def register_users_table(metadata: MetaData, reg: registry) -> UsersTables:
         reg: The mapper registry.
 
     Returns:
-        The newly created table.
+        The newly created tables.
     """
 
     table_users = Table(

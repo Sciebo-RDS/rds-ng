@@ -22,10 +22,7 @@ from common.py.data.entities.project.features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from common.py.data.entities.project.logbook import (
-    PublishingHistoryRecord,
-    PublishingJobRecord,
-)
+from common.py.data.entities.project.logbook import PublishingHistoryRecord
 
 from .types import JSONEncodedDataType, ArrayType
 
@@ -40,11 +37,10 @@ class ProjectsTables:
     feature_dmp: Table
 
     logbook: Table
-    logbook_publishing_jobs: Table
     logbook_publishing_history: Table
 
 
-def register_projects_table(metadata: MetaData, reg: registry) -> ProjectsTables:
+def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTables:
     """
     Registers the projects table.
 
@@ -53,7 +49,7 @@ def register_projects_table(metadata: MetaData, reg: registry) -> ProjectsTables
         reg: The mapper registry.
 
     Returns:
-        The newly created table.
+        The newly created tables.
     """
 
     # Define tables
@@ -135,21 +131,6 @@ def register_projects_table(metadata: MetaData, reg: registry) -> ProjectsTables
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
-    )
-
-    table_logbook_publishing_jobs = Table(
-        "project_logbook_publishing_jobs",
-        metadata,
-        Column(
-            "project_id",
-            Integer,
-            ForeignKey("project_logbook.project_id"),
-            primary_key=True,
-        ),
-        Column("timestamp", Float, primary_key=True),
-        Column("connector_instance", String(64), primary_key=True),
-        Column("progress", Float),
-        Column("message", Text),
     )
 
     table_logbook_publishing_history = Table(
@@ -239,22 +220,12 @@ def register_projects_table(metadata: MetaData, reg: registry) -> ProjectsTables
         Project.Logbook,
         table_project_logbook,
         properties={
-            "publishing_jobs": relationship(
-                PublishingJobRecord,
-                backref="project_logbook",
-                cascade="all, delete",
-            ),
             "publishing_history": relationship(
                 PublishingHistoryRecord,
                 backref="project_logbook",
                 cascade="all, delete",
             ),
         },
-    )
-
-    reg.map_imperatively(
-        PublishingJobRecord,
-        table_logbook_publishing_jobs,
     )
 
     reg.map_imperatively(
@@ -269,6 +240,5 @@ def register_projects_table(metadata: MetaData, reg: registry) -> ProjectsTables
         feature_resources_metadata=table_feature_resources_metadata,
         feature_dmp=table_feature_dmp,
         logbook=table_project_logbook,
-        logbook_publishing_jobs=table_logbook_publishing_jobs,
         logbook_publishing_history=table_logbook_publishing_history,
     )

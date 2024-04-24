@@ -13,7 +13,7 @@ class ConnectorsTables:
     main: Table
 
 
-def register_connectors_table(metadata: MetaData, reg: registry) -> ConnectorsTables:
+def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsTables:
     """
     Registers the connectors table.
 
@@ -22,7 +22,7 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> ConnectorsTa
         reg: The mapper registry.
 
     Returns:
-        The newly created table.
+        The newly created tables.
     """
     from sqlalchemy import Unicode
 
