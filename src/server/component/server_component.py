@@ -12,6 +12,8 @@ from common.py.utils import UnitID
 # Make the entire API known
 from common.py.api import *
 
+from ..engine import ServerEngine
+
 
 class ServerComponent(BackendComponent):
     """
@@ -28,15 +30,19 @@ class ServerComponent(BackendComponent):
         self._add_server_settings()
         self._prepare_storage_pool()
 
+        self._engine = ServerEngine()
+
     def run(self) -> None:
         from ..services import (
             create_connectors_service,
+            create_engine_service,
             create_projects_service,
             create_resources_service,
             create_session_service,
             create_users_service,
         )
 
+        create_engine_service(self)
         create_session_service(self)
         create_connectors_service(self)
         create_users_service(self)
@@ -80,6 +86,13 @@ class ServerComponent(BackendComponent):
             )
 
             raise exc
+
+    @property
+    def engine(self) -> ServerEngine:
+        """
+        The global server engine.
+        """
+        return self._engine
 
     @staticmethod
     def instance() -> "ServerComponent":

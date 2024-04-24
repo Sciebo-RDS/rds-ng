@@ -10,6 +10,7 @@ from common.py.services import ServiceContext
 from common.py.utils import UnitID
 from common.py.utils.config import Configuration
 
+from ..engine import ServerEngine
 from ..networking.session import SessionManager, Session
 
 
@@ -31,8 +32,11 @@ class ServerServiceContext(ServiceContext):
             msg_meta, msg_origin, msg_builder, logger=logger, config=config
         )
 
+        from ..component import ServerComponent
+
         self._session_manager = SessionManager()
         self._storage_pool = self._create_storage_pool()
+        self._server_engine = ServerComponent.instance().engine
 
     def _create_storage_pool(self) -> StoragePool:
         from ..settings import StorageSettingIDs
@@ -126,3 +130,7 @@ class ServerServiceContext(ServiceContext):
         The global storage pool.
         """
         return self._storage_pool
+
+    @property
+    def engine(self) -> ServerEngine:
+        return self._server_engine
