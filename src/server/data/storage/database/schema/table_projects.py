@@ -1,4 +1,5 @@
 import uuid
+from dataclasses import dataclass
 
 from sqlalchemy import (
     MetaData,
@@ -29,7 +30,21 @@ from common.py.data.entities.project.logbook import (
 from .types import JSONEncodedDataType, ArrayType
 
 
-def register_projects_table(metadata: MetaData, reg: registry) -> Table:
+@dataclass(kw_only=True)
+class ProjectsTables:
+    main: Table
+
+    features: Table
+    feature_metadata: Table
+    feature_resources_metadata: Table
+    feature_dmp: Table
+
+    logbook: Table
+    logbook_publishing_jobs: Table
+    logbook_publishing_history: Table
+
+
+def register_projects_table(metadata: MetaData, reg: registry) -> ProjectsTables:
     """
     Registers the projects table.
 
@@ -247,4 +262,13 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         table_logbook_publishing_history,
     )
 
-    return table_projects
+    return ProjectsTables(
+        main=table_projects,
+        features=table_project_features,
+        feature_metadata=table_feature_metadata,
+        feature_resources_metadata=table_feature_resources_metadata,
+        feature_dmp=table_feature_dmp,
+        logbook=table_project_logbook,
+        logbook_publishing_jobs=table_logbook_publishing_jobs,
+        logbook_publishing_history=table_logbook_publishing_history,
+    )

@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from sqlalchemy import Table, MetaData, Column, Text, String, Float, Integer
 from sqlalchemy.orm import registry, composite
 
@@ -6,7 +8,12 @@ from common.py.data.entities.connector import Connector
 from .types import JSONEncodedDataType
 
 
-def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
+@dataclass(kw_only=True)
+class ConnectorsTables:
+    main: Table
+
+
+def register_connectors_table(metadata: MetaData, reg: registry) -> ConnectorsTables:
     """
     Registers the connectors table.
 
@@ -49,4 +56,4 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         },
     )
 
-    return table_connectors
+    return ConnectorsTables(main=table_connectors)
