@@ -3,13 +3,13 @@ from enum import IntEnum
 
 from dataclasses_json import dataclass_json
 
-from .project_history_record import ProjectHistoryRecord
+from .project_logbook_record import ProjectLogbookRecord
 from ...connector import ConnectorInstanceID
 
 
 @dataclass_json
 @dataclass
-class PublishingHistoryRecord(ProjectHistoryRecord):
+class PublishingHistoryRecord(ProjectLogbookRecord):
     """
     A single record of a project's publishing history.
 

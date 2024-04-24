@@ -6,9 +6,9 @@ from dataclasses_json import dataclass_json
 
 @dataclass_json
 @dataclass
-class ProjectHistoryRecord(abc.ABC):
+class ProjectLogbookRecord(abc.ABC):
     """
-    Base class for all project history records.
+    Base class for all project logbook records.
 
     Attributes:
         timestamp: The timestamp of the record.

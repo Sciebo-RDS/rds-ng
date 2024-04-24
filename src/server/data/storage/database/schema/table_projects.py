@@ -21,7 +21,7 @@ from common.py.data.entities.project.features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from common.py.data.entities.project.history import PublishingHistoryRecord
+from common.py.data.entities.project.logbook import PublishingHistoryRecord
 
 from .types import JSONEncodedDataType, ArrayType
 
@@ -109,23 +109,23 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         Column("plan", JSONEncodedDataType),
     )
 
-    # -- History
+    # -- Logbook
 
-    table_project_history = Table(
-        "project_history",
+    table_project_logbook = Table(
+        "project_logbook",
         metadata,
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
     )
 
-    table_history_publishing = Table(
-        "project_history_publishing",
+    table_logbook_publishing_history = Table(
+        "project_logbook_publishing_history",
         metadata,
         Column(
             "project_id",
             Integer,
-            ForeignKey("project_history.project_id"),
+            ForeignKey("project_logbook.project_id"),
             primary_key=True,
         ),
         Column("timestamp", Float, primary_key=True),
@@ -153,8 +153,8 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
                 table_projects.c.opt__active_connector_instances,
                 table_projects.c.opt__ui,
             ),
-            "history": relationship(
-                Project.History,
+            "logbook": relationship(
+                Project.Logbook,
                 backref="projects",
                 uselist=False,
                 cascade="all, delete",
@@ -203,12 +203,12 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
     )
 
     reg.map_imperatively(
-        Project.History,
-        table_project_history,
+        Project.Logbook,
+        table_project_logbook,
         properties={
-            "publishing": relationship(
+            "publishing_history": relationship(
                 PublishingHistoryRecord,
-                backref="project_history",
+                backref="project_logbook",
                 cascade="all, delete",
             )
         },
@@ -216,7 +216,7 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
 
     reg.map_imperatively(
         PublishingHistoryRecord,
-        table_history_publishing,
+        table_logbook_publishing_history,
     )
 
     return table_projects

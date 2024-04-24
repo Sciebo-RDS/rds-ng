@@ -1,6 +1,6 @@
-import { type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { PublishingHistoryRecordStatus } from "@common/data/entities/project/history/PublishingHistoryRecord";
-import { Project } from "@common/data/entities/project/Project";
+import { type ConnectorInstanceID } from "../connector/ConnectorInstance";
+import { PublishingHistoryRecordStatus } from "./logbook/PublishingHistoryRecord";
+import { Project } from "./Project";
 
 /**
  * Statistics about project publications.
@@ -39,7 +39,7 @@ export class ProjectStatistics {
     private collectPublicationStatistics(): void {
         this._publications = {};
 
-        for (const publication of this._project.history.publishing) {
+        for (const publication of this._project.logbook.publishing_history) {
             if (!(publication.connector_instance in this._publications)) {
                 this._publications[publication.connector_instance] = this.createEmptyPublicationStatistics();
             }

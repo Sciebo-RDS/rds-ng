@@ -10,7 +10,7 @@ from .features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from .history import PublishingHistoryRecord
+from .logbook import PublishingHistoryRecord
 from ..connector import ConnectorInstanceID
 from ..user import UserID
 
@@ -35,7 +35,7 @@ class Project:
         status: The project status.
         features: All project features.
         options: All project options.
-        history: The project's publishing history.
+        logbook: The project's logbook.
     """
 
     class Status(IntEnum):
@@ -90,15 +90,15 @@ class Project:
 
     @dataclass_json
     @dataclass(kw_only=True)
-    class History:
+    class Logbook:
         """
-        Class holding all history records of a project.
+        Class holding all logbook records of a project.
 
         Attributes:
-            publishing: All publishing history records.
+            publishing_history: All publishing history records.
         """
 
-        publishing: List[PublishingHistoryRecord] = field(default_factory=list)
+        publishing_history: List[PublishingHistoryRecord] = field(default_factory=list)
 
     project_id: ProjectID
     user_id: UserID
@@ -115,4 +115,4 @@ class Project:
     features: Features = field(default_factory=Features)
     options: Options = field(default_factory=Options)
 
-    history: History = field(default_factory=History)
+    logbook: Logbook = field(default_factory=Logbook)

@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ConnectorOptions } from "@common/data/entities/connector/Connector";
 import Button from "primevue/button";
 import { computed, type PropType, toRefs, unref } from "vue";
 
+import { ConnectorOptions } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
+import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
 
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-import { ProjectStatistics } from "@/ui/tools/project/ProjectStatistics";
 
 const consStore = useConnectorsStore();
 const props = defineProps({

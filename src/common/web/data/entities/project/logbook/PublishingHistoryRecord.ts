@@ -2,7 +2,7 @@
  * The status of the publishing operation.
  */
 import { type ConnectorInstanceID } from "../../connector/ConnectorInstance";
-import { ProjectHistoryRecord } from "./ProjectHistoryRecord";
+import { ProjectLogbookRecord } from "./ProjectLogbookRecord";
 
 export const enum PublishingHistoryRecordStatus {
     Done = 0,
@@ -15,7 +15,7 @@ export const enum PublishingHistoryRecordStatus {
  * @param status - The status (done or failed).
  * @param message - An optional message (usually in case of an error).
  */
-export class PublishingHistoryRecord extends ProjectHistoryRecord {
+export class PublishingHistoryRecord extends ProjectLogbookRecord {
     public readonly connector_instance: ConnectorInstanceID;
 
     public readonly status: PublishingHistoryRecordStatus;
