@@ -2,9 +2,9 @@ from common.py.component import BackendComponent
 from common.py.services import Service
 
 
-def create_engine_service(comp: BackendComponent) -> Service:
+def create_jobs_service(comp: BackendComponent) -> Service:
     """
-    Creates the server engine service.
+    Creates the jobs service.
 
     Args:
         comp: The main component instance.
@@ -16,10 +16,10 @@ def create_engine_service(comp: BackendComponent) -> Service:
 
     from .server_service_context import ServerServiceContext
 
-    svc = comp.create_service("Engine service", context_type=ServerServiceContext)
+    svc = comp.create_service("Jobs service", context_type=ServerServiceContext)
 
     @svc.message_handler(ComponentProcessEvent)
-    def process_engine(msg: ComponentProcessEvent, ctx: ServerServiceContext) -> None:
-        ctx.engine.process()
+    def process_jobs(msg: ComponentProcessEvent, ctx: ServerServiceContext) -> None:
+        pass
 
     return svc
