@@ -11,6 +11,7 @@ from sqlalchemy import (
     Boolean,
     ForeignKey,
     String,
+    Uuid,
 )
 from sqlalchemy.orm import registry, composite, relationship
 
@@ -143,7 +144,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             primary_key=True,
         ),
         Column("timestamp", Float, primary_key=True),
-        Column("connector_instance", String(64), primary_key=True),
+        Column("connector_instance", Uuid, primary_key=True),
         Column("status", Integer),
         Column("message", Text),
     )
