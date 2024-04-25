@@ -40,13 +40,12 @@ const disablePublish = computed(() => {
 });
 
 function onPublish() {
-    if (!unref(project) || !unref(connector) || !unref(instance)) {
-        return;
+    const conn = unref(connector);
+    if (conn) {
+        const action = new InitiateJobAction(comp);
+        action.prepare(unref(project), conn, unref(instance));
+        action.execute();
     }
-
-    const action = new InitiateJobAction(comp);
-    action.prepare(unref(project)!, unref(connector)!, unref(instance)!);
-    action.execute();
 }
 </script>
 
