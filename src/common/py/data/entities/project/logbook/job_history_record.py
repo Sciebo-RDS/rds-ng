@@ -9,9 +9,9 @@ from ...connector import ConnectorInstanceID
 
 @dataclass_json
 @dataclass
-class PublishingHistoryRecord(ProjectLogbookRecord):
+class JobHistoryRecord(ProjectLogbookRecord):
     """
-    A single record of a project's publishing history.
+    A single record of a project's job history.
 
     Attributes:
         connector_instance: The connector instance ID.
@@ -21,7 +21,7 @@ class PublishingHistoryRecord(ProjectLogbookRecord):
 
     class Status(IntEnum):
         """
-        The status of the publishing operation.
+        The status of the job operation.
         """
 
         DONE = 0

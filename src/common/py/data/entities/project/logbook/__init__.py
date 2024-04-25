@@ -1,3 +1,3 @@
 from .project_logbook_record import ProjectLogbookRecord
 
-from .publishing_history_record import PublishingHistoryRecord
+from .job_history_record import JobHistoryRecord

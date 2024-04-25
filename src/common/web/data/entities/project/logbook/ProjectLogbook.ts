@@ -1,19 +1,18 @@
 import { Type } from "class-transformer";
 
-import { PublishingHistoryRecord } from "./PublishingHistoryRecord";
+import { JobHistoryRecord } from "./JobHistoryRecord";
 
 /**
  * Class holding all history records of a project.
  *
- * @param publishing_jobs - All running publishing jobs.
- * @para, publishing_history - All publishing history records.
+ * @param job_history - All job history records.
  */
 export class ProjectLogbook {
     // @ts-ignore
-    @Type(() => PublishingHistoryRecord)
-    public readonly publishing_history: PublishingHistoryRecord[];
+    @Type(() => JobHistoryRecord)
+    public readonly job_history: JobHistoryRecord[];
 
-    public constructor(publishingHistory: PublishingHistoryRecord[] = []) {
-        this.publishing_history = publishingHistory;
+    public constructor(jobHistory: JobHistoryRecord[] = []) {
+        this.job_history = jobHistory;
     }
 }

@@ -1,12 +1,12 @@
 import { type ConnectorInstanceID } from "../connector/ConnectorInstance";
-import { PublishingHistoryRecordStatus } from "./logbook/PublishingHistoryRecord";
+import { JobHistoryRecordStatus } from "./logbook/JobHistoryRecord";
 import { Project } from "./Project";
 
 /**
- * Statistics about project publications.
+ * Statistics about project jobs.
  */
-export interface PublicationStatistics {
-    lastPublication: number;
+export interface JobStatistics {
+    lastJob: number;
     totalCount: {
         done: number;
         failed: number;
@@ -19,50 +19,50 @@ export interface PublicationStatistics {
 export class ProjectStatistics {
     private readonly _project: Project;
 
-    private _publications: Record<ConnectorInstanceID, PublicationStatistics> = {};
+    private _jobStatistics: Record<ConnectorInstanceID, JobStatistics> = {};
 
     public constructor(project: Project) {
         this._project = project;
 
-        this.collectPublicationStatistics();
+        this.collectJobStatistics();
     }
 
     /**
-     * Gets statistics about publications of a specific connector instance.
+     * Gets statistics about jobs of a specific connector instance.
      *
      * @param connectorInstance - The connector instance.
      */
-    public getPublicationStatistics(connectorInstance: ConnectorInstanceID): PublicationStatistics {
-        return connectorInstance in this._publications ? this._publications[connectorInstance] : this.createEmptyPublicationStatistics();
+    public getJobStatistics(connectorInstance: ConnectorInstanceID): JobStatistics {
+        return connectorInstance in this._jobStatistics ? this._jobStatistics[connectorInstance] : this.createEmptyJobStatistics();
     }
 
-    private collectPublicationStatistics(): void {
-        this._publications = {};
+    private collectJobStatistics(): void {
+        this._jobStatistics = {};
 
-        for (const publication of this._project.logbook.publishing_history) {
-            if (!(publication.connector_instance in this._publications)) {
-                this._publications[publication.connector_instance] = this.createEmptyPublicationStatistics();
+        for (const jobRecord of this._project.logbook.job_history) {
+            if (!(jobRecord.connector_instance in this._jobStatistics)) {
+                this._jobStatistics[jobRecord.connector_instance] = this.createEmptyJobStatistics();
             }
 
-            if (publication.status == PublishingHistoryRecordStatus.Done) {
-                this._publications[publication.connector_instance].lastPublication = Math.max(
-                    this._publications[publication.connector_instance].lastPublication,
-                    publication.timestamp,
+            if (jobRecord.status == JobHistoryRecordStatus.Done) {
+                this._jobStatistics[jobRecord.connector_instance].lastJob = Math.max(
+                    this._jobStatistics[jobRecord.connector_instance].lastJob,
+                    jobRecord.timestamp,
                 );
-                this._publications[publication.connector_instance].totalCount.done += 1;
-            } else if (publication.status == PublishingHistoryRecordStatus.Failed) {
-                this._publications[publication.connector_instance].totalCount.failed += 1;
+                this._jobStatistics[jobRecord.connector_instance].totalCount.done += 1;
+            } else if (jobRecord.status == JobHistoryRecordStatus.Failed) {
+                this._jobStatistics[jobRecord.connector_instance].totalCount.failed += 1;
             }
         }
     }
 
-    private createEmptyPublicationStatistics(): PublicationStatistics {
+    private createEmptyJobStatistics(): JobStatistics {
         return {
-            lastPublication: 0,
+            lastJob: 0,
             totalCount: {
                 done: 0,
                 failed: 0,
             },
-        } as PublicationStatistics;
+        } as JobStatistics;
     }
 }

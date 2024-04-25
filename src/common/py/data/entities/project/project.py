@@ -10,7 +10,7 @@ from .features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from .logbook import PublishingHistoryRecord
+from .logbook import JobHistoryRecord
 from ..connector import ConnectorInstanceID
 from ..user import UserID
 
@@ -95,10 +95,10 @@ class Project:
         Class holding all logbook records of a project.
 
         Attributes:
-            publishing_history: All publishing history records.
+            job_history: All job history records.
         """
 
-        publishing_history: List[PublishingHistoryRecord] = field(default_factory=list)
+        job_history: List[JobHistoryRecord] = field(default_factory=list)
 
     project_id: ProjectID
     user_id: UserID

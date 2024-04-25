@@ -27,11 +27,11 @@ const { project, instance } = toRefs(props);
 const connector = computed(() => findConnectorByID(consStore.connectors, unref(instance)!.connector_id));
 const category = unref(connector) ? getConnectorCategory(unref(connector)!) : undefined;
 
-const publishStats = new ProjectStatistics(unref(project)!).getPublicationStatistics(unref(instance)!.instance_id);
+const jobStats = new ProjectStatistics(unref(project)!).getJobStatistics(unref(instance)!.instance_id);
 const disablePublish = computed(() => {
     if (unref(connector)) {
         const publishOnce = (unref(connector)!.options & ConnectorOptions.PublishOnce) == ConnectorOptions.PublishOnce;
-        return publishOnce && publishStats.totalCount.done >= 1;
+        return publishOnce && jobStats.totalCount.done >= 1;
     }
     return true;
 });
@@ -60,11 +60,11 @@ const disablePublish = computed(() => {
         <div class="grid grid-cols-[1fr_max-content] grid-flow-col pt-5 col-span-2 text-sm">
             <div v-if="category" class="grid grid-flow-col auto-cols-max gap-2 r-text-secondary italic">
                 <b>Last {{ category.verbStatus }}: </b>
-                <span class="pr-3">{{ publishStats.lastPublication > 0 ? new Date(publishStats.lastPublication * 1000).toLocaleString() : "Never" }}</span>
+                <span class="pr-3">{{ jobStats.lastJob > 0 ? new Date(jobStats.lastJob * 1000).toLocaleString() : "Never" }}</span>
                 <b>Total {{ category.verbNounPlural }}:</b>
                 <span>
-                    {{ publishStats.totalCount.done }}
-                    <span v-if="publishStats.totalCount.failed > 0">(+ {{ publishStats.totalCount.failed }} failed)</span>
+                    {{ jobStats.totalCount.done }}
+                    <span v-if="jobStats.totalCount.failed > 0">(+ {{ jobStats.totalCount.failed }} failed)</span>
                 </span>
             </div>
             <div v-else class="italic r-text-error">Unknown connector category</div>

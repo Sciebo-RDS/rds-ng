@@ -13,7 +13,7 @@ ProjectJobID = typing.Tuple[ProjectID, ConnectorInstanceID]
 @dataclass(kw_only=True)
 class ProjectJob:
     """
-    A project (publishing) job that is currently active.
+    A project job that is currently active.
 
     Attributes:
         project_id: The project ID.

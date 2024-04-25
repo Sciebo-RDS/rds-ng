@@ -1,8 +1,8 @@
-import { ConnectorInstanceID } from "../connector/ConnectorInstance";
-import { ProjectID } from "./Project";
+import { type ConnectorInstanceID } from "../connector/ConnectorInstance";
+import { type ProjectID } from "./Project";
 
 /**
- * A project (publishing) job that is currently active.
+ * A project job that is currently active.
  *
  * @param project_id - The project ID.
  * @param connector_instance - The connector instance ID.

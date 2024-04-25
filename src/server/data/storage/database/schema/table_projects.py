@@ -22,7 +22,7 @@ from common.py.data.entities.project.features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from common.py.data.entities.project.logbook import PublishingHistoryRecord
+from common.py.data.entities.project.logbook import JobHistoryRecord
 
 from .types import JSONEncodedDataType, ArrayType
 
@@ -221,7 +221,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         table_project_logbook,
         properties={
             "publishing_history": relationship(
-                PublishingHistoryRecord,
+                JobHistoryRecord,
                 backref="project_logbook",
                 cascade="all, delete",
             ),
@@ -229,7 +229,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
     )
 
     reg.map_imperatively(
-        PublishingHistoryRecord,
+        JobHistoryRecord,
         table_logbook_publishing_history,
     )
 
