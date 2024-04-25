@@ -220,7 +220,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Project.Logbook,
         table_project_logbook,
         properties={
-            "publishing_history": relationship(
+            "job_history": relationship(
                 JobHistoryRecord,
                 backref="project_logbook",
                 cascade="all, delete",

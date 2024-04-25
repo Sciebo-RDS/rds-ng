@@ -8,9 +8,12 @@ import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtil
 import { Project } from "@common/data/entities/project/Project";
 import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { InitiateJobAction } from "@/ui/actions/project/InitiateJobAction";
 
+const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
 const props = defineProps({
     project: {
@@ -35,6 +38,16 @@ const disablePublish = computed(() => {
     }
     return true;
 });
+
+function onPublish() {
+    if (!unref(project) || !unref(connector) || !unref(instance)) {
+        return;
+    }
+
+    const action = new InitiateJobAction(comp);
+    action.prepare(unref(project)!, unref(connector)!, unref(instance)!);
+    action.execute();
+}
 </script>
 
 <template>
@@ -52,6 +65,7 @@ const disablePublish = computed(() => {
                 :label="category.verbAction"
                 icon="material-icons-outlined mi-rocket-launch"
                 :pt="{ root: category.buttonClass }"
+                @click="onPublish"
             />
         </div>
 
