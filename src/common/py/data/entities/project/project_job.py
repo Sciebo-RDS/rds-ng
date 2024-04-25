@@ -1,9 +1,12 @@
+import typing
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
 
 from .project import ProjectID
 from ..connector import ConnectorInstanceID
+
+ProjectJobID = typing.Tuple[ProjectID, ConnectorInstanceID]
 
 
 @dataclass_json

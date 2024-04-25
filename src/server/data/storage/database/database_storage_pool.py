@@ -5,6 +5,7 @@ from common.py.data.storage import StoragePool
 from common.py.utils.config import Configuration
 
 from .database_connector_storage import DatabaseConnectorStorage
+from .database_project_job_storage import DatabaseProjectJobStorage
 from .database_project_storage import DatabaseProjectStorage
 from .database_user_storage import DatabaseUserStorage
 from .schema import DatabaseSchema
@@ -41,6 +42,9 @@ class DatabaseStoragePool(StoragePool):
         self._project_storage = DatabaseProjectStorage(
             self._session, DatabaseStoragePool._schema.projects_table
         )
+        self._project_job_storage = DatabaseProjectJobStorage(
+            self._session, DatabaseStoragePool._schema.projects_table
+        )
 
     def close(self, save_changes: bool = True) -> None:
         self._session.commit() if save_changes else self._session.rollback()
@@ -57,3 +61,7 @@ class DatabaseStoragePool(StoragePool):
     @property
     def project_storage(self) -> DatabaseProjectStorage:
         return self._project_storage
+
+    @property
+    def project_job_storage(self) -> DatabaseProjectJobStorage:
+        return self._project_job_storage
