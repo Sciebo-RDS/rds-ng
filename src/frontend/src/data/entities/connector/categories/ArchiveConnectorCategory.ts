@@ -12,6 +12,7 @@ export class ArchiveConnectorCategory extends ConnectorCategory {
             "Export",
             "Export",
             "Exports",
+            "Exporting",
             "Exported",
             "r-connector-category-archive-tag",
             "r-connector-category-archive-button",

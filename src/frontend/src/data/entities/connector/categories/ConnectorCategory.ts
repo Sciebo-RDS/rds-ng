@@ -11,7 +11,8 @@ export class ConnectorCategory {
     public readonly verbAction: string;
     public readonly verbNoun: string;
     public readonly verbNounPlural: string;
-    public readonly verbStatus: string;
+    public readonly verbStatusProgressing: string;
+    public readonly verbStatusDone: string;
 
     public readonly tagClass: string | undefined;
     public readonly buttonClass: string | undefined;
@@ -22,7 +23,8 @@ export class ConnectorCategory {
         verbAction: string,
         verbNoun: string,
         verbNounPlural: string,
-        verbStatus: string,
+        verbStatusProgressing: string,
+        verbStatusDone: string,
         tagClass?: string,
         buttonClass?: string,
     ) {
@@ -32,7 +34,8 @@ export class ConnectorCategory {
         this.verbAction = verbAction;
         this.verbNoun = verbNoun;
         this.verbNounPlural = verbNounPlural;
-        this.verbStatus = verbStatus;
+        this.verbStatusProgressing = verbStatusProgressing;
+        this.verbStatusDone = verbStatusDone;
 
         this.tagClass = tagClass;
         this.buttonClass = buttonClass;
