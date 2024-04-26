@@ -86,6 +86,21 @@ html {
     @apply text-red-500 #{!important};
 }
 
+.r-bg-success,
+.r-bg-success * {
+    @apply bg-green-400 #{!important};
+}
+
+.r-bg-warning,
+.r-bg-warning * {
+    @apply bg-yellow-400 #{!important};
+}
+
+.r-bg-error,
+.r-bg-error * {
+    @apply bg-red-500 #{!important};
+}
+
 .r-border-color {
     color: var(--r-border-color);
 }

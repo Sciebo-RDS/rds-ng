@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import Button from "primevue/button";
-import { computed, type PropType, toRefs, unref } from "vue";
+import { computed, type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorOptions } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
+import { errorMessageDialog } from "@common/ui/dialogs/MessageDialog";
+import { finishSentence } from "@common/utils/Strings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
@@ -31,6 +33,7 @@ const connector = computed(() => findConnectorByID(consStore.connectors, unref(i
 const category = unref(connector) ? getConnectorCategory(unref(connector)!) : undefined;
 
 const jobStats = new ProjectStatistics(unref(project)!).getJobStatistics(unref(instance)!.instance_id);
+const initiatePublish = ref(false);
 const disablePublish = computed(() => {
     if (unref(connector)) {
         const publishOnce = (unref(connector)!.options & ConnectorOptions.PublishOnce) == ConnectorOptions.PublishOnce;
@@ -38,13 +41,31 @@ const disablePublish = computed(() => {
     }
     return true;
 });
+const publishTitle = computed(() => (unref(initiatePublish) ? "Initiating..." : category?.verbAction));
 
 function onPublish() {
     const conn = unref(connector);
     if (conn) {
+        initiatePublish.value = true;
+
         const action = new InitiateJobAction(comp);
-        action.prepare(unref(project), conn, unref(instance));
+        action
+            .prepare(unref(project), conn, unref(instance))
+            .done((_, success, msg) => {
+                publishInitiated(success, msg);
+            })
+            .failed((_, msg) => {
+                publishInitiated(false, msg);
+            });
         action.execute();
+    }
+}
+
+function publishInitiated(success: boolean, msg: string): void {
+    initiatePublish.value = false;
+
+    if (!success) {
+        errorMessageDialog(comp, "Unable to start job", finishSentence(msg));
     }
 }
 </script>
@@ -56,13 +77,15 @@ function onPublish() {
         <div class="row-span-2 pl-1 content-center">
             <Button
                 v-if="category"
-                :disabled="disablePublish"
+                :label="publishTitle"
+                :aria-label="publishTitle"
                 :title="disablePublish ? 'The project has already been ' + category.verbStatus.toLowerCase() : category.verbAction + ' the project'"
+                :loading="initiatePublish"
+                :disabled="disablePublish"
                 rounded
                 size="small"
-                :aria-label="category.verbAction"
-                :label="category.verbAction"
                 icon="material-icons-outlined mi-rocket-launch"
+                loading-icon="material-icons-outlined mi-rocket-launch"
                 :pt="{ root: category.buttonClass }"
                 @click="onPublish"
             />

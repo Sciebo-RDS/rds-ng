@@ -33,3 +33,15 @@ export function humanReadableFileSize(size: number): string {
         return size + " B";
     }
 }
+
+/**
+ * Adds a full stop to a string if necessary.
+ *
+ * @param sentence - The sentence to complete.
+ */
+export function finishSentence(sentence: string): string {
+    if (sentence.length > 0 && sentence[sentence.length - 1] != ".") {
+        sentence += ".";
+    }
+    return sentence;
+}
