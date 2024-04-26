@@ -1,4 +1,5 @@
 import time
+import typing
 
 from common.py.component import BackendComponent
 from common.py.data.entities.project import ProjectJob
@@ -15,12 +16,30 @@ def create_jobs_service(comp: BackendComponent) -> Service:
     Returns:
         The newly created service.
     """
-    from common.py.api.project import InitiateJobCommand, InitiateJobReply
+    from common.py.api.project import (
+        ListJobsCommand,
+        ListJobsReply,
+        InitiateJobCommand,
+        InitiateJobReply,
+    )
     from common.py.api.component import ComponentProcessEvent
 
     from .server_service_context import ServerServiceContext
 
     svc = comp.create_service("Jobs service", context_type=ServerServiceContext)
+
+    @svc.message_handler(ListJobsCommand)
+    def list_jobs(msg: ListJobsCommand, ctx: ServerServiceContext) -> None:
+        if not ctx.ensure_user(msg, ListJobsReply, project_jobs=[]):
+            return
+
+        from .tools import get_user_project_jobs
+
+        ListJobsReply.build(
+            ctx.message_builder,
+            msg,
+            project_jobs=get_user_project_jobs(ctx),
+        ).emit()
 
     @svc.message_handler(InitiateJobCommand)
     def initiate_job(msg: InitiateJobCommand, ctx: ServerServiceContext) -> None:

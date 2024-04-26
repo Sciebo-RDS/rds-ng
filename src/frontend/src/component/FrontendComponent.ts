@@ -13,6 +13,7 @@ import { registerConnectorCategories } from "@/data/entities/connector/categorie
 import createConnectorsService from "@/services/ConnectorsService";
 import createFrontendService from "@/services/FrontendService";
 import createProjectsService from "@/services/ProjectsService";
+import createJobsService from "@/services/JobsService";
 import createUserService from "@/services/UserService";
 
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
@@ -32,6 +33,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _userService: Service | null = null;
     private _connectorsService: Service | null = null;
     private _projectsService: Service | null = null;
+    private _jobsService: Service | null = null;
 
     public constructor() {
         super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendUserInterface);
@@ -55,6 +57,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this._userService = createUserService(this);
         this._connectorsService = createConnectorsService(this);
         this._projectsService = createProjectsService(this);
+        this._jobsService = createJobsService(this);
     }
 
     private addFrontendSettings(): void {
@@ -127,6 +130,16 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
             throw new Error("Tried to access the projects service before its creation");
         }
         return this._projectsService;
+    }
+
+    /**
+     * The project jobs service.
+     */
+    public get jobsService(): Service {
+        if (!this._jobsService) {
+            throw new Error("Tried to access the jobs service before its creation");
+        }
+        return this._jobsService;
     }
 
     /**

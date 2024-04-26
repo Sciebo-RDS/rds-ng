@@ -4,6 +4,7 @@ import typing
 from common.py.data.entities.project import (
     ProjectJob,
     ProjectJobID,
+    ProjectID,
 )
 from common.py.data.storage import ProjectJobStorage
 
@@ -47,6 +48,15 @@ class MemoryProjectJobStorage(ProjectJobStorage):
     def list(self) -> typing.List[ProjectJob]:
         with MemoryProjectJobStorage._lock:
             return list(MemoryProjectJobStorage._project_jobs.values())
+
+    def filter_by_project(self, project_id: ProjectID) -> typing.List[ProjectJob]:
+        with MemoryProjectJobStorage._lock:
+            return list(
+                filter(
+                    lambda job: job.project_id == project_id,
+                    MemoryProjectJobStorage._project_jobs.values(),
+                )
+            )
 
     def _key_from_entity(self, entity: ProjectJob) -> ProjectJobID:
         return entity.project_id, entity.connector_instance

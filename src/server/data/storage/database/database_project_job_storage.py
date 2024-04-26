@@ -4,7 +4,7 @@ import typing
 from sqlalchemy import Table
 from sqlalchemy.orm import Session
 
-from common.py.data.entities.project import ProjectJob, ProjectJobID
+from common.py.data.entities.project import ProjectJob, ProjectJobID, ProjectID
 from common.py.data.storage import ProjectJobStorage
 
 from .database_storage_accessor import DatabaseStorageAccessor
@@ -41,3 +41,6 @@ class DatabaseProjectJobStorage(ProjectJobStorage):
 
     def list(self) -> typing.List[ProjectJob]:
         return self._accessor.list()
+
+    def filter_by_project(self, project_id: ProjectID) -> typing.List[ProjectJob]:
+        return self._accessor.filter(self._table.c.project_id == project_id)
