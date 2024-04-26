@@ -65,7 +65,7 @@ function publishInitDone(success: boolean, msg: string): void {
     initiatePublish.value = false;
 
     if (!success) {
-        errorMessageDialog(comp, "Unable to start job", finishSentence(msg));
+        errorMessageDialog(comp, `Unable to start ${category?.verbNoun.toLowerCase() || "job"}`, finishSentence(msg));
     }
 }
 </script>
