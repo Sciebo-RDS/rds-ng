@@ -52,16 +52,16 @@ function onPublish() {
         action
             .prepare(unref(project), conn, unref(instance))
             .done((_, success, msg) => {
-                publishInitiated(success, msg);
+                publishInitDone(success, msg);
             })
             .failed((_, msg) => {
-                publishInitiated(false, msg);
+                publishInitDone(false, msg);
             });
         action.execute();
     }
 }
 
-function publishInitiated(success: boolean, msg: string): void {
+function publishInitDone(success: boolean, msg: string): void {
     initiatePublish.value = false;
 
     if (!success) {
