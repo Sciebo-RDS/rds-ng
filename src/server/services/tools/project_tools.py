@@ -11,7 +11,7 @@ def send_projects_list(msg: Message, ctx: ServerServiceContext) -> None:
         msg: Original message for chaining.
         ctx: The service context.
     """
-    from common.py.api import ProjectsListEvent
+    from common.py.api.project import ProjectsListEvent
 
     if ctx.user is None:
         raise RuntimeError("Sending projects list without an authenticated user")

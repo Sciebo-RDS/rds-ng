@@ -1,9 +1,8 @@
-import time
-import typing
-
 from common.py.component import BackendComponent
 from common.py.data.entities.project import ProjectJob
 from common.py.services import Service
+
+from .tools.project_job_tools import send_project_jobs_list
 
 
 def create_jobs_service(comp: BackendComponent) -> Service:
@@ -66,11 +65,11 @@ def create_jobs_service(comp: BackendComponent) -> Service:
         else:
             message = "A job through this connection is already running"
 
-        # TODO: Logging
-
         InitiateJobReply.build(
             ctx.message_builder, msg, success=success, message=message
         ).emit()
+
+        send_project_jobs_list(msg, ctx)
 
     @svc.message_handler(ComponentProcessEvent)
     def process_jobs(msg: ComponentProcessEvent, ctx: ServerServiceContext) -> None:

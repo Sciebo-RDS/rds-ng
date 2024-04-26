@@ -1,5 +1,6 @@
 import typing
 
+from common.py.core.messaging import Message, Channel
 from common.py.data.entities.project import ProjectJob
 
 from .. import ServerServiceContext
@@ -23,3 +24,23 @@ def get_user_project_jobs(ctx: ServerServiceContext) -> typing.List[ProjectJob]:
             ctx.storage_pool.project_job_storage.filter_by_project(project.project_id)
         )
     return project_jobs
+
+
+def send_project_jobs_list(msg: Message, ctx: ServerServiceContext) -> None:
+    """
+    Sends the project job list to the currently authenticated user.
+
+    Args:
+        msg: Original message for chaining.
+        ctx: The service context.
+    """
+    from common.py.api.project import JobsListEvent
+
+    if ctx.user is None:
+        raise RuntimeError("Sending project jobs list without an authenticated user")
+
+    JobsListEvent.build(
+        ctx.message_builder,
+        project_jobs=get_user_project_jobs(ctx),
+        chain=msg,
+    ).emit(Channel.direct(msg.origin))
