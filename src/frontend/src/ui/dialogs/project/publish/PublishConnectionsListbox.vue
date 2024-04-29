@@ -26,7 +26,15 @@ const props = defineProps({
 const { connectors } = storeToRefs(consStore);
 const { project, userSettings } = toRefs(props);
 
-const groupedInstances = computed(() => groupConnectorInstances(unref(userSettings)!.connector_instances, unref(connectors)!));
+const groupedInstances = computed(() =>
+    groupConnectorInstances(
+        unref(userSettings)!.connector_instances.filter((instance) => {
+            const options = unref(project)!.options;
+            return options.use_all_connector_instances || options.active_connector_instances.includes(instance.instance_id);
+        }),
+        unref(connectors)!,
+    ),
+);
 </script>
 
 <template>

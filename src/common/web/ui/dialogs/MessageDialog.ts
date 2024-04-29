@@ -8,6 +8,7 @@ function messageDialog(comp: WebComponent, title: string, message: string, icon:
         header: title,
         message: message,
         icon: icon,
+        // @ts-ignore
         background: background,
     });
 }
