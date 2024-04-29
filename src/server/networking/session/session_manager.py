@@ -1,6 +1,8 @@
 import threading
 import typing
 
+from common.py.data.entities.user import UserID
+
 from .session import SessionID, Session
 
 
@@ -50,3 +52,20 @@ class SessionManager:
         """
         with SessionManager._lock:
             return session_id in SessionManager._sessions
+
+    def find_user_session(self, user_id: UserID) -> Session | None:
+        """
+        Finds the session associated with the user ID.
+
+        Args:
+            user_id: The user ID.
+
+        Returns:
+            The associated session, if any.
+        """
+        with SessionManager._lock:
+            for _, session in SessionManager._sessions.items():
+                if session.user_token and session.user_token.user_id == user_id:
+                    return session
+            else:
+                return None

@@ -22,6 +22,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         InitiateProjectJobCommand,
         InitiateProjectJobReply,
         StartProjectJobCommand,
+        StartProjectJobReply,
     )
     from common.py.api.component import ComponentProcessEvent
 
@@ -107,28 +108,36 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             )
             return
 
-        # All checks have passed, so send the job to the connector
+        # All checks have passed, so initiate the job and send it to the connector
         job = ProjectJob(
             user_id=ctx.user.user_id,
             project_id=msg.project_id,
             connector_instance=msg.connector_instance,
-            message="Job started",
+            message="Job initiated",
         )
+
+        _initiate(True, "", job)
 
         StartProjectJobCommand.build(
             ctx.message_builder,
             project=project,
             connector_instance=msg.connector_instance,
             chain=msg,
-        ).done(
-            lambda _, success, message: _initiate(
-                success, message, job if success else None
+        ).emit(Channel.direct(connector.connector_address))
+
+    @svc.message_handler(StartProjectJobReply)
+    def job_started(msg: StartProjectJobReply, ctx: ServerServiceContext) -> None:
+        if (
+            job := ctx.storage_pool.project_job_storage.get(
+                (msg.project_id, msg.connector_instance)
             )
-        ).failed(
-            lambda _, message: _initiate(False, message)
-        ).emit(
-            Channel.direct(connector.connector_address)
-        )
+        ) is not None:
+            job.message = "Job started"
+
+            if (
+                session := ctx.session_manager.find_user_session(job.user_id)
+            ) is not None:
+                send_project_jobs_list(msg, ctx, session=session)
 
     @svc.message_handler(ComponentProcessEvent)
     def process_jobs(msg: ComponentProcessEvent, ctx: ServerServiceContext) -> None:

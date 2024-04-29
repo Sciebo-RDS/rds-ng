@@ -120,15 +120,20 @@ export class StartProjectJobCommand extends Command {
  */
 @Message.define("command/project-job/start/reply")
 export class StartProjectJobReply extends CommandReply {
+    public readonly project_id: ProjectID = 0;
+    public readonly connector_instance: ConnectorInstanceID = "";
+
     /**
      * Helper function to easily build this message.
      */
     public static build(
         messageBuilder: MessageBuilder,
         cmd: StartProjectJobCommand,
+        projectID: ProjectID,
+        connectorInstance: ConnectorInstanceID,
         success: boolean = true,
         message: string = "",
     ): CommandReplyComposer<StartProjectJobReply> {
-        return messageBuilder.buildCommandReply(StartProjectJobReply, cmd, success, message);
+        return messageBuilder.buildCommandReply(StartProjectJobReply, cmd, success, message, { project_id: projectID, connector_instance: connectorInstance });
     }
 }

@@ -37,7 +37,9 @@ def create_users_service(comp: BackendComponent) -> Service:
     def authenticate_user(
         msg: AuthenticateUserCommand, ctx: ServerServiceContext
     ) -> None:
-        success = ctx.session_manager[msg.origin].authenticate(msg.user_token)
+        success = ctx.session_manager[msg.origin].authenticate(
+            msg.user_token, msg.origin
+        )
 
         if success:
             user_id = msg.user_token.user_id

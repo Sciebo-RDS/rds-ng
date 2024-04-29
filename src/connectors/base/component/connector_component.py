@@ -32,13 +32,14 @@ class ConnectorComponent(BackendComponent):
 
     def run(self) -> None:
         from ..data.entities.connector.categories import register_connector_categories
-        from ..services.connector_service import create_connector_service
+        from ..services import create_connector_service, create_project_jobs_service
 
         # Register global items
         register_connector_categories()
 
         # Create connector-specific services
         create_connector_service(self)
+        create_project_jobs_service(self)
 
         super().run()
 

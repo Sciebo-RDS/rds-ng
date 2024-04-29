@@ -158,13 +158,22 @@ class StartProjectJobCommand(Command):
 class StartProjectJobReply(CommandReply):
     """
     Reply to ``StartProjectJobCommand``.
+
+    Args:
+        project_id: The project ID.
+        connector_instance: The connector instance ID.
     """
+
+    project_id: ProjectID
+    connector_instance: ConnectorInstanceID
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         cmd: StartProjectJobCommand,
         *,
+        project_id: ProjectID,
+        connector_instance: ConnectorInstanceID,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -172,5 +181,10 @@ class StartProjectJobReply(CommandReply):
         Helper function to easily build this message.
         """
         return message_builder.build_command_reply(
-            StartProjectJobReply, cmd, success, message
+            StartProjectJobReply,
+            cmd,
+            success,
+            message,
+            project_id=project_id,
+            connector_instance=connector_instance,
         )
