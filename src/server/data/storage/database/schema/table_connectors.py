@@ -4,8 +4,9 @@ from sqlalchemy import Table, MetaData, Column, Text, String, Float, Integer
 from sqlalchemy.orm import registry, composite
 
 from common.py.data.entities.connector import Connector
+from common.py.utils import UnitID
 
-from .types import JSONEncodedDataType
+from .types import JSONEncodedDataType, DataclassDataType
 
 
 @dataclass(kw_only=True)
@@ -31,6 +32,10 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         metadata,
         # Main
         Column("connector_id", String(64), primary_key=True),
+        Column(
+            "connector_address",
+            DataclassDataType[UnitID](dataclass_type=UnitID),
+        ),
         Column("name", Text),
         Column("description", Text),
         Column("category", Text),

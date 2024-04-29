@@ -12,7 +12,7 @@ import ConfirmDialog from "primevue/confirmdialog";
                 </div>
 
                 <span class="self-start font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
-                <p class="mb-0">{{ message.message }}</p>
+                <p class="self-start mb-0">{{ message.message }}</p>
 
                 <div class="flex self-end gap-2 mt-6">
                     <Button label="OK" outlined @click="acceptCallback" />

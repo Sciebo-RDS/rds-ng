@@ -7,7 +7,7 @@ import { CommandReplyComposer } from "../../core/messaging/composers/CommandRepl
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
 import { type ConnectorInstanceID } from "../../data/entities/connector/ConnectorInstance";
-import { type ProjectID } from "../../data/entities/project/Project";
+import { Project, type ProjectID } from "../../data/entities/project/Project";
 import { ProjectJob } from "../../data/entities/project/ProjectJob";
 
 /**
@@ -87,5 +87,48 @@ export class InitiateProjectJobReply extends CommandReply {
         message: string = "",
     ): CommandReplyComposer<InitiateProjectJobReply> {
         return messageBuilder.buildCommandReply(InitiateProjectJobReply, cmd, success, message);
+    }
+}
+
+/**
+ * Command to start a project job in the target connector.
+ *
+ * @param project - The project to publish.
+ */
+@Message.define("command/project-job/start")
+export class StartProjectJobCommand extends Command {
+    // @ts-ignore
+    @Type(() => Project)
+    public readonly project: Project = new Project(0, 0, "", "");
+    public readonly connector_instance: ConnectorInstanceID = "";
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        project: Project,
+        connectorInstance: ConnectorInstanceID,
+        chain: Message | null = null,
+    ): CommandComposer<InitiateProjectJobCommand> {
+        return messageBuilder.buildCommand(InitiateProjectJobCommand, { project: project, connector_instance: connectorInstance }, chain);
+    }
+}
+
+/**
+ * Reply to ``StartProjectJobCommand``.
+ */
+@Message.define("command/project-job/start/reply")
+export class StartProjectJobReply extends CommandReply {
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: StartProjectJobCommand,
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<StartProjectJobReply> {
+        return messageBuilder.buildCommandReply(StartProjectJobReply, cmd, success, message);
     }
 }

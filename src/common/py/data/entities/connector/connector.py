@@ -5,6 +5,8 @@ from enum import IntFlag
 
 from dataclasses_json import dataclass_json
 
+from ....utils import UnitID
+
 ConnectorID = str
 ConnectorCategoryID = str
 ConnectorMetadataProfile = typing.Dict[str, typing.Any]  # TODO: Use proper type
@@ -18,6 +20,7 @@ class Connector:
 
     Attributes:
         connector_id: The unique connector identifier.
+        connector_address: The target address of the connector.
         name: The name of the connector.
         description: An optional connector description.
         category: The connector category.
@@ -53,6 +56,7 @@ class Connector:
         horizontal_logo: str | None = None
 
     connector_id: ConnectorID
+    connector_address: UnitID
 
     name: str
     description: str

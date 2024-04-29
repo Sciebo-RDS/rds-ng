@@ -12,7 +12,7 @@ from ...core.messaging.composers import (
     CommandReplyComposer,
 )
 from ...data.entities.connector import ConnectorInstanceID
-from ...data.entities.project import ProjectID, ProjectJob
+from ...data.entities.project import ProjectID, ProjectJob, Project
 
 
 @Message.define("command/project-job/list")
@@ -116,4 +116,61 @@ class InitiateProjectJobReply(CommandReply):
         """
         return message_builder.build_command_reply(
             InitiateProjectJobReply, cmd, success, message
+        )
+
+
+@Message.define("command/project-job/start")
+class StartProjectJobCommand(Command):
+    """
+    Command to start a project job in the target connector.
+
+    Args:
+        project: The project to publish.
+        connector_instance: The connector instance ID.
+
+    Notes:
+        Requires a ``StartProjectJobReply`` reply.
+    """
+
+    project: Project
+    connector_instance: ConnectorInstanceID
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project: Project,
+        connector_instance: ConnectorInstanceID,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            StartProjectJobCommand,
+            chain,
+            project=project,
+            connector_instance=connector_instance,
+        )
+
+
+@Message.define("command/project-job/start/reply")
+class StartProjectJobReply(CommandReply):
+    """
+    Reply to ``StartProjectJobCommand``.
+    """
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: StartProjectJobCommand,
+        *,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            StartProjectJobReply, cmd, success, message
         )

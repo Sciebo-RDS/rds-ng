@@ -46,6 +46,7 @@ def create_connectors_service(comp: BackendComponent) -> Service:
 
         connector = Connector(
             connector_id=msg.connector_id,
+            connector_address=msg.origin,
             name=msg.display_name,
             description=msg.description,
             category=msg.category,

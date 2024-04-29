@@ -1,5 +1,7 @@
 import { Type } from "class-transformer";
 
+import { UnitID } from "../../../utils/UnitID";
+
 /**
  * The connector ID type.
  */
@@ -47,6 +49,7 @@ export type ConnectorMetadataProfile = Record<string, any>;
  * Data for a single **Connector**.
  *
  * @param connector_id - The unique connector identifier.
+ * @param connector_address - The target address of the connector.
  * @param category - The connector category.
  * @param name - The name of the connector.
  * @param description - An optional connector description.
@@ -57,6 +60,9 @@ export type ConnectorMetadataProfile = Record<string, any>;
  */
 export class Connector {
     public readonly connector_id: ConnectorID;
+    // @ts-ignore
+    @Type(() => UnitID)
+    public readonly connector_address: UnitID;
 
     public readonly name: string;
     public readonly description: string;
@@ -74,6 +80,7 @@ export class Connector {
 
     public constructor(
         connectorID: ConnectorID,
+        connectorAddress: UnitID,
         name: string,
         description: string = "",
         category: ConnectorCategoryID,
@@ -82,6 +89,7 @@ export class Connector {
         metadataProfile: ConnectorMetadataProfile = {},
     ) {
         this.connector_id = connectorID;
+        this.connector_address = connectorAddress;
 
         this.name = name;
         this.description = description;

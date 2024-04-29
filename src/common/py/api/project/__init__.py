@@ -18,5 +18,7 @@ from .project_job_commands import (
     ListProjectJobsReply,
     InitiateProjectJobCommand,
     InitiateProjectJobReply,
+    StartProjectJobCommand,
+    StartProjectJobReply,
 )
 from .project_job_events import ProjectJobsListEvent

@@ -1,4 +1,5 @@
 from common.py.component import BackendComponent
+from common.py.core.messaging import Channel
 from common.py.data.entities.project import ProjectJob
 from common.py.services import Service
 
@@ -20,6 +21,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         ListProjectJobsReply,
         InitiateProjectJobCommand,
         InitiateProjectJobReply,
+        StartProjectJobCommand,
     )
     from common.py.api.component import ComponentProcessEvent
 
@@ -43,32 +45,90 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, InitiateProjectJobReply):
             return
 
-        success = False
-        message = ""
+        def _initiate_job(
+            success: bool, message: str, job: ProjectJob | None = None
+        ) -> None:
+            if success and job is not None:
+                ctx.storage_pool.project_job_storage.add(job)
 
+            InitiateProjectJobReply.build(
+                ctx.message_builder, msg, success=success, message=message
+            ).emit()
+
+            send_project_jobs_list(msg, ctx)
+
+        from common.py.data.entities.connector import find_connector_by_instance_id
+        from common.py.data.entities.project import find_project_by_id
+
+        # Allow only one job per project & connection
         if (
             ctx.storage_pool.project_job_storage.get(
                 (msg.project_id, msg.connector_instance)
             )
-            is None
+            is not None
         ):
-            job = ProjectJob(
-                user_id=ctx.user.user_id,
-                project_id=msg.project_id,
-                connector_instance=msg.connector_instance,
-                message="Job started",
+            _initiate_job(False, "A job through this connection is already running")
+            return
+
+        # We need to find the proper project and connector first
+        if (
+            project := find_project_by_id(
+                ctx.storage_pool.project_storage.filter_by_user(ctx.user.user_id),
+                msg.project_id,
             )
+        ) is None:
+            _initiate_job(
+                False,
+                f"Project {msg.project_id} does not belong to the current user or could not be found",
+            )
+            return
 
-            ctx.storage_pool.project_job_storage.add(job)
-            success = True
-        else:
-            message = "A job through this connection is already running"
+        if (
+            connector := find_connector_by_instance_id(
+                ctx.storage_pool.connector_storage.list(),
+                ctx.user.user_settings.connector_instances,
+                msg.connector_instance,
+            )
+        ) is None:
+            _initiate_job(
+                False,
+                f"The connector for instance {msg.connector_instance} could not be resolved",
+            )
+            return
 
-        InitiateProjectJobReply.build(
-            ctx.message_builder, msg, success=success, message=message
-        ).emit()
+        # Ensure that the connector instance is enabled in the project options
+        if (
+            not project.options.use_all_connector_instances
+            and msg.connector_instance not in project.options.active_connector_instances
+        ):
+            _initiate_job(
+                False,
+                f"The connector instance {msg.connector_instance} is not enabled for the project",
+            )
+            return
 
-        send_project_jobs_list(msg, ctx)
+        # All checks have passed, so send the job to the connector
+        job = ProjectJob(
+            user_id=ctx.user.user_id,
+            project_id=msg.project_id,
+            connector_instance=msg.connector_instance,
+            message="Job started",
+        )
+
+        StartProjectJobCommand.build(
+            ctx.message_builder,
+            project=project,
+            connector_instance=msg.connector_instance,
+            chain=msg,
+        ).done(
+            lambda _, success, message: _initiate_job(
+                success, message, job if success else None
+            )
+        ).failed(
+            lambda _, message: _initiate_job(False, message)
+        ).emit(
+            Channel.direct(connector.connector_address)
+        )
 
     @svc.message_handler(ComponentProcessEvent)
     def process_jobs(msg: ComponentProcessEvent, ctx: ServerServiceContext) -> None:
