@@ -23,7 +23,7 @@ from common.py.data.entities.project.features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from common.py.data.entities.project.logbook import JobHistoryRecord
+from common.py.data.entities.project.logbook import ProjectJobHistoryRecord
 
 from .types import JSONEncodedDataType, ArrayType
 
@@ -38,7 +38,7 @@ class ProjectsTables:
     feature_dmp: Table
 
     logbook: Table
-    logbook_publishing_history: Table
+    logbook_job_history: Table
 
 
 def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTables:
@@ -134,8 +134,8 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         ),
     )
 
-    table_logbook_publishing_history = Table(
-        "project_logbook_publishing_history",
+    table_logbook_job_history = Table(
+        "project_logbook_job_history",
         metadata,
         Column(
             "project_id",
@@ -222,7 +222,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         table_project_logbook,
         properties={
             "job_history": relationship(
-                JobHistoryRecord,
+                ProjectJobHistoryRecord,
                 backref="project_logbook",
                 cascade="all, delete",
             ),
@@ -230,8 +230,8 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
     )
 
     reg.map_imperatively(
-        JobHistoryRecord,
-        table_logbook_publishing_history,
+        ProjectJobHistoryRecord,
+        table_logbook_job_history,
     )
 
     return ProjectsTables(
@@ -241,5 +241,5 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         feature_resources_metadata=table_feature_resources_metadata,
         feature_dmp=table_feature_dmp,
         logbook=table_project_logbook,
-        logbook_publishing_history=table_logbook_publishing_history,
+        logbook_job_history=table_logbook_job_history,
     )

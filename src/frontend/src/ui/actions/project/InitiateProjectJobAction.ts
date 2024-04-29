@@ -1,4 +1,4 @@
-import { InitiateJobCommand } from "@common/api/project/ProjectJobCommands";
+import { InitiateProjectJobCommand } from "@common/api/project/ProjectJobCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
@@ -14,11 +14,11 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 /**
  * Action to initiate a project job.
  */
-export class InitiateJobAction extends FrontendCommandAction<InitiateJobCommand, CommandComposer<InitiateJobCommand>> {
-    public prepare(project: Project, connector: Connector, connectorInstance: ConnectorInstance): CommandComposer<InitiateJobCommand> {
+export class InitiateProjectJobAction extends FrontendCommandAction<InitiateProjectJobCommand, CommandComposer<InitiateProjectJobCommand>> {
+    public prepare(project: Project, connector: Connector, connectorInstance: ConnectorInstance): CommandComposer<InitiateProjectJobCommand> {
         super.prepareNotifiers(project, connector, connectorInstance);
 
-        this._composer = InitiateJobCommand.build(this.messageBuilder, project.project_id, connectorInstance.instance_id).timeout(this._regularTimeout);
+        this._composer = InitiateProjectJobCommand.build(this.messageBuilder, project.project_id, connectorInstance.instance_id).timeout(this._regularTimeout);
         return this._composer;
     }
 

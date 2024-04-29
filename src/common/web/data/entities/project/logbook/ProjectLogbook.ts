@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 
-import { JobHistoryRecord } from "./JobHistoryRecord";
+import { ProjectJobHistoryRecord } from "./ProjectJobHistoryRecord";
 
 /**
  * Class holding all history records of a project.
@@ -9,10 +9,10 @@ import { JobHistoryRecord } from "./JobHistoryRecord";
  */
 export class ProjectLogbook {
     // @ts-ignore
-    @Type(() => JobHistoryRecord)
-    public readonly job_history: JobHistoryRecord[];
+    @Type(() => ProjectJobHistoryRecord)
+    public readonly job_history: ProjectJobHistoryRecord[];
 
-    public constructor(jobHistory: JobHistoryRecord[] = []) {
+    public constructor(jobHistory: ProjectJobHistoryRecord[] = []) {
         this.job_history = jobHistory;
     }
 }

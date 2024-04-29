@@ -5,7 +5,7 @@ from common.py.services import Service
 from .tools.project_job_tools import send_project_jobs_list
 
 
-def create_jobs_service(comp: BackendComponent) -> Service:
+def create_project_jobs_service(comp: BackendComponent) -> Service:
     """
     Creates the jobs service.
 
@@ -16,33 +16,33 @@ def create_jobs_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
     from common.py.api.project import (
-        ListJobsCommand,
-        ListJobsReply,
-        InitiateJobCommand,
-        InitiateJobReply,
+        ListProjectJobsCommand,
+        ListProjectJobsReply,
+        InitiateProjectJobCommand,
+        InitiateProjectJobReply,
     )
     from common.py.api.component import ComponentProcessEvent
 
     from .server_service_context import ServerServiceContext
 
-    svc = comp.create_service("Jobs service", context_type=ServerServiceContext)
+    svc = comp.create_service("Project jobs service", context_type=ServerServiceContext)
 
-    @svc.message_handler(ListJobsCommand)
-    def list_jobs(msg: ListJobsCommand, ctx: ServerServiceContext) -> None:
-        if not ctx.ensure_user(msg, ListJobsReply, project_jobs=[]):
+    @svc.message_handler(ListProjectJobsCommand)
+    def list_jobs(msg: ListProjectJobsCommand, ctx: ServerServiceContext) -> None:
+        if not ctx.ensure_user(msg, ListProjectJobsReply, jobs=[]):
             return
 
         from .tools import get_user_project_jobs
 
-        ListJobsReply.build(
+        ListProjectJobsReply.build(
             ctx.message_builder,
             msg,
-            project_jobs=get_user_project_jobs(ctx),
+            jobs=get_user_project_jobs(ctx),
         ).emit()
 
-    @svc.message_handler(InitiateJobCommand)
-    def initiate_job(msg: InitiateJobCommand, ctx: ServerServiceContext) -> None:
-        if not ctx.ensure_user(msg, InitiateJobReply):
+    @svc.message_handler(InitiateProjectJobCommand)
+    def initiate_job(msg: InitiateProjectJobCommand, ctx: ServerServiceContext) -> None:
+        if not ctx.ensure_user(msg, InitiateProjectJobReply):
             return
 
         success = False
@@ -65,7 +65,7 @@ def create_jobs_service(comp: BackendComponent) -> Service:
         else:
             message = "A job through this connection is already running"
 
-        InitiateJobReply.build(
+        InitiateProjectJobReply.build(
             ctx.message_builder, msg, success=success, message=message
         ).emit()
 

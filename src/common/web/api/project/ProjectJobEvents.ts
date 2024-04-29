@@ -11,16 +11,16 @@ import { ProjectJob } from "../../data/entities/project/ProjectJob";
  *
  * @param projects - The projects list.
  */
-@Message.define("event/job/list")
-export class JobsListEvent extends Event {
+@Message.define("event/project-job/list")
+export class ProjectJobsListEvent extends Event {
     // @ts-ignore
     @Type(() => ProjectJob)
-    public readonly project_jobs: ProjectJob[] = [];
+    public readonly jobs: ProjectJob[] = [];
 
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, projectJobs: ProjectJob[], chain: Message | null = null): EventComposer<JobsListEvent> {
-        return messageBuilder.buildEvent(JobsListEvent, { project_jobs: projectJobs }, chain);
+    public static build(messageBuilder: MessageBuilder, jobs: ProjectJob[], chain: Message | null = null): EventComposer<ProjectJobsListEvent> {
+        return messageBuilder.buildEvent(ProjectJobsListEvent, { jobs: jobs }, chain);
     }
 }

@@ -15,13 +15,13 @@ from ...data.entities.connector import ConnectorInstanceID
 from ...data.entities.project import ProjectID, ProjectJob
 
 
-@Message.define("command/job/list")
-class ListJobsCommand(Command):
+@Message.define("command/project-job/list")
+class ListProjectJobsCommand(Command):
     """
     Command to fetch all project jobs of the current user.
 
     Notes:
-        Requires a ``ListJobsReply`` reply.
+        Requires a ``ListProjectJobsReply`` reply.
     """
 
     @staticmethod
@@ -31,26 +31,26 @@ class ListJobsCommand(Command):
         """
         Helper function to easily build this message.
         """
-        return message_builder.build_command(ListJobsCommand, chain)
+        return message_builder.build_command(ListProjectJobsCommand, chain)
 
 
-@Message.define("command/job/list/reply")
-class ListJobsReply(CommandReply):
+@Message.define("command/project-job/list/reply")
+class ListProjectJobsReply(CommandReply):
     """
     Reply to ``ListJobsCommand``.
 
     Args:
-        project_jobs: List of all project jobs.
+        jobs: List of all project jobs.
     """
 
-    project_jobs: typing.List[ProjectJob] = dataclasses.field(default_factory=list)
+    jobs: typing.List[ProjectJob] = dataclasses.field(default_factory=list)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
-        cmd: ListJobsCommand,
+        cmd: ListProjectJobsCommand,
         *,
-        project_jobs: typing.List[ProjectJob],
+        jobs: typing.List[ProjectJob],
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -58,14 +58,14 @@ class ListJobsReply(CommandReply):
         Helper function to easily build this message.
         """
         return message_builder.build_command_reply(
-            ListJobsReply, cmd, success, message, project_jobs=project_jobs
+            ListProjectJobsReply, cmd, success, message, jobs=jobs
         )
 
 
-@Message.define("command/job/initiate")
-class InitiateJobCommand(Command):
+@Message.define("command/project-job/initiate")
+class InitiateProjectJobCommand(Command):
     """
-    Command to initiate a publishing job.
+    Command to initiate a project job.
 
     Args:
         project_id: The project ID.
@@ -90,23 +90,23 @@ class InitiateJobCommand(Command):
         Helper function to easily build this message.
         """
         return message_builder.build_command(
-            InitiateJobCommand,
+            InitiateProjectJobCommand,
             chain,
             project_id=project_id,
             connector_instance=connector_instance,
         )
 
 
-@Message.define("command/job/initiate/reply")
-class InitiateJobReply(CommandReply):
+@Message.define("command/project-job/initiate/reply")
+class InitiateProjectJobReply(CommandReply):
     """
-    Reply to ``InitiateJobCommand``.
+    Reply to ``InitiateProjectJobCommand``.
     """
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
-        cmd: InitiateJobCommand,
+        cmd: InitiateProjectJobCommand,
         *,
         success: bool = True,
         message: str = "",
@@ -115,5 +115,5 @@ class InitiateJobReply(CommandReply):
         Helper function to easily build this message.
         """
         return message_builder.build_command_reply(
-            InitiateJobReply, cmd, success, message
+            InitiateProjectJobReply, cmd, success, message
         )

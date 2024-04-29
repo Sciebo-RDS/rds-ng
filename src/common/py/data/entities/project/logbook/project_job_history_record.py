@@ -9,7 +9,7 @@ from ...connector import ConnectorInstanceID
 
 @dataclass_json
 @dataclass
-class JobHistoryRecord(ProjectLogbookRecord):
+class ProjectJobHistoryRecord(ProjectLogbookRecord):
     """
     A single record of a project's job history.
 

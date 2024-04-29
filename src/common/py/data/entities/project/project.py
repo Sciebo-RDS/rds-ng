@@ -10,7 +10,7 @@ from .features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
-from .logbook import JobHistoryRecord
+from .logbook import ProjectJobHistoryRecord
 from ..connector import ConnectorInstanceID
 from ..user import UserID
 
@@ -98,7 +98,7 @@ class Project:
             job_history: All job history records.
         """
 
-        job_history: List[JobHistoryRecord] = field(default_factory=list)
+        job_history: List[ProjectJobHistoryRecord] = field(default_factory=list)
 
     project_id: ProjectID
     user_id: UserID

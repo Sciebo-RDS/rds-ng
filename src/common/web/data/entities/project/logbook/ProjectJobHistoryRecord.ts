@@ -4,7 +4,7 @@ import { ProjectLogbookRecord } from "./ProjectLogbookRecord";
 /*
  * The status of the job operation.
  */
-export const enum JobHistoryRecordStatus {
+export const enum ProjectJobHistoryRecordStatus {
     Done = 0,
     Failed = -1,
 }
@@ -16,13 +16,13 @@ export const enum JobHistoryRecordStatus {
  * @param status - The status (done or failed).
  * @param message - An optional message (usually in case of an error).
  */
-export class JobHistoryRecord extends ProjectLogbookRecord {
+export class ProjectJobHistoryRecord extends ProjectLogbookRecord {
     public readonly connector_instance: ConnectorInstanceID;
 
-    public readonly status: JobHistoryRecordStatus;
+    public readonly status: ProjectJobHistoryRecordStatus;
     public readonly message: string;
 
-    public constructor(timestamp: number, connectorInstance: ConnectorInstanceID, status: JobHistoryRecordStatus, message: string) {
+    public constructor(timestamp: number, connectorInstance: ConnectorInstanceID, status: ProjectJobHistoryRecordStatus, message: string) {
         super(timestamp);
 
         this.connector_instance = connectorInstance;

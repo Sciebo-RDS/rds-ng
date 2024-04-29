@@ -14,7 +14,7 @@ export class FrontendServiceContext extends ServiceContext {
     private _connectorsStore = useConnectorsStore();
     private _userStore = useUserStore();
     private _projectsStore = useProjectsStore();
-    private _jobsStore = useProjectJobsStore();
+    private _projectJobsStore = useProjectJobsStore();
 
     /**
      * The connectors store.
@@ -40,7 +40,7 @@ export class FrontendServiceContext extends ServiceContext {
     /**
      * The project jobs store.
      */
-    public get jobsStore() {
-        return this._jobsStore;
+    public get projectJobsStore() {
+        return this._projectJobsStore;
     }
 }

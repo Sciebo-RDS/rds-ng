@@ -1,6 +1,6 @@
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { ListConnectorsAction } from "@/ui/actions/connector/ListConnectorsAction";
-import { ListJobsAction } from "@/ui/actions/project/ListJobsAction";
+import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";
 import { ListProjectsAction } from "@/ui/actions/project/ListProjectsAction";
 import { GetUserSettingsAction } from "@/ui/actions/user/GetUserSettingsAction";
 import { ActionState } from "@common/ui/actions/ActionBase";
@@ -19,7 +19,7 @@ export class GetAllDataAction extends MultiAction {
         const listConAction = new ListConnectorsAction(comp, true);
         const getUserSettingsAction = new GetUserSettingsAction(comp, true);
         const listProjectsAction = new ListProjectsAction(comp, true);
-        const listJobsAction = new ListJobsAction(comp, true);
+        const listJobsAction = new ListProjectJobsAction(comp, true);
 
         listConAction.prepare();
         getUserSettingsAction.prepare();

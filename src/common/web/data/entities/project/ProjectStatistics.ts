@@ -1,5 +1,5 @@
 import { type ConnectorInstanceID } from "../connector/ConnectorInstance";
-import { JobHistoryRecordStatus } from "./logbook/JobHistoryRecord";
+import { ProjectJobHistoryRecordStatus } from "./logbook/ProjectJobHistoryRecord";
 import { Project } from "./Project";
 
 /**
@@ -44,13 +44,13 @@ export class ProjectStatistics {
                 this._jobStatistics[jobRecord.connector_instance] = this.createEmptyJobStatistics();
             }
 
-            if (jobRecord.status == JobHistoryRecordStatus.Done) {
+            if (jobRecord.status == ProjectJobHistoryRecordStatus.Done) {
                 this._jobStatistics[jobRecord.connector_instance].lastJob = Math.max(
                     this._jobStatistics[jobRecord.connector_instance].lastJob,
                     jobRecord.timestamp,
                 );
                 this._jobStatistics[jobRecord.connector_instance].totalCount.done += 1;
-            } else if (jobRecord.status == JobHistoryRecordStatus.Failed) {
+            } else if (jobRecord.status == ProjectJobHistoryRecordStatus.Failed) {
                 this._jobStatistics[jobRecord.connector_instance].totalCount.failed += 1;
             }
         }

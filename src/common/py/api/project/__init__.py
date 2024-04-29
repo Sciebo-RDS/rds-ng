@@ -14,9 +14,9 @@ from .project_features_commands import (
     UpdateProjectFeaturesReply,
 )
 from .project_job_commands import (
-    ListJobsCommand,
-    ListJobsReply,
-    InitiateJobCommand,
-    InitiateJobReply,
+    ListProjectJobsCommand,
+    ListProjectJobsReply,
+    InitiateProjectJobCommand,
+    InitiateProjectJobReply,
 )
-from .project_job_events import JobsListEvent
+from .project_job_events import ProjectJobsListEvent

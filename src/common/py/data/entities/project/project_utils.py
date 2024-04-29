@@ -1,4 +1,3 @@
-import copy
 import typing
 
 from .features import ProjectFeatureID

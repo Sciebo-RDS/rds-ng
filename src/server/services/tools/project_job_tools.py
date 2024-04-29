@@ -34,13 +34,13 @@ def send_project_jobs_list(msg: Message, ctx: ServerServiceContext) -> None:
         msg: Original message for chaining.
         ctx: The service context.
     """
-    from common.py.api.project import JobsListEvent
+    from common.py.api.project import ProjectJobsListEvent
 
     if ctx.user is None:
         raise RuntimeError("Sending project jobs list without an authenticated user")
 
-    JobsListEvent.build(
+    ProjectJobsListEvent.build(
         ctx.message_builder,
-        project_jobs=get_user_project_jobs(ctx),
+        jobs=get_user_project_jobs(ctx),
         chain=msg,
     ).emit(Channel.direct(msg.origin))

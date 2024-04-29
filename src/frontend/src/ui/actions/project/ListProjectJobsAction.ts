@@ -1,4 +1,4 @@
-import { ListJobsCommand } from "@common/api/project/ProjectJobCommands";
+import { ListProjectJobsCommand } from "@common/api/project/ProjectJobCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
@@ -10,11 +10,11 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 /**
  * Action to retrieve all projects.
  */
-export class ListJobsAction extends FrontendCommandAction<ListJobsCommand, CommandComposer<ListJobsCommand>> {
-    public prepare(): CommandComposer<ListJobsCommand> {
+export class ListProjectJobsAction extends FrontendCommandAction<ListProjectJobsCommand, CommandComposer<ListProjectJobsCommand>> {
+    public prepare(): CommandComposer<ListProjectJobsCommand> {
         this.prepareNotifiers();
 
-        this._composer = ListJobsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
+        this._composer = ListProjectJobsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
         return this._composer;
     }
 

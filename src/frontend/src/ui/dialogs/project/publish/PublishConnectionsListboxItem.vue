@@ -15,8 +15,8 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { getActiveProjectJob } from "@/data/entities/project/ProjectJobTools";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-import { InitiateJobAction } from "@/ui/actions/project/InitiateJobAction";
-import { ListJobsAction } from "@/ui/actions/project/ListJobsAction";
+import { InitiateProjectJobAction } from "@/ui/actions/project/InitiateProjectJobAction";
+import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";
 
 const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
@@ -54,7 +54,7 @@ function onPublish() {
     if (conn) {
         initiatePublish.value = true;
 
-        const action = new InitiateJobAction(comp);
+        const action = new InitiateProjectJobAction(comp);
         action
             .prepare(unref(project), conn, unref(instance))
             .done((_, success, msg) => {
@@ -69,7 +69,7 @@ function onPublish() {
 
 function onPublishInitDone(success: boolean, msg: string): void {
     // Only unlock the init-phase after updating the jobs list
-    const listJobsAction = new ListJobsAction(comp);
+    const listJobsAction = new ListProjectJobsAction(comp);
     listJobsAction.prepare().done(() => {
         initiatePublish.value = false;
     });
