@@ -6,6 +6,7 @@ from common.py.data.entities.project import (
     ProjectJobID,
     ProjectID,
 )
+from common.py.data.entities.user import UserID
 from common.py.data.storage import ProjectJobStorage
 
 
@@ -48,6 +49,15 @@ class MemoryProjectJobStorage(ProjectJobStorage):
     def list(self) -> typing.List[ProjectJob]:
         with MemoryProjectJobStorage._lock:
             return list(MemoryProjectJobStorage._project_jobs.values())
+
+    def filter_by_user(self, user_id: UserID) -> typing.List[ProjectJob]:
+        with MemoryProjectJobStorage._lock:
+            return list(
+                filter(
+                    lambda job: job.user_id == user_id,
+                    MemoryProjectJobStorage._project_jobs.values(),
+                )
+            )
 
     def filter_by_project(self, project_id: ProjectID) -> typing.List[ProjectJob]:
         with MemoryProjectJobStorage._lock:

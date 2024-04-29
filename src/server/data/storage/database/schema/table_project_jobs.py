@@ -39,6 +39,7 @@ def register_project_jobs_tables(
         # Main
         Column("project_id", Integer, primary_key=True),
         Column("connector_instance", Uuid, primary_key=True),
+        Column("user_id", Text),
         Column("timestamp", Float),
         # Progress
         Column("progress", Float),

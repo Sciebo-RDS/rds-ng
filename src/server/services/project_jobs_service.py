@@ -32,12 +32,10 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, ListProjectJobsReply, jobs=[]):
             return
 
-        from .tools import get_user_project_jobs
-
         ListProjectJobsReply.build(
             ctx.message_builder,
             msg,
-            jobs=get_user_project_jobs(ctx),
+            jobs=ctx.storage_pool.project_job_storage.filter_by_user(ctx.user.user_id),
         ).emit()
 
     @svc.message_handler(InitiateProjectJobCommand)
@@ -55,6 +53,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             is None
         ):
             job = ProjectJob(
+                user_id=ctx.user.user_id,
                 project_id=msg.project_id,
                 connector_instance=msg.connector_instance,
                 message="Job started",

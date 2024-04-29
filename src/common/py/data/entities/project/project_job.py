@@ -6,6 +6,7 @@ from dataclasses_json import dataclass_json
 
 from .project import ProjectID
 from ..connector import ConnectorInstanceID
+from ..user import UserID
 
 ProjectJobID = typing.Tuple[ProjectID, ConnectorInstanceID]
 
@@ -17,6 +18,7 @@ class ProjectJob:
     A project job that is currently active.
 
     Attributes:
+        user_id: The ID of the user the job belongs to.
         project_id: The project ID.
         connector_instance: The connector instance ID.
         timestamp: The starting time.
@@ -24,6 +26,7 @@ class ProjectJob:
         message: The current activity message.
     """
 
+    user_id: UserID
     project_id: ProjectID
     connector_instance: ConnectorInstanceID
 
