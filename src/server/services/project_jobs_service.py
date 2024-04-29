@@ -45,7 +45,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, InitiateProjectJobReply):
             return
 
-        def _initiate_job(
+        def _initiate(
             success: bool, message: str, job: ProjectJob | None = None
         ) -> None:
             if success and job is not None:
@@ -67,7 +67,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             )
             is not None
         ):
-            _initiate_job(False, "A job through this connection is already running")
+            _initiate(False, "A job through this connection is already running")
             return
 
         # We need to find the proper project and connector first
@@ -77,7 +77,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 msg.project_id,
             )
         ) is None:
-            _initiate_job(
+            _initiate(
                 False,
                 f"Project {msg.project_id} does not belong to the current user or could not be found",
             )
@@ -90,7 +90,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 msg.connector_instance,
             )
         ) is None:
-            _initiate_job(
+            _initiate(
                 False,
                 f"The connector for instance {msg.connector_instance} could not be resolved",
             )
@@ -101,7 +101,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             not project.options.use_all_connector_instances
             and msg.connector_instance not in project.options.active_connector_instances
         ):
-            _initiate_job(
+            _initiate(
                 False,
                 f"The connector instance {msg.connector_instance} is not enabled for the project",
             )
@@ -121,11 +121,11 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             connector_instance=msg.connector_instance,
             chain=msg,
         ).done(
-            lambda _, success, message: _initiate_job(
+            lambda _, success, message: _initiate(
                 success, message, job if success else None
             )
         ).failed(
-            lambda _, message: _initiate_job(False, message)
+            lambda _, message: _initiate(False, message)
         ).emit(
             Channel.direct(connector.connector_address)
         )
