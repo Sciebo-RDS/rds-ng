@@ -1,5 +1,6 @@
 import dataclasses
 import typing
+from enum import StrEnum
 
 from ...core.messaging import (
     Message,
@@ -75,4 +76,49 @@ class ProjectJobProgressEvent(Event):
             connector_instance=connector_instance,
             progress=progress,
             message=message,
+        )
+
+
+@Message.define("event/project-job/completion")
+class ProjectJobCompletionEvent(Event):
+    """
+    Emitted to inform about the completion (either succeeded or failed) of a job.
+
+    Args:
+        project_id: The project ID.
+        connector_instance: The connector instance ID.
+        status: Whether the job succeeded or failed.
+        reason: The reason in case of a failure.
+    """
+
+    class Status(StrEnum):
+        SUCCEEDED = "succeeded"
+        FAILED = "failed"
+
+    project_id: ProjectID
+    connector_instance: ConnectorInstanceID
+
+    status: Status
+    reason: str
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project_id: ProjectID,
+        connector_instance: ConnectorInstanceID,
+        status: Status,
+        reason: str = "",
+        chain: Message | None = None
+    ) -> EventComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_event(
+            ProjectJobCompletionEvent,
+            chain,
+            project_id=project_id,
+            connector_instance=connector_instance,
+            status=status,
+            reason=reason,
         )

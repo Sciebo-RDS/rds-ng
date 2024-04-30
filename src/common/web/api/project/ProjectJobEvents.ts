@@ -8,6 +8,11 @@ import { type ConnectorInstanceID } from "../../data/entities/connector/Connecto
 import { type ProjectID } from "../../data/entities/project/Project";
 import { ProjectJob } from "../../data/entities/project/ProjectJob";
 
+export const enum ProjectJobCompletionStatus {
+    Succeeded = "succeeded",
+    Failed = "failed",
+}
+
 /**
  * Emitted whenever the user's project jobs list has been updated.
  *
@@ -57,6 +62,43 @@ export class ProjectJobProgressEvent extends Event {
         return messageBuilder.buildEvent(
             ProjectJobProgressEvent,
             { project_id: projectID, connector_instance: connectorInstance, progress: progress, message: message },
+            chain,
+        );
+    }
+}
+
+/**
+ * Emitted to inform about the completion (either succeeded or failed) of a job.
+ *
+ * @param project_id - The project ID.
+ * @param connector_instance - The connector instance ID.
+ * @param status - Whether the job succeeded or failed.
+ * @param reason - The reason in case of a failure.
+ */
+@Message.define("event/project-job/completion")
+export class ProjectJobCompletionEvent extends Event {
+    public readonly project_id: ProjectID = 0;
+    public readonly connector_instance: ConnectorInstanceID = "";
+
+    public readonly status: ProjectJobCompletionStatus = ProjectJobCompletionStatus.Succeeded;
+    public readonly reason: string = "";
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        projectID: ProjectID,
+        connectorInstance: ConnectorInstanceID,
+        progress: number,
+        message: string,
+        status: ProjectJobCompletionStatus,
+        reason: string = "",
+        chain: Message | null = null,
+    ): EventComposer<ProjectJobCompletionEvent> {
+        return messageBuilder.buildEvent(
+            ProjectJobCompletionEvent,
+            { project_id: projectID, connector_instance: connectorInstance, status: status, reason: reason },
             chain,
         );
     }

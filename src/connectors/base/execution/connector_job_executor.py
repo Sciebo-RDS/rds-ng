@@ -70,20 +70,25 @@ class ConnectorJobExecutor(abc.ABC):
             message=message,
         ).emit(self._target_channel)
 
-        debug(
-            f"Job progression update: {message} ({progress*100:0.1f}%)",
-            scope="jobs",
-            project_id=self._job.project.project_id,
-            connector_instance=self._job.connector_instance,
-        )
+        self._log_debug(f"Job progression update: {message} ({progress*100:0.1f}%)")
 
     def set_done(self) -> None:
         """
         Marks and reports the job as successfully finished.
         """
+        from common.py.api import ProjectJobCompletionEvent
+
         self._is_active = False
         self.report_progress(1.0, "Job completed successfully")
-        # TODO: Message
+
+        ProjectJobCompletionEvent.build(
+            self._mesage_builder,
+            project_id=self._job.project.project_id,
+            connector_instance=self._job.connector_instance,
+            status=ProjectJobCompletionEvent.Status.SUCCEEDED,
+        ).emit(self._target_channel)
+
+        self._log_debug("Job done")
 
     def set_failed(self, reason: str) -> None:
         """
@@ -92,9 +97,28 @@ class ConnectorJobExecutor(abc.ABC):
         Args:
             reason: The failure reason.
         """
+        from common.py.api import ProjectJobCompletionEvent
+
         self._is_active = False
         self.report_progress(1.0, f"Job failed: {reason}")
-        # TODO: Message
+
+        ProjectJobCompletionEvent.build(
+            self._mesage_builder,
+            project_id=self._job.project.project_id,
+            connector_instance=self._job.connector_instance,
+            status=ProjectJobCompletionEvent.Status.FAILED,
+            reason=reason,
+        ).emit(self._target_channel)
+
+        self._log_debug(f"Job failed: {reason}")
+
+    def _log_debug(self, message: str) -> None:
+        debug(
+            message,
+            scope="jobs",
+            project_id=self._job.project.project_id,
+            connector_instance=self._job.connector_instance,
+        )
 
     @property
     def job(self) -> ConnectorJob:

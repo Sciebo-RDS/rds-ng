@@ -21,4 +21,8 @@ from .project_job_commands import (
     StartProjectJobCommand,
     StartProjectJobReply,
 )
-from .project_job_events import ProjectJobsListEvent, ProjectJobProgressEvent
+from .project_job_events import (
+    ProjectJobsListEvent,
+    ProjectJobProgressEvent,
+    ProjectJobCompletionEvent,
+)
