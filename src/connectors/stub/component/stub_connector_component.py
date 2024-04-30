@@ -9,8 +9,11 @@ class StubConnectorComponent(ConnectorComponent):
     """
 
     def __init__(self):
+        from ..execution import StubJobExecutorFactory
+
         super().__init__(
             "stub",
+            executor_factory=StubJobExecutorFactory(),
             module_name=__name__,
         )
 

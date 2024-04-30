@@ -26,7 +26,6 @@ class ClientServiceContext(ServiceContext):
 
         Raises:
             RuntimeError: If no connection exists.
-
         """
         if ClientServiceContext._remote_channel is None:
             raise RuntimeError(

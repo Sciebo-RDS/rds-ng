@@ -9,6 +9,7 @@ from common.py.component.roles import LeafRole
 from common.py.utils import UnitID
 
 from .connector_information import ConnectorInformation
+from ..execution import ConnectorJobExecutorFactory, ConnectorJobsEngine
 
 
 class ConnectorComponent(BackendComponent):
@@ -16,7 +17,13 @@ class ConnectorComponent(BackendComponent):
     The base connector component class.
     """
 
-    def __init__(self, connector_id: str, *, module_name: str):
+    def __init__(
+        self,
+        connector_id: str,
+        *,
+        executor_factory: ConnectorJobExecutorFactory,
+        module_name: str,
+    ):
         super().__init__(
             UnitID(
                 ComponentType.INFRASTRUCTURE,
@@ -30,9 +37,18 @@ class ConnectorComponent(BackendComponent):
 
         self._connector_info = ConnectorInformation(connector_id)
 
+        self._jobs_engine = ConnectorJobsEngine(executor_factory=executor_factory)
+
     def run(self) -> None:
         from ..data.entities.connector.categories import register_connector_categories
-        from ..services import create_connector_service, create_project_jobs_service
+        from ..services import (
+            create_connector_service,
+            create_project_jobs_service,
+            ConnectorServiceContext,
+        )
+
+        # Assign the global jobs engine to the service context
+        ConnectorServiceContext.set_jobs_engine(self._jobs_engine)
 
         # Register global items
         register_connector_categories()
