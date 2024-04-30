@@ -25,6 +25,8 @@ class ConnectorJobExecutor(abc.ABC):
     def start(self) -> None:
         """
         Called when the job execution is started. Must always be implemented.
+
+        If the job cannot start, an exception should be thrown.
         """
         raise NotImplementedError()
 

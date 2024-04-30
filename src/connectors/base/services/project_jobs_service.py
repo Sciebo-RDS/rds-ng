@@ -27,24 +27,34 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(StartProjectJobCommand)
     def start_job(msg: StartProjectJobCommand, ctx: ConnectorServiceContext) -> None:
-        info(
-            "Starting new job",
-            scope="jobs",
-            project_id=msg.project.project_id,
-            user_id=msg.project.user_id,
-            connector_instance=msg.connector_instance,
-        )
+        success = False
+        message = ""
 
-        job = ConnectorJob(
-            project=msg.project, connector_instance=msg.connector_instance
-        )
-        ctx.jobs_engine.spawn(job, message_builder=ctx.message_builder)
+        try:
+            job = ConnectorJob(
+                project=msg.project, connector_instance=msg.connector_instance
+            )
+            ctx.jobs_engine.spawn(job, message_builder=ctx.message_builder)
+
+            info(
+                "Started new job",
+                scope="jobs",
+                project_id=msg.project.project_id,
+                user_id=msg.project.user_id,
+                connector_instance=msg.connector_instance,
+            )
+
+            success = True
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            message = f"Failed to start job: {str(exc)}"
 
         StartProjectJobReply.build(
             ctx.message_builder,
             msg,
             project_id=msg.project.project_id,
             connector_instance=msg.connector_instance,
+            success=success,
+            message=message,
         ).emit()
 
     @svc.message_handler(ComponentProcessEvent)
