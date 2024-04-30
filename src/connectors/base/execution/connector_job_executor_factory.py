@@ -1,5 +1,6 @@
 from typing import Protocol
 
+from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
 
 from .connector_job_executor import ConnectorJobExecutor
@@ -15,5 +16,9 @@ class ConnectorJobExecutorFactory(Protocol):
     """
 
     def create_executor(
-        self, job: ConnectorJob, *, message_builder: MessageBuilder
+        self,
+        job: ConnectorJob,
+        *,
+        message_builder: MessageBuilder,
+        target_channel: Channel,
     ) -> ConnectorJobExecutor: ...

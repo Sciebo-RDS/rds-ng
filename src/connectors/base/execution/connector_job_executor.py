@@ -1,5 +1,7 @@
 import abc
 
+from common.py.core.logging import debug
+from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
 
 from ..data.entities.connector import ConnectorJob
@@ -11,14 +13,23 @@ class ConnectorJobExecutor(abc.ABC):
     and helper functions to work with a job.
     """
 
-    def __init__(self, job: ConnectorJob, *, message_builder: MessageBuilder):
+    def __init__(
+        self,
+        job: ConnectorJob,
+        *,
+        message_builder: MessageBuilder,
+        target_channel: Channel,
+    ):
         """
         Args:
             job: The job (data).
             message_builder: A message builder to send messages through.
+            target_channel: The target server channel.
         """
         self._job = job
+
         self._mesage_builder = message_builder
+        self._target_channel = target_channel
 
         self._is_active = True
 
@@ -48,8 +59,23 @@ class ConnectorJobExecutor(abc.ABC):
             progress: The overall progress (0.0-1.0).
             message: The current activity message.
         """
+        from common.py.api import ProjectJobProgressEvent
+
         progress = max(0.0, min(progress, 1.0))
-        # TODO: Message
+        ProjectJobProgressEvent.build(
+            self._mesage_builder,
+            project_id=self._job.project.project_id,
+            connector_instance=self._job.connector_instance,
+            progress=progress,
+            message=message,
+        ).emit(self._target_channel)
+
+        debug(
+            f"Job progression update: {message} ({progress*100:0.1f}%)",
+            scope="jobs",
+            project_id=self._job.project.project_id,
+            connector_instance=self._job.connector_instance,
+        )
 
     def set_done(self) -> None:
         """

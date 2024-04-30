@@ -3,7 +3,7 @@ from common.py.core.messaging import Channel
 from common.py.data.entities.project import ProjectJob
 from common.py.services import Service
 
-from .tools.project_job_tools import send_project_jobs_list
+from .tools import send_project_jobs_list, modify_project_job
 
 
 def create_project_jobs_service(comp: BackendComponent) -> Service:
@@ -23,6 +23,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         InitiateProjectJobReply,
         StartProjectJobCommand,
         StartProjectJobReply,
+        ProjectJobProgressEvent,
     )
     from common.py.api.component import ComponentProcessEvent
 
@@ -127,17 +128,23 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(StartProjectJobReply)
     def job_started(msg: StartProjectJobReply, ctx: ServerServiceContext) -> None:
-        if (
-            job := ctx.storage_pool.project_job_storage.get(
-                (msg.project_id, msg.connector_instance)
-            )
-        ) is not None:
+        def update_job(job: ProjectJob) -> None:
+            job.progress = 0.0
             job.message = "Job started"
 
-            if (
-                session := ctx.session_manager.find_user_session(job.user_id)
-            ) is not None:
-                send_project_jobs_list(msg, ctx, session=session)
+        modify_project_job(
+            (msg.project_id, msg.connector_instance), update_job, msg, ctx
+        )
+
+    @svc.message_handler(ProjectJobProgressEvent)
+    def job_progress(msg: ProjectJobProgressEvent, ctx: ServerServiceContext) -> None:
+        def update_job(job: ProjectJob) -> None:
+            job.progress = msg.progress
+            job.message = msg.message
+
+        modify_project_job(
+            (msg.project_id, msg.connector_instance), update_job, msg, ctx
+        )
 
     @svc.message_handler(ComponentProcessEvent)
     def process_jobs(msg: ComponentProcessEvent, ctx: ServerServiceContext) -> None:

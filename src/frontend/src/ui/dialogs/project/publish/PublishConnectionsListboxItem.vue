@@ -87,10 +87,10 @@ function onPublishInitDone(success: boolean, msg: string): void {
 
         <div class="row-span-2 pl-1 content-center">
             <div v-if="activeJob" class="grid grid-flow-row text-sm">
-                <span class="r-text-light italic justify-self-end"
+                <span class="r-text-light italic justify-self-end truncate"
                     ><b>{{ category?.verbStatusProgressing }}:</b> {{ activeJob.message }}</span
                 >
-                <ProgressBar class="h-4" :value="activeJob.progress * 100"></ProgressBar>
+                <ProgressBar class="h-4" :value="Math.trunc(activeJob.progress * 100)"></ProgressBar>
             </div>
             <div v-else>
                 <Button

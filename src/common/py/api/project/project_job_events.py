@@ -9,7 +9,8 @@ from ...core.messaging.composers import (
     MessageBuilder,
     EventComposer,
 )
-from ...data.entities.project import ProjectJob
+from ...data.entities.connector import ConnectorInstanceID
+from ...data.entities.project import ProjectJob, ProjectID
 
 
 @Message.define("event/project-job/list")
@@ -34,3 +35,44 @@ class ProjectJobsListEvent(Event):
         Helper function to easily build this message.
         """
         return message_builder.build_event(ProjectJobsListEvent, chain, jobs=jobs)
+
+
+@Message.define("event/project-job/progress")
+class ProjectJobProgressEvent(Event):
+    """
+    Emitted to inform about the progression of a job.
+
+    Args:
+        project_id: The project ID.
+        connector_instance: The connector instance ID.
+        progress: The total progress (0.0 - 1.0).
+        message: The current activity message.
+    """
+
+    project_id: ProjectID
+    connector_instance: ConnectorInstanceID
+
+    progress: float
+    message: str
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project_id: ProjectID,
+        connector_instance: ConnectorInstanceID,
+        progress: float,
+        message: str,
+        chain: Message | None = None
+    ) -> EventComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_event(
+            ProjectJobProgressEvent,
+            chain,
+            project_id=project_id,
+            connector_instance=connector_instance,
+            progress=progress,
+            message=message,
+        )

@@ -2,7 +2,7 @@ import typing
 from threading import RLock
 
 from common.py.core.logging import debug
-from common.py.core.messaging.composers import MessageBuilder
+from common.py.services import ClientServiceContext
 
 from .connector_job_executor import ConnectorJobExecutor
 from .connector_job_executor_factory import ConnectorJobExecutorFactory
@@ -28,17 +28,19 @@ class ConnectorJobsEngine:
 
         self._lock = RLock()
 
-    def spawn(self, job: ConnectorJob, *, message_builder: MessageBuilder) -> None:
+    def spawn(self, job: ConnectorJob, ctx: ClientServiceContext) -> None:
         """
         Creates a new executor for a connector job.
 
         Args:
             job: The connector job:
-            message_builder: A message builder to send messages through.
+            ctx: The originating message context.
         """
         with self._lock:
             executor = self._executor_factory.create_executor(
-                job, message_builder=message_builder
+                job,
+                message_builder=ctx.message_builder,
+                target_channel=ctx.remote_channel,
             )
 
             self._executors.append(executor)
