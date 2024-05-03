@@ -70,7 +70,7 @@ export default function (comp: WebComponent): Service {
                 const project = ctx.projectsStore.projects.find((project) => project.project_id == msg.project_id);
                 if (project) {
                     // @ts-ignore
-                    project.logbook.job_history = msg.logbook.job_history;
+                    project.logbook.job_history = msg.logbook.job_history; // TODO: Find a better way later
 
                     ctx.logger.debug(`Updated project logbook for ${msg.project_id}`, "projects");
                 } else {
