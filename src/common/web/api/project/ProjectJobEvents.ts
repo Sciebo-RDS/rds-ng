@@ -75,7 +75,7 @@ export class ProjectJobCompletionEvent extends Event {
     public readonly project_id: ProjectID = 0;
     public readonly connector_instance: ConnectorInstanceID = "";
 
-    public readonly success: boolean;
+    public readonly success: boolean = true;
     public readonly message: string = "";
 
     /**

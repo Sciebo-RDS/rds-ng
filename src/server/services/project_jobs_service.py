@@ -1,12 +1,11 @@
-import time
-
 from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
 from common.py.data.entities.project import ProjectJob
 from common.py.services import Service
 
-from .tools import send_project_jobs_list, modify_project_job
+from .tools import send_project_jobs_list, handle_project_job_message
+from ..networking.session import Session
 
 
 def create_project_jobs_service(comp: BackendComponent) -> Service:
@@ -132,7 +131,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(StartProjectJobReply)
     def job_started(msg: StartProjectJobReply, ctx: ServerServiceContext) -> None:
-        def update_job(job: ProjectJob) -> None:
+        def update_job(job: ProjectJob, _: Session) -> None:
             job.progress = 0.0
             job.message = "Job started"
 
@@ -144,17 +143,17 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 connector_instance=job.connector_instance,
             )
 
-        modify_project_job(
+        handle_project_job_message(
             (msg.project_id, msg.connector_instance), update_job, msg, ctx
         )
 
     @svc.message_handler(ProjectJobProgressEvent)
     def job_progress(msg: ProjectJobProgressEvent, ctx: ServerServiceContext) -> None:
-        def update_job(job: ProjectJob) -> None:
+        def update_job(job: ProjectJob, _: Session) -> None:
             job.progress = msg.progress
             job.message = msg.message
 
-        modify_project_job(
+        handle_project_job_message(
             (msg.project_id, msg.connector_instance), update_job, msg, ctx
         )
 
@@ -162,13 +161,15 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
     def job_completion(
         msg: ProjectJobCompletionEvent, ctx: ServerServiceContext
     ) -> None:
-        def update_job(job: ProjectJob) -> None:
+        def update_job(job: ProjectJob, session: Session | None) -> None:
             if (
                 project := ctx.storage_pool.project_storage.get(job.project_id)
             ) is not None:
                 from common.py.data.entities.project.logbook import (
                     ProjectJobHistoryRecord,
                 )
+
+                from ..services.tools import send_project_logbook
 
                 record = ProjectJobHistoryRecord(
                     connector_instance=job.connector_instance,
@@ -177,6 +178,9 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 )
 
                 project.logbook.job_history.append(record)
+
+                if session is not None:
+                    send_project_logbook(msg, ctx, project, session=session)
 
             ctx.storage_pool.project_job_storage.remove(job)
 
@@ -190,8 +194,11 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 message=msg.message,
             )
 
-        modify_project_job(
-            (msg.project_id, msg.connector_instance), update_job, msg, ctx
+        handle_project_job_message(
+            (msg.project_id, msg.connector_instance),
+            update_job,
+            msg,
+            ctx,
         )
 
     @svc.message_handler(ComponentProcessEvent)

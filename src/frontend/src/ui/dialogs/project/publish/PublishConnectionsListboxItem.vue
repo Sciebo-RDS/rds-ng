@@ -36,19 +36,18 @@ const connector = computed(() => findConnectorByID(consStore.connectors, unref(i
 const category = unref(connector) ? getConnectorCategory(unref(connector)!) : undefined;
 
 const activeJob = computed(() => getActiveProjectJob(unref(project)!, unref(instance)!));
-const jobStats = new ProjectStatistics(unref(project)!).getJobStatistics(unref(instance)!.instance_id);
+const jobStats = computed(() => new ProjectStatistics(unref(project)!).getJobStatistics(unref(instance)!.instance_id));
 
 const initiatePublish = ref(false);
 const disablePublish = computed(() => {
     if (unref(connector)) {
         const publishOnce = (unref(connector)!.options & ConnectorOptions.PublishOnce) == ConnectorOptions.PublishOnce;
-        return publishOnce && jobStats.totalCount.done >= 1;
+        return publishOnce && unref(jobStats).totalCount.succeeded >= 1;
     }
     return true;
 });
 const publishTitle = computed(() => (unref(initiatePublish) ? "Initiating..." : category?.verbAction));
 
-// TODO: -> UI Tools?
 function onPublish() {
     const conn = unref(connector);
     if (conn) {
@@ -118,7 +117,7 @@ function onPublishInitDone(success: boolean, msg: string): void {
                 <span class="pr-3">{{ jobStats.lastJob > 0 ? new Date(jobStats.lastJob * 1000).toLocaleString() : "Never" }}</span>
                 <b>Total {{ category.verbNounPlural }}:</b>
                 <span>
-                    {{ jobStats.totalCount.done }}
+                    {{ jobStats.totalCount.succeeded }}
                     <span v-if="jobStats.totalCount.failed > 0">(+ {{ jobStats.totalCount.failed }} failed)</span>
                 </span>
             </div>

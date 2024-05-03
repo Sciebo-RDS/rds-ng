@@ -1,5 +1,6 @@
 import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/project/ProjectCommands";
 import { ProjectsListEvent } from "@common/api/project/ProjectEvents";
+import { ProjectLogbookUpdateEvent } from "@common/api/project/ProjectLogbookEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -62,6 +63,17 @@ export default function (comp: WebComponent): Service {
                     ctx.logger.debug(`Deleted project ${msg.project_id}`, "projects");
                 } else {
                     ctx.logger.error(`Unable to delete project ${msg.project_id}`, "projects", { reason: msg.message });
+                }
+            });
+
+            svc.messageHandler(ProjectLogbookUpdateEvent, (msg: ProjectLogbookUpdateEvent, ctx: FrontendServiceContext) => {
+                const project = ctx.projectsStore.projects.find((project) => project.project_id == msg.project_id);
+                if (project) {
+                    project.logbook.job_history = msg.logbook.job_history;
+
+                    ctx.logger.debug(`Updated project logbook for ${msg.project_id}`, "projects");
+                } else {
+                    ctx.logger.debug(`Received project logbook update for unknown project ${msg.project_id}`, "projects");
                 }
             });
         },
