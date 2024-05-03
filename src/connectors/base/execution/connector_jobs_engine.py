@@ -4,8 +4,7 @@ from threading import RLock
 from common.py.core.logging import debug
 from common.py.services import ClientServiceContext
 
-from .connector_job_executor import ConnectorJobExecutor
-from .connector_job_executor_factory import ConnectorJobExecutorFactory
+from .connector_job_executor import ConnectorJobExecutor, ConnectorJobExecutorType
 from ..data.entities.connector import ConnectorJob
 
 
@@ -17,13 +16,13 @@ class ConnectorJobsEngine:
     def __init__(
         self,
         *,
-        executor_factory: ConnectorJobExecutorFactory,
+        executor_type: type[ConnectorJobExecutorType],
     ):
         """
         Args:
-            executor_factory: The factory used to create new executors.
+            executor_type: The type to create new executors.
         """
-        self._executor_factory = executor_factory
+        self._executor_type = executor_type
         self._executors: typing.List[ConnectorJobExecutor] = []
 
         self._lock = RLock()
@@ -37,7 +36,7 @@ class ConnectorJobsEngine:
             ctx: The originating message context.
         """
         with self._lock:
-            executor = self._executor_factory.create_executor(
+            executor = self._executor_type(
                 job,
                 message_builder=ctx.message_builder,
                 target_channel=ctx.remote_channel,

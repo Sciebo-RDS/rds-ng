@@ -1,4 +1,5 @@
 import abc
+import typing
 
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
@@ -136,3 +137,9 @@ class ConnectorJobExecutor(abc.ABC):
         Whether the job is still running.
         """
         return self._is_active
+
+
+# pylint: disable=invalid-name
+ConnectorJobExecutorType = typing.TypeVar(
+    "ConnectorJobExecutorType", bound=ConnectorJobExecutor
+)

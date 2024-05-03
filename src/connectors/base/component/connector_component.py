@@ -9,7 +9,7 @@ from common.py.component.roles import LeafRole
 from common.py.utils import UnitID
 
 from .connector_information import ConnectorInformation
-from ..execution import ConnectorJobExecutorFactory, ConnectorJobsEngine
+from ..execution import ConnectorJobsEngine, ConnectorJobExecutorType
 
 
 class ConnectorComponent(BackendComponent):
@@ -21,7 +21,7 @@ class ConnectorComponent(BackendComponent):
         self,
         connector_id: str,
         *,
-        executor_factory: ConnectorJobExecutorFactory,
+        executor_type: type[ConnectorJobExecutorType],
         module_name: str,
     ):
         super().__init__(
@@ -37,7 +37,7 @@ class ConnectorComponent(BackendComponent):
 
         self._connector_info = ConnectorInformation(connector_id)
 
-        self._jobs_engine = ConnectorJobsEngine(executor_factory=executor_factory)
+        self._jobs_engine = ConnectorJobsEngine(executor_type=executor_type)
 
     def run(self) -> None:
         from ..data.entities.connector.categories import register_connector_categories
