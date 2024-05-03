@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from enum import IntEnum
 
 from dataclasses_json import dataclass_json
 
@@ -15,19 +14,11 @@ class ProjectJobHistoryRecord(ProjectLogbookRecord):
 
     Attributes:
         connector_instance: The connector instance ID.
-        status: The status (done or failed).
+        success: The success status (done or failed).
         message: An optional message (usually in case of an error).
     """
 
-    class Status(IntEnum):
-        """
-        The status of the job operation.
-        """
+    connector_instance: ConnectorInstanceID = ""
 
-        DONE = 0
-        FAILED = -1
-
-    connector_instance: ConnectorInstanceID
-
-    status: Status
-    message: str
+    success: bool = True
+    message: str = ""

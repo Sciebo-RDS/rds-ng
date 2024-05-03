@@ -85,7 +85,8 @@ class ConnectorJobExecutor(abc.ABC):
             self._mesage_builder,
             project_id=self._job.project.project_id,
             connector_instance=self._job.connector_instance,
-            status=ProjectJobCompletionEvent.Status.SUCCEEDED,
+            success=True,
+            message="Job completed successfully",
         ).emit(self._target_channel)
 
         self._log_debug("Job done")
@@ -99,18 +100,20 @@ class ConnectorJobExecutor(abc.ABC):
         """
         from common.py.api import ProjectJobCompletionEvent
 
+        failure_msg = f"Job failed: {reason}"
+
         self._is_active = False
-        self.report_progress(1.0, f"Job failed: {reason}")
+        self.report_progress(1.0, failure_msg)
 
         ProjectJobCompletionEvent.build(
             self._mesage_builder,
             project_id=self._job.project.project_id,
             connector_instance=self._job.connector_instance,
-            status=ProjectJobCompletionEvent.Status.FAILED,
-            reason=reason,
+            success=False,
+            message=failure_msg,
         ).emit(self._target_channel)
 
-        self._log_debug(f"Job failed: {reason}")
+        self._log_debug(failure_msg)
 
     def _log_debug(self, message: str) -> None:
         debug(

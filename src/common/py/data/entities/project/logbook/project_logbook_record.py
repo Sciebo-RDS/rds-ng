@@ -1,5 +1,6 @@
 import abc
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
@@ -14,4 +15,4 @@ class ProjectLogbookRecord(abc.ABC):
         timestamp: The timestamp of the record.
     """
 
-    timestamp: float
+    timestamp: float = field(default_factory=lambda: time.time())

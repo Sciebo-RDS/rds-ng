@@ -87,19 +87,15 @@ class ProjectJobCompletionEvent(Event):
     Args:
         project_id: The project ID.
         connector_instance: The connector instance ID.
-        status: Whether the job succeeded or failed.
-        reason: The reason in case of a failure.
+        success: The success status (done or failed).
+        message: An optional message (usually in case of an error).
     """
-
-    class Status(StrEnum):
-        SUCCEEDED = "succeeded"
-        FAILED = "failed"
 
     project_id: ProjectID
     connector_instance: ConnectorInstanceID
 
-    status: Status
-    reason: str
+    success: bool
+    message: str
 
     @staticmethod
     def build(
@@ -107,8 +103,8 @@ class ProjectJobCompletionEvent(Event):
         *,
         project_id: ProjectID,
         connector_instance: ConnectorInstanceID,
-        status: Status,
-        reason: str = "",
+        success: bool,
+        message: str = "",
         chain: Message | None = None
     ) -> EventComposer:
         """
@@ -119,6 +115,6 @@ class ProjectJobCompletionEvent(Event):
             chain,
             project_id=project_id,
             connector_instance=connector_instance,
-            status=status,
-            reason=reason,
+            success=success,
+            message=message,
         )

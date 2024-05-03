@@ -5,9 +5,9 @@ from sqlalchemy import (
     Table,
     Column,
     Integer,
-    Float,
     Text,
     Uuid,
+    Numeric,
 )
 from sqlalchemy.orm import registry
 
@@ -40,9 +40,9 @@ def register_project_jobs_tables(
         Column("project_id", Integer, primary_key=True),
         Column("connector_instance", Uuid, primary_key=True),
         Column("user_id", Text),
-        Column("timestamp", Float),
+        Column("timestamp", Numeric(32, 8, asdecimal=False)),
         # Progress
-        Column("progress", Float),
+        Column("progress", Numeric(32, 8, asdecimal=False)),
         Column("message", Text),
     )
 

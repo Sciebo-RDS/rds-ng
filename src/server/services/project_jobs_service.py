@@ -1,4 +1,7 @@
+import time
+
 from common.py.component import BackendComponent
+from common.py.core.logging import debug
 from common.py.core.messaging import Channel
 from common.py.data.entities.project import ProjectJob
 from common.py.services import Service
@@ -24,6 +27,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         StartProjectJobCommand,
         StartProjectJobReply,
         ProjectJobProgressEvent,
+        ProjectJobCompletionEvent,
     )
     from common.py.api.component import ComponentProcessEvent
 
@@ -132,6 +136,14 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             job.progress = 0.0
             job.message = "Job started"
 
+            debug(
+                "Job started",
+                scope="jobs",
+                user_id=job.user_id,
+                project_id=job.project_id,
+                connector_instance=job.connector_instance,
+            )
+
         modify_project_job(
             (msg.project_id, msg.connector_instance), update_job, msg, ctx
         )
@@ -141,6 +153,42 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         def update_job(job: ProjectJob) -> None:
             job.progress = msg.progress
             job.message = msg.message
+
+        modify_project_job(
+            (msg.project_id, msg.connector_instance), update_job, msg, ctx
+        )
+
+    @svc.message_handler(ProjectJobCompletionEvent)
+    def job_completion(
+        msg: ProjectJobCompletionEvent, ctx: ServerServiceContext
+    ) -> None:
+        def update_job(job: ProjectJob) -> None:
+            if (
+                project := ctx.storage_pool.project_storage.get(job.project_id)
+            ) is not None:
+                from common.py.data.entities.project.logbook import (
+                    ProjectJobHistoryRecord,
+                )
+
+                record = ProjectJobHistoryRecord(
+                    connector_instance=job.connector_instance,
+                    success=msg.success,
+                    message=msg.message,
+                )
+
+                project.logbook.job_history.append(record)
+
+            ctx.storage_pool.project_job_storage.remove(job)
+
+            debug(
+                "Job completed",
+                scope="jobs",
+                user_id=job.user_id,
+                project_id=job.project_id,
+                connector_instance=job.connector_instance,
+                success=msg.success,
+                message=msg.message,
+            )
 
         modify_project_job(
             (msg.project_id, msg.connector_instance), update_job, msg, ctx

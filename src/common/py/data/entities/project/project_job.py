@@ -30,7 +30,7 @@ class ProjectJob:
     project_id: ProjectID
     connector_instance: ConnectorInstanceID
 
-    timestamp: float = field(default_factory=time.time)
+    timestamp: float = field(default_factory=lambda: time.time())
 
     progress: float = 0.0
     message: str = ""

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from sqlalchemy import Table, MetaData, Column, Text, String, Float, Integer
+from sqlalchemy import Table, MetaData, Column, Text, String, Integer, Numeric
 from sqlalchemy.orm import registry, composite
 
 from common.py.data.entities.connector import Connector
@@ -46,7 +46,7 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         # Metadata
         Column("metadata_profile", JSONEncodedDataType),
         # Miscellaneous
-        Column("announce_timestamp", Float),
+        Column("announce_timestamp", Numeric(32, 8, asdecimal=False)),
     )
 
     reg.map_imperatively(

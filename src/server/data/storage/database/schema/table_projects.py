@@ -6,12 +6,12 @@ from sqlalchemy import (
     Table,
     Column,
     Integer,
-    Float,
     Text,
     Boolean,
     ForeignKey,
     String,
     Uuid,
+    Numeric,
 )
 from sqlalchemy.orm import registry, composite, relationship
 
@@ -63,7 +63,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         # Main
         Column("project_id", Integer, primary_key=True),
         Column("user_id", String(1024)),
-        Column("creation_time", Float),
+        Column("creation_time", Numeric(32, 8, asdecimal=False)),
         Column("resources_path", Text),
         Column("title", Text),
         Column("description", Text),
@@ -137,15 +137,15 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
     table_logbook_job_history = Table(
         "project_logbook_job_history",
         metadata,
+        Column("record", Integer, primary_key=True, autoincrement=True),
         Column(
             "project_id",
             Integer,
             ForeignKey("project_logbook.project_id"),
-            primary_key=True,
         ),
-        Column("timestamp", Float, primary_key=True),
-        Column("connector_instance", Uuid, primary_key=True),
-        Column("status", Integer),
+        Column("timestamp", Numeric(32, 8, asdecimal=False)),
+        Column("connector_instance", Uuid),
+        Column("success", Boolean),
         Column("message", Text),
     )
 
