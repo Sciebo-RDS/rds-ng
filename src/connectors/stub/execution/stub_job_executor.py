@@ -34,7 +34,7 @@ class StubJobExecutor(ConnectorJobExecutor):
         if progress >= 1.0:
             (
                 self.set_done()
-                if random.uniform(0.0, 1.0) <= 0.5
+                if random.uniform(0.0, 1.0) <= 0.2
                 else self.set_failed("Totally random failure")
             )
 

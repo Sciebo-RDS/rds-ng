@@ -169,8 +169,6 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                     ProjectJobHistoryRecord,
                 )
 
-                from ..services.tools import send_project_logbook
-
                 record = ProjectJobHistoryRecord(
                     connector_instance=job.connector_instance,
                     success=msg.success,
@@ -179,8 +177,10 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
 
                 project.logbook.job_history.append(record)
 
-                if session is not None:
-                    send_project_logbook(msg, ctx, project, session=session)
+                if session:
+                    from .tools.project_tools import send_projects_list
+
+                    send_projects_list(msg, ctx, session=session)
 
             ctx.storage_pool.project_job_storage.remove(job)
 

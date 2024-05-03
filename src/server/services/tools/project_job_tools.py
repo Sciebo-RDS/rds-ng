@@ -44,8 +44,6 @@ def handle_project_job_message(
     callback: ModifyProjectJobCallback,
     msg: Message,
     ctx: ServerServiceContext,
-    *,
-    send_jobs: bool = True,
 ) -> None:
     """
     Modifies a project job via a callback and sends the updated jobs list to the user.
@@ -55,13 +53,10 @@ def handle_project_job_message(
         callback: The callback function.
         msg: Original message.
         ctx: The service context.
-        send_jobs: Whether to send the project jobs list to the user.
     """
     if (job := ctx.storage_pool.project_job_storage.get(job_id)) is not None:
         session = ctx.session_manager.find_user_session(job.user_id)
-
         callback(job, session)
 
         if session is not None:
-            if send_jobs:
-                send_project_jobs_list(msg, ctx, session=session)
+            send_project_jobs_list(msg, ctx, session=session)

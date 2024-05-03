@@ -26,4 +26,3 @@ from .project_job_events import (
     ProjectJobProgressEvent,
     ProjectJobCompletionEvent,
 )
-from .project_logbook_events import ProjectLogbookUpdateEvent
