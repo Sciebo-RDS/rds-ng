@@ -69,6 +69,7 @@ export default function (comp: WebComponent): Service {
             svc.messageHandler(ProjectLogbookUpdateEvent, (msg: ProjectLogbookUpdateEvent, ctx: FrontendServiceContext) => {
                 const project = ctx.projectsStore.projects.find((project) => project.project_id == msg.project_id);
                 if (project) {
+                    // @ts-ignore
                     project.logbook.job_history = msg.logbook.job_history;
 
                     ctx.logger.debug(`Updated project logbook for ${msg.project_id}`, "projects");

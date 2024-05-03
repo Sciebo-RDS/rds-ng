@@ -10,7 +10,7 @@ import { ProjectJobHistoryRecord } from "./ProjectJobHistoryRecord";
 export class ProjectLogbook {
     // @ts-ignore
     @Type(() => ProjectJobHistoryRecord)
-    public job_history: ProjectJobHistoryRecord[];
+    public readonly job_history: ProjectJobHistoryRecord[];
 
     public constructor(jobHistory: ProjectJobHistoryRecord[] = []) {
         this.job_history = jobHistory;
