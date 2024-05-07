@@ -8,7 +8,7 @@ from .project_commands import (
     DeleteProjectCommand,
     DeleteProjectReply,
 )
-from .project_events import ProjectsListEvent
+from .project_events import ProjectsListEvent, ProjectLogbookEvent
 from .project_features_commands import (
     UpdateProjectFeaturesCommand,
     UpdateProjectFeaturesReply,

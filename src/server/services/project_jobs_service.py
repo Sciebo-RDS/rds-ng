@@ -27,6 +27,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         StartProjectJobReply,
         ProjectJobProgressEvent,
         ProjectJobCompletionEvent,
+        ProjectLogbookEvent,
     )
     from common.py.api.component import ComponentProcessEvent
 
@@ -178,10 +179,6 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 project.logbook.job_history.append(record)
 
                 if session:
-                    from .tools.project_tools import send_projects_list
-
-                    send_projects_list(msg, ctx, session=session)
-
                     # Bounce the message off to the user to inform him about the completion
                     ProjectJobCompletionEvent.build(
                         ctx.message_builder,
@@ -189,6 +186,14 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                         connector_instance=msg.connector_instance,
                         success=msg.success,
                         message=msg.message,
+                        chain=msg,
+                    ).emit(Channel.direct(session.user_origin))
+
+                    # Send the updated project logbook to the client
+                    ProjectLogbookEvent.build(
+                        ctx.message_builder,
+                        project_id=msg.project_id,
+                        logbook=project.logbook,
                         chain=msg,
                     ).emit(Channel.direct(session.user_origin))
 
