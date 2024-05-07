@@ -13,6 +13,9 @@ class ProjectLogbookRecord(abc.ABC):
 
     Attributes:
         timestamp: The timestamp of the record.
+        seen: Whether the record has been seen by the user.
     """
 
     timestamp: float = field(default_factory=lambda: time.time())
+
+    seen: bool = False

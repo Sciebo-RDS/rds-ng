@@ -13,7 +13,7 @@ import { finishSentence } from "@common/utils/Strings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
-import { getActiveProjectJob } from "@/data/entities/project/ProjectJobTools";
+import { getActiveProjectJob } from "@/data/entities/project/ProjectJobUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { InitiateProjectJobAction } from "@/ui/actions/project/InitiateProjectJobAction";
 import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";

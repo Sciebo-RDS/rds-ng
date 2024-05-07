@@ -144,6 +144,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_logbook.project_id"),
         ),
         Column("timestamp", Numeric(32, 8, asdecimal=False)),
+        Column("seen", Boolean),
         Column("connector_instance", Uuid),
         Column("success", Boolean),
         Column("message", Text),
