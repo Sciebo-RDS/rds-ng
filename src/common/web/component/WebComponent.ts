@@ -10,6 +10,8 @@ import ToastService from "primevue/toastservice";
 import { type App, type Component as VueComp, createApp, inject } from "vue";
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
+import { Session } from "./Session";
+import { WebComponentData } from "./WebComponentData";
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
 import { Service } from "../services/Service";
@@ -21,8 +23,6 @@ import { Configuration, type SettingsContainer } from "../utils/config/Configura
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
-import { Session } from "./Session";
-import { WebComponentData } from "./WebComponentData";
 
 import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
@@ -71,7 +71,12 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      * @param appRoot - The root (main) application component.
      * @param userInterfaceType - The type of the user interface class.
      */
-    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>) {
+    public constructor(
+        env: SettingsContainer,
+        compID: UnitID,
+        appRoot: VueComponent,
+        userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>,
+    ) {
         if (WebComponent._instance) {
             throw new Error("A component instance has already been created");
         }
@@ -82,13 +87,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         const compInfo = metaInfo.getComponent(compID.unit);
 
         this._session = new Session(compID);
-        this._data = new WebComponentData(
-            this.sanitizeComponentID(compID, config),
-            config,
-            metaInfo.title,
-            compInfo.name,
-            metaInfo.version
-        );
+        this._data = new WebComponentData(this.sanitizeComponentID(compID, config), config, metaInfo.title, compInfo.name, metaInfo.version);
 
         logging.info(this.toString());
         logging.info("Starting component");
@@ -116,7 +115,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     private createRouter(): Router {
         return createRouter({
             history: createWebHistory(),
-            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()]
+            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()],
         });
     }
 
@@ -201,9 +200,11 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      * @param contextType - Can be used to override the default ``ServiceContext`` type. All message handlers
      *      associated with the new service will then receive instances of this type for their service context.
      */
-    public createService<CtxType extends ServiceContext>(name: string,
-                                                         initializer: ((svc: Service) => void) | null = null,
-                                                         contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>): Service {
+    public createService<CtxType extends ServiceContext>(
+        name: string,
+        initializer: ((svc: Service) => void) | null = null,
+        contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>,
+    ): Service {
         let svc = new Service<CtxType>(this._data.compID, name, this._core.messageBus, contextType);
         this._core.registerService(svc);
         if (initializer) {

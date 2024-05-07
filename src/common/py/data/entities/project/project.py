@@ -10,6 +10,7 @@ from .features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
+from .logbook import ProjectJobHistoryRecord
 from ..connector import ConnectorInstanceID
 from ..user import UserID
 
@@ -34,6 +35,7 @@ class Project:
         status: The project status.
         features: All project features.
         options: All project options.
+        logbook: The project's logbook.
     """
 
     class Status(IntEnum):
@@ -45,7 +47,7 @@ class Project:
         DELETED = 0xFF
 
     @dataclass_json
-    @dataclass
+    @dataclass(kw_only=True)
     class Features:
         """
         Data for all **Project** features.
@@ -86,6 +88,18 @@ class Project:
 
         ui: UIOptions = field(default_factory=dict)
 
+    @dataclass_json
+    @dataclass(kw_only=True)
+    class Logbook:
+        """
+        Class holding all logbook records of a project.
+
+        Attributes:
+            job_history: All job history records.
+        """
+
+        job_history: List[ProjectJobHistoryRecord] = field(default_factory=list)
+
     project_id: ProjectID
     user_id: UserID
 
@@ -100,3 +114,5 @@ class Project:
 
     features: Features = field(default_factory=Features)
     options: Options = field(default_factory=Options)
+
+    logbook: Logbook = field(default_factory=Logbook)

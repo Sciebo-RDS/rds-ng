@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
-import { useUserTools } from "@/ui/tools/UserTools";
+import { useUserTools } from "@/ui/tools/user/UserTools";
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 

@@ -133,7 +133,7 @@ export class MessageBus {
     private localDispatch(msg: Message, msgMeta: MessageMetaInformation): void {
         let localRouting = this._router.checkLocalRouting(msg, msgMeta);
         for (const [category, dispatcher] of Object.entries(this._dispatchers)) {
-            if (msg.category != category) {
+            if (msg.messageCategory != category) {
                 continue;
             }
 
@@ -158,10 +158,12 @@ export class MessageBus {
         this._networkEngine.sendMessage(msg, msgMeta);
     }
 
-    private dispatchToService<DispatcherType extends MessageDispatcher<any, any>,
-        CtxType extends MessageContext>(dispatcher: DispatcherType,
-                                        msg: Message, msgMeta: MessageMetaInformation,
-                                        svc: MessageService<CtxType>): boolean {
+    private dispatchToService<DispatcherType extends MessageDispatcher<any, any>, CtxType extends MessageContext>(
+        dispatcher: DispatcherType,
+        msg: Message,
+        msgMeta: MessageMetaInformation,
+        svc: MessageService<CtxType>,
+    ): boolean {
         let msgDispatched = false;
         for (const handler of svc.messageHandlers.findHandlers(msg.name)) {
             try {
@@ -169,8 +171,7 @@ export class MessageBus {
                 dispatcher.dispatch(msg, msgMeta, handler, ctx);
                 msgDispatched = true;
             } catch (err) {
-                logging.error(`An error occurred while processing a message: ${String(err)}`, "bus",
-                    { message: msg, error: err });
+                logging.error(`An error occurred while processing a message: ${String(err)}`, "bus", { message: msg, error: err });
             }
         }
 

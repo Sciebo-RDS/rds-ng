@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 
 import { type UserID } from "../user/User";
 import { ProjectFeatures } from "./features/ProjectFeatures";
+import { ProjectLogbook } from "./logbook/ProjectLogbook";
 import { ProjectOptions } from "./ProjectOptions";
 
 /**
@@ -29,6 +30,7 @@ export const enum ProjectStatus {
  * @param status - The project status.
  * @param features - All project features.
  * @param options - All project options.
+ * @param logbook - The project's logbook.
  */
 export class Project {
     public readonly project_id: ProjectID;
@@ -50,6 +52,10 @@ export class Project {
     @Type(() => ProjectOptions)
     public readonly options: ProjectOptions = new ProjectOptions();
 
+    // @ts-ignore
+    @Type(() => ProjectLogbook)
+    public readonly logbook: ProjectLogbook = new ProjectLogbook();
+
     public constructor(
         projectID: ProjectID,
         creationTime: number,
@@ -58,6 +64,7 @@ export class Project {
         description: string = "",
         features: ProjectFeatures = new ProjectFeatures(),
         options: ProjectOptions = new ProjectOptions(),
+        logbook: ProjectLogbook = new ProjectLogbook(),
     ) {
         this.project_id = projectID;
         this.user_id = "";
@@ -71,5 +78,7 @@ export class Project {
 
         this.features = features;
         this.options = options;
+
+        this.logbook = logbook;
     }
 }

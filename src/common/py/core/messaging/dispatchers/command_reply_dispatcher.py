@@ -25,7 +25,9 @@ class CommandReplyDispatcher(MessageDispatcher[CommandReply]):
         from .command_dispatcher import CommandDispatcher
         from ...logging import debug
 
-        debug(f"Dispatching command reply: {msg}", scope="bus")
+        if not msg_meta.suppress_logging:
+            debug(f"Dispatching command reply: {msg}", scope="bus")
+
         super().pre_dispatch(msg, msg_meta)
 
         CommandDispatcher.invoke_reply_callbacks(

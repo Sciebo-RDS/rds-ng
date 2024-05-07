@@ -123,7 +123,7 @@ export class NetworkEngine {
 
     private createMessageMetaInformation(msg: Message, entrypoint: MessageEntrypoint, ...args: any[]): MessageMetaInformation {
         for (const [msgType, metaType] of Object.entries(this._metaInformationTypes)) {
-            if (msg.category == msgType) {
+            if (msg.messageCategory == msgType) {
                 return new metaType(entrypoint, ...args) as MessageMetaInformation;
             }
         }

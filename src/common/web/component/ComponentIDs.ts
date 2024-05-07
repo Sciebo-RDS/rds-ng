@@ -12,6 +12,7 @@ export const enum ComponentType {
 export const enum ComponentUnit {
     // Infrastructure
     Server = "server",
+    Connector = "connector",
 
     // Web
     Frontend = "frontend",

@@ -1,6 +1,7 @@
 import abc
 
 from .connector_storage import ConnectorStorage
+from .project_job_storage import ProjectJobStorage
 from .project_storage import ProjectStorage
 from .user_storage import UserStorage
 from ...utils.config import Configuration
@@ -65,5 +66,13 @@ class StoragePool(abc.ABC):
     def project_storage(self) -> ProjectStorage:
         """
         The project storage.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
+    def project_job_storage(self) -> ProjectJobStorage:
+        """
+        The project job storage.
         """
         raise NotImplementedError()

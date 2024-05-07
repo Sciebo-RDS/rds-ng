@@ -4,19 +4,23 @@ import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
-import createFrontendService from "@/services/FrontendService";
-import createUserService from "@/services/UserService";
-import createConnectorsService from "@/services/ConnectorsService";
-import createProjectsService from "@/services/ProjectsService";
-
-import { getFrontendSettings } from "@/settings/FrontendSettings";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
-
-import Frontend from "@/ui/Frontend.vue";
-import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { registerAuthenticationSchemes } from "@/authentication/AuthenticationSchemes";
 import { AuthenticationSchemesCatalog } from "@/authentication/AuthenticationSchemesCatalog";
+
+import { registerConnectorCategories } from "@/data/entities/connector/categories/ConnectorCategories";
+
+import createConnectorsService from "@/services/ConnectorsService";
+import createFrontendService from "@/services/FrontendService";
+import createProjectsService from "@/services/ProjectsService";
+import createProjectJobsService from "@/services/ProjectJobsService";
+import createUserService from "@/services/UserService";
+
+import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
+import { getFrontendSettings } from "@/settings/FrontendSettings";
+
+import Frontend from "@/ui/Frontend.vue";
+import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
 /**
@@ -29,6 +33,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _userService: Service | null = null;
     private _connectorsService: Service | null = null;
     private _projectsService: Service | null = null;
+    private _projectJobsService: Service | null = null;
 
     public constructor() {
         super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendUserInterface);
@@ -41,6 +46,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
 
         // Reigster global items
         registerAuthenticationSchemes();
+        registerConnectorCategories();
         registerSnapIns();
 
         // Mount the authentication scheme
@@ -51,6 +57,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this._userService = createUserService(this);
         this._connectorsService = createConnectorsService(this);
         this._projectsService = createProjectsService(this);
+        this._projectJobsService = createProjectJobsService(this);
     }
 
     private addFrontendSettings(): void {
@@ -123,6 +130,16 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
             throw new Error("Tried to access the projects service before its creation");
         }
         return this._projectsService;
+    }
+
+    /**
+     * The project jobs service.
+     */
+    public get projectJobsService(): Service {
+        if (!this._projectJobsService) {
+            throw new Error("Tried to access the jobs service before its creation");
+        }
+        return this._projectJobsService;
     }
 
     /**

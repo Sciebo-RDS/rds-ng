@@ -5,14 +5,14 @@ import { computed, defineAsyncComponent, toRefs } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
-import { type UIOptions } from "@/data/entities/UIOptions";
+import { type UIOptions } from "@/data/entities/ui/UIOptions";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
 const props = defineProps({
     project: {
         type: Project,
-        required: true
-    }
+        required: true,
+    },
 });
 const { project } = toRefs(props);
 

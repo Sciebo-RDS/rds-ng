@@ -1,12 +1,20 @@
-from sqlalchemy import Table, MetaData, Column, Text, String
+from dataclasses import dataclass
+
+from sqlalchemy import Table, MetaData, Column, Text, String, Integer, Numeric
 from sqlalchemy.orm import registry, composite
 
 from common.py.data.entities.connector import Connector
+from common.py.utils import UnitID
 
-from .types import JSONEncodedDataType
+from .types import JSONEncodedDataType, DataclassDataType
 
 
-def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
+@dataclass(kw_only=True)
+class ConnectorsTables:
+    main: Table
+
+
+def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsTables:
     """
     Registers the connectors table.
 
@@ -15,7 +23,7 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         reg: The mapper registry.
 
     Returns:
-        The newly created table.
+        The newly created tables.
     """
     from sqlalchemy import Unicode
 
@@ -24,13 +32,21 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         metadata,
         # Main
         Column("connector_id", String(64), primary_key=True),
+        Column(
+            "connector_address",
+            DataclassDataType[UnitID](dataclass_type=UnitID),
+        ),
         Column("name", Text),
         Column("description", Text),
+        Column("category", Text),
+        Column("options", Integer),
         # Logos
         Column("logos__default", Text),
         Column("logos__horizontal", Text),
         # Metadata
         Column("metadata_profile", JSONEncodedDataType),
+        # Miscellaneous
+        Column("announce_timestamp", Numeric(32, 8, asdecimal=False)),
     )
 
     reg.map_imperatively(
@@ -45,4 +61,4 @@ def register_connectors_table(metadata: MetaData, reg: registry) -> Table:
         },
     )
 
-    return table_connectors
+    return ConnectorsTables(main=table_connectors)

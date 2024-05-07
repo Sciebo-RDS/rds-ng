@@ -1,0 +1,52 @@
+/*
+ * Connector categories: Tags
+ */
+.r-connector-category-repository-tag {
+    background: var(--green-100);
+    color: var(--green-700);
+}
+
+.r-connector-category-archive-tag {
+    background: var(--blue-100);
+    color: var(--blue-700);
+}
+
+.r-connector-category-unknown-tag {
+    background: var(--surface-200);
+    color: var(--surface-700);
+}
+
+/*
+ * Connector categories: Buttons
+ */
+.r-connector-category-repository-button {
+    color: #ffffff;
+    background: #22c55e;
+    border: 1px solid #22c55e;
+}
+
+.r-connector-category-repository-button:hover {
+    background: #16A34A;
+    border: 1px solid #16A34A;
+}
+
+.r-connector-category-repository-button:active {
+    background: #15803D;
+    border: 1px solid #15803D;
+}
+
+.r-connector-category-archive-button {
+    color: #ffffff;
+    background: #0ea5e9;
+    border: 1px solid #0ea5e9;
+}
+
+.r-connector-category-archive-button:hover {
+    background: #0284c7;
+    border: 1px solid #0284c7;
+}
+
+.r-connector-category-archive-button:active {
+    background: #0369A1;
+    border: 1px solid #0369A1;
+}

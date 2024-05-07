@@ -1,4 +1,6 @@
-from sqlalchemy import MetaData, Table, Column, String
+from dataclasses import dataclass
+
+from sqlalchemy import MetaData, Table, Column, String, Text
 from sqlalchemy.orm import registry
 
 from common.py.data.entities.user import User
@@ -6,7 +8,12 @@ from common.py.data.entities.user import User
 from .types import DataclassDataType
 
 
-def register_users_table(metadata: MetaData, reg: registry) -> Table:
+@dataclass(kw_only=True)
+class UsersTables:
+    main: Table
+
+
+def register_users_tables(metadata: MetaData, reg: registry) -> UsersTables:
     """
     Registers the users table.
 
@@ -15,7 +22,7 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
         reg: The mapper registry.
 
     Returns:
-        The newly created table.
+        The newly created tables.
     """
 
     table_users = Table(
@@ -23,6 +30,7 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
         metadata,
         # Main
         Column("user_id", String(1024), primary_key=True),
+        Column("name", Text),
         # Settings
         Column(
             "user_settings",
@@ -32,4 +40,4 @@ def register_users_table(metadata: MetaData, reg: registry) -> Table:
 
     reg.map_imperatively(User, table_users)
 
-    return table_users
+    return UsersTables(main=table_users)

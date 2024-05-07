@@ -34,17 +34,19 @@ def apply_project_features_update(
         updated_features: The feature updates.
         apply_to: The features to update.
     """
-
-    def apply_update(feature_id: ProjectFeatureID) -> None:
-        if apply_to is None or feature_id in apply_to:
-            setattr(project.features, feature_id, getattr(updated_features, feature_id))
-
     from common.py.data.entities.project.features import (
         MetadataFeature,
         ResourcesMetadataFeature,
         DataManagementPlanFeature,
     )
 
-    apply_update(MetadataFeature.feature_id)
-    apply_update(ResourcesMetadataFeature.feature_id)
-    apply_update(DataManagementPlanFeature.feature_id)
+    if apply_to is None or MetadataFeature.feature_id in apply_to:
+        project.features.metadata.metadata = updated_features.metadata.metadata
+
+    if apply_to is None or ResourcesMetadataFeature.feature_id in apply_to:
+        project.features.resources_metadata.resources_metadata = (
+            updated_features.resources_metadata.resources_metadata
+        )
+
+    if apply_to is None or DataManagementPlanFeature.feature_id in apply_to:
+        project.features.dmp.plan = updated_features.dmp.plan

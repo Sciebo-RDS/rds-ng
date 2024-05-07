@@ -1,1 +1,5 @@
-from .component_events import ComponentInformation, ComponentInformationEvent
+from .component_events import (
+    ComponentInformation,
+    ComponentInformationEvent,
+    ComponentProcessEvent,
+)

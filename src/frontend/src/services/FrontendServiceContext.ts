@@ -2,6 +2,7 @@ import { ServiceContext } from "@common/services/ServiceContext";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
+import { useProjectJobsStore } from "@/data/stores/ProjectJobsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
 /**
@@ -13,6 +14,7 @@ export class FrontendServiceContext extends ServiceContext {
     private _connectorsStore = useConnectorsStore();
     private _userStore = useUserStore();
     private _projectsStore = useProjectsStore();
+    private _projectJobsStore = useProjectJobsStore();
 
     /**
      * The connectors store.
@@ -33,5 +35,12 @@ export class FrontendServiceContext extends ServiceContext {
      */
     public get projectsStore() {
         return this._projectsStore;
+    }
+
+    /**
+     * The project jobs store.
+     */
+    public get projectJobsStore() {
+        return this._projectJobsStore;
     }
 }

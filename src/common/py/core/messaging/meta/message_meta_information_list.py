@@ -20,13 +20,17 @@ class MessageMetaInformationList:
         meta_information: MessageMetaInformation
 
         timeout: float = 0.0
-        timestamp: float = dataclasses.field(default_factory=time.time)
+        timestamp: float = dataclasses.field(default_factory=lambda: time.time())
 
         def has_timed_out(self) -> bool:
             """
             Whether the message has timed out.
             """
-            return time.time() - self.timestamp > self.timeout if self.timeout > 0.0 else False
+            return (
+                time.time() - self.timestamp > self.timeout
+                if self.timeout > 0.0
+                else False
+            )
 
     def __init__(self):
         self._list: typing.Dict[Trace, MessageMetaInformationList._Entry] = {}
@@ -44,7 +48,9 @@ class MessageMetaInformationList:
         """
         with self._lock:
             if unique not in self._list:
-                self._list[unique] = MessageMetaInformationList._Entry(meta, timeout=timeout)
+                self._list[unique] = MessageMetaInformationList._Entry(
+                    meta, timeout=timeout
+                )
 
     def remove(self, unique: Trace) -> None:
         """
@@ -78,7 +84,9 @@ class MessageMetaInformationList:
             A list of all timed out entries.
         """
         with self._lock:
-            return [unique for unique, entry in self._list.items() if entry.has_timed_out()]
+            return [
+                unique for unique, entry in self._list.items() if entry.has_timed_out()
+            ]
 
     def _find(self, unique: Trace) -> _Entry | None:
         with self._lock:

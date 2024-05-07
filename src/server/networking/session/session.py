@@ -29,21 +29,24 @@ class Session:
         self._session_id = session_id
 
         self._user_token: UserToken | None = None
+        self._user_origin: UnitID | None = None
 
         self._data: SessionData = {}
         self._lock = threading.RLock()
 
-    def authenticate(self, user_token: UserToken) -> bool:
+    def authenticate(self, user_token: UserToken, user_origin: UnitID) -> bool:
         """
         Assigns a user token to this session.
 
         Args:
             user_token: The user token.
+            user_origin: The origin of the user.
         """
         if user_token.user_id == "":
             return False
 
         self._user_token = user_token
+        self._user_origin = user_origin
         return True
 
     def __getitem__(self, key: str) -> typing.Any:
@@ -114,3 +117,10 @@ class Session:
         The current authentication user token, if any.
         """
         return self._user_token
+
+    @property
+    def user_origin(self) -> UnitID | None:
+        """
+        The origin of the currently authenticated user, if any.
+        """
+        return self._user_origin

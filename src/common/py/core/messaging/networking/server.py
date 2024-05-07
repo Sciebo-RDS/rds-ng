@@ -33,7 +33,7 @@ class Server(socketio.Server):
         sid: str
 
         timeout: float = 0.0
-        last_activity: float = dataclasses.field(default_factory=time.time)
+        last_activity: float = dataclasses.field(default_factory=lambda: time.time())
 
         def has_timed_out(self) -> bool:
             """
@@ -180,9 +180,11 @@ class Server(socketio.Server):
 
             self._connected_components[comp_id] = Server._ComponentEntry(
                 sid,
-                timeout=self._config.value(NetworkServerSettingIDs.IDLE_TIMEOUT)
-                if comp_id.type == ComponentType.WEB
-                else 0.0,
+                timeout=(
+                    self._config.value(NetworkServerSettingIDs.IDLE_TIMEOUT)
+                    if comp_id.type == ComponentType.WEB
+                    else 0.0
+                ),
             )
 
             from .. import Channel

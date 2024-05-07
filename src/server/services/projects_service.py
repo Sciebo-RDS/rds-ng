@@ -186,7 +186,13 @@ def create_projects_service(comp: BackendComponent) -> Service:
             try:
                 ProjectVerifier(project).verify_delete()
 
+                for job in ctx.storage_pool.project_job_storage.filter_by_project(
+                    project.project_id
+                ):
+                    ctx.storage_pool.project_job_storage.remove(job)
+
                 ctx.storage_pool.project_storage.remove(project)
+
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 message = str(exc)

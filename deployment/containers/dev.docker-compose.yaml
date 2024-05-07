@@ -45,6 +45,28 @@ services:
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
+    # Connector: Stub
+    connector-stub:
+        image: rds-ng/connector-stub:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/dev.Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/stub"
+        depends_on:
+            - py-base
+        ports:
+            - "4300:6969"
+        environment:
+            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+
     # Web frontend
     frontend:
         image: rds-ng/frontend:develop

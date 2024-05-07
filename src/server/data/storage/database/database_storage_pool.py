@@ -5,6 +5,7 @@ from common.py.data.storage import StoragePool
 from common.py.utils.config import Configuration
 
 from .database_connector_storage import DatabaseConnectorStorage
+from .database_project_job_storage import DatabaseProjectJobStorage
 from .database_project_storage import DatabaseProjectStorage
 from .database_user_storage import DatabaseUserStorage
 from .schema import DatabaseSchema
@@ -25,18 +26,7 @@ class DatabaseStoragePool(StoragePool):
         DatabaseStoragePool._engine = create_database_engine(config)
         DatabaseStoragePool._schema = DatabaseSchema(DatabaseStoragePool._engine)
 
-        # TODO: Remove later
-        from ...._stub_.data import get_stub_data_connectors
-
-        with Session(DatabaseStoragePool._engine) as session, session.begin():
-            connectors = DatabaseConnectorStorage(
-                session,
-                DatabaseStoragePool._schema.connectors_table,
-            )
-
-            if len(connectors.list()) == 0:
-                for con in get_stub_data_connectors():
-                    connectors.add(con)
+        DatabaseStoragePool._schema.prepare()
 
     def __init__(self):
         super().__init__("Database")
@@ -50,6 +40,9 @@ class DatabaseStoragePool(StoragePool):
             self._session, DatabaseStoragePool._schema.users_table
         )
         self._project_storage = DatabaseProjectStorage(
+            self._session, DatabaseStoragePool._schema.projects_table
+        )
+        self._project_job_storage = DatabaseProjectJobStorage(
             self._session, DatabaseStoragePool._schema.projects_table
         )
 
@@ -68,3 +61,7 @@ class DatabaseStoragePool(StoragePool):
     @property
     def project_storage(self) -> DatabaseProjectStorage:
         return self._project_storage
+
+    @property
+    def project_job_storage(self) -> DatabaseProjectJobStorage:
+        return self._project_job_storage

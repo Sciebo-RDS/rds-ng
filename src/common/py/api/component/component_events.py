@@ -1,4 +1,5 @@
 import dataclasses
+import time
 
 from ..version import API_PROTOCOL_VERSION
 from ...core.messaging import Event, Message
@@ -67,4 +68,31 @@ class ComponentInformationEvent(Event):
             comp_id=comp_id,
             comp_name=comp_name,
             comp_version=comp_version,
+        )
+
+
+@Message.define("event/component/process")
+class ComponentProcessEvent(Event):
+    """
+    Sent periodically to the local channel to allow services to perform recurring tasks.
+
+    Attributes:
+        timestamp: The timestamp (in fractional seconds) of the event.
+    """
+
+    timestamp: float = 0.0
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        chain: Message | None = None,
+    ) -> EventComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_event(
+            ComponentProcessEvent,
+            chain,
+            timestamp=time.time(),
         )

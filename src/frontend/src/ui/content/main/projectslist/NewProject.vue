@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useProjectTools } from "@/ui/tools/ProjectTools";
+import { useProjectTools } from "@/ui/tools/project/ProjectTools";
 import Button from "primevue/button";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -21,6 +21,4 @@ const { newProject } = useProjectTools(comp);
     </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

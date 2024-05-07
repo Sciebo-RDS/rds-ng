@@ -9,7 +9,7 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-import { useConnectorInstancesTools } from "@/ui/tools/ConnectorInstancesTools";
+import { useConnectorInstancesTools } from "@/ui/tools/connector/ConnectorInstancesTools";
 
 import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
 import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxItem.vue";
@@ -19,8 +19,8 @@ const consStore = useConnectorsStore();
 const props = defineProps({
     userSettings: {
         type: Object as PropType<UserSettings>,
-        required: true
-    }
+        required: true,
+    },
 });
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = toRefs(props);
@@ -48,41 +48,43 @@ function onDeleteKey() {
 </script>
 
 <template>
-    <div>
-        <Listbox
-            v-model="selectedInstance"
-            :options="groupedInstances"
-            option-group-label="connectorID"
-            option-group-children="connectorInstances"
-            option-value="instance_id"
-            class="w-full"
-            :pt="{
-                root: 'coninst-listbox',
-                list: 'coninst-listbox-list',
-                item: 'coninst-listbox-item',
-                itemGroup: 'coninst-listbox-item-group'
-            }"
-            @keydown="(event: KeyboardEvent) => { if (event.code == 'Delete') onDeleteKey(); }"
-        >
-            <template #optiongroup="groupEntry">
-                <ConnectorHeader :connector-id="groupEntry.option.connectorID" />
-            </template>
+    <Listbox
+        v-model="selectedInstance"
+        :options="groupedInstances"
+        option-group-label="connectorID"
+        option-group-children="connectorInstances"
+        option-value="instance_id"
+        class="w-full"
+        :pt="{
+            root: 'coninst-listbox',
+            list: 'coninst-listbox-list',
+            item: 'coninst-listbox-item',
+            itemGroup: 'coninst-listbox-item-group',
+        }"
+        @keydown="
+            (event: KeyboardEvent) => {
+                if (event.code == 'Delete') onDeleteKey();
+            }
+        "
+    >
+        <template #optiongroup="groupEntry">
+            <ConnectorHeader :connector-id="groupEntry.option.connectorID" />
+        </template>
 
-            <template #option="instanceEntry">
-                <ConnectorInstancesListboxItem
-                    :instance="instanceEntry.option"
-                    :is-selected="isInstanceSelected(instanceEntry.option)"
-                    @dblclick="onEditInstance(instanceEntry.option)"
-                    @edit-instance="onEditInstance(instanceEntry.option)"
-                    @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
-                />
-            </template>
+        <template #option="instanceEntry">
+            <ConnectorInstancesListboxItem
+                :instance="instanceEntry.option"
+                :is-selected="isInstanceSelected(instanceEntry.option)"
+                @dblclick="onEditInstance(instanceEntry.option)"
+                @edit-instance="onEditInstance(instanceEntry.option)"
+                @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
+            />
+        </template>
 
-            <template #empty>
-                <div class="r-text-caption-big r-small-caps grid justify-center">No connections</div>
-            </template>
-        </Listbox>
-    </div>
+        <template #empty>
+            <div class="r-text-caption-big r-small-caps grid justify-center">No connections</div>
+        </template>
+    </Listbox>
 </template>
 
 <style scoped lang="scss">

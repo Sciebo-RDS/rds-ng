@@ -9,6 +9,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
  * The data used by the ``publishProjectDialog`` function.
  */
 export interface PublishProjectDialogData {
+    project: Project;
 }
 
 /**
@@ -17,24 +18,21 @@ export interface PublishProjectDialogData {
  * @param comp - The global component.
  * @param project - The project to publish.
  */
-export async function publishProjectDialog(
-    comp: FrontendComponent,
-    project: Project
-): ExtendedDialogResult<PublishProjectDialogData> {
+export async function publishProjectDialog(comp: FrontendComponent, project: Project): ExtendedDialogResult<PublishProjectDialogData> {
     return extendedDialog<PublishProjectDialogData>(
         comp,
-        defineAsyncComponent(
-            () => import("@/ui/dialogs/project/publish/PublishProjectDialog.vue")
-        ),
+        defineAsyncComponent(() => import("@/ui/dialogs/project/publish/PublishProjectDialog.vue")),
         {
             header: "Publish & Export project",
             modal: true,
-            contentClass: "w-[20vw] min-w-[40rem]"
+            contentClass: "w-[25vw] min-w-[40rem]",
         },
-        {},
+        {
+            project: project,
+        },
         {
             hasRejectButton: true,
-            rejectLabel: "Close"
-        }
+            rejectLabel: "Close",
+        },
     );
 }

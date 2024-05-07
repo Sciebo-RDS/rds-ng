@@ -1,15 +1,17 @@
 import uuid
+from dataclasses import dataclass
 
 from sqlalchemy import (
     MetaData,
     Table,
     Column,
     Integer,
-    Float,
     Text,
     Boolean,
     ForeignKey,
     String,
+    Uuid,
+    Numeric,
 )
 from sqlalchemy.orm import registry, composite, relationship
 
@@ -21,10 +23,25 @@ from common.py.data.entities.project.features import (
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
+from common.py.data.entities.project.logbook import ProjectJobHistoryRecord
+
 from .types import JSONEncodedDataType, ArrayType
 
 
-def register_projects_table(metadata: MetaData, reg: registry) -> Table:
+@dataclass(kw_only=True)
+class ProjectsTables:
+    main: Table
+
+    features: Table
+    feature_metadata: Table
+    feature_resources_metadata: Table
+    feature_dmp: Table
+
+    logbook: Table
+    logbook_job_history: Table
+
+
+def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTables:
     """
     Registers the projects table.
 
@@ -33,8 +50,12 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         reg: The mapper registry.
 
     Returns:
-        The newly created table.
+        The newly created tables.
     """
+
+    # Define tables
+
+    # -- Main
 
     table_projects = Table(
         "projects",
@@ -42,7 +63,7 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         # Main
         Column("project_id", Integer, primary_key=True),
         Column("user_id", String(1024)),
-        Column("creation_time", Float),
+        Column("creation_time", Numeric(32, 8, asdecimal=False)),
         Column("resources_path", Text),
         Column("title", Text),
         Column("description", Text),
@@ -57,26 +78,88 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         Column("opt__ui", JSONEncodedDataType),
     )
 
+    # -- Features
+
     table_project_features = Table(
         "project_features",
         metadata,
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
-        # Metadata
-        Column("meta__metadata", JSONEncodedDataType),
-        # Resources metadata
-        Column("resmeta__resources_metadata", JSONEncodedDataType),
-        # Data management plan
-        Column("dmp__plan", JSONEncodedDataType),
     )
+
+    table_feature_metadata = Table(
+        "project_feature_metadata",
+        metadata,
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_features.project_id"),
+            primary_key=True,
+        ),
+        Column("metadata", JSONEncodedDataType),
+    )
+
+    table_feature_resources_metadata = Table(
+        "project_feature_resources_metadata",
+        metadata,
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_features.project_id"),
+            primary_key=True,
+        ),
+        Column("resources_metadata", JSONEncodedDataType),
+    )
+
+    table_feature_dmp = Table(
+        "project_feature_dmp",
+        metadata,
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_features.project_id"),
+            primary_key=True,
+        ),
+        Column("plan", JSONEncodedDataType),
+    )
+
+    # -- Logbook
+
+    table_project_logbook = Table(
+        "project_logbook",
+        metadata,
+        Column(
+            "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
+        ),
+    )
+
+    table_logbook_job_history = Table(
+        "project_logbook_job_history",
+        metadata,
+        Column("record", Integer, primary_key=True, autoincrement=True),
+        Column(
+            "project_id",
+            Integer,
+            ForeignKey("project_logbook.project_id"),
+        ),
+        Column("timestamp", Numeric(32, 8, asdecimal=False)),
+        Column("connector_instance", Uuid),
+        Column("success", Boolean),
+        Column("message", Text),
+    )
+
+    # Map all tables
 
     reg.map_imperatively(
         Project,
         table_projects,
         properties={
             "features": relationship(
-                Project.Features, backref="projects", uselist=False
+                Project.Features,
+                backref="projects",
+                uselist=False,
+                cascade="all, delete",
             ),
             "options": composite(
                 Project.Options,
@@ -85,6 +168,12 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
                 table_projects.c.opt__active_connector_instances,
                 table_projects.c.opt__ui,
             ),
+            "logbook": relationship(
+                Project.Logbook,
+                backref="projects",
+                uselist=False,
+                cascade="all, delete",
+            ),
         },
     )
 
@@ -92,19 +181,65 @@ def register_projects_table(metadata: MetaData, reg: registry) -> Table:
         Project.Features,
         table_project_features,
         properties={
-            "metadata": composite(
+            "metadata": relationship(
                 MetadataFeature,
-                table_project_features.c.meta__metadata,
+                backref="project_features",
+                uselist=False,
+                cascade="all, delete",
             ),
-            "resources_metadata": composite(
+            "resources_metadata": relationship(
                 ResourcesMetadataFeature,
-                table_project_features.c.resmeta__resources_metadata,
+                backref="project_features",
+                uselist=False,
+                cascade="all, delete",
             ),
-            "dmp": composite(
+            "dmp": relationship(
                 DataManagementPlanFeature,
-                table_project_features.c.dmp__plan,
+                backref="project_features",
+                uselist=False,
+                cascade="all, delete",
             ),
         },
     )
 
-    return table_projects
+    reg.map_imperatively(
+        MetadataFeature,
+        table_feature_metadata,
+    )
+
+    reg.map_imperatively(
+        ResourcesMetadataFeature,
+        table_feature_resources_metadata,
+    )
+
+    reg.map_imperatively(
+        DataManagementPlanFeature,
+        table_feature_dmp,
+    )
+
+    reg.map_imperatively(
+        Project.Logbook,
+        table_project_logbook,
+        properties={
+            "job_history": relationship(
+                ProjectJobHistoryRecord,
+                backref="project_logbook",
+                cascade="all, delete",
+            ),
+        },
+    )
+
+    reg.map_imperatively(
+        ProjectJobHistoryRecord,
+        table_logbook_job_history,
+    )
+
+    return ProjectsTables(
+        main=table_projects,
+        features=table_project_features,
+        feature_metadata=table_feature_metadata,
+        feature_resources_metadata=table_feature_resources_metadata,
+        feature_dmp=table_feature_dmp,
+        logbook=table_project_logbook,
+        logbook_job_history=table_logbook_job_history,
+    )

@@ -89,6 +89,7 @@ class Client(socketio.Client):
                     auth=self._get_authentication(),
                     wait=True,
                     wait_timeout=self._connection_timeout,
+                    retry=True,
                 )
             except sioexc.ConnectionError as exc:
                 error(f"Failed to connect to server: {str(exc)}", scope="client")
@@ -143,3 +144,8 @@ class Client(socketio.Client):
 
     def _get_authentication(self) -> typing.Dict[str, str]:
         return {"component_id": str(self._comp_id)}
+
+    @property
+    def is_connected(self) -> bool:
+        with self._lock:
+            return self.connected

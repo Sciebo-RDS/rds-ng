@@ -10,7 +10,7 @@ export const enum CommandFailType {
     None = 0,
     Timeout,
     Exception,
-    Unknown
+    Unknown,
 }
 
 /**
@@ -31,7 +31,7 @@ export class CommandReply extends Message {
     /**
      * Gets the global message category.
      */
-    public get category(): MessageCategory {
+    public get messageCategory(): MessageCategory {
         return CommandReply.Category;
     }
 }
