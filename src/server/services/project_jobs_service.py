@@ -182,6 +182,16 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
 
                     send_projects_list(msg, ctx, session=session)
 
+                    # Bounce the message off to the user to inform him about the completion
+                    ProjectJobCompletionEvent.build(
+                        ctx.message_builder,
+                        project_id=msg.project_id,
+                        connector_instance=msg.connector_instance,
+                        success=msg.success,
+                        message=msg.message,
+                        chain=msg,
+                    ).emit(Channel.direct(session.user_origin))
+
             ctx.storage_pool.project_job_storage.remove(job)
 
             debug(

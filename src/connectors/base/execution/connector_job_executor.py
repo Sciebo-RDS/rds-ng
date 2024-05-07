@@ -111,7 +111,7 @@ class ConnectorJobExecutor(abc.ABC):
             project_id=self._job.project.project_id,
             connector_instance=self._job.connector_instance,
             success=False,
-            message=failure_msg,
+            message=reason,
         ).emit(self._target_channel)
 
         self._log_debug(failure_msg)
