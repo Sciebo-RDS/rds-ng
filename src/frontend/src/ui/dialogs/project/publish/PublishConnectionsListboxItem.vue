@@ -9,7 +9,7 @@ import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtil
 import { Project } from "@common/data/entities/project/Project";
 import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
 import { errorMessageDialog } from "@common/ui/dialogs/MessageDialog";
-import { finishSentence } from "@common/utils/Strings";
+import { finishSentence, formatLocaleTimestamp } from "@common/utils/Strings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
@@ -114,7 +114,7 @@ function onPublishInitDone(success: boolean, msg: string): void {
         <div class="grid grid-cols-[1fr_max-content] grid-flow-col pt-5 col-span-2 text-sm">
             <div v-if="category" class="grid grid-flow-col auto-cols-max gap-2 r-text-secondary italic">
                 <b>Last {{ category.verbStatusDone }}: </b>
-                <span class="pr-3">{{ jobStats.lastJob > 0 ? new Date(jobStats.lastJob * 1000).toLocaleString() : "Never" }}</span>
+                <span class="pr-3">{{ jobStats.lastJob > 0 ? formatLocaleTimestamp(jobStats.lastJob) : "Never" }}</span>
                 <b>Total {{ category.verbNounPlural }}:</b>
                 <span>
                     {{ jobStats.totalCount.succeeded }}

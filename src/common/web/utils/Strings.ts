@@ -35,6 +35,17 @@ export function humanReadableFileSize(size: number): string {
 }
 
 /**
+ * Formats a UNIX timestamp to a string using the system locale.
+ *
+ * @param date - The timestamp.
+ *
+ * @returns - The formatted string.
+ */
+export function formatLocaleTimestamp(date: number): string {
+    return new Intl.DateTimeFormat(navigator.language, { dateStyle: "medium", timeStyle: "short" }).format(date * 1000);
+}
+
+/**
  * Adds a full stop to a string if necessary.
  *
  * @param sentence - The sentence to complete.
