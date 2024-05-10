@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 import { storeToRefs } from "pinia";
 import { computed, type PropType, toRefs, unref } from "vue";
 
@@ -49,6 +50,10 @@ const unseenJobRecords = computed(() => {
     });
     return unseenRecords.sort((a, b) => b.jobRecord.timestamp - a.jobRecord.timestamp);
 });
+
+function onDismissAll(): void {
+    console.log("ALL DISMISSED");
+}
 </script>
 
 <template>
@@ -67,6 +72,15 @@ const unseenJobRecords = computed(() => {
                 @dismiss="(record) => {}"
             />
         </div>
+
+        <Button
+            label="Dismiss all"
+            size="small"
+            icon="material-icons-outlined mi-close !text-lg"
+            text
+            class="float-right mt-2 px-2 py-0.5 !text-sm"
+            @click="onDismissAll"
+        />
     </div>
     <div v-else class="r-text-light italic grid justify-center">No finished jobs</div>
 </template>

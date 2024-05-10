@@ -19,6 +19,10 @@ const props = defineProps({
     },
 });
 const { projects, jobs } = toRefs(props);
+
+function onDismissAll() {
+    console.log("WEG DAMIT");
+}
 </script>
 
 <template>
@@ -35,4 +39,12 @@ const { projects, jobs } = toRefs(props);
     </ScrollPanel>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.dismiss-all {
+    @apply opacity-75;
+}
+
+.dismiss-all:hover {
+    @apply opacity-100 cursor-pointer;
+}
+</style>
