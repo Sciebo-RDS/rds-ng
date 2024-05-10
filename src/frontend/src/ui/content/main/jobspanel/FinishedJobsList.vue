@@ -63,6 +63,8 @@ const unseenJobRecords = computed(() => {
                 :connector-instance="job.connectorInstance"
                 :connector-category="job.connectorCategory"
                 closable
+                :record="job.jobRecord.record"
+                @dismiss="(record) => {}"
             />
         </div>
     </div>

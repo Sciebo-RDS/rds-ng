@@ -44,8 +44,15 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    record: {
+        type: Number,
+        default: 0,
+    },
 });
-const { index, timestamp, message, project, connectorInstance, connectorCategory, severity, progress, closable } = toRefs(props);
+const { index, timestamp, message, project, connectorInstance, connectorCategory, severity, progress, closable, record } = toRefs(props);
+const emits = defineEmits<{
+    (e: "dismiss", record: number): void;
+}>();
 </script>
 
 <template>
@@ -75,6 +82,7 @@ const { index, timestamp, message, project, connectorInstance, connectorCategory
                 size="small"
                 title="Dismiss"
                 :pt="{ root: 'w-8 h-8', icon: '!text-lg' }"
+                @click="emits('dismiss', record)"
             />
         </div>
     </div>

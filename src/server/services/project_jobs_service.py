@@ -168,15 +168,17 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             ) is not None:
                 from common.py.data.entities.project.logbook import (
                     ProjectJobHistoryRecord,
+                    append_logbook_record,
                 )
 
-                record = ProjectJobHistoryRecord(
-                    connector_instance=job.connector_instance,
-                    success=msg.success,
-                    message=msg.message,
+                append_logbook_record(
+                    project.logbook.job_history,
+                    ProjectJobHistoryRecord(
+                        connector_instance=job.connector_instance,
+                        success=msg.success,
+                        message=msg.message,
+                    ),
                 )
-
-                project.logbook.job_history.append(record)
 
                 if session:
                     # Bounce the message off to the user to inform him about the completion
