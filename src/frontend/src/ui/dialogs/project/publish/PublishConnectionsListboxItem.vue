@@ -89,7 +89,7 @@ function onPublishInitDone(success: boolean, msg: string): void {
                 <span class="r-text-light italic justify-self-end truncate"
                     ><b>{{ category?.verbStatusProgressing }}:</b> {{ activeJob.message }}</span
                 >
-                <ProgressBar class="h-4" :value="Math.trunc(activeJob.progress * 100)"></ProgressBar>
+                <ProgressBar class="h-3" :value="Math.trunc(activeJob.progress * 100)" />
             </div>
             <div v-else>
                 <Button

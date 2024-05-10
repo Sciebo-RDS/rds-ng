@@ -27,7 +27,7 @@ const { projects, jobs } = toRefs(props);
             <div class="r-text-caption border-b">Active jobs</div>
             <ActiveJobsList :jobs="jobs" class="text-sm pt-2" />
 
-            <div class="h-8">&nbsp;</div>
+            <div class="h-5">&nbsp;</div>
 
             <div class="r-text-caption border-b">Finished jobs</div>
             <FinishedJobsList :projects="projects" class="text-sm pt-2" />
