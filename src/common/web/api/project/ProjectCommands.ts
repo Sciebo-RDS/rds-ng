@@ -7,6 +7,7 @@ import { CommandReplyComposer } from "../../core/messaging/composers/CommandRepl
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
 import { type RecordID } from "../../data/entities/project/logbook/ProjectLogbookRecord";
+import { ProjectLogbookType } from "../../data/entities/project/logbook/ProjectLogbookType";
 import { Project, type ProjectID } from "../../data/entities/project/Project";
 import { ProjectOptions } from "../../data/entities/project/ProjectOptions";
 
@@ -172,6 +173,8 @@ export class UpdateProjectReply extends CommandReply {
  */
 @Message.define("command/project/logbook/mark-seen")
 export class MarkProjectLogbookSeenCommand extends Command {
+    public readonly logbook_type: ProjectLogbookType = ProjectLogbookType.JobHistory;
+
     public readonly project_id: ProjectID = 0;
     public readonly record: RecordID = 0;
 
@@ -184,12 +187,17 @@ export class MarkProjectLogbookSeenCommand extends Command {
      */
     public static build(
         messageBuilder: MessageBuilder,
+        logbookType: ProjectLogbookType,
         projectID: ProjectID,
         record: RecordID,
         markAll: boolean = false,
         chain: Message | null = null,
     ): CommandComposer<MarkProjectLogbookSeenCommand> {
-        return messageBuilder.buildCommand(MarkProjectLogbookSeenCommand, { project_id: projectID, record: record, mark_all: markAll }, chain);
+        return messageBuilder.buildCommand(
+            MarkProjectLogbookSeenCommand,
+            { logbook_type: logbookType, project_id: projectID, record: record, mark_all: markAll },
+            chain,
+        );
     }
 }
 

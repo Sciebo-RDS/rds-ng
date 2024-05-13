@@ -1,5 +1,6 @@
 import { MarkProjectLogbookSeenCommand } from "@common/api/project/ProjectCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
+import { ProjectLogbookType } from "@common/data/entities/project/logbook/ProjectLogbookType";
 import { Project } from "@common/data/entities/project/Project";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
@@ -12,10 +13,12 @@ import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
  * Action to mark a project logbook entry as seen.
  */
 export class MarkProjectLogbookSeenAction extends FrontendCommandAction<MarkProjectLogbookSeenCommand, CommandComposer<MarkProjectLogbookSeenCommand>> {
-    public prepare(markAll: boolean, project?: Project, record?: number): CommandComposer<MarkProjectLogbookSeenCommand> {
+    public prepare(logbookType: ProjectLogbookType, markAll: boolean, project?: Project, record?: number): CommandComposer<MarkProjectLogbookSeenCommand> {
         this.prepareNotifiers(project?.title);
 
-        this._composer = MarkProjectLogbookSeenCommand.build(this.messageBuilder, project?.project_id || 0, record || 0, markAll).timeout(this._regularTimeout);
+        this._composer = MarkProjectLogbookSeenCommand.build(this.messageBuilder, logbookType, project?.project_id || 0, record || 0, markAll).timeout(
+            this._regularTimeout,
+        );
         return this._composer;
     }
 

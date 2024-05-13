@@ -183,7 +183,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, MarkProjectLogbookSeenReply):
             return
 
-        from .tools import send_project_logbook
+        from .tools import send_project_logbook, get_project_logbook
 
         success = False
         message = ""
@@ -196,8 +196,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
             ):
                 send_logbook = False
 
-                # TODO: Spaeter noch andere Logbooks
-                for record in project.logbook.job_history:
+                for record in get_project_logbook(project, msg.logbook_type):
                     if not record.seen:
                         record.seen = True
                         send_logbook = True
@@ -208,14 +207,13 @@ def create_projects_service(comp: BackendComponent) -> Service:
             if (
                 project := ctx.storage_pool.project_storage.get(msg.project_id)
             ) is not None:
-                # TODO: Spaeter noch andere Logbooks
                 from common.py.data.entities.project.logbook import (
                     find_logbook_record_by_id,
                 )
 
                 if (
                     record := find_logbook_record_by_id(
-                        project.logbook.job_history, msg.record
+                        get_project_logbook(project, msg.logbook_type), msg.record
                     )
                 ) is not None:
                     record.seen = True

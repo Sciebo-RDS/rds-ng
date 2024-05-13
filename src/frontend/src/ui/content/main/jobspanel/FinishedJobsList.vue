@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { MarkProjectLogbookSeenCommand } from "@common/api/project/ProjectCommands";
 import Button from "primevue/button";
 import { storeToRefs } from "pinia";
 import { computed, type PropType, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { findConnectorByInstanceID, findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
+import { ProjectLogbookType } from "@common/data/entities/project/logbook/ProjectLogbookType";
 import { ProjectJobHistoryRecord } from "@common/data/entities/project/logbook/ProjectJobHistoryRecord";
 import { Project } from "@common/data/entities/project/Project";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { getUnseenProjectJobHistoryRecords } from "@/data/entities/project/ProjectUtils";
@@ -58,13 +58,13 @@ const unseenJobRecords = computed(() => {
 
 function onDismiss(project: Project, record: number): void {
     const action = new MarkProjectLogbookSeenAction(comp, true);
-    action.prepare(false, project, record);
+    action.prepare(ProjectLogbookType.JobHistory, false, project, record);
     action.execute();
 }
 
 function onDismissAll(): void {
     const action = new MarkProjectLogbookSeenAction(comp, true);
-    action.prepare(true);
+    action.prepare(ProjectLogbookType.JobHistory, true);
     action.execute();
 }
 </script>

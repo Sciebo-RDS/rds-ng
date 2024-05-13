@@ -1,7 +1,7 @@
 import { ListConnectorsReply } from "@common/api/connector/ConnectorCommands";
 import { ConnectorsListEvent } from "@common/api/connector/ConnectorEvents";
 import { WebComponent } from "@common/component/WebComponent";
-import type { Connector } from "@common/data/entities/connector/Connector";
+import { Connector } from "@common/data/entities/connector/Connector";
 import { Service } from "@common/services/Service";
 
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
@@ -14,7 +14,7 @@ import { deepClone, shortenDataStrings } from "@common/utils/ObjectUtils";
  *
  * @returns - The newly created service.
  */
-export default function(comp: WebComponent): Service {
+export default function (comp: WebComponent): Service {
     function printableConnector(connector: Connector): string {
         let obj = deepClone<Connector>(connector);
         return JSON.stringify(shortenDataStrings(obj));
@@ -41,6 +41,6 @@ export default function(comp: WebComponent): Service {
                 ctx.connectorsStore.connectors = msg.connectors;
             });
         },
-        FrontendServiceContext
+        FrontendServiceContext,
     );
 }
