@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FrontendComponent } from "@/component/FrontendComponent";
 import Button from "primevue/button";
 import { storeToRefs } from "pinia";
 import { computed, type PropType, toRefs, unref } from "vue";
@@ -14,6 +15,8 @@ import { getUnseenProjectJobHistoryRecords } from "@/data/entities/project/Proje
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
+import { MarkProjectLogbookSeenAction } from "@/ui/actions/project/MarkProjectLogbookSeenAction";
+
 import ProjectJobsPanelItem from "@/ui/content/main/jobspanel/ProjectJobsPanelItem.vue";
 
 interface ListEntry {
@@ -23,6 +26,7 @@ interface ListEntry {
     connectorCategory: ConnectorCategory | undefined;
 }
 
+const comp = FrontendComponent.inject();
 const props = defineProps({
     projects: {
         type: Object as PropType<Project[]>,
@@ -51,7 +55,14 @@ const unseenJobRecords = computed(() => {
     return unseenRecords.sort((a, b) => b.jobRecord.timestamp - a.jobRecord.timestamp);
 });
 
+function onDismiss(project: Project, record: number): void {
+    const action = new MarkProjectLogbookSeenAction(comp, true);
+    action.prepare(project, record);
+    action.execute();
+}
+
 function onDismissAll(): void {
+    // TODO
     console.log("ALL DISMISSED");
 }
 </script>
@@ -69,7 +80,7 @@ function onDismissAll(): void {
                 :connector-category="job.connectorCategory"
                 closable
                 :record="job.jobRecord.record"
-                @dismiss="(record) => {}"
+                @dismiss="(record) => onDismiss(job.project, record)"
             />
         </div>
 

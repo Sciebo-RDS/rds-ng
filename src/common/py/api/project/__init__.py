@@ -5,6 +5,8 @@ from .project_commands import (
     CreateProjectReply,
     UpdateProjectCommand,
     UpdateProjectReply,
+    MarkProjectLogbookSeenCommand,
+    MarkProjectLogbookSeenReply,
     DeleteProjectCommand,
     DeleteProjectReply,
 )

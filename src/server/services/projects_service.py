@@ -1,6 +1,7 @@
 import time
 
 from common.py.component import BackendComponent
+from common.py.core.messaging import Channel
 from common.py.services import Service
 
 from .tools import send_projects_list
@@ -28,6 +29,9 @@ def create_projects_service(comp: BackendComponent) -> Service:
         DeleteProjectReply,
         UpdateProjectFeaturesCommand,
         UpdateProjectFeaturesReply,
+        MarkProjectLogbookSeenCommand,
+        MarkProjectLogbookSeenReply,
+        ProjectLogbookEvent,
     )
     from common.py.data.entities import clone_entity
     from common.py.data.entities.project import Project
@@ -171,6 +175,48 @@ def create_projects_service(comp: BackendComponent) -> Service:
 
         # TODO:
         # send_projects_list(msg, ctx)
+
+    @svc.message_handler(MarkProjectLogbookSeenCommand)
+    def mark_project_logbook_seen(
+        msg: MarkProjectLogbookSeenCommand, ctx: ServerServiceContext
+    ) -> None:
+        if not ctx.ensure_user(msg, MarkProjectLogbookSeenReply):
+            return
+
+        success = False
+        message = ""
+
+        if (
+            project := ctx.storage_pool.project_storage.get(msg.project_id)
+        ) is not None:
+            # TODO: Spaeter noch andere Logbooks
+            from common.py.data.entities.project.logbook import (
+                find_logbook_record_by_id,
+            )
+
+            if (
+                record := find_logbook_record_by_id(
+                    project.logbook.job_history, msg.record
+                )
+            ) is not None:
+                record.seen = True
+                success = True
+            else:
+                message = f"A logbook record with ID {msg.record} was not found"
+        else:
+            message = f"A project with ID {msg.project_id} was not found"
+
+        MarkProjectLogbookSeenReply.build(
+            ctx.message_builder,
+            msg,
+            success=success,
+            message=message,
+        ).emit()
+
+        # Send the updated project logbook to the client
+        from .tools import send_project_logbook
+
+        send_project_logbook(msg, ctx, project)
 
     @svc.message_handler(DeleteProjectCommand)
     def delete_project(msg: DeleteProjectCommand, ctx: ServerServiceContext) -> None:

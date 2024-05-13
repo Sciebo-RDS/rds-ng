@@ -211,6 +211,65 @@ class UpdateProjectReply(CommandReply):
         )
 
 
+@Message.define("command/project/logbook/mark-seen")
+class MarkProjectLogbookSeenCommand(Command):
+    """
+    Marks a project logbook entry as seen.
+
+    Args:
+        project_id: The ID of the project containing the logbook.
+        record: The record ID.
+
+    Notes:
+        Requires an ``ProjectLogbookMarkSeenReply`` reply.
+    """
+
+    project_id: ProjectID
+    record: int
+
+    # TODO: Verschiedene Logbuch-Typen
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        project_id: ProjectID,
+        record: int,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            MarkProjectLogbookSeenCommand,
+            chain,
+            project_id=project_id,
+            record=record,
+        )
+
+
+@Message.define("command/project/logbook/mark-seen/reply")
+class MarkProjectLogbookSeenReply(CommandReply):
+    """
+    Reply to ``ProjectLogbookMarkSeenCommand``.
+    """
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: MarkProjectLogbookSeenCommand,
+        *,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            MarkProjectLogbookSeenReply, cmd, success, message
+        )
+
+
 @Message.define("command/project/delete")
 class DeleteProjectCommand(Command):
     """

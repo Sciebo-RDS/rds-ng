@@ -41,7 +41,7 @@ export class ListProjectsReply extends CommandReply {
         cmd: ListProjectsCommand,
         projects: Project[],
         success: boolean = true,
-        message: string = ""
+        message: string = "",
     ): CommandReplyComposer<ListProjectsReply> {
         return messageBuilder.buildCommandReply(ListProjectsReply, cmd, success, message, { projects: projects });
     }
@@ -75,9 +75,13 @@ export class CreateProjectCommand extends Command {
         title: string,
         description: string,
         options: ProjectOptions,
-        chain: Message | null = null
+        chain: Message | null = null,
     ): CommandComposer<CreateProjectCommand> {
-        return messageBuilder.buildCommand(CreateProjectCommand, { resources_path: resourcesPath, title: title, description: description, options: options }, chain);
+        return messageBuilder.buildCommand(
+            CreateProjectCommand,
+            { resources_path: resourcesPath, title: title, description: description, options: options },
+            chain,
+        );
     }
 }
 
@@ -98,7 +102,7 @@ export class CreateProjectReply extends CommandReply {
         cmd: CreateProjectCommand,
         project_id: ProjectID,
         success: boolean = true,
-        message: string = ""
+        message: string = "",
     ): CommandReplyComposer<CreateProjectReply> {
         return messageBuilder.buildCommandReply(CreateProjectReply, cmd, success, message, { project_id: project_id });
     }
@@ -133,7 +137,7 @@ export class UpdateProjectCommand extends Command {
         title: string,
         description: string,
         options: ProjectOptions,
-        chain: Message | null = null
+        chain: Message | null = null,
     ): CommandComposer<UpdateProjectCommand> {
         return messageBuilder.buildCommand(UpdateProjectCommand, { project_id: project_id, title: title, description: description, options: options }, chain);
     }
@@ -156,9 +160,50 @@ export class UpdateProjectReply extends CommandReply {
         cmd: UpdateProjectCommand,
         project_id: ProjectID,
         success: boolean = true,
-        message: string = ""
+        message: string = "",
     ): CommandReplyComposer<UpdateProjectReply> {
         return messageBuilder.buildCommandReply(UpdateProjectReply, cmd, success, message, { project_id: project_id });
+    }
+}
+
+/**
+ * Marks a project logbook entry as seen. Requires an ``ProjectLogbookMarkSeenReply`` reply.
+ */
+@Message.define("command/project/logbook/mark-seen")
+export class MarkProjectLogbookSeenCommand extends Command {
+    public readonly project_id: ProjectID = 0;
+    public readonly record: number = 0;
+
+    // TODO: Verschiedene Logbuch-Typen
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        projectID: ProjectID,
+        record: number,
+        chain: Message | null = null,
+    ): CommandComposer<MarkProjectLogbookSeenCommand> {
+        return messageBuilder.buildCommand(MarkProjectLogbookSeenCommand, { project_id: projectID, record: record }, chain);
+    }
+}
+
+/**
+ * Reply to ``ProjectLogbookMarkSeenCommand``.
+ */
+@Message.define("command/project/logbook/mark-seen/reply")
+export class MarkProjectLogbookSeenReply extends CommandReply {
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: MarkProjectLogbookSeenCommand,
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<MarkProjectLogbookSeenReply> {
+        return messageBuilder.buildCommandReply(MarkProjectLogbookSeenReply, cmd, success, message);
     }
 }
 
@@ -195,7 +240,7 @@ export class DeleteProjectReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: DeleteProjectCommand,
         success: boolean = true,
-        message: string = ""
+        message: string = "",
     ): CommandReplyComposer<DeleteProjectReply> {
         return messageBuilder.buildCommandReply(DeleteProjectReply, cmd, success, message, { project_id: cmd.project_id });
     }

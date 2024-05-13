@@ -21,12 +21,12 @@ def send_project_logbook(
         project: The project.
         session: Override the user ID and target to use using a user's session.
     """
-    from common.py.api import ProjectLogbookUpdateEvent
+    from common.py.api.project import ProjectLogbookEvent
 
     if ctx.user is None and (session or session.user_token) is None:
         raise RuntimeError("Sending project logbook without an authenticated user")
 
-    ProjectLogbookUpdateEvent.build(
+    ProjectLogbookEvent.build(
         ctx.message_builder,
         project_id=project.project_id,
         logbook=project.logbook,

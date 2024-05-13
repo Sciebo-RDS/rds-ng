@@ -192,12 +192,9 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                     ).emit(Channel.direct(session.user_origin))
 
                     # Send the updated project logbook to the client
-                    ProjectLogbookEvent.build(
-                        ctx.message_builder,
-                        project_id=msg.project_id,
-                        logbook=project.logbook,
-                        chain=msg,
-                    ).emit(Channel.direct(session.user_origin))
+                    from .tools import send_project_logbook
+
+                    send_project_logbook(msg, ctx, project, session=session)
 
             ctx.storage_pool.project_job_storage.remove(job)
 
