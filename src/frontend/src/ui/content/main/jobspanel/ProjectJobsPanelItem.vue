@@ -23,6 +23,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    resultMessage: {
+        type: String,
+        required: true,
+    },
     project: {
         type: Object as PropType<Project>,
     },
@@ -49,7 +53,7 @@ const props = defineProps({
         default: 0,
     },
 });
-const { index, timestamp, message, project, connectorInstance, connectorCategory, severity, progress, closable, record } = toRefs(props);
+const { index, timestamp, message, resultMessage, project, connectorInstance, connectorCategory, severity, progress, closable, record } = toRefs(props);
 const emits = defineEmits<{
     (e: "dismiss", record: number): void;
 }>();
@@ -57,13 +61,13 @@ const emits = defineEmits<{
 
 <template>
     <div class="grid grid-cols-[1fr_min-content]" :class="{ 'pt-2': index != 0 }">
-        <InlineMessage :severity="severity" class="flex w-full justify-start group" :pt="{ text: '!w-full !text-sm' }">
+        <InlineMessage :severity="severity" class="flex w-full justify-start group" :pt="{ text: '!w-full !text-sm', icon: 'place-self-start mt-3' }">
             <div>
                 <div class="grid grid-cols-[1fr_min-content] grid-flow-col gap-2 w-full">
                     <div>
                         <div class="font-bold">
-                            {{ project?.title || "Unknown project" }} &rarr;
-                            {{ connectorInstance?.name || "Unknown connection" }}
+                            Your {{ connectorCategory?.verbNoun.toLowerCase() || "export" }} of <b>{{ project?.title || "Unknown project" }}</b> to
+                            <b>{{ connectorInstance?.name || "Unknown connection" }}</b> {{ resultMessage }}
                         </div>
                         <div>{{ message }}</div>
 

@@ -60,6 +60,7 @@ const runningJobs = computed(() => {
                 <ProjectJobsPanelItem
                     :index="index"
                     :message="job.job.message"
+                    result-message="is currently running"
                     :timestamp="job.job.timestamp"
                     severity="info"
                     :project="job.project"

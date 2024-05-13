@@ -76,6 +76,7 @@ function onDismissAll(): void {
             <ProjectJobsPanelItem
                 :index="index"
                 :message="job.jobRecord.message"
+                :result-message="job.jobRecord.success ? 'has succeeded' : 'has failed'"
                 :timestamp="job.jobRecord.timestamp"
                 :severity="job.jobRecord.success ? 'success' : 'error'"
                 :project="job.project"
