@@ -24,13 +24,9 @@ const { projects, jobs } = toRefs(props);
 <template>
     <ScrollPanel class="w-full h-full min-w-[30rem] max-h-[60vh]">
         <div class="w-full h-full overflow-auto grid grid-flow-row content-start">
-            <div class="r-text-caption border-b">Active jobs</div>
-            <ActiveJobsList :jobs="jobs" class="text-sm pt-2" />
-
+            <ActiveJobsList :jobs="jobs" />
             <div class="h-5">&nbsp;</div>
-
-            <div class="r-text-caption border-b">Finished jobs</div>
-            <FinishedJobsList :projects="projects" class="text-sm pt-2" />
+            <FinishedJobsList :projects="projects" />
         </div>
     </ScrollPanel>
 </template>

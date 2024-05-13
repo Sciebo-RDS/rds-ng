@@ -56,35 +56,43 @@ const emits = defineEmits<{
 </script>
 
 <template>
-    <div class="grid grid-cols-[1fr_min-content] px-1 group" :class="{ 'pt-2': index != 0 }">
-        <InlineMessage :severity="severity" class="flex w-full justify-start" :pt="{ text: 'w-full !text-sm' }">
+    <div class="grid grid-cols-[1fr_min-content]" :class="{ 'pt-2': index != 0 }">
+        <InlineMessage :severity="severity" class="flex w-full justify-start group" :pt="{ text: '!w-full !text-sm' }">
             <div>
-                <div class="grid grid-cols-[1fr_auto] items-center text-gray-700 mb-1 w-full">
-                    <div class="font-normal">{{ connectorCategory?.verbNoun || "Export" }}</div>
-                    <div class="mr-2 font-light text-xs">{{ formatLocaleTimestamp(timestamp) }}</div>
-                </div>
-                <div class="font-bold">
-                    {{ project?.title || "Unknown project" }} &rarr;
-                    {{ connectorInstance?.name || "Unknown connection" }}
-                </div>
-                <div>{{ message }}</div>
+                <div class="grid grid-cols-[1fr_min-content] grid-flow-col gap-2 w-full">
+                    <div>
+                        <div class="font-bold">
+                            {{ project?.title || "Unknown project" }} &rarr;
+                            {{ connectorInstance?.name || "Unknown connection" }}
+                        </div>
+                        <div>{{ message }}</div>
 
-                <ProgressBar v-if="progress >= 0.0" class="h-3 mt-2" :value="Math.trunc(progress * 100)" :pt="{ value: 'bg-current' }" />
+                        <ProgressBar v-if="progress >= 0.0" class="h-3 mt-1 mb-1" :value="Math.trunc(progress * 100)" :pt="{ value: 'bg-current' }" />
+
+                        <div class="pt-2 text-slate-500">
+                            <span class="font-normal">{{ connectorCategory?.verbNoun || "Export" }} &#x2022; </span>
+                            <span class="font-light text-xs">{{ formatLocaleTimestamp(timestamp) }}</span>
+                        </div>
+                    </div>
+
+                    <div v-if="closable">
+                        <Button
+                            icon="material-icons-outlined mi-close"
+                            severity="secondary"
+                            rounded
+                            text
+                            size="small"
+                            title="Dismiss"
+                            class="-top-1 left-1.5 invisible"
+                            :class="{ 'group-hover:visible': true }"
+                            :pt="{ root: 'w-8 h-8', icon: '!text-lg' }"
+                            @click="emits('dismiss', record)"
+                        />
+                    </div>
+                    <div v-else class="w-0" />
+                </div>
             </div>
         </InlineMessage>
-
-        <div class="ml-1.5 mt-0.5 invisible" :class="{ 'group-hover:visible': closable }">
-            <Button
-                icon="material-icons-outlined mi-close"
-                severity="secondary"
-                rounded
-                outlined
-                size="small"
-                title="Dismiss"
-                :pt="{ root: 'w-8 h-8', icon: '!text-lg' }"
-                @click="emits('dismiss', record)"
-            />
-        </div>
     </div>
 </template>
 

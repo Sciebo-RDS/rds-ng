@@ -53,9 +53,10 @@ const runningJobs = computed(() => {
 </script>
 
 <template>
-    <div v-if="jobs.length > 0" class="w-full">
+    <div class="r-text-caption border-b">Active jobs</div>
+    <div v-if="jobs.length > 0" class="w-full pt-2">
         <div v-for="(job, index) in runningJobs" :key="index">
-            <div class="grid grid-cols-[1fr_min-content] px-1" :class="{ 'pt-2': index != 0 }">
+            <div class="grid grid-cols-[1fr_min-content]" :class="{ 'pt-2': index != 0 }">
                 <ProjectJobsPanelItem
                     :index="index"
                     :message="job.job.message"

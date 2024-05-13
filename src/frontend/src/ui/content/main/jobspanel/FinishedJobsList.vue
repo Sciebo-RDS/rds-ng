@@ -70,7 +70,8 @@ function onDismissAll(): void {
 </script>
 
 <template>
-    <div v-if="unseenJobRecords.length > 0" class="w-full">
+    <div class="r-text-caption border-b">Finished jobs</div>
+    <div v-if="unseenJobRecords.length > 0" class="w-full pt-2">
         <div v-for="(job, index) in unseenJobRecords" :key="index">
             <ProjectJobsPanelItem
                 :index="index"
