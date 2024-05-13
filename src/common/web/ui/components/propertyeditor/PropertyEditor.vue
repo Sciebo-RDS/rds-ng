@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, type PropType, watch, useAttrs } from "vue";
+import { provide, type PropType, watch, useAttrs, onMounted, onBeforeMount } from "vue";
 import PropertySet from "./PropertySet.vue";
 import PropertyDefaultSet from "./PropertyDefaultSet.vue";
 import { Logger } from "./utils/Logging";
@@ -7,9 +7,25 @@ import { Logger } from "./utils/Logging";
 import { MetadataController, PropertyController, type S } from "./PropertyController";
 import type { ExporterID } from "./exporters/Exporter";
 import { PersistedSet } from "./PropertySet";
+import { Profile } from "./PropertyProfile";
+import { dataCite } from "./profiles/datacite";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 
-const emit = defineEmits(["update"]);
-const { controller, logging, project, exporters } = defineProps({
+const profiles: Profile = [dataCite as Profile];
+
+const props = defineProps({
+    projectProfiles: {
+        type: PropertyProfileStore,
+        required: true
+    },
+    projectObjects: {
+        type: ProjectObjectStore,
+        required: true
+    }
+});
+
+/* const { controller, logging, project, exporters } = defineProps({
     controller: {
         type: Object as PropType<PropertyController<S>>,
         required: true
@@ -49,15 +65,15 @@ watch(
         model.value = controller.exportData();
     },
     { deep: true }
-);
+); */
 </script>
 
 <template>
     <div class="overflow-hidden">
-        <PropertyDefaultSet v-if="controller instanceof MetadataController" :controller="controller" :project="project" :exporters="exporters" />
+        <!--         <PropertyDefaultSet v-if="controller instanceof MetadataController" :controller="controller" :project="project" :exporters="exporters" /> -->
 
-        <div v-for="[i, profileId] of controller.getProfileIds().entries()" :class="i > 0 ? '!mt-5' : ''" class="mx-4 mt-4">
-            <PropertySet :controller="controller" :project="project" :exporters="exporters" :profileId="profileId" />
+        <div v-for="[i, profile] in projectProfiles.list().entries()" :class="i > 0 ? '!mt-5' : ''" class="mx-4 mt-4">
+            <PropertySet :profile="profile" :projectObjects="projectObjects" :projectProfiles="projectProfiles" />
         </div>
     </div>
 </template>

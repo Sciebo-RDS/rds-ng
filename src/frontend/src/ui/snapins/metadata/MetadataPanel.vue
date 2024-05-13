@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { reactive, toRefs, watch } from "vue";
+import { reactive, toRefs, watch, inject } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorUtils";
@@ -11,6 +11,10 @@ import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
 import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
@@ -24,6 +28,14 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
+        required: true
+    },
+    projectProfiles: {
+        type: PropertyProfileStore,
+        required: true
+    },
+    projectObjects: {
+        type: ProjectObjectStore,
         required: true
     }
 });
@@ -57,10 +69,10 @@ connectors.value.forEach((connector) => {
     }
 });
 
-const baseSet = new PropertySet(dataCite);
+/* const baseSet = new PropertySet(dataCite);
 const profiles: PropertySet[] = [new PropertySet(testProfile)];
 const controller = reactive(new MetadataController(baseSet, mergeSets, profiles));
-
+ */
 const debounce = makeDebounce(500);
 
 watch(
@@ -73,12 +85,13 @@ watch(
         });
     }
 );
+
+props.projectProfiles.mountProfile(dataCite as Profile);
 </script>
 
 <template>
     <div>
-        <PropertyEditor v-model="project!.features.metadata.metadata as PersistedSet[]" :controller="controller as MetadataController" :logging="logging" />
+        <!-- TODO remove Controllerstuff -->
+        <PropertyEditor v-model="project!.features.metadata.metadata as PersistedSet[]" :projectObjects="projectObjects" :projectProfiles="projectProfiles" />
     </div>
 </template>
-
-<style scoped lang="scss"></style>

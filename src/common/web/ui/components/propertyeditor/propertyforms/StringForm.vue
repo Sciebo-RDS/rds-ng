@@ -1,28 +1,36 @@
 <script setup lang="ts">
-import { inject, computed } from "vue";
+import { inject, computed, ref, watch } from "vue";
 import InputText from "primevue/inputtext";
 
 import { PropertyController } from "../PropertyController";
 import { PropertySet } from "../PropertySet";
-import { type ProfileID } from "../PropertyProfile";
+
 import type { NestedView } from "@common/ui/views/NestedView";
+import type { ProjectObjectStore } from "../ProjectObjectStore";
 
-const props = defineProps(["property"]);
+const props = defineProps(["propertyObjectId", "inputId", "profileId", "projectObjects"]);
 
-const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
-const categoryId = inject("categoryId") as string;
-const profileId = inject("profileId") as ProfileID;
+//const value = computed(() => props.projectObjects.get(props.propertyObjectId).value);
+const value = ref("");
+let mV = "";
 
-const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
+watch(
+    () => props.propertyObjectId,
+    (newValue) => {
+        mV = "";
+        value.value = "";
+    }
+);
 </script>
 
 <template>
     <div>
         <InputText
             type="text"
-            @input="(e: any) => controller.setValue(profileId, categoryId, props.property.id, e.target.value)"
-            :modelValue="value"
+            :modelValue="mV"
+            :v-model="value"
             class="w-full"
+            @input="(e) => projectObjects.update(profileId, inputId, 'string', propertyObjectId, e.target.value)"
         />
     </div>
 </template>

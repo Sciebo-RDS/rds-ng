@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, defineAsyncComponent, toRefs } from "vue";
+import { computed, defineAsyncComponent, toRefs, reactive, provide } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
+import { ProjectObjectStore } from "./../../../../../../common/web/ui/components/propertyeditor/ProjectObjectStore";
+import { PropertyProfileStore } from "./../../../../../../common/web/ui/components/propertyeditor/PropertyProfileStore";
 
 import { type UIOptions } from "@/data/entities/UIOptions";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
@@ -26,6 +28,12 @@ const panels = computed(() => {
         return { title: snapIn.options.tabPanel!.label, component: defineAsyncComponent(snapIn.options.tabPanel!.loader) };
     });
 });
+
+const projectObjects = reactive(new ProjectObjectStore());
+provide("projectObjects", projectObjects);
+
+const projectProfiles = reactive(new PropertyProfileStore());
+provide("projectProfiles", projectProfiles);
 </script>
 
 <template>
@@ -33,7 +41,7 @@ const panels = computed(() => {
         <TabView
             :pt="{
                 nav: 'tab-view',
-                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full', // TODO: Hacky height
+                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full' // TODO: Hacky height
             }"
             class="h-full"
         >
@@ -44,10 +52,10 @@ const panels = computed(() => {
                 :pt="{
                     header: 'tab-view-panel',
                     headerAction: 'tab-view-panel-action',
-                    content: 'h-full',
+                    content: 'h-full'
                 }"
             >
-                <component :is="panel.component" :project="project" />
+                <component :is="panel.component" :project="project" :projectObjects="projectObjects" :projectProfiles="projectProfiles" />
             </TabPanel>
         </TabView>
     </div>

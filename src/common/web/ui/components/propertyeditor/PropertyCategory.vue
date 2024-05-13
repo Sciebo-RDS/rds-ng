@@ -23,7 +23,7 @@ provide("profileId", props.profileId);
 const showPropertySelector = ref(false);
 const selectedProperties = ref<PropertyType>();
 
-const propsToShow = !attrs.hasOwnProperty("defaultSet")
+const propsToShow = !Object.prototype.hasOwnProperty.call(attrs, "defaultSet")
     ? ref<PropertyType[]>(
           props.category.properties.filter((p: PropertyType) => controller.getValue(props.profileId, props.category.id, p.id) != undefined || p.showAlways)
       )
@@ -41,7 +41,7 @@ const header = `${props.index + 1}. ${props.category.name}`;
 </script>
 
 <template>
-    <Accordion v-if="!attrs.hasOwnProperty('defaultSet')" class="w-full">
+    <Accordion v-if="!Object.prototype.hasOwnProperty.call(attrs, 'defaultSet')" class="w-full">
         <AccordionTab :pt="{ header: { class: ['border-indigo-200', { 'border-t': index !== 0 }] }, headerAction: { class: 'pb-0 pt-5' } }">
             <template #header>
                 <span class="flex align-items-center w-full !text-gray-800 truncate text-ellipsis mr-2" :title="header">
@@ -101,7 +101,7 @@ const header = `${props.index + 1}. ${props.category.name}`;
  -->
     <div v-else class="m-5">
         <div class="divide-y">
-            <component :is="PropertyOneCol" v-for="prop in propsToShow" :property="prop" class="[&:not(:first-child)]:mt-2 [&:not(:first-child)]:pt-5" />
+            <PropertyOneCol v-for="prop in propsToShow" :property="prop" class="[&:not(:first-child)]:mt-2 [&:not(:first-child)]:pt-5" />
         </div>
         <!-- Should have its own component -->
         <div v-show="!showPropertySelector && !!propsToSelect.length" class="flex justify-end">

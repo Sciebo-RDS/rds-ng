@@ -14,7 +14,7 @@ export class ResourcesMetadataSnapIn extends SnapIn {
             },
             tabPanel: {
                 label: "Objects",
-                loader: () => import("./ResourcesMetadataPanel.vue")
+                loader: () => /*import("./ResourcesMetadataPanel.vue")*/ null
             }
         });
     }

@@ -1,379 +1,321 @@
-import { type PropertyProfile, PropertyDataType } from "../PropertyProfile";
-
-export const dataCite: PropertyProfile = {
-    profile_id: { name: "DataCite", version: "4.5.0" },
-    categories: [
+export const dataCite: {
+    metadata: {
+        id: [string, number];
+        name: string;
+        description: string;
+        version: number;
+    };
+    layout: {
+        id: string;
+        label: string;
+        description: string;
+        example?: string;
+        type?: string[];
+        input?: { id: string; label: string; type: string }[];
+        required: boolean;
+        multiple: boolean;
+    }[];
+    classes: {};
+} = {
+    metadata: {
+        id: ["DataCite", 4.5],
+        name: "DataCite Profile",
+        description: "DataCite Metadata Profile",
+        version: 4.5
+    },
+    layout: [
         {
-            id: "Mandatory",
-            name: "Mandatory",
-            description: "Mandatory DataCite properties",
-            properties: [
-                {
-                    id: "Identifier",
-                    name: "Identifier (DOI)",
-                    type: PropertyDataType.STRING,
-                    description:
-                        "The Identifier is a unique string that identifies a resource. For software, determine whether the identifier is for a specific version of a piece of software, (per the Force11 Software Citation Principles) or for all versions. The format should be 10.21384/foo",
-                    showAlways: true,
-                    required: true,
-                },
-                {
-                    id: "Creator",
-                    name: "Creator",
-                    type: PropertyDataType.STRINGLIST,
-                    description:
-                        "The main researchers involved in producing the data, or the authors of the publication, in priority order. To supply multiple creators, repeat this property.",
-                    showAlways: true,
-                    required: true,
-                },
-                {
-                    id: "Title",
-                    name: "Title",
-                    type: PropertyDataType.STRING,
-                    description:
-                        "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
-                    showAlways: true,
-                    required: true,
-                },
-                {
-                    id: "Publisher",
-                    name: "Publisher",
-                    type: PropertyDataType.STRING,
-                    description:
-                        "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
-                    showAlways: true,
-                    required: true,
-                },
-                {
-                    id: "PublicationYear",
-                    name: "Publication Year",
-                    type: PropertyDataType.NUMBER,
-                    description:
-                        "The year when the data was or will be made publicly available. In the case of resources such as software or dynamic data where there may be multiple releases in one year, include the Date property and sub-properties (dateType/dateInformation) to provide more information about the publication or release date details. Format: YYYY.",
-                    showAlways: true,
-                    required: true,
-                },
-                {
-                    id: "RessourceType",
-                    name: "Ressource Type",
-                    type: PropertyDataType.STRING,
-                    description:
-                        "Free text. The recommended content is a single term of some detail so that a pair can be formed with the resourceTypeGeneral sub-property. For example, a resourceType of “Census Data” paired with a resourceTypeGeneral of “Dataset” yields “Dataset/Census Data”.",
-                    showAlways: true,
-                    required: true,
-                },
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/identifier/",
+            label: "Identifier",
+            description: "The Identifier is a unique string that identifies a resource. Should be a URL or a DOI.",
+            example: "https://doi.org/10.1234/abc",
+            input: [
+                { id: "identifier", label: "Identifier", type: "string" },
+                { id: "test", label: "test", type: "string" }
             ],
+            required: true,
+            multiple: false
         },
         {
-            id: "Recommended",
-            name: "Recommended ",
-            description: "Properties recommended by DataCite",
-            properties: [
-                {
-                    id: "Subject",
-                    name: "Subject",
-                    type: PropertyDataType.STRINGLIST,
-                    description: "Subject, keyword, classification code, or key phrase describing the resource.",
-                    showAlways: false,
-                    required: false,
-                },
-                {
-                    id: "Contributor",
-                    name: "Contributor",
-                    type: PropertyDataType.STRINGLIST,
-                    description:
-                        "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property. For software, if there is an alternate entity that “holds, archives, publishes, prints, distributes, releases, issues, or produces” the code, use the contributorType “hostingInstitution” for the code repository. For instruments, if there is an institution responsible for the management of the instrument (for example, the legal owner, the operator, or an institute providing access to the instrument), use the contributorType “hostingInstitution” for the owner of the instrument.",
-                    showAlways: false,
-                    required: false,
-                },
-                {
-                    id: "Date",
-                    name: "Date",
-                    type: PropertyDataType.DATE,
-                    description:
-                        "YYYY, YYYY-MM-DD, YYYY- MM-DDThh:mm:ssTZD or any other format or level of granularity described in W3CDTF. Use RKMS-ISO8601 standard for depicting date ranges. Example: 2004-03-02/2005- 06-02. Years before 0000 must be prefixed with a - sign, e.g., -0054 to indicate 55 BC.",
-                    showAlways: false,
-                    required: false,
-                },
-                {
-                    id: "RelatedIdentifier",
-                    name: "Related Identifiers",
-                    type: PropertyDataType.STRINGLIST,
-                    description: "Identifiers of related resources. These must be globally unique identifiers.",
-                    showAlways: true,
-                    required: false,
-                },
-                {
-                    id: "Description",
-                    name: "Description",
-                    type: PropertyDataType.STRINGLIST,
-                    description:
-                        "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
-                    showAlways: true,
-                    required: false,
-                },
-                {
-                    id: "GeoLocation",
-                    name: "GeoLocation",
-                    type: PropertyDataType.STRINGLIST,
-                    description:
-                        "Spatial region or named place where the data was gathered or about which the data is focused. Repeat this property to indicate several different locations.",
-                    showAlways: true,
-                    required: false,
-                },
-            ],
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
+            label: "Creator",
+            description:
+                "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
+            type: ["creator"],
+            required: true,
+            multiple: true
         },
         {
-            id: "Optional",
-            name: "Optional",
-            description: "Optional properties",
-            properties: [
-                {
-                    id: "Language",
-                    name: "Language",
-                    type: PropertyDataType.DROPDOWN,
-                    description: "The primary language of the resource.",
-                    showAlways: false,
-                    required: false,
-                    options: [
-                        "ab",
-                        "aa",
-                        "af",
-                        "ak",
-                        "sq",
-                        "am",
-                        "ar",
-                        "an",
-                        "hy",
-                        "as",
-                        "av",
-                        "ae",
-                        "ay",
-                        "az",
-                        "bm",
-                        "ba",
-                        "eu",
-                        "be",
-                        "bn",
-                        "bh",
-                        "bi",
-                        "bs",
-                        "br",
-                        "bg",
-                        "my",
-                        "ca",
-                        "km",
-                        "ch",
-                        "ce",
-                        "ny",
-                        "zh",
-                        "cu",
-                        "cv",
-                        "kw",
-                        "co",
-                        "cr",
-                        "hr",
-                        "cs",
-                        "da",
-                        "dv",
-                        "nl",
-                        "dz",
-                        "en",
-                        "eo",
-                        "et",
-                        "ee",
-                        "fo",
-                        "fj",
-                        "fi",
-                        "fr",
-                        "ff",
-                        "gd",
-                        "gl",
-                        "lg",
-                        "ka",
-                        "de",
-                        "ki",
-                        "el",
-                        "kl",
-                        "gn",
-                        "gu",
-                        "ht",
-                        "ha",
-                        "he",
-                        "hz",
-                        "hi",
-                        "ho",
-                        "hu",
-                        "is",
-                        "io",
-                        "ig",
-                        "id",
-                        "ia",
-                        "ie",
-                        "iu",
-                        "ik",
-                        "ga",
-                        "it",
-                        "ja",
-                        "jv",
-                        "kn",
-                        "kr",
-                        "ks",
-                        "kk",
-                        "rw",
-                        "kv",
-                        "kg",
-                        "ko",
-                        "kj",
-                        "ku",
-                        "ky",
-                        "lo",
-                        "la",
-                        "lv",
-                        "lb",
-                        "li",
-                        "ln",
-                        "lt",
-                        "lu",
-                        "mk",
-                        "mg",
-                        "ms",
-                        "ml",
-                        "mt",
-                        "gv",
-                        "mi",
-                        "mr",
-                        "mh",
-                        "ro",
-                        "mn",
-                        "na",
-                        "nv",
-                        "nd",
-                        "ng",
-                        "ne",
-                        "se",
-                        "no",
-                        "nb",
-                        "nn",
-                        "ii",
-                        "oc",
-                        "oj",
-                        "or",
-                        "om",
-                        "os",
-                        "pi",
-                        "pa",
-                        "ps",
-                        "fa",
-                        "pl",
-                        "pt",
-                        "qu",
-                        "rm",
-                        "rn",
-                        "ru",
-                        "sm",
-                        "sg",
-                        "sa",
-                        "sc",
-                        "sr",
-                        "sn",
-                        "sd",
-                        "si",
-                        "sk",
-                        "sl",
-                        "so",
-                        "st",
-                        "nr",
-                        "es",
-                        "su",
-                        "sw",
-                        "ss",
-                        "sv",
-                        "tl",
-                        "ty",
-                        "tg",
-                        "ta",
-                        "tt",
-                        "te",
-                        "th",
-                        "bo",
-                        "ti",
-                        "to",
-                        "ts",
-                        "tn",
-                        "tr",
-                        "tk",
-                        "tw",
-                        "ug",
-                        "uk",
-                        "ur",
-                        "uz",
-                        "ve",
-                        "vi",
-                        "vo",
-                        "wa",
-                        "cy",
-                        "fy",
-                        "wo",
-                        "xh",
-                        "yi",
-                        "yo",
-                        "za",
-                        "zu",
-                    ],
-                },
-                {
-                    id: "AlternateIdentifier",
-                    name: "Alternate Identifier",
-                    type: PropertyDataType.STRINGLIST,
-                    description:
-                        "An identifier other than the primary Identifier applied to the resource being registered. This may be any alphanumeric string which is unique within its domain of issue. May be used for local identifiers, a serial number of an instrument or an inventory number. The AlternateIdentifier should be an additional identifier for the same instance of the resource (i.e., same location, same file).",
-                    showAlways: true,
-                    required: false,
-                },
-                {
-                    id: "Size",
-                    name: "Size",
-                    type: PropertyDataType.STRINGLIST,
-                    description: "Size (e.g., bytes, pages, inches, etc.) or duration (extent), e.g., hours, minutes, days, etc., of a resource.",
-                    showAlways: true,
-                    required: false,
-                },
-                {
-                    id: "Format",
-                    name: "Format",
-                    type: PropertyDataType.STRINGLIST,
-                    description:
-                        "Technical format of the resource. Use file extension or MIME type where possible, e.g., PDF, XML, MPG or application/pdf, text/xml, video/mpeg.",
-                    showAlways: true,
-                    required: false,
-                },
-                {
-                    id: "Version",
-                    name: "Format",
-                    type: PropertyDataType.STRING,
-                    description:
-                        "The version number of the resource. Suggested practice: track major_version.minor_version. Register a new identifier for a major version change.",
-                    showAlways: true,
-                    required: false,
-                },
-                {
-                    id: "Rights",
-                    name: "Rights",
-                    type: PropertyDataType.STRINGLIST,
-                    description: "Any rights information for this resource. The property may be repeated to record complex rights characteristics.",
-                    showAlways: true,
-                    required: false,
-                },
-                {
-                    id: "FundingReference",
-                    name: "Funding Reference",
-                    type: PropertyDataType.STRINGLIST,
-                    description: "Information about financial support (funding) for the resource being registered.",
-                    showAlways: true,
-                    required: false,
-                },
-            ],
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
+            label: "Title",
+            description: "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            //type: ["title"],
+            input: [{ id: "title", label: "Title", type: "string" }],
+            required: true,
+            multiple: true
         },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/",
+            label: "Publisher",
+            description:
+                "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
+            //type: ["publisher"],
+            input: [{ id: "publisher", label: "Publisher", type: "string" }],
+            required: true,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publicationyear/",
+            label: "Publication Year",
+            description: "The year when the data was or will be made publicly available. Format: YYYY.",
+            example: "2018",
+            input: [{ id: "publicationYear", label: "Publication Year", type: "number" }],
+            required: true,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/",
+            label: "Subject",
+            description: "Subject, keyword, classification code, or key phrase describing the resource.",
+            example:
+                "World Data Center for Climate (WDCC), GeoForschungsZentrum Potsdam (GFZ), Consejo Superior de Investigaciones Científicas, University of Tokyo, GitHub",
+            //type: ["subject"],
+            input: [{ id: "subject", label: "Subject", type: "string" }],
+            required: true,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/",
+            label: "Contributor",
+            description:
+                "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property.",
+            example: "Charpy, Antoine; Foo Data Center",
+            //type: ["contributor"],
+            input: [{ id: "contributor", label: "Contributor", type: "string" }],
+            required: false,
+            multiple: true
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/",
+            label: "Date",
+            description: "Different dates relevant to the work.",
+            //type: ["date"],
+            input: [{ id: "date", label: "Date", type: "string" }],
+            required: false,
+            multiple: true
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/language/",
+            label: "Language",
+            description: "The primary language of the resource.",
+            example: "en, fr",
+            input: [{ id: "language", label: "Language", type: "string" }],
+            required: false,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/resourcetype/",
+            label: "Resource Type",
+            description:
+                "A description of the resource. The recommended content is a single term of some detail so that a pair can be formed with the resourceTypeGeneral sub-property. For example, a resourceType of “Census Data” paired with a resourceTypeGeneral of “Dataset” yields “Dataset/Census Data”.",
+            example: "Census Data",
+            //type: ["resourceType"],
+            input: [{ id: "resourceType", label: "Resource Type", type: "string" }],
+            required: true,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/alternateidentifier/",
+            label: "Alternate Identifier",
+            description:
+                "An identifier other than the primary Identifier applied to the resource being registered. This may be any alphanumeric string which is unique within its domain of issue. May be used for local identifiers, a serial number of an instrument or an inventory number. The AlternateIdentifier should be an additional identifier for the same instance of the resource (i.e., same location, same file).",
+            example: "E-GEOD-34814",
+            //type: ["alternateIdentifier"],
+            input: [{ id: "alternateIdentifier", label: "Alternate Identifier", type: "string" }],
+            required: false,
+            multiple: true
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/relatedidentifier/",
+            label: "Related Identifier",
+            description: "Identifiers of related resources. These must be globally unique identifiers.",
+            //type: ["relatedIdentifier"],
+            input: [{ id: "relatedIdentifier", label: "Related Identifier", type: "string" }],
+            required: false,
+            multiple: true
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/size/",
+            label: "Size",
+            description: "Size (e.g., bytes, pages, inches, etc.) or duration (extent), e.g., hours, minutes, days, etc., of a resource.",
+            example: "“15 pages”, “6 MB”, “45 minutes”",
+            input: [{ id: "size", label: "Size", type: "string" }],
+            required: false,
+            multiple: true
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/format/",
+            label: "Format",
+            description: "Technical format of the resource. Use file extension or MIME type where possible.",
+            example: "PDF, XML, MPG or application/pdf, text/xml, video/mpeg.",
+            input: [{ id: "format", label: "Format", type: "string" }],
+            required: false,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/version/",
+            label: "Version",
+            description:
+                "The version number of the resource. Suggested practice: track major_version.minor_version. Register a new identifier for a major version change.",
+            example: "2.1",
+            input: [{ id: "version", label: "Version", type: "string" }],
+            required: false,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/rights/",
+            label: "Rights",
+            description: "Rights information for the resource.",
+            //type: ["rights"],
+            input: [{ id: "rights", label: "Rights", type: "string" }],
+            required: false,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
+            label: "Description",
+            description:
+                "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
+            //type: ["description"],
+            input: [{ id: "description", label: "Description", type: "string" }],
+            required: false,
+            multiple: false
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation/",
+            label: "Geolocation",
+            description: "Spatial region or named place where the data was gathered or about which the data is focused.",
+            //type: ["geoLocation"],
+            input: [{ id: "geoLocation", label: "Geolocation", type: "string" }],
+            required: false,
+            multiple: true
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/",
+            label: "Funding Reference",
+            description: "Information about financial support (funding) for the resource being registered.",
+            //type: ["fundingReference"],
+            input: [{ id: "fundingReference", label: "Funding Reference", type: "string" }],
+            required: false,
+            multiple: true
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/relateditem/",
+            label: "Related Item",
+            description: "Information about a resource related to the one being registered.",
+            //type: ["relateditem"],
+            input: [{ id: "relatedItem", label: "Related Item", type: "string" }],
+            required: false,
+            multiple: true
+        }
     ],
+    classes: {
+        creator: {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
+            label: "Creator",
+            description:
+                "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
+            displayString: "${name}",
+            type: ["creator"],
+            input: [
+                {
+                    id: "name",
+                    label: "Name",
+                    type: "string"
+                },
+                {
+                    id: "lang",
+                    label: "Language",
+                    type: "string"
+                },
+                {
+                    id: "nameType",
+                    label: "Name Type",
+                    type: "select",
+                    options: ["Personal", "Organizational"]
+                },
+                {
+                    id: "givenName",
+                    label: "Given Name",
+                    type: "string"
+                },
+                {
+                    id: "familyName",
+                    label: "Family Name",
+                    type: "string"
+                },
+                {
+                    id: "nameIdentifier",
+                    label: "Name Identifier",
+                    type: "nameIdentifier",
+                    multiple: true
+                },
+                {
+                    id: "affiliation",
+                    label: "Affiliation",
+                    type: "affiliation",
+                    multiple: true
+                }
+            ]
+        },
+        nameIdentifier: {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
+            label: "Name Identifier",
+            displayString: "${nameIdentifierScheme}: ${nameIdentifier}",
+            input: [
+                {
+                    id: "nameIdentifier",
+                    label: "Name Identifier",
+                    type: "string"
+                },
+                {
+                    id: "nameIdentifierScheme",
+                    label: "Name Identifier Scheme",
+                    type: "string"
+                },
+                {
+                    id: "schemeURI",
+                    label: "Scheme URI",
+                    type: "string"
+                }
+            ]
+        },
+        affiliation: {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#affiliation",
+            label: "Affiliation",
+            displayString: "${affiliation}",
+            input: [
+                {
+                    id: "affiliation",
+                    label: "Affiliation",
+                    type: "string"
+                },
+                {
+                    id: "affiliationIdentifier",
+                    label: "Affiliation Identifier",
+                    type: "string"
+                },
+                {
+                    id: "affiliationIdentifierScheme",
+                    label: "Affiliation Identifier Scheme",
+                    type: "string"
+                },
+                {
+                    id: "schemeURI",
+                    label: "Affiliation Scheme URI",
+                    type: "string"
+                }
+            ]
+        }
+    }
 };

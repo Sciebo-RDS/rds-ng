@@ -14,7 +14,7 @@ export class DataManagementPlanSnapIn extends SnapIn {
             },
             tabPanel: {
                 label: "Data Management Plan",
-                loader: () => import("./DataManagementPlanPanel.vue")
+                loader: () => /*import("./DataManagementPlanPanel.vue")*/ null
             }
         });
     }

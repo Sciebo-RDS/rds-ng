@@ -7,22 +7,26 @@ import { PropertySet } from "../PropertySet";
 import { type ProfileID } from "../PropertyProfile";
 
 const props = defineProps(["property"]);
-
+/* 
 const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
 const categoryId = inject("categoryId") as string;
 const profileId = inject("profileId") as ProfileID;
 
 // TODO: Handle overflows
-const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
+const value = computed(() => controller.getValue(profileId, categoryId, props.property.id)); */
+
+const value = 0;
 </script>
 
 <template>
     <div>
-        <InputNumber
+        <!-- <InputNumber
             @input="(e: any) => controller.setValue(profileId, categoryId, props.property.id, e.value)"
             :modelValue="value"
             :useGrouping="false"
             class="w-full"
-        />
+        /> -->
+
+        <InputNumber :modelValue="value" :useGrouping="false" class="w-full" />
     </div>
 </template>

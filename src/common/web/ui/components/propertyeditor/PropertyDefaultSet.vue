@@ -17,15 +17,15 @@ const items = computed(() => {
             icon: e.options.menuItem.icon,
             command: () => {
                 e.options.menuItem.command(props.controller, props.project?.title);
-            },
+            }
         };
     });
     return !!downloadItems.length
         ? [
               {
                   label: "Download",
-                  items: downloadItems,
-              },
+                  items: downloadItems
+              }
           ]
         : [];
 });
