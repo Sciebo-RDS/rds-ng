@@ -1,10 +1,10 @@
 import typing
 
-from .project_logbook_record import ProjectLogbookRecord
+from .project_logbook_record import ProjectLogbookRecord, RecordID
 
 
 def find_logbook_record_by_id(
-    records: typing.List[ProjectLogbookRecord], record: int
+    records: typing.List[ProjectLogbookRecord], record: RecordID
 ) -> ProjectLogbookRecord | None:
     """
     Searches for a project logbook record by its record ID within a list of records.
@@ -21,7 +21,7 @@ def find_logbook_record_by_id(
     return next(matching_record, None)
 
 
-def get_next_record_id(records: typing.List[ProjectLogbookRecord]) -> int:
+def get_next_record_id(records: typing.List[ProjectLogbookRecord]) -> RecordID:
     """
     Retrieves the next record ID of the project logbook.
 

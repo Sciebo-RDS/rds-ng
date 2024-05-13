@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { MarkProjectLogbookSeenCommand } from "@common/api/project/ProjectCommands";
 import Button from "primevue/button";
 import { storeToRefs } from "pinia";
 import { computed, type PropType, toRefs, unref } from "vue";
@@ -57,13 +58,14 @@ const unseenJobRecords = computed(() => {
 
 function onDismiss(project: Project, record: number): void {
     const action = new MarkProjectLogbookSeenAction(comp, true);
-    action.prepare(project, record);
+    action.prepare(false, project, record);
     action.execute();
 }
 
 function onDismissAll(): void {
-    // TODO
-    console.log("ALL DISMISSED");
+    const action = new MarkProjectLogbookSeenAction(comp, true);
+    action.prepare(true);
+    action.execute();
 }
 </script>
 

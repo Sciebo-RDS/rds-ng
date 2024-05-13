@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
+RecordID = int
+
 
 @dataclass_json
 @dataclass
@@ -17,7 +19,7 @@ class ProjectLogbookRecord(abc.ABC):
         seen: Whether the record has been seen by the user.
     """
 
-    record: int = 0
+    record: RecordID = 0
     timestamp: float = field(default_factory=lambda: time.time())
 
     seen: bool = False

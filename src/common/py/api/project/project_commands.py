@@ -15,6 +15,7 @@ from ...data.entities.project import (
     Project,
     ProjectID,
 )
+from ...data.entities.project.logbook import RecordID
 
 
 @Message.define("command/project/list")
@@ -219,13 +220,16 @@ class MarkProjectLogbookSeenCommand(Command):
     Args:
         project_id: The ID of the project containing the logbook.
         record: The record ID.
+        mark_all: If true, all records will be marked as seen.
 
     Notes:
         Requires an ``ProjectLogbookMarkSeenReply`` reply.
     """
 
     project_id: ProjectID
-    record: int
+    record: RecordID
+
+    mark_all: bool
 
     # TODO: Verschiedene Logbuch-Typen
 
@@ -234,7 +238,8 @@ class MarkProjectLogbookSeenCommand(Command):
         message_builder: MessageBuilder,
         *,
         project_id: ProjectID,
-        record: int,
+        record: RecordID,
+        mark_all: bool = False,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -245,6 +250,7 @@ class MarkProjectLogbookSeenCommand(Command):
             chain,
             project_id=project_id,
             record=record,
+            mark_all=mark_all,
         )
 
 

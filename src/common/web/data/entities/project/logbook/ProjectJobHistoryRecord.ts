@@ -1,5 +1,5 @@
 import { type ConnectorInstanceID } from "../../connector/ConnectorInstance";
-import { ProjectLogbookRecord } from "./ProjectLogbookRecord";
+import { ProjectLogbookRecord, type RecordID } from "./ProjectLogbookRecord";
 
 /**
  * A single record of a project's job history.
@@ -14,8 +14,8 @@ export class ProjectJobHistoryRecord extends ProjectLogbookRecord {
     public readonly success: boolean;
     public readonly message: string;
 
-    public constructor(timestamp: number, connectorInstance: ConnectorInstanceID, success: boolean, message: string) {
-        super(timestamp);
+    public constructor(record: RecordID, timestamp: number, connectorInstance: ConnectorInstanceID, success: boolean, message: string) {
+        super(record, timestamp);
 
         this.connector_instance = connectorInstance;
 

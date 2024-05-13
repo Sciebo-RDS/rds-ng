@@ -6,6 +6,7 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
+import { type RecordID } from "../../data/entities/project/logbook/ProjectLogbookRecord";
 import { Project, type ProjectID } from "../../data/entities/project/Project";
 import { ProjectOptions } from "../../data/entities/project/ProjectOptions";
 
@@ -172,7 +173,9 @@ export class UpdateProjectReply extends CommandReply {
 @Message.define("command/project/logbook/mark-seen")
 export class MarkProjectLogbookSeenCommand extends Command {
     public readonly project_id: ProjectID = 0;
-    public readonly record: number = 0;
+    public readonly record: RecordID = 0;
+
+    public readonly mark_all: boolean = false;
 
     // TODO: Verschiedene Logbuch-Typen
 
@@ -182,10 +185,11 @@ export class MarkProjectLogbookSeenCommand extends Command {
     public static build(
         messageBuilder: MessageBuilder,
         projectID: ProjectID,
-        record: number,
+        record: RecordID,
+        markAll: boolean = false,
         chain: Message | null = null,
     ): CommandComposer<MarkProjectLogbookSeenCommand> {
-        return messageBuilder.buildCommand(MarkProjectLogbookSeenCommand, { project_id: projectID, record: record }, chain);
+        return messageBuilder.buildCommand(MarkProjectLogbookSeenCommand, { project_id: projectID, record: record, mark_all: markAll }, chain);
     }
 }
 

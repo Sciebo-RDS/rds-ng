@@ -1,4 +1,9 @@
 /**
+ * The record ID type.
+ */
+export type RecordID = number;
+
+/**
  * A single record of a project's logbook.
  *
  * @param record - The record entry ID.
@@ -6,7 +11,7 @@
  * @param seen - Whether the record has been seen by the user.
  */
 export class ProjectLogbookRecord {
-    public readonly record: number;
+    public readonly record: RecordID;
     public readonly timestamp: number;
 
     public readonly seen: boolean;

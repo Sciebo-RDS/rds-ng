@@ -19,10 +19,6 @@ const props = defineProps({
     },
 });
 const { projects, jobs } = toRefs(props);
-
-function onDismissAll() {
-    console.log("WEG DAMIT");
-}
 </script>
 
 <template>

@@ -183,28 +183,49 @@ def create_projects_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, MarkProjectLogbookSeenReply):
             return
 
+        from .tools import send_project_logbook
+
         success = False
         message = ""
 
-        if (
-            project := ctx.storage_pool.project_storage.get(msg.project_id)
-        ) is not None:
-            # TODO: Spaeter noch andere Logbooks
-            from common.py.data.entities.project.logbook import (
-                find_logbook_record_by_id,
-            )
+        if msg.mark_all:
+            success = True
 
-            if (
-                record := find_logbook_record_by_id(
-                    project.logbook.job_history, msg.record
-                )
-            ) is not None:
-                record.seen = True
-                success = True
-            else:
-                message = f"A logbook record with ID {msg.record} was not found"
+            for project in ctx.storage_pool.project_storage.filter_by_user(
+                ctx.user.user_id
+            ):
+                send_logbook = False
+
+                # TODO: Spaeter noch andere Logbooks
+                for record in project.logbook.job_history:
+                    if not record.seen:
+                        record.seen = True
+                        send_logbook = True
+
+                if send_logbook:
+                    send_project_logbook(msg, ctx, project)
         else:
-            message = f"A project with ID {msg.project_id} was not found"
+            if (
+                project := ctx.storage_pool.project_storage.get(msg.project_id)
+            ) is not None:
+                # TODO: Spaeter noch andere Logbooks
+                from common.py.data.entities.project.logbook import (
+                    find_logbook_record_by_id,
+                )
+
+                if (
+                    record := find_logbook_record_by_id(
+                        project.logbook.job_history, msg.record
+                    )
+                ) is not None:
+                    record.seen = True
+                    success = True
+                else:
+                    message = f"A logbook record with ID {msg.record} was not found"
+            else:
+                message = f"A project with ID {msg.project_id} was not found"
+
+            send_project_logbook(msg, ctx, project)
 
         MarkProjectLogbookSeenReply.build(
             ctx.message_builder,
@@ -212,11 +233,6 @@ def create_projects_service(comp: BackendComponent) -> Service:
             success=success,
             message=message,
         ).emit()
-
-        # Send the updated project logbook to the client
-        from .tools import send_project_logbook
-
-        send_project_logbook(msg, ctx, project)
 
     @svc.message_handler(DeleteProjectCommand)
     def delete_project(msg: DeleteProjectCommand, ctx: ServerServiceContext) -> None:
