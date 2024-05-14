@@ -30,6 +30,9 @@ const props = defineProps({
     },
 });
 const { jobs } = toRefs(props);
+const emits = defineEmits<{
+    (e: "contents-changed", entries: ListEntry[]): void;
+}>();
 const projStore = useProjectsStore();
 const userStore = useUserStore();
 const conStore = useConnectorsStore();
@@ -48,30 +51,34 @@ const runningJobs = computed(() => {
             connectorCategory: connector ? getConnectorCategory(connector) : undefined,
         } as ListEntry);
     });
-    return runningJobEntries.sort((a, b) => b.job.timestamp - a.job.timestamp);
+
+    runningJobEntries.sort((a, b) => b.job.timestamp - a.job.timestamp);
+    emits("contents-changed", runningJobEntries);
+    return runningJobEntries;
 });
 </script>
 
 <template>
-    <div class="r-text-caption border-b">Active jobs</div>
-    <div v-if="jobs.length > 0" class="w-full pt-2">
-        <div v-for="(job, index) in runningJobs" :key="index">
-            <div class="grid grid-cols-[1fr_min-content]" :class="{ 'pt-2': index != 0 }">
-                <ProjectJobsPanelItem
-                    :index="index"
-                    :message="job.job.message"
-                    result-message="is currently running"
-                    :timestamp="job.job.timestamp"
-                    severity="info"
-                    :project="job.project"
-                    :connector-instance="job.connectorInstance"
-                    :connector-category="job.connectorCategory"
-                    :progress="job.job.progress"
-                />
+    <div v-if="jobs.length > 0">
+        <div class="r-text-caption border-b">Active jobs</div>
+        <div class="w-full pt-2">
+            <div v-for="(job, index) in runningJobs" :key="index">
+                <div class="grid grid-cols-[1fr_min-content]" :class="{ 'pt-2': index != 0 }">
+                    <ProjectJobsPanelItem
+                        :index="index"
+                        :message="job.job.message"
+                        result-message="is currently running"
+                        :timestamp="job.job.timestamp"
+                        severity="info"
+                        :project="job.project"
+                        :connector-instance="job.connectorInstance"
+                        :connector-category="job.connectorCategory"
+                        :progress="job.job.progress"
+                    />
+                </div>
             </div>
         </div>
     </div>
-    <div v-else class="r-text-light italic grid justify-center">No active jobs running</div>
 </template>
 
 <style scoped lang="scss"></style>

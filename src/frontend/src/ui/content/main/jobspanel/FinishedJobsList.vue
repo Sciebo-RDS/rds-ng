@@ -35,6 +35,9 @@ const props = defineProps({
     },
 });
 const { projects } = toRefs(props);
+const emits = defineEmits<{
+    (e: "contents-changed", entries: ListEntry[]): void;
+}>();
 const userStore = useUserStore();
 const conStore = useConnectorsStore();
 const { userSettings } = storeToRefs(userStore);
@@ -53,7 +56,9 @@ const unseenJobRecords = computed(() => {
             } as ListEntry);
         });
     });
-    return unseenRecords.sort((a, b) => b.jobRecord.timestamp - a.jobRecord.timestamp);
+    unseenRecords.sort((a, b) => b.jobRecord.timestamp - a.jobRecord.timestamp);
+    emits("contents-changed", unseenRecords);
+    return unseenRecords;
 });
 
 function onDismiss(project: Project, record: number): void {
@@ -70,34 +75,35 @@ function onDismissAll(): void {
 </script>
 
 <template>
-    <div class="r-text-caption border-b">Finished jobs</div>
-    <div v-if="unseenJobRecords.length > 0" class="w-full pt-2">
-        <div v-for="(job, index) in unseenJobRecords" :key="index">
-            <ProjectJobsPanelItem
-                :index="index"
-                :message="job.jobRecord.message"
-                :result-message="job.jobRecord.success ? 'has succeeded' : 'has failed'"
-                :timestamp="job.jobRecord.timestamp"
-                :severity="job.jobRecord.success ? 'success' : 'error'"
-                :project="job.project"
-                :connector-instance="job.connectorInstance"
-                :connector-category="job.connectorCategory"
-                closable
-                :record="job.jobRecord.record"
-                @dismiss="(record) => onDismiss(job.project, record)"
+    <div v-if="unseenJobRecords.length > 0">
+        <div class="r-text-caption border-b">Finished jobs</div>
+        <div class="w-full pt-2">
+            <div v-for="(job, index) in unseenJobRecords" :key="index">
+                <ProjectJobsPanelItem
+                    :index="index"
+                    :message="job.jobRecord.message"
+                    :result-message="job.jobRecord.success ? 'has succeeded' : 'has failed'"
+                    :timestamp="job.jobRecord.timestamp"
+                    :severity="job.jobRecord.success ? 'success' : 'error'"
+                    :project="job.project"
+                    :connector-instance="job.connectorInstance"
+                    :connector-category="job.connectorCategory"
+                    closable
+                    :record="job.jobRecord.record"
+                    @dismiss="(record) => onDismiss(job.project, record)"
+                />
+            </div>
+
+            <Button
+                label="Dismiss all"
+                size="small"
+                icon="material-icons-outlined mi-close !text-lg"
+                text
+                class="float-right mt-2 px-2 py-0.5 !text-sm"
+                @click="onDismissAll"
             />
         </div>
-
-        <Button
-            label="Dismiss all"
-            size="small"
-            icon="material-icons-outlined mi-close !text-lg"
-            text
-            class="float-right mt-2 px-2 py-0.5 !text-sm"
-            @click="onDismissAll"
-        />
     </div>
-    <div v-else class="r-text-light italic grid justify-center">No finished jobs</div>
 </template>
 
 <style scoped lang="scss"></style>
