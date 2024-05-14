@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
@@ -19,3 +20,5 @@ class ConnectorJob:
 
     project: Project
     connector_instance: ConnectorInstanceID
+
+    timestamp: float = field(default_factory=lambda: time.time())

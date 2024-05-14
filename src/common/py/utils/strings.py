@@ -1,3 +1,7 @@
+import math
+from datetime import timedelta
+
+
 def human_readable_file_size(size: int, suffix="B") -> str:
     """
     Converts a file size to a human-readable string.
@@ -15,3 +19,16 @@ def human_readable_file_size(size: int, suffix="B") -> str:
         size /= 1024.0
         
     return f"{size:.2f} Y{suffix}"
+
+
+def format_elapsed_time(elapsed: float) -> str:
+    """
+    Converts a number of seconds into a readable string.
+    
+    Args:
+        elapsed: The elapsed time in seconds.
+
+    Returns:
+        The string representation.
+    """
+    return str(timedelta(seconds=math.floor(elapsed)))

@@ -1,4 +1,5 @@
 import abc
+import time
 import typing
 
 from common.py.core.logging import debug
@@ -78,6 +79,7 @@ class ConnectorJobExecutor(abc.ABC):
         Marks and reports the job as successfully finished.
         """
         from common.py.api import ProjectJobCompletionEvent
+        from common.py.utils import format_elapsed_time
 
         self._is_active = False
         self.report_progress(1.0, "Job completed successfully")
@@ -87,7 +89,7 @@ class ConnectorJobExecutor(abc.ABC):
             project_id=self._job.project.project_id,
             connector_instance=self._job.connector_instance,
             success=True,
-            message="Job completed successfully",
+            message=f"Job completed in {format_elapsed_time(time.time() - self._job.timestamp)}",
         ).emit(self._target_channel)
 
         self._log_debug("Job done")
