@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject, computed, watch } from "vue";
+import { ref, inject, computed } from "vue";
 
 import Breadcrumb from "primevue/breadcrumb";
 import Card from "primevue/card";
@@ -14,7 +14,9 @@ import NewPropertyButton from "./NewPropertyButton.vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import Button from "primevue/button";
 
-const dialogRef = inject("dialogRef");
+const dialogRef = inject("dialogRef") as any;
+
+const dialogProps = new Proxy(dialogRef.value.options.props, {});
 
 const id = dialogRef.value.data.id;
 
@@ -86,6 +88,9 @@ const loadObject = (id: string) => {
     updatePath(path.length - 1);
     object.value = projectObjects.get(id);
 };
+
+// TODO set to Object Label when available
+dialogProps.header = computed(() => `Edit ${objectClass.label} ${object.value.id}`);
 </script>
 
 <template>

@@ -16,9 +16,9 @@ const linkableItems = computed(() => {
     let linkedItems = props.projectObjects.getLinkedObjects(props.parentId);
     return props.projectObjects
         .getObjectsByType(props.type)
-        .filter((item) => !linkedItems.includes(item.id))
-        .filter((item) => item.id != props.parentId)
-        .map((item) => ({
+        .filter((item: ProjectObject) => !linkedItems.includes(item.id))
+        .filter((item: ProjectObject) => item.id != props.parentId)
+        .map((item: ProjectObject) => ({
             label: item.id,
             command: () => {
                 props.projectObjects.addLink(props.parentId, item.id);
