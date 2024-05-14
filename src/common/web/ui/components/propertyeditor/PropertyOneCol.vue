@@ -99,6 +99,7 @@ const removeProperty = (id: string) => {
                 <span class="mr-auto ml-5 flex space-x-1">
                     <NewPropertyButton
                         v-for="t in addableTypes"
+                        :key="t['id']"
                         :type="t"
                         :parentId="propertyClass.id"
                         :profileId="profileId"
@@ -116,6 +117,7 @@ const removeProperty = (id: string) => {
             <div class="row-span-1 flex mt-3 flex-wrap">
                 <LinkedItemButton
                     v-for="i in linkedObjects"
+                    :key="i"
                     class="m-1"
                     :profileId="profileId"
                     :linkedItemActions="linkedItemActions"
