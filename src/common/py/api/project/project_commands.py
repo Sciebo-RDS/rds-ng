@@ -221,10 +221,10 @@ class MarkProjectLogbookSeenCommand(Command):
         logbook_type: The logbook type to mark.
         project_id: The ID of the project containing the logbook.
         record: The record ID.
-        mark_all: If true, all records will be marked as seen.
+        mark_all: If true, all records will be marked as seen (ignores project and record IDs).
 
     Notes:
-        Requires an ``ProjectLogbookMarkSeenReply`` reply.
+        Requires a ``ProjectLogbookMarkSeenReply`` reply.
     """
 
     logbook_type: ProjectLogbookType
@@ -233,8 +233,6 @@ class MarkProjectLogbookSeenCommand(Command):
     record: RecordID
 
     mark_all: bool
-
-    # TODO: Verschiedene Logbuch-Typen
 
     @staticmethod
     def build(

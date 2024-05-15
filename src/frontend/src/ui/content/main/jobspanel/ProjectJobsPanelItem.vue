@@ -44,6 +44,10 @@ const props = defineProps({
         type: Number,
         default: -1.0,
     },
+    elapsed: {
+        type: String,
+        default: "",
+    },
     closable: {
         type: Boolean,
         default: false,
@@ -53,7 +57,8 @@ const props = defineProps({
         default: 0,
     },
 });
-const { index, timestamp, message, resultMessage, project, connectorInstance, connectorCategory, severity, progress, closable, record } = toRefs(props);
+const { index, timestamp, message, resultMessage, project, connectorInstance, connectorCategory, severity, progress, elapsed, closable, record } =
+    toRefs(props);
 const emits = defineEmits<{
     (e: "dismiss", record: number): void;
 }>();
@@ -75,7 +80,10 @@ const emits = defineEmits<{
 
                         <div class="pt-2 text-slate-500">
                             <span class="font-normal">{{ connectorCategory?.verbNoun || "Export" }} &#x2022; </span>
-                            <span class="font-light text-xs">{{ formatLocaleTimestamp(timestamp) }}</span>
+                            <span class="font-light text-xs">
+                                <span>{{ formatLocaleTimestamp(timestamp) }}</span>
+                                <span v-if="elapsed" class="float-right">{{ elapsed }} elapsed</span>
+                            </span>
                         </div>
                     </div>
 

@@ -170,6 +170,11 @@ export class UpdateProjectReply extends CommandReply {
 
 /**
  * Marks a project logbook entry as seen. Requires an ``ProjectLogbookMarkSeenReply`` reply.
+ *
+ * @param logbook_type - The logbook type to mark.
+ * @param project_id - The ID of the project containing the logbook.
+ * @param record - The record ID.
+ * @param mark_all - If true, all records will be marked as seen (ignores project and record IDs).
  */
 @Message.define("command/project/logbook/mark-seen")
 export class MarkProjectLogbookSeenCommand extends Command {
@@ -179,8 +184,6 @@ export class MarkProjectLogbookSeenCommand extends Command {
     public readonly record: RecordID = 0;
 
     public readonly mark_all: boolean = false;
-
-    // TODO: Verschiedene Logbuch-Typen
 
     /**
      * Helper function to easily build this message.

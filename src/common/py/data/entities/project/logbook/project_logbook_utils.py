@@ -1,6 +1,29 @@
 import typing
 
+from .project_logbook_type import ProjectLogbookType
 from .project_logbook_record import ProjectLogbookRecord, RecordID
+
+if typing.TYPE_CHECKING:
+    from .. import Project
+
+
+def find_logbook_by_type(
+    project: "Project", logbook_type: ProjectLogbookType
+) -> typing.List[ProjectLogbookRecord]:
+    """
+    Gets the logbook with the specified type of a project.
+
+    Args:
+        project: The project.
+        logbook_type: The logbook type.
+
+    Returns:
+        The project logbook (contents); if the logbook doesn't exist, an empty list is returned.
+    """
+    if logbook_type == ProjectLogbookType.JOB_HISTORY:
+        return project.logbook.job_history
+
+    return typing.cast(typing.List[ProjectLogbookRecord], [])
 
 
 def find_logbook_record_by_id(

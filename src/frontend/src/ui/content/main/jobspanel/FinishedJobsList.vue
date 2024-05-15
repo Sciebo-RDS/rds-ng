@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Button from "primevue/button";
 import { storeToRefs } from "pinia";
 import { computed, type PropType, toRefs, unref } from "vue";
 
@@ -36,7 +35,7 @@ const props = defineProps({
 });
 const { projects } = toRefs(props);
 const emits = defineEmits<{
-    (e: "contents-changed", entries: ListEntry[]): void;
+    (e: "changed", entries: ListEntry[]): void;
 }>();
 const userStore = useUserStore();
 const conStore = useConnectorsStore();
@@ -57,7 +56,7 @@ const unseenJobRecords = computed(() => {
         });
     });
     unseenRecords.sort((a, b) => b.jobRecord.timestamp - a.jobRecord.timestamp);
-    emits("contents-changed", unseenRecords);
+    emits("changed", unseenRecords);
     return unseenRecords;
 });
 
@@ -76,7 +75,13 @@ function onDismissAll(): void {
 
 <template>
     <div v-if="unseenJobRecords.length > 0">
-        <div class="r-text-caption border-b">Finished jobs</div>
+        <div class="grid grid-cols-[1fr_auto] r-text-caption border-b">
+            <span>Finished jobs</span>
+            <div class="grid grid-cols-[min-content_auto] items-center dismiss-all pr-1 r-primary-fg" title="Dismiss all" @click="onDismissAll">
+                <span class="material-icons-outlined mi-close !text-lg !leading-none mr-1" />
+                <span class="!text-sm">Dismiss all</span>
+            </div>
+        </div>
         <div class="w-full pt-2">
             <div v-for="(job, index) in unseenJobRecords" :key="index">
                 <ProjectJobsPanelItem
@@ -93,17 +98,16 @@ function onDismissAll(): void {
                     @dismiss="(record) => onDismiss(job.project, record)"
                 />
             </div>
-
-            <Button
-                label="Dismiss all"
-                size="small"
-                icon="material-icons-outlined mi-close !text-lg"
-                text
-                class="float-right mt-2 px-2 py-0.5 !text-sm"
-                @click="onDismissAll"
-            />
         </div>
     </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.dismiss-all {
+    @apply cursor-pointer opacity-70;
+}
+
+.dismiss-all:hover {
+    @apply opacity-100;
+}
+</style>

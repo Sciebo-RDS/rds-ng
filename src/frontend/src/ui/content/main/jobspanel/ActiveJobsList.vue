@@ -7,6 +7,7 @@ import { findConnectorByInstanceID, findConnectorInstanceByID } from "@common/da
 import { Project } from "@common/data/entities/project/Project";
 import { ProjectJob } from "@common/data/entities/project/ProjectJob";
 import { findProjectByID } from "@common/data/entities/project/ProjectUtils";
+import { formatElapsedTime } from "@common/utils/Strings";
 
 import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
 import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
@@ -31,7 +32,7 @@ const props = defineProps({
 });
 const { jobs } = toRefs(props);
 const emits = defineEmits<{
-    (e: "contents-changed", entries: ListEntry[]): void;
+    (e: "changed", entries: ListEntry[]): void;
 }>();
 const projStore = useProjectsStore();
 const userStore = useUserStore();
@@ -53,7 +54,7 @@ const runningJobs = computed(() => {
     });
 
     runningJobEntries.sort((a, b) => b.job.timestamp - a.job.timestamp);
-    emits("contents-changed", runningJobEntries);
+    emits("changed", runningJobEntries);
     return runningJobEntries;
 });
 </script>
@@ -74,6 +75,7 @@ const runningJobs = computed(() => {
                         :connector-instance="job.connectorInstance"
                         :connector-category="job.connectorCategory"
                         :progress="job.job.progress"
+                        :elapsed="formatElapsedTime(new Date().getTime() / 1000 - job.job.timestamp)"
                     />
                 </div>
             </div>

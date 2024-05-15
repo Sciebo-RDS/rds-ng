@@ -1,7 +1,6 @@
 import time
 
 from common.py.component import BackendComponent
-from common.py.core.messaging import Channel
 from common.py.services import Service
 
 from .tools import send_projects_list
@@ -183,7 +182,9 @@ def create_projects_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, MarkProjectLogbookSeenReply):
             return
 
-        from .tools import send_project_logbook, get_project_logbook
+        from common.py.data.entities.project.logbook import find_logbook_by_type
+
+        from .tools import send_project_logbook
 
         success = False
         message = ""
@@ -196,7 +197,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
             ):
                 send_logbook = False
 
-                for record in get_project_logbook(project, msg.logbook_type):
+                for record in find_logbook_by_type(project, msg.logbook_type):
                     if not record.seen:
                         record.seen = True
                         send_logbook = True
@@ -215,17 +216,17 @@ def create_projects_service(comp: BackendComponent) -> Service:
 
                 if (
                     record := find_logbook_record_by_id(
-                        get_project_logbook(project, msg.logbook_type), msg.record
+                        find_logbook_by_type(project, msg.logbook_type), msg.record
                     )
                 ) is not None:
                     record.seen = True
                     success = True
+
+                    send_project_logbook(msg, ctx, project)
                 else:
                     message = f"A logbook record with ID {msg.record} was not found"
             else:
                 message = f"A project with ID {msg.project_id} was not found"
-
-            send_project_logbook(msg, ctx, project)
 
         MarkProjectLogbookSeenReply.build(
             ctx.message_builder,
