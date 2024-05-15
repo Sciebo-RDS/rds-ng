@@ -53,7 +53,7 @@ class ConnectorJobExecutor(abc.ABC):
         Called before the job is removed from the job pool.
         """
 
-    def report_progress(self, progress: float, message: str) -> None:
+    def report(self, progress: float, message: str) -> None:
         """
         Reports the current progress and activity of the job.
 
@@ -63,16 +63,45 @@ class ConnectorJobExecutor(abc.ABC):
         """
         from common.py.api import ProjectJobProgressEvent
 
+        contents: ProjectJobProgressEvent.Contents = (
+            ProjectJobProgressEvent.Contents.NONE
+        )
+
+        if message != "":
+            contents |= ProjectJobProgressEvent.Contents.MESSAGE
+
+        if progress >= 0.0:
+            contents |= ProjectJobProgressEvent.Contents.PROGRESS
+
         progress = max(0.0, min(progress, 1.0))
         ProjectJobProgressEvent.build(
             self._mesage_builder,
             project_id=self._job.project.project_id,
             connector_instance=self._job.connector_instance,
+            contents=contents,
             progress=progress,
             message=message,
         ).emit(self._target_channel)
 
         self._log_debug(f"Job progression update: {message} ({progress*100:0.1f}%)")
+
+    def report_message(self, message: str) -> None:
+        """
+        Reports the current activity of the job.
+
+        Args:
+            message: The current activity message.
+        """
+        self.report(-1.0, message)
+
+    def report_progress(self, progress: float) -> None:
+        """
+        Reports the current progress of the job.
+
+        Args:
+            progress: The overall progress (0.0-1.0).
+        """
+        self.report(progress, "")
 
     def set_done(self) -> None:
         """
