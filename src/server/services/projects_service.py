@@ -31,7 +31,6 @@ def create_projects_service(comp: BackendComponent) -> Service:
         UpdateProjectFeaturesReply,
         MarkProjectLogbookSeenCommand,
         MarkProjectLogbookSeenReply,
-        ProjectLogbookEvent,
     )
     from common.py.data.entities import clone_entity
     from common.py.data.entities.project import Project
@@ -74,7 +73,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
         )
 
         try:
-            ProjectVerifier(project).verify_create()
+            ProjectVerifier(project, ctx.user).verify_create()
 
             ctx.storage_pool.project_storage.add(project)
             success = True
@@ -112,7 +111,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
             try:
                 # Clone the project, applying the new settings, to only update the actual instance if everything is fine
                 project_upd = _apply_update(clone_entity(project))
-                ProjectVerifier(project_upd).verify_update()
+                ProjectVerifier(project_upd, ctx.user).verify_update()
 
                 _apply_update(project)
                 success = True
@@ -147,6 +146,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
             project := ctx.storage_pool.project_storage.get(msg.project_id)
         ) is not None:
             try:
+                ProjectVerifier(project, ctx.user).verify_update()
                 ProjectFeaturesVerifier(
                     msg.features, selected_features=msg.updated_features
                 ).verify_update()
@@ -211,6 +211,8 @@ def create_projects_service(comp: BackendComponent) -> Service:
                     find_logbook_record_by_id,
                 )
 
+                ProjectVerifier(project, ctx.user).verify_update()
+
                 if (
                     record := find_logbook_record_by_id(
                         get_project_logbook(project, msg.logbook_type), msg.record
@@ -244,7 +246,7 @@ def create_projects_service(comp: BackendComponent) -> Service:
             project := ctx.storage_pool.project_storage.get(msg.project_id)
         ) is not None:
             try:
-                ProjectVerifier(project).verify_delete()
+                ProjectVerifier(project, ctx.user).verify_delete()
 
                 for job in ctx.storage_pool.project_job_storage.filter_by_project(
                     project.project_id
