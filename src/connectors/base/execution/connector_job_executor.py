@@ -1,4 +1,5 @@
 import abc
+import time
 import typing
 
 from common.py.core.logging import debug
@@ -52,7 +53,7 @@ class ConnectorJobExecutor(abc.ABC):
         Called before the job is removed from the job pool.
         """
 
-    def report_progress(self, progress: float, message: str) -> None:
+    def report(self, progress: float, message: str) -> None:
         """
         Reports the current progress and activity of the job.
 
@@ -62,32 +63,62 @@ class ConnectorJobExecutor(abc.ABC):
         """
         from common.py.api import ProjectJobProgressEvent
 
+        contents: ProjectJobProgressEvent.Contents = (
+            ProjectJobProgressEvent.Contents.NONE
+        )
+
+        if message != "":
+            contents |= ProjectJobProgressEvent.Contents.MESSAGE
+
+        if progress >= 0.0:
+            contents |= ProjectJobProgressEvent.Contents.PROGRESS
+
         progress = max(0.0, min(progress, 1.0))
         ProjectJobProgressEvent.build(
             self._mesage_builder,
             project_id=self._job.project.project_id,
             connector_instance=self._job.connector_instance,
+            contents=contents,
             progress=progress,
             message=message,
         ).emit(self._target_channel)
 
         self._log_debug(f"Job progression update: {message} ({progress*100:0.1f}%)")
 
+    def report_message(self, message: str) -> None:
+        """
+        Reports the current activity of the job.
+
+        Args:
+            message: The current activity message.
+        """
+        self.report(-1.0, message)
+
+    def report_progress(self, progress: float) -> None:
+        """
+        Reports the current progress of the job.
+
+        Args:
+            progress: The overall progress (0.0-1.0).
+        """
+        self.report(progress, "")
+
     def set_done(self) -> None:
         """
         Marks and reports the job as successfully finished.
         """
         from common.py.api import ProjectJobCompletionEvent
+        from common.py.utils import format_elapsed_time
 
         self._is_active = False
-        self.report_progress(1.0, "Job completed successfully")
+        self.report(1.0, "Job completed successfully")
 
         ProjectJobCompletionEvent.build(
             self._mesage_builder,
             project_id=self._job.project.project_id,
             connector_instance=self._job.connector_instance,
             success=True,
-            message="Job completed successfully",
+            message=f"Job completed in {format_elapsed_time(time.time() - self._job.timestamp)}",
         ).emit(self._target_channel)
 
         self._log_debug("Job done")
@@ -104,7 +135,7 @@ class ConnectorJobExecutor(abc.ABC):
         failure_msg = f"Job failed: {reason}"
 
         self._is_active = False
-        self.report_progress(1.0, failure_msg)
+        self.report(1.0, failure_msg)
 
         ProjectJobCompletionEvent.build(
             self._mesage_builder,

@@ -1,6 +1,6 @@
 import dataclasses
 import typing
-from enum import StrEnum
+from enum import StrEnum, IntFlag
 
 from ...core.messaging import (
     Message,
@@ -50,8 +50,19 @@ class ProjectJobProgressEvent(Event):
         message: The current activity message.
     """
 
+    class Contents(IntFlag):
+        """
+        Flags specifying which aspects of the job have been updated.
+        """
+
+        NONE = 0
+        PROGRESS = 0x0001
+        MESSAGE = 0x0002
+
     project_id: ProjectID
     connector_instance: ConnectorInstanceID
+
+    contents: Contents
 
     progress: float
     message: str
@@ -62,6 +73,7 @@ class ProjectJobProgressEvent(Event):
         *,
         project_id: ProjectID,
         connector_instance: ConnectorInstanceID,
+        contents: Contents,
         progress: float,
         message: str,
         chain: Message | None = None
@@ -74,6 +86,7 @@ class ProjectJobProgressEvent(Event):
             chain,
             project_id=project_id,
             connector_instance=connector_instance,
+            contents=contents,
             progress=progress,
             message=message,
         )

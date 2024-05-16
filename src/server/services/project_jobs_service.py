@@ -151,8 +151,11 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
     @svc.message_handler(ProjectJobProgressEvent)
     def job_progress(msg: ProjectJobProgressEvent, ctx: ServerServiceContext) -> None:
         def update_job(job: ProjectJob, _: Session) -> None:
-            job.progress = msg.progress
-            job.message = msg.message
+            if ProjectJobProgressEvent.Contents.MESSAGE in msg.contents:
+                job.progress = msg.progress
+
+            if ProjectJobProgressEvent.Contents.PROGRESS in msg.contents:
+                job.message = msg.message
 
         handle_project_job_message(
             (msg.project_id, msg.connector_instance), update_job, msg, ctx
@@ -168,15 +171,17 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             ) is not None:
                 from common.py.data.entities.project.logbook import (
                     ProjectJobHistoryRecord,
+                    append_logbook_record,
                 )
 
-                record = ProjectJobHistoryRecord(
-                    connector_instance=job.connector_instance,
-                    success=msg.success,
-                    message=msg.message,
+                append_logbook_record(
+                    project.logbook.job_history,
+                    ProjectJobHistoryRecord(
+                        connector_instance=job.connector_instance,
+                        success=msg.success,
+                        message=msg.message,
+                    ),
                 )
-
-                project.logbook.job_history.append(record)
 
                 if session:
                     # Bounce the message off to the user to inform him about the completion
@@ -190,12 +195,9 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                     ).emit(Channel.direct(session.user_origin))
 
                     # Send the updated project logbook to the client
-                    ProjectLogbookEvent.build(
-                        ctx.message_builder,
-                        project_id=msg.project_id,
-                        logbook=project.logbook,
-                        chain=msg,
-                    ).emit(Channel.direct(session.user_origin))
+                    from .tools import send_project_logbook
+
+                    send_project_logbook(msg, ctx, project, session=session)
 
             ctx.storage_pool.project_job_storage.remove(job)
 

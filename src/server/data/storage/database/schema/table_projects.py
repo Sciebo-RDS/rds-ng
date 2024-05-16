@@ -137,13 +137,14 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
     table_logbook_job_history = Table(
         "project_logbook_job_history",
         metadata,
-        Column("record", Integer, primary_key=True, autoincrement=True),
+        Column("record", Integer, primary_key=True),
         Column(
             "project_id",
             Integer,
             ForeignKey("project_logbook.project_id"),
         ),
         Column("timestamp", Numeric(32, 8, asdecimal=False)),
+        Column("seen", Boolean),
         Column("connector_instance", Uuid),
         Column("success", Boolean),
         Column("message", Text),

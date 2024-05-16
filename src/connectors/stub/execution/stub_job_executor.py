@@ -25,11 +25,11 @@ class StubJobExecutor(ConnectorJobExecutor):
 
     def start(self) -> None:
         self._start_tick = time.time()
-        self._job_time = random.uniform(5.0, 10.0)
+        self._job_time = random.uniform(5.0, 15.0)
 
     def process(self) -> None:
         progress = (time.time() - self._start_tick) / self._job_time
-        self.report_progress(progress, f"I have already done {progress*100:0.1f}%")
+        self.report(progress, f"I have already done {progress*100:0.1f}%")
 
         if progress >= 1.0:
             (

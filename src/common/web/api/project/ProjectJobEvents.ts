@@ -9,6 +9,15 @@ import { type ProjectID } from "../../data/entities/project/Project";
 import { ProjectJob } from "../../data/entities/project/ProjectJob";
 
 /**
+ * Flags specifying which aspects of the job have been updated.
+ */
+export const enum ProjectJobProgressContents {
+    None = 0,
+    Progress = 0x0001,
+    Message = 0x0002,
+}
+
+/**
  * Emitted whenever the user's project jobs list has been updated.
  *
  * @param projects - The projects list.
@@ -40,6 +49,8 @@ export class ProjectJobProgressEvent extends Event {
     public readonly project_id: ProjectID = 0;
     public readonly connector_instance: ConnectorInstanceID = "";
 
+    public readonly contents: ProjectJobProgressContents = ProjectJobProgressContents.None;
+
     public readonly progress: number = 0.0;
     public readonly message: string = "";
 
@@ -50,13 +61,14 @@ export class ProjectJobProgressEvent extends Event {
         messageBuilder: MessageBuilder,
         projectID: ProjectID,
         connectorInstance: ConnectorInstanceID,
+        contents: ProjectJobProgressContents,
         progress: number,
         message: string,
         chain: Message | null = null,
     ): EventComposer<ProjectJobProgressEvent> {
         return messageBuilder.buildEvent(
             ProjectJobProgressEvent,
-            { project_id: projectID, connector_instance: connectorInstance, progress: progress, message: message },
+            { project_id: projectID, connector_instance: connectorInstance, contents: contents, progress: progress, message: message },
             chain,
         );
     }

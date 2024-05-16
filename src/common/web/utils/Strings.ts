@@ -35,6 +35,17 @@ export function humanReadableFileSize(size: number): string {
 }
 
 /**
+ * Formats a UNIX timestamp to a string using the system locale.
+ *
+ * @param date - The timestamp.
+ *
+ * @returns - The formatted string.
+ */
+export function formatLocaleTimestamp(date: number): string {
+    return new Intl.DateTimeFormat(navigator.language, { dateStyle: "medium", timeStyle: "short" }).format(date * 1000);
+}
+
+/**
  * Adds a full stop to a string if necessary.
  *
  * @param sentence - The sentence to complete.
@@ -44,4 +55,40 @@ export function finishSentence(sentence: string): string {
         sentence += ".";
     }
     return sentence;
+}
+
+/**
+ * Formats a number of seconds into a readable form.
+ *
+ * @param elapsed - The elapsed time in seconds.
+ *
+ * @returns - The formatted string.
+ */
+export function formatElapsedTime(elapsed: number): string {
+    const days = Math.floor(elapsed / (60 * 60 * 24));
+    elapsed -= days * (60 * 60 * 24);
+
+    const hours = Math.floor(elapsed / (60 * 60));
+    elapsed -= hours * (60 * 60);
+
+    const mins = Math.floor(elapsed / 60);
+    elapsed -= mins * 60;
+
+    const seconds = Math.floor(elapsed);
+    elapsed -= seconds;
+
+    const tokens: String[] = [];
+
+    function adcToken(val: number, name: string) {
+        if (val >= 1.0) {
+            tokens.push(`${val}${name}`);
+        }
+    }
+
+    adcToken(days, "d");
+    adcToken(hours, "h");
+    adcToken(mins, "m");
+    adcToken(seconds, "s");
+
+    return tokens.join(" ");
 }

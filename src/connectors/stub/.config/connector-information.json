@@ -3,7 +3,7 @@
     "description": "A connector that acts like a real one but actually doesn't do anything.",
     "category": "repository",
     "options": {
-        "publish_once": true
+        "publish_once": false
     },
     "logos": {
         "default": "/component/common/assets/img/logos/stub.png",
