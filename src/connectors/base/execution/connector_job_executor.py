@@ -111,7 +111,7 @@ class ConnectorJobExecutor(abc.ABC):
         from common.py.utils import format_elapsed_time
 
         self._is_active = False
-        self.report_progress(1.0, "Job completed successfully")
+        self.report(1.0, "Job completed successfully")
 
         ProjectJobCompletionEvent.build(
             self._mesage_builder,
@@ -135,7 +135,7 @@ class ConnectorJobExecutor(abc.ABC):
         failure_msg = f"Job failed: {reason}"
 
         self._is_active = False
-        self.report_progress(1.0, failure_msg)
+        self.report(1.0, failure_msg)
 
         ProjectJobCompletionEvent.build(
             self._mesage_builder,
