@@ -12,7 +12,10 @@ import Chip from "primevue/chip";
 import Skeleton from "primevue/skeleton";
 import NewPropertyButton from "./NewPropertyButton.vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
+import { History } from "./Breadcrumbs";
+import { injectTemplate } from "./utils/Templates";
 import Button from "primevue/button";
+import { type MenuItem } from "primevue/menuitem";
 
 const dialogRef = inject("dialogRef") as any;
 
@@ -32,22 +35,9 @@ const addableTypes = objectClass["type"] || [];
 
 const linkedObjects = computed(() => projectObjects.getLinkedObjects(object.value.id));
 
-let path = [id];
-let menuPath = ref();
-updatePath(path.length - 1);
+const history = new History();
 
-function updatePath(i: number) {
-    path = path.slice(0, i + 1);
-    menuPath.value = path.map((obj, i) => {
-        return {
-            label: obj,
-            command: () => {
-                updatePath(i);
-                object.value = projectObjects.get(obj);
-            }
-        };
-    });
-}
+var menuPath = ref();
 
 const example = objectClass.example ? `<b>Example</b>: ${objectClass.example}` : null;
 
@@ -74,30 +64,32 @@ const linkedItemActions = ref((id: string) => [
     }
 ]);
 
-const loadObject = (id: string) => {
-    if (id === object.value.id) {
-        return;
-    }
-    if (path.includes(id)) {
-        const i = path.indexOf(id);
-        updatePath(i);
-        object.value = projectObjects.get(id);
-        return;
-    }
-    path.push(id);
-    updatePath(path.length - 1);
+function selectActiveObject(id: string) {
     object.value = projectObjects.get(id);
-};
+    history.navigateTo(object.value);
+    console.log(history.list());
+    // TODO optimize by only updating necessary elements
+    menuPath.value = history.list().map((item) => {
+        const cb: Function = () => {
+            selectActiveObject(item.id);
+        };
+        const injectedLabel = injectTemplate(projectProfiles.getClassById(item.profile, item.type).labelTemplate, projectObjects.get(item.id));
+        const label = `${item.type}: ${injectedLabel}`;
+        return {
+            label: label,
+            command: cb
+        };
+    });
+}
 
-// TODO set to Object Label when available
-dialogProps.header = computed(() => `Edit ${objectClass.label} ${object.value.id}`);
+selectActiveObject(id);
 </script>
 
 <template>
     <Card :pt="{ root: { class: 'shadow-none' }, body: { class: 'pl-1 p-0' } }">
         <template #header>
             <Breadcrumb
-                :model="menuPath"
+                :model="menuPath as MenuItem[]"
                 :pt="{
                     root: { class: 'px-0 pt-0' },
                     menu: { class: ' flex flex-wrap' },
@@ -130,7 +122,7 @@ dialogProps.header = computed(() => `Edit ${objectClass.label} ${object.value.id
                         :projectObjects="projectObjects"
                         :projectProfiles="projectProfiles"
                         mode="dialog"
-                        @loadObject="(id) => loadObject(id)"
+                        @loadObject="(id) => selectActiveObject(id)"
                     />
                 </span>
 
@@ -162,7 +154,7 @@ dialogProps.header = computed(() => `Edit ${objectClass.label} ${object.value.id
                             :projectObjects="projectObjects"
                             :projectProfiles="projectProfiles"
                             mode="dialog"
-                            @loadObject="(id) => loadObject(id)"
+                            @loadObject="(id) => selectActiveObject(id)"
                         />
                         <Skeleton v-if="linkedObjects?.length === 0 && addableTypes.length > 0" height="2rem" width="20rem" class="mb-2" />
                     </div>

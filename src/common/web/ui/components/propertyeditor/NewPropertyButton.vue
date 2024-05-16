@@ -6,6 +6,7 @@ import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
 import { PropertyProfileStore } from "./PropertyProfileStore";
+import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
 const props = defineProps(["type", "profileId", "parentId", "projectObjects", "projectProfiles", "mode"]);
@@ -19,7 +20,7 @@ const linkableItems = computed(() => {
         .filter((item: ProjectObject) => !linkedItems.includes(item.id))
         .filter((item: ProjectObject) => item.id != props.parentId)
         .map((item: ProjectObject) => ({
-            label: item.id,
+            label: injectTemplate(props.projectProfiles.getClassById(item.profile, item.type).labelTemplate, props.projectObjects.get(item.id)),
             command: () => {
                 props.projectObjects.addLink(props.parentId, item.id);
             }

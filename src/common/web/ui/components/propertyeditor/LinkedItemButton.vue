@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, inject, unref } from "vue";
+import { computed } from "vue";
 import PropertyDialog from "./PropertyDialog.vue";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
 const props = defineProps(["linkedItemActions", "item", "projectObjects", "profileId", "projectProfiles", "mode"]);
@@ -13,6 +14,11 @@ const object = props.projectObjects.get(props.item);
 const linkedItemActions = props.linkedItemActions(object.id);
 
 const emit = defineEmits(["loadObject"]);
+
+const label = computed(() => {
+    const injectedLabel = injectTemplate(props.projectProfiles.getClassById(object.profile, object.type).labelTemplate, props.projectObjects.get(object.id));
+    return `${object.type}: ${injectedLabel}`;
+});
 
 function handleClick() {
     if (props.mode == "dialog") {
@@ -47,10 +53,7 @@ function handleClick() {
             }
         "
     >
-        <span class="text-lg mx-2 truncate">
-            <i class="pi pi-user mr-2"> </i>
-            {{ object.id }}
-        </span>
+        <span class="text-lg mx-2 truncate"> {{ label }} </span>
     </SplitButton>
 </template>
 
