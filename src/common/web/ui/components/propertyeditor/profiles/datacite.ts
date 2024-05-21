@@ -41,7 +41,7 @@ export const dataCite: {
             label: "Creator",
             description:
                 "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
-            type: ["creator"],
+            type: ["creator", "nameIdentifier", "affiliation"],
             required: true,
             multiple: true
         },
@@ -271,7 +271,7 @@ export const dataCite: {
         nameIdentifier: {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
             label: "Name Identifier",
-            labelTemplate: "${nameIdentifierScheme}: ${nameIdentifier}",
+            labelTemplate: "${nameIdentifier}",
             input: [
                 {
                     id: "nameIdentifier",

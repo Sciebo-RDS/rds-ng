@@ -5,6 +5,7 @@ import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
 import { injectTemplate } from "./utils/Templates";
+import { calculateClassColor } from "./utils/Colors";
 
 const dialog = useDialog();
 const props = defineProps(["linkedItemActions", "item", "projectObjects", "profileId", "projectProfiles", "mode"]);
@@ -15,9 +16,12 @@ const linkedItemActions = props.linkedItemActions(object.id);
 
 const emit = defineEmits(["loadObject"]);
 
+const objectClass = props.projectProfiles.getClassById(props.profileId, object.type);
+const { bgColor, borderColor } = calculateClassColor(props.projectProfiles, props.profileId, object.type, 99, 10);
+
 const label = computed(() => {
-    const injectedLabel = injectTemplate(props.projectProfiles.getClassById(object.profile, object.type).labelTemplate, props.projectObjects.get(object.id));
-    return `${object.type}: ${injectedLabel}`;
+    const injectedLabel = injectTemplate(objectClass.labelTemplate, props.projectObjects.get(object.id));
+    return `${objectClass.label}: ${injectedLabel}`;
 });
 
 function handleClick() {
@@ -52,6 +56,7 @@ function handleClick() {
                 handleClick();
             }
         "
+        :style="`--p-color: ${bgColor}; --p-border-color: ${borderColor};`"
     >
         <span class="text-lg mx-2 truncate"> {{ label }} </span>
     </SplitButton>
@@ -59,13 +64,13 @@ function handleClick() {
 
 <style scoped lang="scss">
 .p-splitbutton {
-    @apply h-8 text-gray-600 border border-[#787878];
+    @apply h-8 text-gray-600 border border-[var(--p-border-color)];
 }
 :deep(.p-splitbutton-defaultbutton) {
-    @apply bg-[#ffdc83] bg-opacity-30	 border-0 px-2 text-inherit;
+    @apply bg-[var(--p-color)] bg-opacity-30 border-0 px-2 text-inherit;
 }
 
 :deep(.p-splitbutton-menubutton) {
-    @apply bg-[#ffdc83] bg-opacity-50	 border-0 border-l border-[#787878] text-inherit;
+    @apply bg-[var(--p-color)] bg-opacity-50 border-0 border-l border-[var(--p-border-color)] text-inherit;
 }
 </style>

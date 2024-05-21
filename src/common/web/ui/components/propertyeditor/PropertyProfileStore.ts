@@ -24,4 +24,8 @@ export class PropertyProfileStore {
     public list(): Profile[] {
         return this._profiles;
     }
+
+    public listClasses(): ProfileClass[] {
+        return this._profiles.flatMap((profile) => Object.values(profile.classes));
+    }
 }

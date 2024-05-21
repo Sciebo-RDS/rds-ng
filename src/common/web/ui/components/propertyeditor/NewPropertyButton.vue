@@ -13,6 +13,8 @@ const props = defineProps(["type", "profileId", "parentId", "projectObjects", "p
 
 const emit = defineEmits(["loadObject"]);
 
+const label = props.projectProfiles.getClassById(props.profileId, props.type)["label"];
+
 const linkableItems = computed(() => {
     let linkedItems = props.projectObjects.getLinkedObjects(props.parentId);
     return props.projectObjects
@@ -68,7 +70,7 @@ function handleClick() {
     >
         <span :title="'Add new ' + type" class="capitalize">
             <i class="pi pi-plus text-xs capitalize"> </i>
-            {{ type }}
+            {{ label }}
         </span>
         <template #menubuttonicon title="test"><i class="pi pi-link" title="Link existing property"></i> </template>
     </SplitButton>
