@@ -6,13 +6,13 @@ driver = "database"
 default_root_path = "/files"
 
 [storage.database]
-engine = "mariadb"
+engine = "mysql"
 dump_sql = false
 
 [storage.database.sqlite]
 file = "/data/rds.db"
 
-[storage.database.mariadb]
+[storage.database.mysql]
 host = "10.0.2.15"
-user = "user"
-password = "user"
+user = "test"
+password = "test"

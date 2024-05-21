@@ -2,27 +2,15 @@
 import { storeToRefs } from "pinia";
 import { computed, type PropType, toRefs, unref } from "vue";
 
-import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
-import { Project } from "@common/data/entities/project/Project";
 import { ProjectJob } from "@common/data/entities/project/ProjectJob";
-import { findProjectByID } from "@common/data/entities/project/ProjectUtils";
 import { formatElapsedTime } from "@common/utils/Strings";
 
-import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
-import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/ConnectorUtils";
+import { getAllProjectJobDetails, type ProjectJobDetails } from "@/data/entities/project/ProjectJobUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
 import ProjectJobsPanelItem from "@/ui/content/main/jobspanel/ProjectJobsPanelItem.vue";
-
-interface ListEntry {
-    project: Project | undefined;
-    job: ProjectJob;
-    connectorInstance: ConnectorInstance | undefined;
-    connectorCategory: ConnectorCategory | undefined;
-}
 
 const props = defineProps({
     jobs: {
@@ -32,7 +20,7 @@ const props = defineProps({
 });
 const { jobs } = toRefs(props);
 const emits = defineEmits<{
-    (e: "changed", entries: ListEntry[]): void;
+    (e: "changed", entries: ProjectJobDetails[]): void;
 }>();
 const projStore = useProjectsStore();
 const userStore = useUserStore();
@@ -42,19 +30,9 @@ const { userSettings } = storeToRefs(userStore);
 const { connectors } = storeToRefs(conStore);
 
 const runningJobs = computed(() => {
-    const runningJobEntries: ListEntry[] = [];
-    unref(jobs)!.forEach((job) => {
-        runningJobEntries.push({
-            project: findProjectByID(unref(projects), job.project_id),
-            job: job,
-            connectorInstance: findConnectorInstanceByID(unref(userSettings).connector_instances, job.connector_instance),
-            connectorCategory: findConnectorCategoryByInstanceID(unref(connectors), unref(userSettings).connector_instances, job.connector_instance),
-        } as ListEntry);
-    });
-
-    runningJobEntries.sort((a, b) => b.job.timestamp - a.job.timestamp);
-    emits("changed", runningJobEntries);
-    return runningJobEntries;
+    const details = getAllProjectJobDetails(unref(projects), unref(jobs), unref(connectors), unref(userSettings).connector_instances);
+    emits("changed", details);
+    return details;
 });
 </script>
 

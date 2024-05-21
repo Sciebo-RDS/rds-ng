@@ -6,11 +6,13 @@ import { computed, type PropType, ref, toRefs, unref } from "vue";
 
 import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
-import { formatLocaleTimestamp } from "@common/utils/Strings";
 
 import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
 import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/ConnectorUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useProjectJobsStore } from "@/data/stores/ProjectJobsStore";
+import { getAllProjectJobDetails } from "@/data/entities/project/ProjectJobUtils";
+import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
 import ProjectJobsCounterTag from "@/ui/components/project/ProjectJobsCounterTag.vue";
@@ -23,6 +25,8 @@ interface CountedCategory {
 
 const consStore = useConnectorsStore();
 const userStore = useUserStore();
+const projStore = useProjectsStore();
+const projJobsStore = useProjectJobsStore();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
@@ -43,6 +47,11 @@ const emits = defineEmits<{
     (e: "delete-project", project: Project): void;
 }>();
 
+const runningJobs = computed(() =>
+    getAllProjectJobDetails(projStore.projects, projJobsStore.jobs, consStore.connectors, userStore.userSettings.connector_instances).filter(
+        (details) => details.job.project_id == unref(project)!.project_id,
+    ),
+);
 const finishedJobCategories = computed(() => {
     const categories: CountedCategory[] = [];
     unref(project)!.logbook.job_history.forEach((record) => {
@@ -121,9 +130,16 @@ const editMenuShown = ref(false);
         <div v-if="!isDeleted" id="project-description" class="overflow-hidden line-clamp" :title="project.description">{{ project!.description }}</div>
         <div v-else class="italic">The project is currently being deleted...</div>
 
-        <div class="self-end text-slate-600 col-span-2">
-            <span class="font-light text-xs">{{ formatLocaleTimestamp(project.creation_time) }}</span>
-            <span class="float-right">
+        <div class="grid grid-cols-[1fr_min-content] self-end text-slate-600 col-span-2">
+            <span v-if="runningJobs.length > 0" class="grid grid-cols-[min-content_auto] items-center text-sm">
+                <span class="material-icons-outlined mi-motion-photos-on animate-spin mr-1 !text-lg" />
+                <span class="pt-0.5">
+                    {{ [...new Set(runningJobs.map((details) => details.connectorCategory?.verbStatusProgressing || "Exporting"))].join(", ") }}...
+                </span>
+            </span>
+            <span v-else />
+
+            <span>
                 <span v-for="category in finishedJobCategories" class="pl-1.5">
                     <ProjectJobsCounterTag :value="category.count" :category="category.category" :instance-names="[...category.instances]" />
                 </span>
