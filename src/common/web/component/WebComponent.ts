@@ -1,4 +1,5 @@
 import { createPinia } from "pinia";
+import BadgeDirective from "primevue/badgedirective";
 import PrimeVue from "primevue/config";
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmPopup from "primevue/confirmpopup";
@@ -87,7 +88,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         const compInfo = metaInfo.getComponent(compID.unit);
 
         this._session = new Session(compID);
-        this._data = new WebComponentData(this.sanitizeComponentID(compID, config), config, metaInfo.title, compInfo.name, metaInfo.version);
+        this._data = new WebComponentData(this.sanitizeComponentID(compID), config, metaInfo.title, compInfo.name, metaInfo.version);
 
         logging.info(this.toString());
         logging.info("Starting component");
@@ -133,6 +134,9 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         app.component("ConfirmPopup", ConfirmPopup);
         app.component("DynamicDialog", DynamicDialog);
         app.component("Toast", Toast);
+
+        // And some directives
+        app.directive("badge", BadgeDirective);
 
         // Register various plugins
         app.use(createPinia());
@@ -273,7 +277,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         return WebComponent._instance;
     }
 
-    private sanitizeComponentID(compID: UnitID, config: Configuration): UnitID {
+    private sanitizeComponentID(compID: UnitID): UnitID {
         const instance: string = compID.instance ? compID.instance : "default";
         return new UnitID(compID.type, compID.unit, `${instance}::${this.session.sessionID}`);
     }

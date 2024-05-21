@@ -3,14 +3,14 @@ import { storeToRefs } from "pinia";
 import { computed, type PropType, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorByInstanceID, findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
+import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { ProjectLogbookType } from "@common/data/entities/project/logbook/ProjectLogbookType";
 import { ProjectJobHistoryRecord } from "@common/data/entities/project/logbook/ProjectJobHistoryRecord";
 import { Project } from "@common/data/entities/project/Project";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
-import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
+import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/ConnectorUtils";
 import { getUnseenProjectJobHistoryRecords } from "@/data/entities/project/ProjectUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -46,12 +46,11 @@ const unseenJobRecords = computed(() => {
     const unseenRecords: ListEntry[] = [];
     unref(projects)!.forEach((project) => {
         getUnseenProjectJobHistoryRecords(project).forEach((record) => {
-            const connector = findConnectorByInstanceID(unref(connectors), unref(userSettings).connector_instances, record.connector_instance);
             unseenRecords.push({
                 project: project,
                 jobRecord: record,
                 connectorInstance: findConnectorInstanceByID(unref(userSettings).connector_instances, record.connector_instance),
-                connectorCategory: connector ? getConnectorCategory(connector) : undefined,
+                connectorCategory: findConnectorCategoryByInstanceID(unref(connectors), unref(userSettings).connector_instances, record.connector_instance),
             } as ListEntry);
         });
     });

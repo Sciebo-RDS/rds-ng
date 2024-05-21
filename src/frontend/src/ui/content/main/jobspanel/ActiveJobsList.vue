@@ -3,14 +3,14 @@ import { storeToRefs } from "pinia";
 import { computed, type PropType, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorByInstanceID, findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
+import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { ProjectJob } from "@common/data/entities/project/ProjectJob";
 import { findProjectByID } from "@common/data/entities/project/ProjectUtils";
 import { formatElapsedTime } from "@common/utils/Strings";
 
 import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
-import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
+import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/ConnectorUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -44,12 +44,11 @@ const { connectors } = storeToRefs(conStore);
 const runningJobs = computed(() => {
     const runningJobEntries: ListEntry[] = [];
     unref(jobs)!.forEach((job) => {
-        const connector = findConnectorByInstanceID(unref(connectors), unref(userSettings).connector_instances, job.connector_instance);
         runningJobEntries.push({
             project: findProjectByID(unref(projects), job.project_id),
             job: job,
             connectorInstance: findConnectorInstanceByID(unref(userSettings).connector_instances, job.connector_instance),
-            connectorCategory: connector ? getConnectorCategory(connector) : undefined,
+            connectorCategory: findConnectorCategoryByInstanceID(unref(connectors), unref(userSettings).connector_instances, job.connector_instance),
         } as ListEntry);
     });
 

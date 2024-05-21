@@ -6,7 +6,7 @@ driver = "database"
 default_root_path = "/files"
 
 [storage.database]
-engine = "mysql"
+engine = "sqlite"
 dump_sql = false
 
 [storage.database.sqlite]
