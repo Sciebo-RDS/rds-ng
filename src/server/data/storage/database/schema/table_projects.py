@@ -62,7 +62,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         metadata,
         # Main
         Column("project_id", Integer, primary_key=True),
-        Column("user_id", String(1024)),
+        Column("user_id", String(256)),
         Column("creation_time", Numeric(32, 8, asdecimal=False)),
         Column("resources_path", Text),
         Column("title", Text),
