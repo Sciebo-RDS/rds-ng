@@ -132,7 +132,7 @@ const editMenuShown = ref(false);
 
         <div class="grid grid-cols-[1fr_min-content] self-end text-slate-600 col-span-2">
             <span v-if="runningJobs.length > 0" class="grid grid-cols-[min-content_auto] items-center text-sm">
-                <span class="material-icons-outlined mi-motion-photos-on animate-spin mr-1 !text-lg" />
+                <span class="material-icons-outlined mi-rocket-launch mr-1 !text-lg" />
                 <span class="pt-0.5">
                     {{ [...new Set(runningJobs.map((details) => details.connectorCategory?.verbStatusProgressing || "Exporting"))].join(", ") }}...
                 </span>

@@ -80,7 +80,7 @@ class ServerServiceContext(ServiceContext):
             Whether a user is currently authenticated.
         """
 
-        if user := self.user is None:
+        if (user := self.user) is None:
             reply_type.build(
                 self.message_builder,
                 msg,
