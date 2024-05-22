@@ -142,6 +142,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             "project_id",
             Integer,
             ForeignKey("project_logbook.project_id"),
+            primary_key=True,
         ),
         Column("timestamp", Numeric(32, 8, asdecimal=False)),
         Column("seen", Boolean),
