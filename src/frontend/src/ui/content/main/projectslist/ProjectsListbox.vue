@@ -110,4 +110,8 @@ function isProjectDeleted(project: Project): boolean {
 :deep(.projects-listbox-item) {
     @apply pr-2 border-solid border-b border-[--r-border-color] #{!important};
 }
+
+:deep(.projects-listbox-item:hover) {
+    @apply bg-[--r-shade-dark] #{!important};
+}
 </style>

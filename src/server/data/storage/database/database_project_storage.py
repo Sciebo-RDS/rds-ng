@@ -32,7 +32,7 @@ class DatabaseProjectStorage(ProjectStorage):
         from sqlalchemy import func
 
         statement = select(func.max(self._table.c.project_id))
-        if proj_id := self._session.execute(statement).scalar_one() is not None:
+        if (proj_id := self._session.execute(statement).scalar_one()) is not None:
             return typing.cast(ProjectID, proj_id + 1)
 
         return 1

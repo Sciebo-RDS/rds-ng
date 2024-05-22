@@ -3,7 +3,7 @@ import { computed, toRefs, unref } from "vue";
 
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 
-import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
+import { findConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 
 import ConnectorCategoryTag from "@/ui/components/connector/ConnectorCategoryTag.vue";
@@ -17,7 +17,7 @@ const props = defineProps({
 });
 const { connectorId } = toRefs(props);
 const connector = computed(() => findConnectorByID(consStore.connectors, connectorId!.value));
-const category = unref(connector) ? getConnectorCategory(unref(connector)!) : undefined;
+const category = unref(connector) ? findConnectorCategory(unref(connector)!) : undefined;
 </script>
 
 <template>

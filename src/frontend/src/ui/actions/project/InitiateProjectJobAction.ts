@@ -8,7 +8,7 @@ import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
-import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
+import { findConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
 
 /**
@@ -23,7 +23,7 @@ export class InitiateProjectJobAction extends FrontendCommandAction<InitiateProj
     }
 
     protected addDefaultNotifiers(project: Project, connector: Connector, connectorInstance: ConnectorInstance): void {
-        const category = getConnectorCategory(connector);
+        const category = findConnectorCategory(connector);
 
         this.addNotifier(
             ActionState.Executing,

@@ -43,7 +43,7 @@ class DatabaseStoragePool(StoragePool):
             self._session, DatabaseStoragePool._schema.projects_table
         )
         self._project_job_storage = DatabaseProjectJobStorage(
-            self._session, DatabaseStoragePool._schema.projects_table
+            self._session, DatabaseStoragePool._schema.project_jobs_table
         )
 
     def close(self, save_changes: bool = True) -> None:

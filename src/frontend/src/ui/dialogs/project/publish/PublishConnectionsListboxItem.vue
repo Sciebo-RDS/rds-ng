@@ -12,7 +12,7 @@ import { errorMessageDialog } from "@common/ui/dialogs/MessageDialog";
 import { finishSentence, formatLocaleTimestamp } from "@common/utils/Strings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { getConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
+import { findConnectorCategory } from "@/data/entities/connector/ConnectorUtils";
 import { getActiveProjectJob } from "@/data/entities/project/ProjectJobUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { InitiateProjectJobAction } from "@/ui/actions/project/InitiateProjectJobAction";
@@ -33,7 +33,7 @@ const props = defineProps({
 
 const { project, instance } = toRefs(props);
 const connector = computed(() => findConnectorByID(consStore.connectors, unref(instance)!.connector_id));
-const category = unref(connector) ? getConnectorCategory(unref(connector)!) : undefined;
+const category = unref(connector) ? findConnectorCategory(unref(connector)!) : undefined;
 
 const activeJob = computed(() => getActiveProjectJob(unref(project)!, unref(instance)!));
 const jobStats = computed(() => new ProjectStatistics(unref(project)!).getJobStatistics(unref(instance)!.instance_id));
