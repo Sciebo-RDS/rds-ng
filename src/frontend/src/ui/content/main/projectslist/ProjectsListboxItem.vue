@@ -52,23 +52,26 @@ const runningJobs = computed(() =>
         (details) => details.job.project_id == unref(project)!.project_id,
     ),
 );
+
 const finishedJobCategories = computed(() => {
     const categories: CountedCategory[] = [];
     unref(project)!.logbook.job_history.forEach((record) => {
-        if (record.success) {
-            const category = findConnectorCategoryByInstanceID(consStore.connectors, userStore.userSettings.connector_instances, record.connector_instance);
-            const connectorInstance = findConnectorInstanceByID(userStore.userSettings.connector_instances, record.connector_instance);
-            if (category) {
-                let counter = categories.find((cat: CountedCategory) => cat.category == category);
-                if (!counter) {
-                    counter = { category: category, count: 0, instances: new Set<string>() } as CountedCategory;
-                    categories.push(counter);
-                }
+        if (!record.success) {
+            return;
+        }
 
-                counter.count += 1;
-                if (connectorInstance) {
-                    counter.instances.add(connectorInstance.name);
-                }
+        const category = findConnectorCategoryByInstanceID(consStore.connectors, userStore.userSettings.connector_instances, record.connector_instance);
+        if (category) {
+            let counter = categories.find((cat: CountedCategory) => cat.category == category);
+            if (!counter) {
+                counter = { category: category, count: 0, instances: new Set<string>() } as CountedCategory;
+                categories.push(counter);
+            }
+            counter.count += 1;
+
+            const connectorInstance = findConnectorInstanceByID(userStore.userSettings.connector_instances, record.connector_instance);
+            if (connectorInstance) {
+                counter.instances.add(connectorInstance.name);
             }
         }
     });
