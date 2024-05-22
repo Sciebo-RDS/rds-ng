@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 import Menu from "primevue/menu";
 import ProgressSpinner from "primevue/progressspinner";
@@ -24,9 +25,13 @@ interface CountedCategory {
 }
 
 const consStore = useConnectorsStore();
+const { connectors } = storeToRefs(consStore);
 const userStore = useUserStore();
+const { userSettings } = storeToRefs(userStore);
 const projStore = useProjectsStore();
+const { projects } = storeToRefs(projStore);
 const projJobsStore = useProjectJobsStore();
+const { jobs } = storeToRefs(projJobsStore);
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
@@ -48,7 +53,7 @@ const emits = defineEmits<{
 }>();
 
 const runningJobs = computed(() =>
-    getAllProjectJobDetails(projStore.projects, projJobsStore.jobs, consStore.connectors, userStore.userSettings.connector_instances).filter(
+    getAllProjectJobDetails(unref(projects), unref(jobs), unref(connectors), unref(userSettings).connector_instances).filter(
         (details) => details.job.project_id == unref(project)!.project_id,
     ),
 );
@@ -60,7 +65,7 @@ const finishedJobCategories = computed(() => {
             return;
         }
 
-        const category = findConnectorCategoryByInstanceID(consStore.connectors, userStore.userSettings.connector_instances, record.connector_instance);
+        const category = findConnectorCategoryByInstanceID(unref(connectors), unref(userSettings).connector_instances, record.connector_instance);
         if (category) {
             let counter = categories.find((cat: CountedCategory) => cat.category == category);
             if (!counter) {
@@ -69,7 +74,7 @@ const finishedJobCategories = computed(() => {
             }
             counter.count += 1;
 
-            const connectorInstance = findConnectorInstanceByID(userStore.userSettings.connector_instances, record.connector_instance);
+            const connectorInstance = findConnectorInstanceByID(unref(userSettings).connector_instances, record.connector_instance);
             if (connectorInstance) {
                 counter.instances.add(connectorInstance.name);
             }
