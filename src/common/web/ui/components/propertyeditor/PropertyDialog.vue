@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { ref, inject, computed } from "vue";
+import { ref, inject, computed, reactive } from "vue";
 
 import Breadcrumb from "primevue/breadcrumb";
 import Card from "primevue/card";
 import { ProjectObject, type ProjectObjectStore } from "./ProjectObjectStore";
-import PropertyOneCol from "./PropertyOneCol.vue";
 import { PropertyDataType } from "./PropertyProfile";
 import { propertyDataForms, type Property } from "./PropertyProfile";
 import OverlayPanel from "primevue/overlaypanel";
 import Chip from "primevue/chip";
-import Skeleton from "primevue/skeleton";
 import NewPropertyButton from "./NewPropertyButton.vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import { History } from "./Breadcrumbs";
@@ -26,12 +24,10 @@ const id = dialogRef.value.data.id;
 const projectObjects = dialogRef.value.data.projectObjectStore;
 const projectProfiles = dialogRef.value.data.propertyProfileStore;
 const profileId = dialogRef.value.data.profileId;
-let object = ref(projectObjects.get(id));
-const objectClass = projectProfiles.getClassById(profileId, object.value["type"]);
-
-const displayableInputs = objectClass["input"] || [];
-
-const addableTypes = objectClass["type"] || [];
+const object = ref(projectObjects.get(id));
+let objectClass = reactive(projectProfiles.getClassById(profileId, object.value["type"]));
+let displayableInputs = objectClass["input"] || [];
+let addableTypes = objectClass["type"] || [];
 
 const linkedObjects = computed(() => projectObjects.getLinkedObjects(object.value.id));
 
@@ -66,6 +62,9 @@ const linkedItemActions = ref((id: string) => [
 
 function selectActiveObject(id: string) {
     object.value = projectObjects.get(id);
+    objectClass = projectProfiles.getClassById(profileId, object.value["type"]);
+    addableTypes = objectClass["type"] || [];
+    displayableInputs = objectClass["input"] || [];
     history.navigateTo(object.value);
     console.log(history.list());
     // TODO optimize by only updating necessary elements
