@@ -99,6 +99,7 @@ const removeProperty = (id: string) => {
                 <span class="mr-auto ml-5 flex space-x-1">
                     <NewPropertyButton
                         v-for="t in addableTypes"
+                        v-if="linkedObjects.length > 0"
                         :key="t['id']"
                         :type="t"
                         :parentId="propertyClass.id"
@@ -117,6 +118,7 @@ const removeProperty = (id: string) => {
             <div class="row-span-1 flex mt-3 flex-wrap">
                 <LinkedItemButton
                     v-for="i in linkedObjects"
+                    v-if="linkedObjects?.length !== 0"
                     :key="i"
                     class="m-1"
                     :profileId="profileId"
@@ -125,7 +127,16 @@ const removeProperty = (id: string) => {
                     :projectObjects="projectObjects"
                     :projectProfiles="projectProfiles"
                 />
-                <Skeleton v-if="linkedObjects.length === 0 && addableTypes.length > 0" height="2rem" width="20rem" class="mb-2" />
+                <NewPropertyButton
+                    v-for="t in addableTypes"
+                    v-else
+                    :key="t['id']"
+                    :type="t"
+                    :parentId="propertyClass.id"
+                    :profileId="profileId"
+                    :projectObjects="projectObjects"
+                    :projectProfiles="projectProfiles"
+                />
             </div>
             <!-- Simple Input Row -->
             <div class="space-y-3">

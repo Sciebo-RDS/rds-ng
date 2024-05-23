@@ -45,7 +45,7 @@ function handleClick() {
                 style: {
                     "min-width": "50vw",
                     "max-width": "50vw",
-                    "max-height": "80vh"
+                    height: "80vh"
                 },
                 breakpoints: {
                     "960px": "75vw",

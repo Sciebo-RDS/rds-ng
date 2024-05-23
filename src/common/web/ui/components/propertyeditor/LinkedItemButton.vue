@@ -19,10 +19,7 @@ const emit = defineEmits(["loadObject"]);
 const objectClass = props.projectProfiles.getClassById(props.profileId, object.type);
 const { bgColor, borderColor } = calculateClassColor(props.projectProfiles, props.profileId, object.type, 99, 10);
 
-const label = computed(() => {
-    const injectedLabel = injectTemplate(objectClass.labelTemplate, props.projectObjects.get(object.id));
-    return `${objectClass.label}: ${injectedLabel}`;
-});
+const injectedLabel = computed(() => injectTemplate(objectClass.labelTemplate, props.projectObjects.get(object.id)));
 
 function handleClick() {
     if (props.mode == "dialog") {
@@ -58,7 +55,7 @@ function handleClick() {
         "
         :style="`--p-color: ${bgColor}; --p-border-color: ${borderColor};`"
     >
-        <span class="text-lg mx-2 truncate"> {{ label }} </span>
+        <span class="text-lg mx-2 truncate"> {{ objectClass.label }}: {{ injectedLabel }} </span>
     </SplitButton>
 </template>
 

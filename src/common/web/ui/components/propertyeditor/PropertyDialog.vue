@@ -73,8 +73,9 @@ function selectActiveObject(id: string) {
         const cb: Function = () => {
             selectActiveObject(item.id);
         };
-        const injectedLabel = injectTemplate(projectProfiles.getClassById(item.profile, item.type).labelTemplate, projectObjects.get(item.id));
-        const label = `${item.type}: ${injectedLabel}`;
+        const objectClass = projectProfiles.getClassById(item.profile, item.type);
+        const injectedLabel = injectTemplate(objectClass.labelTemplate, projectObjects.get(item.id));
+        const label = `${objectClass.label}: ${injectedLabel}`;
         return {
             label: label,
             command: cb
@@ -94,7 +95,7 @@ selectActiveObject(id);
                     root: { class: 'px-0 pt-0' },
                     menu: { class: ' flex flex-wrap' },
                     separator: { class: 'mb-2' },
-                    label: { class: 'text-red-900 opacity-80 hover:opacity-100 cursor-pointer truncate mb-2' }
+                    label: { class: 'text-red-900 opacity-80 hover:opacity-100 cursor-pointer truncate pb-2' }
                 }"
             />
         </template>
@@ -115,6 +116,7 @@ selectActiveObject(id);
                 <span class="mr-auto ml-5 flex space-x-1">
                     <NewPropertyButton
                         v-for="t in addableTypes"
+                        v-if="linkedObjects?.length !== 0"
                         :key="t"
                         :type="t"
                         :parentId="object.id"
@@ -131,7 +133,7 @@ selectActiveObject(id);
         </template>
         <template #content>
             <div class="flex flex-row">
-                <div class="grow">
+                <div class="grow max-w-full">
                     <!-- <span class="bg-blue-100">
                         {{ object }}
                     </span>
@@ -143,11 +145,12 @@ selectActiveObject(id);
                     {{ objectClass }} -->
 
                     <!--  Linked Items Row -->
-                    <div class="row-span-1 flex mb-3 flex-wrap">
+                    <div v-if="addableTypes.length > 0" class="row-span-1 flex mb-5 flex-wrap space-x-1">
                         <LinkedItemButton
                             v-for="i in linkedObjects"
+                            v-if="linkedObjects?.length !== 0"
                             :key="i"
-                            class="m-1"
+                            class="m-1 max-w-full"
                             :linkedItemActions="linkedItemActions"
                             :item="i"
                             :profileId="profileId"
@@ -156,12 +159,24 @@ selectActiveObject(id);
                             mode="dialog"
                             @loadObject="(id) => selectActiveObject(id)"
                         />
-                        <Skeleton v-if="linkedObjects?.length === 0 && addableTypes.length > 0" height="2rem" width="20rem" class="mb-2" />
+                        <NewPropertyButton
+                            v-for="t in addableTypes"
+                            v-else
+                            :key="t"
+                            :type="t"
+                            :parentId="object.id"
+                            :profileId="profileId"
+                            :projectObjects="projectObjects"
+                            :projectProfiles="projectProfiles"
+                            mode="dialog"
+                            @loadObject="(id) => selectActiveObject(id)"
+                        />
                     </div>
                     <!-- Simple Input Row -->
                     <div class="space-y-3">
                         <div v-for="input in displayableInputs" class="row-span-1">
-                            <span v-if="input.label !== objectClass.label">{{ input.label }}</span>
+                            <div v-if="input.label !== objectClass.label" class="font-bold">{{ input.label }}</div>
+                            {{ input.description }}
                             <component
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"
@@ -176,3 +191,9 @@ selectActiveObject(id);
         </template>
     </Card>
 </template>
+
+<style scoped lang="scss">
+:deep(.p-menuitem:last-child) {
+    @apply font-bold;
+}
+</style>

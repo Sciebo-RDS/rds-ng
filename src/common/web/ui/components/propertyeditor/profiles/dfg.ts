@@ -1,7 +1,7 @@
 import { type PropertyProfile, PropertyDataType } from "../PropertyProfile";
 
 export const dfgDmp: PropertyProfile = {
-    profile_id: { name: "Deutsche Forschungsgesellschaft", version: "21.12.2021" },
+    profile_id: { name: "Deutsche Forschungsgemeinschaft", version: "21.12.2021" },
     categories: [
         {
             id: "1",

@@ -29,10 +29,7 @@ export const dataCite: {
             label: "Identifier",
             description: "The Identifier is a unique string that identifies a resource. Should be a URL or a DOI.",
             example: "https://doi.org/10.1234/abc",
-            input: [
-                { id: "identifier", label: "Identifier", type: "string" },
-                { id: "test", label: "test", type: "string" }
-            ],
+            input: [{ id: "identifier", label: "Identifier", type: "string" }],
             required: true,
             multiple: false
         },
@@ -41,7 +38,7 @@ export const dataCite: {
             label: "Creator",
             description:
                 "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
-            type: ["creator", "nameIdentifier", "affiliation"],
+            type: ["creator"],
             required: true,
             multiple: true
         },
@@ -226,45 +223,13 @@ export const dataCite: {
             description:
                 "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             labelTemplate: "${name}",
-            type: ["creator"],
+            type: ["nameIdentifier", "affiliation"],
             input: [
                 {
                     id: "name",
                     label: "Name",
-                    type: "string"
-                },
-                {
-                    id: "lang",
-                    label: "Language",
-                    type: "string"
-                },
-                {
-                    id: "nameType",
-                    label: "Name Type",
-                    type: "select",
-                    options: ["Personal", "Organizational"]
-                },
-                {
-                    id: "givenName",
-                    label: "Given Name",
-                    type: "string"
-                },
-                {
-                    id: "familyName",
-                    label: "Family Name",
-                    type: "string"
-                },
-                {
-                    id: "nameIdentifier",
-                    label: "Name Identifier",
-                    type: "nameIdentifier",
-                    multiple: true
-                },
-                {
-                    id: "affiliation",
-                    label: "Affiliation",
-                    type: "affiliation",
-                    multiple: true
+                    type: "string",
+                    description: "The full name of the creator."
                 }
             ]
         },
@@ -276,17 +241,20 @@ export const dataCite: {
                 {
                     id: "nameIdentifier",
                     label: "Name Identifier",
-                    type: "string"
+                    type: "string",
+                    description: "Uniquely identifies an individual or legal entity, according to various schemes."
                 },
                 {
                     id: "nameIdentifierScheme",
                     label: "Name Identifier Scheme",
-                    type: "string"
+                    type: "string",
+                    description: "The name of the name identifier scheme."
                 },
                 {
                     id: "schemeURI",
                     label: "Scheme URI",
-                    type: "string"
+                    type: "string",
+                    description: "The URI of the name identifier scheme."
                 }
             ]
         },
@@ -298,22 +266,26 @@ export const dataCite: {
                 {
                     id: "affiliation",
                     label: "Affiliation",
-                    type: "string"
+                    type: "string",
+                    description: "The organizational or institutional affiliation of the creator."
                 },
                 {
                     id: "affiliationIdentifier",
                     label: "Affiliation Identifier",
-                    type: "string"
+                    type: "string",
+                    description: "Uniquely identifies the organizational affiliation of the creator."
                 },
                 {
                     id: "affiliationIdentifierScheme",
                     label: "Affiliation Identifier Scheme",
-                    type: "string"
+                    type: "string",
+                    description: "The name of the affiliation identifier scheme."
                 },
                 {
                     id: "schemeURI",
                     label: "Affiliation Scheme URI",
-                    type: "string"
+                    type: "string",
+                    description: "The URI of the affiliation identifier scheme."
                 }
             ]
         }
