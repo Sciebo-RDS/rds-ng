@@ -5,6 +5,7 @@ import { unref } from "vue";
 import { terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { type HostAuthorization } from "@/integration/HostTypes";
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 /**
@@ -12,6 +13,7 @@ import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
  */
 const enum HostAPIEndpoints {
     PublicKey = "public-key",
+    Authorization = "authorization",
 }
 
 /**
@@ -29,27 +31,32 @@ export class HostAPI {
     }
 
     public async getPublicKey(): Promise<KeyLike> {
-        const PubKeyDataName = "public-key";
+        return this.getEndpointData<KeyLike>(HostAPIEndpoints.PublicKey, "public-key");
+    }
 
-        // TODO: Single Host only; extend later
-        return new Promise<KeyLike>(async (resolve, reject) => {
-            const pubKeyURL = this.resolveAPIEndpoint(HostAPIEndpoints.PublicKey);
-            useAxios(pubKeyURL).then(async (response) => {
+    public async getAuthorization(): Promise<HostAuthorization> {
+        return this.getEndpointData<HostAuthorization>(HostAPIEndpoints.Authorization, "authorization");
+    }
+
+    private resolveAPIEndpoint(endpoint: string): string {
+        return new URL(endpoint, new URL(this._apiURL)).toString();
+    }
+
+    private async getEndpointData<DataType>(endpoint: string, dataName: string): Promise<DataType> {
+        return new Promise<DataType>(async (resolve, reject) => {
+            const url = this.resolveAPIEndpoint(endpoint);
+            useAxios(url).then(async (response) => {
                 if (!response.isFinished) {
                     return;
                 }
 
                 const data = unref(response.data);
-                if (!data.hasOwnProperty(PubKeyDataName)) {
-                    reject("The configured host doesn't provide a public key");
+                if (!data.hasOwnProperty(dataName)) {
+                    reject("The configured host doesn't provide the proper data");
                     return;
                 }
-                resolve(JSON.parse(data[PubKeyDataName]) as KeyLike);
+                resolve(JSON.parse(data[dataName]) as DataType);
             });
         });
-    }
-
-    private resolveAPIEndpoint(endpoint: string): string {
-        return new URL(endpoint, new URL(this._apiURL)).toString();
     }
 }

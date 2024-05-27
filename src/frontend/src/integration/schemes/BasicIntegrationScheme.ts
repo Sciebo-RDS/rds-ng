@@ -1,23 +1,23 @@
-import { useUserStore } from "@/data/stores/UserStore";
 import { defineAsyncComponent } from "vue";
 
 import { createUserToken, isUserTokenValid } from "@common/data/entities/user/UserToken";
 
-import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
-import { Authenticator } from "@/authentication/Authenticator";
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
+import { Authenticator } from "@/integration/Authenticator";
+import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
 /**
  * Basic authentication using a simple username.
  */
-export class BasicAuthenticationScheme extends AuthenticationScheme {
+export class BasicIntegrationScheme extends IntegrationScheme {
     public static readonly Scheme = "basic";
 
     public constructor(comp: FrontendComponent) {
         super(
             comp,
-            BasicAuthenticationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/authentication/BasicAuthentication.vue")),
+            BasicIntegrationScheme.Scheme,
+            defineAsyncComponent(() => import("@/ui/integration/BasicIntegration.vue")),
         );
     }
 

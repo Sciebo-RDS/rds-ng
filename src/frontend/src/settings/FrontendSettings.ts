@@ -14,7 +14,7 @@ export function getFrontendSettings(): Map<SettingID, any> {
 
     settings.set(FrontendSettingIDs.HostAPIURL, "");
 
-    settings.set(FrontendSettingIDs.AuthenticationScheme, "");
+    settings.set(FrontendSettingIDs.IntegrationScheme, "");
 
     return settings;
 }

@@ -2,23 +2,23 @@ import { defineAsyncComponent } from "vue";
 
 import { createUserToken } from "@common/data/entities/user/UserToken";
 
-import { Authenticator } from "@/authentication/Authenticator";
-import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
+import { Authenticator } from "@/integration/Authenticator";
+import { IntegrationScheme } from "@/integration/IntegrationScheme";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { type HostUserToken } from "@/integration/HostUserToken";
+import { type HostUserToken } from "@/integration/HostTypes";
 
 /**
  * Basic authentication using a simple username.
  */
-export class HostAuthenticationScheme extends AuthenticationScheme {
+export class HostIntegrationScheme extends IntegrationScheme {
     public static readonly Scheme = "host";
 
     public constructor(comp: FrontendComponent) {
         super(
             comp,
-            HostAuthenticationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/authentication/HostAuthentication.vue")),
+            HostIntegrationScheme.Scheme,
+            defineAsyncComponent(() => import("@/ui/integration/HostIntegration.vue")),
         );
     }
 

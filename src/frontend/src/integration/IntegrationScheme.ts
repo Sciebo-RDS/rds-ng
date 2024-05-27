@@ -1,26 +1,26 @@
 import { isUserTokenValid } from "@common/data/entities/user/UserToken";
 import { type VueComponent } from "@common/component/WebComponent";
 
-import { Authenticator } from "@/authentication/Authenticator";
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { Authenticator } from "@/integration/Authenticator";
 import { useUserStore } from "@/data/stores/UserStore";
 
 /**
- * Base class for authentication themes.
+ * Base class for integration schemes.
  */
-export abstract class AuthenticationScheme {
+export abstract class IntegrationScheme {
     protected readonly _component: FrontendComponent;
 
     private readonly _scheme: string;
 
-    private readonly _authComponent: VueComponent;
+    private readonly _integrationComponent: VueComponent;
 
-    protected constructor(comp: FrontendComponent, scheme: string, authComponent: VueComponent) {
+    protected constructor(comp: FrontendComponent, scheme: string, integrationComponent: VueComponent) {
         this._component = comp;
 
         this._scheme = scheme;
 
-        this._authComponent = authComponent;
+        this._integrationComponent = integrationComponent;
     }
 
     /**
@@ -29,10 +29,11 @@ export abstract class AuthenticationScheme {
     public abstract authenticator(...args: any[]): Authenticator;
 
     /**
-     * Checks whether the user is authenticated.
+     * Checks whether the integration has completed.
      */
-    public get isAuthenticated(): boolean {
+    public get isIntegrated(): boolean {
         const { userToken } = useUserStore();
+        // TODO: Authorization
         return isUserTokenValid(userToken);
     }
 
@@ -54,9 +55,9 @@ export abstract class AuthenticationScheme {
     }
 
     /**
-     * ,The authentication component used during the login process.
+     * ,The integration component used during the login process.
      */
-    public get authComponent(): VueComponent {
-        return this._authComponent;
+    public get integrationComponent(): VueComponent {
+        return this._integrationComponent;
     }
 }

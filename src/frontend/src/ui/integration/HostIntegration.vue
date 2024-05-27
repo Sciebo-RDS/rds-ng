@@ -3,18 +3,18 @@ import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import Header from "@common/ui/views/main/states/Header.vue";
 
-import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { IntegrationScheme } from "@/integration/IntegrationScheme";
 import { useHostIntegration } from "@/integration/HostIntegration";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
-    authScheme: {
-        type: Object as PropType<AuthenticationScheme>,
+    scheme: {
+        type: Object as PropType<IntegrationScheme>,
         required: true,
     },
 });
-const { authScheme } = toRefs(props);
+const { scheme } = toRefs(props);
 
 const errorMessage = ref("");
 onMounted(async () => {
@@ -22,7 +22,7 @@ onMounted(async () => {
 
     getHostUserToken()
         .then((userToken) => {
-            unref(authScheme)!
+            unref(scheme)!
                 .authenticator(userToken)
                 .failed((msg) => {
                     errorMessage.value = msg;
