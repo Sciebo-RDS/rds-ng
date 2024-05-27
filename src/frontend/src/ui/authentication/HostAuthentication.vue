@@ -18,9 +18,9 @@ const { authScheme } = toRefs(props);
 
 const errorMessage = ref("");
 onMounted(async () => {
-    const { extractUserToken } = useHostIntegration(comp);
+    const { getHostUserToken } = useHostIntegration(comp);
 
-    extractUserToken()
+    getHostUserToken()
         .then((userToken) => {
             unref(authScheme)!
                 .authenticator(userToken)

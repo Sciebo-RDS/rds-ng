@@ -1,3 +1,7 @@
+import { useAxios } from "@vueuse/integrations/useAxios";
+import { type KeyLike } from "jose";
+import { unref } from "vue";
+
 import { terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -6,24 +10,46 @@ import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 /**
  * All known host API endpoints.
  */
-export const enum HostAPIEndpoints {
-    PublicKey = "publickey",
-    Resources = "resources",
+const enum HostAPIEndpoints {
+    PublicKey = "public-key",
 }
 
 /**
- * Formats a URL of the host API.
- *
- * @param comp - The frontend component.
- * @param endpoint - The target endpoint (may include query parameters).
- *
- * @returns - The URL as a string.
+ * The host integration API.
  */
-export function resolveHostAPIEndpoint(comp: FrontendComponent, endpoint: string): string {
-    let apiURL = comp.data.config.value<string>(FrontendSettingIDs.HostAPIURL);
-    if (apiURL == "") {
-        throw new Error("No host API URL has been configured");
+export class HostAPI {
+    private readonly _apiURL: string;
+
+    public constructor(comp: FrontendComponent) {
+        this._apiURL = comp.data.config.value<string>(FrontendSettingIDs.HostAPIURL);
+        if (this._apiURL == "") {
+            throw new Error("No host API URL has been configured");
+        }
+        this._apiURL = terminatePath(this._apiURL);
     }
-    apiURL = terminatePath(apiURL);
-    return new URL(endpoint, new URL(apiURL)).toString();
+
+    public async getPublicKey(): Promise<KeyLike> {
+        const PubKeyDataName = "public-key";
+
+        // TODO: Single Host only; extend later
+        return new Promise<KeyLike>(async (resolve, reject) => {
+            const pubKeyURL = this.resolveAPIEndpoint(HostAPIEndpoints.PublicKey);
+            useAxios(pubKeyURL).then(async (response) => {
+                if (!response.isFinished) {
+                    return;
+                }
+
+                const data = unref(response.data);
+                if (!data.hasOwnProperty(PubKeyDataName)) {
+                    reject("The configured host doesn't provide a public key");
+                    return;
+                }
+                resolve(JSON.parse(data[PubKeyDataName]) as KeyLike);
+            });
+        });
+    }
+
+    private resolveAPIEndpoint(endpoint: string): string {
+        return new URL(endpoint, new URL(this._apiURL)).toString();
+    }
 }
