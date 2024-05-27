@@ -31,7 +31,7 @@ export class HostAPI {
     }
 
     public async getPublicKey(): Promise<KeyLike> {
-        return this.getEndpointData<KeyLike>(HostAPIEndpoints.PublicKey, "public-key");
+        return this.getEndpointData<KeyLike>(HostAPIEndpoints.PublicKey, "public-key", true);
     }
 
     public async getAuthorization(): Promise<HostAuthorization> {
@@ -42,7 +42,7 @@ export class HostAPI {
         return new URL(endpoint, new URL(this._apiURL)).toString();
     }
 
-    private async getEndpointData<DataType>(endpoint: string, dataName: string): Promise<DataType> {
+    private async getEndpointData<DataType>(endpoint: string, dataName: string, decodeData: boolean = false): Promise<DataType> {
         return new Promise<DataType>(async (resolve, reject) => {
             const url = this.resolveAPIEndpoint(endpoint);
             useAxios(url).then(async (response) => {
@@ -55,7 +55,7 @@ export class HostAPI {
                     reject("The configured host doesn't provide the proper data");
                     return;
                 }
-                resolve(JSON.parse(data[dataName]) as DataType);
+                resolve(decodeData ? (JSON.parse(data[dataName]) as DataType) : (data[dataName] as DataType));
             });
         });
     }

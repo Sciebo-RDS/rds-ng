@@ -3,6 +3,7 @@ import { type VueComponent } from "@common/component/WebComponent";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authenticator } from "@/integration/Authenticator";
+import { Authorizer } from "@/integration/Authorizer";
 import { useUserStore } from "@/data/stores/UserStore";
 
 /**
@@ -27,6 +28,11 @@ export abstract class IntegrationScheme {
      * Creates a new authenticator.
      */
     public abstract authenticator(...args: any[]): Authenticator;
+
+    /**
+     * Creates a new authorizer.
+     */
+    public abstract authorizer(...args: any[]): Authorizer;
 
     /**
      * Checks whether the integration has completed.

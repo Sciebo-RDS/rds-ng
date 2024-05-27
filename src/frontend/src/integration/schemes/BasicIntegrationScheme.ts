@@ -5,6 +5,7 @@ import { createUserToken, isUserTokenValid } from "@common/data/entities/user/Us
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { Authenticator } from "@/integration/Authenticator";
+import { Authorizer } from "@/integration/Authorizer";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
 /**
@@ -23,6 +24,10 @@ export class BasicIntegrationScheme extends IntegrationScheme {
 
     public authenticator(userName: string): Authenticator {
         return new Authenticator(this._component, createUserToken(userName, userName));
+    }
+
+    public authorizer(): Authorizer {
+        return new Authorizer(this._component);
     }
 
     public enter(): void {

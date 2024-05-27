@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref, shallowReactive, watch } from "vue";
 import { RouterView } from "vue-router";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 const comp = FrontendComponent.inject();
-const integrationScheme = comp.integrationScheme;
-const isIntegrated = computed(() => integrationScheme.isIntegrated);
+const integrationScheme = shallowReactive(comp.integrationScheme);
+const isIntegrated = ref(integrationScheme.isIntegrated);
+
+// Circumvent Vue warnings arising from using IntegrationScheme.isIntegrated directly
+watch(
+    () => integrationScheme.isIntegrated,
+    (integrated) => {
+        isIntegrated.value = integrated;
+    },
+);
 
 onMounted(() => {
     // The app has been loaded; notify the authentication scheme about this

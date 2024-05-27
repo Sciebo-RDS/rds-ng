@@ -6,46 +6,15 @@ import { useNetworkStore } from "@common/data/stores/NetworkStore";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { IntegrationPerformer } from "@/integration/IntegrationPerformer";
 
-export type AuthDoneCallback = () => void;
-export type AuthFailCallback = (msg: string) => void;
-
-export class Authenticator {
-    private readonly _component: FrontendComponent;
-
+export class Authenticator extends IntegrationPerformer {
     private readonly _userToken: UserToken;
 
-    private _doneCallbacks: AuthDoneCallback[] = [];
-    private _failCallbacks: AuthFailCallback[] = [];
-
     public constructor(comp: FrontendComponent, token: UserToken) {
-        this._component = comp;
+        super(comp);
 
         this._userToken = token;
-    }
-
-    /**
-     * Adds a *Done* callback.
-     *
-     * @param cb - The callback to add.
-     *
-     * @returns - This authenticator instance to allow call chaining.
-     */
-    public done(cb: AuthDoneCallback): this {
-        this._doneCallbacks.push(cb);
-        return this;
-    }
-
-    /**
-     * Adds a *Fail* callback.
-     *
-     * @param cb - The callback to add.
-     *
-     * @returns - This authenticator instance to allow call chaining.
-     */
-    public failed(cb: AuthFailCallback): this {
-        this._failCallbacks.push(cb);
-        return this;
     }
 
     /**
@@ -75,17 +44,5 @@ export class Authenticator {
                 this.callFailCallbacks(msg);
             })
             .emit(nwStore.serverChannel);
-    }
-
-    private callDoneCallbacks(): void {
-        for (const callback of this._doneCallbacks) {
-            callback();
-        }
-    }
-
-    private callFailCallbacks(msg: string): void {
-        for (const callback of this._failCallbacks) {
-            callback(msg);
-        }
     }
 }

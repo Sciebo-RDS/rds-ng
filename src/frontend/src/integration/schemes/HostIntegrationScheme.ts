@@ -2,10 +2,11 @@ import { defineAsyncComponent } from "vue";
 
 import { createUserToken } from "@common/data/entities/user/UserToken";
 
-import { Authenticator } from "@/integration/Authenticator";
-import { IntegrationScheme } from "@/integration/IntegrationScheme";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { Authenticator } from "@/integration/Authenticator";
+import { Authorizer } from "@/integration/Authorizer";
+import { IntegrationScheme } from "@/integration/IntegrationScheme";
 import { type HostUserToken } from "@/integration/HostTypes";
 
 /**
@@ -24,6 +25,10 @@ export class HostIntegrationScheme extends IntegrationScheme {
 
     public authenticator(token: HostUserToken): Authenticator {
         return new Authenticator(this._component, createUserToken(token.userID, token.userName));
+    }
+
+    public authorizer(): Authorizer {
+        return new Authorizer(this._component);
     }
 
     public enter(): void {

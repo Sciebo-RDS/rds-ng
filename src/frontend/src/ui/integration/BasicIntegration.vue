@@ -37,6 +37,9 @@ function performLogin(): void {
             errorMessage.value = msg;
         })
         .authenticate();
+
+    // Basic only needs to authenticate, so just authorize it right away
+    unref(scheme)!.authorizer().authorize();
 }
 </script>
 
