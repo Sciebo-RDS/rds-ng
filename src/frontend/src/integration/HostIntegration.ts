@@ -1,11 +1,8 @@
 import { useUrlSearchParams } from "@vueuse/core";
 import { useAxios } from "@vueuse/integrations/useAxios";
-import { plainToInstance } from "class-transformer";
 import { type KeyLike } from "jose";
 import * as jose from "jose";
 import { unref } from "vue";
-
-import { ResourcesList } from "@common/data/entities/resource/ResourcesList";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { HostAPIEndpoints, resolveHostAPIEndpoint } from "@/integration/HostAPI";
@@ -13,7 +10,8 @@ import { type HostUserToken } from "@/integration/HostUserToken";
 
 export function useHostIntegration(comp: FrontendComponent) {
     // TODO: Many fixed & magic things, variables etc.; improve later
-    async function getHostPublicKey(): Promise<KeyLike> { // TODO: Single Host only; must be extended later
+    async function getHostPublicKey(): Promise<KeyLike> {
+        // TODO: Single Host only; must be extended later
         return new Promise<KeyLike>(async (resolve, reject) => {
             const pubKeyURL = resolveHostAPIEndpoint(comp, HostAPIEndpoints.PublicKey);
             useAxios(pubKeyURL).then(async (response) => {
@@ -29,27 +27,9 @@ export function useHostIntegration(comp: FrontendComponent) {
         });
     }
 
-    // TODO: Temporary only
-    async function getResourcesList(systemID: string): Promise<ResourcesList> {
-        return new Promise<ResourcesList>(async (resolve, reject) => {
-            const resourcesURL = resolveHostAPIEndpoint(comp, `${HostAPIEndpoints.Resources}?uid=${systemID}`);
-            useAxios(resourcesURL).then(async (response) => {
-                if (response.isFinished) {
-                    const data = unref(response.data);
-                    if (!data.hasOwnProperty("resources")) {
-                        reject("The configured host doesn't provide a resources list");
-                        return;
-                    }
-                    const resourcesData = JSON.parse(data["resources"] as string);
-                    resolve(plainToInstance(ResourcesList, resourcesData) as ResourcesList);
-                }
-            });
-        });
-    }
-
     function getUserToken(): string | undefined {
         const queryParams = useUrlSearchParams("history");
-        return queryParams.hasOwnProperty("user-token") ? queryParams["user-token"] as string : undefined;
+        return queryParams.hasOwnProperty("user-token") ? (queryParams["user-token"] as string) : undefined;
     }
 
     async function extractUserToken(): Promise<HostUserToken> {
@@ -75,7 +55,7 @@ export function useHostIntegration(comp: FrontendComponent) {
                     resolve({
                         userID: tokenData["user-id"],
                         systemID: tokenData["system-id"],
-                        userName: tokenData["user-name"]
+                        userName: tokenData["user-name"],
                     } as HostUserToken);
                 } catch (exc) {
                     reject(`The provided JWT is invalid: ${String(exc)}`);
@@ -87,7 +67,6 @@ export function useHostIntegration(comp: FrontendComponent) {
     return {
         getHostPublicKey,
         getUserToken,
-        getResourcesList,
-        extractUserToken
+        extractUserToken,
     };
 }

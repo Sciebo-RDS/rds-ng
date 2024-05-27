@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { onMounted, type PropType, ref, toRefs } from "vue";
+import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import Header from "@common/ui/views/main/states/Header.vue";
 
 import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { useUserStore } from "@/data/stores/UserStore";
 import { useHostIntegration } from "@/integration/HostIntegration";
-import { SetSessionValueAction } from "@/ui/actions/session/SetSessionValueAction";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -18,33 +15,19 @@ const props = defineProps({
     },
 });
 const { authScheme } = toRefs(props);
-const userStore = useUserStore();
-const { userToken } = storeToRefs(userStore);
 
 const errorMessage = ref("");
 onMounted(async () => {
-    const { extractUserToken, getResourcesList } = useHostIntegration(comp);
+    const { extractUserToken } = useHostIntegration(comp);
 
     extractUserToken()
         .then((userToken) => {
-            // TODO: Temporary only
-            getResourcesList(userToken.systemID)
-                .then((resources) => {
-                    const action = new SetSessionValueAction(comp);
-                    action.prepare("resources", JSON.stringify(resources)).done(() => {
-                        // Authenticate only after the resources list has been sent to the backend
-                        authScheme!.value
-                            .authenticator(userToken)
-                            .failed((msg) => {
-                                errorMessage.value = msg;
-                            })
-                            .authenticate();
-                    });
-                    action.execute();
-                })
-                .catch((msg) => {
+            unref(authScheme)!
+                .authenticator(userToken)
+                .failed((msg) => {
                     errorMessage.value = msg;
-                });
+                })
+                .authenticate();
         })
         .catch((error) => {
             errorMessage.value = error;

@@ -1,3 +1,5 @@
+import { terminatePath } from "@common/utils/Paths";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
@@ -6,7 +8,7 @@ import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
  */
 export const enum HostAPIEndpoints {
     PublicKey = "publickey",
-    Resources = "resources"
+    Resources = "resources",
 }
 
 /**
@@ -18,9 +20,10 @@ export const enum HostAPIEndpoints {
  * @returns - The URL as a string.
  */
 export function resolveHostAPIEndpoint(comp: FrontendComponent, endpoint: string): string {
-    const apiURL = comp.data.config.value<string>(FrontendSettingIDs.HostAPIURL);
+    let apiURL = comp.data.config.value<string>(FrontendSettingIDs.HostAPIURL);
     if (apiURL == "") {
         throw new Error("No host API URL has been configured");
     }
+    apiURL = terminatePath(apiURL);
     return new URL(endpoint, new URL(apiURL)).toString();
 }
