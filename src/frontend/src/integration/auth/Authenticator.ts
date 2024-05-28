@@ -6,12 +6,15 @@ import { useNetworkStore } from "@common/data/stores/NetworkStore";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { IntegrationPerformer } from "@/integration/IntegrationPerformer";
+import { BaseAuth } from "@/integration/auth/BaseAuth";
 
-export class Authenticator extends IntegrationPerformer {
+/**
+ * Base authenticator.
+ */
+export abstract class Authenticator extends BaseAuth {
     private readonly _userToken: UserToken;
 
-    public constructor(comp: FrontendComponent, token: UserToken) {
+    protected constructor(comp: FrontendComponent, token: UserToken) {
         super(comp);
 
         this._userToken = token;
@@ -20,7 +23,9 @@ export class Authenticator extends IntegrationPerformer {
     /**
      * Authenticate the user.
      */
-    public authenticate(): void {
+    public abstract authenticate(): void;
+
+    protected authenticateWithToken(): void {
         if (!isUserTokenValid(this._userToken)) {
             throw new Error("Invalid user token used for authentication");
         }

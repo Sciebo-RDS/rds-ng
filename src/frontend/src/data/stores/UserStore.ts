@@ -17,19 +17,26 @@ export const useUserStore = defineStore("userStore", () => {
     const userToken = comp.session.sessionValue<UserToken>("user-token", {} as UserToken);
     const userSettings = ref(new UserSettings());
 
+    const isAuthorized = ref(false);
+
     function reset(): void {
         userToken.value = {} as UserToken;
         userSettings.value = new UserSettings();
+
+        isAuthorized.value = false;
     }
 
-    function resetUserToken(): void {
+    function resetAuth(): void {
         userToken.value = {} as UserToken;
+
+        isAuthorized.value = false;
     }
 
     return {
         userToken,
         userSettings,
+        isAuthorized,
         reset,
-        resetUserToken,
+        resetAuth,
     };
 });

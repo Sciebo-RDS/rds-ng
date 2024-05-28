@@ -1,13 +1,13 @@
 import { defineAsyncComponent } from "vue";
 
-import { createUserToken } from "@common/data/entities/user/UserToken";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { Authenticator } from "@/integration/Authenticator";
-import { Authorizer } from "@/integration/Authorizer";
+import { Authenticator } from "@/integration/auth/Authenticator";
+import { Authorizer } from "@/integration/auth/Authorizer";
+import { HostAuthenticator } from "@/integration/auth/HostAuthenticator";
+import { HostAuthorizer } from "@/integration/auth/HostAuthorizer";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
-import { type HostUserToken } from "@/integration/HostTypes";
+import { type HostAuthorization, type HostUserToken } from "@/integration/HostTypes";
 
 /**
  * Basic authentication using a simple username.
@@ -24,28 +24,28 @@ export class HostIntegrationScheme extends IntegrationScheme {
     }
 
     public authenticator(token: HostUserToken): Authenticator {
-        return new Authenticator(this._component, createUserToken(token.userID, token.userName));
+        return new HostAuthenticator(this._component, token);
     }
 
-    public authorizer(): Authorizer {
-        return new Authorizer(this._component);
+    public authorizer(hostAuth: HostAuthorization): Authorizer {
+        return new HostAuthorizer(this._component, hostAuth);
     }
 
     public enter(): void {
         super.enter();
 
-        this.resetUserToken();
+        this.resetAuth();
     }
 
     public leave(): void {
         super.leave();
 
-        this.resetUserToken();
+        this.resetAuth();
     }
 
-    private resetUserToken(): void {
+    private resetAuth(): void {
         // Enforce a re-authentication on each refresh to avoid user hijacking
-        const { resetUserToken } = useUserStore();
-        resetUserToken();
+        const { resetAuth } = useUserStore();
+        resetAuth();
     }
 }

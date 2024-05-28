@@ -28,8 +28,8 @@ function performAuthentication(): void {
             unref(scheme)!
                 .authenticator(userToken)
                 .done(() => performAuthorization())
-                .failed((msg) => {
-                    errorMessage.value = msg;
+                .failed((error) => {
+                    errorMessage.value = error;
                 })
                 .authenticate();
         })
@@ -43,7 +43,12 @@ function performAuthorization(): void {
 
     getHostAuthorization()
         .then((hostAuth) => {
-            unref(scheme)!.authorizer().authorize();
+            unref(scheme)!
+                .authorizer(hostAuth)
+                .failed((error) => {
+                    errorMessage.value = error;
+                })
+                .authorize();
         })
         .catch((error) => {
             errorMessage.value = error;
@@ -67,7 +72,10 @@ onMounted(async () => performAuthentication());
             </div>
         </div>
         <div v-else class="r-text-error italic">
-            <span class="font-bold">An error occurred while logging in ({{ statusMessage }}): </span><span>{{ errorMessage }}</span>
+            <span class="font-bold">
+                An error occurred while logging in <span class="r-text-light">({{ statusMessage }})</span>:
+            </span>
+            <span>{{ errorMessage }}</span>
         </div>
     </div>
 </template>

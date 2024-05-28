@@ -3,7 +3,10 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 export type PerformerDoneCallback = () => void;
 export type PerformerFailCallback = (msg: string) => void;
 
-export class IntegrationPerformer {
+/**
+ * Base class for both authenticators and authorizers.
+ */
+export abstract class BaseAuth {
     protected readonly _component: FrontendComponent;
 
     private _doneCallbacks: PerformerDoneCallback[] = [];

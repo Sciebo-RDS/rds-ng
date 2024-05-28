@@ -38,7 +38,6 @@ function performLogin(): void {
         })
         .authenticate();
 
-    // Basic only needs to authenticate, so just authorize it right away
     unref(scheme)!.authorizer().authorize();
 }
 </script>

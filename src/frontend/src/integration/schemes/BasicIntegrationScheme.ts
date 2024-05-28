@@ -1,11 +1,13 @@
 import { defineAsyncComponent } from "vue";
 
-import { createUserToken, isUserTokenValid } from "@common/data/entities/user/UserToken";
+import { isUserTokenValid } from "@common/data/entities/user/UserToken";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { Authenticator } from "@/integration/Authenticator";
-import { Authorizer } from "@/integration/Authorizer";
+import { Authenticator } from "@/integration/auth/Authenticator";
+import { Authorizer } from "@/integration/auth/Authorizer";
+import { BasicAuthenticator } from "@/integration/auth/BasicAuthenticator";
+import { BasicAuthorizer } from "@/integration/auth/BasicAuthorizer";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
 /**
@@ -23,25 +25,27 @@ export class BasicIntegrationScheme extends IntegrationScheme {
     }
 
     public authenticator(userName: string): Authenticator {
-        return new Authenticator(this._component, createUserToken(userName, userName));
+        return new BasicAuthenticator(this._component, userName);
     }
 
     public authorizer(): Authorizer {
-        return new Authorizer(this._component);
+        return new BasicAuthorizer(this._component);
     }
 
     public enter(): void {
         super.enter();
 
-        this.reauthenticate();
+        this.reauth();
     }
 
-    private reauthenticate(): void {
+    private reauth(): void {
         // Resend the user authentication information
         const { userToken } = useUserStore();
-
         if (isUserTokenValid(userToken)) {
             this.authenticator(userToken.user_id).authenticate();
         }
+
+        // Redo the authorization
+        this.authorizer().authorize();
     }
 }
