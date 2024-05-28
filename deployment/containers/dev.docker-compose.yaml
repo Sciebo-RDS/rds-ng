@@ -88,5 +88,7 @@ services:
             - "8000:6969"
         environment:
             - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200
-            - RDS_FRONTEND_INTEGRATION_SCHEME=host
-            - RDS_FRONTEND_HOST_API_URL=http://localhost:8080/apps/rdsng/api/v1
+            - RDS_INTEGRATION_SCHEME=host
+            - RDS_INTEGRATION_HOST_API_URL=http://localhost:8080/apps/rdsng/api/v1
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=3LyZSkK1Yn7HVV9gNAw3OguiYx2BwxYh58gBidzA1HvbsnBfbGWXg9EbxCFXp9UI
+            - RDS_AUTHORIZATION_OAUTH2_REDIRECT_URL=http://localhost:8080/apps/rdsng/launcher/launch

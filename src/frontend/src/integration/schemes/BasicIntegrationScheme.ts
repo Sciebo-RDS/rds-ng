@@ -35,10 +35,10 @@ export class BasicIntegrationScheme extends IntegrationScheme {
     public enter(): void {
         super.enter();
 
-        this.reauth();
+        this.reAuth();
     }
 
-    private reauth(): void {
+    private reAuth(): void {
         // Resend the user authentication information
         const { userToken } = useUserStore();
         if (isUserTokenValid(userToken)) {

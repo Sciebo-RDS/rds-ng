@@ -2,7 +2,7 @@
  * Details about the host authorization scheme.
  */
 export interface HostAuthorization {
-    type: string;
+    strategy: string;
     config: Record<string, any>;
 }
 
@@ -15,7 +15,7 @@ export interface HostAuthorization {
  */
 export function hostAuthorizationFromData(data: Record<string, any>): HostAuthorization {
     return {
-        type: data["type"],
+        strategy: data["strategy"],
         config: data["config"],
     } as HostAuthorization;
 }

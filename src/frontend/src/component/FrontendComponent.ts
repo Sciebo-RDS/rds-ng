@@ -16,8 +16,8 @@ import createProjectsService from "@/services/ProjectsService";
 import createProjectJobsService from "@/services/ProjectJobsService";
 import createUserService from "@/services/UserService";
 
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 import { getFrontendSettings } from "@/settings/FrontendSettings";
+import { IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 
 import Frontend from "@/ui/Frontend.vue";
 import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
@@ -65,7 +65,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     }
 
     private mountIntegrationScheme(): void {
-        const scheme = this._data.config.value<string>(FrontendSettingIDs.IntegrationScheme);
+        const scheme = this._data.config.value<string>(IntegrationSettingIDS.Scheme);
         if (!scheme) {
             error("No integration scheme has been configured");
             return;

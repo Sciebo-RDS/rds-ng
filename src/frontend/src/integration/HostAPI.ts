@@ -6,7 +6,7 @@ import { terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type HostAuthorization } from "@/integration/HostTypes";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
+import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
  * All known host API endpoints.
@@ -23,7 +23,7 @@ export class HostAPI {
     private readonly _apiURL: string;
 
     public constructor(comp: FrontendComponent) {
-        this._apiURL = comp.data.config.value<string>(FrontendSettingIDs.HostAPIURL);
+        this._apiURL = comp.data.config.value<string>(HostIntegrationSettingIDs.APIURL);
         if (this._apiURL == "") {
             throw new Error("No host API URL has been configured");
         }
