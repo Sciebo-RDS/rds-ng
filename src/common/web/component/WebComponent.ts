@@ -25,8 +25,6 @@ import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
 
-import { registerAuthorizationStrategies } from "../integration/authorization/AuthorizationStrategies";
-
 import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
 import createWebService from "../services/WebService";
@@ -188,7 +186,6 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         logging.info("Running component");
 
         // Reigster global items
-        registerAuthorizationStrategies();
         registerExporters();
 
         // Create all basic services

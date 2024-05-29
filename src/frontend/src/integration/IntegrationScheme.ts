@@ -2,8 +2,8 @@ import { isUserTokenValid } from "@common/data/entities/user/UserToken";
 import { type VueComponent } from "@common/component/WebComponent";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { Authenticator } from "@/integration/auth/Authenticator";
-import { Authorizer } from "@/integration/auth/Authorizer";
+import { Authenticator } from "@/integration/authentication/Authenticator";
+import { Authorizer } from "@/integration/authorization/Authorizer";
 import { useUserStore } from "@/data/stores/UserStore";
 
 /**

@@ -2,10 +2,10 @@ import { defineAsyncComponent } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { Authenticator } from "@/integration/auth/Authenticator";
-import { Authorizer } from "@/integration/auth/Authorizer";
-import { HostAuthenticator } from "@/integration/auth/HostAuthenticator";
-import { HostAuthorizer } from "@/integration/auth/HostAuthorizer";
+import { Authenticator } from "@/integration/authentication/Authenticator";
+import { Authorizer } from "@/integration/authorization/Authorizer";
+import { HostAuthenticator } from "@/integration/authentication/HostAuthenticator";
+import { HostAuthorizer } from "@/integration/authorization/HostAuthorizer";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 import { type HostAuthorization, type HostUserToken } from "@/integration/HostTypes";
 

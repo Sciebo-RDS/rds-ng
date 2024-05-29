@@ -1,4 +1,4 @@
-import { WebComponent } from "../../component/WebComponent";
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { AuthorizationStrategy } from "./AuthorizationStrategy";
 
 /**
@@ -27,7 +27,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
 
     private readonly _config: OAuth2Configuration;
 
-    public constructor(comp: WebComponent, config: OAuth2Configuration) {
+    public constructor(comp: FrontendComponent, config: OAuth2Configuration) {
         super(comp, OAuth2Strategy.Strategy);
 
         this.verifyConfiguration(config);

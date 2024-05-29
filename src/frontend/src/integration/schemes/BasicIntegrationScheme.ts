@@ -4,10 +4,10 @@ import { isUserTokenValid } from "@common/data/entities/user/UserToken";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { Authenticator } from "@/integration/auth/Authenticator";
-import { Authorizer } from "@/integration/auth/Authorizer";
-import { BasicAuthenticator } from "@/integration/auth/BasicAuthenticator";
-import { BasicAuthorizer } from "@/integration/auth/BasicAuthorizer";
+import { Authenticator } from "@/integration/authentication/Authenticator";
+import { Authorizer } from "@/integration/authorization/Authorizer";
+import { BasicAuthenticator } from "@/integration/authentication/BasicAuthenticator";
+import { BasicAuthorizer } from "@/integration/authorization/BasicAuthorizer";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
 /**

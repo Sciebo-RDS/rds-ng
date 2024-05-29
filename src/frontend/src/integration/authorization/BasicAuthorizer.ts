@@ -1,5 +1,5 @@
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { Authorizer } from "@/integration/auth/Authorizer";
+import { Authorizer } from "@/integration/authorization/Authorizer";
 
 /**
  * Authorizer for basic integration.

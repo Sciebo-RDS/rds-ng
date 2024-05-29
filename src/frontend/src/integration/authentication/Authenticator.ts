@@ -3,19 +3,26 @@ import { storeToRefs } from "pinia";
 import { AuthenticateUserCommand } from "@common/api/user/UserCommands";
 import { isUserTokenValid, type UserToken } from "@common/data/entities/user/UserToken";
 import { useNetworkStore } from "@common/data/stores/NetworkStore";
+import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
-import { BaseAuth } from "@/integration/auth/BaseAuth";
+
+export type AuthenticatorDoneCallback = () => void;
+export type AuthenticatorFailCallback = (msg: string) => void;
 
 /**
  * Base authenticator.
  */
-export abstract class Authenticator extends BaseAuth {
+export abstract class Authenticator {
+    private readonly _component: FrontendComponent;
+
     private readonly _userToken: UserToken;
 
+    private readonly _callbacks: ExecutionCallbacks<AuthenticatorDoneCallback, AuthenticatorFailCallback> = new ExecutionCallbacks();
+
     protected constructor(comp: FrontendComponent, token: UserToken) {
-        super(comp);
+        this._component = comp;
 
         this._userToken = token;
     }
@@ -24,6 +31,26 @@ export abstract class Authenticator extends BaseAuth {
      * Authenticate the user.
      */
     public abstract authenticate(): void;
+
+    /**
+     * Adds a *Done* callback.
+     *
+     * @param cb - The callback to add.
+     */
+    public done(cb: AuthenticatorDoneCallback): Authenticator {
+        this._callbacks.done(cb);
+        return this;
+    }
+
+    /**
+     * Adds a *Fail* callback.
+     *
+     * @param cb - The callback to add.
+     */
+    public failed(cb: AuthenticatorFailCallback): Authenticator {
+        this._callbacks.failed(cb);
+        return this;
+    }
 
     protected authenticateWithToken(): void {
         if (!isUserTokenValid(this._userToken)) {
@@ -40,13 +67,13 @@ export abstract class Authenticator extends BaseAuth {
 
                     userToken.value = this._userToken;
 
-                    this.callDoneCallbacks();
+                    this._callbacks.invokeDoneCallbacks();
                 } else {
-                    this.callFailCallbacks(msg);
+                    this._callbacks.invokeFailCallbacks(msg);
                 }
             })
             .failed((_, msg: string) => {
-                this.callFailCallbacks(msg);
+                this._callbacks.invokeFailCallbacks(msg);
             })
             .emit(nwStore.serverChannel);
     }

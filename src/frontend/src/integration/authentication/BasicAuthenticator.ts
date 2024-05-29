@@ -1,7 +1,7 @@
 import { createUserToken } from "@common/data/entities/user/UserToken";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { Authenticator } from "@/integration/auth/Authenticator";
+import { Authenticator } from "@/integration/authentication/Authenticator";
 
 /**
  * Authenticator for basic integration.
