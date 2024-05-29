@@ -19,7 +19,7 @@ export abstract class Authenticator {
 
     private readonly _userToken: UserToken;
 
-    private readonly _callbacks: ExecutionCallbacks<AuthenticatorDoneCallback, AuthenticatorFailCallback> = new ExecutionCallbacks();
+    private readonly _callbacks = new ExecutionCallbacks<AuthenticatorDoneCallback, AuthenticatorFailCallback>();
 
     protected constructor(comp: FrontendComponent, token: UserToken) {
         this._component = comp;

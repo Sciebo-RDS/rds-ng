@@ -14,7 +14,7 @@ export type AuthorizerFailCallback = (msg: string) => void;
 export abstract class Authorizer {
     private readonly _component: FrontendComponent;
 
-    private readonly _callbacks: ExecutionCallbacks<AuthorizerDoneCallback, AuthorizerFailCallback> = new ExecutionCallbacks();
+    private readonly _callbacks = new ExecutionCallbacks<AuthorizerDoneCallback, AuthorizerFailCallback>();
 
     protected constructor(comp: FrontendComponent) {
         this._component = comp;
