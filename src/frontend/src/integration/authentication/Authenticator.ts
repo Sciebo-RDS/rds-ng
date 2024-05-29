@@ -15,11 +15,11 @@ export type AuthenticatorFailCallback = (msg: string) => void;
  * Base authenticator.
  */
 export abstract class Authenticator {
-    private readonly _component: FrontendComponent;
+    protected readonly _component: FrontendComponent;
 
-    private readonly _userToken: UserToken;
+    protected readonly _userToken: UserToken;
 
-    private readonly _callbacks = new ExecutionCallbacks<AuthenticatorDoneCallback, AuthenticatorFailCallback>();
+    protected readonly _callbacks = new ExecutionCallbacks<AuthenticatorDoneCallback, AuthenticatorFailCallback>();
 
     protected constructor(comp: FrontendComponent, token: UserToken) {
         this._component = comp;

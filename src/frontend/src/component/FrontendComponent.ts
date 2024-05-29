@@ -6,6 +6,7 @@ import { UnitID } from "@common/utils/UnitID";
 
 import { registerConnectorCategories } from "@/data/entities/connector/categories/ConnectorCategories";
 
+import { registerAuthorizationStrategies } from "@/integration/authorization/strategies/AuthorizationStrategies";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 import { registerIntegrationSchemes } from "@/integration/IntegrationSchemes";
 import { IntegrationSchemesCatalog } from "@/integration/IntegrationSchemesCatalog";
@@ -45,6 +46,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         super.run();
 
         // Reigster global items
+        registerAuthorizationStrategies();
         registerIntegrationSchemes();
         registerConnectorCategories();
         registerSnapIns();

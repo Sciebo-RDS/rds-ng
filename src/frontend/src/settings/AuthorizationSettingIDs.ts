@@ -1,4 +1,4 @@
-import { SettingID } from "../utils/config/SettingID";
+import { SettingID } from "@common/utils/config/SettingID";
 
 /**
  * Identifiers for authorization settings.

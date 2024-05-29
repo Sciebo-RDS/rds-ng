@@ -1,5 +1,7 @@
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { AuthorizationStrategy } from "./AuthorizationStrategy";
+import { AuthorizationStrategy } from "@/integration/authorization/strategies/AuthorizationStrategy";
+import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
+import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
  * The OAuth2 strategy configuration.
@@ -74,4 +76,30 @@ export class OAuth2Strategy extends AuthorizationStrategy {
             this._config.client.embedded ? window.parent.location.replace(authURL) : window.location.replace(authURL);
         }
     }
+}
+
+/**
+ * Creates a new OAuth2 strategy instance, automatically configuring it.
+ *
+ * @param comp - The main component.
+ * @param config - The host strategy configuration as an arbitrary record.
+ *
+ * @returns - The newly created strategy.
+ */
+export function createOAuth2Strategy(comp: FrontendComponent, config: Record<string, any>): OAuth2Strategy {
+    const oauth2Config = {
+        server: {
+            endpoints: {
+                authorization: config.endpoints.authorization || "",
+                token: config.endpoints.token || "",
+            },
+        },
+        client: {
+            clientID: comp.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
+            redirectURL: comp.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
+            embedded: comp.data.config.value<boolean>(HostIntegrationSettingIDs.Embedded),
+        },
+    } as OAuth2Configuration;
+
+    return new OAuth2Strategy(comp, oauth2Config);
 }

@@ -1,5 +1,4 @@
 import { SettingID } from "../utils/config/SettingID";
-import { OAuth2AuthorizationSettingIDs } from "./AuthorizationSettingIDs";
 import { GeneralSettingIDs } from "./GeneralSettingIDs";
 import { NetworkClientSettingIDs } from "./NetworkSettingIDs";
 
@@ -18,10 +17,6 @@ export function getDefaultSettings(): Map<SettingID, any> {
     // Network settings
     defaults.set(NetworkClientSettingIDs.ServerAddress, "");
     defaults.set(NetworkClientSettingIDs.ConnectionTimeout, 10);
-
-    // Authorization settings
-    defaults.set(OAuth2AuthorizationSettingIDs.ClientID, "");
-    defaults.set(OAuth2AuthorizationSettingIDs.RedirectURL, "");
 
     return defaults;
 }

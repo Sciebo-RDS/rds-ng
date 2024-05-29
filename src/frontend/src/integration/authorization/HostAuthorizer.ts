@@ -1,6 +1,7 @@
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 import { Authorizer } from "@/integration/authorization/Authorizer";
+import { createAuthorizationStrategy } from "@/integration/authorization/strategies/AuthorizationStrategies";
 import { type HostAuthorization } from "@/integration/HostTypes";
 
 /**
@@ -17,7 +18,8 @@ export class HostAuthorizer extends Authorizer {
 
     public authorize(): void {
         try {
-            // Use strategy
+            const strategy = createAuthorizationStrategy(this._component, this._hostAuth.strategy, this._hostAuth.config);
+            strategy.requestAuthorization();
             this.setAuthorized(true);
         } catch (exc) {
             this.setAuthorized(false, `Authorization failed: ${exc}`);

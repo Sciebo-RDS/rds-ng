@@ -1,5 +1,6 @@
 import { SettingID } from "@common/utils/config/SettingID";
 
+import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 import { HostIntegrationSettingIDs, IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 
@@ -19,6 +20,10 @@ export function getFrontendSettings(): Map<SettingID, any> {
 
     settings.set(HostIntegrationSettingIDs.APIURL, "");
     settings.set(HostIntegrationSettingIDs.Embedded, true);
+
+    // Authorization settings
+    settings.set(OAuth2AuthorizationSettingIDs.ClientID, "");
+    settings.set(OAuth2AuthorizationSettingIDs.RedirectURL, "");
 
     return settings;
 }
