@@ -47,6 +47,9 @@ export class OAuth2Strategy extends AuthorizationStrategy {
             const authCode = getURLQueryParam("oauth2:auth-code");
             console.log("AUTH CODE: " + authCode);
             // TODO: Check and use code
+
+            // Redirect to the original app site to get rid of all query parameters
+            this.redirect(this._config.client.redirectURL);
         } else {
             this.launchAuthorizationRequest();
         }
@@ -80,11 +83,14 @@ export class OAuth2Strategy extends AuthorizationStrategy {
     }
 
     private launchAuthorizationRequest(): void {
-        const authURL = this.getAuthorizationURL();
-        if (authURL) {
+        this.redirect(this.getAuthorizationURL());
+    }
+
+    private redirect(url: string): void {
+        if (url) {
             // Not sure if this will always work with all browsers and web servers
             // Might need to open the URL in a new window
-            this._config.client.embedded ? window.parent.location.replace(authURL) : window.location.replace(authURL);
+            this._config.client.embedded ? window.parent.location.replace(url) : window.location.replace(url);
         }
     }
 }
