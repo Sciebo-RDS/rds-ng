@@ -16,6 +16,11 @@ export abstract class AuthorizationStrategy {
 
     public abstract requestAuthorization(): void;
 
+    protected requiresAuthorization(): boolean {
+        // TODO: Get from server
+        return true;
+    }
+
     /**
      * The strategy identifier.
      */

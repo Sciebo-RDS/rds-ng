@@ -1,3 +1,5 @@
+import { getURLQueryParam } from "@common/utils/URLUtils";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { AuthorizationStrategy } from "@/integration/authorization/strategies/AuthorizationStrategy";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
@@ -37,8 +39,17 @@ export class OAuth2Strategy extends AuthorizationStrategy {
     }
 
     public requestAuthorization(): void {
-        // TODO: Check if necessary
-        this.launchAuthorization();
+        if (!this.requiresAuthorization()) {
+            return;
+        }
+
+        if (getURLQueryParam("oauth2:auth") === "request") {
+            const authCode = getURLQueryParam("oauth2:auth-code");
+            console.log("AUTH CODE: " + authCode);
+            // TODO: Check and use code
+        } else {
+            this.launchAuthorizationRequest();
+        }
     }
 
     private verifyConfiguration(config: OAuth2Configuration): void {
@@ -68,7 +79,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         return url.toString();
     }
 
-    private launchAuthorization(): void {
+    private launchAuthorizationRequest(): void {
         const authURL = this.getAuthorizationURL();
         if (authURL) {
             // Not sure if this will always work with all browsers and web servers
