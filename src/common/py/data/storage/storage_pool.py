@@ -1,5 +1,6 @@
 import abc
 
+from .authorization_token_storage import AuthorizationTokenStorage
 from .connector_storage import ConnectorStorage
 from .project_job_storage import ProjectJobStorage
 from .project_storage import ProjectStorage
@@ -74,5 +75,13 @@ class StoragePool(abc.ABC):
     def project_job_storage(self) -> ProjectJobStorage:
         """
         The project job storage.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
+    def authorization_token_storage(self) -> AuthorizationTokenStorage:
+        """
+        The authorization token storage.
         """
         raise NotImplementedError()

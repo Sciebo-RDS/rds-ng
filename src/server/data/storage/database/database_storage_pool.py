@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from common.py.data.storage import StoragePool
 from common.py.utils.config import Configuration
 
+from .database_authorization_token_storage import DatabaseAuthorizationTokenStorage
 from .database_connector_storage import DatabaseConnectorStorage
 from .database_project_job_storage import DatabaseProjectJobStorage
 from .database_project_storage import DatabaseProjectStorage
@@ -45,6 +46,9 @@ class DatabaseStoragePool(StoragePool):
         self._project_job_storage = DatabaseProjectJobStorage(
             self._session, DatabaseStoragePool._schema.project_jobs_table
         )
+        self._authorization_token_storage = DatabaseAuthorizationTokenStorage(
+            self._session, DatabaseStoragePool._schema.authorization_tokens_table
+        )
 
     def close(self, save_changes: bool = True) -> None:
         self._session.commit() if save_changes else self._session.rollback()
@@ -65,3 +69,7 @@ class DatabaseStoragePool(StoragePool):
     @property
     def project_job_storage(self) -> DatabaseProjectJobStorage:
         return self._project_job_storage
+
+    @property
+    def authorization_token_storage(self) -> DatabaseAuthorizationTokenStorage:
+        return self._authorization_token_storage

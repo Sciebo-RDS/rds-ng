@@ -1,6 +1,7 @@
 from sqlalchemy import MetaData, Engine, Table
 from sqlalchemy.orm import registry, Session
 
+from .table_authorization_tokens import register_authorization_tokens_tables
 from .table_connectors import register_connectors_tables
 from .table_users import register_users_tables
 from .table_projects import register_projects_tables
@@ -25,6 +26,9 @@ class DatabaseSchema:
         self._users_tables = register_users_tables(self._metadata, self._registry)
         self._projects_tables = register_projects_tables(self._metadata, self._registry)
         self._project_jobs_tables = register_project_jobs_tables(
+            self._metadata, self._registry
+        )
+        self._authorization_tokens_table = register_authorization_tokens_tables(
             self._metadata, self._registry
         )
 
@@ -54,3 +58,7 @@ class DatabaseSchema:
     @property
     def project_jobs_table(self) -> Table:
         return self._project_jobs_tables.main
+
+    @property
+    def authorization_tokens_table(self) -> Table:
+        return self._authorization_tokens_table.main

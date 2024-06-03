@@ -3,7 +3,7 @@ from .project_job import ProjectJob, ProjectJobID
 
 def combine_project_job_id(job: ProjectJob) -> ProjectJobID:
     """
-    Combines the project job keys (project ID + connector instance) to a tuple.
+    Combines the project job keys (project ID + connector instance) into a tuple.
 
     Args:
         job: The project job.
