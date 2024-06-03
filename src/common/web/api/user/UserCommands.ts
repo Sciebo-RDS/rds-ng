@@ -6,6 +6,7 @@ import { CommandComposer } from "../../core/messaging/composers/CommandComposer"
 import { CommandReplyComposer } from "../../core/messaging/composers/CommandReplyComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
+import { AuthorizationState } from "../../data/entities/authorization/AuthorizationState";
 import { UserSettings } from "../../data/entities/user/UserSettings";
 import { type UserToken } from "../../data/entities/user/UserToken";
 
@@ -27,11 +28,11 @@ export class AuthenticateUserCommand extends Command {
 /**
  * Reply to ``AuthenticateUserCommand``.
  *
- * @param is_authorized - Whether the user is authorized in his host system.
+ * @param authorization_state - The authorization state of the user in his host system.
  */
 @Message.define("command/user/authenticate/reply")
 export class AuthenticateUserReply extends CommandReply {
-    public readonly is_authorized: boolean = false;
+    public readonly authorization_state: AuthorizationState = AuthorizationState.NotAuthorized;
 
     /**
      * Helper function to easily build this message.
@@ -39,11 +40,11 @@ export class AuthenticateUserReply extends CommandReply {
     public static build(
         messageBuilder: MessageBuilder,
         cmd: AuthenticateUserCommand,
-        isAuthorized: boolean,
+        authState: AuthorizationState,
         success: boolean = true,
         message: string = "",
     ): CommandReplyComposer<AuthenticateUserReply> {
-        return messageBuilder.buildCommandReply(AuthenticateUserReply, cmd, success, message, { is_authorized: isAuthorized });
+        return messageBuilder.buildCommandReply(AuthenticateUserReply, cmd, success, message, { authorization_state: authState });
     }
 }
 

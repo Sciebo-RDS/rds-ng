@@ -68,7 +68,7 @@ export abstract class Authenticator {
 
                     userToken.value = this._userToken;
 
-                    this._callbacks.invokeDoneCallbacks(reply.is_authorized ? AuthorizationState.Authorized : AuthorizationState.NotAuthorized);
+                    this._callbacks.invokeDoneCallbacks(reply.authorization_state);
                 } else {
                     this._callbacks.invokeFailCallbacks(msg);
                 }
