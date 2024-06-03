@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import Header from "@common/ui/views/main/states/Header.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -27,7 +28,7 @@ function performAuthentication(): void {
         .then((userToken) => {
             unref(scheme)!
                 .authenticator(userToken)
-                .done(() => performAuthorization())
+                .done((authState) => performAuthorization(authState))
                 .failed((error) => {
                     errorMessage.value = error;
                 })
@@ -38,7 +39,7 @@ function performAuthentication(): void {
         });
 }
 
-function performAuthorization(): void {
+function performAuthorization(authState: AuthorizationState): void {
     statusMessage.value = "Authorizing [2/2]";
 
     getHostAuthorization()
@@ -48,7 +49,7 @@ function performAuthorization(): void {
                 .failed((error) => {
                     errorMessage.value = error;
                 })
-                .authorize();
+                .authorize(authState);
         })
         .catch((error) => {
             errorMessage.value = error;

@@ -1,6 +1,7 @@
 import { storeToRefs } from "pinia";
 
-import { AuthenticateUserCommand } from "@common/api/user/UserCommands";
+import { AuthenticateUserCommand, AuthenticateUserReply } from "@common/api/user/UserCommands";
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { isUserTokenValid, type UserToken } from "@common/data/entities/user/UserToken";
 import { useNetworkStore } from "@common/data/stores/NetworkStore";
 import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
@@ -8,7 +9,7 @@ import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 
-export type AuthenticatorDoneCallback = () => void;
+export type AuthenticatorDoneCallback = (authState: AuthorizationState) => void;
 export type AuthenticatorFailCallback = (msg: string) => void;
 
 /**
@@ -60,14 +61,14 @@ export abstract class Authenticator {
         const nwStore = useNetworkStore();
 
         AuthenticateUserCommand.build(this._component.frontendService.messageBuilder, this._userToken)
-            .done((_, success, msg) => {
+            .done((reply: AuthenticateUserReply, success, msg) => {
                 if (success) {
                     const userStore = useUserStore();
                     const { userToken } = storeToRefs(userStore);
 
                     userToken.value = this._userToken;
 
-                    this._callbacks.invokeDoneCallbacks();
+                    this._callbacks.invokeDoneCallbacks(reply.is_authorized ? AuthorizationState.Authorized : AuthorizationState.NotAuthorized);
                 } else {
                     this._callbacks.invokeFailCallbacks(msg);
                 }

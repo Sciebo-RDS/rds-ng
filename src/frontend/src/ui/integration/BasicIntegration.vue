@@ -6,6 +6,7 @@ import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
 import { type PropType, ref, toRefs, unref } from "vue";
 
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { useDirectives } from "@common/ui/Directives";
 
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
@@ -38,7 +39,7 @@ function performLogin(): void {
         })
         .authenticate();
 
-    unref(scheme)!.authorizer().authorize();
+    unref(scheme)!.authorizer().authorize(AuthorizationState.Authorized);
 }
 </script>
 

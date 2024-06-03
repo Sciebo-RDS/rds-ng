@@ -16,14 +16,14 @@ class AuthorizationToken:
 
     Attributes:
         user_id: The user identifier.
-        token_id: The id of this token (provided by the external system).
+        auth_id: The id of this token (provided by the external system).
         expiration_timestamp: Timestamp when the token becomes invalid; a value of 0 means that the token never becomes invalid.
         strategy: The token strategy/type (e.g., OAuth2).
         data: The actual token data.
     """
 
     user_id: UserID
-    token_id: str
+    auth_id: str
 
     expiration_timestamp: float = 0.0
 

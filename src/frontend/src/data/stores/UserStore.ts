@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 import { type UserToken } from "@common/data/entities/user/UserToken";
 
@@ -17,25 +18,25 @@ export const useUserStore = defineStore("userStore", () => {
     const userToken = comp.session.sessionValue<UserToken>("user-token", {} as UserToken);
     const userSettings = ref(new UserSettings());
 
-    const isAuthorized = ref(false);
+    const authorizationState = ref(AuthorizationState.NotAuthorized);
 
     function reset(): void {
         userToken.value = {} as UserToken;
         userSettings.value = new UserSettings();
 
-        isAuthorized.value = false;
+        authorizationState.value = AuthorizationState.NotAuthorized;
     }
 
     function resetAuth(): void {
         userToken.value = {} as UserToken;
 
-        isAuthorized.value = false;
+        authorizationState.value = AuthorizationState.NotAuthorized;
     }
 
     return {
         userToken,
         userSettings,
-        isAuthorized,
+        authorizationState,
         reset,
         resetAuth,
     };

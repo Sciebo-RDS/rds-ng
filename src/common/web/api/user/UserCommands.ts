@@ -26,19 +26,24 @@ export class AuthenticateUserCommand extends Command {
 
 /**
  * Reply to ``AuthenticateUserCommand``.
+ *
+ * @param is_authorized - Whether the user is authorized in his host system.
  */
 @Message.define("command/user/authenticate/reply")
 export class AuthenticateUserReply extends CommandReply {
+    public readonly is_authorized: boolean = false;
+
     /**
      * Helper function to easily build this message.
      */
     public static build(
         messageBuilder: MessageBuilder,
         cmd: AuthenticateUserCommand,
+        isAuthorized: boolean,
         success: boolean = true,
         message: string = "",
     ): CommandReplyComposer<AuthenticateUserReply> {
-        return messageBuilder.buildCommandReply(AuthenticateUserReply, cmd, success, message);
+        return messageBuilder.buildCommandReply(AuthenticateUserReply, cmd, success, message, { is_authorized: isAuthorized });
     }
 }
 

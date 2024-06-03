@@ -1,5 +1,6 @@
 import { storeToRefs } from "pinia";
 
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -22,8 +23,10 @@ export abstract class Authorizer {
 
     /**
      * Authorize the user/integration.
+     *
+     * @param authState - The current authorization state.
      */
-    public abstract authorize(): void;
+    public abstract authorize(authState: AuthorizationState): void;
 
     /**
      * Adds a *Done* callback.
@@ -47,9 +50,9 @@ export abstract class Authorizer {
 
     protected setAuthorized(authorized: boolean, msg: string = ""): void {
         const userStore = useUserStore();
-        const { isAuthorized } = storeToRefs(userStore);
+        const { authorizationState } = storeToRefs(userStore);
 
-        isAuthorized.value = authorized;
+        authorizationState.value = authorized ? AuthorizationState.Authorized : AuthorizationState.NotAuthorized;
 
         if (authorized) {
             this._callbacks.invokeDoneCallbacks();

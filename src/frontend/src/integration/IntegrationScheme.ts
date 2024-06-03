@@ -1,10 +1,10 @@
-import { isUserTokenValid } from "@common/data/entities/user/UserToken";
-import { type VueComponent } from "@common/component/WebComponent";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
 import { Authenticator } from "@/integration/authentication/Authenticator";
 import { Authorizer } from "@/integration/authorization/Authorizer";
-import { useUserStore } from "@/data/stores/UserStore";
+import { type VueComponent } from "@common/component/WebComponent";
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { isUserTokenValid } from "@common/data/entities/user/UserToken";
 
 /**
  * Base class for integration schemes.
@@ -38,8 +38,8 @@ export abstract class IntegrationScheme {
      * Checks whether the integration has completed.
      */
     public get isIntegrated(): boolean {
-        const { userToken, isAuthorized } = useUserStore();
-        return isUserTokenValid(userToken) && isAuthorized;
+        const { userToken, authorizationState } = useUserStore();
+        return isUserTokenValid(userToken) && authorizationState == AuthorizationState.Authorized;
     }
 
     /**

@@ -1,3 +1,5 @@
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 /**
@@ -14,12 +16,12 @@ export abstract class AuthorizationStrategy {
         this._strategy = strategy;
     }
 
-    public abstract requestAuthorization(): void;
-
-    protected requiresAuthorization(): boolean {
-        // TODO: Get from server
-        return true;
-    }
+    /**
+     * Requests user authorization.
+     *
+     * @param authState - The current authorization state.
+     */
+    public abstract requestAuthorization(authState: AuthorizationState): void;
 
     /**
      * The strategy identifier.

@@ -1,3 +1,4 @@
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { defineAsyncComponent } from "vue";
 
 import { isUserTokenValid } from "@common/data/entities/user/UserToken";
@@ -46,6 +47,6 @@ export class BasicIntegrationScheme extends IntegrationScheme {
         }
 
         // Redo the authorization
-        this.authorizer().authorize();
+        this.authorizer().authorize(AuthorizationState.Authorized);
     }
 }

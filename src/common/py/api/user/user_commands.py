@@ -46,13 +46,19 @@ class AuthenticateUserCommand(Command):
 class AuthenticateUserReply(CommandReply):
     """
     Reply to ``AuthenticateUserCommand``.
+
+    Args:
+        is_authorized: Whether the user is authorized in his host system.
     """
+
+    is_authorized: bool
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         cmd: AuthenticateUserCommand,
         *,
+        is_authorized: bool,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -64,6 +70,7 @@ class AuthenticateUserReply(CommandReply):
             cmd,
             success,
             message,
+            is_authorized=is_authorized,
         )
 
 

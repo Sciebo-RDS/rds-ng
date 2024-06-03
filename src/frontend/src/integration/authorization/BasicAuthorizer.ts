@@ -1,3 +1,5 @@
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 
@@ -9,7 +11,7 @@ export class BasicAuthorizer extends Authorizer {
         super(comp);
     }
 
-    public authorize(): void {
+    public authorize(_: AuthorizationState): void {
         // Basic authorization simply skips actual authorization
         this.setAuthorized(true);
     }

@@ -42,16 +42,12 @@ def create_users_service(comp: BackendComponent) -> Service:
         )
 
         if success:
+            from common.py.data.entities.authorization import (
+                get_host_authorization_token_id,
+            )
+
             user_id = msg.user_token.user_id
             user_name = msg.user_token.user_name
-
-            ctx.logger.info(
-                "User authenticated",
-                scope="users",
-                origin=msg.origin,
-                user_id=user_id,
-                user_name=user_name,
-            )
 
             # Update or create the authenticated user in the storage
             if (user := ctx.storage_pool.user_storage.get(user_id)) is not None:
@@ -59,7 +55,26 @@ def create_users_service(comp: BackendComponent) -> Service:
             else:
                 user = User(user_id=user_id, name=user_name)
                 ctx.storage_pool.user_storage.add(user)
+
+            # We don't check for a _valid_ token here, only if one exists for the host system
+            is_authorized = (
+                ctx.storage_pool.authorization_token_storage.get(
+                    get_host_authorization_token_id(user)
+                )
+                is not None
+            )
+
+            ctx.logger.info(
+                "User authenticated",
+                scope="users",
+                origin=msg.origin,
+                user_id=user_id,
+                user_name=user_name,
+                is_authorized=is_authorized,
+            )
         else:
+            is_authorized = False
+
             ctx.logger.warning(
                 "Unable to authenticate user",
                 scope="users",
@@ -73,6 +88,7 @@ def create_users_service(comp: BackendComponent) -> Service:
             msg,
             success=success,
             message="Invalid user token" if not success else "",
+            is_authorized=is_authorized,
         ).emit()
 
     @svc.message_handler(GetUserSettingsCommand)

@@ -1,18 +1,22 @@
 from .authorization_token import AuthorizationTokenID
-from ..user import UserID
+from ..connector import ConnectorInstanceID
+from ..user import User
 
 
-def combine_authorization_token_id(
-    user_id: UserID, token_id: str
-) -> AuthorizationTokenID:
+def get_host_authorization_token_id(user: User) -> AuthorizationTokenID:
     """
-    Combines the keys of an authorization token ID (user ID + token ID) into a tuple.
+    Retrieves the authorization token ID for the user host system.
 
     Args:
-        user_id: The user ID.
-        token_id: The token ID.
+        user: The user.
 
     Returns:
-        The ID tuple.
+        The authorization token.
     """
-    return user_id, token_id
+    return user.user_id, "host"
+
+
+def get_connector_instance_authorization_token_id(
+    user: User, instance: ConnectorInstanceID
+) -> AuthorizationTokenID:
+    return user.user_id, f"connector:{instance}"

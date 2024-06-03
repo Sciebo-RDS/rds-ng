@@ -1,3 +1,4 @@
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { getURLQueryParam } from "@common/utils/URLUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -38,8 +39,9 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         this._config = config;
     }
 
-    public requestAuthorization(): void {
-        if (!this.requiresAuthorization()) {
+    public requestAuthorization(authState: AuthorizationState): void {
+        // Authorization only needs to be requested if not done yet
+        if (authState == AuthorizationState.Authorized) {
             return;
         }
 
