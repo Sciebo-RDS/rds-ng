@@ -11,7 +11,7 @@ def get_host_authorization_token_id(user: User) -> AuthorizationTokenID:
         user: The user.
 
     Returns:
-        The authorization token.
+        The authorization token ID.
     """
     return user.user_id, "host"
 
@@ -19,4 +19,14 @@ def get_host_authorization_token_id(user: User) -> AuthorizationTokenID:
 def get_connector_instance_authorization_token_id(
     user: User, instance: ConnectorInstanceID
 ) -> AuthorizationTokenID:
+    """
+    Retrieves the authorization token ID for a connector instance.
+
+    Args:
+        user: The user.
+        instance: The connector instance ID.
+
+    Returns:
+        The authorization token ID.
+    """
     return user.user_id, f"connector:{instance}"
