@@ -1,5 +1,6 @@
 from .server_service_context import ServerServiceContext
 
+from .authorization_service import create_authorization_service
 from .connectors_service import create_connectors_service
 from .projects_service import create_projects_service
 from .project_jobs_service import create_project_jobs_service
