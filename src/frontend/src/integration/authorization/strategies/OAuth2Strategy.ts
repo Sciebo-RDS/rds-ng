@@ -1,9 +1,10 @@
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { getURLQueryParam } from "@common/utils/URLUtils";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { AuthorizationStrategy } from "@/integration/authorization/strategies/AuthorizationStrategy";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
-import { getURLQueryParam } from "@common/utils/URLUtils";
 
 /**
  * The OAuth2 strategy configuration.
@@ -15,11 +16,22 @@ export interface OAuth2Configuration {
             token: string;
         };
     };
-
     client: {
         clientID: string;
         redirectURL: string;
         embedded: boolean;
+    };
+}
+
+/**
+ * OAuth2 authorization request data.
+ */
+export interface OAuth2AuthorizationRequestData {
+    auth: {
+        code: string;
+    };
+    endpoints: {
+        token: string;
     };
 }
 
@@ -48,10 +60,14 @@ export class OAuth2Strategy extends AuthorizationStrategy {
             throw new Error("No authentication code provided");
         }
 
-        // TODO:
         return {
-            authCode,
-        };
+            auth: {
+                code: authCode,
+            },
+            endpoints: {
+                token: this._config.server.endpoints.token,
+            },
+        } as OAuth2AuthorizationRequestData;
     }
 
     protected finishRequest(authState: AuthorizationState): void {

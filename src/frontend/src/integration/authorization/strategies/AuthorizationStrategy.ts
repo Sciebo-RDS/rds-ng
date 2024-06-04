@@ -2,10 +2,9 @@ import { RequestAuthorizationCommand } from "@common/api/authorization/Authoriza
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { useNetworkStore } from "@common/data/stores/NetworkStore";
+import { getURLQueryParam } from "@common/utils/URLUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { getURLQueryParam } from "@common/utils/URLUtils";
-import { data } from "autoprefixer";
 
 /**
  * Base class for all authorization strategies.

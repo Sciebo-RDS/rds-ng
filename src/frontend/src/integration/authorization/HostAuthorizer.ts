@@ -1,8 +1,9 @@
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { createAuthorizationStrategy } from "@/integration/authorization/strategies/AuthorizationStrategies";
 import { type HostAuthorization } from "@/integration/HostTypes";
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 
 /**
  * Authorizer for host integration.
