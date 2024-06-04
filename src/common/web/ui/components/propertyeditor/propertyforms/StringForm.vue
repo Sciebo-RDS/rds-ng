@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, type PropType } from "vue";
 import InputText from "primevue/inputtext";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
+import { type ProfileID } from "../PropertyProfile";
 
-const props = defineProps(["propertyObjectId", "inputId", "profileId", "projectObjects"]);
+const props = defineProps({
+    propertyObjectId: { type: String, required: true },
+    inputId: { type: String, required: true },
+    profileId: { type: Object as PropType<ProfileID>, required: true },
+    projectObjects: { type: ProjectObjectStore, required: true }
+});
 
-const value = computed(() => props.projectObjects.get(props.propertyObjectId).value);
+const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
 </script>
 
 <template>
     <div>
         <InputText
             type="text"
-            :modelValue="value[inputId]"
+            v-model="value[inputId]"
             class="w-full"
-            @input="(e) => projectObjects.update(profileId, inputId, 'string', propertyObjectId, e.target.value)"
+            @update:modelValue="(value) => projectObjects.update(profileId, inputId, 'string', propertyObjectId, value)"
         />
     </div>
 </template>

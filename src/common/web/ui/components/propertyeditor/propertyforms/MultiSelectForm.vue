@@ -1,27 +1,28 @@
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { computed, type PropType } from "vue";
 import MultiSelect from "primevue/multiselect";
 
-import { PropertyController } from "../PropertyController";
-import { PropertySet } from "../PropertySet";
+import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
 
-const props = defineProps(["property"]);
+const props = defineProps({
+    propertyObjectId: { type: String, required: true },
+    inputId: { type: String, required: true },
+    profileId: { type: Object as PropType<ProfileID>, required: true },
+    projectObjects: { type: ProjectObjectStore, required: true },
+    inputOptions: { type: Array as PropType<string[]>, required: true }
+});
 
-const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
-const categoryId = inject("categoryId") as string;
-const profileId = inject("profileId") as ProfileID;
-
-const value = ref(controller.getValue(profileId, categoryId, props.property.id));
+const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
 </script>
 
 <template>
     <div>
         <MultiSelect
-            @change="(e: any) => controller.setValue(profileId, categoryId, props.property.id, e.value)"
-            v-model="value"
-            :options="property.options"
+            v-model="value[inputId]"
+            :options="inputOptions"
             class="w-full relative"
+            @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, 'multiselect', propertyObjectId, value)"
         />
     </div>
 </template>

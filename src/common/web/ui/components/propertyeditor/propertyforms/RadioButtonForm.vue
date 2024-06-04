@@ -1,47 +1,52 @@
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed, type PropType } from "vue";
 import { getRandomId } from "../utils/Ids";
 
 import RadioButton from "primevue/radiobutton";
 import Button from "primevue/button";
 
-import { PropertyController } from "../PropertyController";
-import { PropertySet } from "../PropertySet";
+import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
 
-const props = defineProps(["property"]);
+const props = defineProps({
+    propertyObjectId: { type: String, required: true },
+    inputId: { type: String, required: true },
+    profileId: { type: Object as PropType<ProfileID>, required: true },
+    projectObjects: { type: ProjectObjectStore, required: true },
+    inputOptions: { type: Array as PropType<string[]>, required: true }
+});
 
-const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
-const categoryId = inject("categoryId") as string;
-const profileId = inject("profileId") as ProfileID;
-
-const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
+const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
 
 const id = getRandomId();
 </script>
 
 <template>
-    <div class="card flex justify-content-center">
-        <Button
-            @click="controller.setValue(profileId, categoryId, props.property.id, '')"
-            icon="pi pi-times"
-            severity="secondary"
-            text
-            rounded
-            aria-label="unset"
-            class="m-0 p-0 mr-5 max-h-4 max-w-[1.65rem]"
-        />
-        <div class="flex flex-column gap-3">
-            <div v-for="option in property.options" :key="option" class="flex align-items-center">
+    <div class="card justify-content-center my-5">
+        <div class="flex flex-col space-y-4">
+            <div v-for="option in inputOptions" :key="option" class="flex align-items-center">
                 <RadioButton
-                    :modelValue="value"
+                    class="block"
+                    :modelValue="value[inputId]"
                     :inputId="option + id"
                     name="dynamic"
                     :value="option"
-                    @update:modelValue="(eValue: Event) => controller.setValue(profileId, categoryId, props.property.id, eValue)"
+                    @update:modelValue="(value: String) => projectObjects.update(profileId, inputId, 'radiobuttons', propertyObjectId, value)"
                 />
                 <label :for="option + id" class="ml-2">{{ option }}</label>
             </div>
+        </div>
+        <div class="w-full grid">
+            <Button
+                @click="projectObjects.update(profileId, inputId, 'string', propertyObjectId, '')"
+                icon="pi pi-times"
+                severity="secondary"
+                aria-label="clear selection"
+                label="clear"
+                class="justify-self-end"
+                :class="!value[inputId] ? 'invisible' : ''"
+                outlined
+            />
         </div>
     </div>
 </template>

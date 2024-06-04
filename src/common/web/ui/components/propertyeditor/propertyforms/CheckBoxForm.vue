@@ -1,33 +1,36 @@
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { computed, type PropType, ref } from "vue";
 import { getRandomId } from "../utils/Ids";
 
 import Checkbox from "primevue/checkbox";
 
-import { PropertyController } from "../PropertyController";
-import { PropertySet } from "../PropertySet";
+import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
 
-const props = defineProps(["property"]);
+const props = defineProps({
+    propertyObjectId: { type: String, required: true },
+    inputId: { type: String, required: true },
+    profileId: { type: Object as PropType<ProfileID>, required: true },
+    projectObjects: { type: ProjectObjectStore, required: true },
+    inputOptions: { type: Array as PropType<string[]>, required: true }
+});
 
-const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
-const categoryId = inject("categoryId") as string;
-const profileId = inject("profileId") as ProfileID;
+const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
 
-const value = ref(controller.getValue(profileId, categoryId, props.property.id));
 const id = getRandomId();
+
 </script>
 
 <template>
     <div class="grid grid-cols-2 gap-4 place-content-stretch">
-        <div v-for="option of property.options" :key="option">
+        <div v-for="option of inputOptions" :key="option">
             <Checkbox
-                v-model="value"
-                :inputId="option + id"
-                :name="option"
-                :value="option"
-                @change="controller.setValue(profileId, categoryId, props.property.id, value)"
-                class="mr-2"
+            :modelValue="value[inputId]"
+            :inputId="option + id"
+            :name="option"
+            :value="option"
+            class="mr-2" 
+            @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, 'checkbox', propertyObjectId, value)"
             />
             <label class="break-all" :for="option + id">{{ option }}</label>
         </div>
