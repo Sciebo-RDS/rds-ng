@@ -34,6 +34,8 @@ export class AuthenticateUserCommand extends Command {
 export class AuthenticateUserReply extends CommandReply {
     public readonly authorization_state: AuthorizationState = AuthorizationState.NotAuthorized;
 
+    public readonly fingerprint: string = "";
+
     /**
      * Helper function to easily build this message.
      */
@@ -41,10 +43,11 @@ export class AuthenticateUserReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: AuthenticateUserCommand,
         authState: AuthorizationState,
+        fingerprint: string = "",
         success: boolean = true,
         message: string = "",
     ): CommandReplyComposer<AuthenticateUserReply> {
-        return messageBuilder.buildCommandReply(AuthenticateUserReply, cmd, success, message, { authorization_state: authState });
+        return messageBuilder.buildCommandReply(AuthenticateUserReply, cmd, success, message, { authorization_state: authState, fingerprint: fingerprint });
     }
 }
 

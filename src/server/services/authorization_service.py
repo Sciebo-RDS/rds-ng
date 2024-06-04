@@ -13,6 +13,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
 
+    from common.py.api.authorization import RequestAuthorizationCommand
     from common.py.api.component import ComponentProcessEvent
 
     from .server_service_context import ServerServiceContext
@@ -20,6 +21,15 @@ def create_authorization_service(comp: BackendComponent) -> Service:
     svc = comp.create_service(
         "Authorization service", context_type=ServerServiceContext
     )
+
+    @svc.message_handler(RequestAuthorizationCommand, is_async=True)
+    def request_authorization(
+        msg: RequestAuthorizationCommand, ctx: ServerServiceContext
+    ):
+        # TODO: Compare fingerprints
+        print(msg.fingerprint, flush=True)
+        print(ctx.session.fingerprint, flush=True)
+        pass
 
     @svc.message_handler(ComponentProcessEvent)
     def process_authorization_tokens(

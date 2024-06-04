@@ -25,8 +25,9 @@ export abstract class Authorizer {
      * Authorize the user/integration.
      *
      * @param authState - The current authorization state.
+     * @param fingerprint - The user's fingerprint.
      */
-    public abstract authorize(authState: AuthorizationState): void;
+    public abstract authorize(authState: AuthorizationState, fingerprint: string): void;
 
     /**
      * Adds a *Done* callback.

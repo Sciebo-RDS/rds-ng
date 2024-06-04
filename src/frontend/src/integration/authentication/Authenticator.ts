@@ -9,7 +9,7 @@ import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 
-export type AuthenticatorDoneCallback = (authState: AuthorizationState) => void;
+export type AuthenticatorDoneCallback = (authState: AuthorizationState, fingerprint: string) => void;
 export type AuthenticatorFailCallback = (msg: string) => void;
 
 /**
@@ -68,7 +68,7 @@ export abstract class Authenticator {
 
                     userToken.value = this._userToken;
 
-                    this._callbacks.invokeDoneCallbacks(reply.authorization_state);
+                    this._callbacks.invokeDoneCallbacks(reply.authorization_state, reply.fingerprint);
                 } else {
                     this._callbacks.invokeFailCallbacks(msg);
                 }

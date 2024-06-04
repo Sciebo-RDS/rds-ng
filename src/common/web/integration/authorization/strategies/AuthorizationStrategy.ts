@@ -30,8 +30,9 @@ export abstract class AuthorizationStrategy {
      * Requests user authorization.
      *
      * @param authState - The current authorization state.
+     * @param fingerprint - The user's fingerprint.
      */
-    public requestAuthorization(authState: AuthorizationState): Promise<AuthorizationState> {
+    public requestAuthorization(authState: AuthorizationState, fingerprint: string): Promise<AuthorizationState> {
         const promise = new Promise<AuthorizationState>(async (resolve, reject) => {
             // Authorization only needs to be requested if not done yet
             if (authState == AuthorizationState.Authorized) {
@@ -42,14 +43,14 @@ export abstract class AuthorizationStrategy {
             if (getURLQueryParam("auth:action") === "request") {
                 const nwStore = useNetworkStore();
 
-                RequestAuthorizationCommand.build(this._service.messageBuilder, AuthorizationTokenType.Host, this.strategy, this.getRequestData())
+                RequestAuthorizationCommand.build(this._service.messageBuilder, AuthorizationTokenType.Host, this.strategy, this.getRequestData(), fingerprint)
                     .done((_, success: boolean, msg: string) => {
                         success ? resolve(AuthorizationState.Authorized) : reject(msg);
                     })
                     .failed((_, msg: string) => reject(msg))
                     .emit(nwStore.serverChannel);
             } else {
-                this.initiateRequest();
+                this.initiateRequest(fingerprint);
                 resolve(AuthorizationState.Pending);
             }
         });
@@ -57,7 +58,7 @@ export abstract class AuthorizationStrategy {
         return promise;
     }
 
-    protected abstract initiateRequest(): void;
+    protected abstract initiateRequest(fingerprint: string): void;
 
     protected abstract getRequestData(): any;
 

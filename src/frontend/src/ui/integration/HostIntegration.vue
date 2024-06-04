@@ -28,7 +28,7 @@ function performAuthentication(): void {
         .then((userToken) => {
             unref(scheme)!
                 .authenticator(userToken)
-                .done((authState) => performAuthorization(authState))
+                .done((authState, fingerprint) => performAuthorization(authState, fingerprint))
                 .failed((error) => {
                     errorMessage.value = error;
                 })
@@ -39,7 +39,7 @@ function performAuthentication(): void {
         });
 }
 
-function performAuthorization(authState: AuthorizationState): void {
+function performAuthorization(authState: AuthorizationState, fingerprint: string): void {
     statusMessage.value = "Authorizing [2/2]";
 
     getHostAuthorization()
@@ -49,7 +49,7 @@ function performAuthorization(authState: AuthorizationState): void {
                 .failed((error) => {
                     errorMessage.value = error;
                 })
-                .authorize(authState);
+                .authorize(authState, fingerprint);
         })
         .catch((error) => {
             errorMessage.value = error;

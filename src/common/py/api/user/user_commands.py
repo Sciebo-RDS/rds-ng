@@ -50,9 +50,12 @@ class AuthenticateUserReply(CommandReply):
 
     Args:
         authorization_state: The authorization state of the user in his host system.
+        fingerprint: The user's fingerprint.
     """
 
     authorization_state: AuthorizationState
+
+    fingerprint: str
 
     @staticmethod
     def build(
@@ -60,6 +63,7 @@ class AuthenticateUserReply(CommandReply):
         cmd: AuthenticateUserCommand,
         *,
         authorization_state: AuthorizationState,
+        fingerprint: str = "",
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -72,6 +76,7 @@ class AuthenticateUserReply(CommandReply):
             success,
             message,
             authorization_state=authorization_state,
+            fingerprint=fingerprint,
         )
 
 

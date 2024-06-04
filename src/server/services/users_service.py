@@ -90,6 +90,7 @@ def create_users_service(comp: BackendComponent) -> Service:
             success=success,
             message="Invalid user token" if not success else "",
             authorization_state=auth_state,
+            fingerprint=ctx.session.fingerprint,
         ).emit()
 
     @svc.message_handler(GetUserSettingsCommand)

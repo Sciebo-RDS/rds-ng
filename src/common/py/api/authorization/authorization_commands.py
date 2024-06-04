@@ -1,3 +1,6 @@
+import typing
+from dataclasses import field
+
 from ...core.messaging import Message, Command, CommandReply
 from ...core.messaging.composers import (
     MessageBuilder,
@@ -18,12 +21,15 @@ class RequestAuthorizationCommand(Command):
         auth_id: The id of this token.
         strategy: The token strategy (e.g., OAuth2).
         data: The actual token request data.
+        fingerprint: The user's fingerprint.
     """
 
     auth_id: str
 
     strategy: str
-    data: any
+    data: typing.Dict[str, typing.Any] = field(default_factory=dict)
+
+    fingerprint: str = ""
 
     @staticmethod
     def build(
@@ -31,7 +37,8 @@ class RequestAuthorizationCommand(Command):
         *,
         auth_id: str,
         strategy: str,
-        data: any,
+        data: typing.Dict[str, typing.Any],
+        fingerprint: str,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -43,6 +50,7 @@ class RequestAuthorizationCommand(Command):
             auth_id=auth_id,
             strategy=strategy,
             data=data,
+            fingerprint=fingerprint,
         )
 
 

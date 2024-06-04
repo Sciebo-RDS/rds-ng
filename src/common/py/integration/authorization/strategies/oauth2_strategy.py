@@ -18,6 +18,7 @@ class OAuth2AuthorizationRequestData:
     @dataclass(kw_only=True)
     class Authorization:
         code: str
+        fingerprint: str
 
     @dataclass_json
     @dataclass(kw_only=True)

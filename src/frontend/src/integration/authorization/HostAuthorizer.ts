@@ -20,7 +20,7 @@ export class HostAuthorizer extends Authorizer {
         this._hostAuth = hostAuth;
     }
 
-    public authorize(authState: AuthorizationState): void {
+    public authorize(authState: AuthorizationState, fingerprint: string): void {
         try {
             const strategy = createAuthorizationStrategy(
                 this._component,
@@ -29,7 +29,7 @@ export class HostAuthorizer extends Authorizer {
                 this.getStrategyConfiguration(),
             );
             strategy
-                .requestAuthorization(authState)
+                .requestAuthorization(authState, fingerprint)
                 .then((authState: AuthorizationState) => {
                     // Skip any non-authorized states, as these will occur during the multistep authorization process
                     if (authState == AuthorizationState.Authorized) {

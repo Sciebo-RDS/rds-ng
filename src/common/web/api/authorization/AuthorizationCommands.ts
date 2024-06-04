@@ -15,6 +15,8 @@ export class RequestAuthorizationCommand extends Command {
     public readonly strategy: string = "";
     public readonly data: any = null;
 
+    public readonly fingerprint: string = "";
+
     /**
      * Helper function to easily build this message.
      */
@@ -23,9 +25,10 @@ export class RequestAuthorizationCommand extends Command {
         authID: string,
         strategy: string,
         data: any,
+        fingerprint: string,
         chain: Message | null = null,
     ): CommandComposer<RequestAuthorizationCommand> {
-        return messageBuilder.buildCommand(RequestAuthorizationCommand, { auth_id: authID, strategy: strategy, data: data }, chain);
+        return messageBuilder.buildCommand(RequestAuthorizationCommand, { auth_id: authID, strategy: strategy, data: data, fingerprint: fingerprint }, chain);
     }
 }
 

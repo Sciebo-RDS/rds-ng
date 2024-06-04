@@ -27,6 +27,7 @@ export interface OAuth2Configuration {
 export interface OAuth2AuthorizationRequestData {
     auth: {
         code: string;
+        fingerprint: string;
     };
     endpoints: {
         token: string;
@@ -47,19 +48,26 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         this._config = config;
     }
 
-    protected initiateRequest(): void {
-        this.redirect(this.getAuthorizationURL());
+    protected initiateRequest(fingerprint: string): void {
+        const url = new URL(this._config.server.endpoints.authorization);
+        url.searchParams.set("response_type", "code");
+        url.searchParams.set("client_id", this._config.client.clientID);
+        url.searchParams.set("redirect_uri", this._config.client.redirectURL);
+        url.searchParams.set("state", fingerprint);
+        this.redirect(url.toString());
     }
 
     protected getRequestData(): any {
         const authCode = getURLQueryParam("auth:code");
-        if (!authCode) {
-            throw new Error("No authentication code provided");
+        const fingerprint = getURLQueryParam("auth:fingerprint");
+        if (!authCode || !fingerprint) {
+            throw new Error("No authentication code or fingerprint provided");
         }
 
         return {
             auth: {
                 code: authCode,
+                fingerprint: fingerprint,
             },
             endpoints: {
                 token: this._config.server.endpoints.token,
@@ -71,15 +79,6 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         if (authState == AuthorizationState.Authorized) {
             this.redirect(this._config.client.redirectURL);
         }
-    }
-
-    private getAuthorizationURL(): string {
-        const url = new URL(this._config.server.endpoints.authorization);
-        url.searchParams.set("response_type", "code");
-        url.searchParams.set("client_id", this._config.client.clientID);
-        url.searchParams.set("redirect_uri", this._config.client.redirectURL);
-        url.searchParams.set("state", "code"); // TODO: Dynamic (from backend)
-        return url.toString();
     }
 }
 
