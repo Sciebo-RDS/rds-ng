@@ -15,6 +15,7 @@ import { Session } from "./Session";
 import { WebComponentData } from "./WebComponentData";
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
+import { registerAuthorizationStrategies } from "../integration/authorization/strategies/AuthorizationStrategies";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
@@ -186,6 +187,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         logging.info("Running component");
 
         // Reigster global items
+        registerAuthorizationStrategies();
         registerExporters();
 
         // Create all basic services

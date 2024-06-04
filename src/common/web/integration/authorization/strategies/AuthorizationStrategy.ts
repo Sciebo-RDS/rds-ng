@@ -1,23 +1,25 @@
-import { RequestAuthorizationCommand } from "@common/api/authorization/AuthorizationCommands";
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
-import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
-import { useNetworkStore } from "@common/data/stores/NetworkStore";
-import { getURLQueryParam } from "@common/utils/URLUtils";
-
-import { FrontendComponent } from "@/component/FrontendComponent";
+import { RequestAuthorizationCommand } from "../../../api/authorization/AuthorizationCommands";
+import { WebComponent } from "../../../component/WebComponent";
+import { AuthorizationState } from "../../../data/entities/authorization/AuthorizationState";
+import { AuthorizationTokenType } from "../../../data/entities/authorization/AuthorizationToken";
+import { useNetworkStore } from "../../../data/stores/NetworkStore";
+import { Service } from "../../../services/Service";
+import { getURLQueryParam } from "../../../utils/URLUtils";
 
 /**
  * Base class for all authorization strategies.
  */
 export abstract class AuthorizationStrategy {
-    protected readonly _component: FrontendComponent;
+    protected readonly _component: WebComponent;
+    protected readonly _service: Service;
 
     private readonly _strategy: string;
 
     private readonly _embedded: boolean;
 
-    protected constructor(comp: FrontendComponent, strategy: string, embedded: boolean = false) {
+    protected constructor(comp: WebComponent, svc: Service, strategy: string, embedded: boolean = false) {
         this._component = comp;
+        this._service = svc;
 
         this._strategy = strategy;
 
@@ -40,12 +42,7 @@ export abstract class AuthorizationStrategy {
             if (getURLQueryParam("auth:action") === "request") {
                 const nwStore = useNetworkStore();
 
-                RequestAuthorizationCommand.build(
-                    this._component.frontendService.messageBuilder,
-                    AuthorizationTokenType.Host,
-                    this.strategy,
-                    this.getRequestData(),
-                )
+                RequestAuthorizationCommand.build(this._service.messageBuilder, AuthorizationTokenType.Host, this.strategy, this.getRequestData())
                     .done((_, success: boolean, msg: string) => {
                         success ? resolve(AuthorizationState.Authorized) : reject(msg);
                     })

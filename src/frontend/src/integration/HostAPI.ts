@@ -2,11 +2,11 @@ import { useAxios } from "@vueuse/integrations/useAxios";
 import { type KeyLike } from "jose";
 import { unref } from "vue";
 
+import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 import { terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type HostAuthorization } from "@/integration/HostTypes";
-import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
  * All known host API endpoints.

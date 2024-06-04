@@ -1,8 +1,8 @@
 import { SettingID } from "@common/utils/config/SettingID";
 
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 import { HostIntegrationSettingIDs, IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
+import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 /**
  * Gets default values for all frontend settings.

@@ -1,9 +1,9 @@
-import logging from "@common/core/logging/Logging";
-
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { AuthorizationStrategy } from "@/integration/authorization/strategies/AuthorizationStrategy";
-import { AuthorizationStrategiesCatalog } from "@/integration/authorization/strategies/AuthorizationStrategiesCatalog";
-import { createOAuth2Strategy, OAuth2Strategy } from "@/integration/authorization/strategies/OAuth2Strategy";
+import { WebComponent } from "../../../component/WebComponent";
+import logging from "../../../core/logging/Logging";
+import { Service } from "../../../services/Service";
+import { AuthorizationStrategiesCatalog } from "./AuthorizationStrategiesCatalog";
+import { AuthorizationStrategy } from "./AuthorizationStrategy";
+import { createOAuth2Strategy, OAuth2Strategy } from "./OAuth2Strategy";
 
 /**
  * Registers all available authorization strategies.
@@ -23,10 +23,11 @@ export function registerAuthorizationStrategies(): void {
  * Creates an authorization strategy using the specified identifier.
  *
  * @param comp - The global component.
+ * @param svc - The service to use for message sending.
  * @param strategy - The strategy identifier.
  * @param config - The host strategy configuration as an arbitrary record.
  */
-export function createAuthorizationStrategy(comp: FrontendComponent, strategy: string, config: Record<string, any>): AuthorizationStrategy {
+export function createAuthorizationStrategy(comp: WebComponent, svc: Service, strategy: string, config: Record<string, any>): AuthorizationStrategy {
     if (!strategy) {
         throw new Error("No authorization strategy has been provided");
     }
@@ -36,5 +37,5 @@ export function createAuthorizationStrategy(comp: FrontendComponent, strategy: s
         throw new Error(`The authorization strategy '${strategy}' couldn't be found`);
     }
 
-    return strategyCreator(comp, config);
+    return strategyCreator(comp, svc, config);
 }

@@ -1,8 +1,11 @@
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
+import { type OAuth2Configuration, OAuth2Strategy } from "@common/integration/authorization/strategies/OAuth2Strategy";
+import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
+import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
-import { createAuthorizationStrategy } from "@/integration/authorization/strategies/AuthorizationStrategies";
 import { type HostAuthorization } from "@/integration/HostTypes";
 
 /**
@@ -19,7 +22,12 @@ export class HostAuthorizer extends Authorizer {
 
     public authorize(authState: AuthorizationState): void {
         try {
-            const strategy = createAuthorizationStrategy(this._component, this._hostAuth.strategy, this._hostAuth.config);
+            const strategy = createAuthorizationStrategy(
+                this._component,
+                this._component.frontendService,
+                this._hostAuth.strategy,
+                this.getStrategyConfiguration(),
+            );
             strategy
                 .requestAuthorization(authState)
                 .then((authState: AuthorizationState) => {
@@ -33,6 +41,28 @@ export class HostAuthorizer extends Authorizer {
                 });
         } catch (exc) {
             this.setAuthorizationState(AuthorizationState.NotAuthorized, `Authorization failed: ${exc}`);
+        }
+    }
+
+    private getStrategyConfiguration(): Record<string, any> {
+        switch (this._hostAuth.strategy) {
+            case OAuth2Strategy.Strategy:
+                return {
+                    server: {
+                        endpoints: {
+                            authorization: this._hostAuth.config.endpoints?.authorization || "",
+                            token: this._hostAuth.config.endpoints?.token || "",
+                        },
+                    },
+                    client: {
+                        clientID: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
+                        redirectURL: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
+                        embedded: this._component.data.config.value<boolean>(HostIntegrationSettingIDs.Embedded),
+                    },
+                } as OAuth2Configuration;
+
+            default:
+                return {};
         }
     }
 }
