@@ -1,5 +1,6 @@
 from .version import API_PROTOCOL_VERSION
 
+from .authorization import *
 from .component import *
 from .component import *
 from .network import *

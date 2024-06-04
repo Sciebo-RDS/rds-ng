@@ -1,10 +1,9 @@
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
-import { getURLQueryParam } from "@common/utils/URLUtils";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { AuthorizationStrategy } from "@/integration/authorization/strategies/AuthorizationStrategy";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { getURLQueryParam } from "@common/utils/URLUtils";
 
 /**
  * The OAuth2 strategy configuration.
@@ -33,27 +32,31 @@ export class OAuth2Strategy extends AuthorizationStrategy {
     private readonly _config: OAuth2Configuration;
 
     public constructor(comp: FrontendComponent, config: OAuth2Configuration) {
-        super(comp, OAuth2Strategy.Strategy);
+        super(comp, OAuth2Strategy.Strategy, config.client.embedded);
 
         this.verifyConfiguration(config);
         this._config = config;
     }
 
-    public requestAuthorization(authState: AuthorizationState): void {
-        // Authorization only needs to be requested if not done yet
-        if (authState == AuthorizationState.Authorized) {
-            return;
+    protected initiateRequest(): void {
+        this.redirect(this.getAuthorizationURL());
+    }
+
+    protected getRequestData(): any {
+        const authCode = getURLQueryParam("auth:code");
+        if (!authCode) {
+            throw new Error("No authentication code provided");
         }
 
-        if (getURLQueryParam("oauth2:auth") === "request") {
-            const authCode = getURLQueryParam("oauth2:auth-code");
-            console.log("AUTH CODE: " + authCode);
-            // TODO: Check and use code
+        // TODO:
+        return {
+            authCode,
+        };
+    }
 
-            // Redirect to the original app site to get rid of all query parameters
+    protected finishRequest(authState: AuthorizationState): void {
+        if (authState == AuthorizationState.Authorized) {
             this.redirect(this._config.client.redirectURL);
-        } else {
-            this.launchAuthorizationRequest();
         }
     }
 
@@ -82,18 +85,6 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         url.searchParams.set("redirect_uri", this._config.client.redirectURL);
         url.searchParams.set("state", "code"); // TODO: Dynamic (from backend)
         return url.toString();
-    }
-
-    private launchAuthorizationRequest(): void {
-        this.redirect(this.getAuthorizationURL());
-    }
-
-    private redirect(url: string): void {
-        if (url) {
-            // Not sure if this will always work with all browsers and web servers
-            // Might need to open the URL in a new window
-            this._config.client.embedded ? window.parent.location.replace(url) : window.location.replace(url);
-        }
     }
 }
 

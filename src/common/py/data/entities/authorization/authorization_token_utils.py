@@ -1,4 +1,4 @@
-from .authorization_token import AuthorizationTokenID
+from .authorization_token import AuthorizationTokenID, AuthorizationToken
 from ..connector import ConnectorInstanceID
 from ..user import User
 
@@ -13,7 +13,7 @@ def get_host_authorization_token_id(user: User) -> AuthorizationTokenID:
     Returns:
         The authorization token ID.
     """
-    return user.user_id, "host"
+    return user.user_id, AuthorizationToken.TokenType.HOST
 
 
 def get_connector_instance_authorization_token_id(
@@ -29,4 +29,4 @@ def get_connector_instance_authorization_token_id(
     Returns:
         The authorization token ID.
     """
-    return user.user_id, f"connector:{instance}"
+    return user.user_id, f"{AuthorizationToken.TokenType.CONNECTOR}:{instance}"

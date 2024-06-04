@@ -1,5 +1,6 @@
 import typing
 from dataclasses import dataclass
+from enum import StrEnum
 
 from dataclasses_json import dataclass_json
 
@@ -16,11 +17,19 @@ class AuthorizationToken:
 
     Attributes:
         user_id: The user identifier.
-        auth_id: The id of this token (provided by the external system).
+        auth_id: The id of this token.
         expiration_timestamp: Timestamp when the token becomes invalid; a value of 0 means that the token never becomes invalid.
-        strategy: The token strategy/type (e.g., OAuth2).
+        strategy: The token strategy (e.g., OAuth2).
         data: The actual token data.
     """
+
+    class TokenType(StrEnum):
+        """
+        Various token types.
+        """
+
+        HOST = "host"
+        CONNECTOR = "connector"
 
     user_id: UserID
     auth_id: str

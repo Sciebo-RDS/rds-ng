@@ -48,13 +48,13 @@ export abstract class Authorizer {
         return this;
     }
 
-    protected setAuthorized(authorized: boolean, msg: string = ""): void {
+    protected setAuthorizationState(authState: AuthorizationState, msg: string = ""): void {
         const userStore = useUserStore();
         const { authorizationState } = storeToRefs(userStore);
 
-        authorizationState.value = authorized ? AuthorizationState.Authorized : AuthorizationState.NotAuthorized;
+        authorizationState.value = authState;
 
-        if (authorized) {
+        if (authState == AuthorizationState.Authorized) {
             this._callbacks.invokeDoneCallbacks();
         } else {
             this._callbacks.invokeFailCallbacks(msg);

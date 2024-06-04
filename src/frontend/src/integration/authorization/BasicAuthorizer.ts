@@ -13,6 +13,6 @@ export class BasicAuthorizer extends Authorizer {
 
     public authorize(_: AuthorizationState): void {
         // Basic authorization simply skips actual authorization
-        this.setAuthorized(true);
+        this.setAuthorizationState(AuthorizationState.Authorized);
     }
 }
