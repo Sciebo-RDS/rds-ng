@@ -61,7 +61,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         const authCode = getURLQueryParam("auth:code");
         const fingerprint = getURLQueryParam("auth:fingerprint");
         if (!authCode || !fingerprint) {
-            throw new Error("No authentication code or fingerprint provided");
+            throw new Error("No authentication information provided");
         }
 
         return {

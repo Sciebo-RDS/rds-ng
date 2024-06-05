@@ -26,7 +26,7 @@ export class HostAuthorizer extends Authorizer {
                 this._component,
                 this._component.frontendService,
                 this._hostAuth.strategy,
-                this.getStrategyConfiguration(),
+                this.getStrategyConfiguration(this._hostAuth.strategy),
             );
             strategy
                 .requestAuthorization(authState, fingerprint)
@@ -44,8 +44,8 @@ export class HostAuthorizer extends Authorizer {
         }
     }
 
-    private getStrategyConfiguration(): Record<string, any> {
-        switch (this._hostAuth.strategy) {
+    private getStrategyConfiguration(strategy: string): Record<string, any> {
+        switch (strategy) {
             case OAuth2Strategy.Strategy:
                 return {
                     server: {
