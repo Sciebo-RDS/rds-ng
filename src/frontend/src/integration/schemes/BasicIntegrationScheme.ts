@@ -47,6 +47,6 @@ export class BasicIntegrationScheme extends IntegrationScheme {
         }
 
         // Redo the authorization
-        this.authorizer().authorize(AuthorizationState.Authorized);
+        this.authorizer().authorize(AuthorizationState.Authorized, "");
     }
 }

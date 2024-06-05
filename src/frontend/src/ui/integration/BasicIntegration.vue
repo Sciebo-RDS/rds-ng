@@ -39,7 +39,7 @@ function performLogin(): void {
         })
         .authenticate();
 
-    unref(scheme)!.authorizer().authorize(AuthorizationState.Authorized);
+    unref(scheme)!.authorizer().authorize(AuthorizationState.Authorized, "");
 }
 </script>
 

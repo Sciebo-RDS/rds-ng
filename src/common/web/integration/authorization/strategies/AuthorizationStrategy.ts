@@ -7,18 +7,9 @@ import { Service } from "../../../services/Service";
 import { getURLQueryParam } from "../../../utils/URLUtils";
 
 /**
- * Data composed for an authorization request.
- */
-export interface AuthorizationRequestData {
-    data: any;
-
-    fingerprint: string;
-}
-
-/**
  * Base class for all authorization strategies.
  */
-export abstract class AuthorizationStrategy {
+export abstract class AuthorizationStrategy<DataType> {
     protected readonly _component: WebComponent;
     protected readonly _service: Service;
 
@@ -52,8 +43,13 @@ export abstract class AuthorizationStrategy {
             if (getURLQueryParam("auth:action") === "request") {
                 const nwStore = useNetworkStore();
 
-                const reqData = this.getRequestData();
-                RequestAuthorizationCommand.build(this._service.messageBuilder, AuthorizationTokenType.Host, this.strategy, reqData.data, reqData.fingerprint)
+                RequestAuthorizationCommand.build(
+                    this._service.messageBuilder,
+                    AuthorizationTokenType.Host,
+                    this.strategy,
+                    this.getRequestData(),
+                    this.getFingerprintParam(),
+                )
                     .done((_, success: boolean, msg: string) => {
                         success ? resolve(AuthorizationState.Authorized) : reject(msg);
                     })
@@ -70,7 +66,7 @@ export abstract class AuthorizationStrategy {
 
     protected abstract initiateRequest(fingerprint: string): void;
 
-    protected abstract getRequestData(): AuthorizationRequestData;
+    protected abstract getRequestData(): DataType;
 
     protected finishRequest(authState: AuthorizationState): void {}
 
@@ -80,6 +76,14 @@ export abstract class AuthorizationStrategy {
             // Might need to open the URL in a new window
             this._embedded ? window.parent.location.replace(url) : window.location.replace(url);
         }
+    }
+
+    private getFingerprintParam(): string {
+        const fingerprint = getURLQueryParam("auth:fingerprint");
+        if (!fingerprint) {
+            throw new Error("No authentication fingerprint provided");
+        }
+        return fingerprint;
     }
 
     /**

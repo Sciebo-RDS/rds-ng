@@ -1,9 +1,8 @@
-import { string } from "yup";
 import { WebComponent } from "../../../component/WebComponent";
 import { AuthorizationState } from "../../../data/entities/authorization/AuthorizationState";
 import { Service } from "../../../services/Service";
 import { getURLQueryParam } from "../../../utils/URLUtils";
-import { type AuthorizationRequestData, AuthorizationStrategy } from "./AuthorizationStrategy";
+import { AuthorizationStrategy } from "./AuthorizationStrategy";
 
 /**
  * The OAuth2 strategy configuration.
@@ -33,7 +32,7 @@ export interface OAuth2AuthorizationRequestData {
 /**
  * OAuth2 authorization strategy.
  */
-export class OAuth2Strategy extends AuthorizationStrategy {
+export class OAuth2Strategy extends AuthorizationStrategy<OAuth2AuthorizationRequestData> {
     public static readonly Strategy = "oauth2";
 
     private readonly _config: OAuth2Configuration;
@@ -53,20 +52,16 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         this.redirect(url.toString());
     }
 
-    protected getRequestData(): AuthorizationRequestData {
+    protected getRequestData(): OAuth2AuthorizationRequestData {
         const authCode = getURLQueryParam("auth:code");
-        const fingerprint = getURLQueryParam("auth:fingerprint");
-        if (!authCode || !fingerprint) {
-            throw new Error("No authentication information provided");
+        if (!authCode) {
+            throw new Error("No authentication code provided");
         }
 
         return {
-            data: {
-                auth_code: authCode,
-                token_endpoint: this._config.server.endpoints.token,
-            } as OAuth2AuthorizationRequestData,
-            fingerprint: fingerprint,
-        } as AuthorizationRequestData;
+            auth_code: authCode,
+            token_endpoint: this._config.server.endpoints.token,
+        };
     }
 
     protected finishRequest(authState: AuthorizationState): void {
