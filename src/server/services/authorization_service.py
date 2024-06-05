@@ -36,6 +36,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         message = ""
 
         if msg.fingerprint == ctx.session.fingerprint:
+            # TODO: Secret in cfg: secrets.host
             success = True
         else:
             message = "The provided fingerprint doesn't match"

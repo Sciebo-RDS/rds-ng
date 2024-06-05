@@ -1,4 +1,5 @@
 import abc
+import typing
 
 from ....component import BackendComponent
 from ....services import Service
@@ -20,6 +21,12 @@ class AuthorizationStrategy(abc.ABC):
         self._service = svc
 
         self._strategy = strategy
+
+    def _get_config_value(self, key: str, default: typing.Any) -> typing.Any:
+        from ....utils.config import SettingID
+
+        setting_id = SettingID(f"authorization.{self._strategy}", key)
+        return self._component.data.config.value_with_default(setting_id, default)
 
     @property
     def strategy(self) -> str:
