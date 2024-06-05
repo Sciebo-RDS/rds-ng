@@ -6,6 +6,7 @@ gevent >= 22.10, < 23.0
 gevent >= 22.10, < 23.0
 gevent-websocket >= 0.10, < 1.0
 gunicorn >= 21.2, < 22.0
+requests >= 2.32, < 3.0
 
 # Database
 sqlalchemy >= 2.0, < 3.0

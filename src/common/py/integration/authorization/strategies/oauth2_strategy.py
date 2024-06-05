@@ -1,6 +1,7 @@
 import typing
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
+import requests
 from dataclasses_json import dataclass_json
 
 from .authorization_strategy import AuthorizationStrategy
@@ -58,6 +59,29 @@ class OAuth2Strategy(AuthorizationStrategy):
     ) -> AuthorizationToken:
         oauth2_data = self._get_request_data(request_data)
         client_secret = self._get_client_secret(auth_id)
+
+        # TODO: Nextcloud Rewrite Host?
+        # TODO: 10.0.2.15 -> JWT Probleme
+
+        response = requests.post(
+            oauth2_data.token_endpoint.replace("localhost", "10.0.2.15"),  # TODO
+            data={
+                "grant_type": "authorization_code",
+                "client_id": oauth2_data.client_id,
+                "client_secret": client_secret,
+                "code": oauth2_data.auth_code,
+                "redirect_uri": oauth2_data.redirect_url,
+            },
+        )
+
+        print("--------------------", flush=True)
+        print(response.status_code, flush=True)  # TODO: Must be 200
+        print(response.json(), flush=True)
+
+        # Response:  {'access_token': 'Hz9KuA2AQCYPbwFSO1Vsvs92iB3EEgDvEk99eokW5sUCdKQpTXwhGnIXb3xTrWo6vWG5C4kt', 'token_type': 'Bearer', 'expires_in': 3600, 'refresh_token': '1p5TZzIRjAYTp3dl5R1crs6rIhjDHybejdpwzmr7LyxaFWa2JKvOiSGX0yRLyJnlWwQ1vHOTAqyoJG9Z92r1YPieOeozWIdDHn9XqQL8UqfhfGUEXd46OFVjFcyjgFfc', 'user_id': 'admin'}
+
+        # TODO: use requests() to grab stuff
+        # TODO: Create and return AuthorizationToken (-> new config type for OAuth2 to store in DB and use externally)
 
         pass
 
