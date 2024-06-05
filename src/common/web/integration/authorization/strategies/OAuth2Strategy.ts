@@ -25,8 +25,12 @@ export interface OAuth2Configuration {
  * OAuth2 authorization request data.
  */
 export interface OAuth2AuthorizationRequestData {
-    auth_code: string;
     token_endpoint: string;
+
+    client_id: string;
+    auth_code: string;
+
+    redirect_url: string;
 }
 
 /**
@@ -59,8 +63,12 @@ export class OAuth2Strategy extends AuthorizationStrategy<OAuth2AuthorizationReq
         }
 
         return {
-            auth_code: authCode,
             token_endpoint: this._config.server.endpoints.token,
+
+            client_id: this._config.client.clientID,
+            auth_code: authCode,
+
+            redirect_url: this._config.client.redirectURL,
         };
     }
 

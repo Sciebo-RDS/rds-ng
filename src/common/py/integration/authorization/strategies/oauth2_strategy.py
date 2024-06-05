@@ -23,12 +23,18 @@ class OAuth2AuthorizationRequestData:
     OAuth2 authorization request data.
 
     Attributes:
-        auth_code: The authorization code.
         token_endpoint: The OAuth2 token endpoint.
+        client_id: The OAuth2 client ID.
+        auth_code: The authorization code.
+        redirect_url: The redirection URL.
     """
 
-    auth_code: str
     token_endpoint: str
+
+    client_id: str
+    auth_code: str
+
+    redirect_url: str
 
 
 class OAuth2Strategy(AuthorizationStrategy):

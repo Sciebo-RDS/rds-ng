@@ -35,7 +35,6 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         success = False
         message = ""
 
-        # TODO: Fingerprint aus OAuth2 Auth Request
         if msg.fingerprint == ctx.session.fingerprint:
             success = True
         else:
