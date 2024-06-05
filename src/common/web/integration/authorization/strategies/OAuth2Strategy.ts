@@ -1,8 +1,9 @@
+import { string } from "yup";
 import { WebComponent } from "../../../component/WebComponent";
 import { AuthorizationState } from "../../../data/entities/authorization/AuthorizationState";
 import { Service } from "../../../services/Service";
 import { getURLQueryParam } from "../../../utils/URLUtils";
-import { AuthorizationStrategy } from "./AuthorizationStrategy";
+import { type AuthorizationRequestData, AuthorizationStrategy } from "./AuthorizationStrategy";
 
 /**
  * The OAuth2 strategy configuration.
@@ -25,13 +26,8 @@ export interface OAuth2Configuration {
  * OAuth2 authorization request data.
  */
 export interface OAuth2AuthorizationRequestData {
-    auth: {
-        code: string;
-        fingerprint: string;
-    };
-    endpoints: {
-        token: string;
-    };
+    auth_code: string;
+    token_endpoint: string;
 }
 
 /**
@@ -57,7 +53,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         this.redirect(url.toString());
     }
 
-    protected getRequestData(): any {
+    protected getRequestData(): AuthorizationRequestData {
         const authCode = getURLQueryParam("auth:code");
         const fingerprint = getURLQueryParam("auth:fingerprint");
         if (!authCode || !fingerprint) {
@@ -65,14 +61,12 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         }
 
         return {
-            auth: {
-                code: authCode,
-                fingerprint: fingerprint,
-            },
-            endpoints: {
-                token: this._config.server.endpoints.token,
-            },
-        } as OAuth2AuthorizationRequestData;
+            data: {
+                auth_code: authCode,
+                token_endpoint: this._config.server.endpoints.token,
+            } as OAuth2AuthorizationRequestData,
+            fingerprint: fingerprint,
+        } as AuthorizationRequestData;
     }
 
     protected finishRequest(authState: AuthorizationState): void {

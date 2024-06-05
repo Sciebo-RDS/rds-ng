@@ -7,6 +7,15 @@ import { Service } from "../../../services/Service";
 import { getURLQueryParam } from "../../../utils/URLUtils";
 
 /**
+ * Data composed for an authorization request.
+ */
+export interface AuthorizationRequestData {
+    data: any;
+
+    fingerprint: string;
+}
+
+/**
  * Base class for all authorization strategies.
  */
 export abstract class AuthorizationStrategy {
@@ -43,7 +52,8 @@ export abstract class AuthorizationStrategy {
             if (getURLQueryParam("auth:action") === "request") {
                 const nwStore = useNetworkStore();
 
-                RequestAuthorizationCommand.build(this._service.messageBuilder, AuthorizationTokenType.Host, this.strategy, this.getRequestData(), fingerprint)
+                const reqData = this.getRequestData();
+                RequestAuthorizationCommand.build(this._service.messageBuilder, AuthorizationTokenType.Host, this.strategy, reqData.data, reqData.fingerprint)
                     .done((_, success: boolean, msg: string) => {
                         success ? resolve(AuthorizationState.Authorized) : reject(msg);
                     })
@@ -60,7 +70,7 @@ export abstract class AuthorizationStrategy {
 
     protected abstract initiateRequest(fingerprint: string): void;
 
-    protected abstract getRequestData(): any;
+    protected abstract getRequestData(): AuthorizationRequestData;
 
     protected finishRequest(authState: AuthorizationState): void {}
 

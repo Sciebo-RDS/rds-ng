@@ -13,7 +13,10 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
 
-    from common.py.api.authorization import RequestAuthorizationCommand
+    from common.py.api.authorization import (
+        RequestAuthorizationCommand,
+        RequestAuthorizationReply,
+    )
     from common.py.api.component import ComponentProcessEvent
 
     from .server_service_context import ServerServiceContext
@@ -26,10 +29,24 @@ def create_authorization_service(comp: BackendComponent) -> Service:
     def request_authorization(
         msg: RequestAuthorizationCommand, ctx: ServerServiceContext
     ):
-        # TODO: Compare fingerprints
-        print(msg.fingerprint, flush=True)
-        print(ctx.session.fingerprint, flush=True)
-        pass
+        if not ctx.ensure_user(msg, RequestAuthorizationReply):
+            return
+
+        success = False
+        message = ""
+
+        # TODO: Fingerprint aus OAuth2 Auth Request
+        if msg.fingerprint == ctx.session.fingerprint:
+            success = True
+        else:
+            message = "The provided fingerprint doesn't match"
+
+        RequestAuthorizationReply.build(
+            ctx.message_builder,
+            msg,
+            success=success,
+            message=message,
+        ).emit()
 
     @svc.message_handler(ComponentProcessEvent)
     def process_authorization_tokens(

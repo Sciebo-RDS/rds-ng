@@ -23,23 +23,12 @@ class OAuth2AuthorizationRequestData:
     OAuth2 authorization request data.
 
     Attributes:
-        auth: The authorization data.
-        endpoints: The OAuth2 server endpoints.
+        auth_code: The authorization code.
+        token_endpoint: The OAuth2 token endpoint.
     """
 
-    @dataclass_json
-    @dataclass(kw_only=True)
-    class Authorization:
-        code: str
-        fingerprint: str
-
-    @dataclass_json
-    @dataclass(kw_only=True)
-    class Endpoints:
-        token: str
-
-    auth: Authorization = field(default_factory=Authorization)
-    endpoints: Endpoints = field(default_factory=Endpoints)
+    auth_code: str
+    token_endpoint: str
 
 
 class OAuth2Strategy(AuthorizationStrategy):
