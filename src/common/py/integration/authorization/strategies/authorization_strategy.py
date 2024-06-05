@@ -2,6 +2,8 @@ import abc
 import typing
 
 from ....component import BackendComponent
+from ....data.entities.authorization import AuthorizationToken
+from ....data.entities.user import UserID
 from ....services import Service
 
 
@@ -21,6 +23,11 @@ class AuthorizationStrategy(abc.ABC):
         self._service = svc
 
         self._strategy = strategy
+
+    @abc.abstractmethod
+    def request_authorization(
+        self, user_id: UserID, auth_id: str, request_data: typing.Any
+    ) -> AuthorizationToken: ...
 
     def _get_config_value(self, key: str, default: typing.Any) -> typing.Any:
         from ....utils.config import SettingID

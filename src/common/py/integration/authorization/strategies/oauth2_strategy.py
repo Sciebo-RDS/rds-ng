@@ -5,6 +5,8 @@ from dataclasses_json import dataclass_json
 
 from .authorization_strategy import AuthorizationStrategy
 from ....component import BackendComponent
+from ....data.entities.authorization import AuthorizationToken
+from ....data.entities.user import UserID
 from ....services import Service
 
 
@@ -50,6 +52,11 @@ class OAuth2Strategy(AuthorizationStrategy):
         super().__init__(comp, svc, OAuth2Strategy.Strategy)
 
         self._config = config
+
+    def request_authorization(
+        self, user_id: UserID, auth_id: str, request_data: typing.Any
+    ) -> AuthorizationToken:
+        pass
 
 
 def create_oauth2_strategy(
