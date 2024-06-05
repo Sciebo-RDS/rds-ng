@@ -53,7 +53,7 @@ class OAuth2Strategy(AuthorizationStrategy):
 
 
 def create_oauth2_strategy(
-    comp: BackendComponent, svc: Service, config: typing.Dict[str, typing.Any]
+    comp: BackendComponent, svc: Service, config: typing.Any
 ) -> OAuth2Strategy:
     """
     Creates a new OAuth2 strategy instance, automatically configuring it.
@@ -66,8 +66,9 @@ def create_oauth2_strategy(
     Returns:
         The newly created strategy.
     """
-    oauth2_config = typing.cast(OAuth2Configuration, config)
+    if not isinstance(config, OAuth2Configuration):
+        raise RuntimeError("Invalid configuration passed for OAuth2")
 
-    # Verify the passed configuration
+    oauth2_config = typing.cast(OAuth2Configuration, config)
 
     return OAuth2Strategy(comp, svc, oauth2_config)

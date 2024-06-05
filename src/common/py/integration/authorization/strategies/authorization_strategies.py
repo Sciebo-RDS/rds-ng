@@ -31,7 +31,7 @@ def create_authorization_strategy(
     comp: BackendComponent,
     svc: Service,
     strategy: str,
-    config: typing.Dict[str, typing.Any],
+    config: typing.Any,
 ) -> AuthorizationStrategy:
     """
     Creates an authorization strategy using the specified identifier.

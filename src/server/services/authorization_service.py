@@ -1,5 +1,11 @@
 from common.py.component import BackendComponent
+from common.py.integration.authorization.strategies import (
+    create_authorization_strategy,
+    AuthorizationStrategy,
+)
 from common.py.services import Service
+
+from ..integration.authorization.strategies import get_default_strategy_configuration
 
 
 def create_authorization_service(comp: BackendComponent) -> Service:
@@ -25,6 +31,14 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         "Authorization service", context_type=ServerServiceContext
     )
 
+    def _create_strategy(strategy: str) -> AuthorizationStrategy:
+        return create_authorization_strategy(
+            comp,
+            svc,
+            strategy,
+            get_default_strategy_configuration(strategy),
+        )
+
     @svc.message_handler(RequestAuthorizationCommand, is_async=True)
     def request_authorization(
         msg: RequestAuthorizationCommand, ctx: ServerServiceContext
@@ -36,8 +50,13 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         message = ""
 
         if msg.fingerprint == ctx.session.fingerprint:
-            # TODO: Secret in cfg: secrets.host
-            success = True
+            try:
+                strategy = _create_strategy(msg.strategy)
+
+                # TODO: Secret in cfg: secrets.host
+                success = True
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                message = str(exc)
         else:
             message = "The provided fingerprint doesn't match"
 

@@ -6,7 +6,7 @@ from ....services import Service
 from ....utils import ItemsCatalog
 
 AuthorizationStrategyCreator = typing.Callable[
-    [BackendComponent, Service, typing.Dict[str, typing.Any]], AuthorizationStrategy
+    [BackendComponent, Service, typing.Any], AuthorizationStrategy
 ]
 
 
