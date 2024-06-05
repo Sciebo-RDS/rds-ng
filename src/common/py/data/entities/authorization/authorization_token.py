@@ -20,7 +20,8 @@ class AuthorizationToken:
         auth_id: The id of this token.
         expiration_timestamp: Timestamp when the token becomes invalid; a value of 0 means that the token never becomes invalid.
         strategy: The token strategy (e.g., OAuth2).
-        data: The actual token data.
+        token: The actual token data.
+        data: Arbitrary strategy data (usually configuration).
     """
 
     class TokenType(StrEnum):
@@ -37,4 +38,5 @@ class AuthorizationToken:
     expiration_timestamp: float = 0.0
 
     strategy: str
+    token: any
     data: any
