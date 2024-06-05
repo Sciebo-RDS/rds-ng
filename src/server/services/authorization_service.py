@@ -56,7 +56,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
 
                 auth_token = strategy.request_authorization(
                     ctx.user.user_id, msg.auth_id, msg.data
-                )  # TODO: Add secret; Secret in cfg: secrets.host
+                )
 
                 AuthorizationTokenVerifier(auth_token).verify_create()
 

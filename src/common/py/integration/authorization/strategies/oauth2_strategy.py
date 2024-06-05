@@ -56,7 +56,36 @@ class OAuth2Strategy(AuthorizationStrategy):
     def request_authorization(
         self, user_id: UserID, auth_id: str, request_data: typing.Any
     ) -> AuthorizationToken:
+        oauth2_data = self._get_request_data(request_data)
+        client_secret = self._get_client_secret(auth_id)
+
         pass
+
+    def _get_request_data(
+        self, request_data: typing.Any
+    ) -> OAuth2AuthorizationRequestData:
+        oauth2_data = OAuth2AuthorizationRequestData.from_dict(request_data)
+
+        # Verify the request data
+        if oauth2_data.token_endpoint == "":
+            raise RuntimeError("Missing token endpoint")
+        if oauth2_data.client_id == "":
+            raise RuntimeError("Missing client ID")
+        if oauth2_data.auth_code == "":
+            raise RuntimeError("Missing authentication code")
+        if oauth2_data.redirect_url == "":
+            raise RuntimeError("Missing redirection URL")
+
+        return oauth2_data
+
+    def _get_client_secret(self, auth_id: str) -> str:
+        client_secret = self._get_config_value(f"secrets.{auth_id}", "")
+
+        # Verify the secret
+        if client_secret == "":
+            raise RuntimeError(f"Missing OAuth2 client secret for {auth_id}")
+
+        return client_secret
 
 
 def create_oauth2_strategy(
