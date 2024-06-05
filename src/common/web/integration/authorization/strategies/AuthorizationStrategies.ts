@@ -26,6 +26,8 @@ export function registerAuthorizationStrategies(): void {
  * @param svc - The service to use for message sending.
  * @param strategy - The strategy identifier.
  * @param config - The host strategy configuration as an arbitrary record.
+ *
+ * @returns - The newly created strategy.
  */
 export function createAuthorizationStrategy(comp: WebComponent, svc: Service, strategy: string, config: Record<string, any>): AuthorizationStrategy {
     if (!strategy) {
