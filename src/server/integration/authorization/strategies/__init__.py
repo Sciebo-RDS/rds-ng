@@ -1,1 +1,1 @@
-from .default_configuration import get_default_strategy_configuration
+from .strategy_configuration import get_strategy_configuration

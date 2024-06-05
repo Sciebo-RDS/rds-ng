@@ -6,7 +6,7 @@ from common.py.integration.authorization.strategies import (
 )
 
 
-def get_default_strategy_configuration(strategy: str) -> typing.Any:
+def get_strategy_configuration(strategy: str) -> typing.Any:
     """
     Creates a default configuration for all known authorization strategies.
 

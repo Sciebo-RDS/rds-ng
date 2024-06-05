@@ -5,7 +5,7 @@ from common.py.integration.authorization.strategies import (
 )
 from common.py.services import Service
 
-from ..integration.authorization.strategies import get_default_strategy_configuration
+from ..integration.authorization.strategies import get_strategy_configuration
 
 
 def create_authorization_service(comp: BackendComponent) -> Service:
@@ -36,7 +36,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             comp,
             svc,
             strategy,
-            get_default_strategy_configuration(strategy),
+            get_strategy_configuration(strategy),
         )
 
     @svc.message_handler(RequestAuthorizationCommand, is_async=True)
