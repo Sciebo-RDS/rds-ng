@@ -1,5 +1,6 @@
 from common.py.component import BackendComponent
-from common.py.data.entities.authorization import AuthorizationToken
+from common.py.core import logging
+from common.py.data.entities.authorization import has_authorization_token_expired
 from common.py.data.verifiers.authorization import AuthorizationTokenVerifier
 from common.py.integration.authorization.strategies import (
     create_authorization_strategy,
@@ -74,9 +75,35 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         ).emit()
 
     @svc.message_handler(ComponentProcessEvent)
-    def process_authorization_tokens(
+    def refresh_expired_tokens(
         msg: ComponentProcessEvent, ctx: ServerServiceContext
     ) -> None:
-        pass
+        # TODO: Async Handling
+        for token in ctx.storage_pool.authorization_token_storage.list():
+            if has_authorization_token_expired(token):
+                try:
+                    logging.debug(
+                        "Refreshing authorization token",
+                        scope="authorization",
+                        user_id=token.user_id,
+                        auth_id=token.auth_id,
+                        strategy=token.strategy,
+                    )
+
+                    AuthorizationTokenVerifier(token).verify_update()
+
+                    strategy = _create_strategy(token.strategy)
+                    strategy.refresh_authorization(token)
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    logging.warning(
+                        "Unable to refresh authorization token - removing token",
+                        scope="authorization",
+                        user_id=token.user_id,
+                        auth_id=token.auth_id,
+                        strategy=token.strategy,
+                        error=str(exc),
+                    )
+
+                    # ctx.storage_pool.authorization_token_storage.remove(token)
 
     return svc

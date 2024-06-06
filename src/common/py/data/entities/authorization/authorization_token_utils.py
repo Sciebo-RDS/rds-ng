@@ -1,3 +1,5 @@
+import time
+
 from .authorization_token import AuthorizationTokenID, AuthorizationToken
 from ..connector import ConnectorInstanceID
 from ..user import User
@@ -30,3 +32,17 @@ def get_connector_instance_authorization_token_id(
         The authorization token ID.
     """
     return user.user_id, f"{AuthorizationToken.TokenType.CONNECTOR}:{instance}"
+
+
+def has_authorization_token_expired(token: AuthorizationToken) -> bool:
+    """
+    Checks whether an authorization token has expired and thus should be refreshed.
+
+    Args:
+        token: The authorization token.
+    """
+    return (
+        time.time() >= token.expiration_timestamp
+        if token.expiration_timestamp > 0
+        else False
+    )

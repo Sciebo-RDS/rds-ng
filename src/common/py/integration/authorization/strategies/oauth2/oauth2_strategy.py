@@ -7,6 +7,7 @@ import requests
 from dataclasses_json import dataclass_json
 
 from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
+from .oauth2_utils import format_oauth2_error_response
 from ..authorization_strategy import AuthorizationStrategy
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
@@ -62,10 +63,10 @@ class OAuth2Strategy(AuthorizationStrategy):
                     user_id=user_id,
                     auth_id=auth_id,
                     expiration_timestamp=(
-                        time.time() + resp_data["expires_in"]
+                        time.time() + (resp_data["expires_in"] * 0.9)
                         if "expires_in" in resp_data
                         else 0
-                    ),
+                    ),  # We reduce the lifespan by 10% to refresh tokens early on
                     strategy=self.strategy,
                     token=OAuth2Token(
                         access_token=resp_data["access_token"],
@@ -80,16 +81,48 @@ class OAuth2Strategy(AuthorizationStrategy):
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
         else:
-            from .oauth2_utils import format_oauth2_error_response
-
             raise RuntimeError(
-                f"Unable to request an access token: {format_oauth2_error_response(response)}"
+                f"Unable to request access token: {format_oauth2_error_response(response)}"
+            )
+
+    def refresh_authorization(self, token: AuthorizationToken) -> None:
+        oauth2_token: OAuth2Token = OAuth2Token.from_dict(token.token)
+        oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
+        client_secret = self._get_client_secret(token.auth_id)
+
+        response = requests.post(
+            oauth2_data.token_endpoint,
+            data={
+                "grant_type": "refresh_token",
+                "client_id": oauth2_data.client_id,
+                "client_secret": client_secret,
+                "refresh_token": oauth2_token.refresh_token,
+            },
+        )
+
+        if response.status_code == HTTPStatus.OK:
+            resp_data = response.json()
+            try:
+                self._verify_oauth2_token_data(resp_data)
+
+                token.data = OAuth2Token(
+                    access_token=resp_data["access_token"],
+                    token_type=resp_data["token_type"],
+                    refresh_token=resp_data["refresh_token"],
+                )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
+        else:
+            raise RuntimeError(
+                f"Unable to refresh access token: {format_oauth2_error_response(response)}"
             )
 
     def _get_auth_request_data(
         self, request_data: typing.Any
     ) -> OAuth2AuthorizationRequestData:
-        oauth2_data = OAuth2AuthorizationRequestData.from_dict(request_data)
+        oauth2_data: OAuth2AuthorizationRequestData = (
+            OAuth2AuthorizationRequestData.from_dict(request_data)
+        )
 
         # Verify the request data
         if oauth2_data.token_endpoint == "":

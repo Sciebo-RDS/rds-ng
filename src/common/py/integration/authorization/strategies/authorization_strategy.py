@@ -32,6 +32,9 @@ class AuthorizationStrategy(abc.ABC):
         self, user_id: UserID, auth_id: str, request_data: typing.Any
     ) -> AuthorizationToken: ...
 
+    @abc.abstractmethod
+    def refresh_authorization(self, token: AuthorizationToken) -> None: ...
+
     def _get_config_value(self, key: str, default: typing.Any) -> typing.Any:
         from ....utils.config import SettingID
 
