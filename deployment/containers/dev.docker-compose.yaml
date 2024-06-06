@@ -44,7 +44,7 @@ services:
             - "4200:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
-            - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=fZ7huZnPfWUWSag2YpcOLMlbhAfjgaotUtNg5W0397iyc7Fc8JkgmYVzF6bW21Me
+            - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=k1BkMPWb6woNcWuMFNI6lumDd5WRxib3yfKY99CMakt46Df1GeEvOa0zFPuq4n3i
 
     # Connector: Stub
     connector-stub:
@@ -91,5 +91,5 @@ services:
             - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200
             - RDS_INTEGRATION_SCHEME=host
             - RDS_INTEGRATION_HOST_API_URL=http://localhost:8080/apps/rdsng/api/v1
-            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=lwL30mc1jE5PuyNgiPlb8YNtP0XxrGl9VnPsfpvnsLkcSkoxqJw4drn3oIoSshny
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=j5kA0t3LjWA8lkaaGeLz3HBynEifuHYC3FkbxP93zq52Y2vZ9fzlO744651a6pSY
             - RDS_AUTHORIZATION_OAUTH2_REDIRECT_URL=http://localhost:8080/apps/rdsng/launcher/launch

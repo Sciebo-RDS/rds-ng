@@ -51,8 +51,11 @@ class OAuth2TokenData:
     Attributes:
         token_endpoint: The OAuth2 token endpoint.
         client_id: The OAuth2 client ID.
+        redirect_url: The redirection URL.
     """
 
     token_endpoint: str
 
     client_id: str
+
+    redirect_url: str

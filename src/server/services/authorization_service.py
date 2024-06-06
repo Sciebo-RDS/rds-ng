@@ -94,6 +94,14 @@ def create_authorization_service(comp: BackendComponent) -> Service:
 
                     strategy = _create_strategy(token.strategy)
                     strategy.refresh_authorization(token)
+
+                    logging.debug(
+                        "Refreshed authorization token",
+                        scope="authorization",
+                        user_id=token.user_id,
+                        auth_id=token.auth_id,
+                        strategy=token.strategy,
+                    )
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     logging.warning(
                         "Unable to refresh authorization token - removing token",

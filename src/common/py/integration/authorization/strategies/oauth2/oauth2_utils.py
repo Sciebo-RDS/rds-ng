@@ -14,10 +14,14 @@ def format_oauth2_error_response(response: Response) -> str:
         The formatted string.
     """
     resp_data = response.json()
-    if "error" in resp_data:
-        err_type = typing.cast(str, resp_data["error"])
-        err_type = err_type.replace("_", " ")
-    else:
-        err_type = "unknown error"
-
-    return f"{err_type} ({response.status_code})".title()
+    err_type = (
+        typing.cast(str, resp_data["error"]).replace("_", " ")
+        if "error" in resp_data
+        else "unknown error"
+    )
+    err_desc = (
+        " - " + resp_data["error_description"]
+        if "error_description" in resp_data
+        else ""
+    )
+    return f"{err_type}{err_desc} ({response.status_code})".title()

@@ -76,6 +76,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                     data=OAuth2TokenData(
                         token_endpoint=oauth2_data.token_endpoint,
                         client_id=oauth2_data.client_id,
+                        redirect_url=oauth2_data.redirect_url,
                     ),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -97,6 +98,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "client_id": oauth2_data.client_id,
                 "client_secret": client_secret,
                 "refresh_token": oauth2_token.refresh_token,
+                "redirect_uri": oauth2_data.redirect_url,
             },
         )
 
