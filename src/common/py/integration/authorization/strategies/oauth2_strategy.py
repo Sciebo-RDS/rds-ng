@@ -1,3 +1,5 @@
+import json
+import time
 import typing
 from dataclasses import dataclass
 
@@ -5,6 +7,7 @@ import requests
 from dataclasses_json import dataclass_json
 
 from .authorization_strategy import AuthorizationStrategy
+from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationToken
 from ....data.entities.user import UserID
@@ -17,27 +20,6 @@ class OAuth2Configuration:
     """
     The OAuth2 strategy configuration.
     """
-
-
-@dataclass_json
-@dataclass(frozen=True, kw_only=True)
-class OAuth2AuthorizationRequestData:
-    """
-    OAuth2 authorization request data.
-
-    Attributes:
-        token_endpoint: The OAuth2 token endpoint.
-        client_id: The OAuth2 client ID.
-        auth_code: The authorization code.
-        redirect_url: The redirection URL.
-    """
-
-    token_endpoint: str
-
-    client_id: str
-    auth_code: str
-
-    redirect_url: str
 
 
 class OAuth2Strategy(AuthorizationStrategy):
@@ -60,11 +42,8 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_data = self._get_request_data(request_data)
         client_secret = self._get_client_secret(auth_id)
 
-        # TODO: Nextcloud Rewrite Host?
-        # TODO: 10.0.2.15 -> JWT Probleme
-
         response = requests.post(
-            oauth2_data.token_endpoint.replace("localhost", "10.0.2.15"),  # TODO
+            oauth2_data.token_endpoint,
             data={
                 "grant_type": "authorization_code",
                 "client_id": oauth2_data.client_id,
@@ -74,16 +53,36 @@ class OAuth2Strategy(AuthorizationStrategy):
             },
         )
 
-        print("--------------------", flush=True)
-        print(response.status_code, flush=True)  # TODO: Must be 200
-        print(response.json(), flush=True)
+        if response.status_code == 200:
+            resp_data = response.json()
+            try:
+                self._verify_oauth2_token_data(resp_data)
 
-        # Response:  {'access_token': 'Hz9KuA2AQCYPbwFSO1Vsvs92iB3EEgDvEk99eokW5sUCdKQpTXwhGnIXb3xTrWo6vWG5C4kt', 'token_type': 'Bearer', 'expires_in': 3600, 'refresh_token': '1p5TZzIRjAYTp3dl5R1crs6rIhjDHybejdpwzmr7LyxaFWa2JKvOiSGX0yRLyJnlWwQ1vHOTAqyoJG9Z92r1YPieOeozWIdDHn9XqQL8UqfhfGUEXd46OFVjFcyjgFfc', 'user_id': 'admin'}
-
-        # TODO: use requests() to grab stuff
-        # TODO: Create and return AuthorizationToken (-> new config type for OAuth2 to store in DB and use externally)
-
-        pass
+                return AuthorizationToken(
+                    user_id=user_id,
+                    auth_id=auth_id,
+                    expiration_timestamp=(
+                        time.time() + resp_data["expires_in"]
+                        if "expires_in" in resp_data
+                        else 0
+                    ),
+                    strategy=self.strategy,
+                    token=OAuth2Token(
+                        access_token=resp_data["access_token"],
+                        token_type=resp_data["token_type"],
+                        refresh_token=resp_data["refresh_token"],
+                    ),
+                    data=OAuth2TokenData(
+                        token_endpoint=oauth2_data.token_endpoint,
+                        client_id=oauth2_data.client_id,
+                    ),
+                )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
+        else:
+            raise RuntimeError(
+                f"Unable to request an access token: {response.text}"
+            )  # TODO: Proper err
 
     def _get_request_data(
         self, request_data: typing.Any
@@ -110,6 +109,14 @@ class OAuth2Strategy(AuthorizationStrategy):
             raise RuntimeError(f"Missing OAuth2 client secret for {auth_id}")
 
         return client_secret
+
+    def _verify_oauth2_token_data(self, data: typing.Dict[str, typing.Any]) -> None:
+        if "access_token" not in data or data["access_token"] == "":
+            raise RuntimeError("Missing access token")
+        if "token_type" not in data or data["token_type"] == "":
+            raise RuntimeError("Missing token type")
+        if "refresh_token" not in data or data["refresh_token"] == "":
+            raise RuntimeError("Missing refresh token")
 
 
 def create_oauth2_strategy(

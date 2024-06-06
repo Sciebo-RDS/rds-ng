@@ -10,6 +10,9 @@ from ....services import Service
 class AuthorizationStrategy(abc.ABC):
     """
     Base class for all authorization strategies.
+
+    Notes:
+        Strategies report errors through raising exceptions (usually *RuntimeError*).
     """
 
     def __init__(self, comp: BackendComponent, svc: Service, strategy: str):

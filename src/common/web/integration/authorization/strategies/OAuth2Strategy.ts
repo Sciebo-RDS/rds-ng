@@ -3,6 +3,7 @@ import { AuthorizationState } from "../../../data/entities/authorization/Authori
 import { Service } from "../../../services/Service";
 import { getURLQueryParam } from "../../../utils/URLUtils";
 import { AuthorizationStrategy } from "./AuthorizationStrategy";
+import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
 
 /**
  * The OAuth2 strategy configuration.
@@ -19,18 +20,6 @@ export interface OAuth2Configuration {
         redirectURL: string;
         embedded: boolean;
     };
-}
-
-/**
- * OAuth2 authorization request data.
- */
-export interface OAuth2AuthorizationRequestData {
-    token_endpoint: string;
-
-    client_id: string;
-    auth_code: string;
-
-    redirect_url: string;
 }
 
 /**

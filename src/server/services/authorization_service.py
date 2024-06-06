@@ -1,4 +1,5 @@
 from common.py.component import BackendComponent
+from common.py.data.entities.authorization import AuthorizationToken
 from common.py.data.verifiers.authorization import AuthorizationTokenVerifier
 from common.py.integration.authorization.strategies import (
     create_authorization_strategy,
@@ -61,7 +62,6 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                 AuthorizationTokenVerifier(auth_token).verify_create()
 
                 ctx.storage_pool.authorization_token_storage.add(auth_token)
-
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 message = str(exc)
