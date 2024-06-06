@@ -1,17 +1,17 @@
-import json
 import time
 import typing
 from dataclasses import dataclass
+from http import HTTPStatus
 
 import requests
 from dataclasses_json import dataclass_json
 
-from .authorization_strategy import AuthorizationStrategy
 from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
-from ....component import BackendComponent
-from ....data.entities.authorization import AuthorizationToken
-from ....data.entities.user import UserID
-from ....services import Service
+from ..authorization_strategy import AuthorizationStrategy
+from .....component import BackendComponent
+from .....data.entities.authorization import AuthorizationToken
+from .....data.entities.user import UserID
+from .....services import Service
 
 
 @dataclass_json
@@ -39,7 +39,7 @@ class OAuth2Strategy(AuthorizationStrategy):
     def request_authorization(
         self, user_id: UserID, auth_id: str, request_data: typing.Any
     ) -> AuthorizationToken:
-        oauth2_data = self._get_request_data(request_data)
+        oauth2_data = self._get_auth_request_data(request_data)
         client_secret = self._get_client_secret(auth_id)
 
         response = requests.post(
@@ -53,7 +53,7 @@ class OAuth2Strategy(AuthorizationStrategy):
             },
         )
 
-        if response.status_code == 200:
+        if response.status_code == HTTPStatus.OK:
             resp_data = response.json()
             try:
                 self._verify_oauth2_token_data(resp_data)
@@ -80,11 +80,13 @@ class OAuth2Strategy(AuthorizationStrategy):
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
         else:
-            raise RuntimeError(
-                f"Unable to request an access token: {response.text}"
-            )  # TODO: Proper err
+            from .oauth2_utils import format_oauth2_error_response
 
-    def _get_request_data(
+            raise RuntimeError(
+                f"Unable to request an access token: {format_oauth2_error_response(response)}"
+            )
+
+    def _get_auth_request_data(
         self, request_data: typing.Any
     ) -> OAuth2AuthorizationRequestData:
         oauth2_data = OAuth2AuthorizationRequestData.from_dict(request_data)

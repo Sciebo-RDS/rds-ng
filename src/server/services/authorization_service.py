@@ -54,11 +54,9 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         if msg.fingerprint == ctx.session.fingerprint:
             try:
                 strategy = _create_strategy(msg.strategy)
-
                 auth_token = strategy.request_authorization(
                     ctx.user.user_id, msg.auth_id, msg.data
                 )
-
                 AuthorizationTokenVerifier(auth_token).verify_create()
 
                 ctx.storage_pool.authorization_token_storage.add(auth_token)

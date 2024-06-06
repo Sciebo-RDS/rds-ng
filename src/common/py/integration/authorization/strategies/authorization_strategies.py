@@ -2,7 +2,10 @@ import typing
 
 from .authorization_strategies_catalog import AuthorizationStrategiesCatalog
 from .authorization_strategy import AuthorizationStrategy
-from .oauth2_strategy import OAuth2Strategy, create_oauth2_strategy
+from common.py.integration.authorization.strategies.oauth2 import (
+    OAuth2Strategy,
+    create_oauth2_strategy,
+)
 from ....component import BackendComponent
 from ....core import logging
 from ....services import Service

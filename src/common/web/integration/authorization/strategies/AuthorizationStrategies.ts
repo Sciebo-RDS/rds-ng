@@ -3,7 +3,7 @@ import logging from "../../../core/logging/Logging";
 import { Service } from "../../../services/Service";
 import { AuthorizationStrategiesCatalog } from "./AuthorizationStrategiesCatalog";
 import { AuthorizationStrategy } from "./AuthorizationStrategy";
-import { createOAuth2Strategy, OAuth2Strategy } from "./OAuth2Strategy";
+import { createOAuth2Strategy, OAuth2Strategy } from "./oauth2/OAuth2Strategy";
 
 /**
  * Registers all available authorization strategies.

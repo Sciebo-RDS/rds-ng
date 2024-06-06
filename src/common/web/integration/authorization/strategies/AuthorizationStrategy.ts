@@ -9,7 +9,7 @@ import { getURLQueryParam } from "../../../utils/URLUtils";
 /**
  * Base class for all authorization strategies.
  */
-export abstract class AuthorizationStrategy<DataType> {
+export abstract class AuthorizationStrategy {
     protected readonly _component: WebComponent;
     protected readonly _service: Service;
 
@@ -66,7 +66,7 @@ export abstract class AuthorizationStrategy<DataType> {
 
     protected abstract initiateRequest(fingerprint: string): void;
 
-    protected abstract getRequestData(): DataType;
+    protected abstract getRequestData(): any;
 
     protected finishRequest(authState: AuthorizationState): void {}
 

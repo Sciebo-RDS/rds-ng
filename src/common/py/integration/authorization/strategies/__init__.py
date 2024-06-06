@@ -4,7 +4,7 @@ from .authorization_strategies import (
 )
 from .authorization_strategies_catalog import AuthorizationStrategiesCatalog
 from .authorization_strategy import AuthorizationStrategy
-from .oauth2_strategy import (
+from common.py.integration.authorization.strategies.oauth2.oauth2_strategy import (
     OAuth2Configuration,
     OAuth2AuthorizationRequestData,
     OAuth2Strategy,

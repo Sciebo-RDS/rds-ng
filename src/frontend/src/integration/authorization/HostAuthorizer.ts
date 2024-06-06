@@ -1,6 +1,6 @@
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
-import { type OAuth2Configuration, OAuth2Strategy } from "@common/integration/authorization/strategies/OAuth2Strategy";
+import { type OAuth2Configuration, OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 

@@ -1,8 +1,8 @@
-import { WebComponent } from "../../../component/WebComponent";
-import { AuthorizationState } from "../../../data/entities/authorization/AuthorizationState";
-import { Service } from "../../../services/Service";
-import { getURLQueryParam } from "../../../utils/URLUtils";
-import { AuthorizationStrategy } from "./AuthorizationStrategy";
+import { WebComponent } from "../../../../component/WebComponent";
+import { AuthorizationState } from "../../../../data/entities/authorization/AuthorizationState";
+import { Service } from "../../../../services/Service";
+import { getURLQueryParam } from "../../../../utils/URLUtils";
+import { AuthorizationStrategy } from "../AuthorizationStrategy";
 import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
 
 /**
@@ -25,7 +25,7 @@ export interface OAuth2Configuration {
 /**
  * OAuth2 authorization strategy.
  */
-export class OAuth2Strategy extends AuthorizationStrategy<OAuth2AuthorizationRequestData> {
+export class OAuth2Strategy extends AuthorizationStrategy {
     public static readonly Strategy = "oauth2";
 
     private readonly _config: OAuth2Configuration;
@@ -45,7 +45,7 @@ export class OAuth2Strategy extends AuthorizationStrategy<OAuth2AuthorizationReq
         this.redirect(url.toString());
     }
 
-    protected getRequestData(): OAuth2AuthorizationRequestData {
+    protected getRequestData(): any {
         const authCode = getURLQueryParam("auth:code");
         if (!authCode) {
             throw new Error("No authentication code provided");
@@ -58,7 +58,7 @@ export class OAuth2Strategy extends AuthorizationStrategy<OAuth2AuthorizationReq
             auth_code: authCode,
 
             redirect_url: this._config.client.redirectURL,
-        };
+        } as OAuth2AuthorizationRequestData;
     }
 
     protected finishRequest(authState: AuthorizationState): void {
