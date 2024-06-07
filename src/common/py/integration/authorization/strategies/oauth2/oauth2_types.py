@@ -33,13 +33,13 @@ class OAuth2Token:
     Attributes:
         access_token: The actual token.
         token_type: The type of the token.
-        refresh_token: The refresh token.
+        refresh_token: The refresh token (optional).
     """
 
     access_token: str
     token_type: str
 
-    refresh_token: str
+    refresh_token: str | None
 
 
 @dataclass_json

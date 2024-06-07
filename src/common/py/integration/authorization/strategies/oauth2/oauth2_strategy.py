@@ -46,7 +46,7 @@ class OAuth2Strategy(AuthorizationStrategy):
     def request_authorization(
         self, user_id: UserID, auth_id: str, request_data: typing.Any
     ) -> AuthorizationToken:
-        oauth2_data = self._get_auth_request_data(request_data)
+        oauth2_data = self._get_oauth2_request_data(request_data)
         client_secret = self._get_client_secret(auth_id)
 
         response = requests.post(
@@ -71,11 +71,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                     auth_id=auth_id,
                     expiration_timestamp=self._get_expiration_timestamp(resp_data),
                     strategy=self.strategy,
-                    token=OAuth2Token(
-                        access_token=resp_data["access_token"],
-                        token_type=resp_data["token_type"],
-                        refresh_token=resp_data["refresh_token"],
-                    ),
+                    token=self._create_oauth2_token(resp_data),
                     data=OAuth2TokenData(
                         token_endpoint=oauth2_data.token_endpoint,
                         client_id=oauth2_data.client_id,
@@ -92,6 +88,9 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_token: OAuth2Token = OAuth2Token.from_dict(token.token)
         oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
         client_secret = self._get_client_secret(token.auth_id)
+
+        if oauth2_token.refresh_token is None:
+            raise RuntimeError("Tried to refresh without a refresh token")
 
         response = requests.post(
             oauth2_data.token_endpoint,
@@ -110,11 +109,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 self._verify_oauth2_token_data(resp_data)
 
                 token.expiration_timestamp = self._get_expiration_timestamp(resp_data)
-                token.token = OAuth2Token(
-                    access_token=resp_data["access_token"],
-                    token_type=resp_data["token_type"],
-                    refresh_token=resp_data["refresh_token"],
-                )
+                token.token = self._create_oauth2_token(resp_data)
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
         else:
@@ -122,7 +117,16 @@ class OAuth2Strategy(AuthorizationStrategy):
                 f"Unable to refresh access token: {format_oauth2_error_response(response)}"
             )
 
-    def _get_auth_request_data(
+    def _create_oauth2_token(self, resp_data) -> OAuth2Token:
+        return OAuth2Token(
+            access_token=resp_data["access_token"],
+            token_type=resp_data["token_type"],
+            refresh_token=(
+                resp_data["refresh_token"] if "refresh_token" in resp_data else None
+            ),
+        )
+
+    def _get_oauth2_request_data(
         self, request_data: typing.Any
     ) -> OAuth2AuthorizationRequestData:
         oauth2_data: OAuth2AuthorizationRequestData = (
@@ -165,8 +169,6 @@ class OAuth2Strategy(AuthorizationStrategy):
             raise RuntimeError("Missing access token")
         if "token_type" not in data or data["token_type"] == "":
             raise RuntimeError("Missing token type")
-        if "refresh_token" not in data or data["refresh_token"] == "":
-            raise RuntimeError("Missing refresh token")
 
 
 def create_oauth2_strategy(
