@@ -1,5 +1,4 @@
 import { WebComponent } from "../../../../component/WebComponent";
-import { AuthorizationState } from "../../../../data/entities/authorization/AuthorizationState";
 import { Service } from "../../../../services/Service";
 import { getURLQueryParam } from "../../../../utils/URLUtils";
 import { AuthorizationStrategy } from "../AuthorizationStrategy";
@@ -61,10 +60,8 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         } as OAuth2AuthorizationRequestData;
     }
 
-    protected finishRequest(authState: AuthorizationState): void {
-        if (authState == AuthorizationState.Authorized) {
-            this.redirect(this._config.client.redirectURL);
-        }
+    protected finishRequest(): void {
+        this.redirect(this._config.client.redirectURL);
     }
 }
 

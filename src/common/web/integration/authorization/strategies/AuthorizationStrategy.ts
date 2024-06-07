@@ -33,7 +33,7 @@ export abstract class AuthorizationStrategy {
      * @param fingerprint - The user's fingerprint.
      */
     public requestAuthorization(authState: AuthorizationState, fingerprint: string): Promise<AuthorizationState> {
-        const promise = new Promise<AuthorizationState>(async (resolve, reject) => {
+        return new Promise<AuthorizationState>(async (resolve, reject) => {
             // Authorization only needs to be requested if not done yet
             if (authState == AuthorizationState.Authorized) {
                 resolve(AuthorizationState.Authorized);
@@ -52,6 +52,10 @@ export abstract class AuthorizationStrategy {
                 )
                     .done((_, success: boolean, msg: string) => {
                         success ? resolve(AuthorizationState.Authorized) : reject(msg);
+
+                        if (success) {
+                            this.finishRequest();
+                        }
                     })
                     .failed((_, msg: string) => reject(msg))
                     .emit(nwStore.serverChannel);
@@ -60,15 +64,13 @@ export abstract class AuthorizationStrategy {
                 resolve(AuthorizationState.Pending);
             }
         });
-        promise.then(this.finishRequest);
-        return promise;
     }
 
     protected abstract initiateRequest(fingerprint: string): void;
 
     protected abstract getRequestData(): any;
 
-    protected finishRequest(authState: AuthorizationState): void {}
+    protected finishRequest(): void {}
 
     protected redirect(url: string): void {
         if (url) {
