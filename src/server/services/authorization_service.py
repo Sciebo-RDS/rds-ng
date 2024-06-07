@@ -1,3 +1,6 @@
+import contextlib
+import time
+
 from common.py.component import BackendComponent
 from common.py.core import logging
 from common.py.data.entities.authorization import has_authorization_token_expired
@@ -7,6 +10,7 @@ from common.py.integration.authorization.strategies import (
     AuthorizationStrategy,
 )
 from common.py.services import Service
+from common.py.utils.entry_guard import EntryGuard
 
 from ..integration.authorization.strategies import get_strategy_configuration
 
@@ -74,39 +78,42 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             message=message,
         ).emit()
 
-    @svc.message_handler(ComponentProcessEvent)
+    @svc.message_handler(ComponentProcessEvent, is_async=True)
     def refresh_expired_tokens(
         msg: ComponentProcessEvent, ctx: ServerServiceContext
     ) -> None:
-        # TODO: Async Handling
-        for token in ctx.storage_pool.authorization_token_storage.list():
-            if has_authorization_token_expired(token):
-                try:
-                    token = ctx.storage_pool.authorization_token_storage.get(
-                        (token.user_id, token.auth_id)
-                    )
-                    AuthorizationTokenVerifier(token).verify_update()
+        with EntryGuard("refresh_expired_tokens") as guard:
+            if not guard.can_execute:
+                return
 
-                    strategy = _create_strategy(token.strategy)
-                    strategy.refresh_authorization(token)
+            for token in ctx.storage_pool.authorization_token_storage.list():
+                if has_authorization_token_expired(token):
+                    try:
+                        token = ctx.storage_pool.authorization_token_storage.get(
+                            (token.user_id, token.auth_id)
+                        )
+                        AuthorizationTokenVerifier(token).verify_update()
 
-                    logging.debug(
-                        "Refreshed authorization token",
-                        scope="authorization",
-                        user_id=token.user_id,
-                        auth_id=token.auth_id,
-                        strategy=token.strategy,
-                    )
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    logging.warning(
-                        "Unable to refresh authorization token - removing token",
-                        scope="authorization",
-                        user_id=token.user_id,
-                        auth_id=token.auth_id,
-                        strategy=token.strategy,
-                        error=str(exc),
-                    )
+                        strategy = _create_strategy(token.strategy)
+                        strategy.refresh_authorization(token)
 
-                    ctx.storage_pool.authorization_token_storage.remove(token)
+                        logging.debug(
+                            "Refreshed authorization token",
+                            scope="authorization",
+                            user_id=token.user_id,
+                            auth_id=token.auth_id,
+                            strategy=token.strategy,
+                        )
+                    except Exception as exc:  # pylint: disable=broad-exception-caught
+                        logging.warning(
+                            "Unable to refresh authorization token - removing token",
+                            scope="authorization",
+                            user_id=token.user_id,
+                            auth_id=token.auth_id,
+                            strategy=token.strategy,
+                            error=str(exc),
+                        )
+
+                        ctx.storage_pool.authorization_token_storage.remove(token)
 
     return svc
