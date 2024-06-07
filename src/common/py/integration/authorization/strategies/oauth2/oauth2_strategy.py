@@ -33,11 +33,15 @@ class OAuth2Strategy(AuthorizationStrategy):
     def __init__(
         self, comp: BackendComponent, svc: Service, config: OAuth2Configuration
     ):
+        from .....settings import NetworkSettingIDs
+
         super().__init__(comp, svc, OAuth2Strategy.Strategy)
 
         self._config = config
 
-        self._timeout = 15
+        self._request_timeout = comp.data.config.value(
+            NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
+        )
 
     def request_authorization(
         self, user_id: UserID, auth_id: str, request_data: typing.Any
@@ -54,7 +58,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "code": oauth2_data.auth_code,
                 "redirect_uri": oauth2_data.redirect_url,
             },
-            timeout=self._timeout,
+            timeout=self._request_timeout,
         )
 
         if response.status_code == HTTPStatus.OK:
@@ -97,7 +101,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "client_secret": client_secret,
                 "refresh_token": oauth2_token.refresh_token,
             },
-            timeout=self._timeout,
+            timeout=self._request_timeout,
         )
 
         if response.status_code == HTTPStatus.OK:
