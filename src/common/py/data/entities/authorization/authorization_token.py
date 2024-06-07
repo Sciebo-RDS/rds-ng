@@ -42,6 +42,13 @@ class AuthorizationToken:
     data: typing.Any
 
     def __post_init__(self):
+        self._convert_dataclasses()
+
+    def __setattr__(self, prop, val):
+        super().__setattr__(prop, val)
+        self._convert_dataclasses()
+
+    def _convert_dataclasses(self) -> None:
         # Automatically convert JSON dataclasses to dictionaries
         if hasattr(self.token, "to_dict"):
             self.token = self.token.to_dict()

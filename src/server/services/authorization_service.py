@@ -82,14 +82,9 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         for token in ctx.storage_pool.authorization_token_storage.list():
             if has_authorization_token_expired(token):
                 try:
-                    logging.debug(
-                        "Refreshing authorization token",
-                        scope="authorization",
-                        user_id=token.user_id,
-                        auth_id=token.auth_id,
-                        strategy=token.strategy,
+                    token = ctx.storage_pool.authorization_token_storage.get(
+                        (token.user_id, token.auth_id)
                     )
-
                     AuthorizationTokenVerifier(token).verify_update()
 
                     strategy = _create_strategy(token.strategy)
@@ -112,6 +107,6 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                         error=str(exc),
                     )
 
-                    # ctx.storage_pool.authorization_token_storage.remove(token)
+                    ctx.storage_pool.authorization_token_storage.remove(token)
 
     return svc

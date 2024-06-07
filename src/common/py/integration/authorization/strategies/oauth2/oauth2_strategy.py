@@ -37,6 +37,8 @@ class OAuth2Strategy(AuthorizationStrategy):
 
         self._config = config
 
+        self._timeout = 15
+
     def request_authorization(
         self, user_id: UserID, auth_id: str, request_data: typing.Any
     ) -> AuthorizationToken:
@@ -52,6 +54,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "code": oauth2_data.auth_code,
                 "redirect_uri": oauth2_data.redirect_url,
             },
+            timeout=self._timeout,
         )
 
         if response.status_code == HTTPStatus.OK:
@@ -62,11 +65,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 return AuthorizationToken(
                     user_id=user_id,
                     auth_id=auth_id,
-                    expiration_timestamp=(
-                        time.time() + (resp_data["expires_in"] * 0.9)
-                        if "expires_in" in resp_data
-                        else 0
-                    ),  # We reduce the lifespan by 10% to refresh tokens early on
+                    expiration_timestamp=self._get_expiration_timestamp(resp_data),
                     strategy=self.strategy,
                     token=OAuth2Token(
                         access_token=resp_data["access_token"],
@@ -76,7 +75,6 @@ class OAuth2Strategy(AuthorizationStrategy):
                     data=OAuth2TokenData(
                         token_endpoint=oauth2_data.token_endpoint,
                         client_id=oauth2_data.client_id,
-                        redirect_url=oauth2_data.redirect_url,
                     ),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -98,8 +96,8 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "client_id": oauth2_data.client_id,
                 "client_secret": client_secret,
                 "refresh_token": oauth2_token.refresh_token,
-                "redirect_uri": oauth2_data.redirect_url,
             },
+            timeout=self._timeout,
         )
 
         if response.status_code == HTTPStatus.OK:
@@ -107,7 +105,8 @@ class OAuth2Strategy(AuthorizationStrategy):
             try:
                 self._verify_oauth2_token_data(resp_data)
 
-                token.data = OAuth2Token(
+                token.expiration_timestamp = self._get_expiration_timestamp(resp_data)
+                token.token = OAuth2Token(
                     access_token=resp_data["access_token"],
                     token_type=resp_data["token_type"],
                     refresh_token=resp_data["refresh_token"],
@@ -146,6 +145,16 @@ class OAuth2Strategy(AuthorizationStrategy):
             raise RuntimeError(f"Missing OAuth2 client secret for {auth_id}")
 
         return client_secret
+
+    def _get_expiration_timestamp(
+        self, resp_data: typing.Dict[str, typing.Any]
+    ) -> float:
+        # We reduce the lifespan by 10% to refresh tokens early on
+        return (
+            time.time() + (resp_data["expires_in"] * 0.9)
+            if "expires_in" in resp_data
+            else 0
+        )
 
     def _verify_oauth2_token_data(self, data: typing.Dict[str, typing.Any]) -> None:
         if "access_token" not in data or data["access_token"] == "":
