@@ -1,5 +1,7 @@
 import { SettingID } from "@common/utils/config/SettingID";
 
+import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
+import { HostIntegrationSettingIDs, IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 
 /**
@@ -10,11 +12,18 @@ import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 export function getFrontendSettings(): Map<SettingID, any> {
     let settings = new Map<SettingID, any>();
 
+    // Frontend settings
     settings.set(FrontendSettingIDs.RegularCommandTimeout, 10.0);
 
-    settings.set(FrontendSettingIDs.HostAPIURL, "");
+    // Integration settings
+    settings.set(IntegrationSettingIDS.Scheme, "basic");
 
-    settings.set(FrontendSettingIDs.AuthenticationScheme, "");
+    settings.set(HostIntegrationSettingIDs.APIURL, "");
+    settings.set(HostIntegrationSettingIDs.Embedded, true);
+
+    // Authorization settings
+    settings.set(OAuth2AuthorizationSettingIDs.ClientID, "");
+    settings.set(OAuth2AuthorizationSettingIDs.RedirectURL, "");
 
     return settings;
 }

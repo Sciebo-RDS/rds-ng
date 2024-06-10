@@ -8,6 +8,8 @@ from sqlalchemy import (
     Text,
     Uuid,
     Numeric,
+    ForeignKey,
+    String,
 )
 from sqlalchemy.orm import registry
 
@@ -37,9 +39,11 @@ def register_project_jobs_tables(
         "project_jobs",
         metadata,
         # Main
-        Column("project_id", Integer, primary_key=True),
+        Column("user_id", String(256), ForeignKey("users.user_id")),
+        Column(
+            "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
+        ),
         Column("connector_instance", Uuid, primary_key=True),
-        Column("user_id", Text),
         Column("timestamp", Numeric(32, 8, asdecimal=False)),
         # Progress
         Column("progress", Numeric(32, 8, asdecimal=False)),

@@ -4,11 +4,11 @@ import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
 import { UnitID } from "@common/utils/UnitID";
 
-import { AuthenticationScheme } from "@/authentication/AuthenticationScheme";
-import { registerAuthenticationSchemes } from "@/authentication/AuthenticationSchemes";
-import { AuthenticationSchemesCatalog } from "@/authentication/AuthenticationSchemesCatalog";
-
 import { registerConnectorCategories } from "@/data/entities/connector/categories/ConnectorCategories";
+
+import { IntegrationScheme } from "@/integration/IntegrationScheme";
+import { registerIntegrationSchemes } from "@/integration/IntegrationSchemes";
+import { IntegrationSchemesCatalog } from "@/integration/IntegrationSchemesCatalog";
 
 import createConnectorsService from "@/services/ConnectorsService";
 import createFrontendService from "@/services/FrontendService";
@@ -16,8 +16,8 @@ import createProjectsService from "@/services/ProjectsService";
 import createProjectJobsService from "@/services/ProjectJobsService";
 import createUserService from "@/services/UserService";
 
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
 import { getFrontendSettings } from "@/settings/FrontendSettings";
+import { IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 
 import Frontend from "@/ui/Frontend.vue";
 import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
@@ -27,7 +27,7 @@ import { registerSnapIns } from "@/ui/snapins/SnapIns";
  * The main frontend component class.
  */
 export class FrontendComponent extends WebComponent<FrontendUserInterface> {
-    private _authenticationScheme: AuthenticationScheme | null = null;
+    private _integrationScheme: IntegrationScheme | null = null;
 
     private _frontendService: Service | null = null;
     private _userService: Service | null = null;
@@ -45,12 +45,12 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         super.run();
 
         // Reigster global items
-        registerAuthenticationSchemes();
+        registerIntegrationSchemes();
         registerConnectorCategories();
         registerSnapIns();
 
-        // Mount the authentication scheme
-        this.mountAuthenticationScheme();
+        // Mount the integration scheme
+        this.mountIntegrationScheme();
 
         // Create frontend-specific services
         this._frontendService = createFrontendService(this);
@@ -64,32 +64,32 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this.data.config.addDefaults(getFrontendSettings());
     }
 
-    private mountAuthenticationScheme(): void {
-        const scheme = this._data.config.value<string>(FrontendSettingIDs.AuthenticationScheme);
+    private mountIntegrationScheme(): void {
+        const scheme = this._data.config.value<string>(IntegrationSettingIDS.Scheme);
         if (!scheme) {
-            error("No authentication theme has been configured");
+            error("No integration scheme has been configured");
             return;
         }
 
-        const authScheme = AuthenticationSchemesCatalog.findItem(scheme);
-        if (!authScheme) {
-            error(`The authentication scheme '${scheme}' couldn't be found`);
+        const intScheme = IntegrationSchemesCatalog.findItem(scheme);
+        if (!intScheme) {
+            error(`The integration scheme '${scheme}' couldn't be found`);
             return;
         }
 
-        this._authenticationScheme = new authScheme(this);
+        this._integrationScheme = new intScheme(this);
 
-        debug(`Using authentication scheme: ${scheme}`, "frontend");
+        debug(`Using integration scheme: ${scheme}`, "frontend");
     }
 
     /**
-     * The active authentication scheme.
+     * The active integration scheme.
      */
-    public get authenticationScheme(): AuthenticationScheme {
-        if (!this._authenticationScheme) {
-            throw new Error("Tried to access the authentication scheme before its creation");
+    public get integrationScheme(): IntegrationScheme {
+        if (!this._integrationScheme) {
+            throw new Error("Tried to access the integration scheme before its creation");
         }
-        return this._authenticationScheme;
+        return this._integrationScheme;
     }
 
     /**

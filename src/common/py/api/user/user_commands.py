@@ -10,6 +10,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
+from ...data.entities.authorization import AuthorizationState
 from ...data.entities.user import User, UserToken
 
 
@@ -46,13 +47,23 @@ class AuthenticateUserCommand(Command):
 class AuthenticateUserReply(CommandReply):
     """
     Reply to ``AuthenticateUserCommand``.
+
+    Args:
+        authorization_state: The authorization state of the user in his host system.
+        fingerprint: The user's fingerprint.
     """
+
+    authorization_state: AuthorizationState
+
+    fingerprint: str
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         cmd: AuthenticateUserCommand,
         *,
+        authorization_state: AuthorizationState,
+        fingerprint: str = "",
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
@@ -64,6 +75,8 @@ class AuthenticateUserReply(CommandReply):
             cmd,
             success,
             message,
+            authorization_state=authorization_state,
+            fingerprint=fingerprint,
         )
 
 

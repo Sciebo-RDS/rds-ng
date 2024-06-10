@@ -1,4 +1,6 @@
 // Import all API files to make them known to the networking system
+import "./authorization/AuthorizationCommands";
+
 import "./component/ComponentEvents";
 
 import "./network/NetworkCommands";

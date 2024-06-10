@@ -3,7 +3,7 @@ import typing
 from enum import Enum, auto
 
 from common.py.data.entities.user import UserToken
-from common.py.utils import UnitID
+from common.py.utils import UnitID, generate_random_string
 
 SessionID = UnitID
 SessionData = typing.Dict[str, typing.Any]
@@ -30,6 +30,8 @@ class Session:
 
         self._user_token: UserToken | None = None
         self._user_origin: UnitID | None = None
+
+        self._fingerprint = generate_random_string(32)
 
         self._data: SessionData = {}
         self._lock = threading.RLock()
@@ -124,3 +126,10 @@ class Session:
         The origin of the currently authenticated user, if any.
         """
         return self._user_origin
+
+    @property
+    def fingerprint(self) -> str:
+        """
+        The (random) fingerprint of the user's session.
+        """
+        return self._fingerprint

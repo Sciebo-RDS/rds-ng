@@ -1,33 +1,34 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, shallowRef, watch } from "vue";
+import { onMounted, onUnmounted, ref, shallowReactive, watch } from "vue";
 import { RouterView } from "vue-router";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
 const comp = FrontendComponent.inject();
-const authScheme = shallowRef(comp.authenticationScheme);
-const isAuthenticated = ref(authScheme.value.isAuthenticated);
+const integrationScheme = shallowReactive(comp.integrationScheme);
+const isIntegrated = ref(integrationScheme.isIntegrated);
 
-// Circumvent Vue warnings arising from using AuthorizationScheme.isAuthenticated directly
-watch(() => authScheme.value.isAuthenticated, (authenticated) => {
-    isAuthenticated.value = authenticated;
-});
+// Circumvent Vue warnings arising from using IntegrationScheme.isIntegrated directly
+watch(
+    () => integrationScheme.isIntegrated,
+    (integrated) => {
+        isIntegrated.value = integrated;
+    },
+);
 
 onMounted(() => {
     // The app has been loaded; notify the authentication scheme about this
-    authScheme.value.enter();
+    integrationScheme.enter();
 });
 onUnmounted(() => {
     // The app has been closed or refreshed; notify the authentication scheme about this
-    authScheme.value.leave();
+    integrationScheme.leave();
 });
 </script>
 
 <template>
-    <RouterView v-if="isAuthenticated" />
-    <component v-else :is="authScheme.authComponent" :auth-scheme="authScheme" />
+    <RouterView v-if="isIntegrated" />
+    <component v-else :is="integrationScheme.integrationComponent" :scheme="integrationScheme" />
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

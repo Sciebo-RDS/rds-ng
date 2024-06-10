@@ -10,9 +10,11 @@ import { NetworkClientSettingIDs } from "./NetworkSettingIDs";
 export function getDefaultSettings(): Map<SettingID, any> {
     let defaults = new Map<SettingID, any>();
 
+    // General settings
     defaults.set(GeneralSettingIDs.Debug, false);
     defaults.set(GeneralSettingIDs.NotificationTimeout, 3.0);
 
+    // Network settings
     defaults.set(NetworkClientSettingIDs.ServerAddress, "");
     defaults.set(NetworkClientSettingIDs.ConnectionTimeout, 10);
 
