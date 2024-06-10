@@ -7,6 +7,7 @@ from sqlalchemy import (
     Text,
     Numeric,
     String,
+    ForeignKey,
 )
 from sqlalchemy.orm import registry
 
@@ -38,7 +39,7 @@ def register_authorization_tokens_tables(
         "authorization_tokens",
         metadata,
         # Main
-        Column("user_id", String(256), primary_key=True),
+        Column("user_id", String(256), ForeignKey("users.user_id"), primary_key=True),
         Column("auth_id", String(256), primary_key=True),
         # Settings
         Column("expiration_timestamp", Numeric(32, 8, asdecimal=False)),
