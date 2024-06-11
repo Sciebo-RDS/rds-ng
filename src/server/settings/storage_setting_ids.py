@@ -8,11 +8,8 @@ class StorageSettingIDs:
 
     Attributes:
         DRIVER: The driver to use for the storage; possible values are *memory* or *database* (value type: ``string``).
-        DEFAULT_ROOT_PATH: The default root path for resources traversal.
     """
     DRIVER = SettingID("storage", "driver")
-
-    DEFAULT_ROOT_PATH = SettingID("storage", "default_root_path")
 
 
 class DatabaseStorageSettingIDs:

@@ -1,4 +1,5 @@
 import os.path
+import typing
 from typing import cast
 
 from common.py.component import BackendComponent
@@ -6,6 +7,10 @@ from common.py.data.entities.resource import (
     Resource,
     ResourcesList,
     ResourcesBrokerToken,
+)
+from common.py.integration.resources.brokers import (
+    create_resources_broker,
+    ResourcesBroker,
 )
 from common.py.services import Service
 
@@ -31,6 +36,12 @@ def create_resources_service(comp: BackendComponent) -> Service:
     from .server_service_context import ServerServiceContext
 
     svc = comp.create_service("Resources service", context_type=ServerServiceContext)
+
+    def _create_broker(broker_token: ResourcesBrokerToken | None) -> ResourcesBroker:
+        if broker_token is None:
+            raise RuntimeError("No resources broker has been assigned")
+
+        return create_resources_broker(comp, broker_token.broker, broker_token.config)
 
     @svc.message_handler(AssignResourcesBrokerCommand)
     def assign_resources_broker(
@@ -61,59 +72,31 @@ def create_resources_service(comp: BackendComponent) -> Service:
             ctx.message_builder, msg, success=success, message=message
         ).emit()
 
-    @svc.message_handler(ListResourcesCommand)
+    @svc.message_handler(ListResourcesCommand, is_async=True)
     def list_resources(msg: ListResourcesCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(
             msg, ListResourcesReply, resources=ResourcesList(resource=msg.root)
         ):
             return
 
-        from ..settings import StorageSettingIDs
-
         success = False
         message = ""
 
-        root = (
-            msg.root
-            if msg.root != ""
-            else ctx.config.value(StorageSettingIDs.DEFAULT_ROOT_PATH)
-        )
         resources = ResourcesList(
             resource=Resource(
-                filename=root,
-                basename=os.path.basename(root),
+                filename=msg.root,
+                basename=os.path.basename(msg.root),
                 type=Resource.Type.FOLDER,
             )
         )
 
         try:
-            from common.py.data.entities.resource import (
-                resources_list_from_syspath,
-                search_resources_list,
-                filter_resources_list,
-            )
-
-            # TODO: Temporary only
-            stored_resources = ctx.session["resources"]
-            resources = (
-                filter_resources_list(
-                    search_resources_list(
-                        cast(
-                            ResourcesList,
-                            ResourcesList.schema().loads(stored_resources),
-                        ),
-                        root,
-                    ),
-                    include_folders=msg.include_folders,
-                    include_files=msg.include_files,
-                )
-                if stored_resources
-                else resources_list_from_syspath(
-                    root,
-                    include_folders=msg.include_folders,
-                    include_files=msg.include_files,
-                    recursive=msg.recursive,
-                )
+            broker = _create_broker(ctx.session.broker_token)
+            resources = broker.list_resources(
+                msg.root,
+                include_folders=msg.include_folders,
+                include_files=msg.include_files,
+                recursive=msg.recursive,
             )
 
             success = True

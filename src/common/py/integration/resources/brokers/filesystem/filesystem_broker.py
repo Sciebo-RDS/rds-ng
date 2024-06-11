@@ -5,6 +5,7 @@ from dataclasses_json import dataclass_json
 
 from .. import ResourcesBroker
 from .....component import BackendComponent
+from .....data.entities.resource import ResourcesList
 
 
 @dataclass_json
@@ -28,6 +29,26 @@ class FilesystemBroker(ResourcesBroker):
         super().__init__(comp, FilesystemBroker.Broker)
 
         self._config = config
+
+    def list_resources(
+        self,
+        root: str,
+        *,
+        include_folders: bool = True,
+        include_files: bool = True,
+        recursive: bool = True,
+    ) -> ResourcesList:
+        from .....data.entities.resource import resources_list_from_syspath
+
+        return resources_list_from_syspath(
+            self._resolve_root(root),
+            include_folders=include_folders,
+            include_files=include_files,
+            recursive=recursive,
+        )
+
+    def _resolve_root(self, root: str) -> str:
+        return super()._resolve_root_path(root, self._config.root)
 
 
 def create_filesystem_broker(

@@ -15,7 +15,6 @@ def get_server_settings() -> typing.Dict[SettingID, typing.Any]:
     return {
         # Storage
         StorageSettingIDs.DRIVER: "memory",
-        StorageSettingIDs.DEFAULT_ROOT_PATH: "/",
         # Database storage
         DatabaseStorageSettingIDs.ENGINE: "sqlite",
         DatabaseStorageSettingIDs.DUMP_SQL: False,

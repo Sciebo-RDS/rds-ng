@@ -1,6 +1,3 @@
-import contextlib
-import time
-
 from common.py.component import BackendComponent
 from common.py.core import logging
 from common.py.data.entities.authorization import has_authorization_token_expired
