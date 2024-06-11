@@ -2,7 +2,11 @@ import os.path
 from typing import cast
 
 from common.py.component import BackendComponent
-from common.py.data.entities.resource import Resource, ResourcesList
+from common.py.data.entities.resource import (
+    Resource,
+    ResourcesList,
+    ResourcesBrokerToken,
+)
 from common.py.services import Service
 
 
@@ -35,11 +39,26 @@ def create_resources_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, AssignResourcesBrokerReply):
             return
 
-        # TODO: Store
+        success = False
+        message = ""
+
+        try:
+            token = ResourcesBrokerToken(broker=msg.broker, config=msg.config)
+
+            from common.py.data.verifiers.resource.resources_broker_token_verifier import (
+                ResourcesBrokerTokenVerifier,
+            )
+
+            ResourcesBrokerTokenVerifier(token).verify_create()
+
+            ctx.session.broker_token = token
+
+            success = True
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            message = str(exc)
 
         AssignResourcesBrokerReply.build(
-            ctx.message_builder,
-            msg,
+            ctx.message_builder, msg, success=success, message=message
         ).emit()
 
     @svc.message_handler(ListResourcesCommand)

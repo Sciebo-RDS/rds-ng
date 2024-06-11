@@ -2,6 +2,7 @@ import threading
 import typing
 from enum import Enum, auto
 
+from common.py.data.entities.resource import ResourcesBrokerToken
 from common.py.data.entities.user import UserToken
 from common.py.utils import UnitID, generate_random_string
 
@@ -31,6 +32,8 @@ class Session:
         self._user_token: UserToken | None = None
         self._user_origin: UnitID | None = None
 
+        self._broker_token: ResourcesBrokerToken | None = None
+
         self._fingerprint = generate_random_string(32)
 
         self._data: SessionData = {}
@@ -44,12 +47,13 @@ class Session:
             user_token: The user token.
             user_origin: The origin of the user.
         """
-        if user_token.user_id == "":
-            return False
+        with self._lock:
+            if user_token.user_id == "":
+                return False
 
-        self._user_token = user_token
-        self._user_origin = user_origin
-        return True
+            self._user_token = user_token
+            self._user_origin = user_origin
+            return True
 
     def __getitem__(self, key: str) -> typing.Any:
         """
@@ -111,25 +115,41 @@ class Session:
         """
         The ID of this session.
         """
-        return self._session_id
+        with self._lock:
+            return self._session_id
 
     @property
     def user_token(self) -> UserToken | None:
         """
         The current authentication user token, if any.
         """
-        return self._user_token
+        with self._lock:
+            return self._user_token
 
     @property
     def user_origin(self) -> UnitID | None:
         """
         The origin of the currently authenticated user, if any.
         """
-        return self._user_origin
+        with self._lock:
+            return self._user_origin
+
+    @property
+    def broker_token(self) -> ResourcesBrokerToken | None:
+        """
+        The assigned broker token.
+        """
+        with self._lock:
+            return self._broker_token
+
+    @broker_token.setter
+    def broker_token(self, value: ResourcesBrokerToken | None) -> None:
+        self._broker_token = value
 
     @property
     def fingerprint(self) -> str:
         """
         The (random) fingerprint of the user's session.
         """
-        return self._fingerprint
+        with self._lock:
+            return self._fingerprint

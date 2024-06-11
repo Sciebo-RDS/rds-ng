@@ -27,7 +27,6 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         StartProjectJobReply,
         ProjectJobProgressEvent,
         ProjectJobCompletionEvent,
-        ProjectLogbookEvent,
     )
     from common.py.api.component import ComponentProcessEvent
 
