@@ -6,7 +6,7 @@ import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 import { terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { type HostAuthorization } from "@/integration/HostTypes";
+import { type HostAuthorization, type HostResources } from "@/integration/HostTypes";
 
 /**
  * All known host API endpoints.
@@ -14,6 +14,7 @@ import { type HostAuthorization } from "@/integration/HostTypes";
 const enum HostAPIEndpoints {
     PublicKey = "public-key",
     Authorization = "authorization",
+    Resources = "resources",
 }
 
 /**
@@ -36,6 +37,10 @@ export class HostAPI {
 
     public async getAuthorization(): Promise<HostAuthorization> {
         return this.getEndpointData<HostAuthorization>(HostAPIEndpoints.Authorization, "authorization");
+    }
+
+    public async getResources(): Promise<HostResources> {
+        return this.getEndpointData<HostResources>(HostAPIEndpoints.Resources, "resources");
     }
 
     private resolveAPIEndpoint(endpoint: string): string {

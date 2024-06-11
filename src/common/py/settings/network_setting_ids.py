@@ -9,6 +9,7 @@ class NetworkSettingIDs:
     Attributes:
         EXTERNAL_REQUESTS_TIMEOUT: The maximum time (in seconds) for requests to external services; set to 0 to disable (value type: ``float``).
     """
+    REGULAR_COMMAND_TIMEOUT = SettingID("network", "regular_command_timeout")
     EXTERNAL_REQUESTS_TIMEOUT = SettingID("network", "external_requests_timeout")
 
 

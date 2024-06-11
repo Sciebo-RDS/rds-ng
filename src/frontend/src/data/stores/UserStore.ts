@@ -19,25 +19,29 @@ export const useUserStore = defineStore("userStore", () => {
     const userSettings = ref(new UserSettings());
 
     const authorizationState = ref(AuthorizationState.NotAuthorized);
+    const brokerAssigned = ref(false);
 
     function reset(): void {
         userToken.value = {} as UserToken;
         userSettings.value = new UserSettings();
 
         authorizationState.value = AuthorizationState.NotAuthorized;
+        brokerAssigned.value = false;
     }
 
-    function resetAuth(): void {
+    function resetLogin(): void {
         userToken.value = {} as UserToken;
 
         authorizationState.value = AuthorizationState.NotAuthorized;
+        brokerAssigned.value = false;
     }
 
     return {
         userToken,
         userSettings,
         authorizationState,
+        brokerAssigned,
         reset,
-        resetAuth,
+        resetLogin,
     };
 });

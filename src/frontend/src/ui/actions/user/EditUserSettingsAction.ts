@@ -25,15 +25,12 @@ export class EditUserSettingsAction extends FrontendCommandAction<SetUserSetting
     public prepare(userSettings: UserSettings): CommandComposer<SetUserSettingsCommand> {
         super.prepareNotifiers();
 
-        this._composer = SetUserSettingsCommand.build(this.messageBuilder, userSettings).timeout(this._regularTimeout);
+        this._composer = SetUserSettingsCommand.build(this.messageBuilder, userSettings);
         return this._composer;
     }
 
     protected addDefaultNotifiers(): void {
-        this.addNotifier(
-            ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Updating user settings", "Updating your settings...")
-        );
+        this.addNotifier(ActionState.Executing, new OverlayNotifier(OverlayNotificationType.Info, "Updating user settings", "Updating your settings..."));
         this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Updating user settings", "Your settings have been updated."));
         this.addNotifier(
             ActionState.Failed,
@@ -41,8 +38,8 @@ export class EditUserSettingsAction extends FrontendCommandAction<SetUserSetting
                 OverlayNotificationType.Error,
                 "Error updating user settings",
                 `An error occurred while updating your settings: ${ActionNotifier.MessagePlaceholder}.`,
-                true
-            )
+                true,
+            ),
         );
     }
 }

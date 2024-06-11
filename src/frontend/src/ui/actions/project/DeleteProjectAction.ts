@@ -29,7 +29,7 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
 
         this.prepareNotifiers(project);
 
-        this._composer = DeleteProjectCommand.build(this.messageBuilder, project.project_id).timeout(this._regularTimeout);
+        this._composer = DeleteProjectCommand.build(this.messageBuilder, project.project_id);
         return this._composer;
     }
 
@@ -41,11 +41,16 @@ export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectComm
     protected addDefaultNotifiers(project: Project): void {
         this.addNotifier(
             ActionState.Done,
-            new OverlayNotifier(OverlayNotificationType.Success, "Delete project", `Project '${project.title}' (ID: ${project.project_id}) has been deleted.`)
+            new OverlayNotifier(OverlayNotificationType.Success, "Delete project", `Project '${project.title}' (ID: ${project.project_id}) has been deleted.`),
         );
         this.addNotifier(
             ActionState.Failed,
-            new OverlayNotifier(OverlayNotificationType.Error, "Error deleting project", `An error occurred while deleting project '${project.title}' (ID: ${project.project_id}): ${ActionNotifier.MessagePlaceholder}.`, true)
+            new OverlayNotifier(
+                OverlayNotificationType.Error,
+                "Error deleting project",
+                `An error occurred while deleting project '${project.title}' (ID: ${project.project_id}): ${ActionNotifier.MessagePlaceholder}.`,
+                true,
+            ),
         );
     }
 }

@@ -15,7 +15,7 @@ export class GetSessionValueAction extends FrontendCommandAction<GetSessionValue
     public prepare(key: string): CommandComposer<GetSessionValueCommand> {
         super.prepareNotifiers();
 
-        this._composer = GetSessionValueCommand.build(this.messageBuilder, key).timeout(this._regularTimeout);
+        this._composer = GetSessionValueCommand.build(this.messageBuilder, key);
         return this._composer;
     }
 }

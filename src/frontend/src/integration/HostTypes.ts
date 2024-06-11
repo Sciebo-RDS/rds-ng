@@ -43,3 +43,11 @@ export function hostUserTokenFromData(data: Record<string, any>): HostUserToken 
         userName: data["user-name"],
     } as HostUserToken;
 }
+
+/**
+ * Details about the host resources scheme.
+ */
+export interface HostResources {
+    broker: string;
+    config: Record<string, any>;
+}
