@@ -6,7 +6,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { Authenticator } from "@/integration/authentication/Authenticator";
 import { Authorizer } from "@/integration/authorization/Authorizer";
-import { ResourcesBroker } from "@/integration/broker/ResourcesBroker";
+import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
 
 /**
  * Base class for integration schemes.

@@ -43,4 +43,7 @@ class AuthorizationStrategy(abc.ABC):
 
     @property
     def strategy(self) -> str:
+        """
+        The strategy identifier.
+        """
         return self._strategy

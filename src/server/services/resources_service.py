@@ -2,6 +2,7 @@ import os.path
 from typing import cast
 
 from common.py.component import BackendComponent
+from common.py.data.entities.resource import Resource, ResourcesList
 from common.py.services import Service
 
 
@@ -16,16 +17,33 @@ def create_resources_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
 
-    from common.py.api.resource import ListResourcesCommand, ListResourcesReply
+    from common.py.api.resource import (
+        AssignResourcesBrokerCommand,
+        AssignResourcesBrokerReply,
+        ListResourcesCommand,
+        ListResourcesReply,
+    )
 
     from .server_service_context import ServerServiceContext
 
     svc = comp.create_service("Resources service", context_type=ServerServiceContext)
 
+    @svc.message_handler(AssignResourcesBrokerCommand)
+    def assign_resources_broker(
+        msg: AssignResourcesBrokerCommand, ctx: ServerServiceContext
+    ) -> None:
+        if not ctx.ensure_user(msg, AssignResourcesBrokerReply):
+            return
+
+        # TODO: Store
+
+        AssignResourcesBrokerReply.build(
+            ctx.message_builder,
+            msg,
+        ).emit()
+
     @svc.message_handler(ListResourcesCommand)
     def list_resources(msg: ListResourcesCommand, ctx: ServerServiceContext) -> None:
-        from common.py.data.entities.resource import Resource, ResourcesList
-
         if not ctx.ensure_user(
             msg, ListResourcesReply, resources=ResourcesList(resource=msg.root)
         ):

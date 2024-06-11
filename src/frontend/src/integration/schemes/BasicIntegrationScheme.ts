@@ -9,8 +9,8 @@ import { Authenticator } from "@/integration/authentication/Authenticator";
 import { BasicAuthenticator } from "@/integration/authentication/BasicAuthenticator";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { BasicAuthorizer } from "@/integration/authorization/BasicAuthorizer";
-import { BasicResourcesBroker } from "@/integration/broker/BasicResourcesBroker";
-import { ResourcesBroker } from "@/integration/broker/ResourcesBroker";
+import { BasicResourcesBroker } from "@/integration/resources/brokers/BasicResourcesBroker";
+import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
 /**

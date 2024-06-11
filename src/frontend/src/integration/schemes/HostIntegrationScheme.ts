@@ -6,8 +6,8 @@ import { Authenticator } from "@/integration/authentication/Authenticator";
 import { HostAuthenticator } from "@/integration/authentication/HostAuthenticator";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { HostAuthorizer } from "@/integration/authorization/HostAuthorizer";
-import { HostResourcesBroker } from "@/integration/broker/HostResourcesBroker";
-import { ResourcesBroker } from "@/integration/broker/ResourcesBroker";
+import { HostResourcesBroker } from "@/integration/resources/brokers/HostResourcesBroker";
+import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
 import { type HostAuthorization, type HostResources, type HostUserToken } from "@/integration/HostTypes";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
