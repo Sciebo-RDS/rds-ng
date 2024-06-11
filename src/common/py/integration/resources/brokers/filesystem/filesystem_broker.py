@@ -14,7 +14,7 @@ class FilesystemConfiguration:
     The filesystem broker configuration.
     """
 
-    root: str
+    root: str = ""
 
 
 class FilesystemBroker(ResourcesBroker):
@@ -43,9 +43,6 @@ def create_filesystem_broker(
     Returns:
         The newly created broker.
     """
-    if not isinstance(config, FilesystemConfiguration):
-        raise RuntimeError("Invalid configuration passed for the filesystem broker")
-
-    fs_config = typing.cast(FilesystemConfiguration, config)
+    fs_config = FilesystemConfiguration.from_dict(config)
 
     return FilesystemBroker(comp, fs_config)
