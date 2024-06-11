@@ -3,6 +3,7 @@ import typing
 from .filesystem import FilesystemBroker, create_filesystem_broker
 from .resources_broker import ResourcesBroker
 from .resources_brokers_catalog_catalog import ResourcesBrokersCatalog
+from .webdav import WebdavBroker, create_webdav_broker
 from ....component import BackendComponent
 from ....core import logging
 
@@ -18,6 +19,7 @@ def register_resources_brokers() -> None:
     ResourcesBrokersCatalog.register_item(
         FilesystemBroker.Broker, create_filesystem_broker
     )
+    ResourcesBrokersCatalog.register_item(WebdavBroker.Broker, create_webdav_broker)
 
     # Print all available brokers for debugging purposes
     names: typing.List[str] = []
