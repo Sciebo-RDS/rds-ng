@@ -46,3 +46,19 @@ def format_elapsed_time(elapsed: float) -> str:
     add_token(s, "s")
     
     return " ".join(tokens)
+
+
+def ensure_starts_with(s: str, start: str) -> str:
+    """
+    Ensures that a string starts with a given string.
+    
+    Args:
+        s: The string.
+        start: The start to ensure.
+
+    Returns:
+        The new string.
+    """
+    if not s.startswith(start):
+        s = start + s
+    return s

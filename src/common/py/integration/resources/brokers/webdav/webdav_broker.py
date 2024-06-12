@@ -13,6 +13,7 @@ from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import ResourcesList, Resource
 from .....data.entities.user import UserToken
 from .....services import Service
+from .....utils import ensure_starts_with
 
 
 @dataclass_json
@@ -50,7 +51,9 @@ class WebdavBroker(ResourcesBroker):
         # Copy the configuration field-by-field, replacing placeholders on-the-go
         self._config = WebdavConfiguration(
             host=self._replace_user_token_placeholders(config.host),
-            endpoint=self._replace_user_token_placeholders(config.endpoint),
+            endpoint=ensure_starts_with(
+                self._replace_user_token_placeholders(config.endpoint), "/"
+            ),
             requires_auth=config.requires_auth,
         )
 
@@ -76,7 +79,7 @@ class WebdavBroker(ResourcesBroker):
         files = self._client.list(self._resolve_root(root), get_info=True)
 
         # TODO: Convert files
-        # TODO: Remove endpoint portion from beginning; both must begin with a / (ensure)
+        # TODO: Remove endpoint portion from beginning; both must begin with a / (ensure) -> ensure_starts_with
 
         #  {
         #       "created":"None",
