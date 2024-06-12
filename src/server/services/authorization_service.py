@@ -5,11 +5,10 @@ from common.py.data.verifiers.authorization import AuthorizationTokenVerifier
 from common.py.integration.authorization.strategies import (
     create_authorization_strategy,
     AuthorizationStrategy,
+    get_authorization_strategy_configuration,
 )
 from common.py.services import Service
 from common.py.utils.entry_guard import EntryGuard
-
-from ..integration.authorization.strategies import get_strategy_configuration
 
 
 def create_authorization_service(comp: BackendComponent) -> Service:
@@ -40,7 +39,6 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             comp,
             svc,
             strategy,
-            get_strategy_configuration(strategy),
         )
 
     @svc.message_handler(RequestAuthorizationCommand, is_async=True)

@@ -51,7 +51,12 @@ def create_resources_service(comp: BackendComponent) -> Service:
         )
 
         return create_resources_broker(
-            comp, svc, broker_token.broker, broker_token.config, auth_token=auth_token
+            comp,
+            svc,
+            broker_token.broker,
+            broker_token.config,
+            user_token=ctx.session.user_token,
+            auth_token=auth_token,
         )
 
     @svc.message_handler(AssignResourcesBrokerCommand)

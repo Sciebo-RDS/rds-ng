@@ -21,8 +21,9 @@ class AuthorizationStrategy(abc.ABC):
         Flags describing what contents the strategy provides.
         """
 
-        AUTH_CREDENTIALS = auto()
         AUTH_TOKEN = auto()
+        AUTH_LOGIN = auto()
+        AUTH_PASSWORD = auto()
 
     def __init__(
         self,

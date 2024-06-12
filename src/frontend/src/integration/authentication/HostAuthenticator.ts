@@ -9,7 +9,7 @@ import { type HostUserToken } from "@/integration/HostTypes";
  */
 export class HostAuthenticator extends Authenticator {
     public constructor(comp: FrontendComponent, userToken: HostUserToken) {
-        super(comp, createUserToken(userToken.userID, userToken.userName));
+        super(comp, createUserToken(userToken.userID, userToken.userName, userToken.systemID, userToken.accessID));
     }
 
     public authenticate(): void {

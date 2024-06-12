@@ -7,6 +7,7 @@ from .. import ResourcesBroker
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import ResourcesList
+from .....data.entities.user import UserToken
 from .....services import Service
 
 
@@ -33,9 +34,17 @@ class FilesystemBroker(ResourcesBroker):
         svc: Service,
         config: FilesystemConfiguration,
         *,
+        user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
     ):
-        super().__init__(comp, svc, FilesystemBroker.Broker, auth_token=auth_token)
+        super().__init__(
+            comp,
+            svc,
+            FilesystemBroker.Broker,
+            user_token=user_token,
+            auth_token=auth_token,
+            default_root=config.root,
+        )
 
         self._config = config
 
@@ -56,14 +65,12 @@ class FilesystemBroker(ResourcesBroker):
             recursive=recursive,
         )
 
-    def _resolve_root(self, root: str) -> str:
-        return super()._resolve_root_path(root, self._config.root)
-
 
 def create_filesystem_broker(
     comp: BackendComponent,
     svc: Service,
     config: typing.Any,
+    user_token: UserToken,
     auth_token: AuthorizationToken | None,
 ) -> FilesystemBroker:
     """
@@ -73,6 +80,7 @@ def create_filesystem_broker(
         comp: The main component.
         svc: The service used for message sending.
         config: The broker configuration.
+        user_token: The user token.
         auth_token: An optional authorization token.
 
     Returns:
@@ -80,4 +88,6 @@ def create_filesystem_broker(
     """
     fs_config = FilesystemConfiguration.from_dict(config)
 
-    return FilesystemBroker(comp, svc, fs_config, auth_token=auth_token)
+    return FilesystemBroker(
+        comp, svc, fs_config, user_token=user_token, auth_token=auth_token
+    )

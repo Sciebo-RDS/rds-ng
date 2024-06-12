@@ -7,6 +7,7 @@ from .webdav import WebdavBroker, create_webdav_broker
 from ....component import BackendComponent
 from ....core import logging
 from ....data.entities.authorization import AuthorizationToken
+from ....data.entities.user import UserToken
 from ....services import Service
 
 
@@ -36,6 +37,7 @@ def create_resources_broker(
     broker: str,
     config: typing.Any,
     *,
+    user_token: UserToken,
     auth_token: AuthorizationToken | None = None,
 ) -> ResourcesBroker:
     """
@@ -46,6 +48,7 @@ def create_resources_broker(
         svc: The service used for message sending.
         broker: The broker identifier.
         config: The broker configuration as an arbitrary record.
+        user_token: The user token.
         auth_token: An authorization token (can be **None**).
 
     Returns:
@@ -58,4 +61,4 @@ def create_resources_broker(
     if broker_creator is None:
         raise RuntimeError(f"The resources broker '{broker}' couldn't be found")
 
-    return broker_creator(comp, svc, config, auth_token)
+    return broker_creator(comp, svc, config, user_token, auth_token)
