@@ -85,7 +85,6 @@ class ResourcesBroker(abc.ABC):
         s = s.replace("{USER_NAME}", self._user_token.user_name)
         s = s.replace("{SYSTEM_ID}", self._user_token.system_id)
         s = s.replace("{ACCESS_ID}", self._user_token.access_id)
-
         return s
 
     def _resolve_root(self, root: str) -> str:

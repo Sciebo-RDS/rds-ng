@@ -65,7 +65,21 @@ class WebdavBroker(ResourcesBroker):
             )
         )
 
+        # Listing is _not_ recursive and contains both files and folders
         files = self._client.list(self._resolve_root(root), get_info=True)
+
+        # TODO: Convert files
+
+        #  {
+        #       "created":"None",
+        #       "name":"None",
+        #       "size":"13378",
+        #       "modified":"Fri, 07 Jun 2024 08:58:55 GMT",
+        #       "etag":"\"54944d8770ddcb128282a5c7485c212b\"",
+        #       "content_type":"application/vnd.oasis.opendocument.spreadsheet",
+        #       "isdir":false,
+        #       "path":"/remote.php/dav/files/admin/Templates/Diagram & table.ods"
+        #    },
 
         print("------------------------", flush=True)
         print(files, flush=True)
