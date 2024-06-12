@@ -47,7 +47,12 @@ class WebdavBroker(ResourcesBroker):
             comp, svc, WebdavBroker.Broker, user_token=user_token, auth_token=auth_token
         )
 
-        self._config = config
+        # Copy the configuration field-by-field, replacing placeholders on-the-go
+        self._config = WebdavConfiguration(
+            host=self._replace_user_token_placeholders(config.host),
+            endpoint=self._replace_user_token_placeholders(config.endpoint),
+            requires_auth=config.requires_auth,
+        )
 
         self._client = self._create_webdav_client()
 
@@ -87,6 +92,8 @@ class WebdavBroker(ResourcesBroker):
         print("------------------------", flush=True)
         print(files, flush=True)
         print("------------------------", flush=True)
+        print(self._config.endpoint, flush=True)
+        print("------------------------", flush=True)
 
         return resources
 
@@ -102,8 +109,7 @@ class WebdavBroker(ResourcesBroker):
 
         options = {
             "webdav_hostname": urllib.parse.urljoin(
-                self._config.host,
-                self._replace_user_token_placeholders(self._config.endpoint),
+                self._config.host, self._config.endpoint
             ),
         }
 
