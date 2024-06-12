@@ -9,6 +9,7 @@ import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
  */
 export interface OAuth2Configuration {
     server: {
+        host: string;
         endpoints: {
             authorization: string;
             token: string;
@@ -36,7 +37,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
     }
 
     protected initiateRequest(fingerprint: string): void {
-        const url = new URL(this._config.server.endpoints.authorization);
+        const url = new URL(this._config.server.endpoints.authorization, new URL(this._config.server.host));
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this._config.client.clientID);
         url.searchParams.set("redirect_uri", this._config.client.redirectURL);
@@ -51,6 +52,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         }
 
         return {
+            token_host: this._config.server.host,
             token_endpoint: this._config.server.endpoints.token,
 
             client_id: this._config.client.clientID,
@@ -78,6 +80,9 @@ export function createOAuth2Strategy(comp: WebComponent, svc: Service, config: R
     const oauth2Config = config as OAuth2Configuration;
 
     // Verify the passed configuration
+    if (!oauth2Config.server?.host) {
+        throw new Error("Missing authorization host");
+    }
     if (!oauth2Config.server?.endpoints?.authorization) {
         throw new Error("Missing authorization endpoint");
     }

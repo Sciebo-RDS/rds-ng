@@ -1,5 +1,6 @@
 import os
 import typing
+import urllib.parse
 from dataclasses import dataclass
 
 import webdav3.client
@@ -21,6 +22,7 @@ class WebdavConfiguration:
     The WebDAV broker configuration.
     """
 
+    host: str = ""
     endpoint: str = ""
     requires_auth: bool = False
 
@@ -69,6 +71,7 @@ class WebdavBroker(ResourcesBroker):
         files = self._client.list(self._resolve_root(root), get_info=True)
 
         # TODO: Convert files
+        # TODO: Remove endpoint portion from beginning; both must begin with a / (ensure)
 
         #  {
         #       "created":"None",
@@ -88,16 +91,19 @@ class WebdavBroker(ResourcesBroker):
         return resources
 
     def _create_webdav_client(self) -> webdav3.client.Client:
-        if self._config.endpoint == "":
-            raise RuntimeError("No WebDAV endpoint provided for client creation")
+        if self._config.host == "" or self._config.endpoint == "":
+            raise RuntimeError(
+                "No WebDAV host or endpoint provided for client creation"
+            )
         if self._config.requires_auth and not self.has_authorization:
             raise RuntimeError(
                 "The WebDAV endpoint requires authorization but none was provided"
             )
 
         options = {
-            "webdav_hostname": self._replace_user_token_placeholders(
-                self._config.endpoint
+            "webdav_hostname": urllib.parse.urljoin(
+                self._config.host,
+                self._replace_user_token_placeholders(self._config.endpoint),
             ),
         }
 

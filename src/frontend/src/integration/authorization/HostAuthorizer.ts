@@ -49,6 +49,7 @@ export class HostAuthorizer extends Authorizer {
             case OAuth2Strategy.Strategy:
                 return {
                     server: {
+                        host: this._hostAuth.config.host || "",
                         endpoints: {
                             authorization: this._hostAuth.config.endpoints?.authorization || "",
                             token: this._hostAuth.config.endpoints?.token || "",

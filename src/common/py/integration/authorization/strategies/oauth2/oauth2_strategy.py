@@ -1,5 +1,6 @@
 import time
 import typing
+import urllib.parse
 from dataclasses import dataclass
 from http import HTTPStatus
 
@@ -55,7 +56,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         client_secret = self._get_client_secret(auth_id)
 
         response = requests.post(
-            oauth2_data.token_endpoint,
+            urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
             data={
                 "grant_type": "authorization_code",
                 "client_id": oauth2_data.client_id,
@@ -78,6 +79,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                     strategy=self.strategy,
                     token=self._create_oauth2_token(resp_data),
                     data=OAuth2TokenData(
+                        token_host=oauth2_data.token_host,
                         token_endpoint=oauth2_data.token_endpoint,
                         client_id=oauth2_data.client_id,
                     ),
@@ -97,7 +99,7 @@ class OAuth2Strategy(AuthorizationStrategy):
             raise RuntimeError("Tried to refresh without a refresh token")
 
         response = requests.post(
-            oauth2_data.token_endpoint,
+            urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
             data={
                 "grant_type": "refresh_token",
                 "client_id": oauth2_data.client_id,
@@ -145,6 +147,8 @@ class OAuth2Strategy(AuthorizationStrategy):
         )
 
         # Verify the request data
+        if oauth2_data.token_host == "":
+            raise RuntimeError("Missing token host")
         if oauth2_data.token_endpoint == "":
             raise RuntimeError("Missing token endpoint")
         if oauth2_data.client_id == "":
