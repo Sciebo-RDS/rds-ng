@@ -57,6 +57,6 @@ def create_webdav_broker(comp: BackendComponent, config: typing.Any) -> WebdavBr
     Returns:
         The newly created broker.
     """
-    webdav_config = WebdavConfiguration.from_dict(config)
+    webdav_config: WebdavConfiguration = WebdavConfiguration.from_dict(config)
 
     return WebdavBroker(comp, webdav_config)

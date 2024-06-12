@@ -1,5 +1,6 @@
 import abc
 import typing
+from enum import auto, IntFlag, Flag
 
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationToken
@@ -15,7 +16,21 @@ class AuthorizationStrategy(abc.ABC):
         Strategies report errors through raising exceptions (usually *RuntimeError*).
     """
 
-    def __init__(self, comp: BackendComponent, svc: Service, strategy: str):
+    class ContentType(Flag):
+        """
+        Flags describing what contents the strategy provides.
+        """
+
+        AUTH_CREDENTIALS = auto()
+        AUTH_TOKEN = auto()
+
+    def __init__(
+        self,
+        comp: BackendComponent,
+        svc: Service,
+        strategy: str,
+        contents: ContentType,
+    ):
         """
         Args:
             comp: The global component.
@@ -26,6 +41,7 @@ class AuthorizationStrategy(abc.ABC):
         self._service = svc
 
         self._strategy = strategy
+        self._contents = contents
 
     @abc.abstractmethod
     def request_authorization(
@@ -34,6 +50,41 @@ class AuthorizationStrategy(abc.ABC):
 
     @abc.abstractmethod
     def refresh_authorization(self, token: AuthorizationToken) -> None: ...
+
+    def provides_token_content(self, content: ContentType) -> bool:
+        """
+        Checks if a certain content type is provided by this strategy.
+
+        Args:
+            content: The content type.
+        """
+        return content in self._contents
+
+    def get_token_content(
+        self, token: AuthorizationToken, content: ContentType
+    ) -> typing.Any:
+        """
+        Retrieves the token content of the specified type.
+
+        Args:
+            token: The authorization token.
+            content: The content type.
+
+        Returns:
+            The token content or **None** in case of any errors.
+        """
+        if token is None or content not in self._contents:
+            return None
+
+        try:
+            return self._get_token_content(token, content)
+        except:
+            return None
+
+    @abc.abstractmethod
+    def _get_token_content(
+        self, token: AuthorizationToken, content: ContentType
+    ) -> typing.Any: ...
 
     def _get_config_value(self, key: str, default: typing.Any) -> typing.Any:
         from ....utils.config import SettingID
@@ -47,3 +98,10 @@ class AuthorizationStrategy(abc.ABC):
         The strategy identifier.
         """
         return self._strategy
+
+    @property
+    def contents(self) -> ContentType:
+        """
+        The content flags.
+        """
+        return self._contents

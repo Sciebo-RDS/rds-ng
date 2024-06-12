@@ -35,7 +35,12 @@ class OAuth2Strategy(AuthorizationStrategy):
     ):
         from .....settings import NetworkSettingIDs
 
-        super().__init__(comp, svc, OAuth2Strategy.Strategy)
+        super().__init__(
+            comp,
+            svc,
+            OAuth2Strategy.Strategy,
+            AuthorizationStrategy.ContentType.AUTH_TOKEN,
+        )
 
         self._config = config
 
@@ -85,8 +90,7 @@ class OAuth2Strategy(AuthorizationStrategy):
             )
 
     def refresh_authorization(self, token: AuthorizationToken) -> None:
-        oauth2_token: OAuth2Token = OAuth2Token.from_dict(token.token)
-        oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
+        oauth2_token, oauth2_data = self._get_oauth2_data_from_token(token)
         client_secret = self._get_client_secret(token.auth_id)
 
         if oauth2_token.refresh_token is None:
@@ -117,6 +121,13 @@ class OAuth2Strategy(AuthorizationStrategy):
                 f"Unable to refresh access token: {format_oauth2_error_response(response)}"
             )
 
+    def _get_token_content(
+        self, token: AuthorizationToken, content: AuthorizationStrategy.ContentType
+    ) -> typing.Any:
+        # We only support a single content type, so no need to distinguish
+        oauth2_token, _ = self._get_oauth2_data_from_token(token)
+        return oauth2_token.access_token
+
     def _create_oauth2_token(self, resp_data) -> OAuth2Token:
         return OAuth2Token(
             access_token=resp_data["access_token"],
@@ -144,6 +155,13 @@ class OAuth2Strategy(AuthorizationStrategy):
             raise RuntimeError("Missing redirection URL")
 
         return oauth2_data
+
+    def _get_oauth2_data_from_token(
+        self, token: AuthorizationToken
+    ) -> typing.Tuple[OAuth2Token, OAuth2TokenData]:
+        oauth2_token: OAuth2Token = OAuth2Token.from_dict(token.token)
+        oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
+        return oauth2_token, oauth2_data
 
     def _get_client_secret(self, auth_id: str) -> str:
         client_secret = self._get_config_value(f"secrets.{auth_id}", "")
