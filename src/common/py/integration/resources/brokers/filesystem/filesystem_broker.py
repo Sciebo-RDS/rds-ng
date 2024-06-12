@@ -5,7 +5,9 @@ from dataclasses_json import dataclass_json
 
 from .. import ResourcesBroker
 from .....component import BackendComponent
+from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import ResourcesList
+from .....services import Service
 
 
 @dataclass_json
@@ -25,8 +27,15 @@ class FilesystemBroker(ResourcesBroker):
 
     Broker: str = "filesystem"
 
-    def __init__(self, comp: BackendComponent, config: FilesystemConfiguration):
-        super().__init__(comp, FilesystemBroker.Broker)
+    def __init__(
+        self,
+        comp: BackendComponent,
+        svc: Service,
+        config: FilesystemConfiguration,
+        *,
+        auth_token: AuthorizationToken | None = None,
+    ):
+        super().__init__(comp, svc, FilesystemBroker.Broker, auth_token=auth_token)
 
         self._config = config
 
@@ -52,18 +61,23 @@ class FilesystemBroker(ResourcesBroker):
 
 
 def create_filesystem_broker(
-    comp: BackendComponent, config: typing.Any
+    comp: BackendComponent,
+    svc: Service,
+    config: typing.Any,
+    auth_token: AuthorizationToken | None,
 ) -> FilesystemBroker:
     """
     Creates a new filesystem broker instance, automatically configuring it.
 
     Args:
         comp: The main component.
+        svc: The service used for message sending.
         config: The broker configuration.
+        auth_token: An optional authorization token.
 
     Returns:
         The newly created broker.
     """
     fs_config = FilesystemConfiguration.from_dict(config)
 
-    return FilesystemBroker(comp, fs_config)
+    return FilesystemBroker(comp, svc, fs_config, auth_token=auth_token)

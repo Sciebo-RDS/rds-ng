@@ -78,7 +78,7 @@ class AuthorizationStrategy(abc.ABC):
 
         try:
             return self._get_token_content(token, content)
-        except:
+        except:  # pylint: disable=bare-except
             return None
 
     @abc.abstractmethod

@@ -3,11 +3,16 @@ import typing
 from typing import cast
 
 from common.py.component import BackendComponent
+from common.py.data.entities.authorization import (
+    get_host_authorization_token_id,
+    AuthorizationToken,
+)
 from common.py.data.entities.resource import (
     Resource,
     ResourcesList,
     ResourcesBrokerToken,
 )
+from common.py.data.entities.user import User
 from common.py.integration.resources.brokers import (
     create_resources_broker,
     ResourcesBroker,
@@ -37,11 +42,17 @@ def create_resources_service(comp: BackendComponent) -> Service:
 
     svc = comp.create_service("Resources service", context_type=ServerServiceContext)
 
-    def _create_broker(broker_token: ResourcesBrokerToken | None) -> ResourcesBroker:
-        if broker_token is None:
+    def _create_broker(ctx: ServerServiceContext) -> ResourcesBroker:
+        if (broker_token := ctx.session.broker_token) is None:
             raise RuntimeError("No resources broker has been assigned")
 
-        return create_resources_broker(comp, broker_token.broker, broker_token.config)
+        auth_token = ctx.storage_pool.authorization_token_storage.get(
+            get_host_authorization_token_id(ctx.user)
+        )
+
+        return create_resources_broker(
+            comp, svc, broker_token.broker, broker_token.config, auth_token=auth_token
+        )
 
     @svc.message_handler(AssignResourcesBrokerCommand)
     def assign_resources_broker(
@@ -91,7 +102,7 @@ def create_resources_service(comp: BackendComponent) -> Service:
         )
 
         try:
-            broker = _create_broker(ctx.session.broker_token)
+            broker = _create_broker(ctx)
             resources = broker.list_resources(
                 msg.root,
                 include_folders=msg.include_folders,

@@ -5,7 +5,9 @@ from dataclasses_json import dataclass_json
 
 from .. import ResourcesBroker
 from .....component import BackendComponent
+from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import ResourcesList
+from .....services import Service
 
 
 @dataclass_json
@@ -25,8 +27,15 @@ class WebdavBroker(ResourcesBroker):
 
     Broker: str = "webdav"
 
-    def __init__(self, comp: BackendComponent, config: WebdavConfiguration):
-        super().__init__(comp, WebdavBroker.Broker)
+    def __init__(
+        self,
+        comp: BackendComponent,
+        svc: Service,
+        config: WebdavConfiguration,
+        *,
+        auth_token: AuthorizationToken | None = None,
+    ):
+        super().__init__(comp, svc, WebdavBroker.Broker, auth_token=auth_token)
 
         self._config = config
 
@@ -46,17 +55,24 @@ class WebdavBroker(ResourcesBroker):
         return super()._resolve_root_path(root, self._config.root)
 
 
-def create_webdav_broker(comp: BackendComponent, config: typing.Any) -> WebdavBroker:
+def create_webdav_broker(
+    comp: BackendComponent,
+    svc: Service,
+    config: typing.Any,
+    auth_token: AuthorizationToken | None,
+) -> WebdavBroker:
     """
     Creates a new WebDAV broker instance, automatically configuring it.
 
     Args:
         comp: The main component.
+        svc: The service used for message sending.
         config: The broker configuration.
+        auth_token: An optional authorization token.
 
     Returns:
         The newly created broker.
     """
     webdav_config: WebdavConfiguration = WebdavConfiguration.from_dict(config)
 
-    return WebdavBroker(comp, webdav_config)
+    return WebdavBroker(comp, svc, webdav_config, auth_token=auth_token)

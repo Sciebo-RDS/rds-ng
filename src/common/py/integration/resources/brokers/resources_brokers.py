@@ -6,6 +6,8 @@ from .resources_brokers_catalog_catalog import ResourcesBrokersCatalog
 from .webdav import WebdavBroker, create_webdav_broker
 from ....component import BackendComponent
 from ....core import logging
+from ....data.entities.authorization import AuthorizationToken
+from ....services import Service
 
 
 def register_resources_brokers() -> None:
@@ -30,16 +32,21 @@ def register_resources_brokers() -> None:
 
 def create_resources_broker(
     comp: BackendComponent,
+    svc: Service,
     broker: str,
     config: typing.Any,
+    *,
+    auth_token: AuthorizationToken | None = None,
 ) -> ResourcesBroker:
     """
     Creates a resources broker using the specified identifier.
 
     Args:
         comp: The global component.
+        svc: The service used for message sending.
         broker: The broker identifier.
         config: The broker configuration as an arbitrary record.
+        auth_token: An authorization token (can be **None**).
 
     Returns:
         The newly created broker.
@@ -51,4 +58,4 @@ def create_resources_broker(
     if broker_creator is None:
         raise RuntimeError(f"The resources broker '{broker}' couldn't be found")
 
-    return broker_creator(comp, config)
+    return broker_creator(comp, svc, config, auth_token)

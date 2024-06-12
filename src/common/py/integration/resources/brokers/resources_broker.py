@@ -1,7 +1,9 @@
 import abc
 
 from ....component import BackendComponent
+from ....data.entities.authorization import AuthorizationToken
 from ....data.entities.resource import ResourcesList
+from ....services import Service
 
 
 class ResourcesBroker(abc.ABC):
@@ -12,12 +14,20 @@ class ResourcesBroker(abc.ABC):
         Brokers report errors through raising exceptions (usually *RuntimeError*).
     """
 
-    def __init__(self, comp: BackendComponent, broker: str):
+    def __init__(
+        self,
+        comp: BackendComponent,
+        svc: Service,
+        broker: str,
+        *,
+        auth_token: AuthorizationToken | None = None
+    ):
         """
         Args:
             comp: The global component.
             broker: The broker identifier.
         """
+        # TODO: Use svc+auth_token to create strategy
         self._component = comp
 
         self._broker = broker
