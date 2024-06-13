@@ -28,6 +28,8 @@ def create_authorization_service(comp: BackendComponent) -> Service:
     from common.py.api.authorization import (
         RequestAuthorizationCommand,
         RequestAuthorizationReply,
+        RevokeAuthorizationCommand,
+        RevokeAuthorizationReply,
     )
     from common.py.api.component import ComponentProcessEvent
 
@@ -89,6 +91,40 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             message=message,
         ).emit()
 
+    @svc.message_handler(RevokeAuthorizationCommand, is_async=False)
+    def revoke_authorization(
+        msg: RevokeAuthorizationCommand, ctx: ServerServiceContext
+    ):
+        success = False
+        message = ""
+
+        if (
+            token := ctx.storage_pool.authorization_token_storage.get(
+                (msg.user_id, msg.auth_id)
+            )
+        ) is not None:
+            ctx.storage_pool.authorization_token_storage.remove(token)
+
+            success = True
+        else:
+            message = (
+                f"No authorization token {msg.auth_id} for user {msg.user_id} found"
+            )
+
+        RevokeAuthorizationReply.build(
+            ctx.message_builder,
+            msg,
+            success=success,
+            message=message,
+        ).emit()
+
+    @svc.message_handler(RevokeAuthorizationReply, is_async=False)
+    def revoke_authorization_reply(
+        msg: RevokeAuthorizationReply, ctx: ServerServiceContext
+    ):
+        # Suppress warnings about this message not being handled
+        pass
+
     @svc.message_handler(ComponentProcessEvent)
     def refresh_expired_tokens(
         msg: ComponentProcessEvent, ctx: ServerServiceContext
@@ -100,9 +136,6 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             for token in ctx.storage_pool.authorization_token_storage.list():
                 if has_authorization_token_expired(token):
                     try:
-                        token = ctx.storage_pool.authorization_token_storage.get(
-                            (token.user_id, token.auth_id)
-                        )
                         AuthorizationTokenVerifier(token).verify_update()
 
                         strategy = _create_strategy(ctx, token.strategy)

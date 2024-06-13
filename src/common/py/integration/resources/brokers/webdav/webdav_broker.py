@@ -2,6 +2,7 @@ import pathlib
 import typing
 import urllib.parse
 from dataclasses import dataclass
+from http import HTTPStatus
 
 import webdav3.client
 from dataclasses_json import dataclass_json
@@ -10,6 +11,8 @@ from .webdav_utils import parse_webdav_resource
 from .. import ResourcesBroker
 from ....authorization.strategies import AuthorizationStrategy
 from .....component import BackendComponent
+from .....core import logging
+from .....core.messaging import Channel
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import (
     ResourcesList,
@@ -73,6 +76,57 @@ class WebdavBroker(ResourcesBroker):
         include_files: bool = True,
         recursive: bool = True,
     ) -> ResourcesList:
+        root_path = pathlib.PurePosixPath(self._resolve_root(root))
+        return self._execute_request(
+            lambda: self._execute_list_resources(
+                root_path,
+                include_folders=include_folders,
+                include_files=include_files,
+                recursive=recursive,
+            ),
+            resource=root_path,
+        )
+
+    def _execute_request(
+        self,
+        cb: typing.Callable[[], typing.Any],
+        *,
+        resource: pathlib.PurePosixPath,
+        refresh_unauthorized_token: bool = True,
+    ) -> typing.Any:
+        try:
+            return cb()
+        except webdav3.client.ResponseErrorCode as exc:
+            # If the request throws a 401 (unauthorized), first try to refresh the auth token and re-do the call
+            # If the second try fails, the auth token is removed and an error is thrown
+            if exc.code == HTTPStatus.UNAUTHORIZED and refresh_unauthorized_token:
+                try:
+                    self._auth_strategy.refresh_authorization(self._auth_token)
+                    return self._execute_request(
+                        cb, resource=resource, refresh_unauthorized_token=False
+                    )
+                except:  # pylint: disable=bare-except
+                    pass
+
+            logging.warning(
+                "Resource access error - removing authorization token",
+                scope="webdav",
+                resource=str(resource),
+                error=str(exc),
+            )
+
+            self._revoke_auth_token()
+
+            raise exc
+
+    def _execute_list_resources(
+        self,
+        root: pathlib.PurePosixPath,
+        *,
+        include_folders: bool = True,
+        include_files: bool = True,
+        recursive: bool = True,
+    ) -> ResourcesList:
         def _process_path(
             root_path: pathlib.PurePosixPath, *, process_resource: bool
         ) -> ResourcesList:
@@ -121,9 +175,7 @@ class WebdavBroker(ResourcesBroker):
                 files=files,
             )
 
-        return _process_path(
-            pathlib.PurePosixPath(self._resolve_root(root)), process_resource=True
-        )
+        return _process_path(root, process_resource=True)
 
     def _create_webdav_client(self) -> webdav3.client.Client:
         if self._config.host == "" or self._config.endpoint == "":

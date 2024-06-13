@@ -8,6 +8,7 @@ from ...authorization.strategies import (
 )
 from ....component import BackendComponent
 from ....core import logging
+from ....core.messaging import Channel
 from ....data.entities.authorization import AuthorizationToken
 from ....data.entities.resource import ResourcesList
 from ....data.entities.user import UserToken
@@ -95,6 +96,16 @@ class ResourcesBroker(IntegrationHandler):
         return self._replace_user_token_placeholders(
             root if root != "" else self._default_root
         )
+
+    def _revoke_auth_token(self) -> None:
+        if self.has_authorization:
+            from ....api.authorization import RevokeAuthorizationCommand
+
+            RevokeAuthorizationCommand.build(
+                self._service.message_builder,
+                user_id=self._user_token.user_id,
+                auth_id=self._auth_token.auth_id,
+            ).failed(lambda _, msg: None).emit(Channel.local())
 
     @property
     def broker(self) -> str:

@@ -43,6 +43,7 @@ class ConnectorComponent(BackendComponent):
         from ..data.entities.connector.categories import register_connector_categories
         from ..services import (
             create_connector_service,
+            create_authorization_service,
             create_project_jobs_service,
             ConnectorServiceContext,
         )
@@ -55,6 +56,7 @@ class ConnectorComponent(BackendComponent):
 
         # Create connector-specific services
         create_connector_service(self)
+        create_authorization_service(self)
         create_project_jobs_service(self)
 
         super().run()
