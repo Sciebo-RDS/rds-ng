@@ -14,12 +14,12 @@ import { humanReadableFileSize } from "../../../utils/Strings";
 const props = defineProps({
     data: {
         type: Object as PropType<Object[]>,
-        required: true
+        required: true,
     },
     refreshable: {
         type: Boolean,
-        default: false
-    }
+        default: false,
+    },
 });
 const { data, refreshable } = toRefs(props);
 const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
@@ -70,10 +70,9 @@ function collapseAll(): void {
         class="grid content-start border-0 border-t-2 border-slate-50"
         :pt="{
             header: 'r-shade-gray h-fit',
-             footer: 'r-shade-dark-gray sticky top-[100vh] border-0',
-             wrapper: '!overflow-auto'
+            footer: 'r-shade-dark-gray sticky top-[100vh] border-0',
+            wrapper: '!overflow-auto',
         }"
-
     >
         <template #header>
             <div class="text-right">
@@ -98,7 +97,7 @@ function collapseAll(): void {
             </template>
         </Column>
 
-        <Column header="Files in folder" class="w-32 text-right truncate" :pt="{ headerCell: 'r-shade-gray' }">
+        <Column header="Elements in folder" class="w-32 text-right truncate" :pt="{ headerCell: 'r-shade-gray' }">
             <template #body="entry">
                 <span v-if="entry.node.data.type === ResourceType.Folder">{{ entry.node.children.length }}</span>
             </template>
