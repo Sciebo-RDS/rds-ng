@@ -13,7 +13,7 @@ from .....services import Service
 
 @dataclass_json
 @dataclass(frozen=True, kw_only=True)
-class FilesystemConfiguration:
+class FilesystemBrokerConfiguration:
     """
     The filesystem broker configuration.
     """
@@ -32,7 +32,7 @@ class FilesystemBroker(ResourcesBroker):
         self,
         comp: BackendComponent,
         svc: Service,
-        config: FilesystemConfiguration,
+        config: FilesystemBrokerConfiguration,
         *,
         user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
@@ -70,8 +70,9 @@ def create_filesystem_broker(
     comp: BackendComponent,
     svc: Service,
     config: typing.Any,
+    *,
     user_token: UserToken,
-    auth_token: AuthorizationToken | None,
+    auth_token: AuthorizationToken | None = None,
 ) -> FilesystemBroker:
     """
     Creates a new filesystem broker instance, automatically configuring it.
@@ -86,7 +87,7 @@ def create_filesystem_broker(
     Returns:
         The newly created broker.
     """
-    fs_config = FilesystemConfiguration.from_dict(config)
+    fs_config = FilesystemBrokerConfiguration.from_dict(config)
 
     return FilesystemBroker(
         comp, svc, fs_config, user_token=user_token, auth_token=auth_token

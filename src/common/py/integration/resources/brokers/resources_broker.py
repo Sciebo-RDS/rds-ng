@@ -1,8 +1,10 @@
 import abc
 
+from ... import IntegrationHandler
 from ...authorization.strategies import (
     AuthorizationStrategy,
     create_authorization_strategy,
+    get_authorization_strategy_configuration,
 )
 from ....component import BackendComponent
 from ....core import logging
@@ -12,7 +14,7 @@ from ....data.entities.user import UserToken
 from ....services import Service
 
 
-class ResourcesBroker(abc.ABC):
+class ResourcesBroker(IntegrationHandler):
     """
     Base class for all resources brokers.
 
@@ -39,19 +41,25 @@ class ResourcesBroker(abc.ABC):
             auth_token: An optional authorization token.
             default_root: The default root path (overrides the globally configured root).
         """
-        self._component = comp
+        super().__init__(comp, svc, user_token=user_token, auth_token=auth_token)
 
         self._broker = broker
 
-        self._user_token = user_token
-        self._auth_token = auth_token
         self._auth_strategy = (
             self._create_auth_strategy(svc, auth_token.strategy)
             if svc is not None and auth_token is not None
             else None
         )
 
-        self._default_root = default_root
+        from ....settings.integration_setting_ids import IntegrationSettingIDs
+
+        self._default_root = (
+            default_root
+            if default_root != ""
+            else self._component.data.config.value(
+                IntegrationSettingIDs.DEFAULT_ROOT_PATH
+            )
+        )
 
     @abc.abstractmethod
     def list_resources(
@@ -70,6 +78,9 @@ class ResourcesBroker(abc.ABC):
                 self._component,
                 svc,
                 strategy,
+                get_authorization_strategy_configuration(strategy),
+                user_token=self._user_token,
+                auth_token=self._auth_token,
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logging.warning(
@@ -80,22 +91,10 @@ class ResourcesBroker(abc.ABC):
             )
             return None
 
-    def _replace_user_token_placeholders(self, s: str) -> str:
-        s = s.replace("{USER_ID}", self._user_token.user_id)
-        s = s.replace("{USER_NAME}", self._user_token.user_name)
-        s = s.replace("{SYSTEM_ID}", self._user_token.system_id)
-        s = s.replace("{ACCESS_ID}", self._user_token.access_id)
-        return s
-
     def _resolve_root(self, root: str) -> str:
-        root_path = root if root != "" else self._default_root
-        if root_path == "":
-            from ....settings.integration_setting_ids import IntegrationSettingIDs
-
-            root_path = self._component.data.config.value(
-                IntegrationSettingIDs.DEFAULT_ROOT_PATH
-            )
-        return root_path
+        return self._replace_user_token_placeholders(
+            root if root != "" else self._default_root
+        )
 
     @property
     def broker(self) -> str:

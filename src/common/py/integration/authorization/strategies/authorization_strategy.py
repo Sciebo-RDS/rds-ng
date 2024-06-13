@@ -1,14 +1,15 @@
 import abc
 import typing
-from enum import auto, IntFlag, Flag
+from enum import auto, Flag
 
+from ... import IntegrationHandler
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationToken
-from ....data.entities.user import UserID
+from ....data.entities.user import UserID, UserToken
 from ....services import Service
 
 
-class AuthorizationStrategy(abc.ABC):
+class AuthorizationStrategy(IntegrationHandler):
     """
     Base class for all authorization strategies.
 
@@ -30,16 +31,21 @@ class AuthorizationStrategy(abc.ABC):
         comp: BackendComponent,
         svc: Service,
         strategy: str,
+        *,
         contents: ContentType,
+        user_token: UserToken | None = None,
+        auth_token: AuthorizationToken | None = None,
     ):
         """
         Args:
             comp: The global component.
             svc: The service used to send messages through.
             strategy: The strategy identifier.
+            contents: The contents this strategy provides.
+            user_token: An optional user token.
+            auth_token: An optional authorization token.
         """
-        self._component = comp
-        self._service = svc
+        super().__init__(comp, svc, user_token=user_token, auth_token=auth_token)
 
         self._strategy = strategy
         self._contents = contents
@@ -50,7 +56,9 @@ class AuthorizationStrategy(abc.ABC):
     ) -> AuthorizationToken: ...
 
     @abc.abstractmethod
-    def refresh_authorization(self, token: AuthorizationToken) -> None: ...
+    def refresh_authorization(
+        self, token: AuthorizationToken
+    ) -> None: ...  # TODO: Token raus, Übergabe an ctor
 
     def provides_token_content(self, content: ContentType) -> bool:
         """

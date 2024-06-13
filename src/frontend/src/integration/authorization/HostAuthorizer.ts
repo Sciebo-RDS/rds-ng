@@ -1,6 +1,6 @@
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
-import { type OAuth2Configuration, OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { type OAuth2StrategyConfiguration, OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
@@ -60,7 +60,7 @@ export class HostAuthorizer extends Authorizer {
                         redirectURL: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
                         embedded: this._component.data.config.value<boolean>(HostIntegrationSettingIDs.Embedded),
                     },
-                } as OAuth2Configuration;
+                } as OAuth2StrategyConfiguration;
 
             default:
                 return {};

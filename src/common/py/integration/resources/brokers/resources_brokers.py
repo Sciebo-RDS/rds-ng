@@ -49,7 +49,7 @@ def create_resources_broker(
         broker: The broker identifier.
         config: The broker configuration as an arbitrary record.
         user_token: The user token.
-        auth_token: An authorization token (can be **None**).
+        auth_token: An optional authorization token.
 
     Returns:
         The newly created broker.
@@ -61,4 +61,6 @@ def create_resources_broker(
     if broker_creator is None:
         raise RuntimeError(f"The resources broker '{broker}' couldn't be found")
 
-    return broker_creator(comp, svc, config, user_token, auth_token)
+    return broker_creator(
+        comp, svc, config, user_token=user_token, auth_token=auth_token
+    )

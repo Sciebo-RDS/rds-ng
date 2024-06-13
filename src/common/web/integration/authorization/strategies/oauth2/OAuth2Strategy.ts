@@ -7,7 +7,7 @@ import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
 /**
  * The OAuth2 strategy configuration.
  */
-export interface OAuth2Configuration {
+export interface OAuth2StrategyConfiguration {
     server: {
         host: string;
         endpoints: {
@@ -28,9 +28,9 @@ export interface OAuth2Configuration {
 export class OAuth2Strategy extends AuthorizationStrategy {
     public static readonly Strategy = "oauth2";
 
-    private readonly _config: OAuth2Configuration;
+    private readonly _config: OAuth2StrategyConfiguration;
 
-    public constructor(comp: WebComponent, svc: Service, config: OAuth2Configuration) {
+    public constructor(comp: WebComponent, svc: Service, config: OAuth2StrategyConfiguration) {
         super(comp, svc, OAuth2Strategy.Strategy, config.client.embedded);
 
         this._config = config;
@@ -77,7 +77,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
  * @returns - The newly created strategy.
  */
 export function createOAuth2Strategy(comp: WebComponent, svc: Service, config: Record<string, any>): OAuth2Strategy {
-    const oauth2Config = config as OAuth2Configuration;
+    const oauth2Config = config as OAuth2StrategyConfiguration;
 
     // Verify the passed configuration
     if (!oauth2Config.server?.host) {

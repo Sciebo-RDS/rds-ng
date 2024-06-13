@@ -1,9 +1,6 @@
 import typing
 
-from common.py.integration.authorization.strategies import (
-    OAuth2Strategy,
-    OAuth2Configuration,
-)
+from .oauth2.oauth2_strategy import OAuth2Strategy, OAuth2StrategyConfiguration
 
 
 def get_authorization_strategy_configuration(strategy: str) -> typing.Any:
@@ -17,6 +14,6 @@ def get_authorization_strategy_configuration(strategy: str) -> typing.Any:
         The default configuration, or **None** if the strategy is unknown.
     """
     if strategy == OAuth2Strategy.Strategy:
-        return OAuth2Configuration()
+        return OAuth2StrategyConfiguration()
 
     return None

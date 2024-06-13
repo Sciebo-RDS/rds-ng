@@ -2,15 +2,14 @@ import typing
 
 from .authorization_strategies_catalog import AuthorizationStrategiesCatalog
 from .authorization_strategy import AuthorizationStrategy
-from .authorization_strategy_configuration import (
-    get_authorization_strategy_configuration,
-)
 from .oauth2 import (
     OAuth2Strategy,
     create_oauth2_strategy,
 )
 from ....component import BackendComponent
 from ....core import logging
+from ....data.entities.authorization import AuthorizationToken
+from ....data.entities.user import UserToken
 from ....services import Service
 
 
@@ -37,6 +36,10 @@ def create_authorization_strategy(
     comp: BackendComponent,
     svc: Service,
     strategy: str,
+    config: typing.Any,
+    *,
+    user_token: UserToken | None = None,
+    auth_token: AuthorizationToken | None = None,
 ) -> AuthorizationStrategy:
     """
     Creates an authorization strategy using the specified identifier.
@@ -45,6 +48,9 @@ def create_authorization_strategy(
         comp: The global component.
         svc: The service to use for message sending.
         strategy: The strategy identifier.
+        config: The strategy configuration as an arbitrary record.
+        user_token: An optional user token.
+        auth_token: An optional authorization token.
 
     Returns:
         The newly created strategy.
@@ -57,5 +63,9 @@ def create_authorization_strategy(
         raise RuntimeError(f"The authorization strategy '{strategy}' couldn't be found")
 
     return strategy_creator(
-        comp, svc, get_authorization_strategy_configuration(strategy)
+        comp,
+        svc,
+        config,
+        user_token=user_token,
+        auth_token=auth_token,
     )

@@ -1,6 +1,9 @@
 from common.py.component import BackendComponent
 from common.py.core import logging
-from common.py.data.entities.authorization import has_authorization_token_expired
+from common.py.data.entities.authorization import (
+    has_authorization_token_expired,
+    get_host_authorization_token_id,
+)
 from common.py.data.verifiers.authorization import AuthorizationTokenVerifier
 from common.py.integration.authorization.strategies import (
     create_authorization_strategy,
@@ -34,11 +37,24 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         "Authorization service", context_type=ServerServiceContext
     )
 
-    def _create_strategy(strategy: str) -> AuthorizationStrategy:
+    def _create_strategy(
+        ctx: ServerServiceContext, strategy: str
+    ) -> AuthorizationStrategy:
+        auth_token = (
+            ctx.storage_pool.authorization_token_storage.get(
+                get_host_authorization_token_id(ctx.user)
+            )
+            if ctx.user
+            else None
+        )
+
         return create_authorization_strategy(
             comp,
             svc,
             strategy,
+            get_authorization_strategy_configuration(strategy),
+            user_token=ctx.session.user_token if ctx.session else None,
+            auth_token=auth_token,
         )
 
     @svc.message_handler(RequestAuthorizationCommand, is_async=True)
@@ -53,7 +69,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
 
         if msg.fingerprint == ctx.session.fingerprint:
             try:
-                strategy = _create_strategy(msg.strategy)
+                strategy = _create_strategy(ctx, msg.strategy)
                 auth_token = strategy.request_authorization(
                     ctx.user.user_id, msg.auth_id, msg.data
                 )
@@ -89,7 +105,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                         )
                         AuthorizationTokenVerifier(token).verify_update()
 
-                        strategy = _create_strategy(token.strategy)
+                        strategy = _create_strategy(ctx, token.strategy)
                         strategy.refresh_authorization(token)
 
                         logging.debug(

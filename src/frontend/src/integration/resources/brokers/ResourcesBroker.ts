@@ -7,7 +7,7 @@ import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { type HostResources } from "@/integration/HostTypes";
-import { IntegrationBase } from "@/integration/IntegrationBase";
+import { IntegrationHandler } from "@/integration/IntegrationHandler";
 
 export type ResourcesBrokerDoneCallback = () => void;
 export type ResourcesBrokerFailCallback = (msg: string) => void;
@@ -15,7 +15,7 @@ export type ResourcesBrokerFailCallback = (msg: string) => void;
 /**
  * Base resources broker.
  */
-export abstract class ResourcesBroker extends IntegrationBase {
+export abstract class ResourcesBroker extends IntegrationHandler {
     protected readonly _hostResources: HostResources;
 
     protected readonly _callbacks = new ExecutionCallbacks<ResourcesBrokerDoneCallback, ResourcesBrokerFailCallback>();

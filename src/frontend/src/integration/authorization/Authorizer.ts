@@ -4,7 +4,7 @@ import { AuthorizationState } from "@common/data/entities/authorization/Authoriz
 import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 
 import { useUserStore } from "@/data/stores/UserStore";
-import { IntegrationBase } from "@/integration/IntegrationBase";
+import { IntegrationHandler } from "@/integration/IntegrationHandler";
 
 export type AuthorizerDoneCallback = () => void;
 export type AuthorizerFailCallback = (msg: string) => void;
@@ -12,7 +12,7 @@ export type AuthorizerFailCallback = (msg: string) => void;
 /**
  * Base authorizer.
  */
-export abstract class Authorizer extends IntegrationBase {
+export abstract class Authorizer extends IntegrationHandler {
     protected readonly _callbacks = new ExecutionCallbacks<AuthorizerDoneCallback, AuthorizerFailCallback>();
 
     /**

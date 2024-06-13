@@ -1,5 +1,5 @@
 from common.py.integration.authorization.strategies.oauth2.oauth2_strategy import (
-    OAuth2Configuration,
+    OAuth2StrategyConfiguration,
     OAuth2AuthorizationRequestData,
     OAuth2Strategy,
     create_oauth2_strategy,

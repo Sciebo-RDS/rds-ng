@@ -1,9 +1,9 @@
 import type { FrontendComponent } from "@/component/FrontendComponent";
 
 /**
- * Base class for all integration parts.
+ * Base class for all integration handlers.
  */
-export abstract class IntegrationBase {
+export abstract class IntegrationHandler {
     protected readonly _component: FrontendComponent;
 
     protected constructor(comp: FrontendComponent) {

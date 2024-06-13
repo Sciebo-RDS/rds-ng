@@ -1,1 +1,5 @@
-from .filesystem_broker import FilesystemBroker, create_filesystem_broker
+from .filesystem_broker import (
+    FilesystemBrokerConfiguration,
+    FilesystemBroker,
+    create_filesystem_broker,
+)

@@ -1,12 +1,12 @@
-import os
 import pathlib
 import typing
 import urllib.parse
 from dataclasses import dataclass
 
 import webdav3.client
-from dataclasses_json import dataclass_json, Undefined
+from dataclasses_json import dataclass_json
 
+from .webdav_utils import parse_webdav_resource
 from .. import ResourcesBroker
 from ....authorization.strategies import AuthorizationStrategy
 from .....component import BackendComponent
@@ -24,7 +24,7 @@ from .....utils import ensure_starts_with
 
 @dataclass_json
 @dataclass(frozen=True, kw_only=True)
-class WebdavConfiguration:
+class WebdavBrokerConfiguration:
     """
     The WebDAV broker configuration.
     """
@@ -32,19 +32,6 @@ class WebdavConfiguration:
     host: str = ""
     endpoint: str = ""
     requires_auth: bool = False
-
-
-@dataclass_json(undefined=Undefined.EXCLUDE)
-@dataclass(frozen=True, kw_only=True)
-class WebdavResource:
-    """
-    A resource information object as returned by WebDAV.
-    """
-
-    path: str
-    isdir: bool
-
-    size: int | None  # Only filled for files
 
 
 class WebdavBroker(ResourcesBroker):
@@ -58,7 +45,7 @@ class WebdavBroker(ResourcesBroker):
         self,
         comp: BackendComponent,
         svc: Service,
-        config: WebdavConfiguration,
+        config: WebdavBrokerConfiguration,
         *,
         user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
@@ -68,7 +55,7 @@ class WebdavBroker(ResourcesBroker):
         )
 
         # Copy the configuration field-by-field, replacing placeholders on-the-go
-        self._config = WebdavConfiguration(
+        self._config = WebdavBrokerConfiguration(
             host=self._replace_user_token_placeholders(config.host),
             endpoint=ensure_starts_with(
                 self._replace_user_token_placeholders(config.endpoint), "/"
@@ -96,7 +83,9 @@ class WebdavBroker(ResourcesBroker):
             if process_resource:
                 for child_resource in self._client.list(str(root_path), get_info=True):
                     if (
-                        resource := self._parse_webdav_resource(child_resource)
+                        resource := parse_webdav_resource(
+                            child_resource, self._config.endpoint
+                        )
                     ) is not None:
                         child_path = pathlib.PurePosixPath(resource.path)
                         if (
@@ -152,16 +141,15 @@ class WebdavBroker(ResourcesBroker):
             ),
         }
 
+        def _add_option(
+            content_type: AuthorizationStrategy.ContentType, key: str
+        ) -> None:
+            if self._auth_strategy.provides_token_content(content_type):
+                options[key] = self._auth_strategy.get_token_content(
+                    self._auth_token, content_type
+                )
+
         if self._config.requires_auth and self.has_authorization:
-
-            def _add_option(
-                content_type: AuthorizationStrategy.ContentType, key: str
-            ) -> None:
-                if self._auth_strategy.provides_token_content(content_type):
-                    options[key] = self._auth_strategy.get_token_content(
-                        self._auth_token, content_type
-                    )
-
             _add_option(AuthorizationStrategy.ContentType.AUTH_LOGIN, "webdav_login")
             _add_option(
                 AuthorizationStrategy.ContentType.AUTH_PASSWORD, "webdav_password"
@@ -170,31 +158,14 @@ class WebdavBroker(ResourcesBroker):
 
         return webdav3.client.Client(options)
 
-    def _parse_webdav_resource(
-        self, resource: typing.Dict[str, typing.Any]
-    ) -> WebdavResource | None:
-        try:
-            resource = typing.cast(WebdavResource, WebdavResource.from_dict(resource))
-            return WebdavResource(
-                path=ensure_starts_with(
-                    ensure_starts_with(resource.path, "/").replace(
-                        self._config.endpoint, "", 1
-                    ),
-                    "/",
-                ),
-                isdir=resource.isdir,
-                size=resource.size if resource.size else 0,
-            )  # Return a cleaned up and standardized resource
-        except:  # pylint: disable=bare-except
-            return None
-
 
 def create_webdav_broker(
     comp: BackendComponent,
     svc: Service,
     config: typing.Any,
+    *,
     user_token: UserToken,
-    auth_token: AuthorizationToken | None,
+    auth_token: AuthorizationToken | None = None,
 ) -> WebdavBroker:
     """
     Creates a new WebDAV broker instance, automatically configuring it.
@@ -209,7 +180,9 @@ def create_webdav_broker(
     Returns:
         The newly created broker.
     """
-    webdav_config: WebdavConfiguration = WebdavConfiguration.from_dict(config)
+    webdav_config: WebdavBrokerConfiguration = WebdavBrokerConfiguration.from_dict(
+        config
+    )
 
     return WebdavBroker(
         comp, svc, webdav_config, user_token=user_token, auth_token=auth_token

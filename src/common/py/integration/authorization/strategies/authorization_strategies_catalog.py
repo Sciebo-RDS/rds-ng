@@ -2,11 +2,20 @@ import typing
 
 from .authorization_strategy import AuthorizationStrategy
 from ....component import BackendComponent
+from ....data.entities.authorization import AuthorizationToken
+from ....data.entities.user import UserToken
 from ....services import Service
 from ....utils import ItemsCatalog
 
 AuthorizationStrategyCreator = typing.Callable[
-    [BackendComponent, Service, typing.Any], AuthorizationStrategy
+    [
+        BackendComponent,
+        Service,
+        typing.Any,
+        UserToken | None,
+        AuthorizationToken | None,
+    ],
+    AuthorizationStrategy,
 ]
 
 
