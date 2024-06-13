@@ -88,7 +88,7 @@ def create_resources_service(comp: BackendComponent) -> Service:
             ctx.message_builder, msg, success=success, message=message
         ).emit()
 
-    @svc.message_handler(ListResourcesCommand, is_async=True)
+    @svc.message_handler(ListResourcesCommand)
     def list_resources(msg: ListResourcesCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(
             msg, ListResourcesReply, resources=ResourcesList(resource=msg.root)

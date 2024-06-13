@@ -11,7 +11,7 @@ from common.py.integration.authorization.strategies import (
     get_authorization_strategy_configuration,
 )
 from common.py.services import Service
-from common.py.utils.entry_guard import EntryGuard
+from common.py.utils import EntryGuard
 
 
 def create_authorization_service(comp: BackendComponent) -> Service:
@@ -57,7 +57,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             auth_token=auth_token,
         )
 
-    @svc.message_handler(RequestAuthorizationCommand, is_async=True)
+    @svc.message_handler(RequestAuthorizationCommand)
     def request_authorization(
         msg: RequestAuthorizationCommand, ctx: ServerServiceContext
     ):
@@ -89,7 +89,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             message=message,
         ).emit()
 
-    @svc.message_handler(ComponentProcessEvent, is_async=True)
+    @svc.message_handler(ComponentProcessEvent)
     def refresh_expired_tokens(
         msg: ComponentProcessEvent, ctx: ServerServiceContext
     ) -> None:

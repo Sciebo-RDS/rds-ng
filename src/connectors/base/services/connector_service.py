@@ -1,5 +1,6 @@
 from common.py.component import BackendComponent
 from common.py.services import Service
+from common.py.utils import EntryGuard
 
 _ANNOUNCE_INTERVAL = 3600  # Once per hour
 
@@ -25,23 +26,27 @@ def create_connector_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(ComponentProcessEvent)
     def announce(msg: ComponentProcessEvent, ctx: ConnectorServiceContext) -> None:
-        if msg.timestamp - svc.state.last_announce >= _ANNOUNCE_INTERVAL:
-            from common.py.api.connector import ConnectorAnnounceEvent
+        with EntryGuard("announce") as guard:
+            if not guard.can_execute:
+                return
 
-            from ..component import ConnectorComponent
+            if msg.timestamp - svc.state.last_announce >= _ANNOUNCE_INTERVAL:
+                from common.py.api.connector import ConnectorAnnounceEvent
 
-            info = ConnectorComponent.instance().connector_info
-            ConnectorAnnounceEvent.build(
-                ctx.message_builder,
-                connector_id=info.connector_id,
-                name=info.name,
-                description=info.description,
-                category=info.category,
-                options=info.options,
-                logos=info.logos,
-                metadata_profile=info.metadata_profile,
-            ).emit(ctx.remote_channel)
+                from ..component import ConnectorComponent
 
-            svc.state.last_announce = msg.timestamp
+                info = ConnectorComponent.instance().connector_info
+                ConnectorAnnounceEvent.build(
+                    ctx.message_builder,
+                    connector_id=info.connector_id,
+                    name=info.name,
+                    description=info.description,
+                    category=info.category,
+                    options=info.options,
+                    logos=info.logos,
+                    metadata_profile=info.metadata_profile,
+                ).emit(ctx.remote_channel)
+
+                svc.state.last_announce = msg.timestamp
 
     return svc

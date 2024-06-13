@@ -5,6 +5,7 @@ from common.py.core.logging import info, debug, warning
 from common.py.data.entities.connector import Connector
 from common.py.data.verifiers.connector import ConnectorVerifier
 from common.py.services import Service
+from common.py.utils import EntryGuard
 
 _MAX_CONNECTOR_AGE = (
     2.5 * 3600
@@ -94,17 +95,21 @@ def create_connectors_service(comp: BackendComponent) -> Service:
     def purge_obsolete_connectors(
         msg: ComponentProcessEvent, ctx: ServerServiceContext
     ) -> None:
-        connectors = ctx.storage_pool.connector_storage.list()
+        with EntryGuard("purge_obsolete_connectors") as guard:
+            if not guard.can_execute:
+                return
 
-        for connector in connectors:
-            if msg.timestamp - connector.announce_timestamp >= _MAX_CONNECTOR_AGE:
-                ctx.storage_pool.connector_storage.remove(connector)
-                warning(
-                    "Connector removed due to obsolescence",
-                    scope="connectors",
-                    id=connector.connector_id,
-                    name=connector.name,
-                )
+            connectors = ctx.storage_pool.connector_storage.list()
+
+            for connector in connectors:
+                if msg.timestamp - connector.announce_timestamp >= _MAX_CONNECTOR_AGE:
+                    ctx.storage_pool.connector_storage.remove(connector)
+                    warning(
+                        "Connector removed due to obsolescence",
+                        scope="connectors",
+                        id=connector.connector_id,
+                        name=connector.name,
+                    )
 
     @svc.message_handler(ListConnectorsCommand)
     def list_connectors(msg: ListConnectorsCommand, ctx: ServerServiceContext) -> None:
