@@ -1,16 +1,22 @@
 import os
+import pathlib
 import typing
 import urllib.parse
 from dataclasses import dataclass
 
 import webdav3.client
-from dataclasses_json import dataclass_json
+from dataclasses_json import dataclass_json, Undefined
 
 from .. import ResourcesBroker
 from ....authorization.strategies import AuthorizationStrategy
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
-from .....data.entities.resource import ResourcesList, Resource
+from .....data.entities.resource import (
+    ResourcesList,
+    Resource,
+    ResourceFolders,
+    ResourceFiles,
+)
 from .....data.entities.user import UserToken
 from .....services import Service
 from .....utils import ensure_starts_with
@@ -26,6 +32,19 @@ class WebdavConfiguration:
     host: str = ""
     endpoint: str = ""
     requires_auth: bool = False
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass(frozen=True, kw_only=True)
+class WebdavResource:
+    """
+    A resource information object as returned by WebDAV.
+    """
+
+    path: str
+    isdir: bool
+
+    size: int | None  # Only filled for files
 
 
 class WebdavBroker(ResourcesBroker):
@@ -67,38 +86,55 @@ class WebdavBroker(ResourcesBroker):
         include_files: bool = True,
         recursive: bool = True,
     ) -> ResourcesList:
-        resources = ResourcesList(
-            resource=Resource(
-                filename=root,
-                basename=os.path.basename(root),
-                type=Resource.Type.FOLDER,
+        def _process_path(
+            root_path: pathlib.PurePosixPath, *, process_resource: bool
+        ) -> ResourcesList:
+            folders: ResourceFolders = []
+            files: ResourceFiles = []
+            total_size: int = 0
+
+            if process_resource:
+                for child_resource in self._client.list(str(root_path), get_info=True):
+                    if (
+                        resource := self._parse_webdav_resource(child_resource)
+                    ) is not None:
+                        child_path = pathlib.PurePosixPath(resource.path)
+                        if (
+                            child_path == root_path
+                        ):  # WebDAV enumerates the current path, so we need to avoid endless recursion
+                            continue
+
+                        if resource.isdir and include_folders:
+                            path_resources = _process_path(
+                                child_path, process_resource=recursive
+                            )
+                            folders.append(path_resources)
+                            total_size += path_resources.resource.size
+                        elif not resource.isdir and include_files:
+                            files.append(
+                                Resource(
+                                    filename=str(child_path),
+                                    basename=child_path.name,
+                                    type=Resource.Type.FILE,
+                                    size=resource.size,
+                                )
+                            )
+                            total_size += resource.size
+
+            return ResourcesList(
+                resource=Resource(
+                    filename=str(root_path),
+                    basename=root_path.name if root_path.name else "All files",
+                    type=Resource.Type.FOLDER,
+                    size=total_size,
+                ),
+                folders=folders,
+                files=files,
             )
+
+        return _process_path(
+            pathlib.PurePosixPath(self._resolve_root(root)), process_resource=True
         )
-
-        # Listing is _not_ recursive and contains both files and folders
-        files = self._client.list(self._resolve_root(root), get_info=True)
-
-        # TODO: Convert files
-        # TODO: Remove endpoint portion from beginning; both must begin with a / (ensure) -> ensure_starts_with
-
-        #  {
-        #       "created":"None",
-        #       "name":"None",
-        #       "size":"13378",
-        #       "modified":"Fri, 07 Jun 2024 08:58:55 GMT",
-        #       "etag":"\"54944d8770ddcb128282a5c7485c212b\"",
-        #       "content_type":"application/vnd.oasis.opendocument.spreadsheet",
-        #       "isdir":false,
-        #       "path":"/remote.php/dav/files/admin/Templates/Diagram & table.ods"
-        #    },
-
-        print("------------------------", flush=True)
-        print(files, flush=True)
-        print("------------------------", flush=True)
-        print(self._config.endpoint, flush=True)
-        print("------------------------", flush=True)
-
-        return resources
 
     def _create_webdav_client(self) -> webdav3.client.Client:
         if self._config.host == "" or self._config.endpoint == "":
@@ -133,6 +169,24 @@ class WebdavBroker(ResourcesBroker):
             _add_option(AuthorizationStrategy.ContentType.AUTH_TOKEN, "webdav_token")
 
         return webdav3.client.Client(options)
+
+    def _parse_webdav_resource(
+        self, resource: typing.Dict[str, typing.Any]
+    ) -> WebdavResource | None:
+        try:
+            resource = typing.cast(WebdavResource, WebdavResource.from_dict(resource))
+            return WebdavResource(
+                path=ensure_starts_with(
+                    ensure_starts_with(resource.path, "/").replace(
+                        self._config.endpoint, "", 1
+                    ),
+                    "/",
+                ),
+                isdir=resource.isdir,
+                size=resource.size if resource.size else 0,
+            )  # Return a cleaned up and standardized resource
+        except:  # pylint: disable=bare-except
+            return None
 
 
 def create_webdav_broker(
