@@ -8,7 +8,7 @@ import { Authenticator } from "@/integration/authentication/Authenticator";
  */
 export class BasicAuthenticator extends Authenticator {
     public constructor(comp: FrontendComponent, userName: string) {
-        super(comp, createUserToken(userName, userName));
+        super(comp, createUserToken(userName));
     }
 
     public authenticate(): void {

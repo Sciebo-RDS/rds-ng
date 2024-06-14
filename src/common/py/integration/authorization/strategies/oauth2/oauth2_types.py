@@ -10,12 +10,14 @@ class OAuth2AuthorizationRequestData:
     OAuth2 authorization request data.
 
     Attributes:
+        token_host: The OAuth2 token host.
         token_endpoint: The OAuth2 token endpoint.
         client_id: The OAuth2 client ID.
         auth_code: The authorization code.
         redirect_url: The redirection URL.
     """
 
+    token_host: str
     token_endpoint: str
 
     client_id: str
@@ -49,10 +51,12 @@ class OAuth2TokenData:
     OAuth2 additional token data.
 
     Attributes:
+        token_host: The OAuth2 token host.
         token_endpoint: The OAuth2 token endpoint.
         client_id: The OAuth2 client ID.
     """
 
+    token_host: str
     token_endpoint: str
 
     client_id: str

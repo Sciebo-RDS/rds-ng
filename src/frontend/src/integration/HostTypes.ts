@@ -25,8 +25,10 @@ export function hostAuthorizationFromData(data: Record<string, any>): HostAuthor
  */
 export interface HostUserToken {
     userID: string;
-    systemID: string;
     userName: string;
+
+    systemID: string;
+    accessID: string;
 }
 
 /**
@@ -39,7 +41,16 @@ export interface HostUserToken {
 export function hostUserTokenFromData(data: Record<string, any>): HostUserToken {
     return {
         userID: data["user-id"],
-        systemID: data["system-id"],
         userName: data["user-name"],
+        systemID: data["system-id"],
+        accessID: data["access-id"],
     } as HostUserToken;
+}
+
+/**
+ * Details about the host resources scheme.
+ */
+export interface HostResources {
+    broker: string;
+    config: Record<string, any>;
 }

@@ -54,14 +54,20 @@ const datapath = validator.defineComponentBinds("datapath");
 const activeInstances = validator.defineComponentBinds("activeInstances");
 
 const resourcesNodes = ref<Object[]>([]);
+const resourcesError = ref("");
 onMounted(() => {
     if (showDataPathSelector) {
         const action = new ListResourcesAction(comp, true);
-        action.prepare("", true, false).done((reply: ListResourcesReply, success, msg) => {
-            if (success) {
-                resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
-            }
-        });
+        action
+            .prepare("", true, false)
+            .done((reply: ListResourcesReply, success, msg) => {
+                if (success) {
+                    resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
+                }
+            })
+            .failed((_, msg) => {
+                resourcesError.value = "Unable to load resources";
+            });
         action.execute();
     }
 });
@@ -108,6 +114,7 @@ watch(
                         v-bind="datapath"
                         v-model="dialogData.userData.datapath"
                         :options="resourcesNodes"
+                        :loading-error="resourcesError"
                         placeholder="Select where the data of this project is stored"
                         loading
                         :class="{ 'p-invalid': validator.errors.datapath }"

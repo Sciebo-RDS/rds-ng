@@ -1,5 +1,6 @@
 import time
 import typing
+import urllib.parse
 from dataclasses import dataclass
 from http import HTTPStatus
 
@@ -11,13 +12,13 @@ from .oauth2_utils import format_oauth2_error_response
 from ..authorization_strategy import AuthorizationStrategy
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
-from .....data.entities.user import UserID
+from .....data.entities.user import UserID, UserToken
 from .....services import Service
 
 
 @dataclass_json
 @dataclass(frozen=True, kw_only=True)
-class OAuth2Configuration:
+class OAuth2StrategyConfiguration:
     """
     The OAuth2 strategy configuration.
     """
@@ -31,11 +32,24 @@ class OAuth2Strategy(AuthorizationStrategy):
     Strategy: str = "oauth2"
 
     def __init__(
-        self, comp: BackendComponent, svc: Service, config: OAuth2Configuration
+        self,
+        comp: BackendComponent,
+        svc: Service,
+        config: OAuth2StrategyConfiguration,
+        *,
+        user_token: UserToken | None = None,
+        auth_token: AuthorizationToken | None = None,
     ):
         from .....settings import NetworkSettingIDs
 
-        super().__init__(comp, svc, OAuth2Strategy.Strategy)
+        super().__init__(
+            comp,
+            svc,
+            OAuth2Strategy.Strategy,
+            contents=AuthorizationStrategy.ContentType.AUTH_TOKEN,
+            user_token=user_token,
+            auth_token=auth_token,
+        )
 
         self._config = config
 
@@ -50,7 +64,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         client_secret = self._get_client_secret(auth_id)
 
         response = requests.post(
-            oauth2_data.token_endpoint,
+            urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
             data={
                 "grant_type": "authorization_code",
                 "client_id": oauth2_data.client_id,
@@ -73,6 +87,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                     strategy=self.strategy,
                     token=self._create_oauth2_token(resp_data),
                     data=OAuth2TokenData(
+                        token_host=oauth2_data.token_host,
                         token_endpoint=oauth2_data.token_endpoint,
                         client_id=oauth2_data.client_id,
                     ),
@@ -85,15 +100,14 @@ class OAuth2Strategy(AuthorizationStrategy):
             )
 
     def refresh_authorization(self, token: AuthorizationToken) -> None:
-        oauth2_token: OAuth2Token = OAuth2Token.from_dict(token.token)
-        oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
+        oauth2_token, oauth2_data = self._get_oauth2_data_from_token(token)
         client_secret = self._get_client_secret(token.auth_id)
 
         if oauth2_token.refresh_token is None:
             raise RuntimeError("Tried to refresh without a refresh token")
 
         response = requests.post(
-            oauth2_data.token_endpoint,
+            urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
             data={
                 "grant_type": "refresh_token",
                 "client_id": oauth2_data.client_id,
@@ -117,6 +131,13 @@ class OAuth2Strategy(AuthorizationStrategy):
                 f"Unable to refresh access token: {format_oauth2_error_response(response)}"
             )
 
+    def _get_token_content(
+        self, token: AuthorizationToken, content: AuthorizationStrategy.ContentType
+    ) -> typing.Any:
+        # We only support a single content type, so no need to distinguish
+        oauth2_token, _ = self._get_oauth2_data_from_token(token)
+        return oauth2_token.access_token
+
     def _create_oauth2_token(self, resp_data) -> OAuth2Token:
         return OAuth2Token(
             access_token=resp_data["access_token"],
@@ -134,6 +155,8 @@ class OAuth2Strategy(AuthorizationStrategy):
         )
 
         # Verify the request data
+        if oauth2_data.token_host == "":
+            raise RuntimeError("Missing token host")
         if oauth2_data.token_endpoint == "":
             raise RuntimeError("Missing token endpoint")
         if oauth2_data.client_id == "":
@@ -144,6 +167,13 @@ class OAuth2Strategy(AuthorizationStrategy):
             raise RuntimeError("Missing redirection URL")
 
         return oauth2_data
+
+    def _get_oauth2_data_from_token(
+        self, token: AuthorizationToken
+    ) -> typing.Tuple[OAuth2Token, OAuth2TokenData]:
+        oauth2_token: OAuth2Token = OAuth2Token.from_dict(token.token)
+        oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
+        return oauth2_token, oauth2_data
 
     def _get_client_secret(self, auth_id: str) -> str:
         client_secret = self._get_config_value(f"secrets.{auth_id}", "")
@@ -172,7 +202,12 @@ class OAuth2Strategy(AuthorizationStrategy):
 
 
 def create_oauth2_strategy(
-    comp: BackendComponent, svc: Service, config: typing.Any
+    comp: BackendComponent,
+    svc: Service,
+    config: typing.Any,
+    *,
+    user_token: UserToken | None = None,
+    auth_token: AuthorizationToken | None = None,
 ) -> OAuth2Strategy:
     """
     Creates a new OAuth2 strategy instance, automatically configuring it.
@@ -181,13 +216,17 @@ def create_oauth2_strategy(
         comp: The main component.
         svc: The service to use for message sending.
         config: The strategy configuration.
+        user_token: An optional user token.
+        auth_token: An optional authorization token.
 
     Returns:
         The newly created strategy.
     """
-    if not isinstance(config, OAuth2Configuration):
+    if not isinstance(config, OAuth2StrategyConfiguration):
         raise RuntimeError("Invalid configuration passed for OAuth2")
 
-    oauth2_config = typing.cast(OAuth2Configuration, config)
+    oauth2_config = typing.cast(OAuth2StrategyConfiguration, config)
 
-    return OAuth2Strategy(comp, svc, oauth2_config)
+    return OAuth2Strategy(
+        comp, svc, oauth2_config, user_token=user_token, auth_token=auth_token
+    )

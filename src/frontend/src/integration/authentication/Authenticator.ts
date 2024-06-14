@@ -8,6 +8,7 @@ import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { IntegrationHandler } from "@/integration/IntegrationHandler";
 
 export type AuthenticatorDoneCallback = (authState: AuthorizationState, fingerprint: string) => void;
 export type AuthenticatorFailCallback = (msg: string) => void;
@@ -15,15 +16,13 @@ export type AuthenticatorFailCallback = (msg: string) => void;
 /**
  * Base authenticator.
  */
-export abstract class Authenticator {
-    protected readonly _component: FrontendComponent;
-
+export abstract class Authenticator extends IntegrationHandler {
     protected readonly _userToken: UserToken;
 
     protected readonly _callbacks = new ExecutionCallbacks<AuthenticatorDoneCallback, AuthenticatorFailCallback>();
 
     protected constructor(comp: FrontendComponent, token: UserToken) {
-        this._component = comp;
+        super(comp);
 
         this._userToken = token;
     }

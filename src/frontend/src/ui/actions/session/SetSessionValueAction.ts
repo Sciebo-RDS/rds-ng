@@ -15,7 +15,7 @@ export class SetSessionValueAction extends FrontendCommandAction<SetSessionValue
     public prepare(key: string, value: any): CommandComposer<SetSessionValueCommand> {
         super.prepareNotifiers();
 
-        this._composer = SetSessionValueCommand.build(this.messageBuilder, key, value).timeout(this._regularTimeout);
+        this._composer = SetSessionValueCommand.build(this.messageBuilder, key, value);
         return this._composer;
     }
 }

@@ -1,10 +1,12 @@
+import { type VueComponent } from "@common/component/WebComponent";
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { isUserTokenValid } from "@common/data/entities/user/UserToken";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { Authenticator } from "@/integration/authentication/Authenticator";
 import { Authorizer } from "@/integration/authorization/Authorizer";
-import { type VueComponent } from "@common/component/WebComponent";
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
-import { isUserTokenValid } from "@common/data/entities/user/UserToken";
+import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
 
 /**
  * Base class for integration schemes.
@@ -35,11 +37,17 @@ export abstract class IntegrationScheme {
     public abstract authorizer(...args: any[]): Authorizer;
 
     /**
+     * Creates a new resources broker.
+     */
+    public abstract resourcesBroker(...args: any[]): ResourcesBroker;
+
+    /**
      * Checks whether the integration has completed.
      */
     public get isIntegrated(): boolean {
-        const { userToken, authorizationState } = useUserStore();
-        return isUserTokenValid(userToken) && authorizationState == AuthorizationState.Authorized;
+        // The integration is completed when the user has been authenticated, authorized, and a broker has been assigned
+        const { userToken, authorizationState, brokerAssigned } = useUserStore();
+        return isUserTokenValid(userToken) && authorizationState == AuthorizationState.Authorized && brokerAssigned;
     }
 
     /**

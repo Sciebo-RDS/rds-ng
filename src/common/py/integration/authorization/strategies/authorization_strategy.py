@@ -1,13 +1,15 @@
 import abc
 import typing
+from enum import auto, Flag
 
+from ... import IntegrationHandler
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationToken
-from ....data.entities.user import UserID
+from ....data.entities.user import UserID, UserToken
 from ....services import Service
 
 
-class AuthorizationStrategy(abc.ABC):
+class AuthorizationStrategy(IntegrationHandler):
     """
     Base class for all authorization strategies.
 
@@ -15,17 +17,38 @@ class AuthorizationStrategy(abc.ABC):
         Strategies report errors through raising exceptions (usually *RuntimeError*).
     """
 
-    def __init__(self, comp: BackendComponent, svc: Service, strategy: str):
+    class ContentType(Flag):
+        """
+        Flags describing what contents the strategy provides.
+        """
+
+        AUTH_TOKEN = auto()
+        AUTH_LOGIN = auto()
+        AUTH_PASSWORD = auto()
+
+    def __init__(
+        self,
+        comp: BackendComponent,
+        svc: Service,
+        strategy: str,
+        *,
+        contents: ContentType,
+        user_token: UserToken | None = None,
+        auth_token: AuthorizationToken | None = None,
+    ):
         """
         Args:
             comp: The global component.
             svc: The service used to send messages through.
             strategy: The strategy identifier.
+            contents: The contents this strategy provides.
+            user_token: An optional user token.
+            auth_token: An optional authorization token.
         """
-        self._component = comp
-        self._service = svc
+        super().__init__(comp, svc, user_token=user_token, auth_token=auth_token)
 
         self._strategy = strategy
+        self._contents = contents
 
     @abc.abstractmethod
     def request_authorization(
@@ -33,7 +56,44 @@ class AuthorizationStrategy(abc.ABC):
     ) -> AuthorizationToken: ...
 
     @abc.abstractmethod
-    def refresh_authorization(self, token: AuthorizationToken) -> None: ...
+    def refresh_authorization(
+        self, token: AuthorizationToken
+    ) -> None: ...  # TODO: Token raus, Übergabe an ctor
+
+    def provides_token_content(self, content: ContentType) -> bool:
+        """
+        Checks if a certain content type is provided by this strategy.
+
+        Args:
+            content: The content type.
+        """
+        return content in self._contents
+
+    def get_token_content(
+        self, token: AuthorizationToken, content: ContentType
+    ) -> typing.Any:
+        """
+        Retrieves the token content of the specified type.
+
+        Args:
+            token: The authorization token.
+            content: The content type.
+
+        Returns:
+            The token content or **None** in case of any errors.
+        """
+        if token is None or content not in self._contents:
+            return None
+
+        try:
+            return self._get_token_content(token, content)
+        except:  # pylint: disable=bare-except
+            return None
+
+    @abc.abstractmethod
+    def _get_token_content(
+        self, token: AuthorizationToken, content: ContentType
+    ) -> typing.Any: ...
 
     def _get_config_value(self, key: str, default: typing.Any) -> typing.Any:
         from ....utils.config import SettingID
@@ -43,4 +103,14 @@ class AuthorizationStrategy(abc.ABC):
 
     @property
     def strategy(self) -> str:
+        """
+        The strategy identifier.
+        """
         return self._strategy
+
+    @property
+    def contents(self) -> ContentType:
+        """
+        The content flags.
+        """
+        return self._contents

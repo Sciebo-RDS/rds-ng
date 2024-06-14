@@ -27,16 +27,16 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
             new ProjectFeatures(
                 this.getFeatureFromArray<MetadataFeature>(updatedFeatures, MetadataFeature.FeatureID),
                 this.getFeatureFromArray<ResourcesMetadataFeature>(updatedFeatures, ResourcesMetadataFeature.FeatureID),
-                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID)
-            )
-        ).timeout(this._regularTimeout);
+                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID),
+            ),
+        );
         return this._composer;
     }
 
     protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`)
+            new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`),
         );
         this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Updating project", `Project '${title}' has been updated.`));
         this.addNotifier(
@@ -45,8 +45,8 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
                 OverlayNotificationType.Error,
                 "Error updating project",
                 `An error occurred while updating the features of project '${title}': ${ActionNotifier.MessagePlaceholder}.`,
-                true
-            )
+                true,
+            ),
         );
     }
 

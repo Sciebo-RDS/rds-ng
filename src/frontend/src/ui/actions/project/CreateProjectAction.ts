@@ -24,14 +24,14 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
     public prepare(resourcesPath: string, title: string, description: string, options: ProjectOptions): CommandComposer<CreateProjectCommand> {
         super.prepareNotifiers(title);
 
-        this._composer = CreateProjectCommand.build(this.messageBuilder, resourcesPath, title, description, options).timeout(this._regularTimeout);
+        this._composer = CreateProjectCommand.build(this.messageBuilder, resourcesPath, title, description, options);
         return this._composer;
     }
 
     protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Creating project", `Project '${title}' is being created...`)
+            new OverlayNotifier(OverlayNotificationType.Info, "Creating project", `Project '${title}' is being created...`),
         );
         this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Creating project", `Project '${title}' has been created.`));
         this.addNotifier(
@@ -40,8 +40,8 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
                 OverlayNotificationType.Error,
                 "Error creating project",
                 `An error occurred while creating project '${title}': ${ActionNotifier.MessagePlaceholder}.`,
-                true
-            )
+                true,
+            ),
         );
     }
 }

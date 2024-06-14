@@ -10,6 +10,48 @@ import { Resource, ResourceType } from "../../data/entities/resource/Resource";
 import { ResourcesList } from "../../data/entities/resource/ResourcesList";
 
 /**
+ * Command to assign a broker to access the user's resources. Requires a ``AssignResourcesBrokerReply`` reply.
+ *
+ * @param broker - The broker to use.
+ * @param config - The broker configuration.
+ */
+@Message.define("command/resource/assign-broker")
+export class AssignResourcesBrokerCommand extends Command {
+    public readonly broker: string = "";
+    public readonly config: any = null;
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        broker: string,
+        config: any,
+        chain: Message | null = null,
+    ): CommandComposer<AssignResourcesBrokerCommand> {
+        return messageBuilder.buildCommand(AssignResourcesBrokerCommand, { broker: broker, config: config }, chain);
+    }
+}
+
+/**
+ * Reply to ``AssignResourcesBrokerCommand``.
+ */
+@Message.define("command/resource/assign-broker/reply")
+export class AssignResourcesBrokerReply extends CommandReply {
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: AssignResourcesBrokerCommand,
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<AssignResourcesBrokerReply> {
+        return messageBuilder.buildCommandReply(AssignResourcesBrokerReply, cmd, success, message);
+    }
+}
+
+/**
  * Command to fetch all available resources.
  *
  * @param root - The root path (or empty if the system root should be used).
@@ -35,9 +77,13 @@ export class ListResourcesCommand extends Command {
         includeFolders: boolean = true,
         includeFiles: boolean = true,
         recursive: boolean = true,
-        chain: Message | null = null
+        chain: Message | null = null,
     ): CommandComposer<ListResourcesCommand> {
-        return messageBuilder.buildCommand(ListResourcesCommand, { root: root, include_folders: includeFolders, include_files: includeFiles, recursive: recursive }, chain);
+        return messageBuilder.buildCommand(
+            ListResourcesCommand,
+            { root: root, include_folders: includeFolders, include_files: includeFiles, recursive: recursive },
+            chain,
+        );
     }
 }
 
@@ -60,7 +106,7 @@ export class ListResourcesReply extends CommandReply {
         cmd: ListResourcesCommand,
         resources: ResourcesList,
         success: boolean = true,
-        message: string = ""
+        message: string = "",
     ): CommandReplyComposer<ListResourcesReply> {
         return messageBuilder.buildCommandReply(ListResourcesReply, cmd, success, message, { resources: resources });
     }

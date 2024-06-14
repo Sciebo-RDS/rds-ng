@@ -27,9 +27,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
         StartProjectJobReply,
         ProjectJobProgressEvent,
         ProjectJobCompletionEvent,
-        ProjectLogbookEvent,
     )
-    from common.py.api.component import ComponentProcessEvent
 
     from .server_service_context import ServerServiceContext
 
@@ -217,9 +215,5 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             msg,
             ctx,
         )
-
-    @svc.message_handler(ComponentProcessEvent)
-    def process_jobs(msg: ComponentProcessEvent, ctx: ServerServiceContext) -> None:
-        pass
 
     return svc

@@ -53,7 +53,7 @@ class Service(MessageService):
         message_type: type[MessageType] = Message,
         *,
         name_filter: str = "",
-        is_async: bool = False,
+        is_async: bool = True,
     ) -> typing.Callable[[MessageHandler], MessageHandler]:
         """
         A decorator to declare a message handler.

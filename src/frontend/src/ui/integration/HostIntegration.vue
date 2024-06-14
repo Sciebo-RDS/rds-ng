@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { error } from "@common/core/logging/Logging";
 import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
@@ -16,44 +17,43 @@ const props = defineProps({
     },
 });
 const { scheme } = toRefs(props);
-const { getHostUserToken, getHostAuthorization } = useHostIntegration(comp);
+const { getHostUserToken, getHostAuthorization, getHostResources } = useHostIntegration(comp);
 
-const statusMessage = ref("Initializing [0/2]");
+const statusMessage = ref("0/3: Initializing");
 const errorMessage = ref("");
 
 function performAuthentication(): void {
-    statusMessage.value = "Authenticating [1/2]";
+    statusMessage.value = "1/3: Authenticating";
 
     getHostUserToken()
         .then((userToken) => {
-            unref(scheme)!
-                .authenticator(userToken)
-                .done((authState, fingerprint) => performAuthorization(authState, fingerprint))
-                .failed((error) => {
-                    errorMessage.value = error;
-                })
-                .authenticate();
+            unref(scheme)!.authenticator(userToken).done(performAuthorization).failed(showError).authenticate();
         })
-        .catch((error) => {
-            errorMessage.value = error;
-        });
+        .catch(showError);
 }
 
 function performAuthorization(authState: AuthorizationState, fingerprint: string): void {
-    statusMessage.value = "Authorizing [2/2]";
+    statusMessage.value = "2/3: Authorizing";
 
     getHostAuthorization()
         .then((hostAuth) => {
-            unref(scheme)!
-                .authorizer(hostAuth)
-                .failed((error) => {
-                    errorMessage.value = error;
-                })
-                .authorize(authState, fingerprint);
+            unref(scheme)!.authorizer(hostAuth).done(performBrokerAssignment).failed(showError).authorize(authState, fingerprint);
         })
-        .catch((error) => {
-            errorMessage.value = error;
-        });
+        .catch(showError);
+}
+
+function performBrokerAssignment(): void {
+    statusMessage.value = "3/3: Broker assignment";
+
+    getHostResources()
+        .then((hostResources) => {
+            unref(scheme)!.resourcesBroker(hostResources).failed(showError).assign();
+        })
+        .catch(showError);
+}
+
+function showError(error: string): void {
+    errorMessage.value = error;
 }
 
 onMounted(async () => performAuthentication());

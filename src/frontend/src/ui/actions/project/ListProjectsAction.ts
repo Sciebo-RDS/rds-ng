@@ -14,22 +14,24 @@ export class ListProjectsAction extends FrontendCommandAction<ListProjectsComman
     public prepare(): CommandComposer<ListProjectsCommand> {
         this.prepareNotifiers();
 
-        this._composer = ListProjectsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
+        this._composer = ListProjectsCommand.build(this.messageBuilder);
         return this._composer;
     }
 
     protected addDefaultNotifiers(): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Fetching projects", "Your projects are being downloaded...")
+            new OverlayNotifier(OverlayNotificationType.Info, "Fetching projects", "Your projects are being downloaded..."),
         );
-        this.addNotifier(
-            ActionState.Done,
-            new OverlayNotifier(OverlayNotificationType.Success, "Fetching projects", "Your projects have been downloaded.")
-        );
+        this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Fetching projects", "Your projects have been downloaded."));
         this.addNotifier(
             ActionState.Failed,
-            new OverlayNotifier(OverlayNotificationType.Error, "Error fetching projects", `An error occurred while downloading your projects: ${ActionNotifier.MessagePlaceholder}.`, true)
+            new OverlayNotifier(
+                OverlayNotificationType.Error,
+                "Error fetching projects",
+                `An error occurred while downloading your projects: ${ActionNotifier.MessagePlaceholder}.`,
+                true,
+            ),
         );
     }
 }

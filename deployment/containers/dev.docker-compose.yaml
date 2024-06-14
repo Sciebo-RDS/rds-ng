@@ -45,6 +45,7 @@ services:
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
             - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=AGO8sqdOwQIgEQtT8TYTyC16MenJV0oPoNzwBnP0f35LIlwGldDOnUqxWWCgllv4
+            # - RDS_INTEGRATION_DEFAULT_ROOT_PATH=/files
 
     # Connector: Stub
     connector-stub:

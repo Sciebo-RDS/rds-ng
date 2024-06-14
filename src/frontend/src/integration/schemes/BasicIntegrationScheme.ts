@@ -1,14 +1,16 @@
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { defineAsyncComponent } from "vue";
 
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { isUserTokenValid } from "@common/data/entities/user/UserToken";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { Authenticator } from "@/integration/authentication/Authenticator";
-import { Authorizer } from "@/integration/authorization/Authorizer";
 import { BasicAuthenticator } from "@/integration/authentication/BasicAuthenticator";
+import { Authorizer } from "@/integration/authorization/Authorizer";
 import { BasicAuthorizer } from "@/integration/authorization/BasicAuthorizer";
+import { BasicResourcesBroker } from "@/integration/resources/brokers/BasicResourcesBroker";
+import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
 /**
@@ -33,6 +35,10 @@ export class BasicIntegrationScheme extends IntegrationScheme {
         return new BasicAuthorizer(this._component);
     }
 
+    public resourcesBroker(): ResourcesBroker {
+        return new BasicResourcesBroker(this._component);
+    }
+
     public enter(): void {
         super.enter();
 
@@ -46,7 +52,8 @@ export class BasicIntegrationScheme extends IntegrationScheme {
             this.authenticator(userToken.user_id).authenticate();
         }
 
-        // Redo the authorization
+        // Redo the authorization and broker assignment
         this.authorizer().authorize(AuthorizationState.Authorized, "");
+        this.resourcesBroker().assign();
     }
 }

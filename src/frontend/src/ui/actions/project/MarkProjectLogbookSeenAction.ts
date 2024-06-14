@@ -16,9 +16,7 @@ export class MarkProjectLogbookSeenAction extends FrontendCommandAction<MarkProj
     public prepare(logbookType: ProjectLogbookType, markAll: boolean, project?: Project, record?: number): CommandComposer<MarkProjectLogbookSeenCommand> {
         this.prepareNotifiers(project?.title);
 
-        this._composer = MarkProjectLogbookSeenCommand.build(this.messageBuilder, logbookType, project?.project_id || 0, record || 0, markAll).timeout(
-            this._regularTimeout,
-        );
+        this._composer = MarkProjectLogbookSeenCommand.build(this.messageBuilder, logbookType, project?.project_id || 0, record || 0, markAll);
         return this._composer;
     }
 

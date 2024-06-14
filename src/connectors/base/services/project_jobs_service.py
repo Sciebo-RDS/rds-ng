@@ -1,6 +1,7 @@
 from common.py.component import BackendComponent
 from common.py.core.logging import info
 from common.py.services import Service
+from common.py.utils import EntryGuard
 
 from ..data.entities.connector import ConnectorJob
 
@@ -61,6 +62,10 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
     def process_engine(
         msg: ComponentProcessEvent, ctx: ConnectorServiceContext
     ) -> None:
-        ctx.jobs_engine.process()
+        with EntryGuard("process_engine") as guard:
+            if not guard.can_execute:
+                return
+
+            ctx.jobs_engine.process()
 
     return svc

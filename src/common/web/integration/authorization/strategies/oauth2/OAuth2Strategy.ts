@@ -7,8 +7,9 @@ import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
 /**
  * The OAuth2 strategy configuration.
  */
-export interface OAuth2Configuration {
+export interface OAuth2StrategyConfiguration {
     server: {
+        host: string;
         endpoints: {
             authorization: string;
             token: string;
@@ -27,16 +28,16 @@ export interface OAuth2Configuration {
 export class OAuth2Strategy extends AuthorizationStrategy {
     public static readonly Strategy = "oauth2";
 
-    private readonly _config: OAuth2Configuration;
+    private readonly _config: OAuth2StrategyConfiguration;
 
-    public constructor(comp: WebComponent, svc: Service, config: OAuth2Configuration) {
+    public constructor(comp: WebComponent, svc: Service, config: OAuth2StrategyConfiguration) {
         super(comp, svc, OAuth2Strategy.Strategy, config.client.embedded);
 
         this._config = config;
     }
 
     protected initiateRequest(fingerprint: string): void {
-        const url = new URL(this._config.server.endpoints.authorization);
+        const url = new URL(this._config.server.endpoints.authorization, new URL(this._config.server.host));
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this._config.client.clientID);
         url.searchParams.set("redirect_uri", this._config.client.redirectURL);
@@ -51,6 +52,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         }
 
         return {
+            token_host: this._config.server.host,
             token_endpoint: this._config.server.endpoints.token,
 
             client_id: this._config.client.clientID,
@@ -75,9 +77,12 @@ export class OAuth2Strategy extends AuthorizationStrategy {
  * @returns - The newly created strategy.
  */
 export function createOAuth2Strategy(comp: WebComponent, svc: Service, config: Record<string, any>): OAuth2Strategy {
-    const oauth2Config = config as OAuth2Configuration;
+    const oauth2Config = config as OAuth2StrategyConfiguration;
 
     // Verify the passed configuration
+    if (!oauth2Config.server?.host) {
+        throw new Error("Missing authorization host");
+    }
     if (!oauth2Config.server?.endpoints?.authorization) {
         throw new Error("Missing authorization endpoint");
     }

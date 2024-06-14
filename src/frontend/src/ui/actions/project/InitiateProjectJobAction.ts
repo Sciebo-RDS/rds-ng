@@ -18,7 +18,7 @@ export class InitiateProjectJobAction extends FrontendCommandAction<InitiateProj
     public prepare(project: Project, connector: Connector, connectorInstance: ConnectorInstance): CommandComposer<InitiateProjectJobCommand> {
         super.prepareNotifiers(project, connector, connectorInstance);
 
-        this._composer = InitiateProjectJobCommand.build(this.messageBuilder, project.project_id, connectorInstance.instance_id).timeout(this._regularTimeout);
+        this._composer = InitiateProjectJobCommand.build(this.messageBuilder, project.project_id, connectorInstance.instance_id);
         return this._composer;
     }
 

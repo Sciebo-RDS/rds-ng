@@ -1,6 +1,6 @@
 import { SettingID } from "../utils/config/SettingID";
 import { GeneralSettingIDs } from "./GeneralSettingIDs";
-import { NetworkClientSettingIDs } from "./NetworkSettingIDs";
+import { NetworkClientSettingIDs, NetworkSettingIDs } from "./NetworkSettingIDs";
 
 /**
  * Gets default values for all settings.
@@ -15,8 +15,9 @@ export function getDefaultSettings(): Map<SettingID, any> {
     defaults.set(GeneralSettingIDs.NotificationTimeout, 3.0);
 
     // Network settings
+    defaults.set(NetworkSettingIDs.RegularCommandTimeout, 10.0);
     defaults.set(NetworkClientSettingIDs.ServerAddress, "");
-    defaults.set(NetworkClientSettingIDs.ConnectionTimeout, 10);
+    defaults.set(NetworkClientSettingIDs.ConnectionTimeout, 10.0);
 
     return defaults;
 }

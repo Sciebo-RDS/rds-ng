@@ -14,22 +14,27 @@ export class GetUserSettingsAction extends FrontendCommandAction<GetUserSettings
     public prepare(): CommandComposer<GetUserSettingsCommand> {
         this.prepareNotifiers();
 
-        this._composer = GetUserSettingsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
+        this._composer = GetUserSettingsCommand.build(this.messageBuilder);
         return this._composer;
     }
 
     protected addDefaultNotifiers(): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Fetching user settings", "Your settings are being downloaded...")
+            new OverlayNotifier(OverlayNotificationType.Info, "Fetching user settings", "Your settings are being downloaded..."),
         );
         this.addNotifier(
             ActionState.Done,
-            new OverlayNotifier(OverlayNotificationType.Success, "Fetching user settings", "Your settings have been downloaded.")
+            new OverlayNotifier(OverlayNotificationType.Success, "Fetching user settings", "Your settings have been downloaded."),
         );
         this.addNotifier(
             ActionState.Failed,
-            new OverlayNotifier(OverlayNotificationType.Error, "Error fetching user settings", `An error occurred while downloading your settings: ${ActionNotifier.MessagePlaceholder}.`, true)
+            new OverlayNotifier(
+                OverlayNotificationType.Error,
+                "Error fetching user settings",
+                `An error occurred while downloading your settings: ${ActionNotifier.MessagePlaceholder}.`,
+                true,
+            ),
         );
     }
 }

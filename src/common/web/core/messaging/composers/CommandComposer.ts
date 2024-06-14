@@ -1,7 +1,12 @@
+import { WebComponent } from "../../../component/WebComponent";
+import { NetworkSettingIDs } from "../../../settings/NetworkSettingIDs";
 import { ExecutionCallbacks } from "../../../utils/ExecutionCallbacks";
+import { UnitID } from "../../../utils/UnitID";
 import logging from "../../logging/Logging";
 import { Command } from "../Command";
 import { type CommandDoneCallback, type CommandFailCallback } from "../CommandReply";
+import { type ConstructableMessage, Message } from "../Message";
+import { type MessageBusProtocol } from "../MessageBusProtocol";
 import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { MessageEntrypoint, MessageMetaInformation } from "../meta/MessageMetaInformation";
 import { MessageComposer } from "./MessageComposer";
@@ -13,6 +18,18 @@ export class CommandComposer<MsgType extends Command> extends MessageComposer<Ms
     private _callbacks = new ExecutionCallbacks<CommandDoneCallback, CommandFailCallback>();
 
     private _timeout: number = 0.0;
+
+    public constructor(
+        originID: UnitID,
+        messageBus: MessageBusProtocol,
+        msgType: ConstructableMessage<MsgType>,
+        params: Record<string, any> = {},
+        chain: Message | null = null,
+    ) {
+        super(originID, messageBus, msgType, params, chain);
+
+        this._timeout = WebComponent.instance.data.config.value<number>(NetworkSettingIDs.RegularCommandTimeout);
+    }
 
     /**
      * Adds a *Done* callback.

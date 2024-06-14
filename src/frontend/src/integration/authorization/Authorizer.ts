@@ -3,8 +3,8 @@ import { storeToRefs } from "pinia";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 
-import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { IntegrationHandler } from "@/integration/IntegrationHandler";
 
 export type AuthorizerDoneCallback = () => void;
 export type AuthorizerFailCallback = (msg: string) => void;
@@ -12,14 +12,8 @@ export type AuthorizerFailCallback = (msg: string) => void;
 /**
  * Base authorizer.
  */
-export abstract class Authorizer {
-    protected readonly _component: FrontendComponent;
-
+export abstract class Authorizer extends IntegrationHandler {
     protected readonly _callbacks = new ExecutionCallbacks<AuthorizerDoneCallback, AuthorizerFailCallback>();
-
-    protected constructor(comp: FrontendComponent) {
-        this._component = comp;
-    }
 
     /**
      * Authorize the user/integration.

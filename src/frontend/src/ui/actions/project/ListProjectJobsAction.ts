@@ -14,7 +14,7 @@ export class ListProjectJobsAction extends FrontendCommandAction<ListProjectJobs
     public prepare(): CommandComposer<ListProjectJobsCommand> {
         this.prepareNotifiers();
 
-        this._composer = ListProjectJobsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
+        this._composer = ListProjectJobsCommand.build(this.messageBuilder);
         return this._composer;
     }
 
