@@ -1,27 +1,11 @@
-export const dataCite: {
+import { Profile } from "../PropertyProfile";
+
+export const dataCite: Profile = {
     metadata: {
-        id: [string, number];
-        name: string;
-        description: string;
-        version: number;
-    };
-    layout: {
-        id: string;
-        label: string;
-        description: string;
-        example?: string;
-        type?: string[];
-        input?: { id: string; label: string; type: string }[];
-        required: boolean;
-        multiple: boolean;
-    }[];
-    classes: {};
-} = {
-    metadata: {
-        id: ["DataCite", 4.5],
+        id: ["DataCite", "4.5"],
         name: "DataCite Profile",
-        description: "DataCite Metadata Profile",
-        version: 4.5
+        version: "4.5",
+        description: "DataCite Metadata Profile"
     },
     layout: [
         {
@@ -210,7 +194,8 @@ export const dataCite: {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/relateditem/",
             label: "Related Item",
             description: "Information about a resource related to the one being registered.",
-            //type: ["relateditem"],
+            // TODO cardinality
+            //linkable: [{ type: "relateditem", mulitple: true, required: false}],
             input: [{ id: "relatedItem", label: "Related Item", type: "string" }],
             required: false,
             multiple: true

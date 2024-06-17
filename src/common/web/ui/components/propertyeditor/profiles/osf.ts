@@ -1,30 +1,32 @@
-import { type PropertyProfile, PropertyDataType } from "../PropertyProfile";
+import { type Profile } from "../PropertyProfile";
 
-export const osf: PropertyProfile = {
-    profile_id: { name: "OSF", version: "2024.2.1" },
-    categories: [
+export const osf: Profile = {
+    metadata: {
+        id: ["OSF", "2024.2.21"],
+        name: "OSF",
+        version: "2024.2.21",
+        description: "A Profile for OSF DMP."
+    },
+    layout: [
         {
             id: "Mandatory",
-            name: "Mandatory",
+            label: "Mandatory",
             description: "Mandatory OSF properties",
-            properties: [
+            input: [
                 {
                     id: "Title",
-                    name: "Title",
-                    type: PropertyDataType.STRING,
+                    label: "Title",
+                    type: "string",
                     description:
-                        "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
-                    showAlways: true,
-                    required: true,
+                        "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument."
                 },
                 {
                     id: "OsfCategory",
-                    name: "Category",
-                    type: PropertyDataType.DROPDOWN,
+                    label: "Category",
+                    type: "dropdown",
                     description:
                         "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
-                    showAlways: true,
-                    required: true,
+
                     options: [
                         "analysis",
                         "communication",
@@ -35,18 +37,16 @@ export const osf: PropertyProfile = {
                         "procedure",
                         "project",
                         "software",
-                        "other",
-                    ],
+                        "other"
+                    ]
                 },
                 {
                     id: "Description",
-                    name: "Description",
-                    type: PropertyDataType.TEXTAREA,
-                    description: "The Description of you resource.",
-                    showAlways: true,
-                    required: true,
-                },
-            ],
-        },
-    ],
+                    label: "Description",
+                    type: "textarea",
+                    description: "The Description of you resource."
+                }
+            ]
+        }
+    ]
 };

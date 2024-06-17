@@ -1,5 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
-import { Profile, ProfileClass } from "./PropertyProfile";
+import { Profile, ProfileClass, type ProfileID } from "./PropertyProfile";
 
 export class PropertyProfileStore {
     private _profiles: Profile[];
@@ -12,13 +11,13 @@ export class PropertyProfileStore {
         this._profiles.push(profile);
     }
 
-    public unmountProfile(profileId: string) {
+    public unmountProfile(profileId: ProfileID) {
         this._profiles = this._profiles.filter((profile) => profile.metadata.id !== profileId);
     }
 
-    public getClassById(profileId: string, classId: string): ProfileClass | undefined {
+    public getClassById(profileId: ProfileID, classId: string): ProfileClass | undefined {
         const profile = this._profiles.find((profile) => profile.metadata.id === profileId);
-        return profile ? profile.classes[classId] : undefined;
+        return profile?.classes ? profile.classes[classId] : undefined;
     }
 
     public list(): Profile[] {
@@ -26,6 +25,6 @@ export class PropertyProfileStore {
     }
 
     public listClasses(): ProfileClass[] {
-        return this._profiles.flatMap((profile) => Object.values(profile.classes));
+        return this._profiles.flatMap((profile) => (!!profile.classes ? Object.values(profile.classes) : []));
     }
 }

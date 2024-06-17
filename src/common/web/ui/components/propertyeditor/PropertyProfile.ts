@@ -10,35 +10,39 @@ import DateForm from "./propertyforms/DateForm.vue";
 import DropDownForm from "./propertyforms/DropdownForm.vue";
 import CheckBoxForm from "./propertyforms/CheckBoxForm.vue";
 
+export type ProfileID = [string, string];
+
 class ProfileMetadata {
     public constructor(
-        public readonly id: string,
+        public readonly id: ProfileID,
         public readonly name: string,
         public readonly description: string,
-        public readonly version: number
+        public readonly version: string
     ) {}
 }
 
+// make inputs its own class, distinguish inputs that have options
 export class ProfileClass {
     public constructor(
         public readonly id: string,
         public readonly label: string,
-        public readonly description: string,
-        public readonly required: boolean,
-        public readonly multiple: boolean,
+        public readonly description?: string,
+        public readonly labelTemplate?: string,
+        public readonly required?: boolean,
+        public readonly multiple?: boolean,
         public readonly example?: string,
         public readonly type?: string[],
-        public readonly input?: { id: string; label: string; type: string }[]
+        public readonly input?: { id: string; label: string; type: string; description?: string; options?: string[] }[]
     ) {}
 }
 
-class ProfileLayoutClass extends ProfileClass {}
+export class ProfileLayoutClass extends ProfileClass {}
 
 export class Profile {
     public constructor(
         public readonly metadata: ProfileMetadata,
         public readonly layout: ProfileLayoutClass[],
-        public readonly classes: { [key: string]: ProfileClass }
+        public readonly classes?: { [key: string]: ProfileClass }
     ) {}
 }
 
@@ -67,36 +71,3 @@ export const propertyDataForms: { [key in PropertyDataType]?: Component } = {
     [PropertyDataType.DROPDOWN]: DropDownForm,
     [PropertyDataType.CHECKBOX]: CheckBoxForm
 };
-
-/* export class ProfileID {
-    public constructor(
-        public readonly name: string,
-        public readonly version: string
-    ) {}
-}
-
-export type PropertyProfile = {
-    profile_id: ProfileID;
-    categories: PropertyCategory[];
-};
-
-export type PropertyCategory = {
-    id: string;
-    name: string;
-    description?: string;
-    properties: (Property | SelectionProperty)[];
-};
-
-export type Property = {
-    id: string;
-    name: string;
-    type: PropertyDataType;
-    description: string;
-    required?: boolean;
-    showAlways?: boolean;
-    filter?: string[];
-};
-
-export type SelectionProperty = Property & {
-    options: string[];
-}; */

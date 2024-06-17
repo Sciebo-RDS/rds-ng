@@ -1,5 +1,5 @@
 import { deepClone } from "@common/utils/ObjectUtils";
-import { type PropertyProfile, ProfileID } from "./PropertyProfile";
+import { type Profile, type ProfileID } from "./PropertyProfile";
 import { compareProfileIDs } from "./utils/PropertyEditorUtils";
 
 export type Properties = {
@@ -21,14 +21,14 @@ export class PersistedSet {
 /**
  * Data for a single **PropertySet**.
  *
- * @param profileId - The ProfileID that uniquely identifies the corresponding PropertyProfile.
+ * @param profileId - The ProfileID that uniquely identifies the corresponding Profile.
 
  */
 export class PropertySet {
     public properties: Properties = {} as Properties;
     public readonly profile_id: ProfileID;
 
-    public constructor(public profile: PropertyProfile) {
+    public constructor(public profile: Profile) {
         this.profile = deepClone(profile);
 
         if (!this._validateProfile()) {
