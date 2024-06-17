@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { reactive, toRefs, watch } from "vue";
+import { reactive, toRefs, watch, type PropType } from "vue";
 
-import logging from "@common/core/logging/Logging";
+import { DataManagementPlanFeature, type DataManagementPlan } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
-import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
-import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
-import { PropertySet, PersistedSet } from "@common/ui/components/propertyeditor/PropertySet";
+import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { PersistedSet } from "@common/ui/components/propertyeditor/PropertySet";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
@@ -20,6 +21,10 @@ const props = defineProps({
     project: {
         type: Project,
         required: true
+    },
+    globalObjectStore: {
+        type: Object as PropType<ProjectObjectStore>,
+        required: true
     }
 });
 const { project } = toRefs(props);
@@ -27,9 +32,11 @@ const { project } = toRefs(props);
 // TODO: Testing data only
 const exporters: ExporterID[] = ["pdf", "raw"];
 
-const dmpProfile = new PropertySet(dfgDmp);
-const controller = reactive(new DmpController(dmpProfile));
+/* const dmpProfile = new PropertySet(dfgDmp);
+const controller = reactive(new DmpController(dmpProfile)); */
 
+const projectObjects = reactive(new ProjectObjectStore());
+const projectProfiles = reactive(new PropertyProfileStore());
 const debounce = makeDebounce(500);
 
 watch(
@@ -40,18 +47,19 @@ watch(
             action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
             action.execute();
         });
-    }
+    },
+    { deep: true }
 );
+
+projectProfiles.mountProfile(dfgDmp as Profile);
 </script>
 
 <template>
     <PropertyEditor
-        v-model="project!.features.dmp.plan as PersistedSet[]"
-        :controller="controller as DmpController"
-        :logging="logging"
-        :exporters="exporters"
-        :project="project"
-        oneCol
+        v-model="project!.features.dmp.plan"
+        :projectObjects="projectObjects as ProjectObjectStore"
+        :globalObjectStore="globalObjectStore as ProjectObjectStore"
+        :projectProfiles="projectProfiles as PropertyProfileStore"
     />
 </template>
 
