@@ -27,14 +27,14 @@ export class UpdateProjectAction extends FrontendCommandAction<UpdateProjectComm
     public prepare(projectID: ProjectID, title: string, description: string, options: ProjectOptions): CommandComposer<UpdateProjectCommand> {
         this.prepareNotifiers(title);
 
-        this._composer = UpdateProjectCommand.build(this.messageBuilder, projectID, title, description, options).timeout(this._regularTimeout);
+        this._composer = UpdateProjectCommand.build(this.messageBuilder, projectID, title, description, options);
         return this._composer;
     }
 
     protected addDefaultNotifiers(title: string): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`)
+            new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`),
         );
         this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Updating project", `Project '${title}' has been updated.`));
         this.addNotifier(
@@ -43,8 +43,8 @@ export class UpdateProjectAction extends FrontendCommandAction<UpdateProjectComm
                 OverlayNotificationType.Error,
                 "Error updating project",
                 `An error occurred while updating project '${title}': ${ActionNotifier.MessagePlaceholder}.`,
-                true
-            )
+                true,
+            ),
         );
     }
 }

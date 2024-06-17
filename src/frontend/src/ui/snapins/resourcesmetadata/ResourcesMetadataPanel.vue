@@ -213,8 +213,9 @@ const showIndex = ref(true);
                 </SplitterPanel>
             </Splitter>
         </div>
-        <div v-else class="r-text-error">
-            The list of objects could not be retrieved from the remote storage: <em>{{ resourcesError }}</em>
+        <div v-else class="r-text-error p-2">
+            <div class="font-bold">The list of objects could not be retrieved from the remote storage:</div>
+            <div class="italic">{{ resourcesError }}</div>
         </div>
     </BlockUI>
 </template>

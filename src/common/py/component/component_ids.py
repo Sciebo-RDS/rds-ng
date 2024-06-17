@@ -17,7 +17,7 @@ class ComponentUnit(StrEnum):
 
     # Infrastructure
     SERVER = "server"
-    GATE = "gate"
+    CONNECTOR = "connector"
 
     # Web
     FRONTEND = "frontend"

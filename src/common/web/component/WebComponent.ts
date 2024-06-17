@@ -1,4 +1,5 @@
 import { createPinia } from "pinia";
+import BadgeDirective from "primevue/badgedirective";
 import PrimeVue from "primevue/config";
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmPopup from "primevue/confirmpopup";
@@ -10,18 +11,20 @@ import ToastService from "primevue/toastservice";
 import { type App, type Component as VueComp, createApp, inject } from "vue";
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
+import { Session } from "./Session";
+import { WebComponentData } from "./WebComponentData";
 import { Core } from "../core/Core";
 import logging from "../core/logging/Logging";
+import { registerAuthorizationStrategies } from "../integration/authorization/strategies/AuthorizationStrategies";
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
+import { registerExporters } from "../ui/components/propertyeditor/exporters/Exporters";
 import { UserInterface } from "../ui/UserInterface";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
 import { UnitID } from "../utils/UnitID";
 import { MetaInformation } from "./MetaInformation";
-import { Session } from "./Session";
-import { WebComponentData } from "./WebComponentData";
 
 import createComponentService from "../services/ComponentService";
 import createNetworkService from "../services/NetworkService";
@@ -70,7 +73,12 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      * @param appRoot - The root (main) application component.
      * @param userInterfaceType - The type of the user interface class.
      */
-    public constructor(env: SettingsContainer, compID: UnitID, appRoot: VueComponent, userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>) {
+    public constructor(
+        env: SettingsContainer,
+        compID: UnitID,
+        appRoot: VueComponent,
+        userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>,
+    ) {
         if (WebComponent._instance) {
             throw new Error("A component instance has already been created");
         }
@@ -81,13 +89,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         const compInfo = metaInfo.getComponent(compID.unit);
 
         this._session = new Session(compID);
-        this._data = new WebComponentData(
-            this.sanitizeComponentID(compID, config),
-            config,
-            metaInfo.title,
-            compInfo.name,
-            metaInfo.version
-        );
+        this._data = new WebComponentData(this.sanitizeComponentID(compID), config, metaInfo.title, compInfo.name, metaInfo.version);
 
         logging.info(this.toString());
         logging.info("Starting component");
@@ -115,7 +117,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     private createRouter(): Router {
         return createRouter({
             history: createWebHistory(),
-            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()]
+            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()],
         });
     }
 
@@ -133,6 +135,9 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         app.component("ConfirmPopup", ConfirmPopup);
         app.component("DynamicDialog", DynamicDialog);
         app.component("Toast", Toast);
+
+        // And some directives
+        app.directive("badge", BadgeDirective);
 
         // Register various plugins
         app.use(createPinia());
@@ -181,6 +186,10 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     public run(): void {
         logging.info("Running component");
 
+        // Reigster global items
+        registerAuthorizationStrategies();
+        registerExporters();
+
         // Create all basic services
         createComponentService(this);
         createNetworkService(this);
@@ -197,9 +206,11 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
      * @param contextType - Can be used to override the default ``ServiceContext`` type. All message handlers
      *      associated with the new service will then receive instances of this type for their service context.
      */
-    public createService<CtxType extends ServiceContext>(name: string,
-                                                         initializer: ((svc: Service) => void) | null = null,
-                                                         contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>): Service {
+    public createService<CtxType extends ServiceContext>(
+        name: string,
+        initializer: ((svc: Service) => void) | null = null,
+        contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>,
+    ): Service {
         let svc = new Service<CtxType>(this._data.compID, name, this._core.messageBus, contextType);
         this._core.registerService(svc);
         if (initializer) {
@@ -268,7 +279,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         return WebComponent._instance;
     }
 
-    private sanitizeComponentID(compID: UnitID, config: Configuration): UnitID {
+    private sanitizeComponentID(compID: UnitID): UnitID {
         const instance: string = compID.instance ? compID.instance : "default";
         return new UnitID(compID.type, compID.unit, `${instance}::${this.session.sessionID}`);
     }

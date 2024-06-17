@@ -35,10 +35,15 @@ class CommandComposer(MessageComposer):
         """
         super().__init__(origin_id, message_bus, msg_type, chain, **kwargs)
 
+        from ....component import BackendComponent
+        from ....settings import NetworkSettingIDs
+
         self._done_callbacks: typing.List[CommandDoneCallback] = []
         self._fail_callbacks: typing.List[CommandFailCallback] = []
         self._async_callbacks = False
-        self._timeout = 0.0
+        self._timeout = BackendComponent.instance().data.config.value(
+            NetworkSettingIDs.REGULAR_COMMAND_TIMEOUT
+        )
 
     def done(self, callback: CommandDoneCallback) -> typing.Self:
         """
@@ -101,7 +106,9 @@ class CommandComposer(MessageComposer):
                 scope="bus",
             )
 
-    def _create_meta_information(self) -> MessageMetaInformation:
+    def _create_meta_information(
+        self, suppress_logging: bool
+    ) -> MessageMetaInformation:
         from ..meta import CommandMetaInformation
 
         return CommandMetaInformation(
@@ -110,4 +117,5 @@ class CommandComposer(MessageComposer):
             fail_callbacks=self._fail_callbacks,
             async_callbacks=self._async_callbacks,
             timeout=self._timeout,
+            suppress_logging=suppress_logging,
         )

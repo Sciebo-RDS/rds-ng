@@ -9,6 +9,14 @@ class NetworkFilter:
     Filters incoming and outgoing network messages.
     """
 
+    class Action(IntEnum):
+        """
+        The action the filter should take.
+        """
+
+        PASS = auto()
+        REJECT = auto()
+
     class ConnectionType(IntEnum):
         """
         The affected connection type (client or server).
@@ -19,7 +27,7 @@ class NetworkFilter:
 
     def filter_incoming_message(
         self, connection: ConnectionType, msg: Message, msg_meta: MessageMetaInformation
-    ) -> bool:
+    ) -> Action:
         """
         Filters incoming messages.
 
@@ -31,11 +39,11 @@ class NetworkFilter:
         Returns:
             Whether the message should be filtered out.
         """
-        return False
+        return NetworkFilter.Action.PASS
 
     def filter_outgoing_message(
         self, connection: ConnectionType, msg: Message, msg_meta: MessageMetaInformation
-    ) -> bool:
+    ) -> Action:
         """
         Filters outgoing messages.
 
@@ -47,4 +55,4 @@ class NetworkFilter:
         Returns:
             Whether the message should be filtered out.
         """
-        return False
+        return NetworkFilter.Action.PASS

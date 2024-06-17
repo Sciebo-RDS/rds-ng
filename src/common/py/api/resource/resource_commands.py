@@ -1,4 +1,5 @@
 import dataclasses
+import typing
 
 from ...core.messaging import (
     Command,
@@ -11,6 +12,63 @@ from ...core.messaging.composers import (
     CommandReplyComposer,
 )
 from ...data.entities.resource import ResourcesList
+
+
+@Message.define("command/resource/assign-broker")
+class AssignResourcesBrokerCommand(Command):
+    """
+    Command to assign a broker to access the user's resources.
+
+    Notes:
+        Requires a ``AssignResourcesBrokerReply`` reply.
+
+    Args:
+        broker: The broker to use.
+        config: The broker configuration.
+    """
+
+    broker: str
+    config: typing.Dict[str, typing.Any] = dataclasses.field(default_factory=dict)
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        broker: str,
+        config: typing.Dict[str, typing.Any],
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            AssignResourcesBrokerCommand,
+            chain,
+            broker=broker,
+            config=config,
+        )
+
+
+@Message.define("command/resource/assign-broker/reply")
+class AssignResourcesBrokerReply(CommandReply):
+    """
+    Reply to ``AssignResourcesBrokerCommand``.
+    """
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: AssignResourcesBrokerCommand,
+        *,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            AssignResourcesBrokerReply, cmd, success, message
+        )
 
 
 @Message.define("command/resource/list")

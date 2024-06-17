@@ -13,9 +13,9 @@ from ...core.messaging.composers import (
 )
 from ...data.entities.project import (
     ProjectID,
+    Project,
 )
 from ...data.entities.project.features import (
-    ProjectFeatures,
     ProjectFeatureID,
 )
 
@@ -39,7 +39,7 @@ class UpdateProjectFeaturesCommand(Command):
     updated_features: typing.List[ProjectFeatureID] = dataclasses.field(
         default_factory=list
     )
-    features: ProjectFeatures = dataclasses.field(default_factory=ProjectFeatures)
+    features: Project.Features = dataclasses.field(default_factory=Project.Features)
 
     @staticmethod
     def build(
@@ -47,7 +47,7 @@ class UpdateProjectFeaturesCommand(Command):
         *,
         project_id: ProjectID,
         updated_features: typing.List[ProjectFeatureID],
-        features: ProjectFeatures,
+        features: Project.Features,
         chain: Message | None = None,
     ) -> CommandComposer:
         """

@@ -19,7 +19,7 @@ export class Command extends Message {
     /**
      * Gets the global message category.
      */
-    public get category(): MessageCategory {
+    public get messageCategory(): MessageCategory {
         return Command.Category;
     }
 }

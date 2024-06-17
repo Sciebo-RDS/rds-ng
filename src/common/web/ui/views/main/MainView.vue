@@ -2,15 +2,20 @@
 import { ref, watch } from "vue";
 
 import { WebComponent } from "../../../component/WebComponent";
-import { ComponentState, componentStore } from "../../../data/stores/ComponentStore";
+import { ComponentState, useComponentStore } from "../../../data/stores/ComponentStore";
+
+import MessageDialog from "../../dialogs/MessageDialog.vue";
 
 const comp = WebComponent.injectComponent();
-const compStore = componentStore();
+const compStore = useComponentStore();
 
 let activeState = ref(compStore.componentState);
-watch(() => compStore.componentState, (state: ComponentState, prevState: ComponentState) => {
-    activeState.value = state;
-});
+watch(
+    () => compStore.componentState,
+    (state: ComponentState, prevState: ComponentState) => {
+        activeState.value = state;
+    },
+);
 </script>
 
 <template>
@@ -18,6 +23,8 @@ watch(() => compStore.componentState, (state: ComponentState, prevState: Compone
     <ConfirmDialog />
     <ConfirmPopup />
     <DynamicDialog />
+
+    <MessageDialog />
 
     <!-- Notifications -->
     <Toast position="bottom-right" class="opacity-75" />

@@ -124,7 +124,7 @@ export abstract class Message {
     /**
      * Gets the global message category.
      */
-    public abstract get category(): MessageCategory;
+    public abstract get messageCategory(): MessageCategory;
 
     /**
      * Gets the string representation of this message.
@@ -137,7 +137,7 @@ export abstract class Message {
 }
 
 export interface ConstructableMessage<T extends Message = Message> {
-    new(...args: any[]): T;
+    new (...args: any[]): T;
 
     messageName(): MessageName;
 }

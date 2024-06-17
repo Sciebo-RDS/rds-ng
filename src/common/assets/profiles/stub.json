@@ -1,0 +1,21 @@
+{
+    "profile_id": {
+        "name": "Stub",
+        "version": "1.0.0"
+    },
+    "categories": [
+        {
+            "id": "STUB",
+            "name": "Stub",
+            "description": "Stubby stuff",
+            "properties": [
+                {
+                    "id": "Stubstuff",
+                    "name": "Stub value",
+                    "type": "string",
+                    "description": "Stubby stuffy value"
+                }
+            ]
+        }
+    ]
+}

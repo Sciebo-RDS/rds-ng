@@ -49,6 +49,10 @@ html {
 /*
  * Extending theme classes.
  */
+.r-text-secondary {
+    @apply text-slate-500;
+}
+
 .r-text-light {
     color: color-mix(in srgb, var(--text-color), #fff 30%);
     opacity: 0.7;
@@ -80,6 +84,21 @@ html {
 .r-text-error,
 .r-text-error * {
     @apply text-red-500 #{!important};
+}
+
+.r-bg-success,
+.r-bg-success * {
+    @apply bg-green-400 #{!important};
+}
+
+.r-bg-warning,
+.r-bg-warning * {
+    @apply bg-yellow-400 #{!important};
+}
+
+.r-bg-error,
+.r-bg-error * {
+    @apply bg-red-500 #{!important};
 }
 
 .r-border-color {

@@ -1,14 +1,50 @@
 import abc
 
+from .authorization_token_storage import AuthorizationTokenStorage
 from .connector_storage import ConnectorStorage
+from .project_job_storage import ProjectJobStorage
 from .project_storage import ProjectStorage
+from .user_storage import UserStorage
+from ...utils.config import Configuration
 
 
 class StoragePool(abc.ABC):
-    # pylint: disable=too-few-public-methods
     """
     A collection of all data storages.
     """
+
+    @staticmethod
+    def prepare(config: Configuration) -> None:
+        """
+        Performs initial preparation of the storage pool.
+
+        Args:
+            config: The global configuration.
+        """
+
+    def __init__(self, name: str):
+        """
+        Args:
+            name: The name of the storage pool.
+        """
+        self._name = name
+
+    def begin(self) -> None:
+        """
+        Called initially when a new pool instance is being used.
+        """
+
+    def close(self, save_changes: bool = True) -> None:
+        """
+        Closes a single pool instance.
+        """
+
+    @property
+    def name(self) -> str:
+        """
+        The name of this backend.
+        """
+        return self._name
 
     @property
     @abc.abstractmethod
@@ -20,8 +56,32 @@ class StoragePool(abc.ABC):
 
     @property
     @abc.abstractmethod
+    def user_storage(self) -> UserStorage:
+        """
+        The user storage.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
     def project_storage(self) -> ProjectStorage:
         """
         The project storage.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
+    def project_job_storage(self) -> ProjectJobStorage:
+        """
+        The project job storage.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abc.abstractmethod
+    def authorization_token_storage(self) -> AuthorizationTokenStorage:
+        """
+        The authorization token storage.
         """
         raise NotImplementedError()

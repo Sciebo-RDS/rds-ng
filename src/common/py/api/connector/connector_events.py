@@ -9,7 +9,12 @@ from ...core.messaging.composers import (
     MessageBuilder,
     EventComposer,
 )
-from ...data.entities.connector import Connector
+from ...data.entities.connector import (
+    Connector,
+    ConnectorID,
+    ConnectorCategoryID,
+    ConnectorMetadataProfile,
+)
 
 
 @Message.define("event/connector/list")
@@ -35,4 +40,51 @@ class ConnectorsListEvent(Event):
         """
         return message_builder.build_event(
             ConnectorsListEvent, chain, connectors=connectors
+        )
+
+
+@Message.define("event/connector/announce")
+class ConnectorAnnounceEvent(Event):
+    """
+    Emitted by a connector to let the server know about its existence.
+    """
+
+    connector_id: ConnectorID
+
+    display_name: str
+    description: str
+    category: ConnectorCategoryID
+
+    options: Connector.Options = Connector.Options.DEFAULT
+
+    logos: Connector.Logos = dataclasses.field(default_factory=Connector.Logos)
+
+    metadata_profile: ConnectorMetadataProfile = dataclasses.field(default_factory=dict)
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        connector_id: ConnectorID,
+        name: str,
+        description: str,
+        category: ConnectorCategoryID,
+        options: Connector.Options,
+        logos: Connector.Logos,
+        metadata_profile: ConnectorMetadataProfile,
+        chain: Message | None = None
+    ) -> EventComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_event(
+            ConnectorAnnounceEvent,
+            chain,
+            connector_id=connector_id,
+            display_name=name,
+            description=description,
+            category=category,
+            options=options,
+            logos=logos,
+            metadata_profile=metadata_profile,
         )

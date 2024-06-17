@@ -14,22 +14,24 @@ export class ListConnectorsAction extends FrontendCommandAction<ListConnectorsCo
     public prepare(): CommandComposer<ListConnectorsCommand> {
         this.prepareNotifiers();
 
-        this._composer = ListConnectorsCommand.build(this.messageBuilder).timeout(this._regularTimeout);
+        this._composer = ListConnectorsCommand.build(this.messageBuilder);
         return this._composer;
     }
 
     protected addDefaultNotifiers(): void {
         this.addNotifier(
             ActionState.Executing,
-            new OverlayNotifier(OverlayNotificationType.Info, "Fetching connectors", "The available connectors are being downloaded...")
+            new OverlayNotifier(OverlayNotificationType.Info, "Fetching connectors", "The available connectors are being downloaded..."),
         );
-        this.addNotifier(
-            ActionState.Done,
-            new OverlayNotifier(OverlayNotificationType.Success, "Fetching connectors", "All connectors have been downloaded.")
-        );
+        this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Fetching connectors", "All connectors have been downloaded."));
         this.addNotifier(
             ActionState.Failed,
-            new OverlayNotifier(OverlayNotificationType.Error, "Error fetching connectors", `An error occurred while downloading the connectors: ${ActionNotifier.MessagePlaceholder}.`, true)
+            new OverlayNotifier(
+                OverlayNotificationType.Error,
+                "Error fetching connectors",
+                `An error occurred while downloading the connectors: ${ActionNotifier.MessagePlaceholder}.`,
+                true,
+            ),
         );
     }
 }

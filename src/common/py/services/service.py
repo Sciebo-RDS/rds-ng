@@ -45,13 +45,15 @@ class Service(MessageService):
 
         self._name = name
 
+        self._state = type("", (), {})()
+
     def message_handler(
         self,
         /,
         message_type: type[MessageType] = Message,
         *,
         name_filter: str = "",
-        is_async: bool = False,
+        is_async: bool = True,
     ) -> typing.Callable[[MessageHandler], MessageHandler]:
         """
         A decorator to declare a message handler.
@@ -92,6 +94,13 @@ class Service(MessageService):
         The service's message builder.
         """
         return self.create_message_builder()
+
+    @property
+    def state(self) -> typing.Any:
+        """
+        The service's state (i.e., arbitrary data associated with the service).
+        """
+        return self._state
 
     def __str__(self) -> str:
         return self._name

@@ -1,27 +1,34 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { onMounted, onUnmounted, ref, shallowReactive, watch } from "vue";
+import { RouterView } from "vue-router";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { useUserStore } from "@/data/stores/UserStore";
-import { FrontendSettingIDs } from "@/settings/FrontendSettingIDs";
-
-import BasicLoginForm from "@/ui/misc/login/BasicLoginForm.vue";
 
 const comp = FrontendComponent.inject();
-const userStore = useUserStore();
-const { userToken } = storeToRefs(userStore);
+const integrationScheme = shallowReactive(comp.integrationScheme);
+const isIntegrated = ref(integrationScheme.isIntegrated);
 
-// If enabled, show the dummy login page to get a user ID token
-const showLoginPage = computed(() => comp.data.config.value<boolean>(FrontendSettingIDs.UseLoginPage) && !userToken.value);
+// Circumvent Vue warnings arising from using IntegrationScheme.isIntegrated directly
+watch(
+    () => integrationScheme.isIntegrated,
+    (integrated) => {
+        isIntegrated.value = integrated;
+    },
+);
 
+onMounted(() => {
+    // The app has been loaded; notify the authentication scheme about this
+    integrationScheme.enter();
+});
+onUnmounted(() => {
+    // The app has been closed or refreshed; notify the authentication scheme about this
+    integrationScheme.leave();
+});
 </script>
 
 <template>
-    <BasicLoginForm v-if="showLoginPage" />
-    <RouterView v-else />
+    <RouterView v-if="isIntegrated" />
+    <component v-else :is="integrationScheme.integrationComponent" :scheme="integrationScheme" />
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

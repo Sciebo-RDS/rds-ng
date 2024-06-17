@@ -1,0 +1,2 @@
+[network.client]
+server_address = "http://rds-server-1:6969"

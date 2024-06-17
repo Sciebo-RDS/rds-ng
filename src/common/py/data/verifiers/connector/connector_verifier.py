@@ -13,10 +13,12 @@ class ConnectorVerifier(Verifier):
     def verify_create(self) -> None:
         self._verify_id()
         self._verify_name()
+        self._verify_category()
 
     def verify_update(self) -> None:
         self._verify_id()
         self._verify_name()
+        self._verify_category()
 
     def verify_delete(self) -> None:
         self._verify_id()
@@ -28,3 +30,7 @@ class ConnectorVerifier(Verifier):
     def _verify_name(self) -> None:
         if self._connector.name == "":
             raise VerificationException("Missing connector name")
+
+    def _verify_category(self) -> None:
+        if self._connector.category == "":
+            raise VerificationException("Invalid connector category")

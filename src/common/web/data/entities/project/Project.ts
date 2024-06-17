@@ -1,6 +1,8 @@
 import { Type } from "class-transformer";
 
+import { type UserID } from "../user/User";
 import { ProjectFeatures } from "./features/ProjectFeatures";
+import { ProjectLogbook } from "./logbook/ProjectLogbook";
 import { ProjectOptions } from "./ProjectOptions";
 
 /**
@@ -20,6 +22,7 @@ export const enum ProjectStatus {
  * Data for a single **Project**.
  *
  * @param project_id - The unique project identifier.
+ * @param user_id - The ID of the user.
  * @param creation_time - A UNIX timestamp of the project creation time.
  * @param resources_path - The resources path of the project.
  * @param title - The title of the project.
@@ -27,9 +30,11 @@ export const enum ProjectStatus {
  * @param status - The project status.
  * @param features - All project features.
  * @param options - All project options.
+ * @param logbook - The project's logbook.
  */
 export class Project {
     public readonly project_id: ProjectID;
+    public readonly user_id: UserID;
 
     public readonly creation_time: number;
 
@@ -47,8 +52,22 @@ export class Project {
     @Type(() => ProjectOptions)
     public readonly options: ProjectOptions = new ProjectOptions();
 
-    public constructor(projectID: ProjectID, creationTime: number, resourcesPath: string, title: string, description: string = "", features: ProjectFeatures = new ProjectFeatures(), options: ProjectOptions = new ProjectOptions()) {
+    // @ts-ignore
+    @Type(() => ProjectLogbook)
+    public readonly logbook: ProjectLogbook = new ProjectLogbook();
+
+    public constructor(
+        projectID: ProjectID,
+        creationTime: number,
+        resourcesPath: string,
+        title: string,
+        description: string = "",
+        features: ProjectFeatures = new ProjectFeatures(),
+        options: ProjectOptions = new ProjectOptions(),
+        logbook: ProjectLogbook = new ProjectLogbook(),
+    ) {
         this.project_id = projectID;
+        this.user_id = "";
 
         this.creation_time = creationTime;
 
@@ -59,5 +78,7 @@ export class Project {
 
         this.features = features;
         this.options = options;
+
+        this.logbook = logbook;
     }
 }

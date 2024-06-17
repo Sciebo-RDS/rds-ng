@@ -22,5 +22,7 @@ class EventDispatcher(MessageDispatcher[Event]):
         """
         from ...logging import debug
 
-        debug(f"Dispatching event: {msg}", scope="bus")
+        if not msg_meta.suppress_logging:
+            debug(f"Dispatching event: {msg}", scope="bus")
+
         super().pre_dispatch(msg, msg_meta)

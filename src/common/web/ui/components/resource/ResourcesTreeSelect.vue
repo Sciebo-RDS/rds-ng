@@ -11,22 +11,26 @@ function pathToSelectedResources(path: string): Record<string, boolean> {
 const props = defineProps({
     options: {
         type: Object as PropType<Object[]>,
-        required: true
+        required: true,
     },
     placeholder: {
         type: String,
-        default: "Select a value"
+        default: "Select a value",
     },
     loading: {
         type: Boolean,
-        default: false
+        default: false,
+    },
+    loadingError: {
+        type: String,
+        default: "",
     },
     loadingLabel: {
         type: String,
-        default: "Loading data..."
-    }
+        default: "Loading data...",
+    },
 });
-const { options, placeholder, loading, loadingLabel } = toRefs(props);
+const { options, placeholder, loading, loadingError, loadingLabel } = toRefs(props);
 const model = defineModel<string>({ default: "" });
 
 const isLoading = ref(loading.value);
@@ -54,14 +58,18 @@ watch(model, (newPath) => {
         :placeholder="placeholder"
         :pt="{
             panel: 'r-z-index-toplevel',
-
         }"
-        :disabled="isLoading"
+        :disabled="isLoading || !!loadingError"
     >
         <template #value="value">
-            <div v-if="!isLoading && value.value.length > 0" class="flex gap-2"><span :class="value.value[0].icon + ' opacity-75'" /> {{ value.value[0].data }}</div>
+            <div v-if="!isLoading && !loadingError && value.value.length > 0" class="flex gap-2">
+                <span :class="value.value[0].icon + ' opacity-75'" /> {{ value.value[0].data }}
+            </div>
             <div v-else>
-                <span v-if="isLoading" class="flex">
+                <span v-if="loadingError" class="flex">
+                    <span class="material-icons-outlined mi-error-outline mr-1" /><span>{{ loadingError }}</span>
+                </span>
+                <span v-else-if="isLoading" class="flex">
                     <span class="material-icons-outlined mi-refresh animate-spin mr-1" /><span>{{ loadingLabel }}</span>
                 </span>
                 <span v-else>{{ value.placeholder }}</span>
@@ -70,6 +78,4 @@ watch(model, (newPath) => {
     </TreeSelect>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

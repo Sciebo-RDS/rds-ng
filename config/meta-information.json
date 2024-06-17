@@ -1,12 +1,17 @@
 {
     "global": {
         "title": "RDS-NG",
-        "version": "0.0.1"
+        "version": "0.1.0"
     },
     "components": {
-        "gate": {
-            "name": "Gate service",
-            "directory": "gate",
+        "server": {
+            "name": "Server",
+            "directory": "server",
+            "tech": "py"
+        },
+        "connector:stub": {
+            "name": "Stub connector",
+            "directory": "connectors/stub",
             "tech": "py"
         },
         "frontend": {

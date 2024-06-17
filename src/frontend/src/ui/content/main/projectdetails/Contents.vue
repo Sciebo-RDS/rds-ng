@@ -5,15 +5,15 @@ import { computed, defineAsyncComponent, reactive, toRefs } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
-import { type UIOptions } from "@/data/entities/UIOptions";
+import { type UIOptions } from "@/data/entities/ui/UIOptions";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 
 const props = defineProps({
     project: {
         type: Project,
-        required: true
-    }
+        required: true,
+    },
 });
 const { project } = toRefs(props);
 

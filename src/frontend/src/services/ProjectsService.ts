@@ -1,5 +1,5 @@
 import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/project/ProjectCommands";
-import { ProjectsListEvent } from "@common/api/project/ProjectEvents";
+import { ProjectLogbookEvent, ProjectsListEvent } from "@common/api/project/ProjectEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -12,7 +12,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function(comp: WebComponent): Service {
+export default function (comp: WebComponent): Service {
     return comp.createService(
         "Projects service",
         (svc: Service) => {
@@ -34,6 +34,20 @@ export default function(comp: WebComponent): Service {
                 ctx.projectsStore.resetPendingDeletions();
                 // @ts-ignore
                 ctx.projectsStore.projects = msg.projects;
+            });
+
+            svc.messageHandler(ProjectLogbookEvent, (msg: ProjectLogbookEvent, ctx: FrontendServiceContext) => {
+                ctx.logger.debug("Project logbook update received", "projects", { project: msg.project_id, logbook: JSON.stringify(msg.logbook) });
+
+                const project = ctx.projectsStore.projects.find((project) => project.project_id == msg.project_id);
+                if (project) {
+                    Object.assign(project, { logbook: msg.logbook });
+                } else {
+                    ctx.logger.warning("Received project logbook for an invalid project", "projects", {
+                        project: msg.project_id,
+                        logbook: JSON.stringify(msg.logbook),
+                    });
+                }
             });
 
             svc.messageHandler(CreateProjectReply, (msg: CreateProjectReply, ctx: FrontendServiceContext) => {
@@ -65,6 +79,6 @@ export default function(comp: WebComponent): Service {
                 }
             });
         },
-        FrontendServiceContext
+        FrontendServiceContext,
     );
 }

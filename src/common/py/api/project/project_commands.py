@@ -14,8 +14,8 @@ from ...core.messaging.composers import (
 from ...data.entities.project import (
     Project,
     ProjectID,
-    ProjectOptions,
 )
+from ...data.entities.project.logbook import RecordID, ProjectLogbookType
 
 
 @Message.define("command/project/list")
@@ -85,7 +85,7 @@ class CreateProjectCommand(Command):
     title: str
     description: str
 
-    options: ProjectOptions = dataclasses.field(default_factory=ProjectOptions)
+    options: Project.Options = dataclasses.field(default_factory=Project.Options)
 
     @staticmethod
     def build(
@@ -94,7 +94,7 @@ class CreateProjectCommand(Command):
         resources_path: str,
         title: str,
         description: str,
-        options: ProjectOptions,
+        options: Project.Options,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -159,7 +159,7 @@ class UpdateProjectCommand(Command):
     title: str
     description: str
 
-    options: ProjectOptions = dataclasses.field(default_factory=ProjectOptions)
+    options: Project.Options = dataclasses.field(default_factory=Project.Options)
 
     @staticmethod
     def build(
@@ -168,7 +168,7 @@ class UpdateProjectCommand(Command):
         project_id: ProjectID,
         title: str,
         description: str,
-        options: ProjectOptions,
+        options: Project.Options,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -209,6 +209,73 @@ class UpdateProjectReply(CommandReply):
         """
         return message_builder.build_command_reply(
             UpdateProjectReply, cmd, success, message, project_id=project_id
+        )
+
+
+@Message.define("command/project/logbook/mark-seen")
+class MarkProjectLogbookSeenCommand(Command):
+    """
+    Marks a project logbook entry as seen.
+
+    Args:
+        logbook_type: The logbook type to mark.
+        project_id: The ID of the project containing the logbook.
+        record: The record ID.
+        mark_all: If true, all records will be marked as seen (ignores project and record IDs).
+
+    Notes:
+        Requires a ``ProjectLogbookMarkSeenReply`` reply.
+    """
+
+    logbook_type: ProjectLogbookType
+
+    project_id: ProjectID
+    record: RecordID
+
+    mark_all: bool
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        logbook_type: ProjectLogbookType,
+        project_id: ProjectID,
+        record: RecordID,
+        mark_all: bool = False,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            MarkProjectLogbookSeenCommand,
+            chain,
+            logbook_type=logbook_type,
+            project_id=project_id,
+            record=record,
+            mark_all=mark_all,
+        )
+
+
+@Message.define("command/project/logbook/mark-seen/reply")
+class MarkProjectLogbookSeenReply(CommandReply):
+    """
+    Reply to ``ProjectLogbookMarkSeenCommand``.
+    """
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: MarkProjectLogbookSeenCommand,
+        *,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            MarkProjectLogbookSeenReply, cmd, success, message
         )
 
 

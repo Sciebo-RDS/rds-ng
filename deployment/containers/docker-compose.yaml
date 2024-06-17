@@ -22,18 +22,33 @@ services:
             replicas: 0
 
     # -- Component images --
-    # Gate service
-    gate:
-        image: rds-ng/gate:latest
+    # Server service
+    server:
+        image: rds-ng/server:latest
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/Dockerfile
             args:
-                COMPONENT_NAME: "gate"
+                COMPONENT_NAME: "server"
         depends_on:
             - py-base
         ports:
             - "4200:6969"
+        environment:
+            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+
+    # Connector: Stub
+    connector-stub:
+        image: rds-ng/connector-stub:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/stub"
+        depends_on:
+            - py-base
+        ports:
+            - "4300:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 

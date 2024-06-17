@@ -23,7 +23,7 @@ provide("profileId", props.profileId);
 const showPropertySelector = ref(false);
 const selectedProperties = ref<PropertyType>();
 
-const propsToShow = !Object.prototype.hasOwnProperty.call(attrs, "defaultSet")
+const propsToShow = !("defaultSet" in attrs)
     ? ref<PropertyType[]>(
           props.category.properties.filter((p: PropertyType) => controller.getValue(props.profileId, props.category.id, p.id) != undefined || p.showAlways)
       )
@@ -41,8 +41,8 @@ const header = `${props.index + 1}. ${props.category.name}`;
 </script>
 
 <template>
-    <Accordion v-if="!Object.prototype.hasOwnProperty.call(attrs, 'defaultSet')" class="w-full">
-        <AccordionTab :pt="{ header: { class: ['border-indigo-200', { 'border-t': index !== 0 }] }, headerAction: { class: 'pb-0 pt-5' } }">
+    <Accordion v-if="!('defaultSet' in attrs)" class="w-full">
+        <AccordionTab :pt="{ header: { class: '!rounded-md !border !border-indigo-200' }, headerAction: { class: '!py-4' } }">
             <template #header>
                 <span class="flex align-items-center w-full !text-gray-800 truncate text-ellipsis mr-2" :title="header">
                     {{ header }}

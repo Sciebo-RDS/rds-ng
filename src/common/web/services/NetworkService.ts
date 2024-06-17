@@ -1,7 +1,7 @@
 import { PingCommand, PingReply } from "../api/network/NetworkCommands";
 import { ClientConnectedEvent, ClientConnectionErrorEvent, ClientDisconnectedEvent } from "../api/network/NetworkEvents";
 import { WebComponent } from "../component/WebComponent";
-import { ConnectionState, networkStore } from "../data/stores/NetworkStore";
+import { ConnectionState, useNetworkStore } from "../data/stores/NetworkStore";
 import { Service } from "./Service";
 import { ServiceContext } from "./ServiceContext";
 
@@ -14,16 +14,16 @@ import { ServiceContext } from "./ServiceContext";
  */
 export default function(comp: WebComponent): Service {
     return comp.createService("Network service", (svc: Service) => {
-        const nwStore = networkStore();
+        const nwStore = useNetworkStore();
 
         svc.messageHandler(PingCommand, (msg: PingCommand, ctx: ServiceContext) => {
-            ctx.logger.debug("Received PING", "component", { payload: msg.payload });
+            ctx.logger.debug("Received PING", "network", { payload: msg.payload });
 
             PingReply.build(ctx.messageBuilder, msg).emit();
         });
 
         svc.messageHandler(PingReply, (msg: PingReply, ctx: ServiceContext) => {
-            ctx.logger.debug("Received PING reply", "component", { payload: msg.payload });
+            ctx.logger.debug("Received PING reply", "network", { payload: msg.payload });
         });
 
         svc.messageHandler(ClientConnectedEvent, (msg: ClientConnectedEvent, ctx: ServiceContext) => {

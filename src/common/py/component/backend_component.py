@@ -90,6 +90,15 @@ class BackendComponent:
 
         info("Running component")
 
+        # Register global items
+        from ..integration.authorization.strategies import (
+            register_authorization_strategies,
+        )
+        from ..integration.resources.brokers import register_resources_brokers
+
+        register_authorization_strategies()
+        register_resources_brokers()
+
         # Create all basic services
         from ..services import create_component_service, create_network_service
 

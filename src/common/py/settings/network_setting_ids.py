@@ -1,6 +1,18 @@
 from ..utils.config import SettingID
 
 
+class NetworkSettingIDs:
+    # pylint: disable=too-few-public-methods
+    """
+    Identifiers for general networking settings.
+
+    Attributes:
+        EXTERNAL_REQUESTS_TIMEOUT: The maximum time (in seconds) for requests to external services; set to 0 to disable (value type: ``float``).
+    """
+    REGULAR_COMMAND_TIMEOUT = SettingID("network", "regular_command_timeout")
+    EXTERNAL_REQUESTS_TIMEOUT = SettingID("network", "external_requests_timeout")
+
+
 class NetworkServerSettingIDs:
     # pylint: disable=too-few-public-methods
     """
@@ -8,7 +20,7 @@ class NetworkServerSettingIDs:
 
     Attributes:
         ALLOWED_ORIGINS: A comma-separated list of allowed origins; use the asterisk (*) to allow all (value type: ``string``).
-        IDLE_TIMEOUT: The time (in seconds) until idle clients will be disconnected automatically; set to 0 to disable.
+        IDLE_TIMEOUT: The time (in seconds) until idle clients will be disconnected automatically; set to 0 to disable (value type: ``float``).
     """
     ALLOWED_ORIGINS = SettingID("network.server", "allowed_origins")
     IDLE_TIMEOUT = SettingID("network.server", "idle_timeout")

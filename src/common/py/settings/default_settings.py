@@ -13,13 +13,25 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
     """
     from .component_setting_ids import ComponentSettingIDs
     from .general_setting_ids import GeneralSettingIDs
-    from .network_setting_ids import NetworkServerSettingIDs, NetworkClientSettingIDs
+    from .integration_setting_ids import IntegrationSettingIDs
+    from .network_setting_ids import (
+        NetworkSettingIDs,
+        NetworkServerSettingIDs,
+        NetworkClientSettingIDs,
+    )
 
     return {
+        # General settings
         GeneralSettingIDs.DEBUG: False,
+        # Component settings
         ComponentSettingIDs.INSTANCE: "default",
+        # Network settings
+        NetworkSettingIDs.REGULAR_COMMAND_TIMEOUT: 10,
+        NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT: 15,
         NetworkServerSettingIDs.ALLOWED_ORIGINS: "",
         NetworkServerSettingIDs.IDLE_TIMEOUT: 30 * 60,
         NetworkClientSettingIDs.SERVER_ADDRESS: "",
         NetworkClientSettingIDs.CONNECTION_TIMEOUT: 10,
+        # Integration settings
+        IntegrationSettingIDs.DEFAULT_ROOT_PATH: "/",
     }

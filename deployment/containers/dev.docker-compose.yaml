@@ -23,22 +23,49 @@ services:
             replicas: 0
 
     # -- Component images --
-    # Gate service
-    gate:
-        image: rds-ng/gate:develop
+    # Server service
+    server:
+        image: rds-ng/server:develop
         volumes:
             -   type: bind
                 source: ../../src
                 target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
             args:
-                COMPONENT_NAME: "gate"
+                COMPONENT_NAME: "server"
         depends_on:
             - py-base
         ports:
             - "4200:6969"
+        environment:
+            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+            - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=AGO8sqdOwQIgEQtT8TYTyC16MenJV0oPoNzwBnP0f35LIlwGldDOnUqxWWCgllv4
+            # - RDS_INTEGRATION_DEFAULT_ROOT_PATH=/files
+
+    # Connector: Stub
+    connector-stub:
+        image: rds-ng/connector-stub:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/dev.Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/stub"
+        depends_on:
+            - py-base
+        ports:
+            - "4300:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
@@ -63,3 +90,7 @@ services:
             - "8000:6969"
         environment:
             - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200
+            - RDS_INTEGRATION_SCHEME=host
+            - RDS_INTEGRATION_HOST_API_URL=http://localhost:8080/apps/rdsng/api/v1
+            - RDS_AUTHORIZATION_OAUTH2_REDIRECT_URL=http://localhost:8080/apps/rdsng/launcher/launch
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=6KJ6TCmAnjC9Bniub6q5OLOMuRAqV98bgSjetBh90tk2i5q5lwD9ckqmM1C72aDh

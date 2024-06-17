@@ -28,7 +28,7 @@ class NetworkFilters:
         connection: NetworkFilter.ConnectionType,
         msg: Message,
         msg_meta: MessageMetaInformation,
-    ) -> bool:
+    ) -> NetworkFilter.Action:
         """
         Filters incoming messages.
 
@@ -40,8 +40,14 @@ class NetworkFilters:
         Returns:
             Whether the message should be filtered out.
         """
-        return any(
-            f.filter_incoming_message(connection, msg, msg_meta) for f in self._filters
+        return (
+            NetworkFilter.Action.REJECT
+            if any(
+                f.filter_incoming_message(connection, msg, msg_meta)
+                == NetworkFilter.Action.REJECT
+                for f in self._filters
+            )
+            else NetworkFilter.Action.PASS
         )
 
     def filter_outgoing_message(
@@ -49,7 +55,7 @@ class NetworkFilters:
         connection: NetworkFilter.ConnectionType,
         msg: Message,
         msg_meta: MessageMetaInformation,
-    ) -> bool:
+    ) -> NetworkFilter.Action:
         """
         Filters outgoing messages.
 
@@ -61,6 +67,12 @@ class NetworkFilters:
         Returns:
             Whether the message should pass.
         """
-        return any(
-            f.filter_outgoing_message(connection, msg, msg_meta) for f in self._filters
+        return (
+            NetworkFilter.Action.REJECT
+            if any(
+                f.filter_outgoing_message(connection, msg, msg_meta)
+                == NetworkFilter.Action.REJECT
+                for f in self._filters
+            )
+            else NetworkFilter.Action.PASS
         )

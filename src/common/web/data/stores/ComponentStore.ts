@@ -20,7 +20,7 @@ export const enum ComponentState {
  * @param componentState - The overall state of the component.
  * @param componentStateMessage - An additional message about the component state.
  */
-export const componentStore = defineStore("componentStore", () => {
+export const useComponentStore = defineStore("componentStore", () => {
     const componentState = ref(ComponentState.Connecting);
     const componentStateMessage = ref("");
 

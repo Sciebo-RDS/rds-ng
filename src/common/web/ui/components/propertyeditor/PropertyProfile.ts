@@ -1,4 +1,4 @@
-import type { Component } from "vue";
+import { type Component } from "vue";
 
 import StringForm from "./propertyforms/StringForm.vue";
 import NumberForm from "./propertyforms/NumberForm.vue";

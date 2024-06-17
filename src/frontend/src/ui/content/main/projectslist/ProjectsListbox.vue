@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // @ts-nocheck
 
-import { useProjectTools } from "@/ui/tools/ProjectTools";
+import { useProjectTools } from "@/ui/tools/project/ProjectTools";
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
 import { watch } from "vue";
@@ -73,7 +73,7 @@ function isProjectDeleted(project: Project): boolean {
             :pt="{
                 root: 'projects-listbox',
                 list: 'projects-listbox-list',
-                item: 'projects-listbox-item'
+                item: 'projects-listbox-item',
             }"
         >
             <template #option="projectEntry">
@@ -109,5 +109,9 @@ function isProjectDeleted(project: Project): boolean {
 
 :deep(.projects-listbox-item) {
     @apply pr-2 border-solid border-b border-[--r-border-color] #{!important};
+}
+
+:deep(.projects-listbox-item:hover) {
+    @apply bg-[--r-shade-dark] #{!important};
 }
 </style>
