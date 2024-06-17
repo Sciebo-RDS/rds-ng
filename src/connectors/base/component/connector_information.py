@@ -27,7 +27,9 @@ class ConnectorInformation:
                     "endpoints": {
                         "authorization": "/index.php/apps/oauth2/authorize",
                         "token": "/index.php/apps/oauth2/api/v1/token"
-                    }
+                    },
+                    "client_id": "<some id...>",
+                    "redirect_url": "http://www.rdsng.com/auth"
                 }
             },
             "options": {

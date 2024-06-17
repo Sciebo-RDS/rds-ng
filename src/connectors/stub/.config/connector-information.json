@@ -9,7 +9,9 @@
             "endpoints": {
                 "authorization": "/index.php/apps/oauth2/authorize",
                 "token": "/index.php/apps/oauth2/api/v1/token"
-            }
+            },
+            "client_id": "q6C71zSMBkxzSqzPTn7AxS9Tia2RUTddSEiN53jlObD5RLgX4t1EsTD1e9dg4HTJ",
+            "redirect_url": "http://localhost:8080/apps/rdsng/launcher/launch"
         }
     },
     "options": {
