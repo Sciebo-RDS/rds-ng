@@ -9,7 +9,7 @@ import { PersistedSet } from "../PropertySet";
  * @param id2 - The second ID.
  */
 export function compareProfileIDs(id1: ProfileID, id2: ProfileID): boolean {
-    return id1.name.toLowerCase().localeCompare(id2.name.toLowerCase()) == 0 && id1.version.toLowerCase().localeCompare(id2.version.toLowerCase()) == 0;
+    return id1[0].toLowerCase().localeCompare(id2[0].toLowerCase()) == 0 && id1[1].toLowerCase().localeCompare(id2[1].toLowerCase()) == 0;
 }
 
 /**
@@ -20,8 +20,8 @@ export function compareProfileIDs(id1: ProfileID, id2: ProfileID): boolean {
  *
  * @returns - The found persisted set, if any.
  */
-export function extractPersistedSetFromArray(persistedSets: PersistedSet[], profileID: ProfileID): PersistedSet {
-    const sets = persistedSets.filter((set) => compareProfileIDs(set.profile_id, profileID));
+export function extractPersistedSetFromArray(persistedSets, profileID: ProfileID): PersistedSet {
+    const sets = persistedSets.filter((set) => compareProfileIDs(set["metadata"]["id"], profileID));
     return sets.length ? sets[0] : ({} as PersistedSet);
 }
 
