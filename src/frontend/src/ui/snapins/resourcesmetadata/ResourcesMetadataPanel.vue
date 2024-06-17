@@ -2,22 +2,22 @@
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
 import Image from "primevue/image";
+import InputSwitch from "primevue/inputswitch";
+import Panel from "primevue/panel";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import Panel from "primevue/panel";
-import { nextTick, reactive, ref, toRefs, watch, computed } from "vue";
+import { computed, nextTick, reactive, ref, toRefs, watch, type PropType } from "vue";
 
-import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
-import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import { ResourcesMetadataFeature, type ResourcesMetadata } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
+import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
-import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
-import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
-import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
-import { deepClone } from "@common/utils/ObjectUtils";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+import { deepClone } from "@common/utils/ObjectUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
@@ -33,6 +33,10 @@ const props = defineProps({
     project: {
         type: Project,
         required: true
+    },
+    globalObjectStore: {
+        type: Object as PropType<ProjectObjectStore>,
+        required: true
     }
 });
 const { project } = toRefs(props);
@@ -42,9 +46,10 @@ const selectedNodes = ref({} as Record<string, boolean>);
 const resourcesRefreshing = ref(false);
 const resourcesError = ref("");
 
-const resourcesProfile = new PropertySet(resources);
-const resourcesData = ref<PersistedSet[]>([]);
-const controller = reactive(new MetadataController(resourcesProfile, [], []));
+/* const resourcesProfile = new PropertySet(resources);
+const controller = reactive(new MetadataController(resourcesProfile, [], [])); */
+
+const resourcesData = ref();
 
 const showPreview = ref(true);
 
@@ -79,46 +84,57 @@ const propertyHeader = computed(() => {
     }
 });
 
+const projectObjects = reactive(new ProjectObjectStore());
+const projectProfiles = reactive(new PropertyProfileStore());
 const debounce = makeDebounce(500);
 
-watch(resourcesData, (metadata) => {
-    if (blockResourcesUpdate) {
-        return;
-    }
-    debounce(() => {
-        const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
-        const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
+// TODO make backend accept List instead of PersistedSets/Dicts
+watch(
+    resourcesData,
+    (metadata) => {
+        if (blockResourcesUpdate) {
+            return;
+        }
 
-        const selectedPaths = Object.keys(selectedNodes.value);
-        selectedPaths.forEach((path) => {
-            updatedData[path] = resourcesSet;
+        debounce(() => {
+            const resourcesSet = metadata;
+            const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
+
+            const selectedPaths = Object.keys(selectedNodes.value);
+            selectedPaths.forEach((path) => {
+                updatedData[path] = resourcesSet;
+            });
+            const action = new UpdateProjectFeaturesAction(comp);
+            action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
+            action.execute();
+
+            // TODO: A hack to update the local data; nedds to be changed later
+            // @ts-ignore
+            project!.value.features.resources_metadata.resources_metadata = updatedData;
         });
-
-        const action = new UpdateProjectFeaturesAction(comp);
-        action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
-        action.execute();
-
-        // TODO: A hack to update the local data; nedds to be changed later
-        // @ts-ignore
-        project!.value.features.resources_metadata.resources_metadata = updatedData;
-    });
-});
+    },
+    { deep: true }
+);
 
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
     blockResourcesUpdate = true;
 
-    const persistedSets: PersistedSet[] = [];
+    /* const persistedSets: PersistedSet[] = []; */
     const selectedPaths = Object.keys(nodes);
     const metadata = project!.value.features.resources_metadata.resources_metadata;
-    selectedPaths.forEach((path) => {
-        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id));
-    });
+    /* selectedPaths.forEach((path) => {
+        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
+    }); */
 
-    resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
+    resourcesData.value = metadata[selectedPaths[0]] || [];
 
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));
 });
+
+projectProfiles.mountProfile(resources as Profile);
+const showObjects = ref(false);
+const showIndex = ref(true);
 </script>
 
 <template>
@@ -141,6 +157,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                             <span class="truncate mx-1" :title="Object.keys(selectedNodes).sort().join('\n')"> {{ propertyHeader }}</span>
                             <span>
                                 <Button
+                                    v-if="Object.keys(selectedNodes).length == 1"
                                     icon="material-icons-outlined mi-visibility"
                                     title="Toggle preview"
                                     size="small"
@@ -155,20 +172,43 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                             <div v-if="Object.keys(selectedNodes).length > 1" class="w-full">
                                 <Panel class="mx-5 mt-5">
                                     <template #header>
-                                        <span class="font-bold"
-                                            ><i class="pi pi-exclamation-circle mr-2"></i> Changes will apply to
-                                            {{ Object.keys(selectedNodes).length }} objects.</span
-                                        >
+                                        <span class="flex w-full mx-2 gap-2">
+                                            <span class="grow font-bold">
+                                                <i class="pi pi-exclamation-circle mr-2" /> Changes will apply to
+                                                {{ Object.keys(selectedNodes).length }} objects.
+                                            </span>
+                                            <label for="switch1">Show Objects</label> <InputSwitch v-model="showObjects" />
+                                        </span>
                                     </template>
-                                    <p v-for="path of Object.keys(selectedNodes).sort()" class="m-0 font-mono">{{ path }}</p>
+                                    <div v-if="showObjects">
+                                        <div class="m-2 mt-0 flex gap-2 flex-row-reverse">
+                                            <InputSwitch v-model="showIndex" input-id="switch1" /> <label for="switch1">Show Index</label>
+                                        </div>
+                                        <div class="m-2 p-2 rounded bg-gray-100">
+                                            <p
+                                                v-for="[i, path] of Object.keys(selectedNodes).sort().entries()"
+                                                class="m-0 font-mono text-ellipsis overflow-hidden text-nowrap"
+                                                :title="path"
+                                            >
+                                                {{ showIndex ? i + 1 : null }} {{ path }}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </Panel>
                             </div>
                             <div v-else-if="showPreview" class="mt-5">
                                 <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
                             </div>
-                            <PropertyEditor v-model="resourcesData" :controller="controller as MetadataController" :logging="logging" oneCol class="w-full" />
+                            <PropertyEditor
+                                v-model="resourcesData"
+                                :projectObjects="projectObjects as ProjectObjectStore"
+                                :globalObjectStore="globalObjectStore as ProjectObjectStore"
+                                :projectProfiles="projectProfiles as PropertyProfileStore"
+                                class="w-full"
+                            />
                         </div>
                         <div v-else class="r-centered-grid italic pt-8">Select one or more file objects on the left to edit their metadata.</div>
+                        {{ project!.features.resources_metadata.resources_metadata }}
                     </div>
                 </SplitterPanel>
             </Splitter>
