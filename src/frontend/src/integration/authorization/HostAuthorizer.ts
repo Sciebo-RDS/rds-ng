@@ -1,10 +1,10 @@
+import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
 import { type OAuth2StrategyConfiguration, OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
-import { type HostAuthorization } from "@/integration/HostTypes";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
@@ -12,9 +12,9 @@ import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
  * Authorizer for host integration.
  */
 export class HostAuthorizer extends Authorizer {
-    private readonly _hostAuth: HostAuthorization;
+    private readonly _hostAuth: AuthorizationSettings;
 
-    public constructor(comp: FrontendComponent, hostAuth: HostAuthorization) {
+    public constructor(comp: FrontendComponent, hostAuth: AuthorizationSettings) {
         super(comp);
 
         this._hostAuth = hostAuth;
