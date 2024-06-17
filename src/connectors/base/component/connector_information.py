@@ -23,13 +23,17 @@ class ConnectorInformation:
             "authorization": {
                 "strategy": "oauth2",
                 "config": {
-                    "host": "http://10.0.2.15",
-                    "endpoints": {
-                        "authorization": "/index.php/apps/oauth2/authorize",
-                        "token": "/index.php/apps/oauth2/api/v1/token"
+                    "server": {
+                        "host": "http://10.0.2.15",
+                        "endpoints": {
+                            "authorization": "/index.php/apps/oauth2/authorize",
+                            "token": "/index.php/apps/oauth2/api/v1/token"
+                        },
                     },
-                    "client_id": "<some id...>",
-                    "redirect_url": "http://www.rdsng.com/auth"
+                    "client": {
+                        "client_id": "<some id...>",
+                        "redirect_url": "http://www.rdsng.com/auth"
+                    }
                 }
             },
             "options": {

@@ -23,7 +23,7 @@ export class HostIntegrationScheme extends IntegrationScheme {
         super(
             comp,
             HostIntegrationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/integration/HostIntegration.vue")),
+            defineAsyncComponent(() => import("@/ui/integration/schemes/HostIntegration.vue")),
         );
     }
 
