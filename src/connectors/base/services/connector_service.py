@@ -42,6 +42,7 @@ def create_connector_service(comp: BackendComponent) -> Service:
                     name=info.name,
                     description=info.description,
                     category=info.category,
+                    authorization=info.authorization,
                     options=info.options,
                     logos=info.logos,
                     metadata_profile=info.metadata_profile,

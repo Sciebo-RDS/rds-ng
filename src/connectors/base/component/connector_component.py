@@ -62,7 +62,9 @@ class ConnectorComponent(BackendComponent):
         super().run()
 
     def _add_connector_settings(self) -> None:
-        pass
+        from ..settings import get_connector_settings
+
+        self.data.config.add_defaults(get_connector_settings())
 
     @property
     def connector_info(self) -> ConnectorInformation:

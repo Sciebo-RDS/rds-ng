@@ -52,7 +52,7 @@ class ServerComponent(BackendComponent):
         super().run()
 
     def _add_server_settings(self) -> None:
-        from server.settings import get_server_settings
+        from ..settings import get_server_settings
 
         self.data.config.add_defaults(get_server_settings())
 
