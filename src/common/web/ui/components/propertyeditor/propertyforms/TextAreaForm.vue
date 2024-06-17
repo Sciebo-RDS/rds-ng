@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, type PropType } from "vue";
 import Textarea from "primevue/textarea";
+import { computed, type PropType } from "vue";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
@@ -18,7 +18,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
 <template>
     <div>
         <Textarea
-            @update:modelValue="(value) => projectObjects.update(profileId, inputId, 'string', propertyObjectId, value)"
+            @update:modelValue="(value) => projectObjects.update(profileId, inputId, propertyObjectId, value)"
             v-model="value[inputId]"
             autoResize
             class="w-full"

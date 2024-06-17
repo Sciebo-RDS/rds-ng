@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type PropType, ref } from "vue";
+import { computed, type PropType } from "vue";
 import { getRandomId } from "../utils/Ids";
 
 import Checkbox from "primevue/checkbox";
@@ -18,19 +18,18 @@ const props = defineProps({
 const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
 
 const id = getRandomId();
-
 </script>
 
 <template>
     <div class="grid grid-cols-2 gap-4 place-content-stretch">
         <div v-for="option of inputOptions" :key="option">
             <Checkbox
-            :modelValue="value[inputId]"
-            :inputId="option + id"
-            :name="option"
-            :value="option"
-            class="mr-2" 
-            @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, 'checkbox', propertyObjectId, value)"
+                :modelValue="value[inputId]"
+                :inputId="option + id"
+                :name="option"
+                :value="option"
+                class="mr-2"
+                @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, propertyObjectId, value)"
             />
             <label class="break-all" :for="option + id">{{ option }}</label>
         </div>

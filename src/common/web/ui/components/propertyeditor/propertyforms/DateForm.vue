@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, type PropType } from "vue";
 import Calendar from "primevue/calendar";
+import { computed, type PropType } from "vue";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
@@ -17,10 +17,6 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
 
 <template>
     <div>
-        <Calendar
-            @date-select="(date: Date) => projectObjects.update(profileId, inputId, 'string', propertyObjectId, date)"
-            v-model="value[inputId]"
-            class="w-full"
-        />
+        <Calendar @date-select="(date: Date) => projectObjects.update(profileId, inputId, propertyObjectId, date)" v-model="value[inputId]" class="w-full" />
     </div>
 </template>

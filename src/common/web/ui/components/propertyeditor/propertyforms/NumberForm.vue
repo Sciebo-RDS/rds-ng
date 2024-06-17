@@ -1,7 +1,6 @@
 <script setup lang="ts">
+import InputNumber, { type InputNumberInputEvent } from "primevue/inputnumber";
 import { computed, type PropType } from "vue";
-import InputNumber from "primevue/inputnumber";
-import { type InputNumberInputEvent } from "primevue/inputnumber";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
@@ -25,7 +24,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
             v-model="value[inputId]"
             :useGrouping="false"
             class="w-full"
-            @input="(e: InputNumberInputEvent) => projectObjects.update(profileId, inputId, 'number', propertyObjectId, e.value)"
+            @input="(e: InputNumberInputEvent) => projectObjects.update(profileId, inputId, propertyObjectId, e.value)"
         />
     </div>
 </template>

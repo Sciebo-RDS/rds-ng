@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, type PropType } from "vue";
 import MultiSelect from "primevue/multiselect";
+import { computed, type PropType } from "vue";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
@@ -22,7 +22,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
             v-model="value[inputId]"
             :options="inputOptions"
             class="w-full relative"
-            @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, 'multiselect', propertyObjectId, value)"
+            @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, propertyObjectId, value)"
         />
     </div>
 </template>

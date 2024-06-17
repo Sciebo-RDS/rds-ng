@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, type PropType } from "vue";
 import Chips from "primevue/chips";
+import { computed, type PropType } from "vue";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
@@ -17,7 +17,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
 
 <template>
     <Chips
-        @update:modelValue="(value) => projectObjects.update(profileId, inputId, 'string', propertyObjectId, value)"
+        @update:modelValue="(value) => projectObjects.update(profileId, inputId, propertyObjectId, value)"
         v-model="value[inputId]"
         separator=","
         class="inline"

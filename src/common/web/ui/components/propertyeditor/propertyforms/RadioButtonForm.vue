@@ -2,8 +2,8 @@
 import { computed, type PropType } from "vue";
 import { getRandomId } from "../utils/Ids";
 
-import RadioButton from "primevue/radiobutton";
 import Button from "primevue/button";
+import RadioButton from "primevue/radiobutton";
 
 import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
@@ -31,14 +31,14 @@ const id = getRandomId();
                     :inputId="option + id"
                     name="dynamic"
                     :value="option"
-                    @update:modelValue="(value: String) => projectObjects.update(profileId, inputId, 'radiobuttons', propertyObjectId, value)"
+                    @update:modelValue="(value: String) => projectObjects.update(profileId, inputId, propertyObjectId, value)"
                 />
                 <label :for="option + id" class="ml-2">{{ option }}</label>
             </div>
         </div>
         <div class="w-full grid">
             <Button
-                @click="projectObjects.update(profileId, inputId, 'string', propertyObjectId, '')"
+                @click="projectObjects.update(profileId, inputId, propertyObjectId, '')"
                 icon="pi pi-times"
                 severity="secondary"
                 aria-label="clear selection"
