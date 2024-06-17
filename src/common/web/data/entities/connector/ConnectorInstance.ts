@@ -1,3 +1,4 @@
+import { AuthorizationState } from "../authorization/AuthorizationState";
 import { type ConnectorID } from "./Connector";
 
 /**
@@ -12,6 +13,7 @@ export type ConnectorInstanceID = string;
  * @param connector_id - The assigned connector.
  * @param name - The name of this connector instance.
  * @param description - The instance description.
+ * @param authorization_state: The authorization state.
  */
 export class ConnectorInstance {
     public readonly instance_id: ConnectorInstanceID;
@@ -21,12 +23,22 @@ export class ConnectorInstance {
     public readonly name: string;
     public readonly description: string;
 
-    public constructor(instanceID: ConnectorInstanceID, connectorID: ConnectorID, name: string, description: string = "") {
+    public readonly authorization_state: AuthorizationState;
+
+    public constructor(
+        instanceID: ConnectorInstanceID,
+        connectorID: ConnectorID,
+        name: string,
+        description: string = "",
+        authState: AuthorizationState = AuthorizationState.NotAuthorized,
+    ) {
         this.instance_id = instanceID;
 
         this.connector_id = connectorID;
 
         this.name = name;
         this.description = description;
+
+        this.authorization_state = authState;
     }
 }

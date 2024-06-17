@@ -5,7 +5,7 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
-    function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
+    async function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, undefined, connector).then((data) => {
             const instance = new ConnectorInstance(crypto.randomUUID() as ConnectorInstanceID, connector.connector_id, data.name, data.description);
             instances.push(instance);
@@ -13,7 +13,7 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         });
     }
 
-    function editInstance(instances: ConnectorInstance[], instance: ConnectorInstance, connector?: Connector): Promise<ConnectorInstance> {
+    async function editInstance(instances: ConnectorInstance[], instance: ConnectorInstance, connector?: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, instance, connector).then((data) => {
             const editedInstance = new ConnectorInstance(instance.instance_id, instance.connector_id, data.name, data.description);
             const index = instances.indexOf(instance);
@@ -36,6 +36,6 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
     return {
         newInstance,
         editInstance,
-        deleteInstance
+        deleteInstance,
     };
 }

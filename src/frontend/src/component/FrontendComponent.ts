@@ -21,6 +21,7 @@ import { IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 
 import Frontend from "@/ui/Frontend.vue";
 import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
+import { registerAuthorizationStrategyUIs } from "@/ui/integration/authorization/strategies/AuthorizationStrategyUIs";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
 /**
@@ -48,6 +49,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         registerIntegrationSchemes();
         registerConnectorCategories();
         registerSnapIns();
+        registerAuthorizationStrategyUIs();
 
         // Mount the integration scheme
         this.mountIntegrationScheme();

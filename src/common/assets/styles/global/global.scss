@@ -133,6 +133,10 @@ html {
     font-variant: small-caps;
 }
 
+.r-button-small {
+    @apply py-1 px-3 #{!important};
+}
+
 /*
  * Helper classes.
  */
