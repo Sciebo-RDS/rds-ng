@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref, inject, computed, reactive } from "vue";
+import { computed, inject, reactive, ref, Ref } from "vue";
 
 import Breadcrumb from "primevue/breadcrumb";
-import Card from "primevue/card";
-import { ProjectObject, type ProjectObjectStore } from "./ProjectObjectStore";
-import { PropertyDataType } from "./PropertyProfile";
-import { propertyDataForms, type Property } from "./PropertyProfile";
-import OverlayPanel from "primevue/overlaypanel";
-import Chip from "primevue/chip";
-import NewPropertyButton from "./NewPropertyButton.vue";
-import LinkedItemButton from "./LinkedItemButton.vue";
-import { History } from "./Breadcrumbs";
-import { injectTemplate } from "./utils/Templates";
 import Button from "primevue/button";
-import { type MenuItem } from "primevue/menuitem";
+import Card from "primevue/card";
+import Chip from "primevue/chip";
+import type { MenuItem } from "primevue/menuitem";
+import OverlayPanel from "primevue/overlaypanel";
+import { History } from "./Breadcrumbs";
+import LinkedItemButton from "./LinkedItemButton.vue";
+import NewPropertyButton from "./NewPropertyButton.vue";
+import { ProjectObjectStore } from "./ProjectObjectStore";
+import { ProfileClass, propertyDataForms, PropertyDataType } from "./PropertyProfile";
+import { PropertyProfileStore } from "./PropertyProfileStore";
+import { injectTemplate } from "./utils/Templates";
 
 const dialogRef = inject("dialogRef") as any;
 
@@ -21,15 +21,16 @@ const dialogProps = new Proxy(dialogRef.value.options.props, {});
 
 const id = dialogRef.value.data.id;
 
-const projectObjects = dialogRef.value.data.projectObjectStore;
-const projectProfiles = dialogRef.value.data.propertyProfileStore;
+const projectObjects: ProjectObjectStore = dialogRef.value.data.projectObjectStore;
+const globalObjectStore: ProjectObjectStore = dialogRef.value.data.globalObjectStore;
+const projectProfiles: PropertyProfileStore = dialogRef.value.data.propertyProfileStore;
 const profileId = dialogRef.value.data.profileId;
-const object = ref(projectObjects.get(id));
-let objectClass = reactive(projectProfiles.getClassById(profileId, object.value["type"]));
+const object = ref(globalObjectStore.get(id)!);
+let objectClass = reactive(projectProfiles.getClassById(profileId, object.value["type"])!) as ProfileClass;
 let displayableInputs = objectClass["input"] || [];
 let addableTypes = objectClass["type"] || [];
 
-const linkedObjects = computed(() => projectObjects.getLinkedObjects(object.value.id));
+const linkedObjects = computed(() => globalObjectStore.getLinkedObjects(object.value.id));
 
 const history = new History();
 
@@ -41,13 +42,13 @@ const op = ref();
 const toggle = (event: Event) => {
     op.value.toggle(event);
 };
-const linkedItemActions = ref((id: string) => [
+const linkedItemActions = ref((id: string, label: Ref<string>) => [
     {
         label: "Unlink",
         icon: "pi pi-minus",
         command: () => {
             console.log("Unlinking " + id);
-            projectObjects.removeLink(object.value.id, id);
+            globalObjectStore.removeLink(object.value.id, id);
         }
     },
     {
@@ -55,26 +56,25 @@ const linkedItemActions = ref((id: string) => [
         icon: "pi pi-trash",
         command: () => {
             console.log("Deleting " + id);
-            projectObjects.remove(id);
+            globalObjectStore.remove(id);
         }
     }
 ]);
 
 function selectActiveObject(id: string) {
-    object.value = projectObjects.get(id);
-    objectClass = projectProfiles.getClassById(profileId, object.value["type"]);
+    object.value = globalObjectStore.get(id)!;
+    objectClass = projectProfiles.getClassById(profileId, object.value["type"])! as ProfileClass;
     addableTypes = objectClass["type"] || [];
     displayableInputs = objectClass["input"] || [];
     history.navigateTo(object.value);
-    console.log(history.list());
     // TODO optimize by only updating necessary elements
     menuPath.value = history.list().map((item) => {
         const cb: Function = () => {
             selectActiveObject(item.id);
         };
         const objectClass = projectProfiles.getClassById(item.profile, item.type);
-        const injectedLabel = injectTemplate(objectClass.labelTemplate, projectObjects.get(item.id));
-        const label = `${objectClass.label}: ${injectedLabel}`;
+        const injectedLabel = injectTemplate(objectClass!.labelTemplate!, globalObjectStore.get(item.id)!);
+        const label = `${objectClass!.label}: ${injectedLabel}`;
         return {
             label: label,
             command: cb
@@ -100,7 +100,7 @@ selectActiveObject(id);
         </template>
         <template #title>
             <div class="row-span-1 text-gray-800 justify-between flex items-center">
-                <span :title="object.label">
+                <span :title="objectClass.label">
                     <span class="text-xl"> {{ objectClass.label }}</span>
                     <Button unstyled @click="toggle">
                         <i v-if="objectClass.description" class="pi pi-question-circle mx-2" style="font-size: 1rem" />
@@ -110,62 +110,38 @@ selectActiveObject(id);
                         <p :v-if="objectClass.example" class="mt-2" v-html="example"></p>
                     </OverlayPanel>
                 </span>
-                <!-- {{ object }} -->
 
                 <span class="mr-auto ml-5 flex space-x-1">
                     <NewPropertyButton
                         v-for="t in addableTypes"
-                        v-if="linkedObjects?.length !== 0"
                         :key="t"
                         :type="t"
                         :parentId="object.id"
                         :profileId="profileId"
                         :projectObjects="projectObjects"
+                        :globalObjectStore="globalObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"
                         mode="dialog"
                         @loadObject="(id) => selectActiveObject(id)"
                     />
                 </span>
-
                 <Chip label="RepoLabel" size="small" class="bg-[#83d5ff] h-4 !rounded px-2 py-3 text-sm bg-opacity-40" />
             </div>
         </template>
         <template #content>
             <div class="flex flex-row">
                 <div class="grow max-w-full">
-                    <!-- <span class="bg-blue-100">
-                        {{ object }}
-                    </span>
-                    {{ linkedObjects }} -->
-                    <!--  Header Row -->
-
-                    <!--                     {{ projectObjects.get(object.id) }} {{ projectObjects._objects.length }}
-
-                    {{ objectClass }} -->
-
                     <!--  Linked Items Row -->
-                    <div v-if="addableTypes.length > 0" class="row-span-1 flex mb-5 flex-wrap space-x-1">
+                    <div class="row-span-1 flex my-3 flex-wrap gap-2">
                         <LinkedItemButton
                             v-for="i in linkedObjects"
-                            v-if="linkedObjects?.length !== 0"
                             :key="i"
                             class="m-1 max-w-full"
                             :linkedItemActions="linkedItemActions"
                             :item="i"
                             :profileId="profileId"
                             :projectObjects="projectObjects"
-                            :projectProfiles="projectProfiles"
-                            mode="dialog"
-                            @loadObject="(id) => selectActiveObject(id)"
-                        />
-                        <NewPropertyButton
-                            v-for="t in addableTypes"
-                            v-else
-                            :key="t"
-                            :type="t"
-                            :parentId="object.id"
-                            :profileId="profileId"
-                            :projectObjects="projectObjects"
+                            :globalObjectStore="globalObjectStore as ProjectObjectStore"
                             :projectProfiles="projectProfiles"
                             mode="dialog"
                             @loadObject="(id) => selectActiveObject(id)"
@@ -180,8 +156,10 @@ selectActiveObject(id);
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"
                                 :propertyObjectId="object['id']"
-                                :projectObjects="projectObjects"
+                                :projectObjects="globalObjectStore"
+                                :globalObjectStore="globalObjectStore as ProjectObjectStore"
                                 :inputId="input['id']"
+                                :profileId="profileId"
                             />
                         </div>
                     </div>

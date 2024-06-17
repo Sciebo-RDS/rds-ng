@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, defineAsyncComponent, toRefs, reactive, provide } from "vue";
+import { computed, defineAsyncComponent, reactive, toRefs } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
-import { ProjectObjectStore } from "./../../../../../../common/web/ui/components/propertyeditor/ProjectObjectStore";
-import { PropertyProfileStore } from "./../../../../../../common/web/ui/components/propertyeditor/PropertyProfileStore";
 
 import { type UIOptions } from "@/data/entities/UIOptions";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
+import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 
 const props = defineProps({
     project: {
@@ -29,11 +28,7 @@ const panels = computed(() => {
     });
 });
 
-const projectObjects = reactive(new ProjectObjectStore());
-provide("projectObjects", projectObjects);
-
-const projectProfiles = reactive(new PropertyProfileStore());
-provide("projectProfiles", projectProfiles);
+const globalObjectStore = reactive(new ProjectObjectStore());
 </script>
 
 <template>
@@ -55,7 +50,7 @@ provide("projectProfiles", projectProfiles);
                     content: 'h-full'
                 }"
             >
-                <component :is="panel.component" :project="project" :projectObjects="projectObjects" :projectProfiles="projectProfiles" />
+                <component :is="panel.component" :project="project" :globalObjectStore="globalObjectStore" />
             </TabPanel>
         </TabView>
     </div>

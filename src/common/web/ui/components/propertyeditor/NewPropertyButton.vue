@@ -1,43 +1,37 @@
 <script setup lang="ts">
-import { ref, inject, watch, computed } from "vue";
-import { v4 as uuidv4 } from "uuid";
-import PropertyDialog from "./PropertyDialog.vue";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
-import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
-import { PropertyProfileStore } from "./PropertyProfileStore";
+import { computed } from "vue";
+import { ProjectObject } from "./ProjectObjectStore";
+import PropertyDialog from "./PropertyDialog.vue";
 import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
-const props = defineProps(["type", "profileId", "parentId", "projectObjects", "projectProfiles", "mode"]);
+const props = defineProps(["type", "profileId", "parentId", "projectObjects", "globalObjectStore", "projectProfiles", "mode"]);
 
 const emit = defineEmits(["loadObject"]);
-
 const label = props.projectProfiles.getClassById(props.profileId, props.type)["label"];
-
 const linkableItems = computed(() => {
-    let linkedItems = props.projectObjects.getLinkedObjects(props.parentId);
-    return props.projectObjects
+    let linkedItems = [...props.projectObjects.getLinkedObjects(props.parentId), ...props.globalObjectStore.getLinkedObjects(props.parentId)].flat();
+    return props.globalObjectStore
         .getObjectsByType(props.type)
         .filter((item: ProjectObject) => !linkedItems.includes(item.id))
         .filter((item: ProjectObject) => item.id != props.parentId)
         .map((item: ProjectObject) => ({
-            label: injectTemplate(props.projectProfiles.getClassById(item.profile, item.type).labelTemplate, props.projectObjects.get(item.id)),
+            label: injectTemplate(props.projectProfiles.getClassById(item.profile, item.type).labelTemplate, props.globalObjectStore.get(item.id)),
             command: () => {
-                props.projectObjects.addLink(props.parentId, item.id);
+                props.projectObjects.addLink(props.parentId, item.id) || props.globalObjectStore.addLink(props.parentId, item.id);
             }
         }));
 });
 
-function handleClick() {
-    // TODO let ObjectStore create the id on object creation, return it and use it in the dialog
-    const id = uuidv4();
-    const newObject = new ProjectObject(props.profileId, props.type, id);
-    props.projectObjects.add(newObject);
-    props.projectObjects.addLink(props.parentId, id);
+function createObject() {
+    const newObject = new ProjectObject(props.profileId, props.type);
+    props.globalObjectStore.add(newObject);
+    props.projectObjects.addLink(props.parentId, newObject["id"]) || props.globalObjectStore.addLink(props.parentId, newObject["id"]);
 
     if (props.mode == "dialog") {
-        emit("loadObject", id);
+        emit("loadObject", newObject["id"]);
     } else {
         dialog.open(PropertyDialog, {
             props: {
@@ -53,7 +47,13 @@ function handleClick() {
                 },
                 modal: true
             },
-            data: { id: id, projectObjectStore: props.projectObjects, propertyProfileStore: props.projectProfiles, profileId: props.profileId }
+            data: {
+                id: newObject["id"],
+                projectObjectStore: props.projectObjects,
+                globalObjectStore: props.globalObjectStore,
+                propertyProfileStore: props.projectProfiles,
+                profileId: props.profileId
+            }
         });
     }
 }
@@ -61,14 +61,10 @@ function handleClick() {
 
 <template>
     <SplitButton
-        @click="
-            () => {
-                handleClick();
-            }
-        "
+        @click="() => createObject()"
         :model="linkableItems.length ? linkableItems : [{ label: `No linkable ${props.type}(s) available`, disabled: true }]"
     >
-        <span :title="'Add new ' + type" class="capitalize">
+        <span :title="'Add new ' + type" class="capitalize text-nowrap">
             <i class="pi pi-plus text-xs capitalize"> </i>
             {{ label }}
         </span>

@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, provide, reactive, unref } from "vue";
 import Button from "primevue/button";
-import Menu from "primevue/menu";
-import Fieldset from "primevue/fieldset";
-import Toolbar from "primevue/toolbar";
 import ContextMenu from "primevue/contextmenu";
-import Dropdown from "primevue/dropdown";
+import Fieldset from "primevue/fieldset";
 import Listbox from "primevue/listbox";
+import { computed, provide, ref, unref, type Ref } from "vue";
 
-import { ExportersCatalog } from "./exporters/ExportersCatalog";
-import PropertyCategory from "./PropertyCategory.vue";
+import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
-import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+import { ProfileLayoutClass } from "./PropertyProfile";
 
-const props = defineProps(["controller", "profile", "project", "exporters", "projectProfiles", "projectObjects"]);
+const props = defineProps(["controller", "profile", "project", "exporters", "projectProfiles", "projectObjects", "globalObjectStore"]);
 provide("profileId", props.profile["metadata"]["id"]);
 
 /* const menu = ref();
@@ -47,32 +43,35 @@ const items = ref([
         label: "info",
         icon: "pi pi-info-circle",
         command: () => {
-            console.log(selected);
+            console.log({ ...selected.value });
         }
     }
 ]);
 
 let selected = ref();
-const onRightClick = (event, p) => {
-    selected = p;
+const onRightClick = (event: Event, p: Ref<ProfileLayoutClass>) => {
+    const c = unref(p);
+    selected.value = c as ProfileLayoutClass;
 
     menu.value.show(event);
 };
 
-var propsToShow = ref(props.profile["layout"].filter((e) => e.required || props.projectObjects.get(e.id) !== undefined));
+var propsToShow = ref(props.profile["layout"].filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined));
 const selectedProperty = ref();
 
 // TODO FIXME this
 const hideProperty = (id: string) => {
-    propsToShow.value = propsToShow.value.filter((e) => e.id != id);
+    propsToShow.value = propsToShow.value.filter((e: ProfileLayoutClass) => e.id != id);
 };
 
 const showAddProperties = ref(false);
-const hiddenPropertys = computed(() => props.profile["layout"].filter((e) => !propsToShow.value.map((e) => e.id).includes(e.id)));
+const hiddenPropertys = computed(() =>
+    props.profile["layout"].filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.id).includes(e.id))
+);
 </script>
 
 <template>
-    <Toolbar :pt="{ root: { class: '!py-2 border-0 border-y-4 rounded-none' } }">
+    <!--     <Toolbar :pt="{ root: { class: '!py-2 border-0 border-y-4 rounded-none' } }">
         <template #start>
             <div class="text-xl font-bold truncate text-clip" :title="profile['metadata']['name'] + ' v' + profile['metadata']['version']">
                 {{ `${profile["metadata"]["name"]} v${profile["metadata"]["version"]}` }}
@@ -80,7 +79,7 @@ const hiddenPropertys = computed(() => props.profile["layout"].filter((e) => !pr
         </template>
         <template #center class="flex grow"> </template>
         <template #end>
-            <!-- <Button
+            <Button
                 text
                 :disabled="!items.length"
                 iconPos="right"
@@ -91,9 +90,9 @@ const hiddenPropertys = computed(() => props.profile["layout"].filter((e) => !pr
                 aria-haspopup="true"
                 aria-controls="overlay_menu"
             /> 
-            <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />-->
+            <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
         </template>
-    </Toolbar>
+    </Toolbar> -->
 
     <PropertyOneCol
         v-for="p in propsToShow"
@@ -101,6 +100,7 @@ const hiddenPropertys = computed(() => props.profile["layout"].filter((e) => !pr
         :propertyClass="p"
         :profileId="props.profile['metadata']['id']"
         :projectObjects="projectObjects"
+        :globalObjectStore="globalObjectStore as ProjectObjectStore"
         :projectProfiles="projectProfiles"
         @contextmenu="onRightClick($event, p)"
         @hide="

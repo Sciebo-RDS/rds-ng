@@ -1,27 +1,45 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import PropertyDialog from "./PropertyDialog.vue";
+import Button from "primevue/button";
+import OverlayPanel from "primevue/overlaypanel";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
-import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
-import { injectTemplate } from "./utils/Templates";
+import { computed, ref } from "vue";
+import PropertyDialog from "./PropertyDialog.vue";
 import { calculateClassColor } from "./utils/Colors";
+import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
-const props = defineProps(["linkedItemActions", "item", "projectObjects", "profileId", "projectProfiles", "mode"]);
+const props = defineProps(["linkedItemActions", "item", "projectObjects", "globalObjectStore", "profileId", "projectProfiles", "mode"]);
 
-const object = props.projectObjects.get(props.item);
-
-const linkedItemActions = props.linkedItemActions(object.id);
-
+let object = props.projectObjects.get(props.item) || props.globalObjectStore.get(props.item);
+var bgColor, borderColor, injectedLabel, objectClass;
+if (object !== undefined) {
+    var { bgColor, borderColor } = calculateClassColor(props.projectProfiles, props.profileId, object.type, 99, 10);
+    var objectClass = props.projectProfiles.getClassById(props.profileId, object["type"]);
+    injectedLabel = computed(() => injectTemplate(objectClass.labelTemplate, props.globalObjectStore.get(object.id)));
+} else {
+    bgColor = "#eee";
+    borderColor = "#ee0000";
+    injectedLabel = computed(() => `[${props.item.slice(0, 6)}]`);
+}
+const linkedItemActions = object
+    ? props.linkedItemActions(object.id, injectedLabel)
+    : [
+          {
+              label: "Remove all References to undefined Item",
+              icon: "pi pi-trash",
+              command: () => {
+                  props.globalObjectStore.remove(props.item, props.item);
+                  props.projectObjects.remove(props.item, props.item);
+              }
+          }
+      ];
 const emit = defineEmits(["loadObject"]);
 
-const objectClass = props.projectProfiles.getClassById(props.profileId, object.type);
-const { bgColor, borderColor } = calculateClassColor(props.projectProfiles, props.profileId, object.type, 99, 10);
-
-const injectedLabel = computed(() => injectTemplate(objectClass.labelTemplate, props.projectObjects.get(object.id)));
-
 function handleClick() {
+    if (object["id"] === undefined) {
+        return;
+    }
     if (props.mode == "dialog") {
         emit("loadObject", object["id"]);
     } else {
@@ -38,25 +56,76 @@ function handleClick() {
                 },
                 modal: true
             },
-            data: { id: object["id"], projectObjectStore: props.projectObjects, propertyProfileStore: props.projectProfiles, profileId: props.profileId }
+            data: {
+                id: object["id"],
+                projectObjectStore: props.projectObjects,
+                globalObjectStore: props.globalObjectStore,
+                propertyProfileStore: props.projectProfiles,
+                profileId: props.profileId
+            }
         });
     }
 }
+
+const op = ref();
+const toggle = (event: Event) => {
+    op.value.toggle(event);
+};
 </script>
 
 <template>
     <SplitButton
+        v-if="object !== undefined"
         menuButtonIcon="pi pi-ellipsis-v"
         :model="linkedItemActions"
+        menuitemicon="pi pi-link"
         @click="
             () => {
-                handleClick();
+                object === undefined ? null : handleClick();
             }
         "
         :style="`--p-color: ${bgColor}; --p-border-color: ${borderColor};`"
     >
         <span class="text-lg mx-2 truncate"> {{ objectClass.label }}: {{ injectedLabel }} </span>
     </SplitButton>
+    <Button
+        v-else
+        menuButtonIcon="pi pi-ellipsis-v"
+        :model="linkedItemActions"
+        menuitemicon="pi pi-link"
+        :style="`background-color: ${bgColor}; border-color: ${borderColor}; height: 2rem`"
+        class="text-gray-600"
+        @click="toggle"
+    >
+        <i class="pi pi-exclamation-circle mx-1" style="color: #ee0000" />
+        <span class="text-lg mx-2 truncate"> {{ "broken link" }}: {{ injectedLabel }} </span>
+    </Button>
+
+    <OverlayPanel ref="op" class="border-red-400">
+        <div class="m-2 gap-3 w-25rem">
+            <div>
+                <span class="font-medium text-900 block mb-2">The referenced object is missing.</span>
+            </div>
+            <div>Do you want to remove all references to the missing object?</div>
+            <div class="min-w-full flex justify-end mt-5 space-x-2">
+                <Button text class="min-w-fit" size="small" @click="toggle"> cancel </Button>
+                <Button
+                    class="min-w-fit"
+                    size="small"
+                    severity="danger"
+                    icon="pi pi-trash"
+                    @click="
+                        () => {
+                            props.globalObjectStore.remove(props.item, props.item);
+                            props.projectObjects.remove(props.item, props.item);
+                        }
+                    "
+                >
+                    Remove
+                </Button>
+            </div>
+        </div>
+    </OverlayPanel>
 </template>
 
 <style scoped lang="scss">

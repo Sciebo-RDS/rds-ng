@@ -1,31 +1,46 @@
 <script setup lang="ts">
-import { ref, inject, computed, unref } from "vue";
-import { propertyDataForms, type Property } from "./PropertyProfile";
+import { FrontendComponent } from "@/component/FrontendComponent";
 import Button from "primevue/button";
-import NewPropertyButton from "./NewPropertyButton.vue";
+import { computed, ref, type PropType, type Ref } from "vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
-import { PropertyDataType } from "./PropertyProfile";
+import NewPropertyButton from "./NewPropertyButton.vue";
+import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
-import OverlayPanel from "primevue/overlaypanel";
+import { confirmDialog } from "@common/ui/dialogs/ConfirmDialog";
 import Chip from "primevue/chip";
-import Skeleton from "primevue/skeleton";
-import { ProjectObject, type ProjectObjectStore } from "./ProjectObjectStore";
+import OverlayPanel from "primevue/overlaypanel";
+import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+
+const comp = FrontendComponent.inject();
 
 const emit = defineEmits(["hide"]);
-const props = defineProps(["propertyClass", "profileId", "projectObjects", "propertyObject", "projectProfiles"]);
+const { propertyClass, profileId, projectObjects, projectProfiles, globalObjectStore } = defineProps({
+    propertyClass: {
+        type: Object as PropType<ProfileClass>,
+        required: true
+    },
+    profileId: {
+        type: Object as PropType<ProfileID>,
+        required: true
+    },
+    projectObjects: {
+        type: ProjectObjectStore,
+        required: true
+    },
+    projectProfiles: {
+        type: PropertyProfileStore,
+        required: true
+    },
+    globalObjectStore: {
+        type: Object as PropType<ProjectObjectStore>,
+        required: true
+    }
+});
 
-if ((props.propertyClass === props.propertyObject) === undefined) {
-    throw new Error("PropertyOneCol: propertyClass or propertyObject must be defined");
-}
-const profileId = props.profileId as string;
+projectObjects.add(new ProjectObject(profileId, null, propertyClass.id));
 
-const propertyClass = props.propertyClass ? props.propertyClass : props.projectProfiles.getClassById(profileId, props.propertyObject["type"]); // get propertyClass by propertyObject.type
-let propertyObject = props.propertyObject
-    ? props.propertyObject
-    : props.projectObjects.add(new ProjectObject(profileId, propertyClass["type"], propertyClass.id));
-
-propertyObject = computed(() => props.projectObjects.get(propertyClass.id));
+const propertyObject = computed(() => projectObjects.get(propertyClass.id)) as Ref<ProjectObject>;
 
 const op = ref();
 const toggle = (event: Event) => {
@@ -34,34 +49,68 @@ const toggle = (event: Event) => {
 
 const example = propertyClass.example ? `<b>Example</b>: ${propertyClass.example}` : null;
 
-const linkedItemActions = ref((id: string) => [
+//make this global with linkedItemActions in PropertyDialog.vue
+const linkedItemActions = ref((id: string, label: Ref<string>) => [
     {
         label: "Unlink",
         icon: "pi pi-minus",
         command: () => {
-            console.log("Unlinking " + id);
-            props.projectObjects.removeLink(propertyClass.id, id);
+            confirmDialog(comp, {
+                header: `Unlink "${label.value}?"`,
+                message: "Are you sure you want to unlink this property? The object will not be deleted, you can relink at any time.",
+                acceptLabel: "Unlink",
+                acceptIcon: "pi pi-minus",
+                acceptClass: "p-button-danger",
+                rejectLabel: "Cancel",
+                rejectIcon: "pi pi-times",
+                rejectClass: "p-button-secondary"
+            }).then(() => {
+                console.log("Unlinking " + id);
+                projectObjects.removeLink(propertyClass.id, id);
+            });
         }
     },
     {
         label: "Delete",
         icon: "pi pi-trash",
         command: () => {
-            console.log("Deleting " + id);
-            props.projectObjects.remove(id);
+            confirmDialog(comp, {
+                header: `Delete "${label.value}"?`,
+                message: "Are you sure you want to delete this object? It will not be recoverable.",
+                acceptLabel: "Delete",
+                acceptIcon: "pi pi-trash",
+                acceptClass: "p-button-danger",
+                rejectLabel: "Cancel",
+                rejectIcon: "pi pi-times",
+                rejectClass: "p-button-secondary"
+            }).then(() => {
+                console.log("Deleting " + id);
+                projectObjects.remove(id);
+            });
         }
     }
 ]);
 
 const displayableInputs = propertyClass["input"] || [];
 
-const addableTypes = propertyClass["type"] || [];
+const addableTypes = propertyClass["type"];
 
-const linkedObjects = computed(() => props.projectObjects.getLinkedObjects(propertyClass.id));
+const linkedObjects = computed(() => projectObjects.getLinkedObjects(propertyClass.id));
 
-const removeProperty = (id: string) => {
-    props.projectObjects.remove(id);
-    emit("hide", id);
+const removeLayoutProperty = (propertyClass: ProfileClass) => {
+    confirmDialog(comp, {
+        header: `Remove "${propertyClass.label}?"`,
+        message: `Are you sure you want to remove this property? The data for "${propertyClass.label}" will be lost.`,
+        acceptLabel: "Remove",
+        acceptIcon: "pi pi-trash",
+        acceptClass: "p-button-danger",
+        rejectLabel: "Cancel",
+        rejectIcon: "pi pi-times",
+        rejectClass: "p-button-secondary"
+    }).then(() => {
+        projectObjects.remove(propertyClass.id);
+        emit("hide", propertyClass.id);
+    });
 };
 </script>
 
@@ -76,7 +125,7 @@ const removeProperty = (id: string) => {
                 :title="'Remove ' + propertyClass.label"
                 :class="propertyClass.required ? 'invisible' : 'invisible group-hover:visible'"
                 class="pt-0"
-                @click="removeProperty(propertyClass.id)"
+                @click="removeLayoutProperty(propertyClass)"
                 aria-haspopup="true"
                 aria-controls="overlay_menu"
                 :pt="{ root: { class: 'text-slate-400 hover:text-red-600 bg-transparent' } }"
@@ -84,8 +133,8 @@ const removeProperty = (id: string) => {
         </div>
         <div class="grow">
             <!--  Header Row -->
-            <div class="row-span-1 text-gray-800 justify-between flex items-center">
-                <span :title="propertyClass.label">
+            <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4">
+                <span :title="propertyClass.label" class="min-w-fit">
                     <span class="text-xl"> {{ propertyClass.label }}</span>
                     <Button unstyled @click="toggle">
                         <i v-if="propertyClass.description" class="pi pi-question-circle mx-2" style="font-size: 1rem" />
@@ -96,50 +145,39 @@ const removeProperty = (id: string) => {
                     </OverlayPanel>
                 </span>
 
-                <span class="mr-auto ml-5 flex space-x-1">
+                <span class="mr-auto">
                     <NewPropertyButton
                         v-for="t in addableTypes"
-                        v-if="linkedObjects.length > 0"
-                        :key="t['id']"
+                        :key="t"
                         :type="t"
                         :parentId="propertyClass.id"
                         :profileId="profileId"
                         :projectObjects="projectObjects"
+                        :globalObjectStore="globalObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"
+                        class="m-1"
                     />
                 </span>
 
-                <Chip label="$RepoLabel" size="small" class="bg-[#83d5ff] h-4 !rounded px-2 py-3 text-sm bg-opacity-40" />
+                <Chip :label="profileId[0]" size="small" class="bg-[#83d5ff] h-4 !rounded px-2 py-3 text-sm bg-opacity-40 ml-1" />
             </div>
-            <!--             <span class="bg-blue-100">
-                {{ propertyObject }}
-            </span> -->
+            <!-- <span class="bg-blue-100"> {{ propertyClass }} </span> -->
             <!--  Linked Items Row -->
-            <div class="row-span-1 flex mt-3 flex-wrap">
+            <div class="row-span-1 flex my-3 flex-wrap gap-2">
                 <LinkedItemButton
                     v-for="i in linkedObjects"
-                    v-if="linkedObjects?.length !== 0"
                     :key="i"
                     class="m-1"
                     :profileId="profileId"
                     :linkedItemActions="linkedItemActions"
                     :item="i"
                     :projectObjects="projectObjects"
-                    :projectProfiles="projectProfiles"
-                />
-                <NewPropertyButton
-                    v-for="t in addableTypes"
-                    v-else
-                    :key="t['id']"
-                    :type="t"
-                    :parentId="propertyClass.id"
-                    :profileId="profileId"
-                    :projectObjects="projectObjects"
+                    :globalObjectStore="globalObjectStore as ProjectObjectStore"
                     :projectProfiles="projectProfiles"
                 />
             </div>
             <!-- Simple Input Row -->
-            <div class="space-y-3">
+            <div class="space-y-3 mt-5">
                 <div v-for="input in displayableInputs" class="row-span-1">
                     <span v-if="input.label !== propertyClass.label">{{ input.label }}</span>
                     <component
@@ -148,7 +186,9 @@ const removeProperty = (id: string) => {
                         :propertyObjectId="propertyObject['id']"
                         :profileId="profileId"
                         :projectObjects="projectObjects"
+                        :globalObjectStore="globalObjectStore as ProjectObjectStore"
                         :inputId="input['id']"
+                        :inputOptions="input['options'] ? input['options'] : []"
                     />
                 </div>
             </div>

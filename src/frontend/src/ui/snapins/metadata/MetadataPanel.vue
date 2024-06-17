@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { reactive, toRefs, watch, inject } from "vue";
+import { PropType, reactive, toRefs, watch } from "vue";
 
-import logging from "@common/core/logging/Logging";
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
 import { testProfile } from "@common/ui/components/propertyeditor/DummyData";
-import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
-import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
-import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
-import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
-import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
-import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
+import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
 
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
@@ -30,12 +27,8 @@ const props = defineProps({
         type: Project,
         required: true
     },
-    projectProfiles: {
-        type: PropertyProfileStore,
-        required: true
-    },
-    projectObjects: {
-        type: ProjectObjectStore,
+    globalObjectStore: {
+        type: Object as PropType<ProjectObjectStore>,
         required: true
     }
 });
@@ -65,14 +58,12 @@ connectors.value.forEach((connector) => {
 
     const metadataProfile = connector.metadata_profile;
     if (metadataProfile.hasOwnProperty("profile_id")) {
-        mergeSets.push(new PropertySet(connector.metadata_profile as PropertyProfile));
+        mergeSets.push(new PropertySet(connector.metadata_profile));
     }
 });
 
-/* const baseSet = new PropertySet(dataCite);
-const profiles: PropertySet[] = [new PropertySet(testProfile)];
-const controller = reactive(new MetadataController(baseSet, mergeSets, profiles));
- */
+const projectObjects = reactive(new ProjectObjectStore());
+const projectProfiles = reactive(new PropertyProfileStore());
 const debounce = makeDebounce(500);
 
 watch(
@@ -83,15 +74,21 @@ watch(
             action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata)]);
             action.execute();
         });
-    }
+    },
+    { deep: true }
 );
 
-props.projectProfiles.mountProfile(dataCite as Profile);
+projectProfiles.mountProfile(dataCite as Profile);
+projectProfiles.mountProfile(testProfile as Profile);
 </script>
 
 <template>
     <div>
-        <!-- TODO remove Controllerstuff -->
-        <PropertyEditor v-model="project!.features.metadata.metadata as PersistedSet[]" :projectObjects="projectObjects" :projectProfiles="projectProfiles" />
+        <PropertyEditor
+            v-model="project!.features.metadata.metadata"
+            :projectObjects="projectObjects as ProjectObjectStore"
+            :globalObjectStore="globalObjectStore as ProjectObjectStore"
+            :projectProfiles="projectProfiles as PropertyProfileStore"
+        />
     </div>
 </template>
