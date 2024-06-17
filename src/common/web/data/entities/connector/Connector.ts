@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 
 import { UnitID } from "../../../utils/UnitID";
+import { type AuthorizationSettings } from "../authorization/AuthorizationSettings";
 
 /**
  * The connector ID type.
@@ -53,6 +54,7 @@ export type ConnectorMetadataProfile = Record<string, any>;
  * @param category - The connector category.
  * @param name - The name of the connector.
  * @param description - An optional connector description.
+ * @param authorization - Authorization settings for the connector.
  * @param options - The connector options.
  * @param logos - Image data of the connector logos.
  * @param metadata_profile - The profile for connector-specific data.
@@ -68,6 +70,7 @@ export class Connector {
     public readonly description: string;
     public readonly category: ConnectorCategoryID;
 
+    public readonly authorization: AuthorizationSettings;
     public readonly options: ConnectorOptions;
 
     // @ts-ignore
@@ -82,8 +85,9 @@ export class Connector {
         connectorID: ConnectorID,
         connectorAddress: UnitID,
         name: string,
-        description: string = "",
+        description: string,
         category: ConnectorCategoryID,
+        authorization: AuthorizationSettings = { strategy: "", config: {} },
         options: ConnectorOptions = ConnectorOptions.Default,
         logos: ConnectorLogos = new ConnectorLogos(),
         metadataProfile: ConnectorMetadataProfile = {},
@@ -95,6 +99,7 @@ export class Connector {
         this.description = description;
         this.category = category;
 
+        this.authorization = authorization;
         this.options = options;
 
         this.logos = logos;

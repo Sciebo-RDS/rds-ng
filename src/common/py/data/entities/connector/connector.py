@@ -5,6 +5,7 @@ from enum import IntFlag
 
 from dataclasses_json import dataclass_json
 
+from ..authorization import AuthorizationSettings
 from ....utils import UnitID
 
 ConnectorID = str
@@ -24,6 +25,7 @@ class Connector:
         name: The name of the connector.
         description: An optional connector description.
         category: The connector category.
+        authorization: Authorization settings for the connector.
         options: The connector options.
         logos: Image data of the connector logos.
         metadata_profile: The profile for connector-specific data.
@@ -62,6 +64,9 @@ class Connector:
     description: str
     category: ConnectorCategoryID
 
+    authorization: AuthorizationSettings = dataclasses.field(
+        default_factory=AuthorizationSettings
+    )
     options: Options = Options.DEFAULT
 
     logos: Logos = dataclasses.field(default_factory=Logos)

@@ -1,10 +1,14 @@
 import typing
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import StrEnum
 
 from dataclasses_json import dataclass_json
 
-from ..user import UserID
+# Avoid some cyclic dependencies
+if typing.TYPE_CHECKING:
+    from ..user import UserID
+else:
+    UserID = str
 
 AuthorizationTokenID = typing.Tuple[UserID, str]
 

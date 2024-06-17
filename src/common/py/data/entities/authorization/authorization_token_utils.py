@@ -1,11 +1,15 @@
 import time
+import typing
 
 from .authorization_token import AuthorizationTokenID, AuthorizationToken
-from ..connector import ConnectorInstanceID
-from ..user import User
+
+# Avoid some cyclic dependencies
+if typing.TYPE_CHECKING:
+    from ..connector import ConnectorInstanceID
+    from ..user import User
 
 
-def get_host_authorization_token_id(user: User) -> AuthorizationTokenID:
+def get_host_authorization_token_id(user: "User") -> AuthorizationTokenID:
     """
     Retrieves the authorization token ID for the user host system.
 
@@ -19,7 +23,7 @@ def get_host_authorization_token_id(user: User) -> AuthorizationTokenID:
 
 
 def get_connector_instance_authorization_token_id(
-    user: User, instance: ConnectorInstanceID
+    user: "User", instance: "ConnectorInstanceID"
 ) -> AuthorizationTokenID:
     """
     Retrieves the authorization token ID for a connector instance.
