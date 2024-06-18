@@ -39,6 +39,23 @@ export abstract class AuthorizationStrategy {
     }
 
     /**
+     * Whether an authorization request has been issued and should be handled now.
+     *
+     * @param authType - The authorization type.
+     */
+    public static authorizationRequestIssued(authType: AuthorizationTokenType): boolean {
+        if (getURLQueryParam("auth:action") === "request") {
+            try {
+                const payload = AuthorizationStrategy.decodeRequestPayload();
+                if (payload.auth_type == authType) {
+                    return true;
+                }
+            } catch (e) {}
+        }
+        return false;
+    }
+
+    /**
      * Initiates an authorization request.
      *
      * @param authID - The authorization ID.
@@ -46,8 +63,8 @@ export abstract class AuthorizationStrategy {
      * @param authIssuer - The issuer of the authorization.
      * @param fingerprint - The user's fingerprint.
      */
-    public initiateAuthorizationRequest(authID: string, authType: string, authIssuer: string, fingerprint: string): void {
-        this.initiateRequest(this.encodeRequestPayload(authID, authType, authIssuer, fingerprint));
+    public initiateAuthorizationRequest(authID: string, authType: AuthorizationTokenType, authIssuer: string, fingerprint: string): void {
+        this.initiateRequest(AuthorizationStrategy.encodeRequestPayload(authID, authType, authIssuer, fingerprint));
     }
 
     /**
@@ -57,11 +74,12 @@ export abstract class AuthorizationStrategy {
      * @param authType - The authorization type.
      * @param authIssuer - The issuer of the authorization.
      */
-    public executeAuthorizationRequest(authID: string, authType: string, authIssuer: string): Promise<AuthorizationState> {
+    public executeAuthorizationRequest(authID: string, authType: AuthorizationTokenType, authIssuer: string): Promise<AuthorizationState> {
         return new Promise<AuthorizationState>(async (resolve, reject) => {
             const nwStore = useNetworkStore();
-            const payload = this.decodeRequestPayload(this.getPayloadParam());
+            const payload = AuthorizationStrategy.decodeRequestPayload();
 
+            // Make sure that we're dealing with the correct request
             const checkPayload = (name: string, expected: string, got: string): boolean => {
                 if (expected != got) {
                     reject(`Authorization ${name} mismatch: Expected ${expected}, got ${got}`);
@@ -103,7 +121,7 @@ export abstract class AuthorizationStrategy {
      */
     public requestAuthorization(
         authID: string,
-        authType: string,
+        authType: AuthorizationTokenType,
         authIssuer: string,
         authState: AuthorizationState,
         fingerprint: string,
@@ -114,7 +132,7 @@ export abstract class AuthorizationStrategy {
             });
         }
 
-        if (getURLQueryParam("auth:action") === "request") {
+        if (AuthorizationStrategy.authorizationRequestIssued(authType)) {
             return this.executeAuthorizationRequest(authID, authType, authIssuer);
         } else {
             return new Promise<AuthorizationState>(async (resolve, reject) => {
@@ -151,7 +169,7 @@ export abstract class AuthorizationStrategy {
         }
     }
 
-    private getPayloadParam(): string {
+    private static getPayloadParam(): string {
         const payload = getURLQueryParam("auth:payload");
         if (!payload) {
             throw new Error("No authentication payload provided");
@@ -159,7 +177,7 @@ export abstract class AuthorizationStrategy {
         return payload;
     }
 
-    private encodeRequestPayload(authID: string, authType: string, authIssuer: string, fingerprint: string): string {
+    private static encodeRequestPayload(authID: string, authType: AuthorizationTokenType, authIssuer: string, fingerprint: string): string {
         const payload = {
             auth_id: authID,
             auth_type: authType,
@@ -170,8 +188,8 @@ export abstract class AuthorizationStrategy {
         return btoa(JSON.stringify(payload));
     }
 
-    private decodeRequestPayload(payload: string): AuthorizationStrategyPayload {
-        return JSON.parse(atob(payload)) as AuthorizationStrategyPayload;
+    private static decodeRequestPayload(): AuthorizationStrategyPayload {
+        return JSON.parse(atob(AuthorizationStrategy.getPayloadParam())) as AuthorizationStrategyPayload;
     }
 
     /**
