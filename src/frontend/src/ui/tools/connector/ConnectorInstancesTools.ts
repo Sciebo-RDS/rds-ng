@@ -1,3 +1,4 @@
+import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
@@ -43,7 +44,12 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         }
 
         const { userFingerprint } = useUserStore();
-        strategy.initiateAuthorizationRequest(getConnectorInstanceAuthorizationID(instance), userFingerprint);
+        strategy.initiateAuthorizationRequest(
+            getConnectorInstanceAuthorizationID(instance),
+            AuthorizationTokenType.Connector,
+            instance.instance_id,
+            userFingerprint,
+        );
     }
 
     function revokeInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {

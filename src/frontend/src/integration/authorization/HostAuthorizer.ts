@@ -30,7 +30,7 @@ export class HostAuthorizer extends Authorizer {
                 this.getStrategyConfiguration(this._hostAuth.strategy),
             );
             strategy
-                .requestAuthorization(AuthorizationTokenType.Host, authState, fingerprint)
+                .requestAuthorization(AuthorizationTokenType.Host, AuthorizationTokenType.Host, AuthorizationTokenType.Host, authState, fingerprint)
                 .then((authState: AuthorizationState) => {
                     // Skip any non-authorized states, as these will occur during the multistep authorization process
                     if (authState == AuthorizationState.Authorized) {

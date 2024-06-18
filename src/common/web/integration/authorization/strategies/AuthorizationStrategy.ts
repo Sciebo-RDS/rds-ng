@@ -1,6 +1,7 @@
 import { RequestAuthorizationCommand } from "../../../api/authorization/AuthorizationCommands";
 import { WebComponent } from "../../../component/WebComponent";
 import { AuthorizationState } from "../../../data/entities/authorization/AuthorizationState";
+import { AuthorizationTokenType } from "../../../data/entities/authorization/AuthorizationToken";
 import { useNetworkStore } from "../../../data/stores/NetworkStore";
 import { Service } from "../../../services/Service";
 import { RedirectionTarget } from "../../../utils/HTMLUtils";
@@ -11,6 +12,8 @@ import { getURLQueryParam } from "../../../utils/URLUtils";
  */
 export interface AuthorizationStrategyPayload {
     auth_id: string;
+    auth_type: AuthorizationTokenType;
+    auth_issuer: string;
 
     fingerprint: string;
 }
@@ -39,10 +42,12 @@ export abstract class AuthorizationStrategy {
      * Initiates an authorization request.
      *
      * @param authID - The authorization ID.
+     * @param authType - The authorization type.
+     * @param authIssuer - The issuer of the authorization.
      * @param fingerprint - The user's fingerprint.
      */
-    public initiateAuthorizationRequest(authID: string, fingerprint: string): void {
-        this.initiateRequest(this.encodeRequestPayload(authID, fingerprint));
+    public initiateAuthorizationRequest(authID: string, authType: string, authIssuer: string, fingerprint: string): void {
+        this.initiateRequest(this.encodeRequestPayload(authID, authType, authIssuer, fingerprint));
     }
 
     /**
@@ -77,10 +82,18 @@ export abstract class AuthorizationStrategy {
      * Requests user authorization, handling all steps automatically.
      *
      * @param authID - The authorization ID.
+     * @param authType - The authorization type.
+     * @param authIssuer - The issuer of the authorization.
      * @param authState - The current authorization state.
      * @param fingerprint - The user's fingerprint.
      */
-    public requestAuthorization(authID: string, authState: AuthorizationState, fingerprint: string): Promise<AuthorizationState> {
+    public requestAuthorization(
+        authID: string,
+        authType: string,
+        authIssuer: string,
+        authState: AuthorizationState,
+        fingerprint: string,
+    ): Promise<AuthorizationState> {
         if (authState == AuthorizationState.Authorized) {
             return new Promise<AuthorizationState>(async (resolve, reject) => {
                 resolve(AuthorizationState.Authorized);
@@ -91,7 +104,7 @@ export abstract class AuthorizationStrategy {
             return this.executeAuthorizationRequest(authID);
         } else {
             return new Promise<AuthorizationState>(async (resolve, reject) => {
-                this.initiateRequest(this.encodeRequestPayload(authID, fingerprint));
+                this.initiateAuthorizationRequest(authID, authType, authIssuer, fingerprint);
                 resolve(AuthorizationState.Pending);
             });
         }
@@ -132,9 +145,11 @@ export abstract class AuthorizationStrategy {
         return payload;
     }
 
-    private encodeRequestPayload(authID: string, fingerprint: string): string {
+    private encodeRequestPayload(authID: string, authType: string, authIssuer: string, fingerprint: string): string {
         const payload = {
             auth_id: authID,
+            auth_type: authType,
+            auth_issuer: authIssuer,
             fingerprint: fingerprint,
         } as AuthorizationStrategyPayload;
 
