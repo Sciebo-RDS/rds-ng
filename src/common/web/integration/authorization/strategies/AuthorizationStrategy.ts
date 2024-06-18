@@ -54,14 +54,28 @@ export abstract class AuthorizationStrategy {
      * Executes an authorization requests (requires a preceding initiation).
      *
      * @param authID - The authorization ID.
+     * @param authType - The authorization type.
+     * @param authIssuer - The issuer of the authorization.
      */
-    public executeAuthorizationRequest(authID: string): Promise<AuthorizationState> {
+    public executeAuthorizationRequest(authID: string, authType: string, authIssuer: string): Promise<AuthorizationState> {
         return new Promise<AuthorizationState>(async (resolve, reject) => {
             const nwStore = useNetworkStore();
             const payload = this.decodeRequestPayload(this.getPayloadParam());
 
-            if (payload.auth_id != authID) {
-                reject(`Authorization ID mismatch: Expected ${authID}, got ${payload.auth_id}`);
+            const checkPayload = (name: string, expected: string, got: string): boolean => {
+                if (expected != got) {
+                    reject(`Authorization ${name} mismatch: Expected ${expected}, got ${got}`);
+                    return false;
+                }
+                return true;
+            };
+            if (!checkPayload("ID", authID, payload.auth_id)) {
+                return;
+            }
+            if (!checkPayload("type", authType, payload.auth_type)) {
+                return;
+            }
+            if (!checkPayload("issuer", authIssuer, payload.auth_issuer)) {
                 return;
             }
 
@@ -101,7 +115,7 @@ export abstract class AuthorizationStrategy {
         }
 
         if (getURLQueryParam("auth:action") === "request") {
-            return this.executeAuthorizationRequest(authID);
+            return this.executeAuthorizationRequest(authID, authType, authIssuer);
         } else {
             return new Promise<AuthorizationState>(async (resolve, reject) => {
                 this.initiateAuthorizationRequest(authID, authType, authIssuer, fingerprint);
