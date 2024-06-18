@@ -1,11 +1,11 @@
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { connectorRequiresAuthorization, findConnectorByID, getStrategyConfigurationFromConnector } from "@common/data/entities/connector/ConnectorUtils";
-import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
-import { AuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategy";
+import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
+import { getConnectorInstanceAuthorizationID } from "@common/data/entities/authorization/AuthorizationTokenUtils";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
     async function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
@@ -36,32 +36,18 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         }
     }
 
-    function _createAuthStrategy(instance: ConnectorInstance, connectors: Connector[]): AuthorizationStrategy | undefined {
-        const connector = findConnectorByID(connectors, instance.connector_id);
-        if (!connector || !connectorRequiresAuthorization(connector)) {
-            return undefined;
-        }
-
-        try {
-            return createAuthorizationStrategy(comp, comp.frontendService, connector.authorization.strategy, getStrategyConfigurationFromConnector(connector));
-        } catch (e) {
-            return undefined;
-        }
-    }
-
     function requestInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
-        const strategy = _createAuthStrategy(instance, connectors);
+        const strategy = createAuthorizationStrategyFromConnectorInstance(comp, comp.frontendService, instance, connectors);
         if (!strategy) {
             return;
         }
 
-        //const { userFingerprint } = useUserStore();
-        //strategy.requestAuthorization(instance.authorization_state, userFingerprint).catch();
-        console.log("AYYYY REQUEST");
+        const { userFingerprint } = useUserStore();
+        strategy.initiateAuthorizationRequest(getConnectorInstanceAuthorizationID(instance), userFingerprint);
     }
 
     function revokeInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
-        const strategy = _createAuthStrategy(instance, connectors);
+        const strategy = createAuthorizationStrategyFromConnectorInstance(comp, comp.frontendService, instance, connectors);
         if (!strategy) {
             return;
         }

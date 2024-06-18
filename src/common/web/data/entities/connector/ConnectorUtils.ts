@@ -1,5 +1,9 @@
+import { WebComponent } from "../../../component/WebComponent";
+import { createAuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategies";
 import { AuthorizationStrategiesCatalog } from "../../../integration/authorization/strategies/AuthorizationStrategiesCatalog";
+import { AuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategy";
 import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "../../../integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { Service } from "../../../services/Service";
 import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { Connector, type ConnectorID } from "./Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "./ConnectorInstance";
@@ -55,5 +59,30 @@ export function getStrategyConfigurationFromConnector(connector: Connector): Rec
 
         default:
             return {};
+    }
+}
+
+/**
+ * Creates the authorization strategy configured in a connector.
+ *
+ * @param comp - The global component.
+ * @param svc - The service to use for message sending.
+ * @param connector - The connector.
+ *
+ * @returns - The authorization strategy or **undefined** if none is required.
+ */
+export function createAuthorizationStrategyFromConnector(
+    comp: WebComponent,
+    svc: Service,
+    connector: Connector | undefined,
+): AuthorizationStrategy | undefined {
+    if (!connector || !connectorRequiresAuthorization(connector)) {
+        return undefined;
+    }
+
+    try {
+        return createAuthorizationStrategy(comp, svc, connector.authorization.strategy, getStrategyConfigurationFromConnector(connector));
+    } catch (e) {
+        return undefined;
     }
 }

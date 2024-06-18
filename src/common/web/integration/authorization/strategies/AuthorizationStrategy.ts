@@ -36,40 +36,65 @@ export abstract class AuthorizationStrategy {
     }
 
     /**
-     * Requests user authorization.
+     * Initiates an authorization request.
+     *
+     * @param authID - The authorization ID.
+     * @param fingerprint - The user's fingerprint.
+     */
+    public initiateAuthorizationRequest(authID: string, fingerprint: string): void {
+        this.initiateRequest(this.encodeRequestPayload(authID, fingerprint));
+    }
+
+    /**
+     * Executes an authorization requests (requires a preceding initiation).
+     *
+     * @param authID - The authorization ID.
+     */
+    public executeAuthorizationRequest(authID: string): Promise<AuthorizationState> {
+        return new Promise<AuthorizationState>(async (resolve, reject) => {
+            const nwStore = useNetworkStore();
+            const payload = this.decodeRequestPayload(this.getPayloadParam());
+
+            if (payload.auth_id != authID) {
+                reject(`Authorization ID mismatch: Expected ${authID}, got ${payload.auth_id}`);
+                return;
+            }
+
+            RequestAuthorizationCommand.build(this._service.messageBuilder, authID, this.strategy, this.getRequestData(), payload.fingerprint)
+                .done((_, success: boolean, msg: string) => {
+                    success ? resolve(AuthorizationState.Authorized) : reject(msg);
+
+                    if (success) {
+                        this.finishRequest();
+                    }
+                })
+                .failed((_, msg: string) => reject(msg))
+                .emit(nwStore.serverChannel);
+        });
+    }
+
+    /**
+     * Requests user authorization, handling all steps automatically.
      *
      * @param authID - The authorization ID.
      * @param authState - The current authorization state.
      * @param fingerprint - The user's fingerprint.
      */
     public requestAuthorization(authID: string, authState: AuthorizationState, fingerprint: string): Promise<AuthorizationState> {
-        return new Promise<AuthorizationState>(async (resolve, reject) => {
-            // Authorization only needs to be requested if not done yet
-            if (authState == AuthorizationState.Authorized) {
+        if (authState == AuthorizationState.Authorized) {
+            return new Promise<AuthorizationState>(async (resolve, reject) => {
                 resolve(AuthorizationState.Authorized);
-                return;
-            }
+            });
+        }
 
-            if (getURLQueryParam("auth:action") === "request") {
-                const nwStore = useNetworkStore();
-                const payload = this.decodeRequestPayload(this.getPayloadParam());
-                console.log(payload);
-
-                RequestAuthorizationCommand.build(this._service.messageBuilder, payload.auth_id, this.strategy, this.getRequestData(), payload.fingerprint)
-                    .done((_, success: boolean, msg: string) => {
-                        success ? resolve(AuthorizationState.Authorized) : reject(msg);
-
-                        if (success) {
-                            this.finishRequest();
-                        }
-                    })
-                    .failed((_, msg: string) => reject(msg))
-                    .emit(nwStore.serverChannel);
-            } else {
+        if (getURLQueryParam("auth:action") === "request") {
+            return this.executeAuthorizationRequest(authID);
+        } else {
+            return new Promise<AuthorizationState>(async (resolve, reject) => {
                 this.initiateRequest(this.encodeRequestPayload(authID, fingerprint));
                 resolve(AuthorizationState.Pending);
-            }
-        });
+            });
+        }
     }
 
     protected abstract initiateRequest(payload: string): void;

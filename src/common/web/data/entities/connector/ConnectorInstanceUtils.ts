@@ -1,6 +1,9 @@
+import { WebComponent } from "../../../component/WebComponent";
+import { AuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategy";
+import { Service } from "../../../services/Service";
 import { Connector, type ConnectorID } from "./Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "./ConnectorInstance";
-import { findConnectorByID, findConnectorInstanceByID } from "./ConnectorUtils";
+import { createAuthorizationStrategyFromConnector, findConnectorByID, findConnectorInstanceByID } from "./ConnectorUtils";
 
 /**
  * A single connector instances group.
@@ -64,4 +67,24 @@ export function findConnectorByInstanceID(
 ): Connector | undefined {
     const instance = findConnectorInstanceByID(connectorInstances, instanceID);
     return instance ? findConnectorByID(connectors, instance.connector_id) : undefined;
+}
+
+/**
+ * Creates the authorization strategy configured in a connector instance.
+ *
+ * @param comp - The global component.
+ * @param svc - The service to use for message sending.
+ * @param instance - The connector instance.
+ * @param connectors - List of all connectors.
+ *
+ * @returns - The authorization strategy or **undefined** if none is required.
+ */
+export function createAuthorizationStrategyFromConnectorInstance(
+    comp: WebComponent,
+    svc: Service,
+    instance: ConnectorInstance,
+    connectors: Connector[],
+): AuthorizationStrategy | undefined {
+    const connector = findConnectorByID(connectors, instance.connector_id);
+    return createAuthorizationStrategyFromConnector(comp, svc, connector);
 }
