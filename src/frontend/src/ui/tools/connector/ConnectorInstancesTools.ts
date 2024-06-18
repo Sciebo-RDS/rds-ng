@@ -1,6 +1,8 @@
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { connectorRequiresAuthorization, findConnectorByID, getStrategyConfigurationFromConnector } from "@common/data/entities/connector/ConnectorUtils";
+import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
+import { AuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategy";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
@@ -34,17 +36,30 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         }
     }
 
-    function requestInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
+    function _createAuthStrategy(instance: ConnectorInstance, connectors: Connector[]): AuthorizationStrategy | undefined {
         const connector = findConnectorByID(connectors, instance.connector_id);
         if (!connector || !connectorRequiresAuthorization(connector)) {
+            return undefined;
+        }
+
+        try {
+            return createAuthorizationStrategy(comp, comp.frontendService, connector.authorization.strategy, getStrategyConfigurationFromConnector(connector));
+        } catch (e) {
+            return undefined;
+        }
+    }
+
+    function requestInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
+        const strategy = _createAuthStrategy(instance, connectors);
+        if (!strategy) {
             return;
         }
         console.log("AYYYY REQUEST");
     }
 
     function revokeInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
-        const connector = findConnectorByID(connectors, instance.connector_id);
-        if (!connector || !connectorRequiresAuthorization(connector)) {
+        const strategy = _createAuthStrategy(instance, connectors);
+        if (!strategy) {
             return;
         }
         console.log("AYYYY REVOKE");

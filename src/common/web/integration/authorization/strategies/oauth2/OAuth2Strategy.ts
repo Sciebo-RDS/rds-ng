@@ -16,8 +16,8 @@ export interface OAuth2StrategyConfiguration {
         };
     };
     client: {
-        clientID: string;
-        redirectURL: string;
+        client_id: string;
+        redirect_url: string;
         embedded: boolean;
     };
 }
@@ -39,8 +39,8 @@ export class OAuth2Strategy extends AuthorizationStrategy {
     protected initiateRequest(fingerprint: string): void {
         const url = new URL(this._config.server.endpoints.authorization, new URL(this._config.server.host));
         url.searchParams.set("response_type", "code");
-        url.searchParams.set("client_id", this._config.client.clientID);
-        url.searchParams.set("redirect_uri", this._config.client.redirectURL);
+        url.searchParams.set("client_id", this._config.client.client_id);
+        url.searchParams.set("redirect_uri", this._config.client.redirect_url);
         url.searchParams.set("state", fingerprint);
         this.redirect(url.toString());
     }
@@ -55,15 +55,15 @@ export class OAuth2Strategy extends AuthorizationStrategy {
             token_host: this._config.server.host,
             token_endpoint: this._config.server.endpoints.token,
 
-            client_id: this._config.client.clientID,
+            client_id: this._config.client.client_id,
             auth_code: authCode,
 
-            redirect_url: this._config.client.redirectURL,
+            redirect_url: this._config.client.redirect_url,
         } as OAuth2AuthorizationRequestData;
     }
 
     protected finishRequest(): void {
-        this.redirect(this._config.client.redirectURL);
+        this.redirect(this._config.client.redirect_url);
     }
 }
 
@@ -90,10 +90,10 @@ export function createOAuth2Strategy(comp: WebComponent, svc: Service, config: R
         throw new Error("Missing token endpoint");
     }
 
-    if (!oauth2Config.client?.clientID) {
+    if (!oauth2Config.client?.client_id) {
         throw new Error("Missing client ID");
     }
-    if (!oauth2Config.client?.redirectURL) {
+    if (!oauth2Config.client?.redirect_url) {
         throw new Error("Missing redirection URL");
     }
 

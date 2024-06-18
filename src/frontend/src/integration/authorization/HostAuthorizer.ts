@@ -56,8 +56,8 @@ export class HostAuthorizer extends Authorizer {
                         },
                     },
                     client: {
-                        clientID: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
-                        redirectURL: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
+                        client_id: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
+                        redirect_url: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
                         embedded: this._component.data.config.value<boolean>(HostIntegrationSettingIDs.Embedded),
                     },
                 } as OAuth2StrategyConfiguration;

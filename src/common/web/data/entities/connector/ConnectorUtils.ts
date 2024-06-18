@@ -1,4 +1,5 @@
 import { AuthorizationStrategiesCatalog } from "../../../integration/authorization/strategies/AuthorizationStrategiesCatalog";
+import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "../../../integration/authorization/strategies/oauth2/OAuth2Strategy";
 import { Connector, type ConnectorID } from "./Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "./ConnectorInstance";
 
@@ -34,4 +35,24 @@ export function findConnectorInstanceByID(connectorInstances: ConnectorInstance[
 export function connectorRequiresAuthorization(connector: Connector): boolean {
     const strategy = connector.authorization.strategy;
     return strategy != "" && AuthorizationStrategiesCatalog.findItem(strategy) != undefined;
+}
+
+/**
+ * Creates a strategy configuration from the authorization settings of a connector.
+ *
+ * @param connector - The connector.
+ *
+ * @returns - The strategy configuration.
+ */
+export function getStrategyConfigurationFromConnector(connector: Connector): Record<string, any> {
+    switch (connector.authorization.strategy) {
+        case OAuth2Strategy.Strategy:
+            // For OAuth2, the stored configuration matches the proper structure already
+            const config = connector.authorization.config as OAuth2StrategyConfiguration;
+            config.client.embedded = false;
+            return config;
+
+        default:
+            return {};
+    }
 }
