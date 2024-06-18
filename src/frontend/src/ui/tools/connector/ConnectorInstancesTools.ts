@@ -1,5 +1,6 @@
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
+import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
@@ -33,9 +34,27 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         }
     }
 
+    function requestInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
+        const connector = findConnectorByID(connectors, instance.connector_id);
+        if (!connector || !connectorRequiresAuthorization(connector)) {
+            return;
+        }
+        console.log("AYYYY REQUEST");
+    }
+
+    function revokeInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
+        const connector = findConnectorByID(connectors, instance.connector_id);
+        if (!connector || !connectorRequiresAuthorization(connector)) {
+            return;
+        }
+        console.log("AYYYY REVOKE");
+    }
+
     return {
         newInstance,
         editInstance,
         deleteInstance,
+        requestInstanceAuthorization,
+        revokeInstanceAuthorization,
     };
 }

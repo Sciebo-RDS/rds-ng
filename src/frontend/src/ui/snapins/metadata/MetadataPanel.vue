@@ -3,7 +3,7 @@ import { storeToRefs } from "pinia";
 import { type PropType, reactive, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
-import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorUtils";
+import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
 import { testProfile } from "@common/ui/components/propertyeditor/DummyData";

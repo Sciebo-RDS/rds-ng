@@ -4,7 +4,8 @@ import Listbox from "primevue/listbox";
 import { computed, type PropType, toRefs } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorByID, findConnectorInstanceByID, groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
+import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorInstanceUtils";
+import { findConnectorByID, findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -24,7 +25,7 @@ const props = defineProps({
 });
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = toRefs(props);
-const { editInstance, deleteInstance } = useConnectorInstancesTools(comp);
+const { editInstance, deleteInstance, requestInstanceAuthorization, revokeInstanceAuthorization } = useConnectorInstancesTools(comp);
 
 const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, connectors.value));
 const selectedInstance = defineModel<ConnectorInstanceID | undefined>();
@@ -76,6 +77,8 @@ function onDeleteKey() {
                 :instance="instanceEntry.option"
                 :is-selected="isInstanceSelected(instanceEntry.option)"
                 @dblclick="onEditInstance(instanceEntry.option)"
+                @authorize-instance="requestInstanceAuthorization(instanceEntry.option, connectors)"
+                @unauthorize-instance="revokeInstanceAuthorization(instanceEntry.option, connectors)"
                 @edit-instance="onEditInstance(instanceEntry.option)"
                 @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
             />

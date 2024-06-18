@@ -3,14 +3,12 @@ import { AuthorizationState } from "@common/data/entities/authorization/Authoriz
 import Button from "primevue/button";
 import Menu from "primevue/menu";
 import Tag from "primevue/tag";
-import { computed, defineAsyncComponent, type PropType, ref, toRefs, unref } from "vue";
+import { computed, type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-
-import { AuthorizationStrategyUIsCatalog } from "@/ui/integration/authorization/strategies/AuthorizationStrategyUIsCatalog";
 
 const consStore = useConnectorsStore();
 const props = defineProps({
@@ -24,73 +22,63 @@ const props = defineProps({
     },
 });
 const emits = defineEmits<{
+    (e: "authorize-instance", instance: ConnectorInstance): void;
+    (e: "unauthorize-instance", instance: ConnectorInstance): void;
     (e: "edit-instance", instance: ConnectorInstance): void;
     (e: "delete-instance", instance: ConnectorInstance): void;
 }>();
 
 const { instance, isSelected } = toRefs(props);
 const connector = computed(() => findConnectorByID(consStore.connectors, instance.value.connector_id));
-const authStrategyUI = computed(() => {
-    const strategy = unref(connector)!.authorization.strategy;
-    if (!!strategy) {
-        return AuthorizationStrategyUIsCatalog.findItem(strategy);
-    }
-    return undefined;
-});
-const authStrategyComponent = computed(() => {
-    if (!!unref(authStrategyUI) && unref(authStrategyUI).hasIntegration) {
-        return defineAsyncComponent(unref(authStrategyUI).options.integration!.loader);
-    }
-    return undefined;
-});
-const isAuthorized = computed(() => unref(authStrategyComponent) && unref(instance)!.authorization_state == AuthorizationState.Authorized);
+const requiresAuthorization = computed(() => connectorRequiresAuthorization(unref(connector)!));
+const isAuthorized = computed(() => unref(instance)!.authorization_state == AuthorizationState.Authorized);
 
 const editMenu = ref();
 const editMenuItems = computed(() => {
-    const items = {
+    const menuItems = {
         label: "Edit connection",
-        items: [
-            {
-                label: "Settings",
-                icon: "material-icons-outlined mi-engineering",
-                command: () => {
-                    emits("edit-instance", instance!.value);
-                },
-            },
-            { separator: true },
-            {
-                label: "Delete",
-                icon: "material-icons-outlined mi-delete-forever",
-                class: "r-text-error",
-                command: () => {
-                    emits("delete-instance", instance!.value);
-                },
-            },
-        ],
+        items: [] as Record<any, any>[],
     };
 
-    if (!!unref(authStrategyUI) && unref(authStrategyUI).hasIntegration && unref(authStrategyUI).options.integration!.providesMenuEntry) {
-        const menuItem = unref(authStrategyUI).getMenuEntry(unref(instance)!.authorization_state);
-        if (!!menuItem) {
-            items.items = [
-                {
-                    label: menuItem.label,
-                    icon: menuItem.icon || "",
-                    command: () => menuItem.command(unref(connector)!, unref(instance)!),
-                },
-                ...items.items,
-            ];
+    if (unref(requiresAuthorization)) {
+        if (unref(isAuthorized)) {
+            menuItems.items.push({
+                label: "Disconnect",
+                icon: "material-icons-outlined mi-link-off",
+                command: () => emits("unauthorize-instance", instance!.value),
+            });
+        } else {
+            menuItems.items.push({
+                label: "Connect",
+                icon: "material-icons-outlined mi-link",
+                command: () => emits("authorize-instance", instance!.value),
+            });
         }
     }
 
-    return [items];
+    menuItems.items.push(
+        {
+            label: "Settings",
+            icon: "material-icons-outlined mi-engineering",
+            command: () => emits("edit-instance", instance!.value),
+        },
+        { separator: true },
+        {
+            label: "Delete",
+            icon: "material-icons-outlined mi-delete-forever",
+            class: "r-text-error",
+            command: () => emits("delete-instance", instance!.value),
+        },
+    );
+
+    return [menuItems];
 });
 const editMenuShown = ref(false);
 </script>
 
 <template>
     <div class="grid grid-rows-auto grid-cols-[min-content_1fr_min-content] grid-flow-row gap-0 place-content-start group">
-        <div v-if="!!authStrategyComponent" class="row-span-3 pt-1 pr-2.5">
+        <div v-if="requiresAuthorization" class="row-span-3 pt-1 pr-2.5">
             <Tag rounded :severity="isAuthorized ? 'success' : 'danger'" :title="isAuthorized ? 'Connected' : 'Not connected'" class="w-10 h-10">
                 <span class="material-icons-outlined" :class="isAuthorized ? 'mi-power' : 'mi-power-off'" />
             </Tag>
@@ -125,9 +113,29 @@ const editMenuShown = ref(false);
 
         <div class="truncate" :title="instance!.description">{{ instance!.description }}</div>
 
-        <div class="col-span-2 items-center">
-            <component v-if="!!authStrategyComponent" :is="authStrategyComponent" :connector="connector" :connector-instance="instance" />
+        <div v-if="requiresAuthorization" class="col-span-3 place-self-end">
+            <Button
+                v-if="isAuthorized"
+                label="Disconnect"
+                severity="warning"
+                size="small"
+                rounded
+                icon="material-icons-outlined mi-link-off"
+                class="r-button-small"
+                @click="emits('unauthorize-instance', instance!)"
+            />
+            <Button
+                v-else
+                label="Connect"
+                severity="info"
+                size="small"
+                rounded
+                icon="material-icons-outlined mi-link"
+                class="r-button-small"
+                @click="emits('authorize-instance', instance!)"
+            />
         </div>
+        <div v-else class="col-span-3 place-self-end">&nbsp;</div>
     </div>
 </template>
 

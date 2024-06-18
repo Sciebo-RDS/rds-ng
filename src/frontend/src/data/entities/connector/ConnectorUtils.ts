@@ -3,7 +3,7 @@ import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorCategoriesCatalog } from "@/data/entities/connector/categories/ConnectorCategoriesCatalog";
 import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorUtils";
+import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 
 /**
  * Retrieves the category of a connector or undefined otherwise.
