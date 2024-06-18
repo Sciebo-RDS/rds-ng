@@ -37,12 +37,12 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         this._config = config;
     }
 
-    protected initiateRequest(fingerprint: string): void {
+    protected initiateRequest(payload: string): void {
         const url = new URL(this._config.server.endpoints.authorization, new URL(this._config.server.host));
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this._config.client.client_id);
         url.searchParams.set("redirect_uri", this._config.client.redirect_url);
-        url.searchParams.set("state", fingerprint);
+        url.searchParams.set("state", payload);
         this.redirect(url.toString());
     }
 

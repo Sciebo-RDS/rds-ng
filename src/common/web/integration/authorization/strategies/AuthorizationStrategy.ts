@@ -1,11 +1,19 @@
 import { RequestAuthorizationCommand } from "../../../api/authorization/AuthorizationCommands";
 import { WebComponent } from "../../../component/WebComponent";
 import { AuthorizationState } from "../../../data/entities/authorization/AuthorizationState";
-import { AuthorizationTokenType } from "../../../data/entities/authorization/AuthorizationToken";
 import { useNetworkStore } from "../../../data/stores/NetworkStore";
 import { Service } from "../../../services/Service";
 import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { getURLQueryParam } from "../../../utils/URLUtils";
+
+/**
+ * The payload that is sent with authorization requests.
+ */
+export interface AuthorizationStrategyPayload {
+    auth_id: string;
+
+    fingerprint: string;
+}
 
 /**
  * Base class for all authorization strategies.
@@ -30,10 +38,11 @@ export abstract class AuthorizationStrategy {
     /**
      * Requests user authorization.
      *
+     * @param authID - The authorization ID.
      * @param authState - The current authorization state.
      * @param fingerprint - The user's fingerprint.
      */
-    public requestAuthorization(authState: AuthorizationState, fingerprint: string): Promise<AuthorizationState> {
+    public requestAuthorization(authID: string, authState: AuthorizationState, fingerprint: string): Promise<AuthorizationState> {
         return new Promise<AuthorizationState>(async (resolve, reject) => {
             // Authorization only needs to be requested if not done yet
             if (authState == AuthorizationState.Authorized) {
@@ -43,14 +52,10 @@ export abstract class AuthorizationStrategy {
 
             if (getURLQueryParam("auth:action") === "request") {
                 const nwStore = useNetworkStore();
+                const payload = this.decodeRequestPayload(this.getPayloadParam());
+                console.log(payload);
 
-                RequestAuthorizationCommand.build(
-                    this._service.messageBuilder,
-                    AuthorizationTokenType.Host,
-                    this.strategy,
-                    this.getRequestData(),
-                    this.getFingerprintParam(),
-                )
+                RequestAuthorizationCommand.build(this._service.messageBuilder, payload.auth_id, this.strategy, this.getRequestData(), payload.fingerprint)
                     .done((_, success: boolean, msg: string) => {
                         success ? resolve(AuthorizationState.Authorized) : reject(msg);
 
@@ -61,13 +66,13 @@ export abstract class AuthorizationStrategy {
                     .failed((_, msg: string) => reject(msg))
                     .emit(nwStore.serverChannel);
             } else {
-                this.initiateRequest(fingerprint);
+                this.initiateRequest(this.encodeRequestPayload(authID, fingerprint));
                 resolve(AuthorizationState.Pending);
             }
         });
     }
 
-    protected abstract initiateRequest(fingerprint: string): void;
+    protected abstract initiateRequest(payload: string): void;
 
     protected abstract getRequestData(): any;
 
@@ -94,12 +99,25 @@ export abstract class AuthorizationStrategy {
         }
     }
 
-    private getFingerprintParam(): string {
-        const fingerprint = getURLQueryParam("auth:fingerprint");
-        if (!fingerprint) {
-            throw new Error("No authentication fingerprint provided");
+    private getPayloadParam(): string {
+        const payload = getURLQueryParam("auth:payload");
+        if (!payload) {
+            throw new Error("No authentication payload provided");
         }
-        return fingerprint;
+        return payload;
+    }
+
+    private encodeRequestPayload(authID: string, fingerprint: string): string {
+        const payload = {
+            auth_id: authID,
+            fingerprint: fingerprint,
+        } as AuthorizationStrategyPayload;
+
+        return btoa(JSON.stringify(payload));
+    }
+
+    private decodeRequestPayload(payload: string): AuthorizationStrategyPayload {
+        return JSON.parse(atob(payload)) as AuthorizationStrategyPayload;
     }
 
     /**
