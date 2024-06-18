@@ -1,5 +1,6 @@
 import { WebComponent } from "../../../../component/WebComponent";
 import { Service } from "../../../../services/Service";
+import { RedirectionTarget } from "../../../../utils/HTMLUtils";
 import { getURLQueryParam } from "../../../../utils/URLUtils";
 import { AuthorizationStrategy } from "../AuthorizationStrategy";
 import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
@@ -18,7 +19,7 @@ export interface OAuth2StrategyConfiguration {
     client: {
         client_id: string;
         redirect_url: string;
-        embedded: boolean;
+        redirect_target: RedirectionTarget;
     };
 }
 
@@ -31,7 +32,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
     private readonly _config: OAuth2StrategyConfiguration;
 
     public constructor(comp: WebComponent, svc: Service, config: OAuth2StrategyConfiguration) {
-        super(comp, svc, OAuth2Strategy.Strategy, config.client.embedded);
+        super(comp, svc, OAuth2Strategy.Strategy, config.client.redirect_target);
 
         this._config = config;
     }

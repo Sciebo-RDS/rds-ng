@@ -5,6 +5,7 @@ import { createAuthorizationStrategy } from "@common/integration/authorization/s
 import { AuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategy";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
@@ -54,7 +55,9 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         if (!strategy) {
             return;
         }
-        console.log("AYYYY REQUEST");
+
+        const { userFingerprint } = useUserStore();
+        strategy.requestAuthorization(instance.authorization_state, userFingerprint).catch();
     }
 
     function revokeInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {

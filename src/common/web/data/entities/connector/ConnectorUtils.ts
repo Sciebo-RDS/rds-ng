@@ -1,5 +1,6 @@
 import { AuthorizationStrategiesCatalog } from "../../../integration/authorization/strategies/AuthorizationStrategiesCatalog";
 import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "../../../integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { Connector, type ConnectorID } from "./Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "./ConnectorInstance";
 
@@ -49,7 +50,7 @@ export function getStrategyConfigurationFromConnector(connector: Connector): Rec
         case OAuth2Strategy.Strategy:
             // For OAuth2, the stored configuration matches the proper structure already
             const config = connector.authorization.config as OAuth2StrategyConfiguration;
-            config.client.embedded = false;
+            config.client.redirect_target = RedirectionTarget.Blank;
             return config;
 
         default:

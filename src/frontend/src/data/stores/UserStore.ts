@@ -16,6 +16,7 @@ export const useUserStore = defineStore("userStore", () => {
     const comp = FrontendComponent.inject();
 
     const userToken = comp.session.sessionValue<UserToken>("user-token", {} as UserToken);
+    const userFingerprint = ref("");
     const userSettings = ref(new UserSettings());
 
     const authorizationState = ref(AuthorizationState.NotAuthorized);
@@ -23,6 +24,7 @@ export const useUserStore = defineStore("userStore", () => {
 
     function reset(): void {
         userToken.value = {} as UserToken;
+        userFingerprint.value = "";
         userSettings.value = new UserSettings();
 
         authorizationState.value = AuthorizationState.NotAuthorized;
@@ -31,6 +33,7 @@ export const useUserStore = defineStore("userStore", () => {
 
     function resetLogin(): void {
         userToken.value = {} as UserToken;
+        userFingerprint.value = "";
 
         authorizationState.value = AuthorizationState.NotAuthorized;
         brokerAssigned.value = false;
@@ -38,6 +41,7 @@ export const useUserStore = defineStore("userStore", () => {
 
     return {
         userToken,
+        userFingerprint,
         userSettings,
         authorizationState,
         brokerAssigned,

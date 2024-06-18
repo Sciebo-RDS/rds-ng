@@ -1,12 +1,12 @@
-import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
-import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
-import { type OAuth2StrategyConfiguration, OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
+import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
+import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { RedirectionTarget } from "@common/utils/HTMLUtils";
 
 /**
  * Authorizer for host integration.
@@ -58,7 +58,9 @@ export class HostAuthorizer extends Authorizer {
                     client: {
                         client_id: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
                         redirect_url: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
-                        embedded: this._component.data.config.value<boolean>(HostIntegrationSettingIDs.Embedded),
+                        redirect_target: this._component.data.config.value<boolean>(HostIntegrationSettingIDs.Embedded)
+                            ? RedirectionTarget.Parent
+                            : RedirectionTarget.Same,
                     },
                 } as OAuth2StrategyConfiguration;
 

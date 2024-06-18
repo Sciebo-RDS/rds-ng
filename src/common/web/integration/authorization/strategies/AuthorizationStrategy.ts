@@ -4,6 +4,7 @@ import { AuthorizationState } from "../../../data/entities/authorization/Authori
 import { AuthorizationTokenType } from "../../../data/entities/authorization/AuthorizationToken";
 import { useNetworkStore } from "../../../data/stores/NetworkStore";
 import { Service } from "../../../services/Service";
+import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { getURLQueryParam } from "../../../utils/URLUtils";
 
 /**
@@ -15,15 +16,15 @@ export abstract class AuthorizationStrategy {
 
     private readonly _strategy: string;
 
-    private readonly _embedded: boolean;
+    private readonly _redirectionTarget: RedirectionTarget;
 
-    protected constructor(comp: WebComponent, svc: Service, strategy: string, embedded: boolean = false) {
+    protected constructor(comp: WebComponent, svc: Service, strategy: string, redirectionTarget: RedirectionTarget = RedirectionTarget.Same) {
         this._component = comp;
         this._service = svc;
 
         this._strategy = strategy;
 
-        this._embedded = embedded;
+        this._redirectionTarget = redirectionTarget;
     }
 
     /**
@@ -76,7 +77,20 @@ export abstract class AuthorizationStrategy {
         if (url) {
             // Not sure if this will always work with all browsers and web servers
             // Might need to open the URL in a new window
-            this._embedded ? window.parent.location.replace(url) : window.location.replace(url);
+            switch (this._redirectionTarget) {
+                case RedirectionTarget.Same:
+                    window.location.replace(url);
+                    break;
+
+                case RedirectionTarget.Parent:
+                    window.parent.location.replace(url);
+                    break;
+
+                case RedirectionTarget.Blank:
+                    // @ts-ignore
+                    window.open(url, "_blank").focus();
+                    break;
+            }
         }
     }
 
