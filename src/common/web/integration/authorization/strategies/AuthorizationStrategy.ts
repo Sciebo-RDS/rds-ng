@@ -41,13 +41,13 @@ export abstract class AuthorizationStrategy {
     /**
      * Whether an authorization request has been issued and should be handled now.
      *
-     * @param authType - The authorization type.
+     * @param authTypes - The authorization type(s).
      */
-    public static authorizationRequestIssued(authType: AuthorizationTokenType): boolean {
+    public static authorizationRequestIssued(authTypes: AuthorizationTokenType | AuthorizationTokenType[]): boolean {
         if (getURLQueryParam("auth:action") === "request") {
             try {
                 const payload = AuthorizationStrategy.decodeRequestPayload();
-                if (payload.auth_type == authType) {
+                if ((Array.isArray(authTypes) && authTypes.includes(payload.auth_type)) || (!Array.isArray(authTypes) && payload.auth_type == authTypes)) {
                     return true;
                 }
             } catch (e) {}

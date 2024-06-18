@@ -24,14 +24,19 @@ export const useComponentStore = defineStore("componentStore", () => {
     const componentState = ref(ComponentState.Connecting);
     const componentStateMessage = ref("");
 
+    const queryParams = ref(new URLSearchParams());
+
     function reset(): void {
         componentState.value = ComponentState.Connecting;
         componentStateMessage.value = "";
+
+        queryParams.value = new URLSearchParams();
     }
 
     return {
         componentState,
         componentStateMessage,
-        reset
+        queryParams,
+        reset,
     };
 });

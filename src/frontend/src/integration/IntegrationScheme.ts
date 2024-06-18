@@ -1,6 +1,8 @@
 import { type VueComponent } from "@common/component/WebComponent";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { getAllNonHostTokenTypes } from "@common/data/entities/authorization/AuthorizationToken";
 import { isUserTokenValid } from "@common/data/entities/user/UserToken";
+import { AuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategy";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -61,6 +63,19 @@ export abstract class IntegrationScheme {
     public leave(): void {}
 
     /**
+     * Called when the app has launched after completed integration.
+     */
+    public beginSession(): void {
+        // When the session begins, perform any pending authorizations (which are not for the host integration)
+        this.handlePendingAuthorizationRequests();
+    }
+
+    /**
+     * Called when the user leaves the main view.
+     */
+    public endSession(): void {}
+
+    /**
      * The scheme identifier.
      */
     public get scheme(): string {
@@ -72,5 +87,11 @@ export abstract class IntegrationScheme {
      */
     public get integrationComponent(): VueComponent {
         return this._integrationComponent;
+    }
+
+    private handlePendingAuthorizationRequests(): void {
+        if (AuthorizationStrategy.authorizationRequestIssued(getAllNonHostTokenTypes())) {
+            // TODO
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { useUrlSearchParams } from "@vueuse/core";
+import { useComponentStore } from "../data/stores/ComponentStore";
 
 /**
  * Retrieves a parameter from the URL query.
@@ -8,6 +8,6 @@ import { useUrlSearchParams } from "@vueuse/core";
  * @returns - The parameter value, if any.
  */
 export function getURLQueryParam(paramName: string): string | undefined {
-    const queryParams = useUrlSearchParams("history");
-    return queryParams.hasOwnProperty(paramName) ? (queryParams[paramName] as string) : undefined;
+    const compStore = useComponentStore();
+    return compStore.queryParams.get(paramName) || undefined;
 }
