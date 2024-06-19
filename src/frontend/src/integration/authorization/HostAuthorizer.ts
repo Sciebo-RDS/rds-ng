@@ -5,6 +5,7 @@ import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
+import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
 import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
 import { RedirectionTarget } from "@common/utils/HTMLUtils";
@@ -29,8 +30,14 @@ export class HostAuthorizer extends Authorizer {
                 this._hostAuth.strategy,
                 this.getStrategyConfiguration(this._hostAuth.strategy),
             );
+            const authRequest = AuthorizationRequest.fromValues(
+                AuthorizationTokenType.Host,
+                AuthorizationTokenType.Host,
+                AuthorizationTokenType.Host,
+                fingerprint,
+            );
             strategy
-                .requestAuthorization(AuthorizationTokenType.Host, AuthorizationTokenType.Host, AuthorizationTokenType.Host, authState, fingerprint)
+                .requestAuthorization(authState, authRequest)
                 .then((authState: AuthorizationState) => {
                     // Skip any non-authorized states, as these will occur during the multistep authorization process
                     if (authState == AuthorizationState.Authorized) {

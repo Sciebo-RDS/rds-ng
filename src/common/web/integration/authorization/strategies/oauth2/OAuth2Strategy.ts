@@ -2,6 +2,7 @@ import { WebComponent } from "../../../../component/WebComponent";
 import { Service } from "../../../../services/Service";
 import { RedirectionTarget } from "../../../../utils/HTMLUtils";
 import { getURLQueryParam } from "../../../../utils/URLUtils";
+import { AuthorizationRequest } from "../../AuthorizationRequest";
 import { AuthorizationStrategy } from "../AuthorizationStrategy";
 import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
 
@@ -37,16 +38,16 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         this._config = config;
     }
 
-    protected initiateRequest(payload: string): void {
+    protected initiateRequest(authRequest: AuthorizationRequest): void {
         const url = new URL(this._config.server.endpoints.authorization, new URL(this._config.server.host));
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this._config.client.client_id);
         url.searchParams.set("redirect_uri", this._config.client.redirect_url);
-        url.searchParams.set("state", payload);
+        url.searchParams.set("state", authRequest.encodedPayload);
         this.redirect(url.toString());
     }
 
-    protected getRequestData(): any {
+    protected getRequestData(_: AuthorizationRequest): any {
         const authCode = getURLQueryParam("auth:code");
         if (!authCode) {
             throw new Error("No authentication code provided");

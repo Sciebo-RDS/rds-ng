@@ -1,8 +1,8 @@
 import { type VueComponent } from "@common/component/WebComponent";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
-import { getAllNonHostTokenTypes } from "@common/data/entities/authorization/AuthorizationToken";
+import { getNonHostTokenTypes } from "@common/data/entities/authorization/AuthorizationToken";
 import { isUserTokenValid } from "@common/data/entities/user/UserToken";
-import { AuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategy";
+import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -90,7 +90,7 @@ export abstract class IntegrationScheme {
     }
 
     private handlePendingAuthorizationRequests(): void {
-        if (AuthorizationStrategy.authorizationRequestIssued(getAllNonHostTokenTypes())) {
+        if (AuthorizationRequest.requestIssued(getNonHostTokenTypes())) {
             // TODO
         }
     }
