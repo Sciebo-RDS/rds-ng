@@ -1,3 +1,4 @@
+import { AuthorizationRequestsHandler } from "@/integration/authorization/AuthorizationRequestsHandler";
 import { type VueComponent } from "@common/component/WebComponent";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { getNonHostTokenTypes } from "@common/data/entities/authorization/AuthorizationToken";
@@ -91,7 +92,8 @@ export abstract class IntegrationScheme {
 
     private handlePendingAuthorizationRequests(): void {
         if (AuthorizationRequest.requestIssued(getNonHostTokenTypes())) {
-            // TODO
+            const handler = new AuthorizationRequestsHandler(this._component, this._component.frontendService);
+            handler.handlePendingRequests();
         }
     }
 }

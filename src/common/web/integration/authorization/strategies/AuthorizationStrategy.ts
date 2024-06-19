@@ -45,7 +45,7 @@ export abstract class AuthorizationStrategy {
             const nwStore = useNetworkStore();
 
             // Make sure that we're dealing with the correct request
-            const urlRequest = AuthorizationRequest.fromURLParam();
+            const urlRequest = AuthorizationRequest.fromURLParameters();
             try {
                 authRequest.verify(urlRequest);
             } catch (exc) {
@@ -56,6 +56,9 @@ export abstract class AuthorizationStrategy {
             RequestAuthorizationCommand.build(
                 this._service.messageBuilder,
                 authRequest.payload.auth_id,
+                authRequest.payload.auth_type,
+                authRequest.payload.auth_issuer,
+                authRequest.payload.auth_bearer,
                 this.strategy,
                 this.getRequestData(authRequest),
                 authRequest.payload.fingerprint,

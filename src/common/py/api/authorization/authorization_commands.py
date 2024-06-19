@@ -7,6 +7,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
+from ...data.entities.authorization import AuthorizationToken
 from ...data.entities.user import UserID
 
 
@@ -20,12 +21,18 @@ class RequestAuthorizationCommand(Command):
 
     Args:
         auth_id: The ID of this token.
+        auth_type: The token type.
+        auth_issuer: The entity that requires the authorization.
+        auth_bearer: The bearer that will be authorized against.
         strategy: The token strategy (e.g., OAuth2).
         data: The actual token request data.
         fingerprint: The user's fingerprint.
     """
 
     auth_id: str
+    auth_type: AuthorizationToken.TokenType
+    auth_issuer: str
+    auth_bearer: str
 
     strategy: str
     data: typing.Dict[str, typing.Any] = field(default_factory=dict)
@@ -37,6 +44,9 @@ class RequestAuthorizationCommand(Command):
         message_builder: MessageBuilder,
         *,
         auth_id: str,
+        auth_type: str,
+        auth_issuer: str,
+        auth_bearer: str,
         strategy: str,
         data: typing.Dict[str, typing.Any],
         fingerprint: str,
@@ -49,6 +59,9 @@ class RequestAuthorizationCommand(Command):
             RequestAuthorizationCommand,
             chain,
             auth_id=auth_id,
+            auth_type=auth_type,
+            auth_issuer=auth_issuer,
+            auth_bearer=auth_bearer,
             strategy=strategy,
             data=data,
             fingerprint=fingerprint,

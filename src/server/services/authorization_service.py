@@ -73,7 +73,12 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             try:
                 strategy = _create_strategy(ctx, msg.strategy)
                 auth_token = strategy.request_authorization(
-                    ctx.user.user_id, msg.auth_id, msg.data
+                    ctx.user.user_id,
+                    msg.auth_id,
+                    msg.auth_type,
+                    msg.auth_issuer,
+                    msg.auth_bearer,
+                    msg.data,
                 )
                 AuthorizationTokenVerifier(auth_token).verify_create()
 

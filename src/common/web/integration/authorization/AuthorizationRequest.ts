@@ -5,10 +5,15 @@ import { getURLQueryParam } from "../../utils/URLUtils";
  * The payload that is sent with authorization requests.
  */
 export interface AuthorizationRequestPayload {
+    /** The authorization ID. */
     auth_id: string;
+    /** The authorization type. */
     auth_type: AuthorizationTokenType;
+    /** The entity that requires the authorization. */
     auth_issuer: string;
-
+    /** The entity that will be authorized against. */
+    auth_bearer: string;
+    /** The user's fingerprint. */
     fingerprint: string;
 }
 
@@ -23,6 +28,7 @@ export class AuthorizationRequest {
             auth_id: "",
             auth_type: AuthorizationTokenType.Invalid,
             auth_issuer: "",
+            auth_bearer: "",
             fingerprint: "",
         } as AuthorizationRequestPayload;
     }
@@ -33,20 +39,28 @@ export class AuthorizationRequest {
      * @param authID - The authorization ID.
      * @param authType - The authorization type.
      * @param authIssuer - The issuer of the authorization.
+     * @param authBearer - The bearer of the authorization.
      * @param fingerprint - The user's fingerprint.
      */
-    public static fromValues(authID: string, authType: AuthorizationTokenType, authIssuer: string, fingerprint: string): AuthorizationRequest {
+    public static fromValues(
+        authID: string,
+        authType: AuthorizationTokenType,
+        authIssuer: string,
+        authBearer: string,
+        fingerprint: string,
+    ): AuthorizationRequest {
         const request = new AuthorizationRequest();
         request._payload = {
             auth_id: authID,
             auth_type: authType,
             auth_issuer: authIssuer,
+            auth_bearer: authBearer,
             fingerprint: fingerprint,
         } as AuthorizationRequestPayload;
         return request;
     }
 
-    public static fromURLParam() {
+    public static fromURLParameters() {
         const request = new AuthorizationRequest();
         request.payloadFromURLParam();
         return request;
@@ -60,7 +74,7 @@ export class AuthorizationRequest {
     public static requestIssued(authTypes: AuthorizationTokenType[] = []): boolean {
         if (getURLQueryParam("auth:action") === "request") {
             try {
-                const authRequest = AuthorizationRequest.fromURLParam();
+                const authRequest = AuthorizationRequest.fromURLParameters();
                 if (authTypes.length == 0 || authTypes.includes(authRequest.payload.auth_type)) {
                     return true;
                 }
@@ -84,6 +98,7 @@ export class AuthorizationRequest {
         checkPayload("ID", this.payload.auth_id, other.payload.auth_id);
         checkPayload("type", this.payload.auth_type, other.payload.auth_type);
         checkPayload("issuer", this.payload.auth_issuer, other.payload.auth_issuer);
+        checkPayload("bearer", this.payload.auth_bearer, other.payload.auth_bearer);
     }
 
     /**

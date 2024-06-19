@@ -52,7 +52,13 @@ class AuthorizationStrategy(IntegrationHandler):
 
     @abc.abstractmethod
     def request_authorization(
-        self, user_id: UserID, auth_id: str, request_data: typing.Any
+        self,
+        user_id: UserID,
+        auth_id: str,
+        auth_type: AuthorizationToken.TokenType,
+        auth_issuer: str,
+        auth_bearer: str,
+        request_data: typing.Any,
     ) -> AuthorizationToken: ...
 
     @abc.abstractmethod

@@ -34,8 +34,9 @@ export class HostAuthorizer extends Authorizer {
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
+                AuthorizationTokenType.Host,
                 fingerprint,
-            );
+            ); // (yes, we need that AuthorizationTokenType.Host 4 times)
             strategy
                 .requestAuthorization(authState, authRequest)
                 .then((authState: AuthorizationState) => {

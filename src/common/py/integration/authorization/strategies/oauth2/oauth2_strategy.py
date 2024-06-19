@@ -58,10 +58,16 @@ class OAuth2Strategy(AuthorizationStrategy):
         )
 
     def request_authorization(
-        self, user_id: UserID, auth_id: str, request_data: typing.Any
+        self,
+        user_id: UserID,
+        auth_id: str,
+        auth_type: AuthorizationToken.TokenType,
+        auth_issuer: str,
+        auth_bearer: str,
+        request_data: typing.Any,
     ) -> AuthorizationToken:
         oauth2_data = self._get_oauth2_request_data(request_data)
-        client_secret = self._get_client_secret(auth_id)
+        client_secret = self._get_client_secret(auth_bearer)
 
         response = requests.post(
             urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
@@ -83,6 +89,9 @@ class OAuth2Strategy(AuthorizationStrategy):
                 return AuthorizationToken(
                     user_id=user_id,
                     auth_id=auth_id,
+                    auth_type=auth_type,
+                    auth_issuer=auth_issuer,
+                    auth_bearer=auth_bearer,
                     expiration_timestamp=self._get_expiration_timestamp(resp_data),
                     strategy=self.strategy,
                     token=self._create_oauth2_token(resp_data),
@@ -101,7 +110,7 @@ class OAuth2Strategy(AuthorizationStrategy):
 
     def refresh_authorization(self, token: AuthorizationToken) -> None:
         oauth2_token, oauth2_data = self._get_oauth2_data_from_token(token)
-        client_secret = self._get_client_secret(token.auth_id)
+        client_secret = self._get_client_secret(token.auth_bearer)
 
         if oauth2_token.refresh_token is None:
             raise RuntimeError("Tried to refresh without a refresh token")
@@ -175,12 +184,12 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
         return oauth2_token, oauth2_data
 
-    def _get_client_secret(self, auth_id: str) -> str:
-        client_secret = self._get_config_value(f"secrets.{auth_id}", "")
+    def _get_client_secret(self, auth_bearer: str) -> str:
+        client_secret = self._get_config_value(f"secrets.{auth_bearer}", "")
 
         # Verify the secret
         if client_secret == "":
-            raise RuntimeError(f"Missing OAuth2 client secret for {auth_id}")
+            raise RuntimeError(f"Missing OAuth2 client secret for {auth_bearer}")
 
         return client_secret
 

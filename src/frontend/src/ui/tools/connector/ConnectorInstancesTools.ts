@@ -1,8 +1,14 @@
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
+import { getConnectorInstanceAuthorizationID } from "@common/data/entities/authorization/AuthorizationTokenUtils";
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
+import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
@@ -35,19 +41,24 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
     }
 
     function requestInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
+        const connector = findConnectorByID(connectors, instance.connector_id);
+        if (!connector) {
+            return;
+        }
         const strategy = createAuthorizationStrategyFromConnectorInstance(comp, comp.frontendService, instance, connectors);
         if (!strategy) {
             return;
         }
-        /*
-                const { userFingerprint } = useUserStore();
-                strategy.initiateAuthorizationRequest(
-                    getConnectorInstanceAuthorizationID(instance),
-                    AuthorizationTokenType.Connector,
-                    instance.instance_id,
-                    userFingerprint,
-                );
-         */
+
+        const { userFingerprint } = useUserStore();
+        const authRequest = AuthorizationRequest.fromValues(
+            getConnectorInstanceAuthorizationID(instance),
+            AuthorizationTokenType.Connector,
+            instance.instance_id,
+            connector.connector_id,
+            userFingerprint,
+        );
+        strategy.initiateAuthorizationRequest(authRequest);
     }
 
     function revokeInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
@@ -56,6 +67,7 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             return;
         }
         console.log("AYYYY REVOKE");
+        // TODO
     }
 
     return {

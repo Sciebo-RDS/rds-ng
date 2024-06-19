@@ -6,14 +6,14 @@
         "strategy": "oauth2",
         "config": {
             "server": {
-                "host": "http://10.0.2.15",
+                "host": "http://10.0.2.15:8080",
                 "endpoints": {
-                    "authorization": "/index.php/apps/oauth2/authorize",
-                    "token": "/index.php/apps/oauth2/api/v1/token"
+                    "authorization": "/apps/oauth2/authorize",
+                    "token": "/apps/oauth2/api/v1/token"
                 }
             },
             "client": {
-                "client_id": "tIkW9mkhkYfEokY7QbaCsUWWZuEvgbEy5iN1v5hfdSOAbKokaa8jJv1tkSZbPW4l",
+                "client_id": "R52Hg4cVkkw6bUuD9wiSPSHIJItfLEFTWSzGXxSKpDHuSUI8D3siFBoujjpR3AEi",
                 "redirect_url": "http://localhost:8080/apps/rdsng/main"
             }
         }
