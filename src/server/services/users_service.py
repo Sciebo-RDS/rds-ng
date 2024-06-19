@@ -4,7 +4,7 @@ from common.py.data.entities.authorization import AuthorizationState
 from common.py.data.entities.user import User
 from common.py.services import Service
 
-from .tools import send_projects_list
+from .tools import send_projects_list, reflect_user_settings_authorization_states
 
 
 def create_users_service(comp: BackendComponent) -> Service:
@@ -100,10 +100,14 @@ def create_users_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, GetUserSettingsReply, settings=User.Settings()):
             return
 
+        # When sending the user settings, always update any authorization states
+        user_settings = clone_entity(ctx.user.user_settings)
+        reflect_user_settings_authorization_states(ctx, user_settings)
+
         GetUserSettingsReply.build(
             ctx.message_builder,
             msg,
-            settings=ctx.user.user_settings,
+            settings=user_settings,
         ).emit()
 
     @svc.message_handler(SetUserSettingsCommand)
