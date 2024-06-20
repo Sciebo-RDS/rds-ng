@@ -69,6 +69,12 @@ services:
             - "4300:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+            - RDS_AUTHORIZATION_STRATEGY=oauth2
+            - RDS_AUTHORIZATION_OAUTH2_SERVER_HOST=http://10.0.2.15:8080
+            - RDS_AUTHORIZATION_OAUTH2_SERVER_AUTHORIZATION_ENDPOINT=/apps/oauth2/authorize
+            - RDS_AUTHORIZATION_OAUTH2_SERVER_TOKEN_ENDPOINT=/apps/oauth2/api/v1/token
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL=http://localhost:8080/apps/rdsng/main
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=R52Hg4cVkkw6bUuD9wiSPSHIJItfLEFTWSzGXxSKpDHuSUI8D3siFBoujjpR3AEi
 
     # Web frontend
     frontend:
@@ -94,5 +100,5 @@ services:
             # - RDS_INTEGRATION_SCHEME=basic
             - RDS_INTEGRATION_SCHEME=host
             - RDS_INTEGRATION_HOST_API_URL=http://localhost:8080/apps/rdsng/api/v1
-            - RDS_AUTHORIZATION_OAUTH2_REDIRECT_URL=http://localhost:8080/apps/rdsng/main
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL=http://localhost:8080/apps/rdsng/main
             - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=uh8K3FCc7PDtwSb9UeKzWs7QYb89pOWAYWxhJuidOpkUnizblqdk2KggH2y8w9GW

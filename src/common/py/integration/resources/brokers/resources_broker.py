@@ -4,7 +4,6 @@ from ... import IntegrationHandler
 from ...authorization.strategies import (
     AuthorizationStrategy,
     create_authorization_strategy,
-    get_authorization_strategy_configuration,
 )
 from ....component import BackendComponent
 from ....core import logging
@@ -79,7 +78,6 @@ class ResourcesBroker(IntegrationHandler):
                 self._component,
                 svc,
                 strategy,
-                get_authorization_strategy_configuration(strategy),
                 user_token=self._user_token,
                 auth_token=self._auth_token,
             )

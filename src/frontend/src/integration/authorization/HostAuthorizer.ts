@@ -20,6 +20,8 @@ export class HostAuthorizer extends Authorizer {
         super(comp);
 
         this._hostAuth = hostAuth;
+        console.log("-------------------------------------");
+        console.log(hostAuth);
     }
 
     public authorize(authState: AuthorizationState, fingerprint: string): void {
@@ -59,10 +61,8 @@ export class HostAuthorizer extends Authorizer {
                 return {
                     server: {
                         host: this._hostAuth.config.host || "",
-                        endpoints: {
-                            authorization: this._hostAuth.config.endpoints?.authorization || "",
-                            token: this._hostAuth.config.endpoints?.token || "",
-                        },
+                        authorization_endpoint: this._hostAuth.config.authorization_endpoint || "",
+                        token_endpoint: this._hostAuth.config.token_endpoint || "",
                     },
                     client: {
                         client_id: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),

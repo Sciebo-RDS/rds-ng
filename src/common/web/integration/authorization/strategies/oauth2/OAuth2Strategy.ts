@@ -12,10 +12,8 @@ import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
 export interface OAuth2StrategyConfiguration {
     server: {
         host: string;
-        endpoints: {
-            authorization: string;
-            token: string;
-        };
+        authorization_endpoint: string;
+        token_endpoint: string;
     };
     client: {
         client_id: string;
@@ -39,7 +37,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
     }
 
     protected initiateRequest(authRequest: AuthorizationRequest): void {
-        const url = new URL(this._config.server.endpoints.authorization, new URL(this._config.server.host));
+        const url = new URL(this._config.server.authorization_endpoint, new URL(this._config.server.host));
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this._config.client.client_id);
         url.searchParams.set("redirect_uri", this._config.client.redirect_url);
@@ -55,7 +53,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
 
         return {
             token_host: this._config.server.host,
-            token_endpoint: this._config.server.endpoints.token,
+            token_endpoint: this._config.server.token_endpoint,
 
             client_id: this._config.client.client_id,
             auth_code: authCode,
@@ -85,10 +83,10 @@ export function createOAuth2Strategy(comp: WebComponent, svc: Service, config: R
     if (!oauth2Config.server?.host) {
         throw new Error("Missing authorization host");
     }
-    if (!oauth2Config.server?.endpoints?.authorization) {
+    if (!oauth2Config.server?.authorization_endpoint) {
         throw new Error("Missing authorization endpoint");
     }
-    if (!oauth2Config.server?.endpoints?.token) {
+    if (!oauth2Config.server?.token_endpoint) {
         throw new Error("Missing token endpoint");
     }
 

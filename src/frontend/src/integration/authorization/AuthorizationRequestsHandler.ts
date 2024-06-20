@@ -33,8 +33,6 @@ export class AuthorizationRequestsHandler {
     }
 
     private handleRequest(authRequest: AuthorizationRequest): void {
-        logging.debug("Processing authorization request", "authorization", this.getLoggingParams(authRequest));
-
         const strategy = this.createAuthStrategy(authRequest);
         if (strategy) {
             strategy

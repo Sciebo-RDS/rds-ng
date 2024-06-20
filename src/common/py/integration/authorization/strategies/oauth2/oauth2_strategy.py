@@ -1,7 +1,7 @@
 import time
 import typing
 import urllib.parse
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from http import HTTPStatus
 
 import requests
@@ -24,6 +24,22 @@ class OAuth2StrategyConfiguration:
     The OAuth2 strategy configuration.
     """
 
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Server:
+        host: str = ""
+        authorization_endpoint: str = ""
+        token_endpoint: str = ""
+
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Client:
+        client_id: str = ""
+        redirect_url: str = ""
+
+    server: Server = field(default_factory=Server)
+    client: Client = field(default_factory=Client)
+
 
 class OAuth2Strategy(AuthorizationStrategy):
     """
@@ -36,7 +52,6 @@ class OAuth2Strategy(AuthorizationStrategy):
         self,
         comp: BackendComponent,
         svc: Service,
-        config: OAuth2StrategyConfiguration,
         *,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
@@ -51,8 +66,6 @@ class OAuth2Strategy(AuthorizationStrategy):
             user_token=user_token,
             auth_token=auth_token,
         )
-
-        self._config = config
 
         self._request_timeout = comp.data.config.value(
             NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
@@ -211,29 +224,20 @@ class OAuth2Strategy(AuthorizationStrategy):
 def create_oauth2_strategy(
     comp: BackendComponent,
     svc: Service,
-    config: typing.Any,
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
 ) -> OAuth2Strategy:
     """
-    Creates a new OAuth2 strategy instance, automatically configuring it.
+    Creates a new OAuth2 strategy instance.
 
     Args:
         comp: The main component.
         svc: The service to use for message sending.
-        config: The strategy configuration.
         user_token: An optional user token.
         auth_token: An optional authorization token.
 
     Returns:
         The newly created strategy.
     """
-    if not isinstance(config, OAuth2StrategyConfiguration):
-        raise RuntimeError("Invalid configuration passed for OAuth2")
-
-    oauth2_config = typing.cast(OAuth2StrategyConfiguration, config)
-
-    return OAuth2Strategy(
-        comp, svc, oauth2_config, user_token=user_token, auth_token=auth_token
-    )
+    return OAuth2Strategy(comp, svc, user_token=user_token, auth_token=auth_token)

@@ -36,7 +36,6 @@ def create_authorization_strategy(
     comp: BackendComponent,
     svc: Service,
     strategy: str,
-    config: typing.Any,
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
@@ -48,7 +47,6 @@ def create_authorization_strategy(
         comp: The global component.
         svc: The service to use for message sending.
         strategy: The strategy identifier.
-        config: The strategy configuration as an arbitrary record.
         user_token: An optional user token.
         auth_token: An optional authorization token.
 
@@ -65,7 +63,6 @@ def create_authorization_strategy(
     return strategy_creator(
         comp,
         svc,
-        config,
         user_token=user_token,
         auth_token=auth_token,
     )

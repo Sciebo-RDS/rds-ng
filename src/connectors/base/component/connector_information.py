@@ -1,7 +1,6 @@
 import json
 import typing
 
-from common.py.data.entities.authorization import AuthorizationSettings
 from common.py.data.entities.connector import (
     Connector,
     ConnectorMetadataProfile,
@@ -20,22 +19,6 @@ class ConnectorInformation:
             "name": "Zenodo",
             "description": "Connector for Zenodo",
             "category": "repository",
-            "authorization": {
-                "strategy": "oauth2",
-                "config": {
-                    "server": {
-                        "host": "http://10.0.2.15",
-                        "endpoints": {
-                            "authorization": "/index.php/apps/oauth2/authorize",
-                            "token": "/index.php/apps/oauth2/api/v1/token"
-                        },
-                    },
-                    "client": {
-                        "client_id": "<some id...>",
-                        "redirect_url": "http://www.rdsng.com/auth"
-                    }
-                }
-            },
             "options": {
                 "publish_once": true
             },
@@ -77,7 +60,6 @@ class ConnectorInformation:
             self._name, self._description, self._category = self._read_general_info(
                 data
             )
-            self._authorization = self._read_authorization(data)
             self._options = self._read_options(data)
             self._logos = self._load_logos(data)
             self._metadata_profile = self._load_metadata_profile(data)
@@ -93,18 +75,6 @@ class ConnectorInformation:
             return "<invalid>", "<invalid>", "<invalid>"
 
         return name, desc, category
-
-    def _read_authorization(self, data: typing.Any) -> AuthorizationSettings:
-        try:
-            auth = AuthorizationSettings()
-            auth_data = data["authorization"]
-
-            auth.strategy = auth_data["strategy"]
-            auth.config = auth_data["config"]
-        except Exception:  # pylint: disable=broad-exception-caught
-            return AuthorizationSettings()
-
-        return auth
 
     def _read_options(self, data: typing.Any) -> Connector.Options:
         try:
@@ -172,13 +142,6 @@ class ConnectorInformation:
         The connector description.
         """
         return self._description
-
-    @property
-    def authorization(self) -> AuthorizationSettings:
-        """
-        The authorization settings.
-        """
-        return self._authorization
 
     @property
     def options(self) -> Connector.Options:

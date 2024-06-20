@@ -2,22 +2,6 @@
     "name": "Stub connector",
     "description": "A connector that acts like a real one but actually doesn't do anything.",
     "category": "repository",
-    "authorization": {
-        "strategy": "oauth2",
-        "config": {
-            "server": {
-                "host": "http://10.0.2.15:8080",
-                "endpoints": {
-                    "authorization": "/apps/oauth2/authorize",
-                    "token": "/apps/oauth2/api/v1/token"
-                }
-            },
-            "client": {
-                "client_id": "R52Hg4cVkkw6bUuD9wiSPSHIJItfLEFTWSzGXxSKpDHuSUI8D3siFBoujjpR3AEi",
-                "redirect_url": "http://localhost:8080/apps/rdsng/main"
-            }
-        }
-    },
     "options": {
         "publish_once": false
     },

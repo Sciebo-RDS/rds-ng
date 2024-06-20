@@ -41,6 +41,9 @@ class ConnectorComponent(BackendComponent):
 
     def run(self) -> None:
         from ..data.entities.connector.categories import register_connector_categories
+        from ..integration.authorization.strategies import (
+            register_authorization_strategy_configurations,
+        )
         from ..services import (
             create_connector_service,
             create_authorization_service,
@@ -53,6 +56,7 @@ class ConnectorComponent(BackendComponent):
 
         # Register global items
         register_connector_categories()
+        register_authorization_strategy_configurations()
 
         # Create connector-specific services
         create_connector_service(self)

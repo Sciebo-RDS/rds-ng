@@ -1,6 +1,5 @@
 from common.py.component import BackendComponent
 from common.py.core import logging
-from common.py.core.messaging import Channel
 from common.py.data.entities.authorization import (
     has_authorization_token_expired,
     get_host_authorization_token_id,
@@ -9,7 +8,6 @@ from common.py.data.verifiers.authorization import AuthorizationTokenVerifier
 from common.py.integration.authorization.strategies import (
     create_authorization_strategy,
     AuthorizationStrategy,
-    get_authorization_strategy_configuration,
 )
 from common.py.services import Service
 from common.py.utils import EntryGuard
@@ -40,7 +38,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         "Authorization service", context_type=ServerServiceContext
     )
 
-    def _create_strategy(
+    def _create_auth_strategy(
         ctx: ServerServiceContext, strategy: str
     ) -> AuthorizationStrategy:
         auth_token = (
@@ -55,7 +53,6 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             comp,
             svc,
             strategy,
-            get_authorization_strategy_configuration(strategy),
             user_token=ctx.session.user_token if ctx.session else None,
             auth_token=auth_token,
         )
@@ -72,7 +69,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
 
         if msg.payload.fingerprint == ctx.session.fingerprint:
             try:
-                strategy = _create_strategy(ctx, msg.strategy)
+                strategy = _create_auth_strategy(ctx, msg.strategy)
                 auth_token = strategy.request_authorization(
                     ctx.user.user_id,
                     msg.payload,
@@ -142,7 +139,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                     try:
                         AuthorizationTokenVerifier(auth_token).verify_update()
 
-                        strategy = _create_strategy(ctx, auth_token.strategy)
+                        strategy = _create_auth_strategy(ctx, auth_token.strategy)
                         strategy.refresh_authorization(auth_token)
 
                         logging.debug(
