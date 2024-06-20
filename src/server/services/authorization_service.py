@@ -12,6 +12,8 @@ from common.py.integration.authorization.strategies import (
 from common.py.services import Service
 from common.py.utils import EntryGuard
 
+from .tools import handle_authorization_token_changes
+
 
 def create_authorization_service(comp: BackendComponent) -> Service:
     """
@@ -78,6 +80,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                 AuthorizationTokenVerifier(auth_token).verify_create()
 
                 ctx.storage_pool.authorization_token_storage.add(auth_token)
+                handle_authorization_token_changes(auth_token, msg, ctx)
 
                 success = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -110,6 +113,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             )
         ) is not None:
             ctx.storage_pool.authorization_token_storage.remove(auth_token)
+            handle_authorization_token_changes(auth_token, msg, ctx)
 
             success = True
         else:
@@ -165,5 +169,6 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                         )
 
                         ctx.storage_pool.authorization_token_storage.remove(auth_token)
+                        handle_authorization_token_changes(auth_token, msg, ctx)
 
     return svc

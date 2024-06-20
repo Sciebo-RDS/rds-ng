@@ -6,3 +6,4 @@ from .user_commands import (
     SetUserSettingsCommand,
     SetUserSettingsReply,
 )
+from .user_events import UserSettingsChangedEvent

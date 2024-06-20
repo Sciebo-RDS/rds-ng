@@ -1,4 +1,5 @@
 import { GetUserSettingsReply, SetUserSettingsReply } from "@common/api/user/UserCommands";
+import { UserSettingsChangedEvent } from "@common/api/user/UserEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -11,7 +12,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function(comp: WebComponent): Service {
+export default function (comp: WebComponent): Service {
     return comp.createService(
         "User service",
         (svc: Service) => {
@@ -36,7 +37,14 @@ export default function(comp: WebComponent): Service {
                     ctx.logger.error("Unable to update the user settings", "user", { reason: msg.message });
                 }
             });
+
+            svc.messageHandler(UserSettingsChangedEvent, (msg: UserSettingsChangedEvent, ctx: FrontendServiceContext) => {
+                ctx.logger.debug("User settings update received", "user", { settings: JSON.stringify(msg.settings) });
+
+                // @ts-ignore
+                ctx.userStore.userSettings = msg.settings;
+            });
         },
-        FrontendServiceContext
+        FrontendServiceContext,
     );
 }
