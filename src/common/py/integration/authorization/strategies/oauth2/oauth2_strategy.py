@@ -10,6 +10,7 @@ from dataclasses_json import dataclass_json
 from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
 from .oauth2_utils import format_oauth2_error_response
 from ..authorization_strategy import AuthorizationStrategy
+from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.user import UserID, UserToken
@@ -60,14 +61,11 @@ class OAuth2Strategy(AuthorizationStrategy):
     def request_authorization(
         self,
         user_id: UserID,
-        auth_id: str,
-        auth_type: AuthorizationToken.TokenType,
-        auth_issuer: str,
-        auth_bearer: str,
+        payload: AuthorizationRequestPayload,
         request_data: typing.Any,
     ) -> AuthorizationToken:
         oauth2_data = self._get_oauth2_request_data(request_data)
-        client_secret = self._get_client_secret(auth_bearer)
+        client_secret = self._get_client_secret(payload.auth_bearer)
 
         response = requests.post(
             urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
@@ -88,10 +86,10 @@ class OAuth2Strategy(AuthorizationStrategy):
 
                 return AuthorizationToken(
                     user_id=user_id,
-                    auth_id=auth_id,
-                    auth_type=auth_type,
-                    auth_issuer=auth_issuer,
-                    auth_bearer=auth_bearer,
+                    auth_id=payload.auth_id,
+                    auth_type=payload.auth_type,
+                    auth_issuer=payload.auth_issuer,
+                    auth_bearer=payload.auth_bearer,
                     expiration_timestamp=self._get_expiration_timestamp(resp_data),
                     strategy=self.strategy,
                     token=self._create_oauth2_token(resp_data),

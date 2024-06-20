@@ -5,46 +5,39 @@ import { CommandReplyComposer } from "../../core/messaging/composers/CommandRepl
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
 import { AuthorizationTokenType } from "../../data/entities/authorization/AuthorizationToken";
+import { type AuthorizationRequestPayload } from "../../integration/authorization/AuthorizationRequest";
 
 /**
  * Command to perform an authorization request. Requires a ``RequestAuthorizationReply`` reply.
  */
 @Message.define("command/authorization/request")
 export class RequestAuthorizationCommand extends Command {
-    public readonly auth_id: string = "";
-    public readonly auth_type: AuthorizationTokenType = AuthorizationTokenType.Invalid;
-    public readonly auth_issuer: string = "";
-    public readonly auth_bearer: string = "";
-
+    public readonly payload: AuthorizationRequestPayload = {
+        auth_id: "",
+        auth_type: AuthorizationTokenType.Invalid,
+        auth_issuer: "",
+        auth_bearer: "",
+        fingerprint: "",
+    };
     public readonly strategy: string = "";
     public readonly data: any = null;
-
-    public readonly fingerprint: string = "";
 
     /**
      * Helper function to easily build this message.
      */
     public static build(
         messageBuilder: MessageBuilder,
-        authID: string,
-        authType: AuthorizationTokenType,
-        authIssuer: string,
-        authBearer: string,
+        payload: AuthorizationRequestPayload,
         strategy: string,
         data: any,
-        fingerprint: string,
         chain: Message | null = null,
     ): CommandComposer<RequestAuthorizationCommand> {
         return messageBuilder.buildCommand(
             RequestAuthorizationCommand,
             {
-                auth_id: authID,
-                auth_type: authType,
-                auth_issuer: authIssuer,
-                auth_bearer: authBearer,
+                payload: payload,
                 strategy: strategy,
                 data: data,
-                fingerprint: fingerprint,
             },
             chain,
         );

@@ -2,6 +2,7 @@ import abc
 import typing
 from enum import auto, Flag
 
+from .. import AuthorizationRequestPayload
 from ... import IntegrationHandler
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationToken
@@ -54,10 +55,7 @@ class AuthorizationStrategy(IntegrationHandler):
     def request_authorization(
         self,
         user_id: UserID,
-        auth_id: str,
-        auth_type: AuthorizationToken.TokenType,
-        auth_issuer: str,
-        auth_bearer: str,
+        payload: AuthorizationRequestPayload,
         request_data: typing.Any,
     ) -> AuthorizationToken: ...
 

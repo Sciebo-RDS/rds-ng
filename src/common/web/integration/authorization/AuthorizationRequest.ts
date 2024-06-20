@@ -62,7 +62,7 @@ export class AuthorizationRequest {
 
     public static fromURLParameters() {
         const request = new AuthorizationRequest();
-        request.payloadFromURLParam();
+        request.payloadFromURLParameters();
         return request;
     }
 
@@ -115,7 +115,7 @@ export class AuthorizationRequest {
         return this.encodeRequestPayload();
     }
 
-    private payloadFromURLParam(): void {
+    private payloadFromURLParameters(): void {
         this._payload = this.decodeRequestPayload();
     }
 

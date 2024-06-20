@@ -53,16 +53,7 @@ export abstract class AuthorizationStrategy {
                 return false;
             }
 
-            RequestAuthorizationCommand.build(
-                this._service.messageBuilder,
-                authRequest.payload.auth_id,
-                authRequest.payload.auth_type,
-                authRequest.payload.auth_issuer,
-                authRequest.payload.auth_bearer,
-                this.strategy,
-                this.getRequestData(authRequest),
-                authRequest.payload.fingerprint,
-            )
+            RequestAuthorizationCommand.build(this._service.messageBuilder, authRequest.payload, this.strategy, this.getRequestData(authRequest))
                 .done((_, success: boolean, msg: string) => {
                     success ? resolve(AuthorizationState.Authorized) : reject(msg);
 

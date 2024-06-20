@@ -7,8 +7,8 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities.authorization import AuthorizationToken
 from ...data.entities.user import UserID
+from ...integration.authorization import AuthorizationRequestPayload
 
 
 @Message.define("command/authorization/request")
@@ -20,36 +20,24 @@ class RequestAuthorizationCommand(Command):
         Requires a ``RequestAuthorizationReply`` reply.
 
     Args:
-        auth_id: The ID of this token.
-        auth_type: The token type.
-        auth_issuer: The entity that requires the authorization.
-        auth_bearer: The bearer that will be authorized against.
+        payload: The authorization request information.
         strategy: The token strategy (e.g., OAuth2).
         data: The actual token request data.
-        fingerprint: The user's fingerprint.
     """
 
-    auth_id: str
-    auth_type: AuthorizationToken.TokenType
-    auth_issuer: str
-    auth_bearer: str
-
+    payload: AuthorizationRequestPayload = field(
+        default_factory=AuthorizationRequestPayload
+    )
     strategy: str
     data: typing.Dict[str, typing.Any] = field(default_factory=dict)
-
-    fingerprint: str = ""
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
-        auth_id: str,
-        auth_type: str,
-        auth_issuer: str,
-        auth_bearer: str,
+        payload: AuthorizationRequestPayload,
         strategy: str,
         data: typing.Dict[str, typing.Any],
-        fingerprint: str,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -58,13 +46,9 @@ class RequestAuthorizationCommand(Command):
         return message_builder.build_command(
             RequestAuthorizationCommand,
             chain,
-            auth_id=auth_id,
-            auth_type=auth_type,
-            auth_issuer=auth_issuer,
-            auth_bearer=auth_bearer,
+            payload=payload,
             strategy=strategy,
             data=data,
-            fingerprint=fingerprint,
         )
 
 
