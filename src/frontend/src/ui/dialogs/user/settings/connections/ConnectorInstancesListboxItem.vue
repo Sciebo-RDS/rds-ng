@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import Button from "primevue/button";
 import Menu from "primevue/menu";
 import Tag from "primevue/tag";
 import { computed, type PropType, ref, toRefs, unref } from "vue";
 
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 

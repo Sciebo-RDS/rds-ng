@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
-import { computed, type PropType, toRefs } from "vue";
+import { computed, type PropType, toRefs, unref, watch } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorInstanceUtils";
@@ -10,12 +10,14 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useUserStore } from "@/data/stores/UserStore";
 import { useConnectorInstancesTools } from "@/ui/tools/connector/ConnectorInstancesTools";
 
 import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
 import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxItem.vue";
 
 const comp = FrontendComponent.inject();
+const userStore = useUserStore();
 const consStore = useConnectorsStore();
 const props = defineProps({
     userSettings: {
@@ -27,25 +29,39 @@ const { connectors } = storeToRefs(consStore);
 const { userSettings } = toRefs(props);
 const { editInstance, deleteInstance, requestInstanceAuthorization, revokeInstanceAuthorization } = useConnectorInstancesTools(comp);
 
-const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, connectors.value));
+const groupedInstances = computed(() => groupConnectorInstances(unref(userSettings)!.connector_instances, unref(connectors)));
 const selectedInstance = defineModel<ConnectorInstanceID | undefined>();
 
 function isInstanceSelected(instance: ConnectorInstance): boolean {
-    return instance.instance_id === selectedInstance.value;
+    return instance.instance_id === unref(selectedInstance);
 }
 
 function onEditInstance(instance: ConnectorInstance): void {
-    editInstance(userSettings!.value!.connector_instances, instance, findConnectorByID(connectors.value, instance.connector_id));
+    editInstance(unref(userSettings)!.connector_instances, instance, findConnectorByID(unref(connectors), instance.connector_id));
 }
 
 function onDeleteKey() {
-    if (selectedInstance.value) {
-        const instance = findConnectorInstanceByID(userSettings!.value!.connector_instances, selectedInstance.value);
+    if (unref(selectedInstance)) {
+        const instance = findConnectorInstanceByID(unref(userSettings)!.connector_instances, unref(selectedInstance)!);
         if (instance) {
-            deleteInstance(userSettings!.value!.connector_instances, instance);
+            deleteInstance(unref(userSettings)!.connector_instances, instance);
         }
     }
 }
+
+// Since we're working on a copy of the user settings, we need to watch for external changes in order to reflect the instance's authorization states
+watch(
+    () => userStore.userSettings,
+    (newSettings: UserSettings) => {
+        for (const updInstance of newSettings.connector_instances) {
+            const curInstance = unref(userSettings)!.connector_instances.find((instance) => instance.instance_id == updInstance.instance_id);
+            if (!!curInstance) {
+                // @ts-ignore
+                curInstance.authorization_state = updInstance.authorization_state;
+            }
+        }
+    },
+);
 </script>
 
 <template>

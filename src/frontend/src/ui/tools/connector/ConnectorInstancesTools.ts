@@ -22,7 +22,13 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
 
     async function editInstance(instances: ConnectorInstance[], instance: ConnectorInstance, connector?: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, instance, connector).then((data) => {
-            const editedInstance = new ConnectorInstance(instance.instance_id, instance.connector_id, data.name, data.description);
+            const editedInstance = new ConnectorInstance(
+                instance.instance_id,
+                instance.connector_id,
+                data.name,
+                data.description,
+                instance.authorization_state,
+            );
             const index = instances.indexOf(instance);
             if (index == -1) {
                 instances.push(editedInstance);
