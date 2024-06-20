@@ -99,9 +99,14 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         success = False
         message = ""
 
+        if (user := ctx.user) is not None:
+            user_id = user.user_id
+        else:
+            user_id = msg.user_id
+
         if (
             auth_token := ctx.storage_pool.authorization_token_storage.get(
-                (msg.user_id, msg.auth_id)
+                (user_id, msg.auth_id)
             )
         ) is not None:
             ctx.storage_pool.authorization_token_storage.remove(auth_token)

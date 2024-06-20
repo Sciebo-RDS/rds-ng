@@ -5,10 +5,15 @@ import { CommandReplyComposer } from "../../core/messaging/composers/CommandRepl
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Message } from "../../core/messaging/Message";
 import { AuthorizationTokenType } from "../../data/entities/authorization/AuthorizationToken";
+import { type UserID } from "../../data/entities/user/User";
 import { type AuthorizationRequestPayload } from "../../integration/authorization/AuthorizationRequest";
 
 /**
  * Command to perform an authorization request. Requires a ``RequestAuthorizationReply`` reply.
+ *
+ * @param payload - The authorization request information.
+ * @param strategy - The token strategy (e.g., OAuth2).
+ * @param data - The actual token request data.
  */
 @Message.define("command/authorization/request")
 export class RequestAuthorizationCommand extends Command {
@@ -59,5 +64,47 @@ export class RequestAuthorizationReply extends CommandReply {
         message: string = "",
     ): CommandReplyComposer<RequestAuthorizationReply> {
         return messageBuilder.buildCommandReply(RequestAuthorizationReply, cmd, success, message);
+    }
+}
+
+/**
+ * Command to revoke an authorization. Requires a ``RevokeAuthorizationReply`` reply.
+ *
+ * @param user_id - The user ID.
+ * @param auth_id - The ID of the token to revoke.
+ */
+@Message.define("command/authorization/revoke")
+export class RevokeAuthorizationCommand extends Command {
+    public readonly user_id: UserID = "";
+    public readonly auth_id: string = "";
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        userID: UserID,
+        authID: string,
+        chain: Message | null = null,
+    ): CommandComposer<RevokeAuthorizationCommand> {
+        return messageBuilder.buildCommand(RevokeAuthorizationCommand, { user_id: userID, auth_id: authID }, chain);
+    }
+}
+
+/**
+ * Reply to ``RevokeAuthorizationCommand``.
+ */
+@Message.define("command/authorization/revoke/reply")
+export class RevokeAuthorizationReply extends CommandReply {
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: RevokeAuthorizationCommand,
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<RevokeAuthorizationReply> {
+        return messageBuilder.buildCommandReply(RevokeAuthorizationReply, cmd, success, message);
     }
 }

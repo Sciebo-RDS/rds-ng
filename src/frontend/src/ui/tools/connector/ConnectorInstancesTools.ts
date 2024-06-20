@@ -1,4 +1,8 @@
-import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
+import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
+import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
+import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { getConnectorInstanceAuthorizationID } from "@common/data/entities/authorization/AuthorizationTokenUtils";
 import { Connector } from "@common/data/entities/connector/Connector";
@@ -6,10 +10,6 @@ import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entiti
 import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
-
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { useUserStore } from "@/data/stores/UserStore";
-import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
     async function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
@@ -41,6 +41,10 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
     }
 
     function requestInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
+        if (instance.authorization_state == AuthorizationState.Authorized) {
+            return;
+        }
+
         const connector = findConnectorByID(connectors, instance.connector_id);
         if (!connector) {
             return;
@@ -62,12 +66,13 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
     }
 
     function revokeInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
-        const strategy = createAuthorizationStrategyFromConnectorInstance(comp, comp.frontendService, instance, connectors);
-        if (!strategy) {
+        if (instance.authorization_state != AuthorizationState.Authorized) {
             return;
         }
-        console.log("AYYYY REVOKE");
-        // TODO
+
+        const action = new RevokeAuthorizationAction(comp);
+        action.prepare(getConnectorInstanceAuthorizationID(instance), `connector ${instance.name}`);
+        action.execute();
     }
 
     return {
