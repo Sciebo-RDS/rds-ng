@@ -1,7 +1,3 @@
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { useUserStore } from "@/data/stores/UserStore";
-import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
-import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { getConnectorInstanceAuthorizationID } from "@common/data/entities/authorization/AuthorizationTokenUtils";
@@ -10,6 +6,11 @@ import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entiti
 import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { useUserStore } from "@/data/stores/UserStore";
+import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
+import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 
 export function useConnectorInstancesTools(comp: FrontendComponent) {
     async function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
@@ -71,13 +72,14 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         strategy.initiateAuthorizationRequest(authRequest);
     }
 
-    function revokeInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
-        if (instance.authorization_state != AuthorizationState.Authorized) {
-            return;
-        }
-
+    function revokeInstanceAuthorization(instance: ConnectorInstance, updateAuthState: boolean = true): void {
         const action = new RevokeAuthorizationAction(comp);
-        action.prepare(getConnectorInstanceAuthorizationID(instance), `connector ${instance.name}`);
+        action.prepare(getConnectorInstanceAuthorizationID(instance), `connector ${instance.name}`).done((_, success, msg) => {
+            if (success && updateAuthState) {
+                // @ts-ignore
+                instance.authorization_state = AuthorizationState.NotAuthorized;
+            }
+        });
         action.execute();
     }
 

@@ -20,8 +20,6 @@ export class HostAuthorizer extends Authorizer {
         super(comp);
 
         this._hostAuth = hostAuth;
-        console.log("-------------------------------------");
-        console.log(hostAuth);
     }
 
     public authorize(authState: AuthorizationState, fingerprint: string): void {

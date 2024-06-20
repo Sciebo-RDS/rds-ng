@@ -2,15 +2,18 @@
 import Button from "primevue/button";
 import Menu from "primevue/menu";
 import Tag from "primevue/tag";
-import { computed, type PropType, ref, toRefs, unref } from "vue";
+import { computed, type PropType, ref, toRefs, unref, watch } from "vue";
 
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
 import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useUserStore } from "@/data/stores/UserStore";
 
 const consStore = useConnectorsStore();
+const userStore = useUserStore();
 const props = defineProps({
     instance: {
         type: Object as PropType<ConnectorInstance>,
@@ -32,6 +35,7 @@ const { instance, isSelected } = toRefs(props);
 const connector = computed(() => findConnectorByID(consStore.connectors, instance.value.connector_id));
 const requiresAuthorization = computed(() => connectorRequiresAuthorization(unref(connector)!));
 const isAuthorized = computed(() => unref(instance)!.authorization_state == AuthorizationState.Authorized);
+const isUnAuthorizing = ref(false);
 
 const editMenu = ref();
 const editMenuItems = computed(() => {
@@ -45,13 +49,15 @@ const editMenuItems = computed(() => {
             menuItems.items.push({
                 label: "Disconnect",
                 icon: "material-icons-outlined mi-link-off",
-                command: () => emits("unauthorize-instance", instance!.value),
+                disabled: isUnAuthorizing,
+                command: onUnauthorize,
             });
         } else {
             menuItems.items.push({
                 label: "Connect",
                 icon: "material-icons-outlined mi-link",
-                command: () => emits("authorize-instance", instance!.value),
+                disabled: isUnAuthorizing,
+                command: onAuthorize,
             });
         }
     }
@@ -60,20 +66,41 @@ const editMenuItems = computed(() => {
         {
             label: "Settings",
             icon: "material-icons-outlined mi-engineering",
-            command: () => emits("edit-instance", instance!.value),
+            command: () => emits("edit-instance", unref(instance)!),
         },
         { separator: true },
         {
             label: "Delete",
             icon: "material-icons-outlined mi-delete-forever",
             class: "r-text-error",
-            command: () => emits("delete-instance", instance!.value),
+            command: () => emits("delete-instance", unref(instance)!),
         },
     );
 
     return [menuItems];
 });
 const editMenuShown = ref(false);
+
+function onAuthorize(): void {
+    isUnAuthorizing.value = true;
+    emits("authorize-instance", unref(instance)!);
+}
+
+function onUnauthorize(): void {
+    isUnAuthorizing.value = true;
+    emits("unauthorize-instance", unref(instance)!);
+}
+
+// A simple way to get notified about completion of a running (un)authorization is to watch for changes in the user settings
+watch(
+    () => userStore.userSettings,
+    (newSettings: UserSettings) => {
+        const updInstance = newSettings.connector_instances.find((updInst) => updInst.instance_id == unref(instance)!.instance_id);
+        if (!!updInstance && updInstance.authorization_state != unref(instance)!.authorization_state) {
+            isUnAuthorizing.value = false;
+        }
+    },
+);
 </script>
 
 <template>
@@ -116,23 +143,25 @@ const editMenuShown = ref(false);
         <div v-if="requiresAuthorization" class="col-span-3 place-self-end">
             <Button
                 v-if="isAuthorized"
-                label="Disconnect"
+                :label="isUnAuthorizing ? 'Disconnecting...' : 'Disconnect'"
                 severity="warning"
                 size="small"
                 rounded
                 icon="material-icons-outlined mi-link-off"
                 class="r-button-small"
-                @click="emits('unauthorize-instance', instance!)"
+                :loading="isUnAuthorizing"
+                @click="onUnauthorize"
             />
             <Button
                 v-else
-                label="Connect"
+                :label="isUnAuthorizing ? 'Connecting...' : 'Connect'"
                 severity="info"
                 size="small"
                 rounded
                 icon="material-icons-outlined mi-link"
                 class="r-button-small"
-                @click="emits('authorize-instance', instance!)"
+                :loading="isUnAuthorizing"
+                @click="onAuthorize"
             />
         </div>
         <div v-else class="col-span-3 place-self-end">&nbsp;</div>

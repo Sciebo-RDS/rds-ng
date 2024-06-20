@@ -13,9 +13,9 @@ export abstract class AuthorizationStrategy {
     protected readonly _component: WebComponent;
     protected readonly _service: Service;
 
-    private readonly _strategy: string;
+    protected readonly _redirectionTarget: RedirectionTarget;
 
-    private readonly _redirectionTarget: RedirectionTarget;
+    private readonly _strategy: string;
 
     protected constructor(comp: WebComponent, svc: Service, strategy: string, redirectionTarget: RedirectionTarget = RedirectionTarget.Same) {
         this._component = comp;
@@ -109,7 +109,6 @@ export abstract class AuthorizationStrategy {
                     break;
 
                 case RedirectionTarget.Blank:
-                    // @ts-ignore
                     window.open(url, "_blank").focus();
                     break;
             }

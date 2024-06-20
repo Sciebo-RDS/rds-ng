@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
-import { computed, type PropType, toRefs, unref, watch } from "vue";
+import { computed, type PropType, toRefs, unref } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorInstanceUtils";
@@ -10,14 +10,12 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-import { useUserStore } from "@/data/stores/UserStore";
 import { useConnectorInstancesTools } from "@/ui/tools/connector/ConnectorInstancesTools";
 
 import ConnectorHeader from "@/ui/components/connector/ConnectorHeader.vue";
 import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListboxItem.vue";
 
 const comp = FrontendComponent.inject();
-const userStore = useUserStore();
 const consStore = useConnectorsStore();
 const props = defineProps({
     userSettings: {
@@ -48,20 +46,6 @@ function onDeleteKey() {
         }
     }
 }
-
-// Since we're working on a copy of the user settings, we need to watch for external changes in order to reflect the instance's authorization states
-watch(
-    () => userStore.userSettings,
-    (newSettings: UserSettings) => {
-        for (const updInstance of newSettings.connector_instances) {
-            const curInstance = unref(userSettings)!.connector_instances.find((instance) => instance.instance_id == updInstance.instance_id);
-            if (!!curInstance) {
-                // @ts-ignore
-                curInstance.authorization_state = updInstance.authorization_state;
-            }
-        }
-    },
-);
 </script>
 
 <template>
@@ -94,7 +78,7 @@ watch(
                 :is-selected="isInstanceSelected(instanceEntry.option)"
                 @dblclick="onEditInstance(instanceEntry.option)"
                 @authorize-instance="requestInstanceAuthorization(instanceEntry.option, connectors)"
-                @unauthorize-instance="revokeInstanceAuthorization(instanceEntry.option, connectors)"
+                @unauthorize-instance="revokeInstanceAuthorization(instanceEntry.option)"
                 @edit-instance="onEditInstance(instanceEntry.option)"
                 @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
             />
