@@ -13,6 +13,9 @@ import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUse
 import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 
+/**
+ * Tools for working with connector instances.
+ */
 export function useConnectorInstancesTools(comp: FrontendComponent) {
     async function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, undefined, connector).then((data) => {

@@ -11,8 +11,6 @@ const comp = FrontendComponent.inject();
 const integrationScheme = shallowReactive(comp.integrationScheme);
 
 const isInitializing = ref(true);
-const initMessage = ref("Initializing...");
-const initError = ref(false);
 
 onMounted(() => {
     // When launching the frontend view (after the initial render), get all data first
@@ -22,15 +20,9 @@ onMounted(() => {
         action.prepare(comp);
         action.completed(() => {
             // The app has been fully integrated; notify the authentication scheme about this
-            integrationScheme
-                .startSession((status) => (initMessage.value = status))
-                .then(() => {
-                    isInitializing.value = false;
-                })
-                .catch((error) => {
-                    initError.value = true;
-                    initMessage.value = error;
-                });
+            integrationScheme.startSession().then(() => {
+                isInitializing.value = false;
+            });
         });
         action.execute();
     });
@@ -42,7 +34,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <FrontendViewInitializer :initializing="isInitializing" :message="initMessage" :is-error="initError" />
+    <FrontendViewInitializer :initializing="isInitializing" />
     <MainContent />
 </template>
 

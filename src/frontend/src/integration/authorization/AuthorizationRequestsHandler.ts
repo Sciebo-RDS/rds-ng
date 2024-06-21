@@ -45,7 +45,7 @@ export class AuthorizationRequestsHandler {
                 })
                 .catch((error) => {
                     logging.error("Authorization request failed", "authorization", { ...this.getLoggingParams(authRequest), error: error });
-                    reject(`Authorization request failed: ${error}`);
+                    reject(error);
                 });
         } else {
             logging.warning("Unable to process authorization request", "authorization", this.getLoggingParams(authRequest));

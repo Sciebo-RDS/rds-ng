@@ -58,7 +58,7 @@ export abstract class AuthorizationStrategy {
                 authRequest.verify(urlRequest);
             } catch (exc) {
                 reject(exc);
-                return false;
+                return;
             }
 
             RequestAuthorizationCommand.build(this._service.messageBuilder, authRequest.payload, this.strategy, this.getRequestData(authRequest))
