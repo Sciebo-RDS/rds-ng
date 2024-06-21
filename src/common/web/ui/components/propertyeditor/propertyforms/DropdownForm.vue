@@ -19,7 +19,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
 <template>
     <div class="flex">
         <Dropdown
-            :modelValue="value"
+            :modelValue="value[inputId]"
             @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, propertyObjectId, value)"
             :options="inputOptions"
             class="grow"
