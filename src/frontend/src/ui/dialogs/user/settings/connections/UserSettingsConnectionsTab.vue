@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type PropType, ref, toRefs } from "vue";
 
-import { type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
+import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import ConnectorInstancesListbox from "@/ui/dialogs/user/settings/connections/ConnectorInstancesListbox.vue";
@@ -15,6 +15,10 @@ const props = defineProps({
 });
 const { tabData: userSettings } = toRefs(props);
 const selectedConnectorInstance = ref<ConnectorInstanceID | undefined>();
+
+function onCreateInstance(instance: ConnectorInstance): void {
+    selectedConnectorInstance.value = instance.instance_id;
+}
 </script>
 
 <template>
@@ -26,14 +30,7 @@ const selectedConnectorInstance = ref<ConnectorInstanceID | undefined>();
         </div>
 
         <ConnectorInstancesListbox v-model="selectedConnectorInstance" :user-settings="userSettings" />
-        <NewConnectorInstance
-            :user-settings="userSettings"
-            @create-instance="
-                (instance) => {
-                    selectedConnectorInstance = instance.instance_id;
-                }
-            "
-        />
+        <NewConnectorInstance :user-settings="userSettings" @create-instance="onCreateInstance" />
     </div>
 </template>
 

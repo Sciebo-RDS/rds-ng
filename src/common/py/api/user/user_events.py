@@ -1,4 +1,5 @@
 import dataclasses
+import typing
 
 from ...core.messaging import (
     Event,
@@ -8,30 +9,31 @@ from ...core.messaging.composers import (
     EventComposer,
     MessageBuilder,
 )
-from ...data.entities.user import User
 
 
-@Message.define("event/user/settings/changed")
-class UserSettingsChangedEvent(Event):
+@Message.define("event/user/authorization/list")
+class UserAuthorizationsListEvent(Event):
     """
-    Event sent when the user settings have changed on the server side.
+    Event sent when the user authorizations have changed.
 
     Args:
-        settings: The new settings.
+        authorizations: The new list of all granted authorizations.
     """
 
-    settings: User.Settings = dataclasses.field(default_factory=User.Settings)
+    authorizations: typing.List[str] = dataclasses.field(default_factory=list)
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
-        settings: User.Settings,
+        authorizations: typing.List[str],
         chain: Message | None = None,
     ) -> EventComposer:
         """
         Helper function to easily build this message.
         """
         return message_builder.build_event(
-            UserSettingsChangedEvent, chain, settings=settings
+            UserAuthorizationsListEvent,
+            chain,
+            authorizations=authorizations,
         )

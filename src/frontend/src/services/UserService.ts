@@ -1,5 +1,5 @@
-import { GetUserSettingsReply, SetUserSettingsReply } from "@common/api/user/UserCommands";
-import { UserSettingsChangedEvent } from "@common/api/user/UserEvents";
+import { GetUserSettingsReply, ListUserAuthorizationsReply, SetUserSettingsReply } from "@common/api/user/UserCommands";
+import { UserAuthorizationsListEvent } from "@common/api/user/UserEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
@@ -38,11 +38,22 @@ export default function (comp: WebComponent): Service {
                 }
             });
 
-            svc.messageHandler(UserSettingsChangedEvent, (msg: UserSettingsChangedEvent, ctx: FrontendServiceContext) => {
-                ctx.logger.debug("User settings update received", "user", { settings: JSON.stringify(msg.settings) });
+            svc.messageHandler(ListUserAuthorizationsReply, (msg: ListUserAuthorizationsReply, ctx: FrontendServiceContext) => {
+                if (msg.success) {
+                    ctx.logger.debug("Retrieved authorizations list", "user", { authorizations: msg.authorizations.join(", ") });
+
+                    // @ts-ignore
+                    ctx.userStore.userAuthorizations = msg.authorizations;
+                } else {
+                    ctx.logger.error("Unable to retrieve the authorizations list", "user", { reason: msg.message });
+                }
+            });
+
+            svc.messageHandler(UserAuthorizationsListEvent, (msg: UserAuthorizationsListEvent, ctx: FrontendServiceContext) => {
+                ctx.logger.debug("Authorizations list update received", "user", { authorizations: msg.authorizations.join(", ") });
 
                 // @ts-ignore
-                ctx.userStore.userSettings = msg.settings;
+                ctx.userStore.userAuthorizations = msg.authorizations;
             });
         },
         FrontendServiceContext,

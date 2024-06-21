@@ -132,3 +132,41 @@ export class SetUserSettingsReply extends CommandReply {
         return messageBuilder.buildCommandReply(SetUserSettingsReply, cmd, success, message, { settings: settings });
     }
 }
+
+/**
+ * Command to get all granted authorizations of the current user. Requires a ``ListUserAuthorizationsReply`` reply.
+ */
+@Message.define("command/user/authorization/list")
+export class ListUserAuthorizationsCommand extends Command {
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(messageBuilder: MessageBuilder, chain: Message | null = null): CommandComposer<ListUserAuthorizationsCommand> {
+        return messageBuilder.buildCommand(ListUserAuthorizationsCommand, {}, chain);
+    }
+}
+
+/**
+ * Reply to ``ListUserAuthorizationsCommand``.
+ *
+ * @param authorizations - List of all granted authorizations.
+ */
+@Message.define("command/user/authorization/list/reply")
+export class ListUserAuthorizationsReply extends CommandReply {
+    // @ts-ignore
+    @Type(() => String)
+    public readonly authorizations: string[] = [];
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: ListUserAuthorizationsCommand,
+        authorizations: string[],
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<ListUserAuthorizationsReply> {
+        return messageBuilder.buildCommandReply(ListUserAuthorizationsReply, cmd, success, message, { authorizations: authorizations });
+    }
+}

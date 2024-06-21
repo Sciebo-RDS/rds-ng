@@ -1,64 +1,52 @@
+import typing
+
 from common.py.core.messaging import Channel, Message
-from common.py.data.entities import clone_entity
-from common.py.data.entities.authorization import (
-    AuthorizationState,
-    AuthorizationToken,
-)
-from common.py.data.entities.user import User
+from common.py.data.entities.authorization import AuthorizationToken
+from common.py.data.entities.user import UserID
 
 from .. import ServerServiceContext
 from ...networking.session import Session
 
 
-def reflect_user_settings_authorization_states(
-    ctx: ServerServiceContext, settings: User.Settings
-) -> User.Settings:
+def get_user_authorizations(
+    user_id: UserID, ctx: ServerServiceContext
+) -> typing.List[str]:
     """
-    Returns a copy of the user settings with all connector instances updated to reflect their authorization states
+    Returns a list of all granted authorization IDs for the specified user.
 
     Args:
-        ctx: The message context.
-        settings: The current user settings.
+        user_id: The user ID.
+        ctx: The service context.
 
     Returns:
-        The updated user settings.
+        A list of all granted authorization IDs.
     """
-    # Update all connector instances to reflect their authorization state
-    auth_tokens = ctx.storage_pool.authorization_token_storage.filter_by_user(
-        ctx.user.user_id
+    return list(
+        map(
+            lambda token: token.auth_id,
+            ctx.storage_pool.authorization_token_storage.filter_by_user(user_id),
+        )
     )
 
-    settings = clone_entity(settings)
-    for instance in settings.connector_instances:
-        instance.authorization_state = AuthorizationState.NOT_AUTHORIZED
-        for auth_token in auth_tokens:
-            if (
-                auth_token.auth_type == AuthorizationToken.TokenType.CONNECTOR
-                and auth_token.auth_issuer == str(instance.instance_id)
-            ):
-                instance.authorization_state = AuthorizationState.AUTHORIZED
 
-    return settings
-
-
-def send_user_settings(
+def send_user_authorizations(
     msg: Message,
     ctx: ServerServiceContext,
     *,
     session: Session | None = None,
 ) -> None:
     """
-    Sends the user settings to the currently authenticated user.
+    Sends all granted authorizations to the currently authenticated user.
 
     Args:
         msg: Original message for chaining.
         ctx: The service context.
         session: Override the user ID and target to use using a user's session.
     """
-    from common.py.api.user import UserSettingsChangedEvent
+    from common.py.api.user import UserAuthorizationsListEvent
 
     if ctx.user is None and (session or session.user_token) is None:
-        raise RuntimeError("Sending user settings without an authenticated user")
+        raise RuntimeError("Sending user authorizations without an authenticated user")
 
     if (
         user := ctx.storage_pool.user_storage.get(
@@ -67,11 +55,9 @@ def send_user_settings(
             else ctx.user.user_id
         )
     ) is not None:
-        UserSettingsChangedEvent.build(
+        UserAuthorizationsListEvent.build(
             ctx.message_builder,
-            settings=reflect_user_settings_authorization_states(
-                ctx, user.user_settings
-            ),
+            authorizations=get_user_authorizations(user.user_id, ctx),
             chain=msg,
         ).emit(Channel.direct(session.user_origin if session else msg.origin))
 
@@ -82,7 +68,7 @@ def handle_authorization_token_changes(
     ctx: ServerServiceContext,
 ) -> None:
     """
-    Sends the updated settings to the user the authorization token belongs to.
+    Sends all updated data to the user the authorization token belongs to.
 
     Args:
         auth_token: The authorization token.
@@ -92,4 +78,4 @@ def handle_authorization_token_changes(
     if (
         session := ctx.session_manager.find_user_session(auth_token.user_id)
     ) is not None:
-        send_user_settings(msg, ctx, session=session)
+        send_user_authorizations(msg, ctx, session=session)

@@ -1,13 +1,15 @@
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { ListConnectorsAction } from "@/ui/actions/connector/ListConnectorsAction";
-import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";
-import { ListProjectsAction } from "@/ui/actions/project/ListProjectsAction";
-import { GetUserSettingsAction } from "@/ui/actions/user/GetUserSettingsAction";
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { MultiAction } from "@common/ui/actions/MultiAction";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUserAuthorizationsAction";
+import { ListConnectorsAction } from "@/ui/actions/connector/ListConnectorsAction";
+import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";
+import { ListProjectsAction } from "@/ui/actions/project/ListProjectsAction";
+import { GetUserSettingsAction } from "@/ui/actions/user/GetUserSettingsAction";
 
 /**
  * Multi-action to fetch all data from the server.
@@ -18,15 +20,17 @@ export class GetAllDataAction extends MultiAction {
 
         const listConAction = new ListConnectorsAction(comp, true);
         const getUserSettingsAction = new GetUserSettingsAction(comp, true);
+        const listAuthorizationsAction = new ListUserAuthorizationsAction(comp, true);
         const listProjectsAction = new ListProjectsAction(comp, true);
         const listJobsAction = new ListProjectJobsAction(comp, true);
 
         listConAction.prepare();
         getUserSettingsAction.prepare();
+        listAuthorizationsAction.prepare();
         listProjectsAction.prepare();
         listJobsAction.prepare();
 
-        this.addActions([listConAction, getUserSettingsAction, listProjectsAction, listJobsAction]);
+        this.addActions([listConAction, getUserSettingsAction, listAuthorizationsAction, listProjectsAction, listJobsAction]);
     }
 
     protected addDefaultNotifiers(): void {

@@ -3,7 +3,7 @@ import { AuthorizationTokenType } from "@common/data/entities/authorization/Auth
 import { getConnectorInstanceAuthorizationID } from "@common/data/entities/authorization/AuthorizationTokenUtils";
 import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
+import { connectorInstanceIsAuthorized, createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 
@@ -23,13 +23,7 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
 
     async function editInstance(instances: ConnectorInstance[], instance: ConnectorInstance, connector?: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, instance, connector).then((data) => {
-            const editedInstance = new ConnectorInstance(
-                instance.instance_id,
-                instance.connector_id,
-                data.name,
-                data.description,
-                instance.authorization_state,
-            );
+            const editedInstance = new ConnectorInstance(instance.instance_id, instance.connector_id, data.name, data.description);
             const index = instances.indexOf(instance);
             if (index == -1) {
                 instances.push(editedInstance);
@@ -47,8 +41,8 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         }
     }
 
-    function requestInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[]): void {
-        if (instance.authorization_state == AuthorizationState.Authorized) {
+    function requestInstanceAuthorization(instance: ConnectorInstance, connectors: Connector[], authorizations: string[]): void {
+        if (connectorInstanceIsAuthorized(instance, authorizations)) {
             return;
         }
 

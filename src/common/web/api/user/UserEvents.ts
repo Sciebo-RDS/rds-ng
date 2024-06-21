@@ -4,23 +4,22 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
-import { UserSettings } from "../../data/entities/user/UserSettings";
 
 /**
- * Event sent when the user settings have changed on the server side.
+ * Event sent when the user authorizations have changed.
  *
- * @param settings - The new settings.
+ * @param authorizations - The new list of all granted authorizations.
  */
-@Message.define("event/user/settings/changed")
-export class UserSettingsChangedEvent extends Event {
+@Message.define("event/user/authorization/list")
+export class UserAuthorizationsListEvent extends Event {
     // @ts-ignore
-    @Type(() => UserSettings)
-    public readonly settings: UserSettings = new UserSettings();
+    @Type(() => String)
+    public readonly authorizations: string[] = [];
 
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, settings: UserSettings, chain: Message | null = null): EventComposer<UserSettingsChangedEvent> {
-        return messageBuilder.buildEvent(UserSettingsChangedEvent, { settings: settings }, chain);
+    public static build(messageBuilder: MessageBuilder, authorizations: string[], chain: Message | null = null): EventComposer<UserAuthorizationsListEvent> {
+        return messageBuilder.buildEvent(UserAuthorizationsListEvent, { authorizations: authorizations }, chain);
     }
 }

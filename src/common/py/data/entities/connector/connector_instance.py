@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
 
 from .connector import ConnectorID
-from ..authorization import AuthorizationState
 
 ConnectorInstanceID = uuid.UUID
 
@@ -20,7 +19,6 @@ class ConnectorInstance:
         connector_id: The assigned connector.
         name: The name of this connector instance.
         description: The instance description.
-        authorization_state: The authorization state.
     """
 
     instance_id: ConnectorInstanceID = field(default_factory=uuid.uuid4)
@@ -29,5 +27,3 @@ class ConnectorInstance:
 
     name: str = ""
     description: str = ""
-
-    authorization_state: AuthorizationState = AuthorizationState.NOT_AUTHORIZED

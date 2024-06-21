@@ -1,6 +1,7 @@
 import { WebComponent } from "../../../component/WebComponent";
 import { AuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategy";
 import { Service } from "../../../services/Service";
+import { getConnectorInstanceAuthorizationID } from "../authorization/AuthorizationTokenUtils";
 import { Connector, type ConnectorID } from "./Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "./ConnectorInstance";
 import { createAuthorizationStrategyFromConnector, findConnectorByID, findConnectorInstanceByID } from "./ConnectorUtils";
@@ -87,4 +88,14 @@ export function createAuthorizationStrategyFromConnectorInstance(
 ): AuthorizationStrategy | undefined {
     const connector = findConnectorByID(connectors, instance.connector_id);
     return createAuthorizationStrategyFromConnector(comp, svc, connector);
+}
+
+/**
+ * Checks whether a connector instance is authorized.
+ *
+ * @param instance - The connector instance.
+ * @param authorizations - A list of all granted authorizations.
+ */
+export function connectorInstanceIsAuthorized(instance: ConnectorInstance, authorizations: string[]): boolean {
+    return authorizations.includes(getConnectorInstanceAuthorizationID(instance));
 }

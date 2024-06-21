@@ -105,7 +105,10 @@ export abstract class AuthorizationStrategy {
                     break;
 
                 case RedirectionTarget.Blank:
-                    window.open(url, "_blank").focus();
+                    const newWin = window.open(url, "_blank");
+                    if (newWin) {
+                        newWin.focus();
+                    }
                     break;
             }
         }

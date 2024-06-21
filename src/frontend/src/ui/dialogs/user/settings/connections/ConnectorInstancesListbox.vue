@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useUserStore } from "@/data/stores/UserStore";
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
 import { computed, type PropType, toRefs, unref } from "vue";
@@ -17,6 +18,7 @@ import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connection
 
 const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
+const userStore = useUserStore();
 const props = defineProps({
     userSettings: {
         type: Object as PropType<UserSettings>,
@@ -24,6 +26,7 @@ const props = defineProps({
     },
 });
 const { connectors } = storeToRefs(consStore);
+const { userAuthorizations } = storeToRefs(userStore);
 const { userSettings } = toRefs(props);
 const { editInstance, deleteInstance, requestInstanceAuthorization, revokeInstanceAuthorization } = useConnectorInstancesTools(comp);
 
@@ -77,7 +80,7 @@ function onDeleteKey() {
                 :instance="instanceEntry.option"
                 :is-selected="isInstanceSelected(instanceEntry.option)"
                 @dblclick="onEditInstance(instanceEntry.option)"
-                @authorize-instance="requestInstanceAuthorization(instanceEntry.option, connectors)"
+                @authorize-instance="requestInstanceAuthorization(instanceEntry.option, connectors, userAuthorizations)"
                 @unauthorize-instance="revokeInstanceAuthorization(instanceEntry.option)"
                 @edit-instance="onEditInstance(instanceEntry.option)"
                 @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"

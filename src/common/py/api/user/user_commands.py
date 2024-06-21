@@ -1,4 +1,5 @@
 import dataclasses
+import typing
 
 from ...core.messaging import (
     Command,
@@ -189,4 +190,55 @@ class SetUserSettingsReply(CommandReply):
             success,
             message,
             settings=settings,
+        )
+
+
+@Message.define("command/user/authorization/list")
+class ListUserAuthorizationsCommand(Command):
+    """
+    Command to get all granted authorizations of the current user.
+
+    Notes:
+        Requires a ``ListUserAuthorizationsReply`` reply.
+    """
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder, *, chain: Message | None = None
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(ListUserAuthorizationsCommand, chain)
+
+
+@Message.define("command/user/authorization/list/reply")
+class ListUserAuthorizationsReply(CommandReply):
+    """
+    Reply to ``ListUserAuthorizationsCommand``.
+
+    Args:
+        authorizations: List of all granted authorizations.
+    """
+
+    authorizations: typing.List[str] = dataclasses.field(default_factory=list)
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: ListUserAuthorizationsCommand,
+        *,
+        authorizations: typing.List[str],
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            ListUserAuthorizationsReply,
+            cmd,
+            success,
+            message,
+            authorizations=authorizations,
         )

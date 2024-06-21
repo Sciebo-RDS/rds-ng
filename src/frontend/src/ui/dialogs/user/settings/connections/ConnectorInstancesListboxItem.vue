@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 import Menu from "primevue/menu";
 import Tag from "primevue/tag";
 import { computed, type PropType, ref, toRefs, unref, watch } from "vue";
 
-import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
+import { connectorInstanceIsAuthorized } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
-import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -32,9 +32,11 @@ const emits = defineEmits<{
 }>();
 
 const { instance, isSelected } = toRefs(props);
+const { userAuthorizations } = storeToRefs(userStore);
+
 const connector = computed(() => findConnectorByID(consStore.connectors, instance.value.connector_id));
 const requiresAuthorization = computed(() => connectorRequiresAuthorization(unref(connector)!));
-const isAuthorized = computed(() => unref(instance)!.authorization_state == AuthorizationState.Authorized);
+const isAuthorized = computed(() => connectorInstanceIsAuthorized(unref(instance)!, unref(userAuthorizations)));
 const isUnAuthorizing = ref(false);
 
 const editMenu = ref();
@@ -91,16 +93,10 @@ function onUnauthorize(): void {
     emits("unauthorize-instance", unref(instance)!);
 }
 
-// A simple way to get notified about completion of a running (un)authorization is to watch for changes in the user settings
-watch(
-    () => userStore.userSettings,
-    (newSettings: UserSettings) => {
-        const updInstance = newSettings.connector_instances.find((updInst) => updInst.instance_id == unref(instance)!.instance_id);
-        if (!!updInstance && updInstance.authorization_state != unref(instance)!.authorization_state) {
-            isUnAuthorizing.value = false;
-        }
-    },
-);
+// Whenever the authorization state changes, any pending (un)authorizations have completed
+watch(isAuthorized, () => {
+    isUnAuthorizing.value = false;
+});
 </script>
 
 <template>
