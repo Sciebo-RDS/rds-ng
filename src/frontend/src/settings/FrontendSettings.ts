@@ -13,9 +13,7 @@ export function getFrontendSettings(): Map<SettingID, any> {
 
     // Integration settings
     settings.set(IntegrationSettingIDS.Scheme, "basic");
-
     settings.set(HostIntegrationSettingIDs.APIURL, "");
-    settings.set(HostIntegrationSettingIDs.Embedded, true);
 
     // Authorization settings
     settings.set(OAuth2AuthorizationSettingIDs.ClientID, "");

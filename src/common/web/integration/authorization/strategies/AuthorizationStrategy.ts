@@ -17,7 +17,7 @@ export abstract class AuthorizationStrategy {
 
     private readonly _strategy: string;
 
-    protected constructor(comp: WebComponent, svc: Service, strategy: string, redirectionTarget: RedirectionTarget = RedirectionTarget.Same) {
+    protected constructor(comp: WebComponent, svc: Service, strategy: string, redirectionTarget: RedirectionTarget = RedirectionTarget.Current) {
         this._component = comp;
         this._service = svc;
 
@@ -100,11 +100,7 @@ export abstract class AuthorizationStrategy {
             // Not sure if this will always work with all browsers and web servers
             // Might need to open the URL in a new window
             switch (this._redirectionTarget) {
-                case RedirectionTarget.Same:
-                    window.location.replace(url);
-                    break;
-
-                case RedirectionTarget.Parent:
+                case RedirectionTarget.Current:
                     window.parent.location.replace(url);
                     break;
 

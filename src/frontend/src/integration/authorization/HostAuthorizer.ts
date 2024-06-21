@@ -1,7 +1,3 @@
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { Authorizer } from "@/integration/authorization/Authorizer";
-import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
-import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
@@ -9,6 +5,10 @@ import { AuthorizationRequest } from "@common/integration/authorization/Authoriz
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
 import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
 import { RedirectionTarget } from "@common/utils/HTMLUtils";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { Authorizer } from "@/integration/authorization/Authorizer";
+import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
 
 /**
  * Authorizer for host integration.
@@ -65,9 +65,7 @@ export class HostAuthorizer extends Authorizer {
                     client: {
                         client_id: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
                         redirect_url: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
-                        redirect_target: this._component.data.config.value<boolean>(HostIntegrationSettingIDs.Embedded)
-                            ? RedirectionTarget.Parent
-                            : RedirectionTarget.Same,
+                        redirect_target: RedirectionTarget.Current,
                     },
                 } as OAuth2StrategyConfiguration;
 

@@ -2,8 +2,7 @@
  * Targets for redirection.
  */
 export const enum RedirectionTarget {
-    Same,
-    Parent,
+    Current,
     Blank,
 }
 
