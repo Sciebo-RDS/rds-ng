@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, shallowReactive } from "vue";
+import BlockUI from "primevue/blockui";
+import { nextTick, onMounted, onUnmounted, shallowReactive, ref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { GetAllDataAction } from "@/ui/actions/multi/GetAllDataAction";
@@ -8,6 +9,7 @@ import MainContent from "@/ui/content/main/MainContent.vue";
 
 const comp = FrontendComponent.inject();
 const integrationScheme = shallowReactive(comp.integrationScheme);
+const isInitializing = ref(true);
 
 onMounted(() => {
     // When launching the frontend view (after the initial render), get all data first
@@ -17,7 +19,9 @@ onMounted(() => {
         action.prepare(comp);
         action.completed(() => {
             // The app has been fully integrated; notify the authentication scheme about this
-            integrationScheme.beginSession();
+            integrationScheme.startSession().then(() => {
+                isInitializing.value = false;
+            });
         });
         action.execute();
     });
@@ -29,6 +33,7 @@ onUnmounted(() => {
 </script>
 
 <template>
+    <BlockUI :blocked="isInitializing" fullScreen />
     <MainContent />
 </template>
 

@@ -1,13 +1,11 @@
-import { AuthorizationRequestsHandler } from "@/integration/authorization/AuthorizationRequestsHandler";
 import { type VueComponent } from "@common/component/WebComponent";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
-import { getNonHostTokenTypes } from "@common/data/entities/authorization/AuthorizationToken";
 import { isUserTokenValid } from "@common/data/entities/user/UserToken";
-import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { Authenticator } from "@/integration/authentication/Authenticator";
+import { AuthorizationRequestsHandler } from "@/integration/authorization/AuthorizationRequestsHandler";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
 
@@ -65,10 +63,12 @@ export abstract class IntegrationScheme {
 
     /**
      * Called when the app has launched after completed integration.
+     *
+     * @returns - A promise that can be used to perform tasks after post-initialization.
      */
-    public beginSession(): void {
+    public startSession(): Promise<void> {
         // When the session begins, perform any pending authorizations (which are not for the host integration)
-        this.handlePendingAuthorizationRequests();
+        return this.handlePendingAuthorizationRequests();
     }
 
     /**
@@ -84,16 +84,14 @@ export abstract class IntegrationScheme {
     }
 
     /**
-     * ,The integration component used during the login process.
+     * The integration component used during the login process.
      */
     public get integrationComponent(): VueComponent {
         return this._integrationComponent;
     }
 
-    private handlePendingAuthorizationRequests(): void {
-        if (AuthorizationRequest.requestIssued(getNonHostTokenTypes())) {
-            const handler = new AuthorizationRequestsHandler(this._component, this._component.frontendService);
-            handler.handlePendingRequests();
-        }
+    private handlePendingAuthorizationRequests(): Promise<void> {
+        const handler = new AuthorizationRequestsHandler(this._component, this._component.frontendService);
+        return handler.handlePendingRequests();
     }
 }

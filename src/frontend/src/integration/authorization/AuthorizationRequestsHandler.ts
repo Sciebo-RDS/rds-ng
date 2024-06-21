@@ -1,6 +1,6 @@
 import { WebComponent } from "@common/component/WebComponent";
 import logging from "@common/core/logging/Logging";
-import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
+import { AuthorizationTokenType, getNonHostTokenTypes } from "@common/data/entities/authorization/AuthorizationToken";
 import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
@@ -26,25 +26,34 @@ export class AuthorizationRequestsHandler {
         this._service = svc;
     }
 
-    public handlePendingRequests(): void {
-        // Only one request can be pending, so fetch it from the URL
-        const authRequest = AuthorizationRequest.fromURLParameters();
-        this.handleRequest(authRequest);
+    public handlePendingRequests(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if (AuthorizationRequest.requestIssued(getNonHostTokenTypes())) {
+                // Only one request can be pending, so fetch it from the URL
+                const authRequest = AuthorizationRequest.fromURLParameters();
+                this.handleRequest(authRequest, resolve, reject);
+            } else {
+                resolve();
+            }
+        });
     }
 
-    private handleRequest(authRequest: AuthorizationRequest): void {
+    private handleRequest(authRequest: AuthorizationRequest, resolve: () => void, reject: (msg: string) => void): void {
         const strategy = this.createAuthStrategy(authRequest);
         if (strategy) {
             strategy
                 .executeAuthorizationRequest(authRequest)
                 .then(() => {
                     logging.info("Authorization request succeeded", "authorization", this.getLoggingParams(authRequest));
+                    resolve();
                 })
                 .catch((error) => {
                     logging.error("Authorization request failed", "authorization", { ...this.getLoggingParams(authRequest), error: error });
+                    reject(error);
                 });
         } else {
             logging.warning("Unable to process authorization request", "authorization", this.getLoggingParams(authRequest));
+            reject("Unable to process authorization request");
         }
     }
 
