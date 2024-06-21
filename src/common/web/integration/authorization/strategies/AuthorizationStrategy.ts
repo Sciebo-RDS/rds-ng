@@ -119,7 +119,7 @@ export abstract class AuthorizationStrategy {
             // Might need to open the URL in a new window
             switch (this._redirectionTarget) {
                 case RedirectionTarget.Current:
-                    this.handleRequestCompleted();
+                    this.handleRequestCompletion();
 
                     // Even if there's no parent, this will work
                     window.parent.location.replace(url);
@@ -131,7 +131,7 @@ export abstract class AuthorizationStrategy {
                         // Get notified when the popup window has closed
                         const timer = setInterval(() => {
                             if (popupWindow.closed) {
-                                this.handleRequestCompleted();
+                                this.handleRequestCompletion();
                                 clearInterval(timer);
                             }
                         }, 100);
@@ -143,7 +143,7 @@ export abstract class AuthorizationStrategy {
         }
     }
 
-    private handleRequestCompleted(): void {
+    private handleRequestCompletion(): void {
         // Give the system some time to get up again
         setTimeout(() => this._executionCallbacks.invokeDoneCallbacks(), 250);
     }
