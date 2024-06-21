@@ -1,6 +1,6 @@
 import { WebComponent } from "@common/component/WebComponent";
 import logging from "@common/core/logging/Logging";
-import { AuthorizationTokenType, getNonHostTokenTypes } from "@common/data/entities/authorization/AuthorizationToken";
+import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
@@ -27,14 +27,10 @@ export class AuthorizationRequestsHandler {
     }
 
     public handlePendingRequests(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            if (AuthorizationRequest.requestIssued(getNonHostTokenTypes())) {
-                // Only one request can be pending, so fetch it from the URL
-                const authRequest = AuthorizationRequest.fromURLParameters();
-                this.handleRequest(authRequest, resolve, reject);
-            } else {
-                resolve();
-            }
+        return new Promise<void>(async (resolve, reject) => {
+            // Only one request can be pending, so fetch it from the URL
+            const authRequest = AuthorizationRequest.fromURLParameters();
+            this.handleRequest(authRequest, resolve, reject);
         });
     }
 
@@ -49,7 +45,7 @@ export class AuthorizationRequestsHandler {
                 })
                 .catch((error) => {
                     logging.error("Authorization request failed", "authorization", { ...this.getLoggingParams(authRequest), error: error });
-                    reject(error);
+                    reject(`Authorization request failed: ${error}`);
                 });
         } else {
             logging.warning("Unable to process authorization request", "authorization", this.getLoggingParams(authRequest));

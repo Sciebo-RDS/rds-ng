@@ -93,8 +93,8 @@ function onUnauthorize(): void {
     emits("unauthorize-instance", unref(instance)!);
 }
 
-// Whenever the authorization state changes, any pending (un)authorizations have completed
-watch(isAuthorized, () => {
+// Whenever any authorization state changes, any pending (un)authorizations have completed
+watch(userAuthorizations, () => {
     isUnAuthorizing.value = false;
 });
 </script>
