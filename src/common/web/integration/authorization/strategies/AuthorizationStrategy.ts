@@ -3,8 +3,14 @@ import { WebComponent } from "../../../component/WebComponent";
 import { AuthorizationState } from "../../../data/entities/authorization/AuthorizationState";
 import { useNetworkStore } from "../../../data/stores/NetworkStore";
 import { Service } from "../../../services/Service";
+import { ExecutionCallbacks } from "../../../utils/ExecutionCallbacks";
 import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { AuthorizationRequest } from "../AuthorizationRequest";
+
+/**
+ * Notification type of finished requests callbacks.
+ */
+export type AuthorizationRequestCallback = () => void;
 
 /**
  * Base class for all authorization strategies.
@@ -16,6 +22,8 @@ export abstract class AuthorizationStrategy {
     protected readonly _redirectionTarget: RedirectionTarget;
 
     private readonly _strategy: string;
+
+    private readonly _executionCallbacks = new ExecutionCallbacks<AuthorizationRequestCallback, AuthorizationRequestCallback>();
 
     protected constructor(comp: WebComponent, svc: Service, strategy: string, redirectionTarget: RedirectionTarget = RedirectionTarget.Current) {
         this._component = comp;
@@ -89,6 +97,16 @@ export abstract class AuthorizationStrategy {
         }
     }
 
+    /**
+     * Adds a callback for completed requests.
+     *
+     * @param cb - The callback to add.
+     */
+    public requestCompleted(cb: AuthorizationRequestCallback): this {
+        this._executionCallbacks.done(cb);
+        return this;
+    }
+
     protected abstract initiateRequest(authRequest: AuthorizationRequest): void;
 
     protected abstract getRequestData(authRequest: AuthorizationRequest): any;
@@ -101,17 +119,33 @@ export abstract class AuthorizationStrategy {
             // Might need to open the URL in a new window
             switch (this._redirectionTarget) {
                 case RedirectionTarget.Current:
+                    this.handleRequestCompleted();
+
+                    // Even if there's no parent, this will work
                     window.parent.location.replace(url);
                     break;
 
                 case RedirectionTarget.Blank:
-                    const newWin = window.open(url, "_blank");
-                    if (newWin) {
-                        newWin.focus();
+                    const popupWindow = window.open(url, "_blank");
+                    if (popupWindow) {
+                        // Get notified when the popup window has closed
+                        const timer = setInterval(() => {
+                            if (popupWindow.closed) {
+                                this.handleRequestCompleted();
+                                clearInterval(timer);
+                            }
+                        }, 100);
+
+                        popupWindow.focus();
                     }
                     break;
             }
         }
+    }
+
+    private handleRequestCompleted(): void {
+        // Give the system some time to get up again
+        setTimeout(() => this._executionCallbacks.invokeDoneCallbacks(), 250);
     }
 
     /**

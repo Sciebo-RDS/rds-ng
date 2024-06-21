@@ -49,16 +49,16 @@ const editMenuItems = computed(() => {
     if (unref(requiresAuthorization)) {
         if (unref(isAuthorized)) {
             menuItems.items.push({
-                label: "Disconnect",
+                label: () => (unref(isUnAuthorizing) ? "Disconnecting..." : "Disconnect"),
                 icon: "material-icons-outlined mi-link-off",
-                disabled: isUnAuthorizing,
+                disabled: () => unref(isUnAuthorizing),
                 command: onUnauthorize,
             });
         } else {
             menuItems.items.push({
-                label: "Connect",
+                label: () => (unref(isUnAuthorizing) ? "Connecting..." : "Connect"),
                 icon: "material-icons-outlined mi-link",
-                disabled: isUnAuthorizing,
+                disabled: () => unref(isUnAuthorizing),
                 command: onAuthorize,
             });
         }

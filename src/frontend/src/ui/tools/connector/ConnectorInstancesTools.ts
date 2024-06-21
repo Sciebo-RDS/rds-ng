@@ -9,6 +9,7 @@ import { AuthorizationRequest } from "@common/integration/authorization/Authoriz
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUserAuthorizationsAction";
 import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
 
@@ -63,6 +64,12 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             connector.connector_id,
             userFingerprint,
         );
+        strategy.requestCompleted(() => {
+            // Once the request has completed, fetch all user authorizations
+            const action = new ListUserAuthorizationsAction(comp);
+            action.prepare();
+            action.execute();
+        });
         strategy.initiateAuthorizationRequest(authRequest);
     }
 
