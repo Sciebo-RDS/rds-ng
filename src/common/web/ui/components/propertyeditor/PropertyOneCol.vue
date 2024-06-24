@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FrontendComponent } from "@/component/FrontendComponent";
 import Button from "primevue/button";
-import { computed, ref, type PropType, type Ref } from "vue";
+import { computed, ref, watch, type PropType, type Ref } from "vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
 import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
@@ -40,7 +40,16 @@ const { propertyClass, profileId, projectObjects, projectProfiles, globalObjectS
 
 projectObjects.add(new ProjectObject(profileId, null, propertyClass.id));
 
-const propertyObject = computed(() => projectObjects.get(propertyClass.id)) as Ref<ProjectObject>;
+const propertyObject = computed(
+    () => projectObjects.get(propertyClass.id) || projectObjects.add(new ProjectObject(profileId, null, propertyClass.id))
+) as Ref<ProjectObject>;
+
+watch(
+    () => projectObjects.get(propertyClass.id),
+    (obj) => {
+        if (!obj) projectObjects.add(new ProjectObject(profileId, null, propertyClass.id));
+    }
+);
 
 const op = ref();
 const toggle = (event: Event) => {

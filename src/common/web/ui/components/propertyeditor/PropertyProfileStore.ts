@@ -20,6 +20,16 @@ export class PropertyProfileStore {
         return profile?.classes ? profile.classes[classId] : undefined;
     }
 
+    public getLabelTemplateById(classId: string): string | undefined {
+        const profile = this._profiles.find((profile) => !!profile.classes && !!profile.classes[classId]);
+        return profile?.classes![classId]["labelTemplate"];
+    }
+
+    public getLabelById(classId: string): string | undefined {
+        const profile = this._profiles.find((profile) => !!profile.classes && !!profile.classes[classId]);
+        return profile?.classes![classId]["label"];
+    }
+
     public list(): Profile[] {
         return this._profiles;
     }

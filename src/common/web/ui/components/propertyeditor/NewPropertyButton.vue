@@ -10,19 +10,22 @@ const dialog = useDialog();
 const props = defineProps(["type", "profileId", "parentId", "projectObjects", "globalObjectStore", "projectProfiles", "mode"]);
 
 const emit = defineEmits(["loadObject"]);
-const label = props.projectProfiles.getClassById(props.profileId, props.type)["label"];
+const label = props.projectProfiles.getLabelById(props.type);
 const linkableItems = computed(() => {
     let linkedItems = [...props.projectObjects.getLinkedObjects(props.parentId), ...props.globalObjectStore.getLinkedObjects(props.parentId)].flat();
-    return props.globalObjectStore
+    let linkable = props.globalObjectStore
         .getObjectsByType(props.type)
         .filter((item: ProjectObject) => !linkedItems.includes(item.id))
-        .filter((item: ProjectObject) => item.id != props.parentId)
-        .map((item: ProjectObject) => ({
-            label: injectTemplate(props.projectProfiles.getClassById(item.profile, item.type).labelTemplate, props.globalObjectStore.get(item.id)),
-            command: () => {
-                props.projectObjects.addLink(props.parentId, item.id) || props.globalObjectStore.addLink(props.parentId, item.id);
-            }
-        }));
+        .filter((item: ProjectObject) => item.id != props.parentId);
+    console.log(linkable);
+    return linkable.length > 0
+        ? linkable.map((item: ProjectObject) => ({
+              label: injectTemplate(props.projectProfiles.getLabelTemplateById(item.type), props.globalObjectStore.get(item.id)),
+              command: () => {
+                  props.projectObjects.addLink(props.parentId, item.id) || props.globalObjectStore.addLink(props.parentId, item.id);
+              }
+          }))
+        : [];
 });
 
 function createObject() {

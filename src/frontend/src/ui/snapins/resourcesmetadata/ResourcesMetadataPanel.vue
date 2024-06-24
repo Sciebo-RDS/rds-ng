@@ -88,7 +88,6 @@ const projectObjects = reactive(new ProjectObjectStore());
 const projectProfiles = reactive(new PropertyProfileStore());
 const debounce = makeDebounce(500);
 
-// TODO make backend accept List instead of PersistedSets/Dicts
 watch(
     resourcesData,
     (metadata) => {
@@ -208,7 +207,6 @@ const showIndex = ref(true);
                             />
                         </div>
                         <div v-else class="r-centered-grid italic pt-8">Select one or more file objects on the left to edit their metadata.</div>
-                        {{ project!.features.resources_metadata.resources_metadata }}
                     </div>
                 </SplitterPanel>
             </Splitter>

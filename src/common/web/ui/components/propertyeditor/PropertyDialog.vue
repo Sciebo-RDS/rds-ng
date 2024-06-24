@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, reactive, ref, Ref } from "vue";
+import { computed, inject, reactive, ref, type Ref } from "vue";
 
 import Breadcrumb from "primevue/breadcrumb";
 import Button from "primevue/button";
@@ -23,10 +23,10 @@ const id = dialogRef.value.data.id;
 
 const projectObjects: ProjectObjectStore = dialogRef.value.data.projectObjectStore;
 const globalObjectStore: ProjectObjectStore = dialogRef.value.data.globalObjectStore;
-const projectProfiles: PropertyProfileStore = dialogRef.value.data.propertyProfileStore;
+let projectProfiles: PropertyProfileStore = dialogRef.value.data.propertyProfileStore;
 const profileId = dialogRef.value.data.profileId;
 const object = ref(globalObjectStore.get(id)!);
-let objectClass = reactive(projectProfiles.getClassById(profileId, object.value["type"])!) as ProfileClass;
+let objectClass = reactive(projectProfiles.getClassById(profileId, object.value["type"]!)!) as ProfileClass;
 let displayableInputs = objectClass["input"] || [];
 let addableTypes = objectClass["type"] || [];
 
@@ -62,8 +62,9 @@ const linkedItemActions = ref((id: string, label: Ref<string>) => [
 ]);
 
 function selectActiveObject(id: string) {
+    projectProfiles = dialogRef.value.data.propertyProfileStore;
     object.value = globalObjectStore.get(id)!;
-    objectClass = projectProfiles.getClassById(profileId, object.value["type"])! as ProfileClass;
+    objectClass = projectProfiles.getClassById(profileId, object.value["type"]!)! as ProfileClass;
     addableTypes = objectClass["type"] || [];
     displayableInputs = objectClass["input"] || [];
     history.navigateTo(object.value);
@@ -72,9 +73,12 @@ function selectActiveObject(id: string) {
         const cb: Function = () => {
             selectActiveObject(item.id);
         };
-        const objectClass = projectProfiles.getClassById(item.profile, item.type);
-        const injectedLabel = injectTemplate(objectClass!.labelTemplate!, globalObjectStore.get(item.id)!);
-        const label = `${objectClass!.label}: ${injectedLabel}`;
+
+        const labelTemplate = projectProfiles.getLabelTemplateById(item.type!)!;
+
+        const injectedLabel = injectTemplate(labelTemplate, globalObjectStore.get(item.id)!);
+        const classLabel = projectProfiles.getLabelById(item.type!);
+        const label = `${classLabel}:  ${injectedLabel}`;
         return {
             label: label,
             command: cb
