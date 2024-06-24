@@ -98,6 +98,7 @@ services:
         ports:
             - "8000:6969"
         environment:
+            - NODE_TLS_REJECT_UNAUTHORIZED=0
             - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200
             # - RDS_INTEGRATION_SCHEME=basic
             - RDS_INTEGRATION_SCHEME=host
