@@ -5,6 +5,7 @@ import { useNetworkStore } from "../../../data/stores/NetworkStore";
 import { Service } from "../../../services/Service";
 import { ExecutionCallbacks } from "../../../utils/ExecutionCallbacks";
 import { RedirectionTarget } from "../../../utils/HTMLUtils";
+import { HostCommuncationAction, sendActionToHost } from "../../HostCommunication";
 import { AuthorizationRequest } from "../AuthorizationRequest";
 
 /**
@@ -121,8 +122,12 @@ export abstract class AuthorizationStrategy {
                 case RedirectionTarget.Current:
                     this.handleRequestCompletion();
 
-                    // Even if there's no parent, this will work
-                    window.parent.location.replace(url);
+                    // If we're embedded, use postMessage and let the host handle the redirect; otherwise, just redirect directly
+                    if (window.parent !== window) {
+                        sendActionToHost(HostCommuncationAction.Redirect, url.toString());
+                    } else {
+                        window.location.replace(url);
+                    }
                     break;
 
                 case RedirectionTarget.Blank:

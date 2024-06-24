@@ -60,7 +60,7 @@ onMounted(async () => performAuthentication());
 
 <template>
     <div class="r-centered-grid r-text">
-        <Header></Header>
+        <Header />
         <div v-if="!errorMessage" class="r-centered-grid">
             <div>
                 <span class="italic">
