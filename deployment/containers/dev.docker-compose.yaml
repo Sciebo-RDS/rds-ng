@@ -44,6 +44,8 @@ services:
             - "4200:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+            # - RDS_STORAGE_DATABASE_ENGINE=sqlite
+            # - RDS_STORAGE_DATABASE_SQLITE_FILE=/data/rds.db
             - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=oNwLWleq5FV8odCHahsp8dL74vKLLbKzWnYVc2PqFgVRUY2IYdyeMyg5qSAAnTBh
             - RDS_AUTHORIZATION_OAUTH2_SECRETS_STUB=c4X1LOf1YLBacQtu6HAR3iDmLajiTeBHiZWtKegDHUSMdmlerGOOU3QjSRKYbXXh
             # - RDS_INTEGRATION_DEFAULT_ROOT_PATH=/files
