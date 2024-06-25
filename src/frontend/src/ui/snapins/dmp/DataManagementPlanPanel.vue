@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, toRefs, watch } from "vue";
+import { type PropType, reactive, toRefs, watch } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { Project } from "@common/data/entities/project/Project";
@@ -17,9 +17,9 @@ import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectF
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
-        type: Project,
-        required: true
-    }
+        type: Object as PropType<Project>,
+        required: true,
+    },
 });
 const { project } = toRefs(props);
 
@@ -29,11 +29,14 @@ const exporters: ExporterID[] = ["pdf", "raw"];
 const dmpProfile = new PropertySet(dfgDmp);
 const controller = reactive(new DmpController(dmpProfile));
 
-watch(() => project!.value.features.dmp.plan, (dmpSet: PersistedSet[]) => {
-    const action = new UpdateProjectFeaturesAction(comp);
-    action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
-    action.execute();
-});
+watch(
+    () => project!.value.features.dmp.plan,
+    (dmpSet: PersistedSet[]) => {
+        const action = new UpdateProjectFeaturesAction(comp);
+        action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
+        action.execute();
+    },
+);
 </script>
 
 <template>
@@ -47,6 +50,4 @@ watch(() => project!.value.features.dmp.plan, (dmpSet: PersistedSet[]) => {
     />
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

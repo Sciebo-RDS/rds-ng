@@ -1,6 +1,8 @@
 import { WebComponent } from "../../../../component/WebComponent";
 import { Service } from "../../../../services/Service";
+import { RedirectionTarget } from "../../../../utils/HTMLUtils";
 import { getURLQueryParam } from "../../../../utils/URLUtils";
+import { AuthorizationRequest } from "../../AuthorizationRequest";
 import { AuthorizationStrategy } from "../AuthorizationStrategy";
 import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
 
@@ -10,15 +12,14 @@ import { type OAuth2AuthorizationRequestData } from "./OAuth2Types";
 export interface OAuth2StrategyConfiguration {
     server: {
         host: string;
-        endpoints: {
-            authorization: string;
-            token: string;
-        };
+        authorization_endpoint: string;
+        token_endpoint: string;
+        scope: string;
     };
     client: {
-        clientID: string;
-        redirectURL: string;
-        embedded: boolean;
+        client_id: string;
+        redirect_url: string;
+        redirect_target: RedirectionTarget;
     };
 }
 
@@ -31,21 +32,22 @@ export class OAuth2Strategy extends AuthorizationStrategy {
     private readonly _config: OAuth2StrategyConfiguration;
 
     public constructor(comp: WebComponent, svc: Service, config: OAuth2StrategyConfiguration) {
-        super(comp, svc, OAuth2Strategy.Strategy, config.client.embedded);
+        super(comp, svc, OAuth2Strategy.Strategy, config.client.redirect_target);
 
         this._config = config;
     }
 
-    protected initiateRequest(fingerprint: string): void {
-        const url = new URL(this._config.server.endpoints.authorization, new URL(this._config.server.host));
+    protected initiateRequest(authRequest: AuthorizationRequest): void {
+        const url = new URL(this._config.server.authorization_endpoint, new URL(this._config.server.host));
         url.searchParams.set("response_type", "code");
-        url.searchParams.set("client_id", this._config.client.clientID);
-        url.searchParams.set("redirect_uri", this._config.client.redirectURL);
-        url.searchParams.set("state", fingerprint);
+        url.searchParams.set("client_id", this._config.client.client_id);
+        url.searchParams.set("scope", this._config.server.scope);
+        url.searchParams.set("redirect_uri", this._config.client.redirect_url);
+        url.searchParams.set("state", authRequest.encodedPayload);
         this.redirect(url.toString());
     }
 
-    protected getRequestData(): any {
+    protected getRequestData(_: AuthorizationRequest): any {
         const authCode = getURLQueryParam("auth:code");
         if (!authCode) {
             throw new Error("No authentication code provided");
@@ -53,17 +55,23 @@ export class OAuth2Strategy extends AuthorizationStrategy {
 
         return {
             token_host: this._config.server.host,
-            token_endpoint: this._config.server.endpoints.token,
+            token_endpoint: this._config.server.token_endpoint,
 
-            client_id: this._config.client.clientID,
+            client_id: this._config.client.client_id,
             auth_code: authCode,
+            scope: this._config.server.scope,
 
-            redirect_url: this._config.client.redirectURL,
+            redirect_url: this._config.client.redirect_url,
         } as OAuth2AuthorizationRequestData;
     }
 
     protected finishRequest(): void {
-        this.redirect(this._config.client.redirectURL);
+        if (this._redirectionTarget == RedirectionTarget.Blank) {
+            // Even if there's no parent, this will work
+            window.parent.close();
+        } else {
+            this.redirect(this._config.client.redirect_url);
+        }
     }
 }
 
@@ -83,17 +91,17 @@ export function createOAuth2Strategy(comp: WebComponent, svc: Service, config: R
     if (!oauth2Config.server?.host) {
         throw new Error("Missing authorization host");
     }
-    if (!oauth2Config.server?.endpoints?.authorization) {
+    if (!oauth2Config.server?.authorization_endpoint) {
         throw new Error("Missing authorization endpoint");
     }
-    if (!oauth2Config.server?.endpoints?.token) {
+    if (!oauth2Config.server?.token_endpoint) {
         throw new Error("Missing token endpoint");
     }
 
-    if (!oauth2Config.client?.clientID) {
+    if (!oauth2Config.client?.client_id) {
         throw new Error("Missing client ID");
     }
-    if (!oauth2Config.client?.redirectURL) {
+    if (!oauth2Config.client?.redirect_url) {
         throw new Error("Missing redirection URL");
     }
 

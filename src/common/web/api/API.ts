@@ -18,5 +18,6 @@ import "./project/ProjectEvents";
 import "./resource/ResourceCommands";
 
 import "./user/UserCommands";
+import "./user/UserEvents";
 
 import "./session/SessionCommands";

@@ -1,12 +1,16 @@
 import { type VueComponent } from "@common/component/WebComponent";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { getNonHostTokenTypes } from "@common/data/entities/authorization/AuthorizationToken";
 import { isUserTokenValid } from "@common/data/entities/user/UserToken";
+import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { Authenticator } from "@/integration/authentication/Authenticator";
+import { AuthorizationRequestsHandler } from "@/integration/authorization/AuthorizationRequestsHandler";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
+import { useFrontendTools } from "@/ui/tools/FrontendTools";
 
 /**
  * Base class for integration schemes.
@@ -61,6 +65,30 @@ export abstract class IntegrationScheme {
     public leave(): void {}
 
     /**
+     * Called when the app has launched after completed integration.
+     *
+     * @returns - A promise that can be used to perform tasks after post-initialization.
+     */
+    public startSession(): Promise<void> {
+        const promise = new Promise<void>(async (resolve, reject) => {
+            // When the session begins, perform any pending authorizations
+            this.handlePendingAuthorizationRequests()
+                .then(resolve)
+                .catch((error) => reject(`Authorization request failed: ${error}`));
+        });
+        promise.catch((error) => {
+            const { setInitializationMessage } = useFrontendTools(this._component);
+            setInitializationMessage(error, true);
+        });
+        return promise;
+    }
+
+    /**
+     * Called when the user leaves the main view.
+     */
+    public endSession(): void {}
+
+    /**
      * The scheme identifier.
      */
     public get scheme(): string {
@@ -68,9 +96,25 @@ export abstract class IntegrationScheme {
     }
 
     /**
-     * ,The integration component used during the login process.
+     * The integration component used during the login process.
      */
     public get integrationComponent(): VueComponent {
         return this._integrationComponent;
+    }
+
+    private handlePendingAuthorizationRequests(): Promise<void> {
+        const { setInitializationMessage } = useFrontendTools(this._component);
+
+        // We only deal with non-host authorizations here
+        if (AuthorizationRequest.requestIssued(getNonHostTokenTypes())) {
+            setInitializationMessage("Performing authorization...");
+
+            const handler = new AuthorizationRequestsHandler(this._component, this._component.frontendService);
+            return handler.handlePendingRequests();
+        } else {
+            return new Promise<void>(async (resolve, reject) => {
+                resolve();
+            });
+        }
     }
 }

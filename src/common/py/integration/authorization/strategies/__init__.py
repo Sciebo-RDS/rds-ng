@@ -10,6 +10,3 @@ from .authorization_strategies import (
 )
 from .authorization_strategies_catalog import AuthorizationStrategiesCatalog
 from .authorization_strategy import AuthorizationStrategy
-from .authorization_strategy_configuration import (
-    get_authorization_strategy_configuration,
-)

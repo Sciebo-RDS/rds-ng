@@ -1,52 +1,12 @@
+import { WebComponent } from "../../../component/WebComponent";
+import { createAuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategies";
+import { AuthorizationStrategiesCatalog } from "../../../integration/authorization/strategies/AuthorizationStrategiesCatalog";
+import { AuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategy";
+import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "../../../integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { Service } from "../../../services/Service";
+import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { Connector, type ConnectorID } from "./Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "./ConnectorInstance";
-
-/**
- * A single connector instances group.
- */
-export interface ConnectorInstancesGroup {
-    connectorID: ConnectorID;
-    connectorInstances: ConnectorInstance[];
-}
-
-/**
- * Function to return all connector instances grouped by their used connectors. By default, the groups are sorted by their IDs; if a list of
- * connectors is given, the display name is used instead.
- *
- * @param connectorInstances - The connector instances.
- * @param connectors - List of available connectors used to sort the groups by their display names.
- *
- * @return - The grouped connector instances.
- */
-export function groupConnectorInstances(connectorInstances: ConnectorInstance[], connectors?: Connector[]): ConnectorInstancesGroup[] {
-    const instancesGroups = [] as ConnectorInstancesGroup[];
-    connectorInstances.forEach((instance) => {
-        let group = instancesGroups.find((group) => group.connectorID == instance.connector_id);
-        if (!group) {
-            group = {
-                connectorID: instance.connector_id,
-                connectorInstances: [] as ConnectorInstance[]
-            };
-            instancesGroups.push(group);
-        }
-        group.connectorInstances.push(instance);
-    });
-
-    instancesGroups.sort((group1, group2) => {
-        if (connectors) {
-            const connector1 = findConnectorByID(connectors, group1.connectorID);
-            const connector2 = findConnectorByID(connectors, group2.connectorID);
-
-            if (connector1 && connector2) {
-                return connector1.name.toLowerCase().localeCompare(connector2.name.toLowerCase());
-            }
-        }
-
-        return group1.connectorID.toLowerCase().localeCompare(group2.connectorID.toLowerCase());
-    });
-
-    return instancesGroups;
-}
 
 /**
  * Searches for a connector by its ID within a list of connectors.
@@ -73,14 +33,56 @@ export function findConnectorInstanceByID(connectorInstances: ConnectorInstance[
 }
 
 /**
- * Searches for a connector using a connector instance ID.
- * @param connectors - The list of connectors.
- * @param connectorInstances - The list of connector instances.
- * @param instanceID - The connector instance ID.
+ * Checks whether a connector requires authorization (and whether that authorization strategy is available).
  *
- * @returns - The found connector or **undefined** otherwise.
+ * @param connector - The connector.
  */
-export function findConnectorByInstanceID(connectors: Connector[], connectorInstances: ConnectorInstance[], instanceID: ConnectorInstanceID): Connector | undefined {
-    const instance = findConnectorInstanceByID(connectorInstances, instanceID);
-    return instance ? findConnectorByID(connectors, instance.connector_id) : undefined;
+export function connectorRequiresAuthorization(connector: Connector): boolean {
+    const strategy = connector.authorization.strategy;
+    return strategy != "" && AuthorizationStrategiesCatalog.findItem(strategy) != undefined;
+}
+
+/**
+ * Creates a strategy configuration from the authorization settings of a connector.
+ *
+ * @param connector - The connector.
+ *
+ * @returns - The strategy configuration.
+ */
+export function getStrategyConfigurationFromConnector(connector: Connector): Record<string, any> {
+    switch (connector.authorization.strategy) {
+        case OAuth2Strategy.Strategy:
+            // For OAuth2, the stored configuration matches the proper structure already
+            const config = connector.authorization.config as OAuth2StrategyConfiguration;
+            config.client.redirect_target = RedirectionTarget.Blank;
+            return config;
+
+        default:
+            return {};
+    }
+}
+
+/**
+ * Creates the authorization strategy configured in a connector.
+ *
+ * @param comp - The global component.
+ * @param svc - The service to use for message sending.
+ * @param connector - The connector.
+ *
+ * @returns - The authorization strategy or **undefined** if none is required.
+ */
+export function createAuthorizationStrategyFromConnector(
+    comp: WebComponent,
+    svc: Service,
+    connector: Connector | undefined,
+): AuthorizationStrategy | undefined {
+    if (!connector || !connectorRequiresAuthorization(connector)) {
+        return undefined;
+    }
+
+    try {
+        return createAuthorizationStrategy(comp, svc, connector.authorization.strategy, getStrategyConfigurationFromConnector(connector));
+    } catch (e) {
+        return undefined;
+    }
 }

@@ -1,4 +1,5 @@
 from common.py.component import BackendComponent
+from common.py.data.entities.authorization import AuthorizationSettings
 from common.py.services import Service
 from common.py.utils import EntryGuard
 
@@ -34,6 +35,12 @@ def create_connector_service(comp: BackendComponent) -> Service:
                 from common.py.api.connector import ConnectorAnnounceEvent
 
                 from ..component import ConnectorComponent
+                from ..integration.authorization.strategies import (
+                    create_authorization_strategy_configuration,
+                )
+                from ..settings import AuthorizationSettingIDs
+
+                strategy = ctx.config.value(AuthorizationSettingIDs.STRATEGY)
 
                 info = ConnectorComponent.instance().connector_info
                 ConnectorAnnounceEvent.build(
@@ -42,6 +49,12 @@ def create_connector_service(comp: BackendComponent) -> Service:
                     name=info.name,
                     description=info.description,
                     category=info.category,
+                    authorization=AuthorizationSettings(
+                        strategy=strategy,
+                        config=create_authorization_strategy_configuration(
+                            strategy, ctx.config
+                        ),
+                    ),
                     options=info.options,
                     logos=info.logos,
                     metadata_profile=info.metadata_profile,

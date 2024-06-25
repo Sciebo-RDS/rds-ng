@@ -1,3 +1,4 @@
+import { ExecutionCallbacks } from "../../utils/ExecutionCallbacks";
 import { ActionNotifier, type ActionNotifiers } from "./notifiers/ActionNotifier";
 
 /**
@@ -7,14 +8,19 @@ export const enum ActionState {
     Pending,
     Executing,
     Done,
-    Failed
+    Failed,
 }
+
+export type ActionDoneCallback = () => void;
+export type ActionFailCallback = () => void;
 
 /**
  * Abstract base class for general actions.
  */
 export abstract class ActionBase {
     protected _state: ActionState;
+
+    private readonly _stateCallbacks = new ExecutionCallbacks<ActionDoneCallback, ActionFailCallback>();
 
     private readonly _notifiers: ActionNotifiers = {} as ActionNotifiers;
     private readonly _suppressDefaultNotifiers: boolean;
@@ -26,6 +32,26 @@ export abstract class ActionBase {
         this._state = ActionState.Pending;
 
         this._suppressDefaultNotifiers = suppressDefaultNotifiers;
+    }
+
+    /**
+     * Adds a callback for action completion.
+     *
+     * @param cb - The callback to add.
+     */
+    public completed(cb: ActionDoneCallback): this {
+        this._stateCallbacks.done(cb);
+        return this;
+    }
+
+    /**
+     * Adds a callback for action failure.
+     *
+     * @param cb - The callback to add.
+     */
+    public failed(cb: ActionFailCallback): this {
+        this._stateCallbacks.failed(cb);
+        return this;
     }
 
     /**
@@ -52,8 +78,7 @@ export abstract class ActionBase {
         }
     }
 
-    protected addDefaultNotifiers(...args: any[]): void {
-    }
+    protected addDefaultNotifiers(...args: any[]): void {}
 
     /**
      * Executes the action.
@@ -75,6 +100,12 @@ export abstract class ActionBase {
         this._state = state;
         this.onStateChanged(state, oldState);
 
+        if (state == ActionState.Done) {
+            this._stateCallbacks.invokeDoneCallbacks();
+        } else if (state == ActionState.Failed) {
+            this._stateCallbacks.invokeFailCallbacks();
+        }
+
         if (state == ActionState.Done || state == ActionState.Failed) {
             // All notifiers need to know when the action has finished
             for (const [_, notifiers] of Object.entries(this._notifiers)) {
@@ -91,14 +122,11 @@ export abstract class ActionBase {
         }
     }
 
-    protected onStateChanged(newState: ActionState, oldState: ActionState): void {
-    }
+    protected onStateChanged(newState: ActionState, oldState: ActionState): void {}
 
-    protected preExecution(): void {
-    }
+    protected preExecution(): void {}
 
-    protected postExecution(): void {
-    }
+    protected postExecution(): void {}
 
     /**
      * The current state of the action.

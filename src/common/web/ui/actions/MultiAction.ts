@@ -19,14 +19,8 @@ export class MultiAction extends ActionBase {
         this._actions.push(...actions);
 
         actions.forEach((action) => {
-            action.addNotifier(
-                ActionState.Done,
-                new CallbackNotifier((message) => this.onActionDone(action, message))
-            );
-            action.addNotifier(
-                ActionState.Failed,
-                new CallbackNotifier((message) => this.onActionFailed(action, message))
-            );
+            action.addNotifier(ActionState.Done, new CallbackNotifier((message) => this.onActionDone(action, message)));
+            action.addNotifier(ActionState.Failed, new CallbackNotifier((message) => this.onActionFailed(action, message)));
         });
     }
 

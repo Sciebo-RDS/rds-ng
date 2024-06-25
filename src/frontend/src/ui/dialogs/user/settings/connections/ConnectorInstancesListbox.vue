@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useUserStore } from "@/data/stores/UserStore";
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
-import { computed, type PropType, toRefs } from "vue";
+import { computed, type PropType, toRefs, unref } from "vue";
 
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorByID, findConnectorInstanceByID, groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
+import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorInstanceUtils";
+import { findConnectorByID, findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -16,6 +18,7 @@ import ConnectorInstancesListboxItem from "@/ui/dialogs/user/settings/connection
 
 const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
+const userStore = useUserStore();
 const props = defineProps({
     userSettings: {
         type: Object as PropType<UserSettings>,
@@ -23,25 +26,26 @@ const props = defineProps({
     },
 });
 const { connectors } = storeToRefs(consStore);
+const { userAuthorizations } = storeToRefs(userStore);
 const { userSettings } = toRefs(props);
-const { editInstance, deleteInstance } = useConnectorInstancesTools(comp);
+const { editInstance, deleteInstance, requestInstanceAuthorization, revokeInstanceAuthorization } = useConnectorInstancesTools(comp);
 
-const groupedInstances = computed(() => groupConnectorInstances(userSettings!.value!.connector_instances, connectors.value));
+const groupedInstances = computed(() => groupConnectorInstances(unref(userSettings)!.connector_instances, unref(connectors)));
 const selectedInstance = defineModel<ConnectorInstanceID | undefined>();
 
 function isInstanceSelected(instance: ConnectorInstance): boolean {
-    return instance.instance_id === selectedInstance.value;
+    return instance.instance_id === unref(selectedInstance);
 }
 
 function onEditInstance(instance: ConnectorInstance): void {
-    editInstance(userSettings!.value!.connector_instances, instance, findConnectorByID(connectors.value, instance.connector_id));
+    editInstance(unref(userSettings)!.connector_instances, instance, findConnectorByID(unref(connectors), instance.connector_id));
 }
 
 function onDeleteKey() {
-    if (selectedInstance.value) {
-        const instance = findConnectorInstanceByID(userSettings!.value!.connector_instances, selectedInstance.value);
+    if (unref(selectedInstance)) {
+        const instance = findConnectorInstanceByID(unref(userSettings)!.connector_instances, unref(selectedInstance)!);
         if (instance) {
-            deleteInstance(userSettings!.value!.connector_instances, instance);
+            deleteInstance(unref(userSettings)!.connector_instances, instance);
         }
     }
 }
@@ -76,6 +80,8 @@ function onDeleteKey() {
                 :instance="instanceEntry.option"
                 :is-selected="isInstanceSelected(instanceEntry.option)"
                 @dblclick="onEditInstance(instanceEntry.option)"
+                @authorize-instance="requestInstanceAuthorization(instanceEntry.option, connectors, userAuthorizations)"
+                @unauthorize-instance="revokeInstanceAuthorization(instanceEntry.option)"
                 @edit-instance="onEditInstance(instanceEntry.option)"
                 @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
             />

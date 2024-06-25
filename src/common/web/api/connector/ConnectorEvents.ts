@@ -4,6 +4,7 @@ import { EventComposer } from "../../core/messaging/composers/EventComposer";
 import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
+import { type AuthorizationSettings } from "../../data/entities/authorization/AuthorizationSettings";
 import {
     Connector,
     type ConnectorCategoryID,
@@ -43,6 +44,7 @@ export class ConnectorAnnounceEvent extends Event {
     public readonly description: string = "";
     public readonly category: ConnectorCategoryID = "";
 
+    public readonly authorization: AuthorizationSettings = { strategy: "", config: {} };
     public readonly options: ConnectorOptions = ConnectorOptions.Default;
 
     // @ts-ignore
@@ -60,6 +62,7 @@ export class ConnectorAnnounceEvent extends Event {
         name: string,
         description: string,
         category: ConnectorCategoryID,
+        authorization: AuthorizationSettings,
         options: ConnectorOptions,
         logos: ConnectorLogos,
         metadataProfile: ConnectorMetadataProfile,
@@ -72,6 +75,7 @@ export class ConnectorAnnounceEvent extends Event {
                 display_name: name,
                 description: description,
                 category: category,
+                authorization: authorization,
                 options: options,
                 logos: logos,
                 metadata_profile: metadataProfile,

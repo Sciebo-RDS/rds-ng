@@ -23,7 +23,7 @@ export class BasicIntegrationScheme extends IntegrationScheme {
         super(
             comp,
             BasicIntegrationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/integration/BasicIntegration.vue")),
+            defineAsyncComponent(() => import("@/ui/integration/schemes/BasicIntegration.vue")),
         );
     }
 

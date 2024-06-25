@@ -63,9 +63,10 @@ export abstract class Authenticator extends IntegrationHandler {
             .done((reply: AuthenticateUserReply, success, msg) => {
                 if (success) {
                     const userStore = useUserStore();
-                    const { userToken } = storeToRefs(userStore);
+                    const { userToken, userFingerprint } = storeToRefs(userStore);
 
                     userToken.value = this._userToken;
+                    userFingerprint.value = reply.fingerprint;
 
                     this._callbacks.invokeDoneCallbacks(reply.authorization_state, reply.fingerprint);
                 } else {

@@ -51,6 +51,7 @@ def create_connectors_service(comp: BackendComponent) -> Service:
             name=msg.display_name,
             description=msg.description,
             category=msg.category,
+            authorization=msg.authorization,
             options=msg.options,
             logos=msg.logos,
             metadata_profile=msg.metadata_profile,

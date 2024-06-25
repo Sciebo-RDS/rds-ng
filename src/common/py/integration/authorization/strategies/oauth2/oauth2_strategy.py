@@ -1,7 +1,7 @@
 import time
 import typing
 import urllib.parse
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from http import HTTPStatus
 
 import requests
@@ -10,6 +10,7 @@ from dataclasses_json import dataclass_json
 from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
 from .oauth2_utils import format_oauth2_error_response
 from ..authorization_strategy import AuthorizationStrategy
+from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.user import UserID, UserToken
@@ -23,6 +24,23 @@ class OAuth2StrategyConfiguration:
     The OAuth2 strategy configuration.
     """
 
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Server:
+        host: str = ""
+        authorization_endpoint: str = ""
+        token_endpoint: str = ""
+        scope: str = ""
+
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Client:
+        client_id: str = ""
+        redirect_url: str = ""
+
+    server: Server = field(default_factory=Server)
+    client: Client = field(default_factory=Client)
+
 
 class OAuth2Strategy(AuthorizationStrategy):
     """
@@ -35,7 +53,6 @@ class OAuth2Strategy(AuthorizationStrategy):
         self,
         comp: BackendComponent,
         svc: Service,
-        config: OAuth2StrategyConfiguration,
         *,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
@@ -51,17 +68,18 @@ class OAuth2Strategy(AuthorizationStrategy):
             auth_token=auth_token,
         )
 
-        self._config = config
-
         self._request_timeout = comp.data.config.value(
             NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
         )
 
     def request_authorization(
-        self, user_id: UserID, auth_id: str, request_data: typing.Any
+        self,
+        user_id: UserID,
+        payload: AuthorizationRequestPayload,
+        request_data: typing.Any,
     ) -> AuthorizationToken:
         oauth2_data = self._get_oauth2_request_data(request_data)
-        client_secret = self._get_client_secret(auth_id)
+        client_secret = self._get_client_secret(payload.auth_bearer)
 
         response = requests.post(
             urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
@@ -69,6 +87,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "grant_type": "authorization_code",
                 "client_id": oauth2_data.client_id,
                 "client_secret": client_secret,
+                "scope": oauth2_data.scope,
                 "code": oauth2_data.auth_code,
                 "redirect_uri": oauth2_data.redirect_url,
             },
@@ -82,7 +101,10 @@ class OAuth2Strategy(AuthorizationStrategy):
 
                 return AuthorizationToken(
                     user_id=user_id,
-                    auth_id=auth_id,
+                    auth_id=payload.auth_id,
+                    auth_type=payload.auth_type,
+                    auth_issuer=payload.auth_issuer,
+                    auth_bearer=payload.auth_bearer,
                     expiration_timestamp=self._get_expiration_timestamp(resp_data),
                     strategy=self.strategy,
                     token=self._create_oauth2_token(resp_data),
@@ -90,6 +112,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                         token_host=oauth2_data.token_host,
                         token_endpoint=oauth2_data.token_endpoint,
                         client_id=oauth2_data.client_id,
+                        scope=oauth2_data.scope,
                     ),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -101,7 +124,7 @@ class OAuth2Strategy(AuthorizationStrategy):
 
     def refresh_authorization(self, token: AuthorizationToken) -> None:
         oauth2_token, oauth2_data = self._get_oauth2_data_from_token(token)
-        client_secret = self._get_client_secret(token.auth_id)
+        client_secret = self._get_client_secret(token.auth_bearer)
 
         if oauth2_token.refresh_token is None:
             raise RuntimeError("Tried to refresh without a refresh token")
@@ -112,6 +135,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "grant_type": "refresh_token",
                 "client_id": oauth2_data.client_id,
                 "client_secret": client_secret,
+                "scope": oauth2_data.scope,
                 "refresh_token": oauth2_token.refresh_token,
             },
             timeout=self._request_timeout,
@@ -175,12 +199,12 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
         return oauth2_token, oauth2_data
 
-    def _get_client_secret(self, auth_id: str) -> str:
-        client_secret = self._get_config_value(f"secrets.{auth_id}", "")
+    def _get_client_secret(self, auth_bearer: str) -> str:
+        client_secret = self._get_config_value(f"secrets.{auth_bearer}", "")
 
         # Verify the secret
         if client_secret == "":
-            raise RuntimeError(f"Missing OAuth2 client secret for {auth_id}")
+            raise RuntimeError(f"Missing OAuth2 client secret for {auth_bearer}")
 
         return client_secret
 
@@ -204,29 +228,20 @@ class OAuth2Strategy(AuthorizationStrategy):
 def create_oauth2_strategy(
     comp: BackendComponent,
     svc: Service,
-    config: typing.Any,
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
 ) -> OAuth2Strategy:
     """
-    Creates a new OAuth2 strategy instance, automatically configuring it.
+    Creates a new OAuth2 strategy instance.
 
     Args:
         comp: The main component.
         svc: The service to use for message sending.
-        config: The strategy configuration.
         user_token: An optional user token.
         auth_token: An optional authorization token.
 
     Returns:
         The newly created strategy.
     """
-    if not isinstance(config, OAuth2StrategyConfiguration):
-        raise RuntimeError("Invalid configuration passed for OAuth2")
-
-    oauth2_config = typing.cast(OAuth2StrategyConfiguration, config)
-
-    return OAuth2Strategy(
-        comp, svc, oauth2_config, user_token=user_token, auth_token=auth_token
-    )
+    return OAuth2Strategy(comp, svc, user_token=user_token, auth_token=auth_token)

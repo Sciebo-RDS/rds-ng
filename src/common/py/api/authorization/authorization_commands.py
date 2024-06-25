@@ -8,6 +8,7 @@ from ...core.messaging.composers import (
     CommandReplyComposer,
 )
 from ...data.entities.user import UserID
+from ...integration.authorization import AuthorizationRequestPayload
 
 
 @Message.define("command/authorization/request")
@@ -19,27 +20,24 @@ class RequestAuthorizationCommand(Command):
         Requires a ``RequestAuthorizationReply`` reply.
 
     Args:
-        auth_id: The ID of this token.
+        payload: The authorization request information.
         strategy: The token strategy (e.g., OAuth2).
         data: The actual token request data.
-        fingerprint: The user's fingerprint.
     """
 
-    auth_id: str
-
+    payload: AuthorizationRequestPayload = field(
+        default_factory=AuthorizationRequestPayload
+    )
     strategy: str
     data: typing.Dict[str, typing.Any] = field(default_factory=dict)
-
-    fingerprint: str = ""
 
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
-        auth_id: str,
+        payload: AuthorizationRequestPayload,
         strategy: str,
         data: typing.Dict[str, typing.Any],
-        fingerprint: str,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -48,10 +46,9 @@ class RequestAuthorizationCommand(Command):
         return message_builder.build_command(
             RequestAuthorizationCommand,
             chain,
-            auth_id=auth_id,
+            payload=payload,
             strategy=strategy,
             data=data,
-            fingerprint=fingerprint,
         )
 
 

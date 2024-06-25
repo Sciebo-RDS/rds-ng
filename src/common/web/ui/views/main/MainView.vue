@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 import { WebComponent } from "../../../component/WebComponent";
 import { ComponentState, useComponentStore } from "../../../data/stores/ComponentStore";
@@ -16,6 +16,10 @@ watch(
         activeState.value = state;
     },
 );
+
+onMounted(() => {
+    compStore.queryParams = new URLSearchParams(window.location.search); // These might get lost, so store them
+});
 </script>
 
 <template>

@@ -1,5 +1,7 @@
 import { defineAsyncComponent } from "vue";
 
+import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
+
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
 import { Authenticator } from "@/integration/authentication/Authenticator";
@@ -8,7 +10,7 @@ import { Authorizer } from "@/integration/authorization/Authorizer";
 import { HostAuthorizer } from "@/integration/authorization/HostAuthorizer";
 import { HostResourcesBroker } from "@/integration/resources/brokers/HostResourcesBroker";
 import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
-import { type HostAuthorization, type HostResources, type HostUserToken } from "@/integration/HostTypes";
+import { type HostResources, type HostUserToken } from "@/integration/HostTypes";
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
 /**
@@ -21,7 +23,7 @@ export class HostIntegrationScheme extends IntegrationScheme {
         super(
             comp,
             HostIntegrationScheme.Scheme,
-            defineAsyncComponent(() => import("@/ui/integration/HostIntegration.vue")),
+            defineAsyncComponent(() => import("@/ui/integration/schemes/HostIntegration.vue")),
         );
     }
 
@@ -29,7 +31,7 @@ export class HostIntegrationScheme extends IntegrationScheme {
         return new HostAuthenticator(this._component, token);
     }
 
-    public authorizer(hostAuth: HostAuthorization): Authorizer {
+    public authorizer(hostAuth: AuthorizationSettings): Authorizer {
         return new HostAuthorizer(this._component, hostAuth);
     }
 

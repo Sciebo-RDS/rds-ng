@@ -4,7 +4,7 @@ import Button from "primevue/button";
 import Image from "primevue/image";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import { nextTick, reactive, ref, toRefs, watch, computed } from "vue";
+import { nextTick, reactive, ref, toRefs, watch, computed, type PropType } from "vue";
 
 import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
@@ -29,7 +29,7 @@ import previewImage from "@assets/img/preview.png";
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
-        type: Project,
+        type: Object as PropType<Project>,
         required: true,
     },
 });

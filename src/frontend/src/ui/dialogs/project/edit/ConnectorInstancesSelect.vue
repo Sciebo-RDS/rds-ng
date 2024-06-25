@@ -4,7 +4,7 @@ import Checkbox from "primevue/checkbox";
 import ScrollPanel from "primevue/scrollpanel";
 import { computed, toRefs } from "vue";
 
-import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
+import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorInstanceUtils";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useUserStore } from "@/data/stores/UserStore";
@@ -16,8 +16,8 @@ const userStore = useUserStore();
 const props = defineProps({
     disabled: {
         type: Boolean,
-        default: false
-    }
+        default: false,
+    },
 });
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
@@ -33,13 +33,7 @@ const model = defineModel({ default: [] });
             <ConnectorHeader :connector-id="group.connectorID" class="r-shade-dark rounded list-entry" />
 
             <div v-for="instance of group.connectorInstances" :key="instance.instance_id" class="flex align-items-center list-entry">
-                <Checkbox
-                    v-model="model"
-                    :inputId="instance.instance_id"
-                    :value="instance.instance_id"
-                    :disabled="disabled"
-                    class="self-center"
-                />
+                <Checkbox v-model="model" :inputId="instance.instance_id" :value="instance.instance_id" :disabled="disabled" class="self-center" />
                 <label :for="instance.instance_id" class="pl-1.5">{{ instance.name }}</label>
             </div>
         </div>

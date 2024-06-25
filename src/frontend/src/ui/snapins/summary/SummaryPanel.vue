@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { toRefs } from "vue";
+import { type PropType, toRefs } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
 const props = defineProps({
     project: {
-        type: Project,
-        required: true
-    }
+        type: Object as PropType<Project>,
+        required: true,
+    },
 });
 const { project } = toRefs(props);
 </script>
@@ -16,6 +16,4 @@ const { project } = toRefs(props);
     <div>And all in all we can say that this is cool!</div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

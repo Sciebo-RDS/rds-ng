@@ -11,7 +11,6 @@ AuthorizationStrategyCreator = typing.Callable[
     [
         BackendComponent,
         Service,
-        typing.Any,
         UserToken | None,
         AuthorizationToken | None,
     ],

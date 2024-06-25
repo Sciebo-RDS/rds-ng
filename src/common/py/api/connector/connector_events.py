@@ -9,6 +9,7 @@ from ...core.messaging.composers import (
     MessageBuilder,
     EventComposer,
 )
+from ...data.entities.authorization import AuthorizationSettings
 from ...data.entities.connector import (
     Connector,
     ConnectorID,
@@ -55,6 +56,9 @@ class ConnectorAnnounceEvent(Event):
     description: str
     category: ConnectorCategoryID
 
+    authorization: AuthorizationSettings = dataclasses.field(
+        default_factory=AuthorizationSettings
+    )
     options: Connector.Options = Connector.Options.DEFAULT
 
     logos: Connector.Logos = dataclasses.field(default_factory=Connector.Logos)
@@ -69,6 +73,7 @@ class ConnectorAnnounceEvent(Event):
         name: str,
         description: str,
         category: ConnectorCategoryID,
+        authorization: AuthorizationSettings,
         options: Connector.Options,
         logos: Connector.Logos,
         metadata_profile: ConnectorMetadataProfile,
@@ -84,6 +89,7 @@ class ConnectorAnnounceEvent(Event):
             display_name=name,
             description=description,
             category=category,
+            authorization=authorization,
             options=options,
             logos=logos,
             metadata_profile=metadata_profile,

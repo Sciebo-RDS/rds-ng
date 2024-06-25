@@ -122,13 +122,6 @@ function onPublishInitDone(success: boolean, msg: string): void {
                 </span>
             </div>
             <div v-else class="italic r-text-error">Unknown connector category</div>
-            <img
-                v-if="connector && connector.logos.horizontal_logo"
-                :src="connector.logos.horizontal_logo"
-                class="h-4 opacity-50"
-                alt="{{ connector.name }}"
-                :title="connector.name"
-            />
         </div>
     </div>
 </template>

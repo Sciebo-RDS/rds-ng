@@ -2,11 +2,12 @@ import { useAxios } from "@vueuse/integrations/useAxios";
 import { type KeyLike } from "jose";
 import { unref } from "vue";
 
-import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
+import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { terminatePath } from "@common/utils/Paths";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import { type HostAuthorization, type HostResources } from "@/integration/HostTypes";
+import { type HostResources } from "@/integration/HostTypes";
+import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
  * All known host API endpoints.
@@ -35,8 +36,8 @@ export class HostAPI {
         return this.getEndpointData<KeyLike>(HostAPIEndpoints.PublicKey, "public-key", true);
     }
 
-    public async getAuthorization(): Promise<HostAuthorization> {
-        return this.getEndpointData<HostAuthorization>(HostAPIEndpoints.Authorization, "authorization");
+    public async getAuthorizationSettings(): Promise<AuthorizationSettings> {
+        return this.getEndpointData<AuthorizationSettings>(HostAPIEndpoints.Authorization, "authorization");
     }
 
     public async getResources(): Promise<HostResources> {
