@@ -18,6 +18,7 @@ def get_oauth2_strategy_configuration(
             token_endpoint=config.value(
                 OAuth2AuthorizationSettingIDs.SERVER_TOKEN_ENDPOINT
             ),
+            scope=config.value(OAuth2AuthorizationSettingIDs.SERVER_SCOPE),
         ),
         client=OAuth2StrategyConfiguration.Client(
             client_id=config.value(OAuth2AuthorizationSettingIDs.CLIENT_ID),

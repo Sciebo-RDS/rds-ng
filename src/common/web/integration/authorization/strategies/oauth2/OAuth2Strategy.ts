@@ -14,6 +14,7 @@ export interface OAuth2StrategyConfiguration {
         host: string;
         authorization_endpoint: string;
         token_endpoint: string;
+        scope: string;
     };
     client: {
         client_id: string;
@@ -40,6 +41,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         const url = new URL(this._config.server.authorization_endpoint, new URL(this._config.server.host));
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this._config.client.client_id);
+        url.searchParams.set("scope", this._config.server.scope);
         url.searchParams.set("redirect_uri", this._config.client.redirect_url);
         url.searchParams.set("state", authRequest.encodedPayload);
         this.redirect(url.toString());
@@ -57,6 +59,7 @@ export class OAuth2Strategy extends AuthorizationStrategy {
 
             client_id: this._config.client.client_id,
             auth_code: authCode,
+            scope: this._config.server.scope,
 
             redirect_url: this._config.client.redirect_url,
         } as OAuth2AuthorizationRequestData;

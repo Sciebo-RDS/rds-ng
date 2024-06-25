@@ -14,6 +14,7 @@ class OAuth2AuthorizationRequestData:
         token_endpoint: The OAuth2 token endpoint.
         client_id: The OAuth2 client ID.
         auth_code: The authorization code.
+        scope: An optional access scope.
         redirect_url: The redirection URL.
     """
 
@@ -22,6 +23,7 @@ class OAuth2AuthorizationRequestData:
 
     client_id: str
     auth_code: str
+    scope: str
 
     redirect_url: str
 
@@ -54,9 +56,11 @@ class OAuth2TokenData:
         token_host: The OAuth2 token host.
         token_endpoint: The OAuth2 token endpoint.
         client_id: The OAuth2 client ID.
+        scope: An optional access scope.
     """
 
     token_host: str
     token_endpoint: str
 
     client_id: str
+    scope: str
