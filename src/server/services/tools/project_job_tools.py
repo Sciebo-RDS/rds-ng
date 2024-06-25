@@ -6,7 +6,8 @@ from common.py.data.entities.project import ProjectJobID, ProjectJob
 from .. import ServerServiceContext
 from ...networking.session import Session
 
-ModifyProjectJobCallback = typing.Callable[[ProjectJob, Session | None], None]
+ModifyProjectJobCallback = typing.Callable[[ProjectJob], None]
+NotifyProjectJobCallback = typing.Callable[[ProjectJob, Session], None]
 
 
 def send_project_jobs_list(
@@ -41,22 +42,28 @@ def send_project_jobs_list(
 
 def handle_project_job_message(
     job_id: ProjectJobID,
-    callback: ModifyProjectJobCallback,
     msg: Message,
     ctx: ServerServiceContext,
+    *,
+    update_callback: ModifyProjectJobCallback | None = None,
+    notify_callback: NotifyProjectJobCallback | None = None,
 ) -> None:
     """
     Modifies a project job via a callback and sends the updated jobs list to the user.
 
     Args:
         job_id: The job ID.
-        callback: The callback function.
+        update_callback: Callback function to update the job (called once).
+        notify_callback: Callback function to notify users about the updated job (called per user session).
         msg: Original message.
         ctx: The service context.
     """
     if (job := ctx.storage_pool.project_job_storage.get(job_id)) is not None:
-        session = ctx.session_manager.find_user_session(job.user_id)
-        callback(job, session)
+        if update_callback is not None:
+            update_callback(job)
 
-        if session is not None:
+        for session in ctx.session_manager.find_user_sessions(job.user_id):
+            if notify_callback is not None:
+                notify_callback(job, session)
+
             send_project_jobs_list(msg, ctx, session=session)

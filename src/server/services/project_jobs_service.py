@@ -130,7 +130,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(StartProjectJobReply)
     def job_started(msg: StartProjectJobReply, ctx: ServerServiceContext) -> None:
-        def update_job(job: ProjectJob, _: Session) -> None:
+        def update_job(job: ProjectJob) -> None:
             job.progress = 0.0
             job.message = "Job started"
 
@@ -143,12 +143,15 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             )
 
         handle_project_job_message(
-            (msg.project_id, msg.connector_instance), update_job, msg, ctx
+            (msg.project_id, msg.connector_instance),
+            msg,
+            ctx,
+            update_callback=update_job,
         )
 
     @svc.message_handler(ProjectJobProgressEvent)
     def job_progress(msg: ProjectJobProgressEvent, ctx: ServerServiceContext) -> None:
-        def update_job(job: ProjectJob, _: Session) -> None:
+        def update_job(job: ProjectJob) -> None:
             if ProjectJobProgressEvent.Contents.MESSAGE in msg.contents:
                 job.progress = msg.progress
 
@@ -156,14 +159,17 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 job.message = msg.message
 
         handle_project_job_message(
-            (msg.project_id, msg.connector_instance), update_job, msg, ctx
+            (msg.project_id, msg.connector_instance),
+            msg,
+            ctx,
+            update_callback=update_job,
         )
 
     @svc.message_handler(ProjectJobCompletionEvent)
     def job_completion(
         msg: ProjectJobCompletionEvent, ctx: ServerServiceContext
     ) -> None:
-        def update_job(job: ProjectJob, session: Session | None) -> None:
+        def update_job(job: ProjectJob) -> None:
             if (
                 project := ctx.storage_pool.project_storage.get(job.project_id)
             ) is not None:
@@ -181,22 +187,6 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                     ),
                 )
 
-                if session:
-                    # Bounce the message off to the user to inform him about the completion
-                    ProjectJobCompletionEvent.build(
-                        ctx.message_builder,
-                        project_id=msg.project_id,
-                        connector_instance=msg.connector_instance,
-                        success=msg.success,
-                        message=msg.message,
-                        chain=msg,
-                    ).emit(Channel.direct(session.user_origin))
-
-                    # Send the updated project logbook to the client
-                    from .tools import send_project_logbook
-
-                    send_project_logbook(msg, ctx, project, session=session)
-
             ctx.storage_pool.project_job_storage.remove(job)
 
             debug(
@@ -209,11 +199,31 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 message=msg.message,
             )
 
+        def notify_job(job: ProjectJob, session: Session) -> None:
+            # Bounce the message off to the user to inform him about the completion
+            ProjectJobCompletionEvent.build(
+                ctx.message_builder,
+                project_id=msg.project_id,
+                connector_instance=msg.connector_instance,
+                success=msg.success,
+                message=msg.message,
+                chain=msg,
+            ).emit(Channel.direct(session.user_origin))
+
+            # Send the updated project logbook to the client
+            if (
+                project := ctx.storage_pool.project_storage.get(job.project_id)
+            ) is not None:
+                from .tools import send_project_logbook
+
+                send_project_logbook(msg, ctx, project, session=session)
+
         handle_project_job_message(
             (msg.project_id, msg.connector_instance),
-            update_job,
             msg,
             ctx,
+            update_callback=update_job,
+            notify_callback=notify_job,
         )
 
     return svc

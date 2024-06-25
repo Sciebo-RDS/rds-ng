@@ -75,7 +75,5 @@ def handle_authorization_token_changes(
         msg: Original message.
         ctx: The service context.
     """
-    if (
-        session := ctx.session_manager.find_user_session(auth_token.user_id)
-    ) is not None:
+    for session in ctx.session_manager.find_user_sessions(auth_token.user_id):
         send_user_authorizations(msg, ctx, session=session)
