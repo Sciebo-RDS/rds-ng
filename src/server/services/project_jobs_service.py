@@ -1,11 +1,19 @@
 from common.py.component import BackendComponent
-from common.py.core.logging import debug
+from common.py.core.logging import debug, error
 from common.py.core.messaging import Channel
 from common.py.data.entities.authorization import get_host_authorization_token_id
 from common.py.data.entities.project import ProjectJob
+from common.py.data.entities.project.logbook import (
+    append_logbook_record,
+    ProjectJobHistoryRecord,
+)
 from common.py.services import Service
 
-from .tools import send_project_jobs_list, handle_project_job_message
+from .tools import (
+    send_project_jobs_list,
+    handle_project_job_message,
+    send_project_logbook,
+)
 from ..networking.session import Session
 
 
@@ -147,23 +155,52 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(StartProjectJobReply)
     def job_started(msg: StartProjectJobReply, ctx: ServerServiceContext) -> None:
-        def update_job(job: ProjectJob) -> None:
-            job.progress = 0.0
-            job.message = "Job started"
+        project = ctx.storage_pool.project_storage.get(msg.project_id)
 
-            debug(
-                "Job started",
-                scope="jobs",
-                user_id=job.user_id,
-                project_id=job.project_id,
-                connector_instance=job.connector_instance,
-            )
+        def update_job(job: ProjectJob) -> None:
+            if msg.success:
+                job.progress = 0.0
+                job.message = "Job started"
+
+                debug(
+                    "Job started",
+                    scope="jobs",
+                    user_id=job.user_id,
+                    project_id=job.project_id,
+                    connector_instance=job.connector_instance,
+                )
+            else:
+                if project is not None:
+                    append_logbook_record(
+                        project.logbook.job_history,
+                        ProjectJobHistoryRecord(
+                            connector_instance=job.connector_instance,
+                            success=False,
+                            message=f"Job start failed: {msg.message}",
+                        ),
+                    )
+
+                ctx.storage_pool.project_job_storage.remove(job)
+
+                error(
+                    "Job start failed",
+                    scope="jobs",
+                    user_id=job.user_id,
+                    project_id=job.project_id,
+                    connector_instance=job.connector_instance,
+                    error=msg.message,
+                )
+
+        def notify_job(job: ProjectJob, session: Session) -> None:
+            if project is not None:
+                send_project_logbook(msg, ctx, project, session=session)
 
         handle_project_job_message(
             (msg.project_id, msg.connector_instance),
             msg,
             ctx,
             update_callback=update_job,
+            notify_callback=notify_job,
         )
 
     @svc.message_handler(ProjectJobProgressEvent)
@@ -186,15 +223,10 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
     def job_completion(
         msg: ProjectJobCompletionEvent, ctx: ServerServiceContext
     ) -> None:
-        def update_job(job: ProjectJob) -> None:
-            if (
-                project := ctx.storage_pool.project_storage.get(job.project_id)
-            ) is not None:
-                from common.py.data.entities.project.logbook import (
-                    ProjectJobHistoryRecord,
-                    append_logbook_record,
-                )
+        project = ctx.storage_pool.project_storage.get(msg.project_id)
 
+        def update_job(job: ProjectJob) -> None:
+            if project is not None:
                 append_logbook_record(
                     project.logbook.job_history,
                     ProjectJobHistoryRecord(
@@ -228,11 +260,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             ).emit(Channel.direct(session.user_origin))
 
             # Send the updated project logbook to the client
-            if (
-                project := ctx.storage_pool.project_storage.get(job.project_id)
-            ) is not None:
-                from .tools import send_project_logbook
-
+            if project is not None:
                 send_project_logbook(msg, ctx, project, session=session)
 
         handle_project_job_message(
