@@ -3,7 +3,8 @@ from .resources_transmitter_exceptions import ResourcesTransmitterError
 from ..brokers import create_resources_broker
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationToken
-from ....data.entities.resource import ResourcesBrokerToken
+from ....data.entities.project import Project
+from ....data.entities.resource import ResourcesBrokerToken, ResourcesList
 from ....data.entities.user import UserToken
 from ....services import Service
 
@@ -46,5 +47,23 @@ class ResourcesTransmitter:
 
         self._context = ResourcesTransmitterContext()
 
+    def prepare(self, project: Project) -> None:
+        """
+        Prepares the transmission of resources; must always be called before any other method.
+
+        Args:
+            project: The project to work on.
+        """
+
+        # Get a list of all resources in the project's path
+        # TODO: Strategy performs re-authorization in case of expired tokens -> At least tell the server
+        self._context.resources = self._fetch_resources(project.resources_path)
+
     def reset(self) -> None:
         self._context = ResourcesTransmitterContext()
+
+    def _fetch_resources(self, root: str) -> ResourcesList:
+        try:
+            return self._broker.list_resources(root)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            raise ResourcesTransmitterError(f"Unable to list resources") from exc

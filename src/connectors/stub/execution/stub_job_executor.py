@@ -32,6 +32,8 @@ class StubJobExecutor(ConnectorJobExecutor):
         self._job_time = 1
 
     def start(self) -> None:
+        self._transmitter.prepare(self._job.project)
+
         self._start_tick = time.time()
         self._job_time = random.uniform(5.0, 15.0)
 
