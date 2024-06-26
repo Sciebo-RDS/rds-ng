@@ -2,7 +2,7 @@ from common.py.component import BackendComponent
 from common.py.core.logging import debug, error
 from common.py.core.messaging import Channel
 from common.py.data.entities.authorization import get_host_authorization_token_id
-from common.py.data.entities.project import ProjectJob
+from common.py.data.entities.project import Project, ProjectJob
 from common.py.data.entities.project.logbook import (
     append_logbook_record,
     ProjectJobHistoryRecord,
@@ -41,6 +41,34 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
     from .server_service_context import ServerServiceContext
 
     svc = comp.create_service("Project jobs service", context_type=ServerServiceContext)
+
+    def _remove_failed_job(
+        job: ProjectJob,
+        project: Project | None,
+        ctx: ServerServiceContext,
+        *,
+        message: str,
+    ) -> None:
+        if project is not None:
+            append_logbook_record(
+                project.logbook.job_history,
+                ProjectJobHistoryRecord(
+                    connector_instance=job.connector_instance,
+                    success=False,
+                    message=f"Job start failed: {message}",
+                ),
+            )
+
+        ctx.storage_pool.project_job_storage.remove(job)
+
+        error(
+            "Job start failed",
+            scope="jobs",
+            user_id=job.user_id,
+            project_id=job.project_id,
+            connector_instance=job.connector_instance,
+            error=message,
+        )
 
     @svc.message_handler(ListProjectJobsCommand)
     def list_jobs(msg: ListProjectJobsCommand, ctx: ServerServiceContext) -> None:
@@ -151,7 +179,11 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             auth_token=auth_token,
             broker_token=broker_token,
             chain=msg,
-        ).emit(Channel.direct(connector.connector_address))
+        ).failed(
+            lambda _, message: _remove_failed_job(job, project, ctx, message=message)
+        ).emit(
+            Channel.direct(connector.connector_address)
+        )
 
     @svc.message_handler(StartProjectJobReply)
     def job_started(msg: StartProjectJobReply, ctx: ServerServiceContext) -> None:
@@ -170,26 +202,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                     connector_instance=job.connector_instance,
                 )
             else:
-                if project is not None:
-                    append_logbook_record(
-                        project.logbook.job_history,
-                        ProjectJobHistoryRecord(
-                            connector_instance=job.connector_instance,
-                            success=False,
-                            message=f"Job start failed: {msg.message}",
-                        ),
-                    )
-
-                ctx.storage_pool.project_job_storage.remove(job)
-
-                error(
-                    "Job start failed",
-                    scope="jobs",
-                    user_id=job.user_id,
-                    project_id=job.project_id,
-                    connector_instance=job.connector_instance,
-                    error=msg.message,
-                )
+                _remove_failed_job(job, project, ctx, message=msg.message)
 
         def notify_job(job: ProjectJob, session: Session) -> None:
             if project is not None:
