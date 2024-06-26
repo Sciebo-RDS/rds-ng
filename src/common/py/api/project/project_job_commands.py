@@ -11,8 +11,11 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
+from ...data.entities.authorization import AuthorizationToken
 from ...data.entities.connector import ConnectorInstanceID
 from ...data.entities.project import ProjectID, ProjectJob, Project
+from ...data.entities.resource import ResourcesBrokerToken
+from ...data.entities.user import UserToken
 
 
 @Message.define("command/project-job/list")
@@ -127,6 +130,9 @@ class StartProjectJobCommand(Command):
     Args:
         project: The project to publish.
         connector_instance: The connector instance ID.
+        user_token: The user token.
+        auth_token: The authorization token to access the host resources.
+        broker_token: Token to create the resources broker.
 
     Notes:
         Requires a ``StartProjectJobReply`` reply.
@@ -135,12 +141,19 @@ class StartProjectJobCommand(Command):
     project: Project
     connector_instance: ConnectorInstanceID
 
+    user_token: UserToken
+    auth_token: AuthorizationToken | None
+    broker_token: ResourcesBrokerToken
+
     @staticmethod
     def build(
         message_builder: MessageBuilder,
         *,
         project: Project,
         connector_instance: ConnectorInstanceID,
+        user_token: UserToken,
+        auth_token: AuthorizationToken | None,
+        broker_token: ResourcesBrokerToken,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -151,6 +164,9 @@ class StartProjectJobCommand(Command):
             chain,
             project=project,
             connector_instance=connector_instance,
+            user_token=user_token,
+            auth_token=auth_token,
+            broker_token=broker_token,
         )
 
 

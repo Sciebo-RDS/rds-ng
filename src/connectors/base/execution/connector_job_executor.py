@@ -2,9 +2,12 @@ import abc
 import time
 import typing
 
+from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.integration.resources.transmitters import ResourcesTransmitter
+from common.py.services import Service
 
 from ..data.entities.connector import ConnectorJob
 
@@ -17,6 +20,8 @@ class ConnectorJobExecutor(abc.ABC):
 
     def __init__(
         self,
+        comp: BackendComponent,
+        svc: Service,
         job: ConnectorJob,
         *,
         message_builder: MessageBuilder,
@@ -24,6 +29,8 @@ class ConnectorJobExecutor(abc.ABC):
     ):
         """
         Args:
+            comp: The global component.
+            svc: The service used for message sending.
             job: The job (data).
             message_builder: A message builder to send messages through.
             target_channel: The target server channel.
@@ -33,6 +40,14 @@ class ConnectorJobExecutor(abc.ABC):
         self._mesage_builder = message_builder
         self._target_channel = target_channel
 
+        self._transmitter: ResourcesTransmitter = ResourcesTransmitter(
+            comp,
+            svc,
+            user_token=self._job.user_token,
+            auth_token=self._job.auth_token,
+            broker_token=self._job.broker_token,
+        )
+
         self._is_active = True
 
     def start(self) -> None:
@@ -41,6 +56,7 @@ class ConnectorJobExecutor(abc.ABC):
 
         If the job cannot start, an exception should be thrown.
         """
+
         raise NotImplementedError()
 
     def process(self) -> None:
@@ -161,6 +177,13 @@ class ConnectorJobExecutor(abc.ABC):
         The connector job (data).
         """
         return self._job
+
+    @property
+    def transmitter(self) -> ResourcesTransmitter | None:
+        """
+        The resources transmitter (if already created).
+        """
+        return self._transmitter
 
     @property
     def is_active(self) -> bool:

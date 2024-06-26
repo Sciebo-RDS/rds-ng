@@ -1,6 +1,7 @@
 from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
+from common.py.data.entities.authorization import get_host_authorization_token_id
 from common.py.data.entities.project import ProjectJob
 from common.py.services import Service
 
@@ -111,6 +112,19 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             )
             return
 
+        # A broker token must be present, too
+        if (broker_token := ctx.session.broker_token) is None:
+            _initiate(
+                False,
+                f"No broker token has been assigned to the user",
+            )
+            return
+
+        # Fetch the host authorization token; this can be *None* if the host doesn't require any authorization
+        auth_token = ctx.storage_pool.authorization_token_storage.get(
+            get_host_authorization_token_id(ctx.user)
+        )
+
         # All checks have passed, so initiate the job and send it to the connector
         job = ProjectJob(
             user_id=ctx.user.user_id,
@@ -125,6 +139,9 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             ctx.message_builder,
             project=project,
             connector_instance=msg.connector_instance,
+            user_token=ctx.session.user_token,
+            auth_token=auth_token,
+            broker_token=broker_token,
             chain=msg,
         ).emit(Channel.direct(connector.connector_address))
 

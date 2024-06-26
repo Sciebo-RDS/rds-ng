@@ -48,7 +48,7 @@ services:
             # - RDS_STORAGE_DATABASE_SQLITE_FILE=/data/rds.db
             - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=oNwLWleq5FV8odCHahsp8dL74vKLLbKzWnYVc2PqFgVRUY2IYdyeMyg5qSAAnTBh
             - RDS_AUTHORIZATION_OAUTH2_SECRETS_STUB=c4X1LOf1YLBacQtu6HAR3iDmLajiTeBHiZWtKegDHUSMdmlerGOOU3QjSRKYbXXh
-            # - RDS_INTEGRATION_DEFAULT_ROOT_PATH=/files
+            - RDS_INTEGRATION_DEFAULT_ROOT_PATH=/files
 
     # Connector: Stub
     connector-stub:
@@ -100,8 +100,8 @@ services:
         environment:
             - NODE_TLS_REJECT_UNAUTHORIZED=0
             - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200
-            # - RDS_INTEGRATION_SCHEME=basic
-            - RDS_INTEGRATION_SCHEME=host
+            - RDS_INTEGRATION_SCHEME=basic
+            # - RDS_INTEGRATION_SCHEME=host
             - RDS_INTEGRATION_HOST_API_URL=http://localhost:8080/apps/rdsng/api/v1
             - RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL=http://localhost:8080/apps/rdsng/main
             - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=uh8K3FCc7PDtwSb9UeKzWs7QYb89pOWAYWxhJuidOpkUnizblqdk2KggH2y8w9GW

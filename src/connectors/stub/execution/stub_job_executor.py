@@ -1,8 +1,10 @@
 import random
 import time
 
+from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.services import Service
 
 from ...base.data.entities.connector import ConnectorJob
 from ...base.execution import ConnectorJobExecutor
@@ -11,13 +13,19 @@ from ...base.execution import ConnectorJobExecutor
 class StubJobExecutor(ConnectorJobExecutor):
     def __init__(
         self,
+        comp: BackendComponent,
+        svc: Service,
         job: ConnectorJob,
         *,
         message_builder: MessageBuilder,
         target_channel: Channel,
     ):
         super().__init__(
-            job, message_builder=message_builder, target_channel=target_channel
+            comp,
+            svc,
+            job,
+            message_builder=message_builder,
+            target_channel=target_channel,
         )
 
         self._start_tick = 0
