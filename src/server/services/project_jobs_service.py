@@ -156,11 +156,6 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             )
             return
 
-        # Fetch the host authorization token; this can be *None* if the host doesn't require any authorization
-        auth_token = ctx.storage_pool.authorization_token_storage.get(
-            get_host_authorization_token_id(ctx.user)
-        )
-
         # All checks have passed, so initiate the job and send it to the connector
         job = ProjectJob(
             user_id=ctx.user.user_id,
@@ -176,7 +171,6 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             project=project,
             connector_instance=msg.connector_instance,
             user_token=ctx.session.user_token,
-            auth_token=auth_token,
             broker_token=broker_token,
             chain=msg,
         ).failed(

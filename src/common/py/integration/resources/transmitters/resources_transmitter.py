@@ -1,12 +1,18 @@
+import typing
+
 from .resources_transmitter_context import ResourcesTransmitterContext
 from .resources_transmitter_exceptions import ResourcesTransmitterError
-from ..brokers import create_resources_broker
+from ..brokers import create_resources_broker, ResourcesBroker
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationToken
 from ....data.entities.project import Project
 from ....data.entities.resource import ResourcesBrokerToken, ResourcesList
 from ....data.entities.user import UserToken
 from ....services import Service
+from ....utils import ExecutionCallbacks
+
+TransmissionPrepareDoneCallback = typing.Callable[[ResourcesList], None]
+TransmissionPrepareFailCallback = typing.Callable[[str], None]
 
 
 class ResourcesTransmitter:
@@ -20,7 +26,6 @@ class ResourcesTransmitter:
         svc: Service,
         *,
         user_token: UserToken,
-        auth_token: AuthorizationToken | None,
         broker_token: ResourcesBrokerToken,
     ):
         """
@@ -28,24 +33,19 @@ class ResourcesTransmitter:
             comp: The global component.
             svc: The service used for message sending.
             user_token: The user token.
-            auth_token: An optional authorization token.
             broker_token: The broker token.
         """
-        try:
-            self._broker = create_resources_broker(
-                comp,
-                svc,
-                broker_token.broker,
-                broker_token.config,
-                user_token=user_token,
-                auth_token=auth_token,
-            )
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            raise ResourcesTransmitterError(
-                f"Unable to create resources broker"
-            ) from exc
+        self._component = comp
+        self._service = svc
+
+        self._user_token = user_token
+        self._broker_token = broker_token
 
         self._context = ResourcesTransmitterContext()
+
+        self._prepare_callbacks = ExecutionCallbacks[
+            TransmissionPrepareDoneCallback, TransmissionPrepareFailCallback
+        ]()
 
     def prepare(self, project: Project) -> None:
         """
@@ -56,14 +56,56 @@ class ResourcesTransmitter:
         """
 
         # Get a list of all resources in the project's path
-        # TODO: Strategy performs re-authorization in case of expired tokens -> At least tell the server
-        self._context.resources = self._fetch_resources(project.resources_path)
+        # TODO: Async; Error Handling
+        broker = self._create_broker()
+
+        self._context.resources = broker.list_resources(project.resources_path)
+        self._prepare_callbacks.invoke_done_callbacks(self._context.resources)
+
+    def prepare_done(self, callback: TransmissionPrepareDoneCallback) -> typing.Self:
+        """
+        Adds a callback for finished preparation.
+
+        Args:
+            callback: The callback to add.
+
+        Returns:
+            This instance for easy chaining.
+        """
+        self._prepare_callbacks.done(callback)
+        return self
+
+    def prepare_failed(self, callback: TransmissionPrepareFailCallback) -> typing.Self:
+        """
+        Adds a callback for failed preparation.
+
+        Args:
+            callback: The callback to add.
+
+        Returns:
+            This instance for easy chaining.
+        """
+        self._prepare_callbacks.failed(callback)
+        return self
 
     def reset(self) -> None:
         self._context = ResourcesTransmitterContext()
 
-    def _fetch_resources(self, root: str) -> ResourcesList:
+        self._prepare_callbacks = ExecutionCallbacks[
+            TransmissionPrepareDoneCallback, TransmissionPrepareFailCallback
+        ]()
+
+    def _create_broker(self) -> ResourcesBroker:
         try:
-            return self._broker.list_resources(root)
+            return create_resources_broker(
+                self._component,
+                self._service,
+                self._broker_token.broker,
+                self._broker_token.config,
+                user_token=self._user_token,
+                auth_token=AuthorizationToken(),  # TODO: Get current auth from svr
+            )
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            raise ResourcesTransmitterError(f"Unable to list resources") from exc
+            raise ResourcesTransmitterError(
+                f"Unable to create resources broker"
+            ) from exc

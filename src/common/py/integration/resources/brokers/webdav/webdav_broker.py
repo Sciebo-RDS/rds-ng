@@ -12,7 +12,6 @@ from .. import ResourcesBroker
 from ....authorization.strategies import AuthorizationStrategy
 from .....component import BackendComponent
 from .....core import logging
-from .....core.messaging import Channel
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import (
     ResourcesList,

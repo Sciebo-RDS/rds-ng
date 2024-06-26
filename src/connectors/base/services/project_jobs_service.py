@@ -36,7 +36,6 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 project=msg.project,
                 connector_instance=msg.connector_instance,
                 user_token=msg.user_token,
-                auth_token=msg.auth_token,
                 broker_token=msg.broker_token,
             )
             ctx.jobs_engine.spawn(comp, svc, job, ctx)

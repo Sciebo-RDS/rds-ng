@@ -44,7 +44,6 @@ class ConnectorJobExecutor(abc.ABC):
             comp,
             svc,
             user_token=self._job.user_token,
-            auth_token=self._job.auth_token,
             broker_token=self._job.broker_token,
         )
 

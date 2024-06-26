@@ -131,7 +131,6 @@ class StartProjectJobCommand(Command):
         project: The project to publish.
         connector_instance: The connector instance ID.
         user_token: The user token.
-        auth_token: The authorization token to access the host resources.
         broker_token: Token to create the resources broker.
 
     Notes:
@@ -142,7 +141,6 @@ class StartProjectJobCommand(Command):
     connector_instance: ConnectorInstanceID
 
     user_token: UserToken
-    auth_token: AuthorizationToken | None
     broker_token: ResourcesBrokerToken
 
     @staticmethod
@@ -152,7 +150,6 @@ class StartProjectJobCommand(Command):
         project: Project,
         connector_instance: ConnectorInstanceID,
         user_token: UserToken,
-        auth_token: AuthorizationToken | None,
         broker_token: ResourcesBrokerToken,
         chain: Message | None = None,
     ) -> CommandComposer:
@@ -165,7 +162,6 @@ class StartProjectJobCommand(Command):
             project=project,
             connector_instance=connector_instance,
             user_token=user_token,
-            auth_token=auth_token,
             broker_token=broker_token,
         )
 
