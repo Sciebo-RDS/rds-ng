@@ -1,3 +1,4 @@
+import threading
 import typing
 
 from .resources_transmitter_context import ResourcesTransmitterContext
@@ -41,11 +42,12 @@ class ResourcesTransmitter:
         self._user_token = user_token
         self._broker_token = broker_token
 
-        self._context = ResourcesTransmitterContext()
-
         self._prepare_callbacks = ExecutionCallbacks[
             TransmissionPrepareDoneCallback, TransmissionPrepareFailCallback
         ]()
+
+        self._context = ResourcesTransmitterContext()
+        self._lock = threading.RLock()
 
     def prepare(self, project: Project) -> None:
         """
@@ -56,11 +58,12 @@ class ResourcesTransmitter:
         """
 
         # Get a list of all resources in the project's path
-        # TODO: Async; Error Handling
-        broker = self._create_broker()
+        with self._lock:
+            # TODO: Async; Error Handling
+            broker = self._create_broker()
 
-        self._context.resources = broker.list_resources(project.resources_path)
-        self._prepare_callbacks.invoke_done_callbacks(self._context.resources)
+            self._context.resources = broker.list_resources(project.resources_path)
+            self._prepare_callbacks.invoke_done_callbacks(self._context.resources)
 
     def prepare_done(self, callback: TransmissionPrepareDoneCallback) -> typing.Self:
         """
@@ -72,8 +75,9 @@ class ResourcesTransmitter:
         Returns:
             This instance for easy chaining.
         """
-        self._prepare_callbacks.done(callback)
-        return self
+        with self._lock:
+            self._prepare_callbacks.done(callback)
+            return self
 
     def prepare_failed(self, callback: TransmissionPrepareFailCallback) -> typing.Self:
         """
@@ -85,15 +89,17 @@ class ResourcesTransmitter:
         Returns:
             This instance for easy chaining.
         """
-        self._prepare_callbacks.failed(callback)
-        return self
+        with self._lock:
+            self._prepare_callbacks.failed(callback)
+            return self
 
     def reset(self) -> None:
-        self._context = ResourcesTransmitterContext()
+        with self._lock:
+            self._context = ResourcesTransmitterContext()
 
-        self._prepare_callbacks = ExecutionCallbacks[
-            TransmissionPrepareDoneCallback, TransmissionPrepareFailCallback
-        ]()
+            self._prepare_callbacks = ExecutionCallbacks[
+                TransmissionPrepareDoneCallback, TransmissionPrepareFailCallback
+            ]()
 
     def _create_broker(self) -> ResourcesBroker:
         try:
@@ -103,7 +109,7 @@ class ResourcesTransmitter:
                 self._broker_token.broker,
                 self._broker_token.config,
                 user_token=self._user_token,
-                auth_token=AuthorizationToken(),  # TODO: Get current auth from svr
+                auth_token=None,  # TODO: Get current auth from svr
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             raise ResourcesTransmitterError(
