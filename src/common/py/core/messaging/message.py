@@ -35,6 +35,7 @@ class Message(abc.ABC):
           target: Where the message should go to.
           hops: A list of components the message was sent through.
           trace: A unique trace identifying messages that logically belong together.
+          api_key: An optional API key to access protected resources.
     """
 
     name: MessageName
@@ -47,6 +48,8 @@ class Message(abc.ABC):
 
     trace: Trace = field(default_factory=uuid.uuid4)
 
+    api_key: str = ""
+
     @staticmethod
     def message_name() -> MessageName:
         """
@@ -55,7 +58,14 @@ class Message(abc.ABC):
         return ""
 
     @staticmethod
-    def define(name: str):
+    def is_protected() -> bool:
+        """
+        Whether this message is protected and thus requires an API key.
+        """
+        return False
+
+    @staticmethod
+    def define(name: str, is_protected: bool = False):
         """
         Defines a new message.
 
@@ -70,6 +80,7 @@ class Message(abc.ABC):
 
         Args:
             name: The name of the message.
+            is_protected: Whether the message requires an API key.
         """
 
         def decorator(cls):
@@ -85,7 +96,8 @@ class Message(abc.ABC):
                 __init__(self, *args, name=MessageName(name), **kwargs)
 
             setattr(cls, "__init__", __new_init__)
-            setattr(cls, "message_name", lambda: name)
+            setattr(cls, "message_name", lambda *args, **kwargs: name)
+            setattr(cls, "is_protected", lambda *args, **kwargs: is_protected)
 
             from .message_types_catalog import MessageTypesCatalog
 

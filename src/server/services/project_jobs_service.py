@@ -1,7 +1,6 @@
 from common.py.component import BackendComponent
 from common.py.core.logging import debug, error
 from common.py.core.messaging import Channel
-from common.py.data.entities.authorization import get_host_authorization_token_id
 from common.py.data.entities.project import Project, ProjectJob
 from common.py.data.entities.project.logbook import (
     append_logbook_record,

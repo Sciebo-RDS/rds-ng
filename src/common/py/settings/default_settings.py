@@ -26,6 +26,7 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
         # Component settings
         ComponentSettingIDs.INSTANCE: "default",
         # Network settings
+        NetworkSettingIDs.API_KEY: "",
         NetworkSettingIDs.REGULAR_COMMAND_TIMEOUT: 10,
         NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT: 15,
         NetworkServerSettingIDs.ALLOWED_ORIGINS: "",

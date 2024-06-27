@@ -31,6 +31,8 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         RequestAuthorizationReply,
         RevokeAuthorizationCommand,
         RevokeAuthorizationReply,
+        GetAuthorizationTokenCommand,
+        GetAuthorizationTokenReply,
     )
     from common.py.api.component import ComponentProcessEvent
 
@@ -45,7 +47,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
     ) -> AuthorizationStrategy:
         auth_token = (
             ctx.storage_pool.authorization_token_storage.get(
-                get_host_authorization_token_id(ctx.user)
+                get_host_authorization_token_id(ctx.user.user_id)
             )
             if ctx.user
             else None
@@ -62,7 +64,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
     @svc.message_handler(RequestAuthorizationCommand)
     def request_authorization(
         msg: RequestAuthorizationCommand, ctx: ServerServiceContext
-    ):
+    ) -> None:
         if not ctx.ensure_user(msg, RequestAuthorizationReply):
             return
 
@@ -98,7 +100,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
     @svc.message_handler(RevokeAuthorizationCommand, is_async=False)
     def revoke_authorization(
         msg: RevokeAuthorizationCommand, ctx: ServerServiceContext
-    ):
+    ) -> None:
         success = False
         message = ""
 
@@ -131,9 +133,28 @@ def create_authorization_service(comp: BackendComponent) -> Service:
     @svc.message_handler(RevokeAuthorizationReply, is_async=False)
     def revoke_authorization_reply(
         msg: RevokeAuthorizationReply, ctx: ServerServiceContext
-    ):
+    ) -> None:
         # Suppress warnings about this message not being handled
         pass
+
+    @svc.message_handler(GetAuthorizationTokenCommand)
+    def get_authorization_token(
+        msg: GetAuthorizationTokenCommand, ctx: ServerServiceContext
+    ) -> None:
+        auth_token = ctx.storage_pool.authorization_token_storage.get(
+            (msg.user_id, msg.auth_id)
+        )
+
+        GetAuthorizationTokenReply.build(
+            ctx.message_builder,
+            msg,
+            auth_token=auth_token,
+            api_key=ctx.api_key,
+            success=auth_token is not None,
+            message=(
+                "No matching authorization token found" if auth_token is None else ""
+            ),
+        ).emit()
 
     @svc.message_handler(ComponentProcessEvent)
     def refresh_expired_tokens(

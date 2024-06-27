@@ -7,8 +7,12 @@ class NetworkSettingIDs:
     Identifiers for general networking settings.
 
     Attributes:
+        API_KEY: An arbitrary API key to access protected resources (value type: ``string``).
+        REGULAR_COMMAND_TIMEOUT: The timeout (in seconds) for commands (value type: ``float``).
         EXTERNAL_REQUESTS_TIMEOUT: The maximum time (in seconds) for requests to external services; set to 0 to disable (value type: ``float``).
     """
+    API_KEY = SettingID("network", "api_key")
+
     REGULAR_COMMAND_TIMEOUT = SettingID("network", "regular_command_timeout")
     EXTERNAL_REQUESTS_TIMEOUT = SettingID("network", "external_requests_timeout")
 

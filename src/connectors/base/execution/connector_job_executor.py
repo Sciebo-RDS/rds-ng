@@ -45,6 +45,7 @@ class ConnectorJobExecutor(abc.ABC):
             svc,
             user_token=self._job.user_token,
             broker_token=self._job.broker_token,
+            auth_channel=target_channel,
         )
 
         self._is_active = True
