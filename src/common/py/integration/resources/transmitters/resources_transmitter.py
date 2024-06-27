@@ -12,7 +12,7 @@ from ....data.entities.project import Project
 from ....data.entities.resource import ResourcesBrokerToken, ResourcesList
 from ....data.entities.user import UserToken
 from ....services import Service
-from ....utils import ExecutionCallbacks
+from ....utils import attempt, ExecutionCallbacks
 
 TransmissionPrepareDoneCallback = typing.Callable[[ResourcesList], None]
 TransmissionPrepareFailCallback = typing.Callable[[str], None]
@@ -28,9 +28,11 @@ class ResourcesTransmitter:
         comp: BackendComponent,
         svc: Service,
         *,
+        auth_channel: Channel,
         user_token: UserToken,
         broker_token: ResourcesBrokerToken,
-        auth_channel: Channel = Channel.local(),
+        max_attempts: int = 1,
+        attempts_delay: float = 3.0,
     ):
         """
         Args:
@@ -38,7 +40,9 @@ class ResourcesTransmitter:
             svc: The service used for message sending.
             user_token: The user token.
             broker_token: The broker token.
-            auth_channel: Channel to fetch authorization tokens from; defaults to a local channel.
+            auth_channel: Channel to fetch authorization tokens from.
+            max_attempts: The number of attempts for each operation; cannot be less than 1.
+            attempts_delay: The delay (in seconds) between each attempt.
         """
         from ....settings import NetworkSettingIDs
 
@@ -49,12 +53,14 @@ class ResourcesTransmitter:
         self._user_token = user_token
         self._broker_token = broker_token
 
+        self._max_attempts = max(1, max_attempts)
+        self._attempts_delay = attempts_delay
+
         self._prepare_callbacks = ExecutionCallbacks[
             TransmissionPrepareDoneCallback, TransmissionPrepareFailCallback
         ]()
 
         self._context = ResourcesTransmitterContext()
-        self._prepared = False
 
         self._api_key = self._component.data.config.value(NetworkSettingIDs.API_KEY)
         self._lock = threading.RLock()
@@ -67,18 +73,20 @@ class ResourcesTransmitter:
             project: The project to work on.
         """
 
-        # Get a list of all resources in the project's path
-        # TODO: Error handling
-        def _execute_prepare(broker: ResourcesBroker) -> None:
+        # Get a list of all resources in the project path
+        def _prepare(broker: ResourcesBroker) -> None:
             self._context.resources = broker.list_resources(project.resources_path)
-            self._prepare_callbacks.invoke_done_callbacks(self._context.resources)
+            self._context.prepared = True
 
-            self._prepared = True
-
-        def _failed_prepare(reason: str) -> None:
-            self._prepare_callbacks.invoke_fail_callbacks(reason)
-
-        self._execute(_execute_prepare, _failed_prepare)
+        self._execute(
+            cb_exec=_prepare,
+            cb_done=lambda: self._prepare_callbacks.invoke_done_callbacks(
+                self._context.resources
+            ),
+            cb_failed=lambda reason: self._prepare_callbacks.invoke_fail_callbacks(
+                reason
+            ),
+        )
 
     def prepare_done(self, callback: TransmissionPrepareDoneCallback) -> typing.Self:
         """
@@ -111,15 +119,14 @@ class ResourcesTransmitter:
     def reset(self) -> None:
         with self._lock:
             self._context = ResourcesTransmitterContext()
-            self._prepared = False
 
     def _execute(
         self,
+        *,
         cb_exec: typing.Callable[[ResourcesBroker], None],
+        cb_done: typing.Callable[[], None],
         cb_failed: typing.Callable[[str], None],
     ) -> None:
-        from ....settings import NetworkSettingIDs
-
         # Get the authorization token for the host system, since we need to access its resources.
         # Once received, the actual execution can happen.
         def _get_auth_token_done(
@@ -133,7 +140,14 @@ class ResourcesTransmitter:
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     cb_failed(str(exc))
                 else:
-                    cb_exec(broker)
+                    if attempt(
+                        cb_exec,
+                        broker=broker,
+                        fail_callback=lambda e: cb_failed(str(e)),
+                        attempts=self._max_attempts,
+                        delay=self._attempts_delay,
+                    ):
+                        cb_done()
 
         def _get_auth_token_failed(_, msg: str) -> None:
             with self._lock:

@@ -16,6 +16,7 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         AuthorizationSettingIDs,
         OAuth2AuthorizationSettingIDs,
     )
+    from .transmission_setting_ids import TransmissionSettingIDs
 
     return {
         # Authorization settings
@@ -27,4 +28,7 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         OAuth2AuthorizationSettingIDs.SERVER_SCOPE: "",
         OAuth2AuthorizationSettingIDs.CLIENT_ID: "",
         OAuth2AuthorizationSettingIDs.CLIENT_REDIRECT_URL: "",
+        # Transmission settings
+        TransmissionSettingIDs.MAX_ATTEMPTS: 3,
+        TransmissionSettingIDs.ATTEMPTS_DELAY: 3.0,
     }

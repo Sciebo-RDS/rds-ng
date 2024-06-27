@@ -189,6 +189,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                             error=str(exc),
                         )
 
+                        # TODO: Less harsh
                         ctx.storage_pool.authorization_token_storage.remove(auth_token)
                         handle_authorization_token_changes(auth_token, msg, ctx)
 

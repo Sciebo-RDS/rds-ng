@@ -114,6 +114,7 @@ class WebdavBroker(ResourcesBroker):
                 error=str(exc),
             )
 
+            # TODO: Less harsh
             self._revoke_auth_token()
 
             raise exc

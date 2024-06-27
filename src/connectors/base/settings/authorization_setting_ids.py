@@ -15,7 +15,7 @@ class AuthorizationSettingIDs:
 class OAuth2AuthorizationSettingIDs:
     # pylint: disable=too-few-public-methods
     """
-    Identifiers for OAuth2 authorization.
+    Identifiers for OAuth2 authorization settings.
 
     Attributes:
         SERVER_HOST: The OAuth2 host server (value type: ``string``).

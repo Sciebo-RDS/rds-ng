@@ -10,6 +10,9 @@ class ResourcesTransmitterContext:
 
     Attributes:
         resources: List of all available resources.
+        prepared: Whether the context has been prepared.
     """
 
     resources: ResourcesList | None = None
+
+    prepared: bool = False

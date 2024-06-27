@@ -35,6 +35,8 @@ class ConnectorJobExecutor(abc.ABC):
             message_builder: A message builder to send messages through.
             target_channel: The target server channel.
         """
+        from connectors.base.settings import TransmissionSettingIDs
+
         self._job = job
 
         self._mesage_builder = message_builder
@@ -43,9 +45,13 @@ class ConnectorJobExecutor(abc.ABC):
         self._transmitter: ResourcesTransmitter = ResourcesTransmitter(
             comp,
             svc,
+            auth_channel=target_channel,
             user_token=self._job.user_token,
             broker_token=self._job.broker_token,
-            auth_channel=target_channel,
+            max_attempts=comp.data.config.value(TransmissionSettingIDs.MAX_ATTEMPTS),
+            attempts_delay=comp.data.config.value(
+                TransmissionSettingIDs.ATTEMPTS_DELAY
+            ),
         )
 
         self._is_active = True

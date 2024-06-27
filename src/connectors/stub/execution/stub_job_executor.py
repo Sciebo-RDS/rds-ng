@@ -35,7 +35,7 @@ class StubJobExecutor(ConnectorJobExecutor):
         self._transmitter.prepare(self._job.project)
 
         self._start_tick = time.time()
-        self._job_time = random.uniform(5.0, 15.0)
+        self._job_time = random.uniform(10.0, 20.0)
 
     def process(self) -> None:
         progress = (time.time() - self._start_tick) / self._job_time
