@@ -33,6 +33,7 @@ class ResourcesTransmitter:
         broker_token: ResourcesBrokerToken,
         max_attempts: int = 1,
         attempts_delay: float = 3.0,
+        auth_token_refresh: bool = True,
     ):
         """
         Args:
@@ -43,6 +44,7 @@ class ResourcesTransmitter:
             auth_channel: Channel to fetch authorization tokens from.
             max_attempts: The number of attempts for each operation; cannot be less than 1.
             attempts_delay: The delay (in seconds) between each attempt.
+            auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
         """
         from ....settings import NetworkSettingIDs
 
@@ -55,6 +57,8 @@ class ResourcesTransmitter:
 
         self._max_attempts = max(1, max_attempts)
         self._attempts_delay = attempts_delay
+
+        self._auth_token_refresh = auth_token_refresh
 
         self._prepare_callbacks = ExecutionCallbacks[
             TransmissionPrepareDoneCallback, TransmissionPrepareFailCallback
@@ -173,6 +177,7 @@ class ResourcesTransmitter:
                 self._broker_token.config,
                 user_token=self._user_token,
                 auth_token=auth_token,
+                auth_token_refresh=self._auth_token_refresh,
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             raise ResourcesTransmitterError(

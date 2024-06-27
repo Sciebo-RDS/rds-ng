@@ -30,6 +30,7 @@ class ResourcesBroker(IntegrationHandler):
         *,
         user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
+        auth_token_refresh: bool = True,
         default_root: str = "",
     ):
         """
@@ -39,6 +40,7 @@ class ResourcesBroker(IntegrationHandler):
             broker: The broker identifier.
             user_token: The user token.
             auth_token: An optional authorization token.
+            auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
             default_root: The default root path (overrides the globally configured root).
         """
         super().__init__(comp, svc, user_token=user_token, auth_token=auth_token)
@@ -50,6 +52,8 @@ class ResourcesBroker(IntegrationHandler):
             if svc is not None and auth_token is not None
             else None
         )
+
+        self._auth_token_refresh = auth_token_refresh
 
         from ....settings.integration_setting_ids import IntegrationSettingIDs
 

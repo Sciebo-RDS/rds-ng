@@ -51,9 +51,15 @@ class WebdavBroker(ResourcesBroker):
         *,
         user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
+        auth_token_refresh: bool = True,
     ):
         super().__init__(
-            comp, svc, WebdavBroker.Broker, user_token=user_token, auth_token=auth_token
+            comp,
+            svc,
+            WebdavBroker.Broker,
+            user_token=user_token,
+            auth_token=auth_token,
+            auth_token_refresh=auth_token_refresh,
         )
 
         # Copy the configuration field-by-field, replacing placeholders on-the-go
@@ -84,6 +90,7 @@ class WebdavBroker(ResourcesBroker):
                 recursive=recursive,
             ),
             resource=root_path,
+            refresh_unauthorized_token=self._auth_token_refresh,
         )
 
     def _execute_request(
@@ -91,7 +98,7 @@ class WebdavBroker(ResourcesBroker):
         cb: typing.Callable[[], typing.Any],
         *,
         resource: pathlib.PurePosixPath,
-        refresh_unauthorized_token: bool = True,
+        refresh_unauthorized_token: bool,
     ) -> typing.Any:
         try:
             return cb()
@@ -218,6 +225,7 @@ def create_webdav_broker(
     *,
     user_token: UserToken,
     auth_token: AuthorizationToken | None = None,
+    auth_token_refresh: bool = True,
 ) -> WebdavBroker:
     """
     Creates a new WebDAV broker instance, automatically configuring it.
@@ -228,6 +236,7 @@ def create_webdav_broker(
         config: The broker configuration.
         user_token: The user token.
         auth_token: An optional authorization token.
+        auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
 
     Returns:
         The newly created broker.
@@ -237,5 +246,10 @@ def create_webdav_broker(
     )
 
     return WebdavBroker(
-        comp, svc, webdav_config, user_token=user_token, auth_token=auth_token
+        comp,
+        svc,
+        webdav_config,
+        user_token=user_token,
+        auth_token=auth_token,
+        auth_token_refresh=auth_token_refresh,
     )

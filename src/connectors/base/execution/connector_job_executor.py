@@ -52,6 +52,7 @@ class ConnectorJobExecutor(abc.ABC):
             attempts_delay=comp.data.config.value(
                 TransmissionSettingIDs.ATTEMPTS_DELAY
             ),
+            auth_token_refresh=False,
         )
 
         self._is_active = True

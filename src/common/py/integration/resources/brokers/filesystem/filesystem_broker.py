@@ -36,6 +36,7 @@ class FilesystemBroker(ResourcesBroker):
         *,
         user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
+        auth_token_refresh: bool = True,
     ):
         super().__init__(
             comp,
@@ -43,6 +44,7 @@ class FilesystemBroker(ResourcesBroker):
             FilesystemBroker.Broker,
             user_token=user_token,
             auth_token=auth_token,
+            auth_token_refresh=auth_token_refresh,
             default_root=config.root,
         )
 
@@ -73,6 +75,7 @@ def create_filesystem_broker(
     *,
     user_token: UserToken,
     auth_token: AuthorizationToken | None = None,
+    auth_token_refresh: bool = True,
 ) -> FilesystemBroker:
     """
     Creates a new filesystem broker instance, automatically configuring it.
@@ -83,6 +86,7 @@ def create_filesystem_broker(
         config: The broker configuration.
         user_token: The user token.
         auth_token: An optional authorization token.
+        auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
 
     Returns:
         The newly created broker.
@@ -90,5 +94,10 @@ def create_filesystem_broker(
     fs_config = FilesystemBrokerConfiguration.from_dict(config)
 
     return FilesystemBroker(
-        comp, svc, fs_config, user_token=user_token, auth_token=auth_token
+        comp,
+        svc,
+        fs_config,
+        user_token=user_token,
+        auth_token=auth_token,
+        auth_token_refresh=auth_token_refresh,
     )
