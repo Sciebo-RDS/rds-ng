@@ -212,10 +212,10 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
     @svc.message_handler(ProjectJobProgressEvent)
     def job_progress(msg: ProjectJobProgressEvent, ctx: ServerServiceContext) -> None:
         def update_job(job: ProjectJob) -> None:
-            if ProjectJobProgressEvent.Contents.MESSAGE in msg.contents:
+            if ProjectJobProgressEvent.Contents.PROGRESS in msg.contents:
                 job.progress = msg.progress
 
-            if ProjectJobProgressEvent.Contents.PROGRESS in msg.contents:
+            if ProjectJobProgressEvent.Contents.MESSAGE in msg.contents:
                 job.message = msg.message
 
         handle_project_job_message(

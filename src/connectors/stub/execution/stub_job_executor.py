@@ -1,10 +1,13 @@
+import logging
 import random
 import time
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.resource import ResourcesList
 from common.py.services import Service
+from common.py.utils import human_readable_file_size
 
 from ...base.data.entities.connector import ConnectorJob
 from ...base.execution import ConnectorJobExecutor
@@ -32,10 +35,11 @@ class StubJobExecutor(ConnectorJobExecutor):
         self._job_time = 1
 
     def start(self) -> None:
-        self._transmitter.prepare(self._job.project)
-
-        self._start_tick = time.time()
-        self._job_time = random.uniform(10.0, 20.0)
+        self._transmitter.prepare_done(
+            lambda res: self._prepare_done(res)
+        ).prepare_failed(lambda reason: self._prepare_failed(reason)).prepare(
+            self._job.project
+        )
 
     def process(self) -> None:
         progress = (time.time() - self._start_tick) / self._job_time
@@ -47,6 +51,17 @@ class StubJobExecutor(ConnectorJobExecutor):
                 if random.uniform(0.0, 1.0) <= 0.8
                 else self.set_failed("Totally random failure")
             )
+
+    def _prepare_done(self, resources: ResourcesList) -> None:
+        self._start_tick = time.time()
+        self._job_time = random.uniform(10.0, 20.0)
+
+        self.report_message(
+            f"I got loads of resources to transfer: {human_readable_file_size(resources.resource.size)}",
+        )
+
+    def _prepare_failed(self, reason: str) -> None:
+        pass
 
     def remove(self) -> None:
         pass
