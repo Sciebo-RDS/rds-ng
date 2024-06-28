@@ -1,0 +1,50 @@
+Chunk size:
+-----------
+
+options = {
+ ...
+ 'chunk_size': 65536    // Eher 1-10 MB default, Config
+}
+client = Client(options)
+
+Timeout:
+--------
+options = {
+ ...
+ 'webdav_timeout': 30       // Config, existierenden benutzen
+}
+
+Download:
+---------
+
+* Client.download_iter -> requests response -> iter_content
+
+     for chunk in response.iter_content(chunk_size=self.chunk_size):
+            buff.write(chunk)
+            current += self.chunk_size
+            if callable(progress):
+                progress(current, total, *progress_args)
+
+! Client.download_from -> Buffer (file-like mit write) + progress Callback: progress_update(current, total, *args)
+    
+    - Benutzt Iterator, liefert nützliche Zusatzinfos
+    - Synchron!
+      -> download_async lässt DL einfach in Thread laufen
+
+Python Buffered IO:
+-------------------
+
+- io.BytesIO als Stream-Puffer
+- BufferedReader/Write on top
+- Kombinieren mittels BufferedRWPair
+
+TransmissionTunnel:
+-------------------
+
+- "Tunnel" zwischen Host und Ziel/Connector
+- Host-Seite: Broker stellt download zur Verfügung, schreibt in file-like
+- Ziel-Seite: Transmitter stellt file-like zur Verfügung zum Lesen
+- Tunnel wird von Transmitter erstellt/verwaltet
+- Support mehrerer Tunnel-Typen
+- Vorerst nur in-mem buffered über BytesIO etc.
+- Tunnel informiert Transmitter über Progress/Done/Failed
