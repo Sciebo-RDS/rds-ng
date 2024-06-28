@@ -6,6 +6,7 @@ import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
 import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
+import { stringToColor } from "./utils/Colors";
 
 import { confirmDialog } from "@common/ui/dialogs/ConfirmDialog";
 import Chip from "primevue/chip";
@@ -15,7 +16,7 @@ import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
 const comp = FrontendComponent.inject();
 
 const emit = defineEmits(["hide"]);
-const { propertyClass, profileId, projectObjects, projectProfiles, globalObjectStore } = defineProps({
+const { propertyClass, profileId, projectObjects, projectProfiles, globalObjectStore, layoutProfiles } = defineProps({
     propertyClass: {
         type: Object as PropType<ProfileClass>,
         required: true
@@ -35,6 +36,9 @@ const { propertyClass, profileId, projectObjects, projectProfiles, globalObjectS
     globalObjectStore: {
         type: Object as PropType<ProjectObjectStore>,
         required: true
+    },
+    layoutProfiles: {
+        type: Array
     }
 });
 
@@ -121,6 +125,8 @@ const removeLayoutProperty = (propertyClass: ProfileClass) => {
         emit("hide", propertyClass.id);
     });
 };
+
+const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).profiles;
 </script>
 
 <template>
@@ -167,10 +173,15 @@ const removeLayoutProperty = (propertyClass: ProfileClass) => {
                         class="m-1"
                     />
                 </span>
-
-                <Chip :label="profileId[0]" size="small" class="bg-[#83d5ff] h-4 !rounded px-2 py-3 text-sm bg-opacity-40 ml-1" />
+                <span class="flex gap-2">
+                    <Chip
+                        v-for="p in profiles"
+                        :label="p[0]"
+                        size="small"
+                        class="h-4 !rounded py-3 text-sm bg-opacity-40"
+                        :style="`background-color: ${stringToColor(p[0])}`"
+                /></span>
             </div>
-            <!-- <span class="bg-blue-100"> {{ propertyClass }} </span> -->
             <!--  Linked Items Row -->
             <div class="row-span-1 flex my-3 flex-wrap gap-2">
                 <LinkedItemButton
@@ -179,7 +190,7 @@ const removeLayoutProperty = (propertyClass: ProfileClass) => {
                     class="m-1"
                     :profileId="profileId"
                     :linkedItemActions="linkedItemActions"
-                    :item="i"
+                    :item-id="i"
                     :projectObjects="projectObjects"
                     :globalObjectStore="globalObjectStore as ProjectObjectStore"
                     :projectProfiles="projectProfiles"

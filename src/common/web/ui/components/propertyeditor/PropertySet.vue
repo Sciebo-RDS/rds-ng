@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Button from "primevue/button";
+import Chip from "primevue/chip";
 import ContextMenu from "primevue/contextmenu";
 import Fieldset from "primevue/fieldset";
 import Listbox from "primevue/listbox";
@@ -8,6 +9,7 @@ import { computed, provide, ref, unref, type Ref } from "vue";
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
+import { stringToColor } from "./utils/Colors";
 
 const props = defineProps(["controller", "profile", "project", "exporters", "projectProfiles", "projectObjects", "globalObjectStore"]);
 provide("profileId", props.profile["metadata"]["id"]);
@@ -56,7 +58,27 @@ const onRightClick = (event: Event, p: Ref<ProfileLayoutClass>) => {
     menu.value.show(event);
 };
 
-var propsToShow = ref(props.profile["layout"].filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined));
+const getLayout = () => {
+    let layout = [];
+    for (const profiles of props.projectProfiles.list()) {
+        for (const p of profiles["layout"]) {
+            const x = layout.find((xd) => p.id == xd.id);
+            if (x !== undefined) {
+                x["profiles"].push(profiles["metadata"]["id"]);
+                if (p.required) x["required"] = true;
+            } else {
+                p["profiles"] = [profiles["metadata"]["id"]];
+                layout.push(p);
+            }
+        }
+    }
+    return layout;
+};
+
+const layout = getLayout();
+
+const propsToShow = ref(layout.filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined));
+
 const selectedProperty = ref();
 
 // TODO FIXME this
@@ -65,9 +87,7 @@ const hideProperty = (id: string) => {
 };
 
 const showAddProperties = ref(false);
-const hiddenPropertys = computed(() =>
-    props.profile["layout"].filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.id).includes(e.id))
-);
+const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.id).includes(e.id)));
 </script>
 
 <template>
@@ -93,7 +113,6 @@ const hiddenPropertys = computed(() =>
             <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
         </template>
     </Toolbar> -->
-
     <PropertyOneCol
         v-for="p in propsToShow"
         class="mt-2 mb-4"
@@ -102,6 +121,7 @@ const hiddenPropertys = computed(() =>
         :projectObjects="projectObjects"
         :globalObjectStore="globalObjectStore as ProjectObjectStore"
         :projectProfiles="projectProfiles"
+        :layoutProfiles="layout"
         @contextmenu="onRightClick($event, p)"
         @hide="
             (id) => {
@@ -126,7 +146,15 @@ const hiddenPropertys = computed(() =>
             >
                 <template #option="{ option }">
                     <div class="flex flex-col">
-                        <span class="font-semibold" :title="option.label">{{ option.label }}</span>
+                        <span class="font-semibold flex gap-4" :title="option.label"
+                            >{{ option.label }}
+                            <Chip
+                                v-for="p in option.profiles"
+                                :label="p[0]"
+                                size="small"
+                                :style="`background-color: ${stringToColor(p[0], 0.3)}; border-color: ${stringToColor(p[0])}`"
+                                class="h-4 !rounded py-2 px-2 text-sm border self-center"
+                        /></span>
                         <span class="text-gray-400 ml-3 ellipsis line-clamp-1" :title="option.description">{{ option.description }}</span>
                     </div>
                 </template>

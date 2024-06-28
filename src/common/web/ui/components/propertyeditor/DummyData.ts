@@ -1,4 +1,4 @@
-import { type Profile, PropertyDataType } from "./PropertyProfile";
+import { type Profile } from "./PropertyProfile";
 import { PersistedSet } from "./PropertySet";
 
 export const testProfile: Profile = {
@@ -74,6 +74,15 @@ export const testProfile: Profile = {
             description: "When was this made publicly available?",
             input: [{ id: "publishdate", label: "Publishing date", type: "date" }],
             required: true
+        },
+        {
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
+            label: "Creator",
+            description:
+                "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
+            type: ["creator"],
+            required: true,
+            multiple: true
         }
     ],
     classes: {

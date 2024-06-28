@@ -7,14 +7,14 @@ import { injectTemplate } from "./utils/Templates";
 
 export class ProjectObject {
     id: string;
-    profile: ProfileID;
+    profile: ProfileID[];
     value: { [key: string]: any };
     refs: string[];
     type?: string;
 
     constructor(profile: ProfileID, type: string | null, id?: string, value: any = {}, refs: string[] = []) {
         this.id = id || uuidv4();
-        this.profile = profile;
+        this.profile = [profile];
         if (type !== null) this.type = type;
         this.value = value;
         this.refs = refs;

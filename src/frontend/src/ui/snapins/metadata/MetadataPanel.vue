@@ -11,6 +11,8 @@ import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfi
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
+import { osf } from "@common/ui/components/propertyeditor/profiles/osf";
+import { zenodo } from "@common/ui/components/propertyeditor/profiles/zenodo";
 
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
@@ -80,6 +82,8 @@ watch(
 
 projectProfiles.mountProfile(dataCite as Profile);
 projectProfiles.mountProfile(testProfile as Profile);
+projectProfiles.mountProfile(zenodo as Profile);
+projectProfiles.mountProfile(osf as Profile);
 </script>
 
 <template>

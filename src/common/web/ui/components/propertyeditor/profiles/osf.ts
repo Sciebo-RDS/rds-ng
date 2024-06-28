@@ -9,24 +9,22 @@ export const osf: Profile = {
     },
     layout: [
         {
-            id: "Mandatory",
-            label: "Mandatory",
-            description: "Mandatory OSF properties",
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
+            label: "Title",
+            description: "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            //type: ["title"],
+            input: [{ id: "title", label: "Title", type: "string" }],
+            required: true,
+            multiple: true
+        },
+        {
+            id: "OsfCategory",
+            label: "OSF Category",
             input: [
                 {
-                    id: "Title",
-                    label: "Title",
-                    type: "string",
-                    description:
-                        "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument."
-                },
-                {
-                    id: "OsfCategory",
-                    label: "Category",
+                    id: "category",
+                    label: "OSF Category",
                     type: "dropdown",
-                    description:
-                        "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
-
                     options: [
                         "analysis",
                         "communication",
@@ -39,14 +37,20 @@ export const osf: Profile = {
                         "software",
                         "other"
                     ]
-                },
-                {
-                    id: "Description",
-                    label: "Description",
-                    type: "textarea",
-                    description: "The Description of you resource."
                 }
-            ]
+            ],
+            description:
+                "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
+            required: true,
+            multiple: true
+        },
+        {
+            id: "Description",
+            label: "Description",
+            input: [{ id: "description", label: "Description", type: "textarea" }],
+            description: "The Description of your resource.",
+            required: true,
+            multiple: true
         }
     ]
 };
