@@ -1,6 +1,9 @@
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { type ProfileID } from "./PropertyProfile";
+import { PropertyProfileStore } from "./PropertyProfileStore";
+import { calculateClassColor } from "./utils/Colors";
+import { injectTemplate } from "./utils/Templates";
 
 export class ProjectObject {
     id: string;
@@ -16,7 +19,34 @@ export class ProjectObject {
         this.value = value;
         this.refs = refs;
     }
+
+    public addProfile(profile: ProfileID) {
+        if (!this.profile.includes(profile)) {
+            this.profile.push(profile);
+        }
+    }
+
+    public bgColor(store: PropertyProfileStore): string {
+        return calculateClassColor(store, this.profile[0], this.type!, 99, 10)["bgColor"];
+    }
+
+    public borderColor(store: PropertyProfileStore): string {
+        return calculateClassColor(store, this.profile[0], this.type!, 99, 10)["borderColor"];
+    }
+
+    public instanceLabel(store: PropertyProfileStore) {
+        const labelTemplate = store.getLabelTemplateById(this.type!)!;
+        return injectTemplate(labelTemplate, this);
+    }
 }
+
+export const dummyProjectObject = (id: string) => {
+    const obj = new ProjectObject(["", ""], "dummy", id, {}, []);
+    obj.bgColor = () => "#eeeeee";
+    obj.borderColor = () => "#ee0000";
+    obj.instanceLabel = () => obj.id.slice(0, 6);
+    return obj;
+};
 
 export class ProjectObjectStore {
     public _objects: ProjectObject[];

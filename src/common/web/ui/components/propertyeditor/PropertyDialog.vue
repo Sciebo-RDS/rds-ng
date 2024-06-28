@@ -142,7 +142,7 @@ selectActiveObject(id);
                             :key="i"
                             class="m-1 max-w-full"
                             :linkedItemActions="linkedItemActions"
-                            :item="i"
+                            :item-id="i"
                             :profileId="profileId"
                             :projectObjects="projectObjects"
                             :globalObjectStore="globalObjectStore as ProjectObjectStore"

@@ -3,40 +3,17 @@ import Button from "primevue/button";
 import OverlayPanel from "primevue/overlaypanel";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
-import { computed, ref } from "vue";
+import { ref } from "vue";
+import { ProjectObject, dummyProjectObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
-import { calculateClassColor } from "./utils/Colors";
-import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
-const props = defineProps(["linkedItemActions", "item", "projectObjects", "globalObjectStore", "profileId", "projectProfiles", "mode"]);
+const props = defineProps(["linkedItemActions", "itemId", "projectObjects", "globalObjectStore", "profileId", "projectProfiles", "mode"]);
 
-let object = props.projectObjects.get(props.item) || props.globalObjectStore.get(props.item);
-var bgColor, borderColor, injectedLabel, label;
-if (object !== undefined) {
-    var { bgColor, borderColor } = calculateClassColor(props.projectProfiles, props.profileId, object.type, 99, 10);
-    var labelTemplate = props.projectProfiles.getLabelTemplateById(object["type"]);
-    var label = props.projectProfiles.getLabelById(object["type"]);
-    injectedLabel = computed(() => injectTemplate(labelTemplate, props.globalObjectStore.get(object.id)));
-} else {
-    bgColor = "#eee";
-    borderColor = "#ee0000";
-    injectedLabel = computed(() => `[${props.item.slice(0, 6)}]`);
-}
-const linkedItemActions = object
-    ? props.linkedItemActions(object.id, injectedLabel)
-    : [
-          {
-              label: "Remove all References to undefined Item",
-              icon: "pi pi-trash",
-              command: () => {
-                  props.globalObjectStore.remove(props.item, props.item);
-                  props.projectObjects.remove(props.item, props.item);
-              }
-          }
-      ];
+const object = (props.projectObjects.get(props.itemId) || props.globalObjectStore.get(props.itemId) || dummyProjectObject(props.itemId)) as ProjectObject;
+
+const linkedItemActions = object ? props.linkedItemActions(object.id, object.instanceLabel(props.projectProfiles)) : [];
 const emit = defineEmits(["loadObject"]);
-
 function handleClick() {
     if (object["id"] === undefined) {
         return;
@@ -77,7 +54,7 @@ const toggle = (event: Event) => {
 <template>
     <div>
         <SplitButton
-            v-if="object !== undefined"
+            v-if="object.type !== 'dummy'"
             menuButtonIcon="pi pi-ellipsis-v"
             :model="linkedItemActions"
             menuitemicon="pi pi-link"
@@ -86,21 +63,23 @@ const toggle = (event: Event) => {
                     object === undefined ? null : handleClick();
                 }
             "
-            :style="`--p-color: ${bgColor}; --p-border-color: ${borderColor};`"
+            :style="`--p-color: ${object.bgColor(props.projectProfiles)}; --p-border-color: ${object.borderColor(props.projectProfiles)};`"
         >
-            <span class="text-lg mx-2 truncate"> {{ label }}: {{ injectedLabel }} </span>
+            <span class="text-lg mx-2 truncate">
+                {{ props.projectProfiles.getLabelById(object["type"]) }}: {{ object.instanceLabel(props.projectProfiles) }}
+            </span>
         </SplitButton>
         <Button
             v-else
             menuButtonIcon="pi pi-ellipsis-v"
             :model="linkedItemActions"
             menuitemicon="pi pi-link"
-            :style="`background-color: ${bgColor}; border-color: ${borderColor}; height: 2rem`"
+            :style="`background-color: ${object.bgColor(props.projectProfiles)}; border-color: ${object.borderColor(props.projectProfiles)}; height: 2rem`"
             class="text-gray-600"
             @click="toggle"
         >
             <i class="pi pi-exclamation-circle mx-1" style="color: #ee0000" />
-            <span class="text-lg mx-2 truncate"> {{ "broken link" }}: {{ injectedLabel }} </span>
+            <span class="text-lg mx-2 truncate"> {{ "broken link" }}: {{ object.instanceLabel(props.projectProfiles) }} </span>
         </Button>
 
         <OverlayPanel ref="op" class="border-red-400">
@@ -118,8 +97,8 @@ const toggle = (event: Event) => {
                         icon="pi pi-trash"
                         @click="
                             () => {
-                                props.globalObjectStore.remove(props.item, props.item);
-                                props.projectObjects.remove(props.item, props.item);
+                                props.globalObjectStore.remove(props.itemId, props.itemId);
+                                props.projectObjects.remove(props.itemId, props.itemId);
                             }
                         "
                     >
