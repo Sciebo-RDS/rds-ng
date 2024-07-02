@@ -15,7 +15,7 @@ import { resourcesListToTreeNodes } from "@common/data/entities/resource/Resourc
 import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
-import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
+import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import { deepClone } from "@common/utils/ObjectUtils";
 
@@ -131,7 +131,8 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     nextTick(() => (blockResourcesUpdate = false));
 });
 
-projectProfiles.mountProfile(resources as Profile);
+projectProfiles.mountProfile(shoes as Profile);
+//projectProfiles.mountProfile(dataCite as Profile);
 const showObjects = ref(false);
 const showIndex = ref(true);
 </script>

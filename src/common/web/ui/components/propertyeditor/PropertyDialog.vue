@@ -155,7 +155,8 @@ selectActiveObject(id);
                     <div class="space-y-3">
                         <div v-for="input in displayableInputs" class="row-span-1">
                             <div v-if="input.label !== objectClass.label" class="font-bold">{{ input.label }}</div>
-                            {{ input.description }}
+                            {{ input.description }} 
+                            <span v-if="input.example" class="mt-2" v-html="`<b>Example</b>: ${input.example}`"/>
                             <component
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"

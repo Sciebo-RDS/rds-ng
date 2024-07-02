@@ -3,7 +3,7 @@ import { PersistedSet } from "./PropertySet";
 
 export const testProfile: Profile = {
     metadata: {
-        id: ["Test Profile", "1.1"],
+        id: ["TestProfile", "1.1"],
         name: "Test Profile",
         version: "1.1",
         description: "Test stuff"
@@ -105,19 +105,22 @@ export const testProfile: Profile = {
         nameIdentifier: {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
             label: "Name Identifier",
-            labelTemplate: "${nameIdentifier}",
+            description: "Uniquely identifies an individual or legal entity, according to various schemes.",
+            example: "Jane Doe",
+            labelTemplate: "${nameIdentifier} (${nameIdentifierScheme})",
             input: [
                 {
                     id: "nameIdentifier",
                     label: "Name Identifier",
                     type: "string",
-                    description: "Uniquely identifies an individual or legal entity, according to various schemes."
+                    
                 },
                 {
                     id: "nameIdentifierScheme",
                     label: "Name Identifier Scheme",
                     type: "string",
-                    description: "The name of the name identifier scheme."
+                    description: "The name of the name identifier scheme.",
+                    example: "ORCID"
                 },
                 {
                     id: "schemeURI",

@@ -1,14 +1,14 @@
 import { type Component } from "vue";
 
-import StringForm from "./propertyforms/StringForm.vue";
-import NumberForm from "./propertyforms/NumberForm.vue";
-import TextAreaForm from "./propertyforms/TextAreaForm.vue";
-import MultiSelectForm from "./propertyforms/MultiSelectForm.vue";
-import StringListForm from "./propertyforms/StringListForm.vue";
-import RadioButtonForm from "./propertyforms/RadioButtonForm.vue";
+import CheckBoxForm from "./propertyforms/CheckBoxForm.vue";
 import DateForm from "./propertyforms/DateForm.vue";
 import DropDownForm from "./propertyforms/DropdownForm.vue";
-import CheckBoxForm from "./propertyforms/CheckBoxForm.vue";
+import MultiSelectForm from "./propertyforms/MultiSelectForm.vue";
+import NumberForm from "./propertyforms/NumberForm.vue";
+import RadioButtonForm from "./propertyforms/RadioButtonForm.vue";
+import StringForm from "./propertyforms/StringForm.vue";
+import StringListForm from "./propertyforms/StringListForm.vue";
+import TextAreaForm from "./propertyforms/TextAreaForm.vue";
 
 export type ProfileID = [string, string];
 
@@ -32,7 +32,7 @@ export class ProfileClass {
         public readonly multiple?: boolean,
         public readonly example?: string,
         public readonly type?: string[],
-        public readonly input?: { id: string; label: string; type: string; description?: string; options?: string[] }[]
+        public readonly input?: { id: string; label: string; type: string; description?: string; example?: string; options?: string[] }[]
     ) {}
 }
 

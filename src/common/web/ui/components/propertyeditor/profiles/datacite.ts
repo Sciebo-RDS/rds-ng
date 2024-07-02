@@ -3,7 +3,7 @@ import { Profile } from "../PropertyProfile";
 export const dataCite: Profile = {
     metadata: {
         id: ["DataCite", "4.5"],
-        name: "DataCite Profile",
+        name: "DataCite",
         version: "4.5",
         description: "DataCite Metadata Profile"
     },
@@ -221,19 +221,22 @@ export const dataCite: Profile = {
         nameIdentifier: {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
             label: "Name Identifier",
-            labelTemplate: "${nameIdentifier}",
+            description: "Uniquely identifies an individual or legal entity, according to various schemes.",
+            example: "Jane Doe",
+            labelTemplate: "${nameIdentifier} (${nameIdentifierScheme})",
             input: [
                 {
                     id: "nameIdentifier",
                     label: "Name Identifier",
                     type: "string",
-                    description: "Uniquely identifies an individual or legal entity, according to various schemes."
+                    
                 },
                 {
                     id: "nameIdentifierScheme",
                     label: "Name Identifier Scheme",
                     type: "string",
-                    description: "The name of the name identifier scheme."
+                    description: "The name of the name identifier scheme.",
+                    example: "ORCID"
                 },
                 {
                     id: "schemeURI",

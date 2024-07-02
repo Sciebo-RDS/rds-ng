@@ -1,16 +1,16 @@
 import { type Profile } from "../PropertyProfile";
 
-export const resources: Profile = {
+export const shoes: Profile = {
     metadata: {
-        id: ["Resources", "2024.2.21"],
-        name: "Resources",
+        id: ["Shoes", "2024.2.21"],
+        name: "Shoes",
         version: "2024.2.21",
         description: "A Profile for individual resources."
     },
     layout: [
         {
-            id: "Shoes",
-            label: "Shoes",
+            id: "Shoe",
+            label: "Shoe",
             description: "Shoe descriptions",
             input: [
                 {
@@ -65,6 +65,8 @@ export const resources: Profile = {
         nameIdentifier: {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
             label: "Name Identifier",
+            description: "Uniquely identifies an individual or legal entity, according to various schemes.",
+            example: "Jane Doe",
             labelTemplate: "${nameIdentifier}",
             input: [
                 {
