@@ -67,6 +67,6 @@ class AuthorizationToken:
     def _convert_dataclasses(self) -> None:
         # Automatically convert JSON dataclasses to dictionaries
         if hasattr(self.token, "to_dict"):
-            self.token = self.token.to_dict()
+            super().__setattr__("token", self.token.to_dict())
         if hasattr(self.data, "to_dict"):
-            self.data = self.data.to_dict()
+            super().__setattr__("data", self.data.to_dict())
