@@ -64,13 +64,14 @@ function createObject() {
 <template>
     <SplitButton
         @click="() => createObject()"
-        :model="linkableItems.length ? linkableItems : [{ label: `No linkable ${props.type}(s) available`, disabled: true }]"
+        @contextmenu="(e: Event) => e.preventDefault()"
+        :model="linkableItems.length ? linkableItems : [{ label: `No linkable ${label}(s) available`, disabled: true }]"
     >
-        <span :title="'Add new ' + type" class="capitalize text-nowrap">
+        <span :title="'Add new ' + label" class="capitalize text-nowrap">
             <i class="pi pi-plus text-xs capitalize"> </i>
             {{ label }}
         </span>
-        <template #menubuttonicon title="test"><i class="pi pi-link" title="Link existing property"></i> </template>
+        <template #menubuttonicon title="test"><i class="pi pi-link" :title="'Link existing ' + label"></i> </template>
     </SplitButton>
 </template>
 

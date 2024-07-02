@@ -60,50 +60,6 @@ const toggle = (event: Event) => {
     op.value.toggle(event);
 };
 
-const example = propertyClass.example ? `<b>Example</b>: ${propertyClass.example}` : null;
-
-//make this global with linkedItemActions in PropertyDialog.vue
-const linkedItemActions = ref((id: string, label: Ref<string>) => [
-    {
-        label: "Unlink",
-        icon: "pi pi-minus",
-        command: () => {
-            confirmDialog(comp, {
-                header: `Unlink "${label.value}?"`,
-                message: "Are you sure you want to unlink this property? The object will not be deleted, you can relink at any time.",
-                acceptLabel: "Unlink",
-                acceptIcon: "pi pi-minus",
-                acceptClass: "p-button-danger",
-                rejectLabel: "Cancel",
-                rejectIcon: "pi pi-times",
-                rejectClass: "p-button-secondary"
-            }).then(() => {
-                console.log("Unlinking " + id);
-                projectObjects.removeLink(propertyClass.id, id);
-            });
-        }
-    },
-    {
-        label: "Delete",
-        icon: "pi pi-trash",
-        command: () => {
-            confirmDialog(comp, {
-                header: `Delete "${label.value}"?`,
-                message: "Are you sure you want to delete this object? It will not be recoverable.",
-                acceptLabel: "Delete",
-                acceptIcon: "pi pi-trash",
-                acceptClass: "p-button-danger",
-                rejectLabel: "Cancel",
-                rejectIcon: "pi pi-times",
-                rejectClass: "p-button-secondary"
-            }).then(() => {
-                console.log("Deleting " + id);
-                projectObjects.remove(id);
-            });
-        }
-    }
-]);
-
 const displayableInputs = propertyClass["input"] || [];
 
 const addableTypes = propertyClass["type"];
@@ -126,7 +82,7 @@ const removeLayoutProperty = (propertyClass: ProfileClass) => {
     });
 };
 
-const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).profiles;
+const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).profiles as ProfileID[];
 </script>
 
 <template>
@@ -151,12 +107,12 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
             <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4">
                 <span :title="propertyClass.label" class="min-w-fit">
                     <span class="text-xl"> {{ propertyClass.label }}</span>
-                    <Button unstyled @click="toggle">
-                        <i v-if="propertyClass.description" class="pi pi-question-circle mx-2" style="font-size: 1rem" />
+                    <Button v-if="propertyClass.description" unstyled @click="toggle">
+                        <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
                     </Button>
                     <OverlayPanel ref="op" class="max-w-lg">
                         {{ propertyClass.description }}
-                        <p :v-if="propertyClass.example" class="mt-2" v-html="example"></p>
+                        <p v-if="propertyClass.example" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.example}`"/>
                     </OverlayPanel>
                 </span>
 
@@ -173,9 +129,9 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
                         class="m-1"
                     />
                 </span>
-                <span class="flex gap-2">
+                <span class="flex self-center gap-2">
                     <Chip
-                        v-for="p in profiles"
+                        v-for="p in profiles.sort()"
                         :label="projectProfiles.getProfileLabelById(p)"
                         size="small"
                         class="h-4 !rounded py-3 text-sm bg-opacity-40"

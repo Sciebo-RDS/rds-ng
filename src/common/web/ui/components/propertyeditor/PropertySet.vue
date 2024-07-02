@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import Chip from "primevue/chip";
-import ContextMenu from "primevue/contextmenu";
 import Fieldset from "primevue/fieldset";
 import Listbox from "primevue/listbox";
-import { computed, ref, unref, type Ref } from "vue";
+import { computed, ref } from "vue";
 
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
@@ -38,24 +37,6 @@ const toggle = (event: Event) => {
     menu.value.toggle(event);
 };*/
 
-const menu = ref();
-const items = ref([
-    {
-        label: "info",
-        icon: "pi pi-info-circle",
-        command: () => {
-            console.log({ ...selected.value });
-        }
-    }
-]);
-
-let selected = ref();
-const onRightClick = (event: Event, p: Ref<ProfileLayoutClass>) => {
-    const c = unref(p);
-    selected.value = c as ProfileLayoutClass;
-
-    menu.value.show(event);
-};
 
 const getLayout = () => {
     let layout = [];
@@ -121,14 +102,12 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
         :globalObjectStore="globalObjectStore as ProjectObjectStore"
         :projectProfiles="projectProfiles"
         :layoutProfiles="layout"
-        @contextmenu="onRightClick($event, p)"
         @hide="
             (id) => {
                 hideProperty(id);
             }
         "
     />
-    <ContextMenu ref="menu" :model="items" />
 
     <Button v-show="hiddenPropertys.length > 0" v-if="!showAddProperties" outlined class="my-5 ml-auto block" @click="showAddProperties = true"
         >Add Property</Button
