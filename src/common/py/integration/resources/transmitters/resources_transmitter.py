@@ -9,7 +9,12 @@ from ....component import BackendComponent
 from ....core.messaging import Channel
 from ....data.entities.authorization import AuthorizationToken
 from ....data.entities.project import Project
-from ....data.entities.resource import ResourcesBrokerToken, ResourcesList
+from ....data.entities.resource import (
+    files_list_from_resources_list,
+    Resource,
+    ResourcesBrokerToken,
+    ResourcesList,
+)
 from ....data.entities.user import UserToken
 from ....services import Service
 from ....utils import attempt, ExecutionCallbacks
@@ -124,17 +129,37 @@ class ResourcesTransmitter:
             self._prepare_callbacks.failed(callback)
             return self
 
-    def download(self, resource: str, *, tunnel: ResourcesBrokerTunnel) -> None:
+    def download(
+        self,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+        predicate: typing.Callable[[Resource], bool] | None = None,
+    ) -> None:
         """
-        Downloads the specified resource using the provided tunnel.
+        Downloads all previously listed resources using the provided tunnel.
 
         Args:
-            resource: The resource path.
             tunnel: The broker tunnel.
+            predicate: An optional filter predicate callback to filter out specific resources.
         """
 
+        if not self._context.prepared or self._context.resources is None:
+            raise RuntimeError("Tried to use an unprepared transmitter context")
+
+        resources = files_list_from_resources_list(self._context.resources)
+        downloaded_resources: typing.List[Resource] = []
+
         def _download(broker: ResourcesBroker) -> None:
-            broker.download_resource(resource, tunnel=tunnel)
+            nonlocal resources, downloaded_resources
+
+            for resource in resources:
+                # Since the overall download action may get retried, we need to keep track of all already finished downloads
+                if resource in downloaded_resources:
+                    continue
+
+                if not callable(predicate) or predicate(resource):
+                    broker.download_resource(resource.filename, tunnel=tunnel)
+                    downloaded_resources.append(resource)
 
         self._execute(
             cb_exec=_download,

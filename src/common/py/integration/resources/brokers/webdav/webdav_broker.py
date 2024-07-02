@@ -203,21 +203,21 @@ class WebdavBroker(ResourcesBroker):
         *,
         tunnel: ResourcesBrokerTunnel,
     ) -> None:
-        total_size = self._client.info(str(resource)).size
-        tunnel.transfer_begin(total_size)
+        total_size = int(self._client.info(str(resource))["size"])
+        tunnel.transfer_begin(resource, total_size)
 
         try:
             self._client.download_from(
                 tunnel.write_buffer,
                 str(resource),
                 lambda current, _: tunnel.transfer_progress(
-                    min(current, total_size), total_size
+                    resource, min(current, total_size), total_size
                 ),
             )
 
-            tunnel.transfer_done(total_size)
+            tunnel.transfer_done(resource, total_size)
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            tunnel.transfer_failed(str(exc))
+            tunnel.transfer_failed(resource, str(exc))
             raise exc
 
     def _create_webdav_client(self, comp: BackendComponent) -> webdav3.client.Client:

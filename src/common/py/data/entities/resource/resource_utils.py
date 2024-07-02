@@ -1,5 +1,5 @@
-import logging
 import pathlib
+import typing
 
 from .resource import Resource
 from .resources_list import ResourcesList, ResourceFiles, ResourceFolders
@@ -134,3 +134,27 @@ def filter_resources_list(
 
     _filter(filtered_resources)
     return filtered_resources
+
+
+def files_list_from_resources_list(resources: ResourcesList) -> typing.List[Resource]:
+    """
+    Converts a resources list into a flat list of all included files.
+
+    Args:
+        resources: The resources list.
+
+    Returns:
+        The flattened files list.
+    """
+    files_list: typing.List[Resource] = []
+
+    def _process_resources_list(resources_list: ResourcesList) -> None:
+        nonlocal files_list
+
+        files_list += resources_list.files
+
+        for sub_list in resources_list.folders:
+            _process_resources_list(sub_list)
+
+    _process_resources_list(resources)
+    return files_list

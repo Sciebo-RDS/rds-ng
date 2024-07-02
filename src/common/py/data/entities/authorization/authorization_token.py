@@ -58,8 +58,11 @@ class AuthorizationToken:
         self._convert_dataclasses()
 
     def __setattr__(self, prop, val):
-        super().__setattr__(prop, val)
-        self._convert_dataclasses()
+        if hasattr(val, "to_dict"):
+            # Automatically convert JSON dataclasses to dictionaries
+            super().__setattr__(prop, val.to_dict())
+        else:
+            super().__setattr__(prop, val)
 
     def _convert_dataclasses(self) -> None:
         # Automatically convert JSON dataclasses to dictionaries

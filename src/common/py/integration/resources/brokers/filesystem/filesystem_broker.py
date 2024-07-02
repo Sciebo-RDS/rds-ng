@@ -1,5 +1,6 @@
 import io
 import os
+import pathlib
 import typing
 from dataclasses import dataclass
 
@@ -75,8 +76,9 @@ class FilesystemBroker(ResourcesBroker):
         *,
         tunnel: ResourcesBrokerTunnel,
     ) -> None:
+        path = pathlib.PurePosixPath(resource)
         total_size = os.stat(resource).st_size
-        tunnel.transfer_begin(total_size)
+        tunnel.transfer_begin(path, total_size)
 
         try:
             # Don't bother with chunked reads or similar, as this broker is only meant for testing anyway
@@ -84,9 +86,9 @@ class FilesystemBroker(ResourcesBroker):
                 data = file.readall()
                 tunnel.write_buffer.write(data)
 
-            tunnel.transfer_done(total_size)
+            tunnel.transfer_done(path, total_size)
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            tunnel.transfer_failed(str(exc))
+            tunnel.transfer_failed(path, str(exc))
             raise exc
 
 

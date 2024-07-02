@@ -1,11 +1,15 @@
-import logging
+import pathlib
 import random
 import time
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
-from common.py.data.entities.resource import ResourcesList
+from common.py.data.entities.resource import (
+    files_list_from_resources_list,
+    ResourcesList,
+)
+from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
 from common.py.services import Service
 from common.py.utils import human_readable_file_size
 
@@ -31,9 +35,6 @@ class StubJobExecutor(ConnectorJobExecutor):
             target_channel=target_channel,
         )
 
-        self._start_tick = 0
-        self._job_time = 1
-
     def start(self) -> None:
         self._transmitter.prepare_done(
             lambda res: self._prepare_done(res)
@@ -41,26 +42,39 @@ class StubJobExecutor(ConnectorJobExecutor):
             self._job.project
         )
 
-    def process(self) -> None:
-        progress = (time.time() - self._start_tick) / self._job_time
-        self.report(progress, f"I have already done {progress*100:0.1f}%")
-
-        if progress >= 1.0:
-            (
-                self.set_done()
-                if random.uniform(0.0, 1.0) <= 0.8
-                else self.set_failed("Totally random failure")
-            )
-
     def _prepare_done(self, resources: ResourcesList) -> None:
-        self._start_tick = time.time()
-        self._job_time = random.uniform(10.0, 20.0)
+        files_list = files_list_from_resources_list(resources)
 
         self.report_message(
-            f"I got loads of resources to transfer: {human_readable_file_size(resources.resource.size)}",
+            f"{len(files_list)} resources to transfer ({human_readable_file_size(resources.resource.size)})",
+        )
+        time.sleep(1)
+
+        cur_file = 0
+
+        def _file_done(res: pathlib.PurePosixPath, _: int) -> None:
+            nonlocal cur_file
+
+            cur_file += 1
+            self.report(cur_file / len(files_list), f"Downloaded {res}")
+            time.sleep(1)
+
+        tunnel = MemoryBrokerTunnel()
+        tunnel.begin(lambda res, _: self.report_message(f"Downloading {res}...")).done(
+            _file_done
         )
 
+        self._transmitter.download_done(lambda: self._download_done()).download_failed(
+            lambda reason: self._download_failed(reason)
+        ).download(tunnel=tunnel)
+
     def _prepare_failed(self, reason: str) -> None:
+        pass
+
+    def _download_done(self) -> None:
+        self.set_done()
+
+    def _download_failed(self, reason: str) -> None:
         pass
 
     def remove(self) -> None:
