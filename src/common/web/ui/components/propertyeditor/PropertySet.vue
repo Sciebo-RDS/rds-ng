@@ -4,7 +4,7 @@ import Chip from "primevue/chip";
 import ContextMenu from "primevue/contextmenu";
 import Fieldset from "primevue/fieldset";
 import Listbox from "primevue/listbox";
-import { computed, provide, ref, unref, type Ref } from "vue";
+import { computed, ref, unref, type Ref } from "vue";
 
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
@@ -12,7 +12,6 @@ import { ProfileLayoutClass } from "./PropertyProfile";
 import { stringToColor } from "./utils/Colors";
 
 const props = defineProps(["controller", "profile", "project", "exporters", "projectProfiles", "projectObjects", "globalObjectStore"]);
-provide("profileId", props.profile["metadata"]["id"]);
 
 /* const menu = ref();
 const items = computed(() => {

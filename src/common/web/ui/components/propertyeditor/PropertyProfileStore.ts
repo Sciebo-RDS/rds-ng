@@ -25,9 +25,14 @@ export class PropertyProfileStore {
         return profile?.classes![classId]["labelTemplate"];
     }
 
-    public getLabelById(classId: string): string | undefined {
+    public getClassLabelById(classId: string): string | undefined {
         const profile = this._profiles.find((profile) => !!profile.classes && !!profile.classes[classId]);
         return profile?.classes![classId]["label"];
+    }
+
+    public getProfileLabelById(profileId: ProfileID): string | undefined {
+        const profile = this._profiles.find((profile) => profile.metadata.id === profileId);
+        return profile?.metadata.name;
     }
 
     public list(): Profile[] {

@@ -165,7 +165,7 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
                         v-for="t in addableTypes"
                         :key="t"
                         :type="t"
-                        :parentId="propertyClass.id"
+                        :parentId="propertyObject['id']"
                         :profileId="profileId"
                         :projectObjects="projectObjects"
                         :globalObjectStore="globalObjectStore as ProjectObjectStore"
@@ -176,7 +176,7 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
                 <span class="flex gap-2">
                     <Chip
                         v-for="p in profiles"
-                        :label="p[0]"
+                        :label="projectProfiles.getProfileLabelById(p)"
                         size="small"
                         class="h-4 !rounded py-3 text-sm bg-opacity-40"
                         :style="`background-color: ${stringToColor(p[0])}`"
@@ -189,8 +189,8 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
                     :key="i"
                     class="m-1"
                     :profileId="profileId"
-                    :linkedItemActions="linkedItemActions"
                     :item-id="i"
+                    :parentId="propertyClass.id"
                     :projectObjects="projectObjects"
                     :globalObjectStore="globalObjectStore as ProjectObjectStore"
                     :projectProfiles="projectProfiles"

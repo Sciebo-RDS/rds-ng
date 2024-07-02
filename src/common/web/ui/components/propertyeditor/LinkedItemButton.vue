@@ -1,21 +1,68 @@
 <script setup lang="ts">
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { confirmDialog } from "@common/ui/dialogs/ConfirmDialog";
 import Button from "primevue/button";
 import OverlayPanel from "primevue/overlaypanel";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { ProjectObject, dummyProjectObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
 
+const comp = FrontendComponent.inject();
 const dialog = useDialog();
-const props = defineProps(["linkedItemActions", "itemId", "projectObjects", "globalObjectStore", "profileId", "projectProfiles", "mode"]);
+const props = defineProps(["itemId", "parentId", "projectObjects", "globalObjectStore", "profileId", "projectProfiles", "mode"]);
 
 const object = (props.projectObjects.get(props.itemId) || props.globalObjectStore.get(props.itemId) || dummyProjectObject(props.itemId)) as ProjectObject;
 
-const linkedItemActions = object ? props.linkedItemActions(object.id, object.instanceLabel(props.projectProfiles)) : [];
+const linkedItemActions = computed(() =>
+[
+              {
+                  label: "Unlink",
+                  icon: "pi pi-minus",
+                  command: () => {
+                      confirmDialog(comp, {
+                          header: `Unlink "${props.globalObjectStore.get(object.id).instanceLabel(props.projectProfiles)}?"`,
+                          message: "Are you sure you want to unlink this property? The object will not be deleted, you can relink at any time.",
+                          acceptLabel: "Unlink",
+                          acceptIcon: "pi pi-minus",
+                          acceptClass: "p-button-danger",
+                          rejectLabel: "Cancel",
+                          rejectIcon: "pi pi-times",
+                          rejectClass: "p-button-secondary"
+                      }).then(() => {
+                          console.log("Unlinking " + object.id);
+                          props.projectObjects.removeLink(props.parentId, object.id);
+                          props.globalObjectStore.removeLink(props.parentId, object.id);
+                      });
+                  }
+              },
+              {
+                  label: "Delete",
+                  icon: "pi pi-trash",
+                  command: () => {
+                      confirmDialog(comp, {
+                          header: `Delete "${props.globalObjectStore.get(object.id).instanceLabel(props.projectProfiles)}"?`,
+                          message: "Are you sure you want to delete this object? It will not be recoverable.",
+                          acceptLabel: "Delete",
+                          acceptIcon: "pi pi-trash",
+                          acceptClass: "p-button-danger",
+                          rejectLabel: "Cancel",
+                          rejectIcon: "pi pi-times",
+                          rejectClass: "p-button-secondary"
+                      }).then(() => {
+                          console.log("Deleting " + object.id);
+                          props.projectObjects.remove(object.id);
+                          props.globalObjectStore.remove(object.id);
+                      });
+                  }
+              }
+          ]
+);
+
 const emit = defineEmits(["loadObject"]);
 function handleClick() {
-    if (object["id"] === undefined) {
+    if (object["type"] === 'dummy') {
         return;
     }
     if (props.mode == "dialog") {
@@ -36,9 +83,9 @@ function handleClick() {
             },
             data: {
                 id: object["id"],
-                projectObjectStore: props.projectObjects,
+                projectObjects: props.projectObjects,
                 globalObjectStore: props.globalObjectStore,
-                propertyProfileStore: props.projectProfiles,
+                projectProfiles: props.projectProfiles,
                 profileId: props.profileId
             }
         });
@@ -65,8 +112,7 @@ const toggle = (event: Event) => {
             "
             :style="`--p-color: ${object.bgColor(props.projectProfiles)}; --p-border-color: ${object.borderColor(props.projectProfiles)};`"
         >
-            <span class="text-lg mx-2 truncate">
-                {{ props.projectProfiles.getLabelById(object["type"]) }}: {{ object.instanceLabel(props.projectProfiles) }}
+                    {{ props.projectProfiles.getClassLabelById(object["type"]) }}
             </span>
         </SplitButton>
         <Button
