@@ -8,16 +8,16 @@ import webdav3.client
 from dataclasses_json import dataclass_json
 
 from .webdav_utils import parse_webdav_resource
-from .. import ResourcesBroker
+from .. import ResourcesBroker, ResourcesBrokerTunnel
 from ....authorization.strategies import AuthorizationStrategy
 from .....component import BackendComponent
 from .....core import logging
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import (
-    ResourcesList,
     Resource,
-    ResourceFolders,
     ResourceFiles,
+    ResourceFolders,
+    ResourcesList,
 )
 from .....data.entities.user import UserToken
 from .....services import Service
@@ -71,7 +71,7 @@ class WebdavBroker(ResourcesBroker):
             requires_auth=config.requires_auth,
         )
 
-        self._client = self._create_webdav_client()
+        self._client = self._create_webdav_client(comp)
 
     def list_resources(
         self,
@@ -90,6 +90,19 @@ class WebdavBroker(ResourcesBroker):
                 recursive=recursive,
             ),
             resource=root_path,
+            refresh_unauthorized_token=self._auth_token_refresh,
+        )
+
+    def download_resource(
+        self,
+        resource: str,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+    ) -> None:
+        resource = pathlib.PurePosixPath(self._resolve_root(resource))
+        self._execute_request(
+            lambda: self._execute_download_resource(resource, tunnel=tunnel),
+            resource=resource,
             refresh_unauthorized_token=self._auth_token_refresh,
         )
 
@@ -184,7 +197,30 @@ class WebdavBroker(ResourcesBroker):
 
         return _process_path(root, process_resource=True)
 
-    def _create_webdav_client(self) -> webdav3.client.Client:
+    def _execute_download_resource(
+        self,
+        resource: pathlib.PurePosixPath,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+    ) -> None:
+        total_size = self._client.info(str(resource)).size
+        tunnel.transfer_begin(total_size)
+
+        try:
+            self._client.download_from(
+                tunnel.write_buffer,
+                str(resource),
+                lambda current, _: tunnel.transfer_progress(
+                    min(current, total_size), total_size
+                ),
+            )
+
+            tunnel.transfer_done(total_size)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            tunnel.transfer_failed(str(exc))
+            raise exc
+
+    def _create_webdav_client(self, comp: BackendComponent) -> webdav3.client.Client:
         if self._config.host == "" or self._config.endpoint == "":
             raise RuntimeError(
                 "No WebDAV host or endpoint provided for client creation"
@@ -194,9 +230,14 @@ class WebdavBroker(ResourcesBroker):
                 "The WebDAV endpoint requires authorization but none was provided"
             )
 
+        from .....settings import NetworkSettingIDs
+
         options = {
             "webdav_hostname": urllib.parse.urljoin(
                 self._config.host, self._config.endpoint
+            ),
+            "webdav_timeout": comp.data.config.value(
+                NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
             ),
         }
 

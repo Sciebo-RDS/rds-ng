@@ -3,7 +3,7 @@ import typing
 
 from .resources_transmitter_context import ResourcesTransmitterContext
 from .resources_transmitter_exceptions import ResourcesTransmitterError
-from ..brokers import create_resources_broker, ResourcesBroker
+from ..brokers import create_resources_broker, ResourcesBroker, ResourcesBrokerTunnel
 from ....api import GetAuthorizationTokenCommand, GetAuthorizationTokenReply
 from ....component import BackendComponent
 from ....core.messaging import Channel
@@ -16,6 +16,8 @@ from ....utils import attempt, ExecutionCallbacks
 
 TransmissionPrepareDoneCallback = typing.Callable[[ResourcesList], None]
 TransmissionPrepareFailCallback = typing.Callable[[str], None]
+TransmissionDownloadDoneCallback = typing.Callable[[], None]
+TransmissionDownloadFailCallback = typing.Callable[[str], None]
 
 
 class ResourcesTransmitter:
@@ -63,6 +65,9 @@ class ResourcesTransmitter:
         self._prepare_callbacks = ExecutionCallbacks[
             TransmissionPrepareDoneCallback, TransmissionPrepareFailCallback
         ]()
+        self._download_callbacks = ExecutionCallbacks[
+            TransmissionDownloadDoneCallback, TransmissionDownloadFailCallback
+        ]()
 
         self._context = ResourcesTransmitterContext()
 
@@ -77,7 +82,6 @@ class ResourcesTransmitter:
             project: The project to work on.
         """
 
-        # Get a list of all resources in the project path
         def _prepare(broker: ResourcesBroker) -> None:
             self._context.resources = broker.list_resources(project.resources_path)
             self._context.prepared = True
@@ -118,6 +122,56 @@ class ResourcesTransmitter:
         """
         with self._lock:
             self._prepare_callbacks.failed(callback)
+            return self
+
+    def download(self, resource: str, *, tunnel: ResourcesBrokerTunnel) -> None:
+        """
+        Downloads the specified resource using the provided tunnel.
+
+        Args:
+            resource: The resource path.
+            tunnel: The broker tunnel.
+        """
+
+        def _download(broker: ResourcesBroker) -> None:
+            broker.download_resource(resource, tunnel=tunnel)
+
+        self._execute(
+            cb_exec=_download,
+            cb_done=lambda: self._download_callbacks.invoke_done_callbacks(),
+            cb_failed=lambda reason: self._download_callbacks.invoke_fail_callbacks(
+                reason
+            ),
+        )
+
+    def download_done(self, callback: TransmissionDownloadDoneCallback) -> typing.Self:
+        """
+        Adds a callback for finished downloads.
+
+        Args:
+            callback: The callback to add.
+
+        Returns:
+            This instance for easy chaining.
+        """
+        with self._lock:
+            self._download_callbacks.done(callback)
+            return self
+
+    def download_failed(
+        self, callback: TransmissionDownloadFailCallback
+    ) -> typing.Self:
+        """
+        Adds a callback for failed downloads.
+
+        Args:
+            callback: The callback to add.
+
+        Returns:
+            This instance for easy chaining.
+        """
+        with self._lock:
+            self._download_callbacks.failed(callback)
             return self
 
     def reset(self) -> None:

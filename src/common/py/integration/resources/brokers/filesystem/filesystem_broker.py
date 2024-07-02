@@ -1,9 +1,11 @@
+import io
+import os
 import typing
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
 
-from .. import ResourcesBroker
+from .. import ResourcesBroker, ResourcesBrokerTunnel
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import ResourcesList
@@ -66,6 +68,26 @@ class FilesystemBroker(ResourcesBroker):
             include_files=include_files,
             recursive=recursive,
         )
+
+    def download_resource(
+        self,
+        resource: str,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+    ) -> None:
+        total_size = os.stat(resource).st_size
+        tunnel.transfer_begin(total_size)
+
+        try:
+            # Don't bother with chunked reads or similar, as this broker is only meant for testing anyway
+            with io.FileIO(resource, "rb") as file:
+                data = file.readall()
+                tunnel.write_buffer.write(data)
+
+            tunnel.transfer_done(total_size)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            tunnel.transfer_failed(str(exc))
+            raise exc
 
 
 def create_filesystem_broker(

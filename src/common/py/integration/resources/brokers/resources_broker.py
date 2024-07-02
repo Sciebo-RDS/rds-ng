@@ -1,5 +1,7 @@
 import abc
+import typing
 
+from .resources_broker_tunnel import ResourcesBrokerTunnel
 from ... import IntegrationHandler
 from ...authorization.strategies import (
     AuthorizationStrategy,
@@ -12,6 +14,8 @@ from ....data.entities.authorization import AuthorizationToken
 from ....data.entities.resource import ResourcesList
 from ....data.entities.user import UserToken
 from ....services import Service
+
+DownloadProgressCallback = typing.Callable[[int, int], None]
 
 
 class ResourcesBroker(IntegrationHandler):
@@ -72,7 +76,36 @@ class ResourcesBroker(IntegrationHandler):
         include_folders: bool = True,
         include_files: bool = True,
         recursive: bool = True,
-    ) -> ResourcesList: ...
+    ) -> ResourcesList:
+        """
+        Retrieves a list of all available resources.
+
+        Args:
+            root: The root path.
+            include_folders: Whether to include folders.
+            include_files: Whether to include files.
+            recursive: Whether to recurse into subdirectories.
+
+        Returns:
+            A list of all resources.
+        """
+        ...
+
+    @abc.abstractmethod
+    def download_resource(
+        self,
+        resource: str,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+    ) -> None:
+        """
+        Downloads the specified resource using the provided tunnel. In case of an error, an exception should be raised.
+
+        Args:
+            resource: The resource path.
+            tunnel: The resources tunnel.
+        """
+        ...
 
     def _create_auth_strategy(
         self, svc: Service, strategy: str
