@@ -53,11 +53,10 @@ class StubJobExecutor(ConnectorJobExecutor):
         cur_file = 0
 
         def _file_done(res: pathlib.PurePosixPath, _: int) -> None:
-            nonlocal cur_file
+            nonlocal cur_file, tunnel
 
             cur_file += 1
             self.report(cur_file / len(files_list), f"Downloaded {res}")
-            time.sleep(1)
 
         tunnel = MemoryBrokerTunnel()
         tunnel.begin(lambda res, _: self.report_message(f"Downloading {res}...")).done(

@@ -115,9 +115,9 @@ class ResourcesBrokerTunnel(abc.ABC):
             resource: The resource path.
             size: The total size (in bytes) that were transferred.
         """
-        self._finish_callbacks.invoke_done_callbacks(resource, size)
-
         self._transfer_finalize(resource)
+
+        self._finish_callbacks.invoke_done_callbacks(resource, size)
 
     def transfer_failed(self, resource: pathlib.PurePosixPath, reason: str) -> None:
         """

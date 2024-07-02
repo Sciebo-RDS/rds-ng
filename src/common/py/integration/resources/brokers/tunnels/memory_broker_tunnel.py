@@ -25,6 +25,7 @@ class MemoryBrokerTunnel(ResourcesBrokerTunnel):
     def _transfer_finalize(
         self, _: pathlib.PurePosixPath, *, success: bool = True
     ) -> None:
+        self._buffer.seek(0)
         self._data_ready = success
 
     @property
