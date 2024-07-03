@@ -224,6 +224,9 @@ class WebdavBroker(ResourcesBroker):
             "webdav_timeout": comp.data.config.value(
                 NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
             ),
+            "chunk_size": comp.data.config.value(
+                NetworkSettingIDs.TRANSMISSION_CHUNK_SIZE
+            ),
         }
 
         def _add_option(
