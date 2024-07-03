@@ -11,7 +11,7 @@ from ....component import BackendComponent
 from ....core import logging
 from ....core.messaging import Channel
 from ....data.entities.authorization import AuthorizationToken
-from ....data.entities.resource import ResourcesList
+from ....data.entities.resource import Resource, ResourcesList
 from ....data.entities.user import UserToken
 from ....services import Service
 
@@ -94,7 +94,7 @@ class ResourcesBroker(IntegrationHandler):
     @abc.abstractmethod
     def download_resource(
         self,
-        resource: str,
+        resource: Resource,
         *,
         tunnel: ResourcesBrokerTunnel,
     ) -> None:
@@ -102,7 +102,7 @@ class ResourcesBroker(IntegrationHandler):
         Downloads the specified resource using the provided tunnel. In case of an error, an exception should be raised.
 
         Args:
-            resource: The resource path.
+            resource: The resource to download.
             tunnel: The resources tunnel.
         """
         ...

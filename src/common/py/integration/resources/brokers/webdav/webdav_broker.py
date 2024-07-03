@@ -95,14 +95,13 @@ class WebdavBroker(ResourcesBroker):
 
     def download_resource(
         self,
-        resource: str,
+        resource: Resource,
         *,
         tunnel: ResourcesBrokerTunnel,
     ) -> None:
-        resource = pathlib.PurePosixPath(self._resolve_root(resource))
         self._execute_request(
             lambda: self._execute_download_resource(resource, tunnel=tunnel),
-            resource=resource,
+            resource=pathlib.PurePosixPath(resource.filename),
             refresh_unauthorized_token=self._auth_token_refresh,
         )
 
@@ -199,26 +198,12 @@ class WebdavBroker(ResourcesBroker):
 
     def _execute_download_resource(
         self,
-        resource: pathlib.PurePosixPath,
+        resource: Resource,
         *,
         tunnel: ResourcesBrokerTunnel,
     ) -> None:
-        total_size = int(self._client.info(str(resource))["size"])
-        tunnel.transfer_begin(resource, total_size)
-
-        try:
-            self._client.download_from(
-                tunnel.write_buffer,
-                str(resource),
-                lambda current, _: tunnel.transfer_progress(
-                    resource, min(current, total_size), total_size
-                ),
-            )
-
-            tunnel.transfer_done(resource, total_size)
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            tunnel.transfer_failed(resource, str(exc))
-            raise exc
+        with tunnel:
+            self._client.download_from(tunnel, resource.filename)
 
     def _create_webdav_client(self, comp: BackendComponent) -> webdav3.client.Client:
         if self._config.host == "" or self._config.endpoint == "":

@@ -1,155 +1,143 @@
 import abc
+import enum
 import io
-import pathlib
 import typing
 
-from ....utils.func import ExecutionCallbacks
+from typing_extensions import Buffer
 
-BrokerTunnelBeginCallback = typing.Callable[[pathlib.PurePosixPath, int], None]
-BrokerTunnelProgressCallback = typing.Callable[[pathlib.PurePosixPath, int, int], None]
-BrokerTunnelDoneCallback = typing.Callable[[pathlib.PurePosixPath, int], None]
-BrokerTunnelFailCallback = typing.Callable[[pathlib.PurePosixPath, str], None]
+from ....core import logging
+from ....data.entities.resource import Resource
+from ....utils.func import CallbacksStack, CallbackType
 
 
-class ResourcesBrokerTunnel(abc.ABC):
+class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
     """
     Class used to "tunnel" the data when up-/downloading files through a broker.
 
-    The created tunnel must be reusable, i.e., resources should always be allocated anew during `_transfer_init`.
+    Tunnels are file-like objects and need to be used as context managers (i.e., using *with*).
     """
 
-    def __init__(self):
-        self._start_callbacks = ExecutionCallbacks[
-            BrokerTunnelBeginCallback, BrokerTunnelProgressCallback
-        ]()
-        self._finish_callbacks = ExecutionCallbacks[
-            BrokerTunnelDoneCallback, BrokerTunnelFailCallback
-        ]()
+    class CallbackTypes(enum.StrEnum):
+        OPEN = "open"
+        DONE = "done"
+        FAIL = "fail"
+        PROGRESS = "progress"
 
-    def begin(self, cb: BrokerTunnelBeginCallback) -> typing.Self:
-        """
-        Adds a *Begin* callback.
+    def __init__(self, resource: Resource):
+        self._resource = resource
+        self._bytes_written = 0
 
-        Args:
-            cb: The callback to add.
+        self._callbacks = CallbacksStack()
 
-        Returns:
-            This instance for easy chaining.
-        """
-        # We are "abusing" execution callbacks here, so done == begin
-        self._start_callbacks.done(cb)
+    def __enter__(self) -> typing.Self:
+        self._invoke_callback(ResourcesBrokerTunnel.CallbackTypes.OPEN)
         return self
 
-    def progress(self, cb: BrokerTunnelProgressCallback) -> typing.Self:
-        """
-        Adds a *Progress* callback.
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        if exc_type is None:
+            self._done()
+        else:
+            import traceback
 
+            self._failed(str(exc_val))
+
+            logging.warning(
+                f"An exception occurred within a broker tunnel: {exc_val}",
+                scope="broker",
+                exception=str(exc_type),
+            )
+            logging.debug(
+                f"Traceback:\n{''.join(traceback.format_tb(exc_tb))}", scope="broker"
+            )
+
+        return exc_type is None
+
+    def _invoke_callback(self, key: CallbackTypes, *args, **kwargs) -> None:
+        self._callbacks.invoke(key, *args, resource=self._resource, **kwargs)
+
+    def on(self, event: CallbackTypes, cb: CallbackType) -> typing.Self:
+        """
+        Registers a new callback for they specified event.
         Args:
-            cb: The callback to add.
-
-        Returns:
-            This instance for easy chaining.
+            event: The event to react to.
+            cb: The callback.
         """
-        # We are "abusing" execution callbacks here, so fail == progress
-        self._start_callbacks.failed(cb)
+        self._callbacks.assign(event, cb)
         return self
 
-    def done(self, cb: BrokerTunnelDoneCallback) -> typing.Self:
-        """
-        Adds a *Done* callback.
+    def _done(self) -> None:
+        self._invoke_callback(ResourcesBrokerTunnel.CallbackTypes.DONE)
 
-        Args:
-            cb: The callback to add.
+    def _failed(self, reason: str) -> None:
+        self._invoke_callback(ResourcesBrokerTunnel.CallbackTypes.FAIL, reason=reason)
 
-        Returns:
-            This instance for easy chaining.
-        """
-        self._finish_callbacks.done(cb)
-        return self
+    def _progress(self, bytes_written: int) -> None:
+        self._bytes_written += bytes_written
 
-    def failed(self, cb: BrokerTunnelFailCallback) -> typing.Self:
-        """
-        Adds a *Fail* callback.
+        self._invoke_callback(
+            ResourcesBrokerTunnel.CallbackTypes.PROGRESS,
+            bytes_written=bytes_written,
+            total_written=self._bytes_written,
+        )
 
-        Args:
-            cb: The callback to add.
+    # File-like interface (all need to be implemented by subclasses)
 
-        Returns:
-            This instance for easy chaining.
-        """
-        self._finish_callbacks.failed(cb)
-        return self
+    def readable(self) -> bool:
+        raise NotImplementedError()
 
-    def transfer_begin(self, resource: pathlib.PurePosixPath, size: int) -> None:
-        """
-        Called to notify the tunnel about the beginning of the transmission.
+    def read(self, size: int = -1) -> bytes | None:
+        raise NotImplementedError()
 
-        Args:
-            resource: The resource path.
-            size: The total size (in bytes) that will be transferred.
-        """
-        self._transfer_init(resource)
+    def readall(self) -> bytes | None:
+        raise NotImplementedError()
 
-        # We are "abusing" execution callbacks here, so done == begin
-        self._start_callbacks.invoke_done_callbacks(resource, size)
+    def writable(self) -> bool:
+        raise NotImplementedError()
 
-    def transfer_progress(
-        self, resource: pathlib.PurePosixPath, current: int, size: int
-    ) -> None:
-        """
-        Called to notify the tunnel about the progression of the transmission.
+    def write(self, data: Buffer) -> int | None:
+        raise NotImplementedError()
 
-        Args:
-            resource: The resource path.
-            current: The current size (in bytes) that has been transferred.
-            size: The total size (in bytes) that will be transferred.
-        """
-        # We are "abusing" execution callbacks here, so fail == progress
-        self._start_callbacks.invoke_fail_callbacks(resource, current, size)
+    # Default implementations
 
-    def transfer_done(self, resource: pathlib.PurePosixPath, size: int) -> None:
-        """
-        Called to notify the tunnel about the end of the transmission.
-
-        Args:
-            resource: The resource path.
-            size: The total size (in bytes) that were transferred.
-        """
-        self._transfer_finalize(resource)
-
-        self._finish_callbacks.invoke_done_callbacks(resource, size)
-
-    def transfer_failed(self, resource: pathlib.PurePosixPath, reason: str) -> None:
-        """
-        Called to notify the tunnel about the failure of the transmission.
-
-        Args:
-            resource: The resource path.
-            reason: The failure reason.
-        """
-        self._finish_callbacks.invoke_fail_callbacks(resource, reason)
-        self._transfer_finalize(resource, success=False)
-
-    def _transfer_init(self, resource: pathlib.PurePosixPath) -> None:
-        pass
-
-    def _transfer_finalize(
-        self, resource: pathlib.PurePosixPath, *, success: bool = True
-    ) -> None:
-        pass
+    def close(self) -> None:
+        super().close()
 
     @property
-    @abc.abstractmethod
-    def read_buffer(self) -> io.BufferedIOBase:
-        """
-        The buffer used for reading contents.
-        """
-        ...
+    def closed(self) -> bool:
+        return super().closed
 
-    @property
-    @abc.abstractmethod
-    def write_buffer(self) -> io.BufferedIOBase:
-        """
-        The buffer used for writing contents.
-        """
-        ...
+    def flush(self) -> None:
+        super().flush()
+
+    def readline(self, size: int | None = -1) -> bytes:
+        return super().read(size)
+
+    def readlines(self, hint: int = -1) -> list[bytes]:
+        return [super().readall()]
+
+    def readinto(self, buffer: Buffer) -> int | None:
+        return super().readinto(buffer)
+
+    def writelines(self, lines: typing.Iterable[Buffer]) -> None:
+        for line in lines:
+            self.write(line)
+
+    # Behavior-defining overrides
+
+    def isatty(self) -> bool:
+        return False
+
+    def fileno(self) -> int:
+        raise OSError("Tunnel doesn't support file descriptors")
+
+    def seek(self, *args, **kwargs):
+        raise OSError("Tunnels aren't seekable")
+
+    def seekable(self) -> bool:
+        return False
+
+    def tell(self) -> int:
+        return super().tell()
+
+    def truncate(self, size: int | None = None) -> None:
+        raise OSError("Tunnel contents can't be truncated")

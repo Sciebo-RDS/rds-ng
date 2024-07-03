@@ -9,7 +9,7 @@ from dataclasses_json import dataclass_json
 from .. import ResourcesBroker, ResourcesBrokerTunnel
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
-from .....data.entities.resource import ResourcesList
+from .....data.entities.resource import Resource, ResourcesList
 from .....data.entities.user import UserToken
 from .....services import Service
 
@@ -72,24 +72,14 @@ class FilesystemBroker(ResourcesBroker):
 
     def download_resource(
         self,
-        resource: str,
+        resource: Resource,
         *,
         tunnel: ResourcesBrokerTunnel,
     ) -> None:
-        path = pathlib.PurePosixPath(resource)
-        total_size = os.stat(resource).st_size
-        tunnel.transfer_begin(path, total_size)
-
-        try:
-            # Don't bother with chunked reads or similar, as this broker is only meant for testing anyway
-            with io.FileIO(resource, "rb") as file:
+        with tunnel:
+            with io.FileIO(resource.filename, "rb") as file:
                 data = file.readall()
-                tunnel.write_buffer.write(data)
-
-            tunnel.transfer_done(path, total_size)
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            tunnel.transfer_failed(path, str(exc))
-            raise exc
+                tunnel.write(data)
 
 
 def create_filesystem_broker(
