@@ -53,7 +53,7 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
         return exc_type is None
 
     def _invoke_callback(self, key: CallbackTypes, *args, **kwargs) -> None:
-        self._callbacks.invoke(key, *args, resource=self._resource, **kwargs)
+        self._callbacks.invoke(key, self._resource, *args, **kwargs)
 
     def on(self, event: CallbackTypes, cb: CallbackType) -> typing.Self:
         """
@@ -141,3 +141,11 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
 
     def truncate(self, size: int | None = None) -> None:
         raise OSError("Tunnel contents can't be truncated")
+
+
+ResourcesBrokerTunnelType = typing.TypeVar(
+    "ResourcesBrokerTunnelType", bound=ResourcesBrokerTunnel
+)
+ResourcesBrokerTunnelCreator = (
+    type[ResourcesBrokerTunnelType] | typing.Callable[[Resource], ResourcesBrokerTunnel]
+)

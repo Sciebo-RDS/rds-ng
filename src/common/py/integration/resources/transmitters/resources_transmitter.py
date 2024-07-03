@@ -4,7 +4,12 @@ import typing
 
 from .resources_transmitter_context import ResourcesTransmitterContext
 from .resources_transmitter_exceptions import ResourcesTransmitterError
-from ..brokers import create_resources_broker, ResourcesBroker, ResourcesBrokerTunnel
+from ..brokers import (
+    create_resources_broker,
+    ResourcesBroker,
+    ResourcesBrokerTunnel,
+    ResourcesBrokerTunnelCreator,
+)
 from ....api import GetAuthorizationTokenCommand, GetAuthorizationTokenReply
 from ....component import BackendComponent
 from ....core.messaging import Channel
@@ -135,18 +140,24 @@ class ResourcesTransmitter:
         self,
         resource: Resource,
         *,
-        tunnel: ResourcesBrokerTunnel,
+        tunnel_type: ResourcesBrokerTunnelCreator,
     ) -> None:
         """
-        Downloads a resource using the provided tunnel.
+        Downloads a resource using the provided tunnel type.
 
         Args:
             resource: The resource to download.
-            tunnel: The broker tunnel.
+            tunnel_type: The tunnel type.
         """
 
         if not self._context.prepared:
             raise RuntimeError("Tried to use an unprepared transmitter context")
+
+        tunnel = tunnel_type(resource)
+
+        def _recreate_tunnel():
+            nonlocal tunnel
+            tunnel = tunnel_type(resource)
 
         def _download(broker: ResourcesBroker) -> None:
             broker.download_resource(resource, tunnel=tunnel)
@@ -159,7 +170,104 @@ class ResourcesTransmitter:
             cb_failed=lambda reason: self._download_callbacks.invoke_fail_callbacks(
                 resource, reason
             ),
+            cb_retry=_recreate_tunnel,
         )
+
+    def download_all(
+        self,
+        *,
+        tunnel_type: ResourcesBrokerTunnelCreator,
+        cb_each: typing.Callable[[Resource, int, int], None] | None = None,
+        cb_done: typing.Callable[[], None] | None = None,
+    ):
+        """
+        Downloads all previously listed files.
+
+        Args:
+            tunnel_type: The tunnel type.
+            cb_each: A callback called for each file being downloaded.
+            cb_done: A callback called when all downloads have finished.
+        """
+        if not self._context.resources:
+            raise RuntimeError("Tried to use an empty transmitter context")
+
+        from ....data.entities.resource import files_list_from_resources_list
+
+        resources = files_list_from_resources_list(self._context.resources)
+        self.download_list(
+            resources,
+            tunnel_type=tunnel_type,
+            cb_each=cb_each,
+            cb_done=cb_done,
+        )
+
+    def download_list(
+        self,
+        resources: typing.List[Resource],
+        *,
+        tunnel_type: ResourcesBrokerTunnelCreator,
+        cb_each: typing.Callable[[Resource, int, int], None] | None = None,
+        cb_done: typing.Callable[[], None] | None = None,
+    ) -> None:
+        """
+        Downloads an entire list of resources.
+
+        Args:
+            resources: The resources list.
+            tunnel_type: The tunnel type.
+            cb_each: A callback called for each file being downloaded.
+            cb_done: A callback called when all downloads have finished.
+        """
+        if len(resources) == 0:
+            if callable(cb_done):
+                cb_done()
+            return
+
+        return self._download_list_indexed(
+            resources,
+            index=0,
+            tunnel_type=tunnel_type,
+            cb_each=cb_each,
+            cb_done=cb_done,
+        )
+
+    def _download_list_indexed(
+        self,
+        resources: typing.List[Resource],
+        *,
+        index: int,
+        tunnel_type: ResourcesBrokerTunnelCreator,
+        cb_each: typing.Callable[[Resource, int, int], None] | None = None,
+        cb_done: typing.Callable[[], None] | None = None,
+    ) -> None:
+        resource = resources[index]
+
+        if callable(cb_each):
+            cb_each(resource, index, len(resources))
+
+        def _all_done() -> None:
+            if callable(cb_done):
+                cb_done()
+
+        def _create_tunnel(resource: Resource) -> ResourcesBrokerTunnel:
+            tunnel = tunnel_type(resource)
+            tunnel.on(
+                ResourcesBrokerTunnel.CallbackTypes.DONE,
+                lambda _: (
+                    self._download_list_indexed(
+                        resources,
+                        index=index + 1,
+                        tunnel_type=tunnel_type,
+                        cb_done=cb_done,
+                        cb_each=cb_each,
+                    )
+                    if index + 1 < len(resources)
+                    else _all_done()
+                ),
+            )
+            return tunnel
+
+        self.download(resource, tunnel_type=_create_tunnel)
 
     def download_done(self, callback: TransmissionDownloadDoneCallback) -> typing.Self:
         """
@@ -201,6 +309,7 @@ class ResourcesTransmitter:
         cb_exec: typing.Callable[[ResourcesBroker], None],
         cb_done: typing.Callable[[], None],
         cb_failed: typing.Callable[[str], None],
+        cb_retry: typing.Callable[[], None] | None = None,
     ) -> None:
         # Get the authorization token for the host system, since we need to access its resources.
         # Once received, the actual execution can happen.
@@ -218,6 +327,7 @@ class ResourcesTransmitter:
                     if attempt(
                         cb_exec,
                         broker=broker,
+                        retry_callback=cb_retry,
                         fail_callback=lambda e: cb_failed(str(e)),
                         attempts=self._max_attempts,
                         delay=self._attempts_delay,

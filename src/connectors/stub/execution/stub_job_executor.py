@@ -2,6 +2,7 @@ import time
 import typing
 
 from common.py.component import BackendComponent
+from common.py.core import logging
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.data.entities.resource import (
@@ -59,43 +60,31 @@ class StubJobExecutor(ConnectorJobExecutor):
         self.set_failed(f"Failed to prepare job: {reason}")
 
     def _download(self, files: typing.List[Resource]) -> None:
-        download_failed = False
-
-        def stop_downloads() -> None:
-            nonlocal download_failed
-            download_failed = True
-
         self._transmitter.download_done(
             lambda res, buffer: self._download_done(res, buffer)
-        ).download_failed(
-            lambda res, reason: self._download_failed(res, reason)
-        ).download_failed(
-            lambda _, __: stop_downloads()
+        ).download_failed(lambda res, reason: self._download_failed(res, reason))
+
+        def _report_each_file(res: Resource, current: int, total: int) -> None:
+            self.report(current / total, f"Downloading {res.filename}...")
+
+        self._transmitter.download_list(
+            files,
+            tunnel_type=MemoryBrokerTunnel,
+            cb_each=_report_each_file,
+            cb_done=lambda: self.set_done(),
         )
-
-        for index, resource in enumerate(files):
-            tunnel = MemoryBrokerTunnel(resource)
-
-            self.report(index / len(files), f"Downloading {resource.filename}...")
-
-            self._transmitter.download(resource, tunnel=tunnel)
-
-            if download_failed:
-                break
-
-            time.sleep(0.1)
-
-        self.set_done()
 
     def _download_done(
         self,
         resource: Resource,
         buffer: ResourceBuffer,
     ) -> None:
-        print("2 ----------------------------", flush=True)
-        print(resource.filename, flush=True)
-        print(len(buffer.readall()), flush=True)
-        print("2 ----------------------------", flush=True)
+        logging.info(
+            "Downloaded resource",
+            scope="stub",
+            filename=resource.filename,
+            size=len(buffer.readall()),
+        )
 
     def _download_failed(self, res: Resource, reason: str) -> None:
         self.set_failed(f"Failed to download {res.filename}: {reason}")
