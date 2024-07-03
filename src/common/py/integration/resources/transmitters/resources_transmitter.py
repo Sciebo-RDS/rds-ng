@@ -1,3 +1,4 @@
+import io
 import threading
 import typing
 
@@ -18,9 +19,11 @@ from ....data.entities.user import UserToken
 from ....services import Service
 from ....utils.func import attempt, ExecutionCallbacks
 
+ResourceBuffer = io.RawIOBase
+
 TransmissionPrepareDoneCallback = typing.Callable[[ResourcesList], None]
 TransmissionPrepareFailCallback = typing.Callable[[str], None]
-TransmissionDownloadDoneCallback = typing.Callable[[Resource], None]
+TransmissionDownloadDoneCallback = typing.Callable[[Resource, ResourceBuffer], None]
 TransmissionDownloadFailCallback = typing.Callable[[Resource, str], None]
 
 
@@ -150,7 +153,9 @@ class ResourcesTransmitter:
 
         self._execute(
             cb_exec=_download,
-            cb_done=lambda: self._download_callbacks.invoke_done_callbacks(resource),
+            cb_done=lambda: self._download_callbacks.invoke_done_callbacks(
+                resource, typing.cast(ResourceBuffer, tunnel)
+            ),
             cb_failed=lambda reason: self._download_callbacks.invoke_fail_callbacks(
                 resource, reason
             ),

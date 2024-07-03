@@ -1,5 +1,3 @@
-import pathlib
-import random
 import time
 import typing
 
@@ -11,11 +9,10 @@ from common.py.data.entities.resource import (
     Resource,
     ResourcesList,
 )
-from common.py.integration.resources.brokers import ResourcesBrokerTunnel
 from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
+from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 from common.py.utils import human_readable_file_size
-
 from ...base.data.entities.connector import ConnectorJob
 from ...base.execution import ConnectorJobExecutor
 
@@ -68,32 +65,37 @@ class StubJobExecutor(ConnectorJobExecutor):
             nonlocal download_failed
             download_failed = True
 
+        self._transmitter.download_done(
+            lambda res, buffer: self._download_done(res, buffer)
+        ).download_failed(
+            lambda res, reason: self._download_failed(res, reason)
+        ).download_failed(
+            lambda _, __: stop_downloads()
+        )
+
         for index, resource in enumerate(files):
             tunnel = MemoryBrokerTunnel(resource)
 
             self.report(index / len(files), f"Downloading {resource.filename}...")
 
-            self._transmitter.download_done(
-                lambda res: self._download_done(res, tunnel)
-            ).download_failed(
-                lambda res, reason: self._download_failed(res, reason)
-            ).download_failed(
-                lambda _, __: stop_downloads()
-            ).download(
-                resource, tunnel=tunnel
-            )
+            self._transmitter.download(resource, tunnel=tunnel)
 
             if download_failed:
                 break
+
+            time.sleep(0.1)
 
         self.set_done()
 
     def _download_done(
         self,
         resource: Resource,
-        tunnel: ResourcesBrokerTunnel,
+        buffer: ResourceBuffer,
     ) -> None:
-        pass
+        print("2 ----------------------------", flush=True)
+        print(resource.filename, flush=True)
+        print(len(buffer.readall()), flush=True)
+        print("2 ----------------------------", flush=True)
 
     def _download_failed(self, res: Resource, reason: str) -> None:
         self.set_failed(f"Failed to download {res.filename}: {reason}")
