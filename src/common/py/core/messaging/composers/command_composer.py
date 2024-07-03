@@ -9,7 +9,8 @@ from .. import (
     CommandFailCallback,
 )
 from ..meta import MessageMetaInformation
-from ....utils import ExecutionCallbacks, UnitID
+from ....utils import UnitID
+from ....utils.func import ExecutionCallbacks
 
 
 class CommandComposer(MessageComposer):

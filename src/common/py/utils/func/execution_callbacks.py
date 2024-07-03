@@ -1,4 +1,7 @@
+import enum
 import typing
+
+from .callbacks_stack import CallbacksStack
 
 # pylint: disable=invalid-name
 DoneCallbackType = typing.TypeVar("DoneCallbackType")
@@ -6,15 +9,15 @@ DoneCallbackType = typing.TypeVar("DoneCallbackType")
 FailCallbackType = typing.TypeVar("FailCallbackType")
 
 
-class ExecutionCallbacks(typing.Generic[DoneCallbackType, FailCallbackType]):
+class ExecutionCallbacks(typing.Generic[DoneCallbackType, FailCallbackType], CallbacksStack):
     """
     Helper class for running 'Done' and 'Failed' callbacks during arbitrary executions.
     """
+    
+    class _CallbackType(enum.StrEnum):
+        DONE = "done"
+        FAIL = "fail"
 
-    def __init__(self):
-        self._done_callbacks: typing.List[DoneCallbackType] = []
-        self._fail_callbacks: typing.List[FailCallbackType] = []
-        
     def done(self, cb: DoneCallbackType) -> typing.Self:
         """
         Adds a *Done* callback.
@@ -25,7 +28,7 @@ class ExecutionCallbacks(typing.Generic[DoneCallbackType, FailCallbackType]):
         Returns:
             This instance to allow call chaining.
         """
-        self._done_callbacks.append(cb)
+        self.assign(ExecutionCallbacks._CallbackType.DONE, cb)
         return self
     
     def failed(self, cb: FailCallbackType) -> typing.Self:
@@ -38,40 +41,31 @@ class ExecutionCallbacks(typing.Generic[DoneCallbackType, FailCallbackType]):
         Returns:
             This instance to allow call chaining.
         """
-        self._fail_callbacks.append(cb)
+        self.assign(ExecutionCallbacks._CallbackType.FAIL, cb)
         return self
 
     def invoke_done_callbacks(self, *args, **kwargs) -> None:
         """
         Invokes all *Done* callbacks.
         """
-        for cb in self._done_callbacks:
-            cb(*args, **kwargs)
-            
+        self.invoke(ExecutionCallbacks._CallbackType.DONE, *args, **kwargs)
+        
     def invoke_fail_callbacks(self, *args, **kwargs) -> None:
         """
         Invokes all *Fail* callbacks.
         """
-        for cb in self._fail_callbacks:
-            cb(*args, **kwargs)
-
-    def reset(self) -> None:
-        """
-        Removecs all callbacks.
-        """
-        self._done_callbacks = []
-        self._fail_callbacks = []
+        self.invoke(ExecutionCallbacks._CallbackType.FAIL, *args, **kwargs)
 
     @property
     def done_callbacks(self) -> typing.List[DoneCallbackType]:
         """
         All *Done* callbacks.
         """
-        return self._done_callbacks
+        return self.callbacks(ExecutionCallbacks._CallbackType.DONE)
     
     @property
     def fail_callbacks(self) -> typing.List[FailCallbackType]:
         """
         All *Fail* callbacks.
         """
-        return self._fail_callbacks
+        return self.callbacks(ExecutionCallbacks._CallbackType.FAIL)

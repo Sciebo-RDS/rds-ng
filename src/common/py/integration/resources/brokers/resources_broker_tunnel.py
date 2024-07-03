@@ -3,7 +3,7 @@ import io
 import pathlib
 import typing
 
-from ....utils import ExecutionCallbacks
+from ....utils.func import ExecutionCallbacks
 
 BrokerTunnelBeginCallback = typing.Callable[[pathlib.PurePosixPath, int], None]
 BrokerTunnelProgressCallback = typing.Callable[[pathlib.PurePosixPath, int, int], None]

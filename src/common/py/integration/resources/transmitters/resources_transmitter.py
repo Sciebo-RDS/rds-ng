@@ -17,7 +17,7 @@ from ....data.entities.resource import (
 )
 from ....data.entities.user import UserToken
 from ....services import Service
-from ....utils import attempt, ExecutionCallbacks
+from ....utils.func import attempt, ExecutionCallbacks
 
 TransmissionPrepareDoneCallback = typing.Callable[[ResourcesList], None]
 TransmissionPrepareFailCallback = typing.Callable[[str], None]
