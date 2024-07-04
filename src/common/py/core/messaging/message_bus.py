@@ -42,6 +42,7 @@ class MessageBus:
         from .command import Command
         from .command_reply import CommandReply
         from .event import Event
+        from ...settings import NetworkSettingIDs
 
         self._comp_data = comp_data
 
@@ -54,7 +55,9 @@ class MessageBus:
             CommandReply: CommandReplyDispatcher(),
             Event: EventDispatcher(),
         }
-        self._router = MessageRouter(comp_data.comp_id)
+        self._router = MessageRouter(
+            comp_data.comp_id, comp_data.config.value(NetworkSettingIDs.API_KEY)
+        )
 
         self._lock = threading.Lock()
 

@@ -16,12 +16,15 @@ class MessageRouter:
         Represents errors during routing validation.
         """
 
-    def __init__(self, comp_id: UnitID):
+    def __init__(self, comp_id: UnitID, api_key: str):
         """
         Args:
             comp_id: The component id (required to decide whether we match a given direct target).
+            api_key: The API key.
         """
         self._comp_id = comp_id
+
+        self._api_key = api_key
 
     def verify_message(self, msg: Message, msg_meta: MessageMetaInformation) -> None:
         """
@@ -34,6 +37,9 @@ class MessageRouter:
         Raises:
             RoutingError: In case the message is not valid to enter the message bus.
         """
+        if msg.is_protected():
+            self._verify_protected_message(msg)
+
         if msg.target.is_local:
             self._verify_local_message(msg, msg_meta)
         if msg.target.is_direct:
@@ -78,6 +84,19 @@ class MessageRouter:
             not msg.target.is_local
             and msg_meta.entrypoint == MessageMetaInformation.Entrypoint.LOCAL
         )
+
+    def _verify_protected_message(self, msg: Message) -> None:
+        if msg.api_key == "":
+            raise MessageRouter.RoutingError(
+                "Protected message without an API key received"
+            )
+        if self._api_key == "":
+            raise MessageRouter.RoutingError(
+                "No API key has been set in the component configuration"
+            )
+
+        if msg.api_key != self._api_key:
+            raise MessageRouter.RoutingError("API key mismatch")
 
     def _verify_local_message(
         self, msg: Message, msg_meta: MessageMetaInformation

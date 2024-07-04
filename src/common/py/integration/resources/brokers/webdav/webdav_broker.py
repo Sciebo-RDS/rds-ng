@@ -8,17 +8,16 @@ import webdav3.client
 from dataclasses_json import dataclass_json
 
 from .webdav_utils import parse_webdav_resource
-from .. import ResourcesBroker
+from .. import ResourcesBroker, ResourcesBrokerTunnel
 from ....authorization.strategies import AuthorizationStrategy
 from .....component import BackendComponent
 from .....core import logging
-from .....core.messaging import Channel
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.resource import (
-    ResourcesList,
     Resource,
-    ResourceFolders,
     ResourceFiles,
+    ResourceFolders,
+    ResourcesList,
 )
 from .....data.entities.user import UserToken
 from .....services import Service
@@ -52,9 +51,15 @@ class WebdavBroker(ResourcesBroker):
         *,
         user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
+        auth_token_refresh: bool = True,
     ):
         super().__init__(
-            comp, svc, WebdavBroker.Broker, user_token=user_token, auth_token=auth_token
+            comp,
+            svc,
+            WebdavBroker.Broker,
+            user_token=user_token,
+            auth_token=auth_token,
+            auth_token_refresh=auth_token_refresh,
         )
 
         # Copy the configuration field-by-field, replacing placeholders on-the-go
@@ -66,7 +71,7 @@ class WebdavBroker(ResourcesBroker):
             requires_auth=config.requires_auth,
         )
 
-        self._client = self._create_webdav_client()
+        self._client = self._create_webdav_client(comp)
 
     def list_resources(
         self,
@@ -85,6 +90,19 @@ class WebdavBroker(ResourcesBroker):
                 recursive=recursive,
             ),
             resource=root_path,
+            refresh_unauthorized_token=self._auth_token_refresh,
+        )
+
+    def download_resource(
+        self,
+        resource: Resource,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+    ) -> None:
+        self._execute_request(
+            lambda: self._execute_download_resource(resource, tunnel=tunnel),
+            resource=pathlib.PurePosixPath(resource.filename),
+            refresh_unauthorized_token=self._auth_token_refresh,
         )
 
     def _execute_request(
@@ -92,7 +110,7 @@ class WebdavBroker(ResourcesBroker):
         cb: typing.Callable[[], typing.Any],
         *,
         resource: pathlib.PurePosixPath,
-        refresh_unauthorized_token: bool = True,
+        refresh_unauthorized_token: bool,
     ) -> typing.Any:
         try:
             return cb()
@@ -115,6 +133,7 @@ class WebdavBroker(ResourcesBroker):
                 error=str(exc),
             )
 
+            # TODO: Less harsh
             self._revoke_auth_token()
 
             raise exc
@@ -177,7 +196,16 @@ class WebdavBroker(ResourcesBroker):
 
         return _process_path(root, process_resource=True)
 
-    def _create_webdav_client(self) -> webdav3.client.Client:
+    def _execute_download_resource(
+        self,
+        resource: Resource,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+    ) -> None:
+        with tunnel:
+            self._client.download_from(tunnel, resource.filename)
+
+    def _create_webdav_client(self, comp: BackendComponent) -> webdav3.client.Client:
         if self._config.host == "" or self._config.endpoint == "":
             raise RuntimeError(
                 "No WebDAV host or endpoint provided for client creation"
@@ -187,9 +215,17 @@ class WebdavBroker(ResourcesBroker):
                 "The WebDAV endpoint requires authorization but none was provided"
             )
 
+        from .....settings import NetworkSettingIDs
+
         options = {
             "webdav_hostname": urllib.parse.urljoin(
                 self._config.host, self._config.endpoint
+            ),
+            "webdav_timeout": comp.data.config.value(
+                NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
+            ),
+            "chunk_size": comp.data.config.value(
+                NetworkSettingIDs.TRANSMISSION_CHUNK_SIZE
             ),
         }
 
@@ -218,6 +254,7 @@ def create_webdav_broker(
     *,
     user_token: UserToken,
     auth_token: AuthorizationToken | None = None,
+    auth_token_refresh: bool = True,
 ) -> WebdavBroker:
     """
     Creates a new WebDAV broker instance, automatically configuring it.
@@ -228,6 +265,7 @@ def create_webdav_broker(
         config: The broker configuration.
         user_token: The user token.
         auth_token: An optional authorization token.
+        auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
 
     Returns:
         The newly created broker.
@@ -237,5 +275,10 @@ def create_webdav_broker(
     )
 
     return WebdavBroker(
-        comp, svc, webdav_config, user_token=user_token, auth_token=auth_token
+        comp,
+        svc,
+        webdav_config,
+        user_token=user_token,
+        auth_token=auth_token,
+        auth_token_refresh=auth_token_refresh,
     )

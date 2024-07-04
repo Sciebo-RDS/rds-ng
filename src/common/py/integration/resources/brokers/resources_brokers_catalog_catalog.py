@@ -8,7 +8,7 @@ from ....services import Service
 from ....utils import ItemsCatalog
 
 ResourcesBrokerCreator = typing.Callable[
-    [BackendComponent, Service, typing.Any, UserToken, AuthorizationToken | None],
+    [BackendComponent, Service, typing.Any, UserToken, AuthorizationToken | None, bool],
     ResourcesBroker,
 ]
 

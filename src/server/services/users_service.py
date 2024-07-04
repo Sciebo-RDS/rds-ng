@@ -63,7 +63,7 @@ def create_users_service(comp: BackendComponent) -> Service:
             # We don't check for a _valid_ token here, only if one exists for the host system
             if (
                 ctx.storage_pool.authorization_token_storage.get(
-                    get_host_authorization_token_id(user)
+                    get_host_authorization_token_id(user.user_id)
                 )
                 is not None
             ):

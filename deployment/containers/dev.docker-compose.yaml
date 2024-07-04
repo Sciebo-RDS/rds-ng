@@ -43,6 +43,7 @@ services:
         ports:
             - "4200:6969"
         environment:
+            - RDS_NETWORK_API_KEY="some_key"
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
             # - RDS_STORAGE_DATABASE_ENGINE=sqlite
             # - RDS_STORAGE_DATABASE_SQLITE_FILE=/data/rds.db
@@ -70,6 +71,7 @@ services:
         ports:
             - "4300:6969"
         environment:
+            - RDS_NETWORK_API_KEY="some_key"
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
             - RDS_AUTHORIZATION_STRATEGY=oauth2
             - RDS_AUTHORIZATION_OAUTH2_SERVER_HOST=http://10.0.2.15:8080

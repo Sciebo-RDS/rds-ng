@@ -81,6 +81,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_data = self._get_oauth2_request_data(request_data)
         client_secret = self._get_client_secret(payload.auth_bearer)
 
+        # TODO: Timeout etc. handling
         response = requests.post(
             urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
             data={
@@ -129,6 +130,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         if oauth2_token.refresh_token is None:
             raise RuntimeError("Tried to refresh without a refresh token")
 
+        # TODO: Timeout etc. handling
         response = requests.post(
             urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
             data={

@@ -43,7 +43,7 @@ def create_resources_service(comp: BackendComponent) -> Service:
             raise RuntimeError("No resources broker has been assigned")
 
         auth_token = ctx.storage_pool.authorization_token_storage.get(
-            get_host_authorization_token_id(ctx.user)
+            get_host_authorization_token_id(ctx.user.user_id)
         )
 
         return create_resources_broker(

@@ -39,6 +39,7 @@ def create_resources_broker(
     *,
     user_token: UserToken,
     auth_token: AuthorizationToken | None = None,
+    auth_token_refresh: bool = True,
 ) -> ResourcesBroker:
     """
     Creates a resources broker using the specified identifier.
@@ -50,6 +51,7 @@ def create_resources_broker(
         config: The broker configuration as an arbitrary record.
         user_token: The user token.
         auth_token: An optional authorization token.
+        auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
 
     Returns:
         The newly created broker.
@@ -62,5 +64,10 @@ def create_resources_broker(
         raise RuntimeError(f"The resources broker '{broker}' couldn't be found")
 
     return broker_creator(
-        comp, svc, config, user_token=user_token, auth_token=auth_token
+        comp,
+        svc,
+        config,
+        user_token=user_token,
+        auth_token=auth_token,
+        auth_token_refresh=auth_token_refresh,
     )

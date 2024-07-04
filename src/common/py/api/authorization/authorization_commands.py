@@ -7,6 +7,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
+from ...data.entities.authorization import AuthorizationToken
 from ...data.entities.user import UserID
 from ...integration.authorization import AuthorizationRequestPayload
 
@@ -128,4 +129,75 @@ class RevokeAuthorizationReply(CommandReply):
         """
         return message_builder.build_command_reply(
             RevokeAuthorizationReply, cmd, success, message
+        )
+
+
+@Message.define("command/authorization/token/get", is_protected=True)
+class GetAuthorizationTokenCommand(Command):
+    """
+    Command to retrieve an authorization token.
+
+    Notes:
+        This message is protected and requires an API key. Requires a ``GetAuthorizationTokenReply`` reply.
+
+    Args:
+        user_id: The user ID.
+        auth_id: The ID of the token to revoke.
+    """
+
+    user_id: UserID
+    auth_id: str
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        user_id: UserID,
+        auth_id: str,
+        api_key: str,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            GetAuthorizationTokenCommand,
+            chain,
+            user_id=user_id,
+            auth_id=auth_id,
+            api_key=api_key,
+        )
+
+
+@Message.define("command/authorization/token/get/reply", is_protected=True)
+class GetAuthorizationTokenReply(CommandReply):
+    """
+    Reply to ``GetAuthorizationTokenCommand``.
+
+    Notes:
+        This message is protected and requires an API key.
+    """
+
+    auth_token: AuthorizationToken | None
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: GetAuthorizationTokenCommand,
+        *,
+        auth_token: AuthorizationToken | None,
+        api_key: str,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            GetAuthorizationTokenReply,
+            cmd,
+            success,
+            message,
+            auth_token=auth_token,
+            api_key=api_key,
         )

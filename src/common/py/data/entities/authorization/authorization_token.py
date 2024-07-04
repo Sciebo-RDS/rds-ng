@@ -1,5 +1,5 @@
 import typing
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum
 
 from dataclasses_json import dataclass_json
@@ -51,19 +51,22 @@ class AuthorizationToken:
     expiration_timestamp: float
 
     strategy: str
-    token: typing.Any
-    data: typing.Any
+    token: typing.Dict[str, typing.Any]
+    data: typing.Dict[str, typing.Any]
 
     def __post_init__(self):
         self._convert_dataclasses()
 
     def __setattr__(self, prop, val):
-        super().__setattr__(prop, val)
-        self._convert_dataclasses()
+        if hasattr(val, "to_dict"):
+            # Automatically convert JSON dataclasses to dictionaries
+            super().__setattr__(prop, val.to_dict())
+        else:
+            super().__setattr__(prop, val)
 
     def _convert_dataclasses(self) -> None:
         # Automatically convert JSON dataclasses to dictionaries
         if hasattr(self.token, "to_dict"):
-            self.token = self.token.to_dict()
+            super().__setattr__("token", self.token.to_dict())
         if hasattr(self.data, "to_dict"):
-            self.data = self.data.to_dict()
+            super().__setattr__("data", self.data.to_dict())
