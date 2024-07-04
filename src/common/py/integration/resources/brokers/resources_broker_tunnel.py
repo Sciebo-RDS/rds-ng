@@ -37,17 +37,12 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
         if exc_type is None:
             self._done()
         else:
-            import traceback
-
             self._failed(str(exc_val))
 
             logging.warning(
                 f"An exception occurred within a broker tunnel: {exc_val}",
                 scope="broker",
                 exception=str(exc_type),
-            )
-            logging.debug(
-                f"Traceback:\n{''.join(traceback.format_tb(exc_tb))}", scope="broker"
             )
 
         return exc_type is None
