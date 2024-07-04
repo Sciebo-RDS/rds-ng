@@ -2,13 +2,16 @@ import io
 import threading
 import typing
 
-from .resources_transmitter_context import ResourcesTransmitterContext
+from .resources_transmitter_contexts import (
+    ResourcesTransmitterContext,
+    ResourcesTransmitterDownloadContext,
+)
 from .resources_transmitter_exceptions import ResourcesTransmitterError
 from ..brokers import (
     create_resources_broker,
     ResourcesBroker,
     ResourcesBrokerTunnel,
-    ResourcesBrokerTunnelCreator,
+    ResourcesBrokerTunnelType,
 )
 from ....api import GetAuthorizationTokenCommand, GetAuthorizationTokenReply
 from ....component import BackendComponent
@@ -43,6 +46,7 @@ class ResourcesTransmitter:
         svc: Service,
         *,
         auth_channel: Channel,
+        tunnel_type: type[ResourcesBrokerTunnelType],
         user_token: UserToken,
         broker_token: ResourcesBrokerToken,
         max_attempts: int = 1,
@@ -53,9 +57,10 @@ class ResourcesTransmitter:
         Args:
             comp: The global component.
             svc: The service used for message sending.
+            auth_channel: Channel to fetch authorization tokens from.
+            tunnel_type: The type of the resources broker tunnel that will be created for downloading.
             user_token: The user token.
             broker_token: The broker token.
-            auth_channel: Channel to fetch authorization tokens from.
             max_attempts: The number of attempts for each operation; cannot be less than 1.
             attempts_delay: The delay (in seconds) between each attempt.
             auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
@@ -65,6 +70,7 @@ class ResourcesTransmitter:
         self._component = comp
         self._service = svc
         self._auth_channel = auth_channel
+        self._tunnel_type = tunnel_type
 
         self._user_token = user_token
         self._broker_token = broker_token
@@ -100,7 +106,7 @@ class ResourcesTransmitter:
 
         self._execute(
             cb_exec=_prepare,
-            cb_done=lambda: self._prepare_callbacks.invoke_done_callbacks(
+            cb_done=lambda _: self._prepare_callbacks.invoke_done_callbacks(
                 self._context.resources
             ),
             cb_failed=lambda reason: self._prepare_callbacks.invoke_fail_callbacks(
@@ -136,56 +142,29 @@ class ResourcesTransmitter:
             self._prepare_callbacks.failed(callback)
             return self
 
-    def download(
-        self,
-        resource: Resource,
-        *,
-        tunnel_type: ResourcesBrokerTunnelCreator,
-    ) -> None:
+    def download(self, resource: Resource) -> None:
         """
         Downloads a resource using the provided tunnel type.
 
         Args:
             resource: The resource to download.
-            tunnel_type: The tunnel type.
         """
+        self._context.download_list = [resource]
+        self._context.download_index = 0
 
-        if not self._context.prepared:
-            raise RuntimeError("Tried to use an unprepared transmitter context")
-
-        tunnel = tunnel_type(resource)
-
-        def _recreate_tunnel():
-            nonlocal tunnel
-            tunnel = tunnel_type(resource)
-
-        def _download(broker: ResourcesBroker) -> None:
-            broker.download_resource(resource, tunnel=tunnel)
-
-        self._execute(
-            cb_exec=_download,
-            cb_done=lambda: self._download_callbacks.invoke_done_callbacks(
-                resource, typing.cast(ResourceBuffer, tunnel)
-            ),
-            cb_failed=lambda reason: self._download_callbacks.invoke_fail_callbacks(
-                resource, reason
-            ),
-            cb_retry=_recreate_tunnel,
-        )
+        self._download_resource(resource)
 
     def download_all(
         self,
         *,
-        tunnel_type: ResourcesBrokerTunnelCreator,
-        cb_each: typing.Callable[[Resource, int, int], None] | None = None,
+        cb_progress: typing.Callable[[Resource, int, int], None] | None = None,
         cb_done: typing.Callable[[], None] | None = None,
     ):
         """
         Downloads all previously listed files.
 
         Args:
-            tunnel_type: The tunnel type.
-            cb_each: A callback called for each file being downloaded.
+            cb_progress: A callback called for each file being downloaded.
             cb_done: A callback called when all downloads have finished.
         """
         if not self._context.resources:
@@ -193,11 +172,12 @@ class ResourcesTransmitter:
 
         from ....data.entities.resource import files_list_from_resources_list
 
-        resources = files_list_from_resources_list(self._context.resources)
+        with self._lock:
+            resources = files_list_from_resources_list(self._context.resources)
+
         self.download_list(
             resources,
-            tunnel_type=tunnel_type,
-            cb_each=cb_each,
+            cb_progress=cb_progress,
             cb_done=cb_done,
         )
 
@@ -205,8 +185,7 @@ class ResourcesTransmitter:
         self,
         resources: typing.List[Resource],
         *,
-        tunnel_type: ResourcesBrokerTunnelCreator,
-        cb_each: typing.Callable[[Resource, int, int], None] | None = None,
+        cb_progress: typing.Callable[[Resource, int, int], None] | None = None,
         cb_done: typing.Callable[[], None] | None = None,
     ) -> None:
         """
@@ -214,60 +193,89 @@ class ResourcesTransmitter:
 
         Args:
             resources: The resources list.
-            tunnel_type: The tunnel type.
-            cb_each: A callback called for each file being downloaded.
+            cb_progress: A callback called for each file being downloaded.
             cb_done: A callback called when all downloads have finished.
         """
-        if len(resources) == 0:
+        if len(resources) > 0:
+            with self._lock:
+                self._context.download_list = resources
+                self._context.download_index = 0
+
+            return self._download_list_next(
+                resources,
+                cb_progress=cb_progress,
+                cb_done=cb_done,
+            )
+        else:
             if callable(cb_done):
                 cb_done()
-            return
 
-        return self._download_list_indexed(
-            resources,
-            index=0,
-            tunnel_type=tunnel_type,
-            cb_each=cb_each,
-            cb_done=cb_done,
-        )
+    def _download_resource(
+        self,
+        resource: Resource,
+        *,
+        cb_tunnel: typing.Callable[[ResourcesBrokerTunnel], None] | None = None,
+    ) -> None:
+        with self._lock:
+            if not self._context.prepared:
+                raise RuntimeError("Tried to use an unprepared transmitter context")
 
-    def _download_list_indexed(
+            def _download(
+                broker: ResourcesBroker,
+                download_ctx: ResourcesTransmitterDownloadContext,
+            ) -> ResourcesTransmitterDownloadContext:
+                download_ctx.tunnel = self._create_tunnel(
+                    download_ctx.resource, cb_tunnel=cb_tunnel
+                )
+                broker.download_resource(resource, tunnel=download_ctx.tunnel)
+                return download_ctx
+
+            def _download_done(
+                download_ctx: ResourcesTransmitterDownloadContext,
+            ) -> None:
+                self._download_callbacks.invoke_done_callbacks(
+                    resource, typing.cast(ResourceBuffer, download_ctx.tunnel)
+                )
+
+            def _download_failed(reason: str) -> None:
+                self._download_callbacks.invoke_fail_callbacks(resource, reason)
+
+            self._execute(
+                cb_exec=_download,
+                cb_done=_download_done,
+                cb_failed=_download_failed,
+                download_ctx=ResourcesTransmitterDownloadContext(resource=resource),
+            )
+
+    def _download_list_next(
         self,
         resources: typing.List[Resource],
         *,
-        index: int,
-        tunnel_type: ResourcesBrokerTunnelCreator,
-        cb_each: typing.Callable[[Resource, int, int], None] | None = None,
+        cb_progress: typing.Callable[[Resource, int, int], None] | None = None,
         cb_done: typing.Callable[[], None] | None = None,
     ) -> None:
-        resource = resources[index]
+        with self._lock:
+            resource = resources[self._context.download_index]
+            if callable(cb_progress):
+                cb_progress(resource, self._context.download_index, len(resources))
 
-        if callable(cb_each):
-            cb_each(resource, index, len(resources))
+            def _chain_tunnel(tunnel: ResourcesBrokerTunnel) -> None:
+                tunnel.on(
+                    ResourcesBrokerTunnel.CallbackTypes.DONE,
+                    lambda _: (
+                        self._download_list_next(
+                            resources,
+                            cb_progress=cb_progress,
+                            cb_done=cb_done,
+                        )
+                        if not self._context.all_downloads_done
+                        else cb_done() if callable(cb_done) else None
+                    ),
+                )
 
-        def _all_done() -> None:
-            if callable(cb_done):
-                cb_done()
+            self._download_resource(resource, cb_tunnel=_chain_tunnel)
 
-        def _create_tunnel(resource: Resource) -> ResourcesBrokerTunnel:
-            tunnel = tunnel_type(resource)
-            tunnel.on(
-                ResourcesBrokerTunnel.CallbackTypes.DONE,
-                lambda _: (
-                    self._download_list_indexed(
-                        resources,
-                        index=index + 1,
-                        tunnel_type=tunnel_type,
-                        cb_done=cb_done,
-                        cb_each=cb_each,
-                    )
-                    if index + 1 < len(resources)
-                    else _all_done()
-                ),
-            )
-            return tunnel
-
-        self.download(resource, tunnel_type=_create_tunnel)
+            self._context.download_index += 1
 
     def download_done(self, callback: TransmissionDownloadDoneCallback) -> typing.Self:
         """
@@ -306,10 +314,11 @@ class ResourcesTransmitter:
     def _execute(
         self,
         *,
-        cb_exec: typing.Callable[[ResourcesBroker], None],
-        cb_done: typing.Callable[[], None],
+        cb_exec: typing.Callable[..., typing.Any],
+        cb_done: typing.Callable[[typing.Any], None],
         cb_failed: typing.Callable[[str], None],
-        cb_retry: typing.Callable[[], None] | None = None,
+        cb_retry: typing.Callable[..., None] | None = None,
+        **kwargs,
     ) -> None:
         # Get the authorization token for the host system, since we need to access its resources.
         # Once received, the actual execution can happen.
@@ -324,15 +333,17 @@ class ResourcesTransmitter:
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     cb_failed(str(exc))
                 else:
-                    if attempt(
+                    success, result = attempt(
                         cb_exec,
-                        broker=broker,
-                        retry_callback=cb_retry,
-                        fail_callback=lambda e: cb_failed(str(e)),
+                        cb_retry=cb_retry,
+                        cb_fail=lambda e: cb_failed(str(e)),
                         attempts=self._max_attempts,
                         delay=self._attempts_delay,
-                    ):
-                        cb_done()
+                        broker=broker,
+                        **kwargs,
+                    )
+                    if success:
+                        cb_done(result)
 
         def _get_auth_token_failed(_, msg: str) -> None:
             with self._lock:
@@ -364,3 +375,15 @@ class ResourcesTransmitter:
             raise ResourcesTransmitterError(
                 f"Unable to create resources broker"
             ) from exc
+
+    def _create_tunnel(
+        self,
+        resource: Resource,
+        *,
+        cb_tunnel: typing.Callable[[ResourcesBrokerTunnel], None] | None,
+    ) -> ResourcesBrokerTunnel:
+        with self._lock:
+            tunnel = self._tunnel_type(resource)
+            if callable(cb_tunnel):
+                cb_tunnel(tunnel)
+            return tunnel

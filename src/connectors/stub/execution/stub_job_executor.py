@@ -34,6 +34,7 @@ class StubJobExecutor(ConnectorJobExecutor):
             job,
             message_builder=message_builder,
             target_channel=target_channel,
+            tunnel_type=MemoryBrokerTunnel,
         )
 
     def start(self) -> None:
@@ -69,8 +70,7 @@ class StubJobExecutor(ConnectorJobExecutor):
 
         self._transmitter.download_list(
             files,
-            tunnel_type=MemoryBrokerTunnel,
-            cb_each=_report_each_file,
+            cb_progress=_report_each_file,
             cb_done=lambda: self.set_done(),
         )
 

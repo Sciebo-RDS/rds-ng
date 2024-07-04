@@ -146,6 +146,3 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
 ResourcesBrokerTunnelType = typing.TypeVar(
     "ResourcesBrokerTunnelType", bound=ResourcesBrokerTunnel
 )
-ResourcesBrokerTunnelCreator = (
-    type[ResourcesBrokerTunnelType] | typing.Callable[[Resource], ResourcesBrokerTunnel]
-)
