@@ -98,6 +98,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             primary_key=True,
         ),
         Column("metadata", JSONEncodedDataType),
+        Column("shared_objects", JSONEncodedDataType),
     )
 
     table_feature_resources_metadata = Table(
