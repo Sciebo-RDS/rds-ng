@@ -53,19 +53,19 @@ class SessionManager:
         with SessionManager._lock:
             return session_id in SessionManager._sessions
 
-    def find_user_session(self, user_id: UserID) -> Session | None:
+    def find_user_sessions(self, user_id: UserID) -> typing.List[Session]:
         """
-        Finds the session associated with the user ID.
+        Finds all sessions associated with the user ID. Since a single user can be logged in for several sessions, a list of all these is returned.
 
         Args:
             user_id: The user ID.
 
         Returns:
-            The associated session, if any.
+            All associated sessions.
         """
         with SessionManager._lock:
+            sessions: typing.List[Session] = []
             for _, session in SessionManager._sessions.items():
                 if session.user_token and session.user_token.user_id == user_id:
-                    return session
-            else:
-                return None
+                    sessions.append(session)
+            return sessions

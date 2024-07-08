@@ -12,10 +12,9 @@ const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { vFocus } = useDirectives();
 
 const validator = useValidator({
-        name: ystring().trim().required().label("Name").default(dialogData.userData.name),
-        description: ystring().label("Description").default(dialogData.userData.description)
-    }
-);
+    name: ystring().trim().required().label("Name").default(dialogData.userData.name),
+    description: ystring().label("Description").default(dialogData.userData.description),
+});
 const name = validator.defineComponentBinds("name");
 </script>
 
@@ -24,7 +23,14 @@ const name = validator.defineComponentBinds("name");
         <Fieldset legend="General">
             <span class="r-form-field">
                 <label>Name <MandatoryMark /></label>
-                <InputText name="name" v-bind="name" v-model="dialogData.userData.name" placeholder="Name" :class="{ 'p-invalid': validator.errors.name }" v-focus />
+                <InputText
+                    name="name"
+                    v-bind="name"
+                    v-model="dialogData.userData.name"
+                    placeholder="Name"
+                    :class="{ 'p-invalid': validator.errors.name }"
+                    v-focus
+                />
                 <small>The name of the connection.</small>
             </span>
 
@@ -37,6 +43,4 @@ const name = validator.defineComponentBinds("name");
     </form>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

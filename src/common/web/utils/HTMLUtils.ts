@@ -1,4 +1,12 @@
 /**
+ * Targets for redirection.
+ */
+export const enum RedirectionTarget {
+    Current,
+    Blank,
+}
+
+/**
  * Scrolls an HTML element into view and focusses it.
  *
  * @param selector - The selector for the element.

@@ -1,11 +1,12 @@
 import { type KeyLike } from "jose";
 import * as jose from "jose";
 
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { type HostAuthorization, type HostResources, type HostUserToken, hostUserTokenFromData } from "@/integration/HostTypes";
-import { HostAPI } from "@/integration/HostAPI";
-
+import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { getURLQueryParam } from "@common/utils/URLUtils";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { type HostResources, type HostUserToken, hostUserTokenFromData } from "@/integration/HostTypes";
+import { HostAPI } from "@/integration/HostAPI";
 
 export function useHostIntegration(comp: FrontendComponent) {
     const api = new HostAPI(comp);
@@ -38,8 +39,8 @@ export function useHostIntegration(comp: FrontendComponent) {
         });
     }
 
-    async function getHostAuthorization(): Promise<HostAuthorization> {
-        return api.getAuthorization();
+    async function getHostAuthorizationSettings(): Promise<AuthorizationSettings> {
+        return api.getAuthorizationSettings();
     }
 
     async function getHostResources(): Promise<HostResources> {
@@ -48,7 +49,7 @@ export function useHostIntegration(comp: FrontendComponent) {
 
     return {
         getHostUserToken,
-        getHostAuthorization,
+        getHostAuthorizationSettings,
         getHostResources,
     };
 }

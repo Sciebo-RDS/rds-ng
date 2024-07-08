@@ -3,7 +3,7 @@ import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
 import { computed, type PropType, toRefs, unref } from "vue";
 
-import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorUtils";
+import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 

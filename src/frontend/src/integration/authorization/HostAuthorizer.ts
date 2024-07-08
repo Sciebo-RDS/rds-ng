@@ -1,20 +1,22 @@
+import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
+import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
+import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
-import { type OAuth2StrategyConfiguration, OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { RedirectionTarget } from "@common/utils/HTMLUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
-import { type HostAuthorization } from "@/integration/HostTypes";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
-import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
  * Authorizer for host integration.
  */
 export class HostAuthorizer extends Authorizer {
-    private readonly _hostAuth: HostAuthorization;
+    private readonly _hostAuth: AuthorizationSettings;
 
-    public constructor(comp: FrontendComponent, hostAuth: HostAuthorization) {
+    public constructor(comp: FrontendComponent, hostAuth: AuthorizationSettings) {
         super(comp);
 
         this._hostAuth = hostAuth;
@@ -28,8 +30,15 @@ export class HostAuthorizer extends Authorizer {
                 this._hostAuth.strategy,
                 this.getStrategyConfiguration(this._hostAuth.strategy),
             );
+            const authRequest = AuthorizationRequest.fromValues(
+                AuthorizationTokenType.Host,
+                AuthorizationTokenType.Host,
+                AuthorizationTokenType.Host,
+                AuthorizationTokenType.Host,
+                fingerprint,
+            ); // (yes, we need that AuthorizationTokenType.Host 4 times)
             strategy
-                .requestAuthorization(authState, fingerprint)
+                .requestAuthorization(authState, authRequest)
                 .then((authState: AuthorizationState) => {
                     // Skip any non-authorized states, as these will occur during the multistep authorization process
                     if (authState == AuthorizationState.Authorized) {
@@ -50,15 +59,14 @@ export class HostAuthorizer extends Authorizer {
                 return {
                     server: {
                         host: this._hostAuth.config.host || "",
-                        endpoints: {
-                            authorization: this._hostAuth.config.endpoints?.authorization || "",
-                            token: this._hostAuth.config.endpoints?.token || "",
-                        },
+                        authorization_endpoint: this._hostAuth.config.authorization_endpoint || "",
+                        token_endpoint: this._hostAuth.config.token_endpoint || "",
+                        scope: this._hostAuth.config.scope || "",
                     },
                     client: {
-                        clientID: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
-                        redirectURL: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
-                        embedded: this._component.data.config.value<boolean>(HostIntegrationSettingIDs.Embedded),
+                        client_id: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
+                        redirect_url: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
+                        redirect_target: RedirectionTarget.Current,
                     },
                 } as OAuth2StrategyConfiguration;
 

@@ -31,7 +31,7 @@ import previewImage from "@assets/img/preview.png";
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
-        type: Project,
+        type: Object as PropType<Project>,
         required: true
     },
     globalObjectStore: {

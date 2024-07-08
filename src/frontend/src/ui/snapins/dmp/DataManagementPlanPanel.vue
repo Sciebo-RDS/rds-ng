@@ -19,7 +19,7 @@ import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectF
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
-        type: Project,
+        type: Object as PropType<Project>,
         required: true
     },
     globalObjectStore: {

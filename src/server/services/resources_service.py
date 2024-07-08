@@ -1,18 +1,14 @@
 import os.path
-import typing
-from typing import cast
 
 from common.py.component import BackendComponent
 from common.py.data.entities.authorization import (
     get_host_authorization_token_id,
-    AuthorizationToken,
 )
 from common.py.data.entities.resource import (
     Resource,
     ResourcesList,
     ResourcesBrokerToken,
 )
-from common.py.data.entities.user import User
 from common.py.integration.resources.brokers import (
     create_resources_broker,
     ResourcesBroker,
@@ -47,7 +43,7 @@ def create_resources_service(comp: BackendComponent) -> Service:
             raise RuntimeError("No resources broker has been assigned")
 
         auth_token = ctx.storage_pool.authorization_token_storage.get(
-            get_host_authorization_token_id(ctx.user)
+            get_host_authorization_token_id(ctx.user.user_id)
         )
 
         return create_resources_broker(

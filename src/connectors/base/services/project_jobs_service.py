@@ -33,9 +33,12 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
 
         try:
             job = ConnectorJob(
-                project=msg.project, connector_instance=msg.connector_instance
+                project=msg.project,
+                connector_instance=msg.connector_instance,
+                user_token=msg.user_token,
+                broker_token=msg.broker_token,
             )
-            ctx.jobs_engine.spawn(job, ctx)
+            ctx.jobs_engine.spawn(comp, svc, job, ctx)
 
             info(
                 "Started new job",

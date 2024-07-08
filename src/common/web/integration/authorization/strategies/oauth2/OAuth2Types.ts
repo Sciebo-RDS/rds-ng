@@ -7,6 +7,7 @@ export interface OAuth2AuthorizationRequestData {
 
     client_id: string;
     auth_code: string;
+    scope: string;
 
     redirect_url: string;
 }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { error } from "@common/core/logging/Logging";
 import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
@@ -17,7 +16,7 @@ const props = defineProps({
     },
 });
 const { scheme } = toRefs(props);
-const { getHostUserToken, getHostAuthorization, getHostResources } = useHostIntegration(comp);
+const { getHostUserToken, getHostAuthorizationSettings, getHostResources } = useHostIntegration(comp);
 
 const statusMessage = ref("0/3: Initializing");
 const errorMessage = ref("");
@@ -35,7 +34,7 @@ function performAuthentication(): void {
 function performAuthorization(authState: AuthorizationState, fingerprint: string): void {
     statusMessage.value = "2/3: Authorizing";
 
-    getHostAuthorization()
+    getHostAuthorizationSettings()
         .then((hostAuth) => {
             unref(scheme)!.authorizer(hostAuth).done(performBrokerAssignment).failed(showError).authorize(authState, fingerprint);
         })
@@ -61,7 +60,7 @@ onMounted(async () => performAuthentication());
 
 <template>
     <div class="r-centered-grid r-text">
-        <Header></Header>
+        <Header />
         <div v-if="!errorMessage" class="r-centered-grid">
             <div>
                 <span class="italic">

@@ -2,9 +2,13 @@ import abc
 import time
 import typing
 
+from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.integration.resources.brokers import ResourcesBrokerTunnelType
+from common.py.integration.resources.transmitters import ResourcesTransmitter
+from common.py.services import Service
 
 from ..data.entities.connector import ConnectorJob
 
@@ -17,21 +21,43 @@ class ConnectorJobExecutor(abc.ABC):
 
     def __init__(
         self,
+        comp: BackendComponent,
+        svc: Service,
         job: ConnectorJob,
         *,
         message_builder: MessageBuilder,
         target_channel: Channel,
+        tunnel_type: type[ResourcesBrokerTunnelType],
     ):
         """
         Args:
+            comp: The global component.
+            svc: The service used for message sending.
             job: The job (data).
             message_builder: A message builder to send messages through.
             target_channel: The target server channel.
+            tunnel_type: The resources broker tunnel type to use for downloads.
         """
+        from connectors.base.settings import TransmissionSettingIDs
+
         self._job = job
 
         self._mesage_builder = message_builder
         self._target_channel = target_channel
+
+        self._transmitter: ResourcesTransmitter = ResourcesTransmitter(
+            comp,
+            svc,
+            auth_channel=target_channel,
+            tunnel_type=tunnel_type,
+            user_token=self._job.user_token,
+            broker_token=self._job.broker_token,
+            max_attempts=comp.data.config.value(TransmissionSettingIDs.MAX_ATTEMPTS),
+            attempts_delay=comp.data.config.value(
+                TransmissionSettingIDs.ATTEMPTS_DELAY
+            ),
+            auth_token_refresh=False,
+        )
 
         self._is_active = True
 
@@ -41,6 +67,7 @@ class ConnectorJobExecutor(abc.ABC):
 
         If the job cannot start, an exception should be thrown.
         """
+
         raise NotImplementedError()
 
     def process(self) -> None:
@@ -161,6 +188,13 @@ class ConnectorJobExecutor(abc.ABC):
         The connector job (data).
         """
         return self._job
+
+    @property
+    def transmitter(self) -> ResourcesTransmitter | None:
+        """
+        The resources transmitter (if already created).
+        """
+        return self._transmitter
 
     @property
     def is_active(self) -> bool:

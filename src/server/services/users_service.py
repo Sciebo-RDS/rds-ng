@@ -4,7 +4,7 @@ from common.py.data.entities.authorization import AuthorizationState
 from common.py.data.entities.user import User
 from common.py.services import Service
 
-from .tools import send_projects_list
+from .tools import send_projects_list, get_user_authorizations
 
 
 def create_users_service(comp: BackendComponent) -> Service:
@@ -25,6 +25,8 @@ def create_users_service(comp: BackendComponent) -> Service:
         GetUserSettingsReply,
         SetUserSettingsCommand,
         SetUserSettingsReply,
+        ListUserAuthorizationsCommand,
+        ListUserAuthorizationsReply,
     )
     from common.py.data.verifiers.user import (
         UserSettingsVerifier,
@@ -61,7 +63,7 @@ def create_users_service(comp: BackendComponent) -> Service:
             # We don't check for a _valid_ token here, only if one exists for the host system
             if (
                 ctx.storage_pool.authorization_token_storage.get(
-                    get_host_authorization_token_id(user)
+                    get_host_authorization_token_id(user.user_id)
                 )
                 is not None
             ):
@@ -142,5 +144,18 @@ def create_users_service(comp: BackendComponent) -> Service:
         ).emit()
 
         send_projects_list(msg, ctx)
+
+    @svc.message_handler(ListUserAuthorizationsCommand)
+    def list_user_authorizations(
+        msg: ListUserAuthorizationsCommand, ctx: ServerServiceContext
+    ):
+        if not ctx.ensure_user(msg, SetUserSettingsReply, settings=User.Settings()):
+            return
+
+        ListUserAuthorizationsReply.build(
+            ctx.message_builder,
+            msg,
+            authorizations=get_user_authorizations(ctx.user.user_id, ctx),
+        ).emit()
 
     return svc

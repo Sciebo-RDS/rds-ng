@@ -3,4 +3,6 @@ from .authorization_commands import (
     RequestAuthorizationReply,
     RevokeAuthorizationCommand,
     RevokeAuthorizationReply,
+    GetAuthorizationTokenCommand,
+    GetAuthorizationTokenReply,
 )

@@ -1,12 +1,15 @@
+import io
+import os
+import pathlib
 import typing
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
 
-from .. import ResourcesBroker
+from .. import ResourcesBroker, ResourcesBrokerTunnel
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationToken
-from .....data.entities.resource import ResourcesList
+from .....data.entities.resource import Resource, ResourcesList
 from .....data.entities.user import UserToken
 from .....services import Service
 
@@ -36,6 +39,7 @@ class FilesystemBroker(ResourcesBroker):
         *,
         user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
+        auth_token_refresh: bool = True,
     ):
         super().__init__(
             comp,
@@ -43,6 +47,7 @@ class FilesystemBroker(ResourcesBroker):
             FilesystemBroker.Broker,
             user_token=user_token,
             auth_token=auth_token,
+            auth_token_refresh=auth_token_refresh,
             default_root=config.root,
         )
 
@@ -65,6 +70,17 @@ class FilesystemBroker(ResourcesBroker):
             recursive=recursive,
         )
 
+    def download_resource(
+        self,
+        resource: Resource,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+    ) -> None:
+        with tunnel:
+            with io.FileIO(resource.filename, "rb") as file:
+                data = file.readall()
+                tunnel.write(data)
+
 
 def create_filesystem_broker(
     comp: BackendComponent,
@@ -73,6 +89,7 @@ def create_filesystem_broker(
     *,
     user_token: UserToken,
     auth_token: AuthorizationToken | None = None,
+    auth_token_refresh: bool = True,
 ) -> FilesystemBroker:
     """
     Creates a new filesystem broker instance, automatically configuring it.
@@ -83,6 +100,7 @@ def create_filesystem_broker(
         config: The broker configuration.
         user_token: The user token.
         auth_token: An optional authorization token.
+        auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
 
     Returns:
         The newly created broker.
@@ -90,5 +108,10 @@ def create_filesystem_broker(
     fs_config = FilesystemBrokerConfiguration.from_dict(config)
 
     return FilesystemBroker(
-        comp, svc, fs_config, user_token=user_token, auth_token=auth_token
+        comp,
+        svc,
+        fs_config,
+        user_token=user_token,
+        auth_token=auth_token,
+        auth_token_refresh=auth_token_refresh,
     )

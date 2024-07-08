@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from sqlalchemy import Table, MetaData, Column, Text, String, Integer, Numeric
 from sqlalchemy.orm import registry, composite
 
+from common.py.data.entities.authorization import AuthorizationSettings
 from common.py.data.entities.connector import Connector
 from common.py.utils import UnitID
 
@@ -40,6 +41,9 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         Column("description", Text),
         Column("category", Text),
         Column("options", Integer),
+        # Authorization
+        Column("auth__strategy", Text),
+        Column("auth__config", JSONEncodedDataType),
         # Logos
         Column("logos__default", Text),
         Column("logos__horizontal", Text),
@@ -53,6 +57,11 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         Connector,
         table_connectors,
         properties={
+            "authorization": composite(
+                AuthorizationSettings,
+                table_connectors.c.auth__strategy,
+                table_connectors.c.auth__config,
+            ),
             "logos": composite(
                 Connector.Logos,
                 table_connectors.c.logos__default,

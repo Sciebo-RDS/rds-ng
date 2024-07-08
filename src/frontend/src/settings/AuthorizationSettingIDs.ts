@@ -1,7 +1,7 @@
 import { SettingID } from "@common/utils/config/SettingID";
 
 /**
- * Identifiers for authorization settings.
+ * Identifiers for general authorization settings.
  */
 export class AuthorizationSettingIDs {}
 
@@ -12,6 +12,6 @@ export class AuthorizationSettingIDs {}
  * @property RedirectURL - The redirection URL (value type: ``string``).
  */
 export class OAuth2AuthorizationSettingIDs {
-    public static readonly ClientID = new SettingID("authorization.oauth2", "client_id");
-    public static readonly RedirectURL = new SettingID("authorization.oauth2", "redirect_url");
+    public static readonly ClientID = new SettingID("authorization.oauth2", "client.id");
+    public static readonly RedirectURL = new SettingID("authorization.oauth2", "client.redirect_url");
 }

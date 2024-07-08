@@ -1,11 +1,5 @@
-import typing
-
 from common.py.core.messaging import Message, Channel
 from common.py.data.entities.project import Project
-from common.py.data.entities.project.logbook import (
-    ProjectLogbookRecord,
-    ProjectLogbookType,
-)
 
 from .. import ServerServiceContext
 from ...networking.session import Session

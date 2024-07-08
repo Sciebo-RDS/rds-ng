@@ -43,8 +43,12 @@ services:
         ports:
             - "4200:6969"
         environment:
+            - RDS_NETWORK_API_KEY="some_key"
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
-            - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=AGO8sqdOwQIgEQtT8TYTyC16MenJV0oPoNzwBnP0f35LIlwGldDOnUqxWWCgllv4
+            # - RDS_STORAGE_DATABASE_ENGINE=sqlite
+            # - RDS_STORAGE_DATABASE_SQLITE_FILE=/data/rds.db
+            - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=oNwLWleq5FV8odCHahsp8dL74vKLLbKzWnYVc2PqFgVRUY2IYdyeMyg5qSAAnTBh
+            - RDS_AUTHORIZATION_OAUTH2_SECRETS_STUB=c4X1LOf1YLBacQtu6HAR3iDmLajiTeBHiZWtKegDHUSMdmlerGOOU3QjSRKYbXXh
             # - RDS_INTEGRATION_DEFAULT_ROOT_PATH=/files
 
     # Connector: Stub
@@ -67,7 +71,14 @@ services:
         ports:
             - "4300:6969"
         environment:
+            - RDS_NETWORK_API_KEY="some_key"
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+            - RDS_AUTHORIZATION_STRATEGY=oauth2
+            - RDS_AUTHORIZATION_OAUTH2_SERVER_HOST=http://10.0.2.15:8080
+            - RDS_AUTHORIZATION_OAUTH2_SERVER_AUTHORIZATION_ENDPOINT=/apps/oauth2/authorize
+            - RDS_AUTHORIZATION_OAUTH2_SERVER_TOKEN_ENDPOINT=/apps/oauth2/api/v1/token
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL=http://localhost:8080/apps/rdsng/main
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=gLH6yzRM7eBtTRCpAVxVExIJnw62RZ4xwXzJCflysIntwfOZ0ZxwwIYOe4RkoH1h
 
     # Web frontend
     frontend:
@@ -89,8 +100,10 @@ services:
         ports:
             - "8000:6969"
         environment:
+            - NODE_TLS_REJECT_UNAUTHORIZED=0
             - RDS_NETWORK_CLIENT_SERVER_ADDRESS=http://localhost:4200
+            # - RDS_INTEGRATION_SCHEME=basic
             - RDS_INTEGRATION_SCHEME=host
             - RDS_INTEGRATION_HOST_API_URL=http://localhost:8080/apps/rdsng/api/v1
-            - RDS_AUTHORIZATION_OAUTH2_REDIRECT_URL=http://localhost:8080/apps/rdsng/launcher/launch
-            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=6KJ6TCmAnjC9Bniub6q5OLOMuRAqV98bgSjetBh90tk2i5q5lwD9ckqmM1C72aDh
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL=http://localhost:8080/apps/rdsng/main
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=uh8K3FCc7PDtwSb9UeKzWs7QYb89pOWAYWxhJuidOpkUnizblqdk2KggH2y8w9GW

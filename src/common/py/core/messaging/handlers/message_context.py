@@ -133,6 +133,15 @@ class MessageContext:
         """
         return self._config
 
+    @property
+    def api_key(self) -> str:
+        """
+        The API key configured in the global settings.
+        """
+        from ....settings import NetworkSettingIDs
+
+        return self._config.value(NetworkSettingIDs.API_KEY)
+
 
 # pylint: disable=invalid-name
 MessageContextType = typing.TypeVar("MessageContextType", bound=MessageContext)

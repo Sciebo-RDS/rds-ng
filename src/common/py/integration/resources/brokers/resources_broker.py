@@ -1,18 +1,21 @@
 import abc
+import typing
 
+from .resources_broker_tunnel import ResourcesBrokerTunnel
 from ... import IntegrationHandler
 from ...authorization.strategies import (
     AuthorizationStrategy,
     create_authorization_strategy,
-    get_authorization_strategy_configuration,
 )
 from ....component import BackendComponent
 from ....core import logging
 from ....core.messaging import Channel
 from ....data.entities.authorization import AuthorizationToken
-from ....data.entities.resource import ResourcesList
+from ....data.entities.resource import Resource, ResourcesList
 from ....data.entities.user import UserToken
 from ....services import Service
+
+DownloadProgressCallback = typing.Callable[[int, int], None]
 
 
 class ResourcesBroker(IntegrationHandler):
@@ -31,6 +34,7 @@ class ResourcesBroker(IntegrationHandler):
         *,
         user_token: UserToken,
         auth_token: AuthorizationToken | None = None,
+        auth_token_refresh: bool = True,
         default_root: str = "",
     ):
         """
@@ -40,6 +44,7 @@ class ResourcesBroker(IntegrationHandler):
             broker: The broker identifier.
             user_token: The user token.
             auth_token: An optional authorization token.
+            auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
             default_root: The default root path (overrides the globally configured root).
         """
         super().__init__(comp, svc, user_token=user_token, auth_token=auth_token)
@@ -51,6 +56,8 @@ class ResourcesBroker(IntegrationHandler):
             if svc is not None and auth_token is not None
             else None
         )
+
+        self._auth_token_refresh = auth_token_refresh
 
         from ....settings.integration_setting_ids import IntegrationSettingIDs
 
@@ -69,7 +76,36 @@ class ResourcesBroker(IntegrationHandler):
         include_folders: bool = True,
         include_files: bool = True,
         recursive: bool = True,
-    ) -> ResourcesList: ...
+    ) -> ResourcesList:
+        """
+        Retrieves a list of all available resources.
+
+        Args:
+            root: The root path.
+            include_folders: Whether to include folders.
+            include_files: Whether to include files.
+            recursive: Whether to recurse into subdirectories.
+
+        Returns:
+            A list of all resources.
+        """
+        ...
+
+    @abc.abstractmethod
+    def download_resource(
+        self,
+        resource: Resource,
+        *,
+        tunnel: ResourcesBrokerTunnel,
+    ) -> None:
+        """
+        Downloads the specified resource using the provided tunnel. In case of an error, an exception should be raised.
+
+        Args:
+            resource: The resource to download.
+            tunnel: The resources tunnel.
+        """
+        ...
 
     def _create_auth_strategy(
         self, svc: Service, strategy: str
@@ -79,7 +115,6 @@ class ResourcesBroker(IntegrationHandler):
                 self._component,
                 svc,
                 strategy,
-                get_authorization_strategy_configuration(strategy),
                 user_token=self._user_token,
                 auth_token=self._auth_token,
             )

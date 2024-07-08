@@ -38,10 +38,14 @@ export abstract class Message {
     // @ts-ignore
     @Type(() => Channel)
     public readonly target: Channel;
+
     // @ts-ignore
     @Type(() => UnitID)
-    public readonly hops: UnitID[];
-    public readonly trace: Trace;
+    public readonly hops: UnitID[] = [];
+
+    public readonly trace: Trace = "";
+
+    public readonly api_key: string = "";
 
     /**
      * @param name - The name of the message.
@@ -50,14 +54,16 @@ export abstract class Message {
      * @param target - Where the message should go to.
      * @param hops - A list of components the message was sent through.
      * @param trace - A unique trace identifying messages that logically belong together.
+     * @param apiKey - An optional API key to access protected resources.
      */
-    public constructor(name: string, origin: UnitID, sender: UnitID, target: Channel, hops: UnitID[] = [], trace: Trace = uuidv4()) {
+    public constructor(name: string, origin: UnitID, sender: UnitID, target: Channel, hops: UnitID[] = [], trace: Trace = uuidv4(), apiKey: string = "") {
         this.name = name;
         this.origin = origin;
         this.sender = sender;
         this.target = target;
         this.hops = hops;
         this.trace = trace;
+        this.api_key = apiKey;
     }
 
     /**
@@ -85,6 +91,13 @@ export abstract class Message {
      */
     public static messageName(): MessageName {
         return "";
+    }
+
+    /**
+     * The frontend never receives or issues protected messages.
+     */
+    public static isProtected(): boolean {
+        return false;
     }
 
     /**
