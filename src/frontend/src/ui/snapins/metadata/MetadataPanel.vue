@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { reactive, toRefs, watch, type PropType } from "vue";
 
-import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorUtils";
+import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
 import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
@@ -26,12 +26,12 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
+        required: true
     },
     globalObjectStore: {
         type: Object as PropType<ProjectObjectStore>,
         required: true
-    },
+    }
 });
 const { project } = toRefs(props);
 const consStore = useConnectorsStore();
@@ -42,18 +42,6 @@ const { userSettings } = storeToRefs(userStore);
 // TODO: Testing data only
 const mergeSets: PropertySet[] = [];
 connectors.value.forEach((connector) => {
-    if (
-        !userSettings.value.connector_instances.find((instance) => {
-            if (project!.value.options.use_all_connector_instances) {
-                return instance.connector_id == connector.connector_id;
-            } else {
-                return !!project!.value.options.active_connector_instances.find((instanceID) => {
-                    const resolvedConnector = findConnectorByInstanceID(connectors.value, userSettings.value.connector_instances, instanceID);
-                    return resolvedConnector && resolvedConnector.connector_id == connector.connector_id;
-                });
-            }
-        })
-    ) {
     if (
         !userSettings.value.connector_instances.find((instance) => {
             if (project!.value.options.use_all_connector_instances) {
