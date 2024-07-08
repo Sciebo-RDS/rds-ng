@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
 import Button from "primevue/button";
 import { computed, ref, watch, type PropType, type Ref } from "vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
@@ -8,15 +7,16 @@ import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } fro
 import { PropertyProfileStore } from "./PropertyProfileStore";
 import { stringToColor } from "./utils/Colors";
 
-import { confirmDialog } from "@common/ui/dialogs/ConfirmDialog";
 import Chip from "primevue/chip";
 import OverlayPanel from "primevue/overlaypanel";
 import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
 
-const comp = FrontendComponent.inject();
-
 const emit = defineEmits(["hide"]);
-const { propertyClass, profileId, projectObjects, projectProfiles, globalObjectStore, layoutProfiles } = defineProps({
+const { index, propertyClass, profileId, projectObjects, projectProfiles, globalObjectStore, layoutProfiles } = defineProps({
+    index: {
+        type: Number,
+        required: true
+    },
     propertyClass: {
         type: Object as PropType<ProfileClass>,
         required: true
@@ -56,7 +56,7 @@ watch(
 );
 
 const op = ref();
-const toggle = (event: Event) => {
+const toggleRemoveDeadLink = (event: Event) => {
     op.value.toggle(event);
 };
 
@@ -66,28 +66,46 @@ const addableTypes = propertyClass["type"];
 
 const linkedObjects = computed(() => projectObjects.getLinkedObjects(propertyClass.id));
 
-const removeLayoutProperty = (propertyClass: ProfileClass) => {
-    confirmDialog(comp, {
-        header: `Remove "${propertyClass.label}?"`,
-        message: `Are you sure you want to remove this property? The data for "${propertyClass.label}" will be lost.`,
-        acceptLabel: "Remove",
-        acceptIcon: "pi pi-trash",
-        acceptClass: "p-button-danger",
-        rejectLabel: "Cancel",
-        rejectIcon: "pi pi-times",
-        rejectClass: "p-button-secondary"
-    }).then(() => {
-        projectObjects.remove(propertyClass.id);
-        emit("hide", propertyClass.id);
-    });
-};
-
 const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).profiles as ProfileID[];
+
+const removeProperty = ref();
+const toggleRemoveProperty = (e: Event) => {
+    removeProperty.value.toggle(e);
+};
 </script>
 
 <template>
-    <div class="flex flex-row <!--hover:bg-gray-100--> p-2 pl-0 rounded group">
-        <div>
+    <div class="flex flex-row <!--hover:bg-gray-100--> px-2 pl-0 rounded group">
+        <div class="grid w-16 justify-center">
+            <div class="text-slate-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.required ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
+            <OverlayPanel ref="removeProperty" class="py-2 px-5">
+                <div class="flex flex-col gap-4">
+                    <h3 class="text-lg font-bold">Remove "{{ propertyClass.label }}"?</h3>
+                    <p>The data for property "{{ propertyClass.label }}" will be lost.</p>
+                    <div class="flex gap-2 ml-auto">
+                        <Button
+                            severity="danger"
+                            @click="
+                                () => {
+                                    projectObjects.remove(propertyClass.id);
+                                    emit('hide', propertyClass.id);
+                                }
+                            "
+                        >
+                            Delete
+                        </Button>
+                        <Button
+                            outlined
+                            @click="
+                                (e) => {
+                                    toggleRemoveProperty(e);
+                                }
+                            "
+                            >Cancel</Button
+                        >
+                    </div>
+                </div>
+            </OverlayPanel>
             <Button
                 :disabled="propertyClass.required"
                 text
@@ -95,10 +113,8 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
                 :aria-label="'Remove ' + propertyClass.label"
                 :title="'Remove ' + propertyClass.label"
                 :class="propertyClass.required ? 'invisible' : 'invisible group-hover:visible'"
-                class="pt-0"
-                @click="removeLayoutProperty(propertyClass)"
-                aria-haspopup="true"
-                aria-controls="overlay_menu"
+                class="pt-0 mt-0 h-9"
+                @click="toggleRemoveProperty($event)"
                 :pt="{ root: { class: 'text-slate-400 hover:text-red-600 bg-transparent' } }"
             />
         </div>
@@ -106,17 +122,17 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
             <!--  Header Row -->
             <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4">
                 <span :title="propertyClass.label" class="min-w-fit">
-                    <span class="text-xl"> {{ propertyClass.label }}</span>
-                    <Button v-if="propertyClass.description" unstyled @click="toggle">
-                        <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
-                    </Button>
+                    <span class="text-lg"> {{ propertyClass.label }} </span>
+                    <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink">
+                        <i class="pi pi-question-circle mx-2" style="font-size: 1rem" /> </Button
+                    ><!-- <span v-if="propertyClass.required" class="text-red-500">*</span> -->
                     <OverlayPanel ref="op" class="max-w-lg">
                         {{ propertyClass.description }}
-                        <p v-if="propertyClass.example" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.example}`"/>
+                        <p v-if="propertyClass.example" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.example}`" />
                     </OverlayPanel>
                 </span>
 
-                <span class="mr-auto">
+                <span class="mr-auto gap-1">
                     <NewPropertyButton
                         v-for="t in addableTypes"
                         :key="t"
@@ -126,7 +142,6 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
                         :projectObjects="projectObjects"
                         :globalObjectStore="globalObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"
-                        class="m-1"
                     />
                 </span>
                 <span class="flex self-center gap-2">
@@ -139,8 +154,12 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
                 /></span>
             </div>
             <!--  Linked Items Row -->
-            <div class="row-span-1 flex my-3 flex-wrap gap-2">
+            <div
+                v-if="addableTypes !== undefined && addableTypes.length > 0"
+                class="row-span-1 flex mt-3 p-2 flex-wrap gap-0.5 rounded-md bg-sky-50 border border-dashed border-indigo-400"
+            >
                 <LinkedItemButton
+                    v-if="linkedObjects.length > 0"
                     v-for="i in linkedObjects"
                     :key="i"
                     class="m-1"
@@ -151,9 +170,11 @@ const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).pr
                     :globalObjectStore="globalObjectStore as ProjectObjectStore"
                     :projectProfiles="projectProfiles"
                 />
+                <span v-else class="text-gray-500 h-8 m-1 my-2">No {{ addableTypes.join(" / ") }} linked</span>
             </div>
+
             <!-- Simple Input Row -->
-            <div class="space-y-3 mt-5">
+            <div v-if="displayableInputs.length > 0" class="space-y-2 mt-2">
                 <div v-for="input in displayableInputs" class="row-span-1">
                     <span v-if="input.label !== propertyClass.label">{{ input.label }}</span>
                     <component

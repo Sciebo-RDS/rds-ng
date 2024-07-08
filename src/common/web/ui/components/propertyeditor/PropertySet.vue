@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import Chip from "primevue/chip";
-import Fieldset from "primevue/fieldset";
-import Listbox from "primevue/listbox";
+import Dialog from "primevue/dialog";
+import OrderList from "primevue/orderlist";
+
 import { computed, ref } from "vue";
 
 import { ProjectObjectStore } from "./ProjectObjectStore";
@@ -37,7 +38,6 @@ const toggle = (event: Event) => {
     menu.value.toggle(event);
 };*/
 
-
 const getLayout = () => {
     let layout = [];
     for (const profiles of props.projectProfiles.list()) {
@@ -59,7 +59,8 @@ const layout = getLayout();
 
 const propsToShow = ref(layout.filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined));
 
-const selectedProperty = ref();
+const selectedProperties = ref([]);
+const unselectProperties = () => (selectedProperties.value = []);
 
 // TODO FIXME this
 const hideProperty = (id: string) => {
@@ -94,69 +95,89 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
         </template>
     </Toolbar> -->
     <PropertyOneCol
-        v-for="p in propsToShow"
-        class="mt-2 mb-4"
+        v-for="(p, i) in propsToShow"
+        :key="p.id"
+        :index="i"
+        class="my-5"
         :propertyClass="p"
         :profileId="props.profile['metadata']['id']"
         :projectObjects="projectObjects"
         :globalObjectStore="globalObjectStore as ProjectObjectStore"
         :projectProfiles="projectProfiles"
         :layoutProfiles="layout"
-        @hide="
-            (id) => {
-                hideProperty(id);
-            }
-        "
+        @hide="(id) => hideProperty(id)"
     />
 
-    <Button v-show="hiddenPropertys.length > 0" v-if="!showAddProperties" outlined class="my-5 ml-auto block" @click="showAddProperties = true"
-        >Add Property</Button
+    <Button v-if="hiddenPropertys.length !== 0" class="fixed bottom-10 right-10" icon="pi pi-plus" size="large" rounded @click="showAddProperties = true" />
+
+    <Dialog
+        v-model:visible="showAddProperties"
+        modal
+        :header="`Add Properties ${selectedProperties.length ? '(' + selectedProperties.length + ')' : ''} `"
+        :pt="{ content: { class: 'h-full' } }"
+        :style="{ width: '50vw', height: '80vh' }"
+        @hide="selectedProperties = []"
     >
-    <Fieldset v-else legend="Add Property" class="mb-10">
-        <div class="flex">
-            <Listbox
-                v-model="selectedProperty"
-                :options="hiddenPropertys"
-                filter
-                optionLabel="label"
-                class="w-full md:w-14rem border-0"
-                listStyle="max-height:250px; min-height:250px; overflow-y: scroll; background-color: #f9f9f9; margin-top: 10px"
+        <template #default class="h-full">
+            <OrderList
+                v-model="hiddenPropertys"
+                @update:selection="(selection) => (selectedProperties = selection)"
+                dataKey="id"
+                class="h-full"
+                :pt="{ list: { class: 'min-h-full' } }"
+                :stripedRows="true"
             >
-                <template #option="{ option }">
+                <template #item="slotProps">
                     <div class="flex flex-col">
-                        <span class="font-semibold flex gap-4" :title="option.label"
-                            >{{ option.label }}
+                        <span class="font-semibold flex gap-4" :title="slotProps.item.label"
+                            >{{ slotProps.item.label }}
                             <Chip
-                                v-for="p in option.profiles"
+                                v-for="p in slotProps.item.profiles"
                                 :label="p[0]"
                                 size="small"
                                 :style="`background-color: ${stringToColor(p[0], 0.3)}; border-color: ${stringToColor(p[0])}`"
                                 class="h-4 !rounded py-2 px-2 text-sm border self-center"
                         /></span>
-                        <span class="text-gray-400 ml-3 ellipsis line-clamp-1" :title="option.description">{{ option.description }}</span>
+                        <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.item.description">{{ slotProps.item.description }}</span>
                     </div>
                 </template>
-            </Listbox>
-        </div>
-        <div class="flex justify-end gap-2 mt-5">
-            <Button
-                :disabled="!selectedProperty"
-                @click="
-                    propsToShow.push(selectedProperty);
-                    selectedProperty = null;
-                    showAddProperties = false;
-                "
-                >Add</Button
-            >
-            <Button
-                outlined
-                severity="secondary"
-                @click="
-                    selectedProperty = null;
-                    showAddProperties = false;
-                "
-                >Cancel</Button
-            >
-        </div>
-    </Fieldset>
+            </OrderList>
+        </template>
+        <template #footer>
+            <div class="flex justify-end gap-2 mt-5">
+                <Button
+                    :disabled="!selectedProperties.length"
+                    @click="
+                        propsToShow.push(...selectedProperties);
+                        unselectProperties();
+                        showAddProperties = false;
+                    "
+                    >Add</Button
+                >
+                <Button
+                    outlined
+                    severity="secondary"
+                    @click="
+                        unselectProperties();
+                        showAddProperties = false;
+                    "
+                    >Cancel</Button
+                >
+            </div>
+        </template>
+    </Dialog>
 </template>
+
+<style scoped lang="scss">
+:deep(.p-orderlist-controls) {
+    display: none;
+}
+
+:deep(.p-orderlist-item) {
+    @apply border-l-2 border-solid border-transparent;
+}
+
+:deep(.p-highlight) {
+    @apply bg-emerald-50  border-l-2 border-emerald-600 text-slate-700;
+}
+</style>

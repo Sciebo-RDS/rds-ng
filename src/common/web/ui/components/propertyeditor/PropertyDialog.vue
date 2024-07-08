@@ -14,7 +14,14 @@ import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } fro
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
 const dialogRef = inject("dialogRef") as any;
-const { id, projectObjects, globalObjectStore, projectProfiles, profileId }: {id: string, projectObjects: ProjectObjectStore, globalObjectStore: ProjectObjectStore, projectProfiles: PropertyProfileStore, profileId: ProfileID}  = dialogRef.value.data;
+const {
+    id,
+    projectObjects,
+    globalObjectStore,
+    projectProfiles,
+    profileId
+}: { id: string; projectObjects: ProjectObjectStore; globalObjectStore: ProjectObjectStore; projectProfiles: PropertyProfileStore; profileId: ProfileID } =
+    dialogRef.value.data;
 
 const object = ref(globalObjectStore.get(id)!);
 let objectClass = reactive(projectProfiles.getClassById(profileId, object.value["type"]!)!) as ProfileClass;
@@ -40,7 +47,7 @@ function selectActiveObject(id: string) {
     // TODO optimize by only updating necessary elements
     menuPath.value = history.list().map((item) => {
         const obj = globalObjectStore.get(item.id);
-        
+
         return {
             label: `${projectProfiles.getClassLabelById(item.type!)}:  ${obj.instanceLabel(projectProfiles)}`,
             command: () => selectActiveObject(item.id)
@@ -73,10 +80,11 @@ selectActiveObject(id);
                     </Button>
                     <OverlayPanel ref="op" class="max-w-lg">
                         {{ objectClass.description }}
+                        <span v-if="objectClass.example" v-html="`<br/><b>Example</b>: ${objectClass.example}`" />
                     </OverlayPanel>
                 </span>
 
-                <span class="mr-auto ml-5 flex space-x-1">
+                <span class="mr-auto ml-5 flex space-x-1 gap-1">
                     <NewPropertyButton
                         v-for="t in addableTypes"
                         :key="t"
@@ -94,29 +102,35 @@ selectActiveObject(id);
         </template>
         <template #content>
             <div class="flex flex-row">
-                <div class="grow max-w-full">
+                <div class="grow max-w-full space-y-4">
                     <!--  Linked Items Row -->
-                    <div class="row-span-1 flex my-3 flex-wrap gap-2">
+
+                    <div
+                        v-if="addableTypes !== undefined && addableTypes.length > 0"
+                        class="row-span-1 flex mt-3 p-2 flex-wrap gap-0.5 rounded-md bg-sky-50 border border-dashed border-indigo-400"
+                    >
                         <LinkedItemButton
+                            v-if="linkedObjects.length > 0"
                             v-for="i in linkedObjects"
                             :key="i"
-                            class="m-1 max-w-full"
+                            class="m-1"
+                            :profileId="profileId"
                             :item-id="i"
                             :parentId="object.id"
-                            :profileId="profileId"
                             :projectObjects="projectObjects"
                             :globalObjectStore="globalObjectStore as ProjectObjectStore"
                             :projectProfiles="projectProfiles"
                             mode="dialog"
                             @loadObject="(id) => selectActiveObject(id)"
                         />
+                        <span v-else class="text-gray-500 h-8 m-1 my-2">No {{ addableTypes.join(" / ") }} linked</span>
                     </div>
                     <!-- Simple Input Row -->
-                    <div class="space-y-3">
-                        <div v-for="input in displayableInputs" class="row-span-1">
-                            <div v-if="input.label !== objectClass.label" class="font-bold">{{ input.label }}</div>
-                            {{ input.description }} 
-                            <span v-if="input.example" class="mt-2" v-html="`<b>Example</b>: ${input.example}`"/>
+                    <div class="space-y-5">
+                        <div v-for="input in displayableInputs" class="row-span-1 space-y-1">
+                            <div v-if="input.label !== objectClass.label" class="font-bold mb-1 font">{{ input.label }}</div>
+                            {{ input.description }}
+                            <span v-if="input.example" v-html="`<br/><b>Example</b>: ${input.example}`" />
                             <component
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"
@@ -125,6 +139,7 @@ selectActiveObject(id);
                                 :globalObjectStore="globalObjectStore as ProjectObjectStore"
                                 :inputId="input['id']"
                                 :profileId="profileId"
+                                :inputOptions="input['options'] ? input['options'] : []"
                             />
                         </div>
                     </div>
