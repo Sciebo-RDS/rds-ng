@@ -5,7 +5,6 @@ import { PropType, reactive, toRefs, watch } from "vue";
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
-import { testProfile } from "@common/ui/components/propertyeditor/DummyData";
 import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
@@ -81,7 +80,6 @@ watch(
 );
 
 projectProfiles.mountProfile(dataCite as Profile);
-projectProfiles.mountProfile(testProfile as Profile);
 projectProfiles.mountProfile(zenodo as Profile);
 projectProfiles.mountProfile(osf as Profile);
 </script>
