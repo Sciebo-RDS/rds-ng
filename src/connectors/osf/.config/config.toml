@@ -1,0 +1,11 @@
+[network.client]
+server_address = "http://rds-server-1:6969"
+
+[authorization]
+strategy = "oauth2"
+
+[authorization.oauth2.server]
+host = "https://accounts.test.osf.io"
+authorization_endpoint = "/oauth2/authorize"
+token_endpoint = "/oauth2/token"
+scope = "osf.full_write"

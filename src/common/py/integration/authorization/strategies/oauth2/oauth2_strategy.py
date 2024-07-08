@@ -216,8 +216,8 @@ class OAuth2Strategy(AuthorizationStrategy):
         # We reduce the lifespan by 10% to refresh tokens early on
         return (
             time.time() + (resp_data["expires_in"] * 0.9)
-            if "expires_in" in resp_data
-            else 0
+            if "expires_in" in resp_data and "refresh_token" in resp_data
+            else 0.0
         )
 
     def _verify_oauth2_token_data(self, data: typing.Dict[str, typing.Any]) -> None:

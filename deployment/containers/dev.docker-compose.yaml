@@ -48,8 +48,34 @@ services:
             # - RDS_STORAGE_DATABASE_ENGINE=sqlite
             # - RDS_STORAGE_DATABASE_SQLITE_FILE=/data/rds.db
             - RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST=oNwLWleq5FV8odCHahsp8dL74vKLLbKzWnYVc2PqFgVRUY2IYdyeMyg5qSAAnTBh
+            - RDS_AUTHORIZATION_OAUTH2_SECRETS_OSF=AISobllXaYyE6tmwI14gPYpQ1uTr6NFjq9ECAsKq
             - RDS_AUTHORIZATION_OAUTH2_SECRETS_STUB=c4X1LOf1YLBacQtu6HAR3iDmLajiTeBHiZWtKegDHUSMdmlerGOOU3QjSRKYbXXh
             # - RDS_INTEGRATION_DEFAULT_ROOT_PATH=/files
+
+    # Connector: OSF
+    connector-osf:
+        image: rds-ng/connector-osf:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/dev.Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/osf"
+        depends_on:
+            - py-base
+        ports:
+            - "4300:6969"
+        environment:
+            - RDS_NETWORK_API_KEY="some_key"
+            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL=https://www.gibbet-nicht.de/apps/rdsng/main
+            - RDS_AUTHORIZATION_OAUTH2_CLIENT_ID=b1b7e874714841239913eddd87f55c57
 
     # Connector: Stub
     connector-stub:
@@ -69,7 +95,7 @@ services:
         depends_on:
             - py-base
         ports:
-            - "4300:6969"
+            - "4400:6969"
         environment:
             - RDS_NETWORK_API_KEY="some_key"
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*

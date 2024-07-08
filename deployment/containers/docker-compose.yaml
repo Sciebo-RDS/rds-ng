@@ -37,6 +37,21 @@ services:
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
+    # Connector: OSF
+    connector-psf:
+        image: rds-ng/connector-osf:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/osf"
+        depends_on:
+            - py-base
+        ports:
+            - "4300:6969"
+        environment:
+            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+
     # Connector: Stub
     connector-stub:
         image: rds-ng/connector-stub:latest
@@ -48,7 +63,7 @@ services:
         depends_on:
             - py-base
         ports:
-            - "4300:6969"
+            - "4400:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
