@@ -16,8 +16,12 @@ export class PropertyProfileStore {
     }
 
     public getClassById(profileId: ProfileID, classId: string): ProfileClass | undefined {
-        const profile = this._profiles.find((profile) => profile.metadata.id === profileId);
+/*         const profile = this._profiles.find((profile) => profile.metadata.id === profileId);
         return profile?.classes ? profile.classes[classId] : undefined;
+ */
+        let classes = {}
+        this._profiles.forEach((profile) => classes = {...classes, ...profile.classes});
+        return classes[classId] ? classes[classId] : undefined;
     }
 
     public getLabelTemplateById(classId: string): string | undefined {
