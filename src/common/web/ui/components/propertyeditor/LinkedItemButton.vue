@@ -9,6 +9,7 @@ import { useDialog } from "primevue/usedialog";
 import { computed, ref } from "vue";
 import { ProjectObject, dummyProjectObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
+import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils";
 
 SplitButton.components.PVSMenu = Menu;
 const comp = FrontendComponent.inject();
@@ -17,7 +18,7 @@ const props = defineProps(["itemId", "parentId", "projectObjects", "globalObject
 
 const object = (props.projectObjects.get(props.itemId) || props.globalObjectStore.get(props.itemId) || dummyProjectObject(props.itemId)) as ProjectObject;
 
-const instanceLabel = computed(() => object.instanceLabel(props.projectProfiles));
+const instanceLabel = computed(() => calcObjLabel(object, props.projectProfiles));
 const linkedItemActions = computed(() => [
     {
         label: `${instanceLabel.value}`,
@@ -123,7 +124,7 @@ const toggle = (event: Event) => {
             class="min-h-full py-0 my-0 mb-2 space-y-0"
             @click="() => (object.type !== 'dummy' ? handleClick() : null)"
             @contextmenu="$refs.button.onDropdownButtonClick()"
-            :style="`--p-color: ${object.bgColor(props.projectProfiles)}; --p-border-color: ${object.borderColor(props.projectProfiles)};`"
+            :style="`--p-color: ${calcBgColor(object, props.projectProfiles)}; --p-border-color: ${calcBorderColor(object, props.projectProfiles)};`"
         >
             <span class="mx-2 truncate flex items-center space-x-2">
                 <span class="text-sm text-gray-700">
@@ -139,7 +140,7 @@ const toggle = (event: Event) => {
             menuButtonIcon="pi pi-ellipsis-v"
             :model="linkedItemActions"
             menuitemicon="pi pi-link"
-            :style="`background-color: ${object.bgColor(props.projectProfiles)}; border-color: ${object.borderColor(props.projectProfiles)}; height: 2rem`"
+            :style="`background-color: ${calcBgColor(object, props.projectProfiles)}; border-color: ${calcBorderColor(object, props.projectProfiles)}; height: 2rem`"
             class="text-gray-600 min-h-full py-0 my-0 mb-2 space-y-0"
             @click="toggle"
             @contextmenu="toggle"

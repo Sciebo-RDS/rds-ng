@@ -12,7 +12,6 @@ import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
 import { ResourcesMetadataFeature, type ResourcesMetadata } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
@@ -32,10 +31,6 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true
-    },
-    globalObjectStore: {
-        type: Object as PropType<ProjectObjectStore>,
         required: true
     }
 });
@@ -84,7 +79,6 @@ const propertyHeader = computed(() => {
     }
 });
 
-const projectObjects = reactive(new ProjectObjectStore());
 const projectProfiles = reactive(new PropertyProfileStore());
 const debounce = makeDebounce(500);
 
@@ -201,8 +195,7 @@ const showIndex = ref(true);
                             </div>
                             <PropertyEditor
                                 v-model="resourcesData"
-                                :projectObjects="projectObjects as ProjectObjectStore"
-                                :globalObjectStore="globalObjectStore as ProjectObjectStore"
+                                v-model:shared-objects="project!.features.metadata.shared_objects"
                                 :projectProfiles="projectProfiles as PropertyProfileStore"
                                 class="w-full"
                             />

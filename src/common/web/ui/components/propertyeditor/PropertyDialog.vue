@@ -12,6 +12,7 @@ import NewPropertyButton from "./NewPropertyButton.vue";
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
+import { calcObjLabel } from "./utils/ObjectUtils";
 
 const dialogRef = inject("dialogRef") as any;
 const {
@@ -49,7 +50,7 @@ function selectActiveObject(id: string) {
         const obj = globalObjectStore.get(item.id);
 
         return {
-            label: `${projectProfiles.getClassLabelById(item.type!)}:  ${obj.instanceLabel(projectProfiles)}`,
+            label: `${projectProfiles.getClassLabelById(item.type!)}:  ${calcObjLabel(obj!, projectProfiles)}`,
             command: () => selectActiveObject(item.id)
         };
     });

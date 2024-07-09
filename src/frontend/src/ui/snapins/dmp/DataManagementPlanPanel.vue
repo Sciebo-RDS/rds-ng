@@ -32,9 +32,6 @@ const { project } = toRefs(props);
 // TODO: Testing data only
 const exporters: ExporterID[] = ["pdf", "raw"];
 
-/* const dmpProfile = new PropertySet(dfgDmp);
-const controller = reactive(new DmpController(dmpProfile)); */
-
 const projectObjects = reactive(new ProjectObjectStore());
 const projectProfiles = reactive(new PropertyProfileStore());
 const debounce = makeDebounce(500);

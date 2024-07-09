@@ -1,19 +1,24 @@
 <script setup lang="ts">
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, defineAsyncComponent, reactive, toRefs } from "vue";
+import { computed, defineAsyncComponent, reactive, toRefs, watch } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
+import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
+import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
 import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 
+const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
@@ -29,6 +34,21 @@ const panels = computed(() => {
 });
 
 const globalObjectStore = reactive(new ProjectObjectStore());
+
+const debounce = makeDebounce(500);
+watch(
+    () => project!.value.features.metadata.shared_objects,
+    (shared_objects) => {
+        debounce(() => {
+            const action = new UpdateProjectFeaturesAction(comp);
+            action.prepare(project!.value, [
+                new MetadataFeature(project!.value.features.metadata.metadata as ProjectMetadata, shared_objects as ProjectMetadata)
+            ]);
+            action.execute();
+        });
+    },
+    { deep: true }
+);
 </script>
 
 <template>
