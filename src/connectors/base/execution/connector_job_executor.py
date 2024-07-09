@@ -38,7 +38,7 @@ class ConnectorJobExecutor(abc.ABC):
             target_channel: The target server channel.
             tunnel_type: The resources broker tunnel type to use for downloads.
         """
-        from connectors.base.settings import TransmissionSettingIDs
+        from ..settings import TransmissionSettingIDs
 
         self._job = job
 

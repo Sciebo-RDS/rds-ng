@@ -17,6 +17,10 @@ from common.py.services import Service
 
 
 class RequestsExecutor(AuthorizedExecutor):
+    """
+    Executes HTTP API calls via `requests`. It supports automatic authorization and attempt retries.
+    """
+
     def __init__(
         self,
         comp: BackendComponent,
@@ -43,6 +47,7 @@ class RequestsExecutor(AuthorizedExecutor):
         from common.py.data.entities.authorization import (
             get_connector_instance_authorization_id,
         )
+        from common.py.settings import NetworkSettingIDs
 
         super().__init__(
             comp,
@@ -55,6 +60,29 @@ class RequestsExecutor(AuthorizedExecutor):
         )
 
         self._base_url = base_url.rstrip("/")
+
+        self._request_timeout = comp.data.config.value(
+            NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
+        )
+
+    def get(
+        self, session: requests.Session, path: [str], *args, **kwargs
+    ) -> requests.Response:
+        """
+        Performs a GET request.
+
+        Args:
+            session: The session to use.
+            path: The path as an array.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The response object.
+        """
+        return session.get(
+            self._url(*path), *args, timeout=self._request_timeout, **kwargs
+        )
 
     def _url(self, *args, trailing_slash: bool = True) -> str:
         parts = [self._base_url, *args]
