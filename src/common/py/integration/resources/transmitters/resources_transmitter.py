@@ -1,5 +1,4 @@
 import io
-import threading
 import typing
 
 from .resources_transmitter_contexts import (
@@ -13,7 +12,7 @@ from ..brokers import (
     ResourcesBrokerTunnel,
     ResourcesBrokerTunnelType,
 )
-from ....api import GetAuthorizationTokenCommand, GetAuthorizationTokenReply
+from ...execution import AuthorizedExecutor
 from ....component import BackendComponent
 from ....core.messaging import Channel
 from ....data.entities.authorization import AuthorizationToken
@@ -25,7 +24,7 @@ from ....data.entities.resource import (
 )
 from ....data.entities.user import UserToken
 from ....services import Service
-from ....utils.func import attempt, ExecutionCallbacks
+from ....utils.func import ExecutionCallbacks
 
 ResourceBuffer = io.RawIOBase
 
@@ -35,7 +34,7 @@ TransmissionDownloadDoneCallback = typing.Callable[[Resource, ResourceBuffer], N
 TransmissionDownloadFailCallback = typing.Callable[[Resource, str], None]
 
 
-class ResourcesTransmitter:
+class ResourcesTransmitter(AuthorizedExecutor):
     """
     Main class to transmit resources.
     """
@@ -51,7 +50,7 @@ class ResourcesTransmitter:
         broker_token: ResourcesBrokerToken,
         max_attempts: int = 1,
         attempts_delay: float = 3.0,
-        auth_token_refresh: bool = True,
+        auth_token_refresh: bool = False,
     ):
         """
         Args:
@@ -65,18 +64,19 @@ class ResourcesTransmitter:
             attempts_delay: The delay (in seconds) between each attempt.
             auth_token_refresh: Whether expired authorization tokens should be refreshed automatically.
         """
-        from ....settings import NetworkSettingIDs
+        super().__init__(
+            comp,
+            svc,
+            auth_channel=auth_channel,
+            auth_token_id=AuthorizationToken.TokenType.HOST,
+            user_token=user_token,
+            max_attempts=max_attempts,
+            attempts_delay=attempts_delay,
+        )
 
-        self._component = comp
-        self._service = svc
-        self._auth_channel = auth_channel
         self._tunnel_type = tunnel_type
 
-        self._user_token = user_token
         self._broker_token = broker_token
-
-        self._max_attempts = max(1, max_attempts)
-        self._attempts_delay = attempts_delay
 
         self._auth_token_refresh = auth_token_refresh
 
@@ -88,9 +88,6 @@ class ResourcesTransmitter:
         ]()
 
         self._context = ResourcesTransmitterContext()
-
-        self._api_key = self._component.data.config.value(NetworkSettingIDs.API_KEY)
-        self._lock = threading.RLock()
 
     def prepare(self, project: Project) -> None:
         """
@@ -322,40 +319,18 @@ class ResourcesTransmitter:
     ) -> None:
         # Get the authorization token for the host system, since we need to access its resources.
         # Once received, the actual execution can happen.
-        def _get_auth_token_done(
-            reply: GetAuthorizationTokenReply, success: bool, _
-        ) -> None:
-            with self._lock:
-                try:
-                    broker = self._create_broker(
-                        auth_token=reply.auth_token if success else None
-                    )
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    cb_failed(str(exc))
-                else:
-                    success, result = attempt(
-                        cb_exec,
-                        cb_retry=cb_retry,
-                        cb_fail=lambda e: cb_failed(str(e)),
-                        attempts=self._max_attempts,
-                        delay=self._attempts_delay,
-                        broker=broker,
-                        **kwargs,
-                    )
-                    if success:
-                        cb_done(result)
+        def _prepare_execute(
+            auth_token: AuthorizationToken | None,
+        ) -> typing.Dict[str, typing.Any]:
+            return {"broker": self._create_broker(auth_token=auth_token)}
 
-        def _get_auth_token_failed(_, msg: str) -> None:
-            with self._lock:
-                cb_failed(msg)
-
-        GetAuthorizationTokenCommand.build(
-            self._service.message_builder,
-            user_id=self._user_token.user_id,
-            auth_id=AuthorizationToken.TokenType.HOST,
-            api_key=self._api_key,
-        ).done(_get_auth_token_done).failed(_get_auth_token_failed).emit(
-            self._auth_channel
+        self.execute(
+            cb_exec=cb_exec,
+            cb_done=cb_done,
+            cb_failed=cb_failed,
+            cb_prepare=_prepare_execute,
+            cb_retry=cb_retry,
+            **kwargs,
         )
 
     def _create_broker(
