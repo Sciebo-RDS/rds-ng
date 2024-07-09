@@ -7,10 +7,15 @@ from common.py.data.entities.user import UserToken
 from common.py.services import Service
 
 from .osf_callbacks import OSFRootInformationCallbacks
+from .osf_request_data import OSFRequestData
 from ...base.integration.execution import RequestsExecutor
 
 
 class OSFClient(RequestsExecutor):
+    """
+    Client to use the OSF API.
+    """
+
     def __init__(
         self,
         comp: BackendComponent,
@@ -48,8 +53,10 @@ class OSFClient(RequestsExecutor):
     ) -> None:
         def _execute(session: requests.Session) -> requests.Response:
             resp = self.get(session, [])
+            # TODO: Automatic request data; Status code Checks
+            req_data = OSFRequestData(resp)
             print("-------------------------", flush=True)
-            print(resp.json(), flush=True)
+            print(req_data.data, flush=True)
             print("-------------------------", flush=True)
             return resp
 
