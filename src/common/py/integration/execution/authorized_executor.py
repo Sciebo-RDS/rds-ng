@@ -22,7 +22,7 @@ class AuthorizedExecutor(abc.ABC):
         svc: Service,
         *,
         auth_channel: Channel,
-        auth_token_id: str,
+        auth_id: str,
         user_token: UserToken,
         max_attempts: int = 1,
         attempts_delay: float = 3.0,
@@ -32,7 +32,7 @@ class AuthorizedExecutor(abc.ABC):
             comp: The global component.
             svc: The service used for message sending.
             auth_channel: Channel to fetch authorization tokens from.
-            auth_token_id: The ID of the authorization token to fetch.
+            auth_id: The ID of the authorization token to fetch.
             user_token: The user token.
             max_attempts: The number of attempts for each operation; cannot be less than 1.
             attempts_delay: The delay (in seconds) between each attempt.
@@ -42,7 +42,7 @@ class AuthorizedExecutor(abc.ABC):
         self._component = comp
         self._service = svc
         self._auth_channel = auth_channel
-        self._auth_token_id = auth_token_id
+        self._auth_id = auth_id
 
         self._user_token = user_token
 
@@ -52,7 +52,7 @@ class AuthorizedExecutor(abc.ABC):
         self._api_key = self._component.data.config.value(NetworkSettingIDs.API_KEY)
         self._lock = threading.RLock()
 
-    def execute(
+    def _execute(
         self,
         *,
         cb_exec: typing.Callable[..., typing.Any],
@@ -99,7 +99,7 @@ class AuthorizedExecutor(abc.ABC):
         GetAuthorizationTokenCommand.build(
             self._service.message_builder,
             user_id=self._user_token.user_id,
-            auth_id=self._auth_token_id,
+            auth_id=self._auth_id,
             api_key=self._api_key,
         ).done(_get_auth_token_done).failed(_get_auth_token_failed).emit(
             self._auth_channel

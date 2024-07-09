@@ -68,7 +68,7 @@ class ResourcesTransmitter(AuthorizedExecutor):
             comp,
             svc,
             auth_channel=auth_channel,
-            auth_token_id=AuthorizationToken.TokenType.HOST,
+            auth_id=AuthorizationToken.TokenType.HOST,
             user_token=user_token,
             max_attempts=max_attempts,
             attempts_delay=attempts_delay,
@@ -324,7 +324,7 @@ class ResourcesTransmitter(AuthorizedExecutor):
         ) -> typing.Dict[str, typing.Any]:
             return {"broker": self._create_broker(auth_token=auth_token)}
 
-        self.execute(
+        super()._execute(
             cb_exec=cb_exec,
             cb_done=cb_done,
             cb_failed=cb_failed,
