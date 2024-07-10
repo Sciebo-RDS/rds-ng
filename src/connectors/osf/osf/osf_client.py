@@ -1,5 +1,6 @@
 import os
 import pathlib
+from http import HTTPStatus
 
 import requests
 
@@ -174,7 +175,7 @@ class OSFClient(RequestsExecutor):
     ) -> OSFStorageData:
         storage = osf_storage
         for entry in path.parts:
-            if entry == "":
+            if entry == "" or entry == "/":
                 continue
 
             storage = self._create_directory(session, storage, name=entry)
@@ -183,13 +184,9 @@ class OSFClient(RequestsExecutor):
     def _create_directory(
         self, session: requests.Session, osf_storage: OSFStorageData, *, name: str
     ) -> OSFStorageData:
-        # Check if the current storage already matches
-        if osf_storage.path == name:
-            return osf_storage
-
         # Check if the subdirectory had already been created previously
         for folder in osf_storage.folders:
-            if folder.path == name:
+            if folder.name == name:
                 return folder
 
         # If not, create it
@@ -198,6 +195,13 @@ class OSFClient(RequestsExecutor):
             osf_storage.folder_link,
             params={"name": name},
         )
-        storage_data = OSFStorageData(resp)
-        osf_storage.folders.append(storage_data)
-        return storage_data
+
+        storage_data = OSFStorageData(resp, verify_response=False)
+        if (
+            storage_data.is_erroneous
+            and storage_data.status_code != HTTPStatus.CONFLICT
+        ):
+            raise requests.RequestException(resp.reason, response=resp)
+        else:
+            osf_storage.folders.append(storage_data)
+            return storage_data

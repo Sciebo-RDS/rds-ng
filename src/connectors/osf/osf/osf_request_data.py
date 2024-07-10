@@ -23,6 +23,8 @@ class OSFRequestData(RequestData):
             source = self._value(error, "source.pointer", "")
             detail = self._value(error, "detail", "Unknown error")
             errors.append(f"{source}: {detail}" if source != "" else detail)
+        else:
+            errors.append(self._response.reason)
         return "; ".join(errors)
 
 
@@ -57,11 +59,11 @@ class OSFStorageData(OSFRequestData):
         return self.value("data.id")
 
     @property
-    def path(self) -> str:
+    def name(self) -> str:
         """
-        The path of the storage.
+        The name (path) of the storage.
         """
-        return self.value("data.attributes.path")
+        return self.value("data.attributes.name")
 
     @property
     def file_link(self) -> str:
