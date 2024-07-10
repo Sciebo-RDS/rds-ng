@@ -62,3 +62,9 @@ class OSFStorageData(OSFRequestData):
         The link to create new folders.
         """
         return self.value("data.links.new_folder")
+
+
+class OSFFileData(OSFRequestData):
+    """
+    OSF file data.
+    """

@@ -5,10 +5,19 @@ from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
+from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 
-from .osf_callbacks import OSFCreateProjectCallbacks, OSFGetStorageCallbacks
-from .osf_request_data import OSFProjectData, OSFRequestData, OSFStorageData
+from .osf_callbacks import (
+    OSFCreateProjectCallbacks,
+    OSFGetStorageCallbacks,
+    OSFUploadFileCallbacks,
+)
+from .osf_request_data import (
+    OSFFileData,
+    OSFProjectData,
+    OSFStorageData,
+)
 from ...base.integration.execution import RequestsExecutor
 
 
@@ -108,6 +117,35 @@ class OSFClient(RequestsExecutor):
                 ["nodes", osf_project.project_id, "files", "providers", provider],
             )
             return OSFStorageData(resp)
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+        )
+
+    def upload_file(
+        self,
+        osf_storage: OSFStorageData,
+        *,
+        path: str,
+        file: ResourceBuffer,
+        overwrite: bool = True,
+        callbacks: OSFUploadFileCallbacks = OSFUploadFileCallbacks(),
+    ) -> None:
+        """
+        Uploads a file to an OSF storage, creating any missing folders on the fly.
+
+        Args:
+            osf_storage: The OSF storage.
+            path: The remote path of the file.
+            file: The file data.
+            overwrite: Whether an existing file should be overwritten.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> OSFFileData:
+            pass
 
         self._execute(
             cb_exec=_execute,

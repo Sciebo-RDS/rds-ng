@@ -21,9 +21,11 @@ from common.py.utils import human_readable_file_size
 from ..osf import (
     OSFClient,
     OSFCreateProjectCallbacks,
+    OSFFileData,
     OSFGetStorageCallbacks,
     OSFProjectData,
     OSFStorageData,
+    OSFUploadFileCallbacks,
 )
 from ...base.data.entities.connector import ConnectorJob
 from ...base.execution import ConnectorJobExecutor
@@ -189,14 +191,21 @@ class OSFJobExecutor(ConnectorJobExecutor):
         resource: Resource,
         buffer: ResourceBuffer,
     ) -> None:
-        logging.info(
-            "Downloaded resource",
-            scope="stub",
-            filename=resource.filename,
-            size=len(buffer.readall()),
-        )
+        self.report_message(f"Uploading {resource.filename}...")
 
-        # TODO: Upload
+        callbacks = OSFUploadFileCallbacks()
+        callbacks.done(lambda data: self._upload_file_done(resource, data))
+        callbacks.failed(lambda reason: self._upload_file_failed(resource, reason))
+
+        self._osf_client.upload_file(
+            osf_storage, path=resource.filename, file=buffer, callbacks=callbacks
+        )
 
     def _download_file_failed(self, res: Resource, reason: str) -> None:
         self.set_failed(f"Failed to download {res.filename}: {reason}")
+
+    def _upload_file_done(self, resource: Resource, osf_file: OSFFileData) -> None:
+        self.report_message(f"Uploaded {resource.filename}")
+
+    def _upload_file_failed(self, res: Resource, reason: str) -> None:
+        self.set_failed(f"Failed to upload {res.filename}: {reason}")
