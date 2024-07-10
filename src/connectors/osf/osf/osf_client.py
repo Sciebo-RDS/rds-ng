@@ -7,8 +7,8 @@ from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
 from common.py.services import Service
 
-from .osf_callbacks import OSFCreateProjectCallbacks
-from .osf_request_data import OSFCreateProjectData, OSFRequestData
+from .osf_callbacks import OSFCreateProjectCallbacks, OSFGetStorageCallbacks
+from .osf_request_data import OSFProjectData, OSFRequestData, OSFStorageData
 from ...base.integration.execution import RequestsExecutor
 
 
@@ -55,7 +55,15 @@ class OSFClient(RequestsExecutor):
         *,
         callbacks: OSFCreateProjectCallbacks = OSFCreateProjectCallbacks(),
     ) -> None:
-        def _execute(session: requests.Session) -> OSFCreateProjectData:
+        """
+        Creates a new OSF project.
+
+        Args:
+            project: The originating project.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> OSFProjectData:
             resp = self.post(
                 session,
                 ["nodes"],
@@ -70,7 +78,36 @@ class OSFClient(RequestsExecutor):
                     }
                 },
             )
-            return OSFCreateProjectData(resp)
+            return OSFProjectData(resp)
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+        )
+
+    def get_storage(
+        self,
+        osf_project: OSFProjectData,
+        *,
+        provider: str = "osfstorage",
+        callbacks: OSFGetStorageCallbacks = OSFGetStorageCallbacks(),
+    ) -> None:
+        """
+        Gets information about an OSF storage.
+
+        Args:
+            osf_project: The OSF project.
+            provider: The storage provider.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> OSFStorageData:
+            resp = self.get(
+                session,
+                ["nodes", osf_project.project_id, "files", "providers", provider],
+            )
+            return OSFStorageData(resp)
 
         self._execute(
             cb_exec=_execute,

@@ -29,14 +29,14 @@
 * Project = Root level Node
 * Default storage: osfstorage
 * Häufig enthalten die Responses ein "links" Field, die für weitere Aktionen genutzt werden müssen (zB Uploads)
-    * Details: https://developer.osf.io/#operation/nodes_providers_read
+    * Details: https://developer.osf.io/#operation/nodes_files_list
     * Nutzt WaterButler: https://waterbutler.readthedocs.io/en/latest/
-    
+
 
 
 OSF Client - Feature Assessment
 ===============================
-    
+
 * Requests per Py Requests
     * Alle Methoden (GET/POST/PUT/PATCH...)
 * Parsen/Verarbeiten der Responses, insb. Errors

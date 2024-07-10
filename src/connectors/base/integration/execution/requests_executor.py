@@ -67,7 +67,7 @@ class RequestsExecutor(AuthorizedExecutor):
         )
 
     def get(
-        self, session: requests.Session, path: [str], *args, **kwargs
+        self, session: requests.Session, path: typing.List[str], *args, **kwargs
     ) -> requests.Response:
         """
         Performs a GET request.
@@ -86,7 +86,12 @@ class RequestsExecutor(AuthorizedExecutor):
         )
 
     def post(
-        self, session: requests.Session, path: [str], data: typing.Any, *args, **kwargs
+        self,
+        session: requests.Session,
+        path: typing.List[str],
+        data: typing.Any,
+        *args,
+        **kwargs,
     ) -> requests.Response:
         """
         Performs a POST request.

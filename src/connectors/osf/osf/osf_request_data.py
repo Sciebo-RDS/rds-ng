@@ -24,14 +24,41 @@ class OSFRequestData(RequestData):
         return "; ".join(errors)
 
 
-class OSFCreateProjectData(OSFRequestData):
+class OSFProjectData(OSFRequestData):
     """
-    Data from a `create_project` API call.
+    OSF project data.
     """
 
     @property
     def project_id(self) -> str:
         """
-        The ID (within OSF) of the project.
+        The ID  of the project.
         """
         return self.value("data.id")
+
+
+class OSFStorageData(OSFRequestData):
+    """
+    OSF storage data.
+    """
+
+    @property
+    def storage_id(self) -> str:
+        """
+        The ID of the storage.
+        """
+        return self.value("data.id")
+
+    @property
+    def file_link(self) -> str:
+        """
+        The link to upload files.
+        """
+        return self.value("data.links.upload")
+
+    @property
+    def folder_link(self) -> str:
+        """
+        The link to create new folders.
+        """
+        return self.value("data.links.new_folder")
