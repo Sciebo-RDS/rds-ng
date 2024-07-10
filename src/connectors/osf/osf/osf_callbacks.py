@@ -3,9 +3,9 @@ import typing
 from common.py.utils.func import ExecutionCallbacks
 
 
-class OSFRootInformationCallbacks(
+class OSFCreateProjectCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[], None],  # TODO: Data type
+        typing.Callable[[typing.Any], None],
         typing.Callable[[str], None],
     ]
 ):

@@ -9,10 +9,17 @@ class RequestData:
     Class to easily access data from an HTTP request.
     """
     
-    def __init__(self, resp: requests.Response):
+    def __init__(self, resp: requests.Response, *, verify_response: bool = True):
+        self._response = resp
         self._data = resp.json()
-        self._is_erroneous = resp.status_code >= HTTPStatus.BAD_REQUEST
-
+        
+        if verify_response:
+            self._verify()
+    
+    def _verify(self) -> None:
+        if self.is_erroneous:
+            raise RuntimeError(self.error)
+    
     def value(self, path: str, default: typing.Any = None) -> typing.Any:
         """
         Gets a value from the response, supporting dot notation.
@@ -43,10 +50,24 @@ class RequestData:
         The raw response data.
         """
         return self._data
+    
+    @property
+    def status_code(self) -> HTTPStatus:
+        """
+        The status code of the response.
+        """
+        return typing.cast(HTTPStatus, self._response.status_code)
 
     @property
     def is_erroneous(self) -> bool:
         """
         Whether the response was erroneous.
         """
-        return self._is_erroneous
+        return self._response.status_code >= HTTPStatus.BAD_REQUEST
+    
+    @property
+    def error(self) -> str:
+        """
+        The error reason (in case the request failed).
+        """
+        return self._response.reason if self.is_erroneous else ""

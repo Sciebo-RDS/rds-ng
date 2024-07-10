@@ -1,10 +1,12 @@
+import time
+
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
 from common.py.services import Service
 
-from ..osf import OSFClient, OSFRootInformationCallbacks
+from ..osf import OSFClient, OSFCreateProjectCallbacks, OSFCreateProjectData
 from ...base.data.entities.connector import ConnectorJob
 from ...base.execution import ConnectorJobExecutor
 
@@ -51,7 +53,27 @@ class OSFJobExecutor(ConnectorJobExecutor):
         )
 
     def start(self) -> None:
-        callbacks = OSFRootInformationCallbacks()
-        callbacks.done(lambda: self.set_done())
+        self._project_create()
 
-        self._osf_client.get_root_information(callbacks=callbacks)
+    def _project_create(self) -> None:
+        self.report_message("Creating project...")
+
+        callbacks = OSFCreateProjectCallbacks()
+        callbacks.done(lambda data: self._project_created(data))
+        callbacks.failed(lambda reason: self._project_failed(reason))
+
+        self._osf_client.create_project(self._job.project, callbacks=callbacks)
+
+    def _project_created(self, data: OSFCreateProjectData) -> None:
+        self.report_message(f"Project created (OSF ID: {data.project_id})")
+        time.sleep(5)
+
+        print("---------------------------------------", flush=True)
+        print(data.status_code, flush=True)
+        print(data.error, flush=True)
+        print(data.data, flush=True)
+        print("---------------------------------------", flush=True)
+        self.set_done()
+
+    def _project_failed(self, reason: str) -> None:
+        self.set_failed(f"Unable to create project: {reason}")

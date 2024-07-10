@@ -1,3 +1,4 @@
+import json
 import typing
 
 import requests
@@ -82,6 +83,30 @@ class RequestsExecutor(AuthorizedExecutor):
         """
         return session.get(
             self._url(*path), *args, timeout=self._request_timeout, **kwargs
+        )
+
+    def post(
+        self, session: requests.Session, path: [str], data: typing.Any, *args, **kwargs
+    ) -> requests.Response:
+        """
+        Performs a POST request.
+
+        Args:
+            session: The session to use.
+            path: The path as an array.
+            data: The data to send.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The response object.
+        """
+        return session.post(
+            self._url(*path),
+            *args,
+            data=json.dumps(data),
+            timeout=self._request_timeout,
+            **kwargs,
         )
 
     def _url(self, *args, trailing_slash: bool = True) -> str:

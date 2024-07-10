@@ -3,11 +3,12 @@ import requests
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
+from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
 from common.py.services import Service
 
-from .osf_callbacks import OSFRootInformationCallbacks
-from .osf_request_data import OSFRequestData
+from .osf_callbacks import OSFCreateProjectCallbacks
+from .osf_request_data import OSFCreateProjectData, OSFRequestData
 from ...base.integration.execution import RequestsExecutor
 
 
@@ -48,20 +49,31 @@ class OSFClient(RequestsExecutor):
             attempts_delay=attempts_delay,
         )
 
-    def get_root_information(
-        self, *, callbacks: OSFRootInformationCallbacks = OSFRootInformationCallbacks()
+    def create_project(
+        self,
+        project: Project,
+        *,
+        callbacks: OSFCreateProjectCallbacks = OSFCreateProjectCallbacks(),
     ) -> None:
-        def _execute(session: requests.Session) -> requests.Response:
-            resp = self.get(session, [])
-            # TODO: Automatic request data; Status code Checks
-            req_data = OSFRequestData(resp)
-            print("-------------------------", flush=True)
-            print(req_data.data, flush=True)
-            print("-------------------------", flush=True)
-            return resp
+        def _execute(session: requests.Session) -> OSFCreateProjectData:
+            resp = self.post(
+                session,
+                ["nodes"],
+                data={
+                    "data": {
+                        "type": "nodes",
+                        "attributes": {
+                            "title": project.title,
+                            "category": "project",
+                            "description": project.description,
+                        },
+                    }
+                },
+            )
+            return OSFCreateProjectData(resp)
 
         self._execute(
             cb_exec=_execute,
-            cb_done=lambda resp: callbacks.invoke_done_callbacks(),
+            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
             cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
         )
