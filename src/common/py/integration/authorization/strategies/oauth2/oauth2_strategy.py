@@ -137,6 +137,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "grant_type": "refresh_token",
                 "client_id": oauth2_data.client_id,
                 "client_secret": client_secret,
+                "access_type": "offline",
                 "scope": oauth2_data.scope,
                 "refresh_token": oauth2_token.refresh_token,
             },
