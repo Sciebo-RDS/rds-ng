@@ -18,7 +18,7 @@ class RequestData:
     
     def _verify(self) -> None:
         if self.is_erroneous:
-            raise RuntimeError(self.error)
+            raise requests.RequestException(self.error, response=self._response)
     
     def value(self, path: str, default: typing.Any = None) -> typing.Any:
         """
