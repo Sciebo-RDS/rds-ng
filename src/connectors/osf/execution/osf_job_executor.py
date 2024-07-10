@@ -179,6 +179,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
             )
         )
         callbacks.failed(lambda res, reason: self._download_file_failed(res, reason))
+        # TODO: Wird aufgerufen, selbst wenn Job fehlschlägt
         callbacks.all_done(lambda: self.set_done())
 
         # TODO: File-by-file; nächstes File erst nach Upload

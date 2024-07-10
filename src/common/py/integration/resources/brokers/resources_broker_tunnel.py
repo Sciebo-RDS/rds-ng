@@ -1,6 +1,7 @@
 import abc
 import enum
 import io
+import random
 import typing
 
 from typing_extensions import Buffer
@@ -123,7 +124,8 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
         return False
 
     def fileno(self) -> int:
-        raise OSError("Tunnel doesn't support file descriptors")
+        # We don't really support a file descriptor, so just return a random number (otherwise, requests will fail)
+        raise random.randint(0x1, 0xFFFF)
 
     def seek(self, *args, **kwargs):
         raise OSError("Tunnels aren't seekable")

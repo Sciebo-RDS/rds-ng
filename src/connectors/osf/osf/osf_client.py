@@ -79,7 +79,7 @@ class OSFClient(RequestsExecutor):
             resp = self.post(
                 session,
                 ["nodes"],
-                data={
+                json={
                     "data": {
                         "type": "nodes",
                         "attributes": {
@@ -178,10 +178,15 @@ class OSFClient(RequestsExecutor):
                 continue
 
             storage = self._create_directory(session, storage, name=entry)
+        return storage
 
     def _create_directory(
         self, session: requests.Session, osf_storage: OSFStorageData, *, name: str
     ) -> OSFStorageData:
+        # Check if the current storage already matches
+        if osf_storage.path == name:
+            return osf_storage
+
         # Check if the subdirectory had already been created previously
         for folder in osf_storage.folders:
             if folder.path == name:

@@ -12,6 +12,7 @@ from .oauth2_utils import format_oauth2_error_response
 from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
+from .....data.entities import clone_entity
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.user import UserID, UserToken
 from .....services import Service
@@ -149,8 +150,14 @@ class OAuth2Strategy(AuthorizationStrategy):
             try:
                 self._verify_oauth2_token_data(resp_data)
 
+                refreshed_token = self._create_oauth2_token(resp_data)
+                if refreshed_token.refresh_token is None:
+                    refreshed_token = clone_entity(
+                        refreshed_token, refresh_token=oauth2_token.refresh_token
+                    )
+
                 token.expiration_timestamp = self._get_expiration_timestamp(resp_data)
-                token.token = self._create_oauth2_token(resp_data)
+                token.token = refreshed_token
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
         else:
