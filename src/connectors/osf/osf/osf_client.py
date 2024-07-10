@@ -1,3 +1,6 @@
+import os
+import pathlib
+
 import requests
 
 from common.py.component import BackendComponent
@@ -130,7 +133,6 @@ class OSFClient(RequestsExecutor):
         *,
         path: str,
         file: ResourceBuffer,
-        overwrite: bool = True,
         callbacks: OSFUploadFileCallbacks = OSFUploadFileCallbacks(),
     ) -> None:
         """
@@ -140,15 +142,57 @@ class OSFClient(RequestsExecutor):
             osf_storage: The OSF storage.
             path: The remote path of the file.
             file: The file data.
-            overwrite: Whether an existing file should be overwritten.
             callbacks: Optional request callbacks.
         """
 
         def _execute(session: requests.Session) -> OSFFileData:
-            pass
+            file_path = pathlib.PurePosixPath(path)
+            target_storage = self._create_directory_tree(
+                session, osf_storage, path=file_path.parent
+            )
+
+            resp = self.put(
+                session,
+                target_storage.file_link,
+                data=file,
+                params={"name": file_path.name},
+            )
+            return OSFFileData(resp)
 
         self._execute(
             cb_exec=_execute,
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
             cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
         )
+
+    def _create_directory_tree(
+        self,
+        session: requests.Session,
+        osf_storage: OSFStorageData,
+        *,
+        path: pathlib.PurePosixPath,
+    ) -> OSFStorageData:
+        storage = osf_storage
+        for entry in path.parts:
+            if entry == "":
+                continue
+
+            storage = self._create_directory(session, storage, name=entry)
+
+    def _create_directory(
+        self, session: requests.Session, osf_storage: OSFStorageData, *, name: str
+    ) -> OSFStorageData:
+        # Check if the subdirectory had already been created previously
+        for folder in osf_storage.folders:
+            if folder.path == name:
+                return folder
+
+        # If not, create it
+        resp = self.put(
+            session,
+            osf_storage.folder_link,
+            params={"name": name},
+        )
+        storage_data = OSFStorageData(resp)
+        osf_storage.folders.append(storage_data)
+        return storage_data

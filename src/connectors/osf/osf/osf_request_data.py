@@ -1,5 +1,7 @@
 import typing
 
+import requests
+
 from common.py.utils import RequestData
 
 
@@ -42,12 +44,24 @@ class OSFStorageData(OSFRequestData):
     OSF storage data.
     """
 
+    def __init__(self, resp: requests.Response, *, verify_response: bool = True):
+        super().__init__(resp, verify_response=verify_response)
+
+        self._folders: typing.List[OSFStorageData] = []
+
     @property
     def storage_id(self) -> str:
         """
         The ID of the storage.
         """
         return self.value("data.id")
+
+    @property
+    def path(self) -> str:
+        """
+        The path of the storage.
+        """
+        return self.value("data.attributes.path")
 
     @property
     def file_link(self) -> str:
@@ -62,6 +76,16 @@ class OSFStorageData(OSFRequestData):
         The link to create new folders.
         """
         return self.value("data.links.new_folder")
+
+    @property
+    def folders(self) -> typing.List["OSFStorageData"]:
+        """
+        A list of all sub-folders (as OSFStorageData).
+
+        Notes:
+            This list is initially empty and will only be filled as needed by the client.
+        """
+        return self._folders
 
 
 class OSFFileData(OSFRequestData):

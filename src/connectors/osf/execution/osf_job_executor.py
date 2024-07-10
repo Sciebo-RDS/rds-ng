@@ -181,6 +181,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         callbacks.failed(lambda res, reason: self._download_file_failed(res, reason))
         callbacks.all_done(lambda: self.set_done())
 
+        # TODO: File-by-file; nächstes File erst nach Upload
         self._transmitter.download_list(files, callbacks=callbacks)
 
     def _download_file_done(

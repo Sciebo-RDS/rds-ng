@@ -67,7 +67,7 @@ class RequestsExecutor(AuthorizedExecutor):
         )
 
     def get(
-        self, session: requests.Session, path: typing.List[str], *args, **kwargs
+        self, session: requests.Session, path: typing.List[str] | str, *args, **kwargs
     ) -> requests.Response:
         """
         Performs a GET request.
@@ -82,13 +82,13 @@ class RequestsExecutor(AuthorizedExecutor):
             The response object.
         """
         return session.get(
-            self._url(*path), timeout=self._request_timeout, *args, **kwargs
+            self._url(path), timeout=self._request_timeout, *args, **kwargs
         )
 
     def post(
         self,
         session: requests.Session,
-        path: typing.List[str],
+        path: typing.List[str] | str,
         data: typing.Any,
         *args,
         **kwargs,
@@ -107,7 +107,7 @@ class RequestsExecutor(AuthorizedExecutor):
             The response object.
         """
         return session.post(
-            self._url(*path),
+            self._url(path),
             *args,
             data=json.dumps(data),
             timeout=self._request_timeout,
@@ -117,8 +117,8 @@ class RequestsExecutor(AuthorizedExecutor):
     def put(
         self,
         session: requests.Session,
-        path: typing.List[str],
-        data: typing.Any,
+        path: typing.List[str] | str,
+        data: typing.Any = None,
         *args,
         **kwargs,
     ) -> requests.Response:
@@ -136,16 +136,19 @@ class RequestsExecutor(AuthorizedExecutor):
             The response object.
         """
         return session.put(
-            self._url(*path),
+            self._url(path),
             *args,
             data=json.dumps(data) if data is not None else None,
             timeout=self._request_timeout,
             **kwargs,
         )
 
-    def _url(self, *args, trailing_slash: bool = True) -> str:
-        parts = [self._base_url, *args]
-        return "/".join(parts) + ("/" if trailing_slash else "")
+    def _url(self, path: typing.List[str] | str, trailing_slash: bool = True) -> str:
+        if isinstance(path, str):
+            return path
+        else:
+            parts = [self._base_url, *path]
+            return "/".join(parts) + ("/" if trailing_slash else "")
 
     def _execute(
         self,
