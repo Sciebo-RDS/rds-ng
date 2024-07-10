@@ -1,14 +1,18 @@
-import time
+import typing
 
 from common.py.component import BackendComponent
+from common.py.core import logging
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.data.entities.resource import (
     files_list_from_resources_list,
+    Resource,
     ResourcesList,
 )
 from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
 from common.py.integration.resources.transmitters import (
+    ResourceBuffer,
+    ResourcesTransmitterDownloadCallbacks,
     ResourcesTransmitterPrepareCallbacks,
 )
 from common.py.services import Service
@@ -79,6 +83,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def start(self) -> None:
         self._project_create()
 
+    # -- Project creation
+
     def _project_create(self) -> None:
         self.report_message("Creating project...")
 
@@ -96,6 +102,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _project_create_failed(self, reason: str) -> None:
         self.set_failed(f"Unable to create project: {reason}")
 
+    # -- Storage retrieval
+
     def _storage_get(self, osf_project: OSFProjectData) -> None:
         self.report_message("Getting storage information...")
 
@@ -108,19 +116,33 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _storage_fetched(
         self, osf_project: OSFProjectData, osf_storage: OSFStorageData
     ) -> None:
-        self._transmitter_prepare()
+        self._transmitter_prepare(osf_project, osf_storage)
 
     def _storage_failed(self, reason: str) -> None:
         self.set_failed(f"Unable to get storage information: {reason}")
 
-    def _transmitter_prepare(self) -> None:
+    # -- Transmitter preparation
+
+    def _transmitter_prepare(
+        self, osf_project: OSFProjectData, osf_storage: OSFStorageData
+    ) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()
-        callbacks.done(lambda res: self._transmitter_prepare_done(res))
+        callbacks.done(
+            lambda res: self._transmitter_prepare_done(
+                osf_project, osf_storage, resources=res
+            )
+        )
         callbacks.failed(lambda reason: self._transmitter_prepare_failed(reason))
 
         self._transmitter.prepare(self._job.project, callbacks=callbacks)
 
-    def _transmitter_prepare_done(self, resources: ResourcesList) -> None:
+    def _transmitter_prepare_done(
+        self,
+        osf_project: OSFProjectData,
+        osf_storage: OSFStorageData,
+        *,
+        resources: ResourcesList,
+    ) -> None:
         files_list = files_list_from_resources_list(resources)
 
         if len(files_list) > 0:
@@ -128,10 +150,53 @@ class OSFJobExecutor(ConnectorJobExecutor):
                 f"{len(files_list)} resources to transfer ({human_readable_file_size(resources.resource.size)})",
             )
 
-            # TODO
-            # self._download(files_list)
+            self._download_files(osf_project, osf_storage, files=files_list)
         else:
             self.set_done()
 
     def _transmitter_prepare_failed(self, reason: str) -> None:
         self.set_failed(f"Failed to prepare job: {reason}")
+
+    # -- File transfers
+
+    def _download_files(
+        self,
+        osf_project: OSFProjectData,
+        osf_storage: OSFStorageData,
+        *,
+        files: typing.List[Resource],
+    ) -> None:
+        def _report_file(res: Resource, current: int, total: int) -> None:
+            self.report(current / total, f"Downloading {res.filename}...")
+
+        callbacks = ResourcesTransmitterDownloadCallbacks()
+        callbacks.progress(_report_file)
+        callbacks.done(
+            lambda res, buffer: self._download_file_done(
+                osf_project, osf_storage, resource=res, buffer=buffer
+            )
+        )
+        callbacks.failed(lambda res, reason: self._download_file_failed(res, reason))
+        callbacks.all_done(lambda: self.set_done())
+
+        self._transmitter.download_list(files, callbacks=callbacks)
+
+    def _download_file_done(
+        self,
+        osf_project: OSFProjectData,
+        osf_storage: OSFStorageData,
+        *,
+        resource: Resource,
+        buffer: ResourceBuffer,
+    ) -> None:
+        logging.info(
+            "Downloaded resource",
+            scope="stub",
+            filename=resource.filename,
+            size=len(buffer.readall()),
+        )
+
+        # TODO: Upload
+
+    def _download_file_failed(self, res: Resource, reason: str) -> None:
+        self.set_failed(f"Failed to download {res.filename}: {reason}")
