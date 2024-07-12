@@ -1,7 +1,6 @@
 import typing
 
 from common.py.component import BackendComponent
-from common.py.core import logging
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.data.entities.resource import (
@@ -16,7 +15,7 @@ from common.py.integration.resources.transmitters import (
     ResourcesTransmitterPrepareCallbacks,
 )
 from common.py.services import Service
-from common.py.utils import human_readable_file_size
+from common.py.utils import human_readable_file_size, relativize_path
 
 from .osf_job_transmission_context import OSFJobTransmissionContext
 from ..osf import (
@@ -213,7 +212,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
         self._osf_transmission_client.upload_file(
             transmission_ctx.osf_storage,
-            path=resource.filename,
+            path=relativize_path(resource.filename, self._job.project.resources_path),
             file=buffer,
             callbacks=callbacks,
         )

@@ -156,7 +156,9 @@ class OAuth2Strategy(AuthorizationStrategy):
                         refreshed_token, refresh_token=oauth2_token.refresh_token
                     )
 
-                token.expiration_timestamp = self._get_expiration_timestamp(resp_data)
+                token.expiration_timestamp = self._get_expiration_timestamp(
+                    resp_data, default=3600.0
+                )
                 token.token = refreshed_token
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
@@ -219,14 +221,14 @@ class OAuth2Strategy(AuthorizationStrategy):
         return client_secret
 
     def _get_expiration_timestamp(
-        self, resp_data: typing.Dict[str, typing.Any]
+        self, resp_data: typing.Dict[str, typing.Any], *, default=0.0
     ) -> float:
         # We reduce the lifespan by 10% to refresh tokens early on
         return (
-            time.time() + (resp_data["expires_in"] * 0.9)
+            time.time() + (resp_data["expires_in"])
             if "expires_in" in resp_data and "refresh_token" in resp_data
-            else 0.0
-        )
+            else default
+        ) * 0.9
 
     def _verify_oauth2_token_data(self, data: typing.Dict[str, typing.Any]) -> None:
         if "access_token" not in data or data["access_token"] == "":
