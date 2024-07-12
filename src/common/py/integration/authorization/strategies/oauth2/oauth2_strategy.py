@@ -224,11 +224,12 @@ class OAuth2Strategy(AuthorizationStrategy):
         self, resp_data: typing.Dict[str, typing.Any], *, default=0.0
     ) -> float:
         # We reduce the lifespan by 10% to refresh tokens early on
-        return (
-            time.time() + (resp_data["expires_in"])
+        expires_in = (
+            resp_data["expires_in"]
             if "expires_in" in resp_data and "refresh_token" in resp_data
             else default
         ) * 0.9
+        return time.time() + expires_in
 
     def _verify_oauth2_token_data(self, data: typing.Dict[str, typing.Any]) -> None:
         if "access_token" not in data or data["access_token"] == "":

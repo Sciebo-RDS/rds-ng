@@ -17,7 +17,6 @@ from common.py.integration.resources.transmitters import (
 from common.py.services import Service
 from common.py.utils import human_readable_file_size, relativize_path
 
-from .osf_job_transmission_context import OSFJobTransmissionContext
 from ..osf import (
     OSFClient,
     OSFCreateProjectCallbacks,
@@ -168,34 +167,25 @@ class OSFJobExecutor(ConnectorJobExecutor):
         *,
         files: typing.List[Resource],
     ) -> None:
-        transmission_ctx = OSFJobTransmissionContext(
-            osf_project=osf_project,
-            osf_storage=osf_storage,
-            resources=files,
-            current_index=0,
-        )
-        self._download_next_file(transmission_ctx)
-
-    def _download_next_file(self, transmission_ctx: OSFJobTransmissionContext) -> None:
-        resource = transmission_ctx.current_resource
-        self.report(
-            transmission_ctx.current_index / len(transmission_ctx.resources),
-            f"Downloading {resource.filename}...",
-        )
+        def _report_file(res: Resource, current: int, total: int) -> None:
+            self.report(current / total, f"Downloading {res.filename}...")
 
         callbacks = ResourcesTransmitterDownloadCallbacks()
+        callbacks.progress(_report_file)
         callbacks.done(
             lambda res, buffer: self._download_file_done(
-                transmission_ctx, resource=res, buffer=buffer
+                osf_project, osf_storage, resource=res, buffer=buffer
             )
         )
         callbacks.failed(lambda res, reason: self._download_file_failed(res, reason))
+        callbacks.all_done(lambda: self.set_done())
 
-        self._transmitter.download(resource, callbacks=callbacks)
+        self._transmitter.download_list(files, callbacks=callbacks)
 
     def _download_file_done(
         self,
-        transmission_ctx: OSFJobTransmissionContext,
+        _: OSFProjectData,
+        osf_storage: OSFStorageData,
         *,
         resource: Resource,
         buffer: ResourceBuffer,
@@ -203,15 +193,11 @@ class OSFJobExecutor(ConnectorJobExecutor):
         self.report_message(f"Uploading {resource.filename}...")
 
         callbacks = OSFUploadFileCallbacks()
-        callbacks.done(
-            lambda data: self._upload_file_done(
-                transmission_ctx, resource=resource, osf_file=data
-            )
-        )
+        callbacks.done(lambda data: self._upload_file_done(resource, data))
         callbacks.failed(lambda reason: self._upload_file_failed(resource, reason))
 
-        self._osf_transmission_client.upload_file(
-            transmission_ctx.osf_storage,
+        self._osf_client.upload_file(
+            osf_storage,
             path=relativize_path(resource.filename, self._job.project.resources_path),
             file=buffer,
             callbacks=callbacks,
@@ -220,20 +206,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _download_file_failed(self, res: Resource, reason: str) -> None:
         self.set_failed(f"Failed to download {res.filename}: {reason}")
 
-    def _upload_file_done(
-        self,
-        transmission_ctx: OSFJobTransmissionContext,
-        *,
-        resource: Resource,
-        osf_file: OSFFileData,
-    ) -> None:
+    def _upload_file_done(self, resource: Resource, _: OSFFileData) -> None:
         self.report_message(f"Uploaded {resource.filename}")
-
-        transmission_ctx.current_index += 1
-        if not transmission_ctx.is_done:
-            self._download_next_file(transmission_ctx)
-        else:
-            self.set_done()
 
     def _upload_file_failed(self, res: Resource, reason: str) -> None:
         self.set_failed(f"Failed to upload {res.filename}: {reason}")
