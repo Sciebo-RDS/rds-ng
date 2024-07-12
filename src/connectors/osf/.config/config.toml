@@ -9,3 +9,7 @@ host = "https://accounts.test.osf.io"
 authorization_endpoint = "/oauth2/authorize"
 token_endpoint = "/oauth2/token"
 scope = "osf.full_write"
+
+[transmission]
+max_attempts = 5
+attempts_delay = 15.0
