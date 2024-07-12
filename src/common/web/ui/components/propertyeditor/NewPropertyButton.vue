@@ -7,21 +7,21 @@ import PropertyDialog from "./PropertyDialog.vue";
 import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
-const props = defineProps(["type", "profileId", "parentId", "projectObjects", "globalObjectStore", "projectProfiles", "mode"]);
+const props = defineProps(["type", "profileId", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
 
 const emit = defineEmits(["loadObject"]);
 const label = props.projectProfiles.getClassLabelById(props.type);
 const linkableItems = computed(() => {
-    const linkedItems = [...props.projectObjects.getLinkedObjects(props.parentId), ...props.globalObjectStore.getLinkedObjects(props.parentId)].flat();
-    const linkable = props.globalObjectStore
+    const linkedItems = [...props.projectObjects.getReferencedObjects(props.parentId), ...props.sharedObjectStore.getReferencedObjects(props.parentId)].flat();
+    const linkable = props.sharedObjectStore
         .getObjectsByType(props.type)
         .filter((item: ProjectObject) => !linkedItems.includes(item.id))
         .filter((item: ProjectObject) => item.id != props.parentId);
     return linkable.length > 0
         ? linkable.map((item: ProjectObject) => ({
-              label: injectTemplate(props.projectProfiles.getLabelTemplateById(item.type), props.globalObjectStore.get(item.id)),
+              label: injectTemplate(props.projectProfiles.getLabelTemplateById(item.type), props.sharedObjectStore.get(item.id)),
               command: () => {
-                  props.projectObjects.addLink(props.parentId, item.id) || props.globalObjectStore.addLink(props.parentId, item.id);
+                  props.projectObjects.addRef(props.parentId, item.id) || props.sharedObjectStore.addRef(props.parentId, item.id);
               }
           }))
         : [];
@@ -29,8 +29,8 @@ const linkableItems = computed(() => {
 
 function createObject() {
     const newObject = new ProjectObject(props.profileId, props.type);
-    props.globalObjectStore.add(newObject);
-    props.projectObjects.addLink(props.parentId, newObject["id"]) || props.globalObjectStore.addLink(props.parentId, newObject["id"]);
+    props.sharedObjectStore.add(newObject);
+    props.projectObjects.addRef(props.parentId, newObject["id"]) || props.sharedObjectStore.addRef(props.parentId, newObject["id"]);
 
     if (props.mode == "dialog") {
         emit("loadObject", newObject["id"]);
@@ -52,7 +52,7 @@ function createObject() {
             data: {
                 id: newObject["id"],
                 projectObjects: props.projectObjects,
-                globalObjectStore: props.globalObjectStore,
+                sharedObjectStore: props.sharedObjectStore,
                 projectProfiles: props.projectProfiles,
                 profileId: props.profileId
             }

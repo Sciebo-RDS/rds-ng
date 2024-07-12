@@ -22,7 +22,7 @@ const props = defineProps({
         type: Object as PropType<Project>,
         required: true
     },
-    globalObjectStore: {
+    sharedObjectStore: {
         type: Object as PropType<ProjectObjectStore>,
         required: true
     }
@@ -55,7 +55,7 @@ projectProfiles.mountProfile(dfgDmp as Profile);
     <PropertyEditor
         v-model="project!.features.dmp.plan"
         :projectObjects="projectObjects as ProjectObjectStore"
-        :globalObjectStore="globalObjectStore as ProjectObjectStore"
+        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
         :projectProfiles="projectProfiles as PropertyProfileStore"
     />
 </template>

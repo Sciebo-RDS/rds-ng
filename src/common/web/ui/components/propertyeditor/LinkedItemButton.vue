@@ -14,9 +14,9 @@ import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils"
 SplitButton.components.PVSMenu = Menu;
 const comp = FrontendComponent.inject();
 const dialog = useDialog();
-const props = defineProps(["itemId", "parentId", "projectObjects", "globalObjectStore", "profileId", "projectProfiles", "mode"]);
+const props = defineProps(["itemId", "parentId", "projectObjects", "sharedObjectStore", "profileId", "projectProfiles", "mode"]);
 
-const object = (props.projectObjects.get(props.itemId) || props.globalObjectStore.get(props.itemId) || dummyProjectObject(props.itemId)) as ProjectObject;
+const object = (props.projectObjects.get(props.itemId) || props.sharedObjectStore.get(props.itemId) || dummyProjectObject(props.itemId)) as ProjectObject;
 
 const instanceLabel = computed(() => calcObjLabel(object, props.projectProfiles));
 const linkedItemActions = computed(() => [
@@ -46,8 +46,8 @@ const linkedItemActions = computed(() => [
                         rejectClass: "p-button-secondary"
                     }).then(() => {
                         console.log("Unlinking " + object.id);
-                        props.projectObjects.removeLink(props.parentId, object.id);
-                        props.globalObjectStore.removeLink(props.parentId, object.id);
+                        props.projectObjects.removeRef(props.parentId, object.id);
+                        props.sharedObjectStore.removeRef(props.parentId, object.id);
                     });
                 }
             },
@@ -67,7 +67,7 @@ const linkedItemActions = computed(() => [
                     }).then(() => {
                         console.log("Deleting " + object.id);
                         props.projectObjects.remove(object.id);
-                        props.globalObjectStore.remove(object.id);
+                        props.sharedObjectStore.remove(object.id);
                     });
                 }
             }
@@ -99,7 +99,7 @@ function handleClick() {
             data: {
                 id: object["id"],
                 projectObjects: props.projectObjects,
-                globalObjectStore: props.globalObjectStore,
+                sharedObjectStore: props.sharedObjectStore,
                 projectProfiles: props.projectProfiles,
                 profileId: props.profileId
             }
@@ -140,7 +140,10 @@ const toggle = (event: Event) => {
             menuButtonIcon="pi pi-ellipsis-v"
             :model="linkedItemActions"
             menuitemicon="pi pi-link"
-            :style="`background-color: ${calcBgColor(object, props.projectProfiles)}; border-color: ${calcBorderColor(object, props.projectProfiles)}; height: 2rem`"
+            :style="`background-color: ${calcBgColor(object, props.projectProfiles)}; border-color: ${calcBorderColor(
+                object,
+                props.projectProfiles
+            )}; height: 2rem`"
             class="text-gray-600 min-h-full py-0 my-0 mb-2 space-y-0"
             @click="toggle"
             @contextmenu="toggle"
@@ -166,7 +169,7 @@ const toggle = (event: Event) => {
                         icon="pi pi-trash"
                         @click="
                             () => {
-                                props.globalObjectStore.remove(props.itemId, props.itemId);
+                                props.sharedObjectStore.remove(props.itemId, props.itemId);
                                 props.projectObjects.remove(props.itemId, props.itemId);
                             }
                         "

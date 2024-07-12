@@ -12,7 +12,7 @@ import OverlayPanel from "primevue/overlaypanel";
 import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
 
 const emit = defineEmits(["hide"]);
-const { index, propertyClass, profileId, projectObjects, projectProfiles, globalObjectStore, layoutProfiles } = defineProps({
+const { index, propertyClass, profileId, projectObjects, projectProfiles, sharedObjectStore, layoutProfiles } = defineProps({
     index: {
         type: Number,
         required: true
@@ -26,14 +26,14 @@ const { index, propertyClass, profileId, projectObjects, projectProfiles, global
         required: true
     },
     projectObjects: {
-        type: ProjectObjectStore,
+        type:  Object as PropType<ProjectObjectStore>,
         required: true
     },
     projectProfiles: {
         type: PropertyProfileStore,
         required: true
     },
-    globalObjectStore: {
+    sharedObjectStore: {
         type: Object as PropType<ProjectObjectStore>,
         required: true
     },
@@ -64,7 +64,7 @@ const displayableInputs = propertyClass["input"] || [];
 
 const addableTypes = propertyClass["type"];
 
-const linkedObjects = computed(() => projectObjects.getLinkedObjects(propertyClass.id));
+const linkedObjects = computed(() => projectObjects.getReferencedObjects(propertyClass.id));
 
 const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).profiles as ProfileID[];
 
@@ -140,7 +140,7 @@ const toggleRemoveProperty = (e: Event) => {
                         :parentId="propertyObject['id']"
                         :profileId="profileId"
                         :projectObjects="projectObjects"
-                        :globalObjectStore="globalObjectStore as ProjectObjectStore"
+                        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"
                     />
                 </span>
@@ -167,7 +167,7 @@ const toggleRemoveProperty = (e: Event) => {
                     :item-id="i"
                     :parentId="propertyClass.id"
                     :projectObjects="projectObjects"
-                    :globalObjectStore="globalObjectStore as ProjectObjectStore"
+                    :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                     :projectProfiles="projectProfiles"
                 />
                 <span v-else class="text-gray-500 h-8 m-1 my-2">No {{ addableTypes.join(" / ") }} linked</span>
@@ -183,7 +183,6 @@ const toggleRemoveProperty = (e: Event) => {
                         :propertyObjectId="propertyObject['id']"
                         :profileId="profileId"
                         :projectObjects="projectObjects"
-                        :globalObjectStore="globalObjectStore as ProjectObjectStore"
                         :inputId="input['id']"
                         :inputOptions="input['options'] ? input['options'] : []"
                     />

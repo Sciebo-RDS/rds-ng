@@ -10,9 +10,23 @@ import StringForm from "./propertyforms/StringForm.vue";
 import StringListForm from "./propertyforms/StringListForm.vue";
 import TextAreaForm from "./propertyforms/TextAreaForm.vue";
 
+/**
+ * Represents a profile ID. usually [profilename, profileversion]
+ * @typedef {Array<string, string>} ProfileID
+ */
 export type ProfileID = [string, string];
 
+/**
+ * Represents the metadata of a profile.
+ */
 class ProfileMetadata {
+    /**
+     * Creates an instance of `ProfileMetadata`.
+     * @param id - The ID of the profile.
+     * @param name - The name of the profile.
+     * @param description - The description of the profile.
+     * @param version - The version of the profile.
+     */
     public constructor(
         public readonly id: ProfileID,
         public readonly name: string,

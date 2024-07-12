@@ -41,9 +41,6 @@ const selectedNodes = ref({} as Record<string, boolean>);
 const resourcesRefreshing = ref(false);
 const resourcesError = ref("");
 
-/* const resourcesProfile = new PropertySet(resources);
-const controller = reactive(new MetadataController(resourcesProfile, [], [])); */
-
 const resourcesData = ref();
 
 const showPreview = ref(true);

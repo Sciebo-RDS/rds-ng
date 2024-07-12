@@ -11,7 +11,7 @@ import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
 import { stringToColor } from "./utils/Colors";
 
-const props = defineProps(["controller", "profile", "project", "exporters", "projectProfiles", "projectObjects", "globalObjectStore"]);
+const props = defineProps(["controller", "profile", "project", "exporters", "projectProfiles", "projectObjects", "sharedObjectStore"]);
 
 /* const menu = ref();
 const items = computed(() => {
@@ -102,7 +102,7 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
         :propertyClass="p"
         :profileId="props.profile['metadata']['id']"
         :projectObjects="projectObjects"
-        :globalObjectStore="globalObjectStore as ProjectObjectStore"
+        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
         :projectProfiles="projectProfiles"
         :layoutProfiles="layout"
         @hide="(id) => hideProperty(id)"

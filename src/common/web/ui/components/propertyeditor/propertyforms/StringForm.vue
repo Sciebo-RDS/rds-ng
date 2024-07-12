@@ -8,11 +8,7 @@ const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
     profileId: { type: Object as PropType<ProfileID>, required: true },
-    projectObjects: { type: ProjectObjectStore, required: true },
-    globalObjectStore: {
-        type: Object as PropType<ProjectObjectStore>,
-        required: true
-    }
+    projectObjects: { type: ProjectObjectStore, required: true }
 });
 
 const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);

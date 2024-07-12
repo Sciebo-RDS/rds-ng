@@ -14,7 +14,7 @@ const { projectProfiles } = defineProps({
 });
 
 const projectObjects = reactive(new ProjectObjectStore());
-const globalObjectStore = reactive(new ProjectObjectStore());
+const sharedObjectStore = reactive(new ProjectObjectStore());
 
 const metadata = defineModel();
 projectObjects.setObjects(metadata.value as ProjectObject[]);
@@ -32,16 +32,16 @@ watch(
 );
 
 const sharedObjects = defineModel("sharedObjects");
-globalObjectStore.setObjects((sharedObjects.value as ProjectObject[]) || []);
+sharedObjectStore.setObjects((sharedObjects.value as ProjectObject[]) || []);
 
 watch(
     () => sharedObjects.value,
-    () => globalObjectStore.setObjects(sharedObjects.value as ProjectObject[])
+    () => sharedObjectStore.setObjects(sharedObjects.value as ProjectObject[])
 );
 
 watch(
-    () => globalObjectStore.exportObjects(),
-    () => (sharedObjects.value = globalObjectStore.exportObjects())
+    () => sharedObjectStore.exportObjects(),
+    () => (sharedObjects.value = sharedObjectStore.exportObjects())
 );
 
 // TODO REMOVE profile prop everywhere
@@ -61,7 +61,7 @@ const dummyProfile: Profile = {
         <PropertySet
             :profile="dummyProfile"
             :projectObjects="projectObjects"
-            :globalObjectStore="globalObjectStore as ProjectObjectStore"
+            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
             :projectProfiles="projectProfiles"
         />
     </div>

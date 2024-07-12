@@ -1,5 +1,4 @@
 import { type Profile } from "./PropertyProfile";
-import { PersistedSet } from "./PropertySet";
 
 export const testProfile: Profile = {
     metadata: {
@@ -112,8 +111,7 @@ export const testProfile: Profile = {
                 {
                     id: "nameIdentifier",
                     label: "Name Identifier",
-                    type: "string",
-                    
+                    type: "string"
                 },
                 {
                     id: "nameIdentifierScheme",
@@ -163,12 +161,3 @@ export const testProfile: Profile = {
         }
     }
 };
-
-export const testValues: PersistedSet = new PersistedSet(["Additional Profile", 1.1], {
-    General: {
-        Author: "John Doee"
-    },
-    Advanced: {
-        SomeMultiselect: ["asd", "another thing"]
-    }
-});

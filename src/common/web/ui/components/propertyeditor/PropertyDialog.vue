@@ -18,18 +18,18 @@ const dialogRef = inject("dialogRef") as any;
 const {
     id,
     projectObjects,
-    globalObjectStore,
+    sharedObjectStore,
     projectProfiles,
     profileId
-}: { id: string; projectObjects: ProjectObjectStore; globalObjectStore: ProjectObjectStore; projectProfiles: PropertyProfileStore; profileId: ProfileID } =
+}: { id: string; projectObjects: ProjectObjectStore; sharedObjectStore: ProjectObjectStore; projectProfiles: PropertyProfileStore; profileId: ProfileID } =
     dialogRef.value.data;
 
-const object = ref(globalObjectStore.get(id)!);
+const object = ref(sharedObjectStore.get(id)!);
 let objectClass = reactive(projectProfiles.getClassById(profileId, object.value["type"]!)!) as ProfileClass;
 const displayableInputs = ref(objectClass["input"] || []);
 const addableTypes = ref(objectClass["type"] || []);
 
-const linkedObjects = computed(() => globalObjectStore.getLinkedObjects(object.value.id));
+const linkedObjects = computed(() => sharedObjectStore.getReferencedObjects(object.value.id));
 
 const history = new History();
 const menuPath = ref();
@@ -40,14 +40,14 @@ const toggle = (event: Event) => {
 };
 
 function selectActiveObject(id: string) {
-    object.value = globalObjectStore.get(id)!;
+    object.value = sharedObjectStore.get(id)!;
     objectClass = projectProfiles.getClassById(profileId, object.value["type"]!)! as ProfileClass;
     addableTypes.value = objectClass["type"] || [];
     displayableInputs.value = objectClass["input"] || [];
     history.navigateTo(object.value);
     // TODO optimize by only updating necessary elements
     menuPath.value = history.list().map((item) => {
-        const obj = globalObjectStore.get(item.id);
+        const obj = sharedObjectStore.get(item.id);
 
         return {
             label: `${projectProfiles.getClassLabelById(item.type!)}:  ${calcObjLabel(obj!, projectProfiles)}`,
@@ -93,7 +93,7 @@ selectActiveObject(id);
                         :parentId="object.id"
                         :profileId="profileId"
                         :projectObjects="projectObjects"
-                        :globalObjectStore="globalObjectStore as ProjectObjectStore"
+                        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"
                         mode="dialog"
                         @loadObject="(id) => selectActiveObject(id)"
@@ -119,7 +119,7 @@ selectActiveObject(id);
                             :item-id="i"
                             :parentId="object.id"
                             :projectObjects="projectObjects"
-                            :globalObjectStore="globalObjectStore as ProjectObjectStore"
+                            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                             :projectProfiles="projectProfiles"
                             mode="dialog"
                             @loadObject="(id) => selectActiveObject(id)"
@@ -136,8 +136,8 @@ selectActiveObject(id);
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"
                                 :propertyObjectId="object['id']"
-                                :projectObjects="globalObjectStore"
-                                :globalObjectStore="globalObjectStore as ProjectObjectStore"
+                                :projectObjects="sharedObjectStore"
+                                :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                                 :inputId="input['id']"
                                 :profileId="profileId"
                                 :inputOptions="input['options'] ? input['options'] : []"

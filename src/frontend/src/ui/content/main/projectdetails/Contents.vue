@@ -33,7 +33,7 @@ const panels = computed(() => {
     });
 });
 
-const globalObjectStore = reactive(new ProjectObjectStore());
+const sharedObjectStore = reactive(new ProjectObjectStore());
 
 const debounce = makeDebounce(500);
 watch(
@@ -70,7 +70,7 @@ watch(
                     content: 'h-full'
                 }"
             >
-                <component :is="panel.component" :project="project" :globalObjectStore="globalObjectStore" />
+                <component :is="panel.component" :project="project" :sharedObjectStore="sharedObjectStore" />
             </TabPanel>
         </TabView>
     </div>
