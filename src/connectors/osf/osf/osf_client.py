@@ -14,6 +14,7 @@ from common.py.services import Service
 
 from .osf_callbacks import (
     OSFCreateProjectCallbacks,
+    OSFDeleteProjectCallbacks,
     OSFGetStorageCallbacks,
     OSFUploadFileCallbacks,
 )
@@ -96,6 +97,32 @@ class OSFClient(RequestsExecutor):
         self._execute(
             cb_exec=_execute,
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+        )
+
+    def delete_project(
+        self,
+        osf_project: OSFProjectData,
+        *,
+        callbacks: OSFDeleteProjectCallbacks = OSFDeleteProjectCallbacks(),
+    ):
+        """
+        Deletes an existing OSF project.
+
+        Args:
+            osf_project: The OSF project.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> None:
+            resp = self.delete(
+                session,
+                ["nodes", osf_project.project_id],
+            )
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda _: callbacks.invoke_done_callbacks(),
             cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
         )
 

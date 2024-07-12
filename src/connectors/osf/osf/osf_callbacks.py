@@ -16,6 +16,17 @@ class OSFCreateProjectCallbacks(
     """
 
 
+class OSFDeleteProjectCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[], None],
+        typing.Callable[[str], None],
+    ]
+):
+    """
+    Callbacks for the delete project API call.
+    """
+
+
 class OSFGetStorageCallbacks(
     ExecutionCallbacks[
         typing.Callable[[OSFStorageData], None],

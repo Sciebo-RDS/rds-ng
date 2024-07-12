@@ -137,6 +137,32 @@ class RequestsExecutor(AuthorizedExecutor):
             **kwargs,
         )
 
+    def delete(
+        self,
+        session: requests.Session,
+        path: typing.List[str] | str,
+        *args,
+        **kwargs,
+    ) -> requests.Response:
+        """
+        Performs a DELETE request.
+
+        Args:
+            session: The session to use.
+            path: The path as an array.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The response object.
+        """
+        return session.delete(
+            self._url(path),
+            *args,
+            timeout=self._request_timeout,
+            **kwargs,
+        )
+
     def _url(self, path: typing.List[str] | str, trailing_slash: bool = True) -> str:
         if isinstance(path, str):
             return path

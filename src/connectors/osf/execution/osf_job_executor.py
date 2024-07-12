@@ -111,6 +111,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         callbacks = OSFGetStorageCallbacks()
         callbacks.done(lambda data: self._storage_fetched(osf_project, data))
         callbacks.failed(lambda reason: self._storage_failed(reason))
+        callbacks.failed(lambda _: self._delete_failed_project(osf_project))
 
         self._osf_client.get_storage(osf_project, callbacks=callbacks)
 
@@ -134,6 +135,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
             )
         )
         callbacks.failed(lambda reason: self._transmitter_prepare_failed(reason))
+        callbacks.failed(lambda _: self._delete_failed_project(osf_project))
 
         self._transmitter.prepare(self._job.project, callbacks=callbacks)
 
@@ -178,13 +180,14 @@ class OSFJobExecutor(ConnectorJobExecutor):
             )
         )
         callbacks.failed(lambda res, reason: self._download_file_failed(res, reason))
+        callbacks.failed(lambda _, __: self._delete_failed_project(osf_project))
         callbacks.all_done(lambda success: self.set_done() if success else None)
 
         self._transmitter.download_list(files, callbacks=callbacks)
 
     def _download_file_done(
         self,
-        _: OSFProjectData,
+        osf_project: OSFProjectData,
         osf_storage: OSFStorageData,
         *,
         resource: Resource,
@@ -195,6 +198,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         callbacks = OSFUploadFileCallbacks()
         callbacks.done(lambda data: self._upload_file_done(resource, data))
         callbacks.failed(lambda reason: self._upload_file_failed(resource, reason))
+        callbacks.failed(lambda _: self._delete_failed_project(osf_project))
 
         self._osf_client.upload_file(
             osf_storage,
@@ -211,3 +215,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
     def _upload_file_failed(self, res: Resource, reason: str) -> None:
         self.set_failed(f"Failed to upload {res.filename}: {reason}")
+
+    # Miscellaneous
+    def _delete_failed_project(self, osf_project: OSFProjectData) -> None:
+        self._osf_client.delete_project(osf_project)

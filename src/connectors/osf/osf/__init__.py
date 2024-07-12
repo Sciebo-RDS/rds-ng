@@ -1,5 +1,6 @@
 from .osf_callbacks import (
     OSFCreateProjectCallbacks,
+    OSFDeleteProjectCallbacks,
     OSFGetStorageCallbacks,
     OSFUploadFileCallbacks,
 )
