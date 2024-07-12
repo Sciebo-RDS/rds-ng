@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { reactive, watch } from "vue";
 import PropertySet from "./PropertySet.vue";
 
-import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+import { ProjectObjectStore } from "./ProjectObjectStore";
 import { Profile } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
@@ -13,36 +12,10 @@ const { projectProfiles } = defineProps({
     }
 });
 
-const projectObjects = reactive(new ProjectObjectStore());
-const sharedObjectStore = reactive(new ProjectObjectStore());
 
-const metadata = defineModel();
-projectObjects.setObjects(metadata.value as ProjectObject[]);
-
-watch(
-    () => metadata.value,
-    () => projectObjects.setObjects(metadata.value as ProjectObject[])
-);
-
-watch(
-    () => projectObjects.exportObjects(),
-    () => {
-        metadata.value = projectObjects.exportObjects();
-    }
-);
-
+const projectObjects = defineModel();
 const sharedObjects = defineModel("sharedObjects");
-sharedObjectStore.setObjects((sharedObjects.value as ProjectObject[]) || []);
 
-watch(
-    () => sharedObjects.value,
-    () => sharedObjectStore.setObjects(sharedObjects.value as ProjectObject[])
-);
-
-watch(
-    () => sharedObjectStore.exportObjects(),
-    () => (sharedObjects.value = sharedObjectStore.exportObjects())
-);
 
 // TODO REMOVE profile prop everywhere
 const dummyProfile: Profile = {
@@ -60,8 +33,8 @@ const dummyProfile: Profile = {
     <div class="overflow-hidden mr-4">
         <PropertySet
             :profile="dummyProfile"
-            :projectObjects="projectObjects"
-            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+            :projectObjects="projectObjects as ProjectObjectStore"
+            :sharedObjectStore="sharedObjects as ProjectObjectStore"
             :projectProfiles="projectProfiles"
         />
     </div>
