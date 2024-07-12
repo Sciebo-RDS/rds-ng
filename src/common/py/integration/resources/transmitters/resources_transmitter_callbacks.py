@@ -45,7 +45,7 @@ class ResourcesTransmitterDownloadCallbacks(
         self.assign(ResourcesTransmitterDownloadCallbacks._CallbackType.PROGRESS, cb)
         return self
 
-    def all_done(self, cb: typing.Callable[[], None]) -> typing.Self:
+    def all_done(self, cb: typing.Callable[[bool], None]) -> typing.Self:
         """
         Adds a *All Done* callback.
 

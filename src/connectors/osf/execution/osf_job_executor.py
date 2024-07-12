@@ -178,7 +178,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
             )
         )
         callbacks.failed(lambda res, reason: self._download_file_failed(res, reason))
-        callbacks.all_done(lambda: self.set_done())
+        callbacks.all_done(lambda success: self.set_done() if success else None)
 
         self._transmitter.download_list(files, callbacks=callbacks)
 

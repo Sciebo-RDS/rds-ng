@@ -115,8 +115,7 @@ class ResourcesTransmitter(AuthorizedExecutor):
             resource: The resource to download.
             callbacks: Optional execution callbacks.
         """
-        self._context.download_list = [resource]
-        self._context.download_index = 0
+        self._context.begin_downloads([resource])
 
         self._download_resource(resource, callbacks=callbacks)
 
@@ -159,8 +158,7 @@ class ResourcesTransmitter(AuthorizedExecutor):
         """
         if len(resources) > 0:
             with self._lock:
-                self._context.download_list = resources
-                self._context.download_index = 0
+                self._context.begin_downloads(resources)
 
             return self._download_list_next(
                 resources,
@@ -198,6 +196,8 @@ class ResourcesTransmitter(AuthorizedExecutor):
                 )
 
             def _download_failed(reason: str) -> None:
+                self._context.download_failed = True
+
                 callbacks.invoke_fail_callbacks(resource, reason)
 
             self._execute(
@@ -228,7 +228,9 @@ class ResourcesTransmitter(AuthorizedExecutor):
                             callbacks=callbacks,
                         )
                         if not self._context.all_downloads_done
-                        else callbacks.invoke_all_done_callbacks()
+                        else callbacks.invoke_all_done_callbacks(
+                            not self._context.download_failed
+                        )
                     ),
                 )
 
