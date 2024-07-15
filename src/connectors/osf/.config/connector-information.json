@@ -1,0 +1,13 @@
+{
+    "name": "Open Science Framework",
+    "description": "OSF (Open Science Framework) is a free, open platform to support your research and enable collaboration. It helps you and your colleagues to manage your project throughout its entire lifecycle.",
+    "category": "repository",
+    "options": {
+        "publish_once": false
+    },
+    "logos": {
+        "default": "/component/common/assets/img/logos/osf.png",
+        "horizontal": "/component/common/assets/img/logos/osf.png"
+    },
+    "metadata_profile": "/component/common/assets/profiles/stub.json"
+}

@@ -19,4 +19,4 @@ class MetadataFeature(ProjectFeature):
     feature_id: typing.ClassVar[ProjectFeatureID] = "metadata"
 
     metadata: ProjectMetadata = field(default_factory=list)
-    shared_objects: MetadataObjects = field(default=list)
+    shared_objects: MetadataObjects = field(default_factory=list)

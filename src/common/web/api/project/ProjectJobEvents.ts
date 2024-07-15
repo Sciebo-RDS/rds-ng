@@ -5,6 +5,7 @@ import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
 import { type ConnectorInstanceID } from "../../data/entities/connector/ConnectorInstance";
+import { type ProjectJobHistoryRecordExtData } from "../../data/entities/project/logbook/ProjectJobHistoryRecord";
 import { type ProjectID } from "../../data/entities/project/Project";
 import { ProjectJob } from "../../data/entities/project/ProjectJob";
 
@@ -90,6 +91,8 @@ export class ProjectJobCompletionEvent extends Event {
     public readonly success: boolean = true;
     public readonly message: string = "";
 
+    public readonly ext_data: ProjectJobHistoryRecordExtData = {};
+
     /**
      * Helper function to easily build this message.
      */
@@ -99,11 +102,12 @@ export class ProjectJobCompletionEvent extends Event {
         connectorInstance: ConnectorInstanceID,
         success: boolean,
         message: string = "",
+        extData: ProjectJobHistoryRecordExtData = {},
         chain: Message | null = null,
     ): EventComposer<ProjectJobCompletionEvent> {
         return messageBuilder.buildEvent(
             ProjectJobCompletionEvent,
-            { project_id: projectID, connector_instance: connectorInstance, success: success, message: message },
+            { project_id: projectID, connector_instance: connectorInstance, success: success, message: message, ext_data: extData },
             chain,
         );
     }
