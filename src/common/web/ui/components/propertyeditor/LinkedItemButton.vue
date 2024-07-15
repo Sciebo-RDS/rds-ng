@@ -121,7 +121,7 @@ const toggle = (event: Event) => {
             menuButtonIcon="pi pi-ellipsis-v"
             :model="linkedItemActions"
             menuitemicon="pi pi-link"
-            class="min-h-full py-0 my-0 mb-2 space-y-0"
+            class="min-h-full py-0 my-0 mb-2 space-y-0 w-full"
             @click="() => (object.type !== 'dummy' ? handleClick() : null)"
             @contextmenu="
                 () => {
@@ -136,7 +136,7 @@ const toggle = (event: Event) => {
                 <span class="text-sm text-gray-700">
                     {{ props.projectProfiles.getClassLabelById(object["type"]) }}
                 </span>
-                <span class="text-lg text-gray-800">
+                <span class="text-lg text-gray-800 truncate">
                     {{ instanceLabel }}
                 </span>
             </span>

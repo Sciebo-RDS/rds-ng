@@ -62,15 +62,17 @@ selectActiveObject(id);
 </script>
 
 <template>
-    <Card :pt="{ root: { class: 'shadow-none' }, body: { class: 'pl-1 p-0' } }">
+    <Card :pt="{ root: { class: 'shadow-none' }, body: { class: 'pl-1 p-0 overflow-hidden' } }">
         <template #header>
             <Breadcrumb
                 :model="menuPath as MenuItem[]"
+                class="max-w-full w-full grid grid-cols-1"
                 :pt="{
                     root: { class: 'px-0 pt-0' },
-                    menu: { class: ' flex flex-wrap' },
+                    menu: { class: ' flex flex-wrap ' },
                     separator: { class: 'mb-2' },
-                    label: { class: 'text-red-900 opacity-80 hover:opacity-100 cursor-pointer truncate pb-2' }
+                    menuItem: { class: 'max-w-full' },
+                    label: { class: 'text-red-900 opacity-80 hover:opacity-100 cursor-pointer truncate pb-2 ' }
                 }"
             />
         </template>
@@ -109,14 +111,26 @@ selectActiveObject(id);
 
                     <div
                         v-if="addableTypes !== undefined && addableTypes.length > 0"
-                        class="row-span-1 flex mt-3 p-2 flex-wrap gap-0.5 rounded-md bg-sky-50 border border-dashed border-indigo-400"
+                        class="row-span-1 flex mt-3 p-2 flex-wrap gap-0.5 rounded-md"
+                        style="
+                            box-shadow:
+                                0 0 #0000,
+                                0 0 #0000,
+                                0 1px 2px 0 rgba(18, 18, 23, 0.05);
+                            transition:
+                                background-color 0.2s,
+                                color 0.2s,
+                                border-color 0.2s,
+                                box-shadow 0.2s,
+                                outline-color 0.2s;
+                            border: 1px dashed #b6bfca;
+                        "
                     >
                         <LinkedItemButton
                             v-if="linkedObjects.length > 0"
                             v-for="i in linkedObjects"
                             :key="i"
-                            class="m-1"
-                            :profileId="profileId"
+                            class="m-1 max-w-full"
                             :item-id="i"
                             :parentId="object.id"
                             :projectObjects="projectObjects"
@@ -125,7 +139,7 @@ selectActiveObject(id);
                             mode="dialog"
                             @loadObject="(id) => selectActiveObject(id)"
                         />
-                        <span v-else class="text-gray-500 h-8 m-1 my-2">No {{ addableTypes.join(" / ") }} linked</span>
+                        <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block">No {{ addableTypes.join(" / ") }} linked</span>
                     </div>
                     <!-- Simple Input Row -->
                     <div class="space-y-5">
@@ -140,7 +154,6 @@ selectActiveObject(id);
                                 :projectObjects="sharedObjectStore"
                                 :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                                 :inputId="input['id']"
-                                :profileId="profileId"
                                 :inputOptions="input['options'] ? input['options'] : []"
                             />
                         </div>

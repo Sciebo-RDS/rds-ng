@@ -95,20 +95,21 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
             <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
         </template>
     </Toolbar> -->
-    <PropertyOneCol
-        v-for="(p, i) in propsToShow"
-        :key="p.id"
-        :index="i"
-        class="my-5"
-        :propertyClass="p"
-        :profileId="props.profile['metadata']['id']"
-        :projectObjects="projectObjects"
-        :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
-        :projectProfiles="projectProfiles"
-        :layoutProfiles="layout"
-        @hide="(id) => hideProperty(id)"
-    />
-
+    <div class="w-full max-w-full">
+        <PropertyOneCol
+            v-for="(p, i) in propsToShow"
+            :key="p.id"
+            :index="i"
+            class="my-5 w-full max-w-full"
+            :propertyClass="p"
+            :profileId="layout.filter((e) => e.id == p.id)[0].profiles"
+            :projectObjects="projectObjects"
+            :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
+            :projectProfiles="projectProfiles"
+            :layoutProfiles="layout"
+            @hide="(id) => hideProperty(id)"
+        />
+    </div>
     <Button v-if="hiddenPropertys.length !== 0" class="fixed bottom-10 right-10" icon="pi pi-plus" size="large" rounded @click="showAddProperties = true" />
 
     <Dialog

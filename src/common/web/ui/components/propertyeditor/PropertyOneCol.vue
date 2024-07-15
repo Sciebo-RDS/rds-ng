@@ -76,9 +76,9 @@ const toggleRemoveProperty = (e: Event) => {
 </script>
 
 <template>
-    <div class="flex flex-row <!--hover:bg-gray-100--> px-2 pl-0 rounded group">
-        <div class="grid w-16 justify-center">
-            <div class="text-slate-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.required ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
+    <div class="flex flex-row <!--hover:bg-gray-100--> px-2 pl-0 rounded group max-w-full w-full">
+        <div class="grid w-16 justify-center shrink-0">
+            <div class="text-gray-400 mt-0 pt-0 text-lg ml-auto mr-2" :class="propertyClass.required ? '' : 'group-hover:hidden'">{{ index + 1 }}.</div>
             <OverlayPanel ref="removeProperty" class="py-2 px-5">
                 <div class="flex flex-col gap-4">
                     <h3 class="text-lg font-bold">Remove "{{ propertyClass.label }}"?</h3>
@@ -116,23 +116,22 @@ const toggleRemoveProperty = (e: Event) => {
                 :class="propertyClass.required ? 'invisible' : 'invisible group-hover:visible'"
                 class="pt-0 mt-0 h-9"
                 @click="toggleRemoveProperty($event)"
-                :pt="{ root: { class: 'text-slate-400 hover:text-red-600 bg-transparent' } }"
+                :pt="{ root: { class: 'text-gray-400 hover:text-red-600 bg-transparent' } }"
             />
         </div>
-        <div class="grow">
+        <div class="w-full grid grid-cols-1">
             <!--  Header Row -->
-            <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4">
+            <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full">
                 <span :title="propertyClass.label" class="min-w-fit">
                     <span class="text-lg"> {{ propertyClass.label }} </span>
                     <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink">
-                        <i class="pi pi-question-circle mx-2" style="font-size: 1rem" /> </Button
+                        <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" /> </Button
                     ><!-- <span v-if="propertyClass.required" class="text-red-500">*</span> -->
                     <OverlayPanel ref="op" class="max-w-lg">
                         {{ propertyClass.description }}
                         <p v-if="propertyClass.example" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.example}`" />
                     </OverlayPanel>
                 </span>
-
                 <span class="mr-auto gap-1">
                     <NewPropertyButton
                         v-for="t in addableTypes"
@@ -157,13 +156,26 @@ const toggleRemoveProperty = (e: Event) => {
             <!--  Linked Items Row -->
             <div
                 v-if="addableTypes !== undefined && addableTypes.length > 0"
-                class="row-span-1 flex mt-3 p-2 flex-wrap gap-0.5 rounded-md bg-sky-50 border border-dashed border-indigo-400"
+                class="row-span-1 flex mt-3 p-2 flex-wrap gap-0.5 rounded-md border"
+                style="
+                    box-shadow:
+                        0 0 #0000,
+                        0 0 #0000,
+                        0 1px 2px 0 rgba(18, 18, 23, 0.05);
+                    transition:
+                        background-color 0.2s,
+                        color 0.2s,
+                        border-color 0.2s,
+                        box-shadow 0.2s,
+                        outline-color 0.2s;
+                    border: 1px dashed #b6bfca;
+                "
             >
                 <LinkedItemButton
                     v-if="linkedObjects.length > 0"
                     v-for="i in linkedObjects"
                     :key="i"
-                    class="m-1"
+                    class="m-1 max-w-full"
                     :profileId="profileId"
                     :item-id="i"
                     :parentId="propertyClass.id"
@@ -171,9 +183,8 @@ const toggleRemoveProperty = (e: Event) => {
                     :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                     :projectProfiles="projectProfiles"
                 />
-                <span v-else class="text-gray-500 h-8 m-1 my-2">No {{ addableTypes.join(" / ") }} linked</span>
+                <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block">No {{ addableTypes.join(" / ") }} linked</span>
             </div>
-
             <!-- Simple Input Row -->
             <div v-if="displayableInputs.length > 0" class="space-y-2 mt-2">
                 <div v-for="input in displayableInputs" class="row-span-1">
