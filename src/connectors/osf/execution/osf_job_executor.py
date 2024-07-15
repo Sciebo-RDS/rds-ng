@@ -3,6 +3,10 @@ import typing
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.project.logbook import (
+    ProjectJobHistoryRecordExtData,
+    ProjectJobHistoryRecordExtDataIDs,
+)
 from common.py.data.entities.resource import (
     files_list_from_resources_list,
     Resource,
@@ -155,7 +159,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
 
             self._download_files(osf_project, osf_storage, files=files_list)
         else:
-            self.set_done()
+            self.set_done(ext_data=self._get_job_ext_data(osf_project))
 
     def _transmitter_prepare_failed(self, reason: str) -> None:
         self.set_failed(f"Failed to prepare job: {reason}")
@@ -181,7 +185,13 @@ class OSFJobExecutor(ConnectorJobExecutor):
         )
         callbacks.failed(lambda res, reason: self._download_file_failed(res, reason))
         callbacks.failed(lambda _, __: self._delete_failed_project(osf_project))
-        callbacks.all_done(lambda success: self.set_done() if success else None)
+        callbacks.all_done(
+            lambda success: (
+                self.set_done(ext_data=self._get_job_ext_data(osf_project))
+                if success
+                else None
+            )
+        )
 
         self._transmitter.download_list(files, callbacks=callbacks)
 
@@ -219,3 +229,8 @@ class OSFJobExecutor(ConnectorJobExecutor):
     # Miscellaneous
     def _delete_failed_project(self, osf_project: OSFProjectData) -> None:
         self._osf_client.delete_project(osf_project)
+
+    def _get_job_ext_data(
+        self, osf_project: OSFProjectData
+    ) -> ProjectJobHistoryRecordExtData:
+        return {ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: osf_project.project_id}

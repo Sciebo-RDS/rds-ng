@@ -6,6 +6,7 @@ from common.py.component import BackendComponent
 from common.py.core.logging import debug
 from common.py.core.messaging import Channel
 from common.py.core.messaging.composers import MessageBuilder
+from common.py.data.entities.project.logbook import ProjectJobHistoryRecordExtData
 from common.py.integration.resources.brokers import ResourcesBrokerTunnelType
 from common.py.integration.resources.transmitters import ResourcesTransmitter
 from common.py.services import Service
@@ -129,7 +130,9 @@ class ConnectorJobExecutor(abc.ABC):
         """
         self.report(progress, "")
 
-    def set_done(self) -> None:
+    def set_done(
+        self, *, ext_data: ProjectJobHistoryRecordExtData | None = None
+    ) -> None:
         """
         Marks and reports the job as successfully finished.
         """
@@ -145,6 +148,7 @@ class ConnectorJobExecutor(abc.ABC):
             connector_instance=self._job.connector_instance,
             success=True,
             message=f"Job completed in {format_elapsed_time(time.time() - self._job.timestamp)}",
+            ext_data=ext_data,
         ).emit(self._target_channel)
 
         self._log_debug("Job done")

@@ -239,6 +239,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                         connector_instance=job.connector_instance,
                         success=msg.success,
                         message=msg.message,
+                        ext_data=msg.ext_data if msg.ext_data is not None else {},
                     ),
                 )
 
@@ -262,6 +263,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
                 connector_instance=msg.connector_instance,
                 success=msg.success,
                 message=msg.message,
+                ext_data=msg.ext_data,
                 chain=msg,
             ).emit(Channel.direct(session.user_origin))
 
