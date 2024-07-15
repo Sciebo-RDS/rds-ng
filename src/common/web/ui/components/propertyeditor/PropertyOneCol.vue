@@ -18,7 +18,7 @@ const { index, propertyClass, profileId, projectObjects, projectProfiles, shared
         required: true
     },
     propertyClass: {
-        type: Object as PropType<ProfileClass>,
+        type: Object as PropType<ProfileClass & { profiles: ProfileID[] }>,
         required: true
     },
     profileId: {
@@ -26,7 +26,7 @@ const { index, propertyClass, profileId, projectObjects, projectProfiles, shared
         required: true
     },
     projectObjects: {
-        type:  Object as PropType<ProjectObjectStore>,
+        type: Object as PropType<ProjectObjectStore>,
         required: true
     },
     projectProfiles: {
@@ -38,7 +38,8 @@ const { index, propertyClass, profileId, projectObjects, projectProfiles, shared
         required: true
     },
     layoutProfiles: {
-        type: Array
+        type: Object as PropType<Array<ProfileClass & { profiles: [] }>>,
+        required: true
     }
 });
 
@@ -66,7 +67,7 @@ const addableTypes = propertyClass["type"];
 
 const linkedObjects = computed(() => projectObjects.getReferencedObjects(propertyClass.id));
 
-const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id).profiles as ProfileID[];
+const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id)!.profiles as ProfileID[];
 
 const removeProperty = ref();
 const toggleRemoveProperty = (e: Event) => {

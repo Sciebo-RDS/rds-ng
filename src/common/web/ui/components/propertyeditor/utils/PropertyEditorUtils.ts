@@ -1,6 +1,4 @@
-import { deepClone, intersectObjects } from "../../../../utils/ObjectUtils";
 import { type ProfileID } from "../PropertyProfile";
-import { PersistedSet } from "../PropertySet";
 
 /**
  * Checks whether two profile IDs are the same.
@@ -20,10 +18,10 @@ export function compareProfileIDs(id1: ProfileID, id2: ProfileID): boolean {
  *
  * @returns - The found persisted set, if any.
  */
-export function extractPersistedSetFromArray(persistedSets, profileID: ProfileID): PersistedSet {
+/* export function extractPersistedSetFromArray(persistedSets, profileID: ProfileID): PersistedSet {
     const sets = persistedSets.filter((set) => compareProfileIDs(set["metadata"]["id"], profileID));
     return sets.length ? sets[0] : ({} as PersistedSet);
-}
+} */
 
 /**
  * Creates an intersection of a list of persisted sets.
@@ -33,7 +31,7 @@ export function extractPersistedSetFromArray(persistedSets, profileID: ProfileID
  *
  * @returns - The combined set.
  */
-export function intersectPersistedSets(persistedSets: PersistedSet[], profileID: ProfileID): PersistedSet {
+/* export function intersectPersistedSets(persistedSets: PersistedSet[], profileID: ProfileID): PersistedSet {
     if (persistedSets.length == 0) {
         return new PersistedSet(profileID, {});
     } else if (persistedSets.length == 1) {
@@ -45,7 +43,7 @@ export function intersectPersistedSets(persistedSets: PersistedSet[], profileID:
         combinedSet = intersectObjects(combinedSet, persistedSets[i]);
     }
     return new PersistedSet(profileID, combinedSet.categories || {});
-}
+} */
 
 /**
  * Creates a debounced wrapper for arbitrary functions.

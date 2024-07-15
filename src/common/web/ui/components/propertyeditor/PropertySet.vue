@@ -4,7 +4,7 @@ import Chip from "primevue/chip";
 import Dialog from "primevue/dialog";
 import OrderList from "primevue/orderlist";
 
-import { computed, ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
@@ -59,8 +59,9 @@ const layout = getLayout();
 
 const propsToShow = ref(layout.filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined));
 
-const selectedProperties = ref([]);
+const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
 const unselectProperties = () => (selectedProperties.value = []);
+const selectProperties = (selection: ProfileLayoutClass[]) => (selectedProperties.value = selection);
 
 // TODO FIXME this
 const hideProperty = (id: string) => {
@@ -121,7 +122,7 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
         <template #default class="h-full">
             <OrderList
                 v-model="hiddenPropertys"
-                @update:selection="(selection) => (selectedProperties = selection)"
+                @update:selection="(selection: ProfileLayoutClass[]) => selectProperties(selection)"
                 dataKey="id"
                 class="h-full"
                 :pt="{ list: { class: 'min-h-full' } }"

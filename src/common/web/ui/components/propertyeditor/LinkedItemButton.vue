@@ -11,6 +11,7 @@ import { SharedObject, dummyProjectObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
 import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils";
 
+// @ts-ignore
 SplitButton.components.PVSMenu = Menu;
 const comp = FrontendComponent.inject();
 const dialog = useDialog();
@@ -122,7 +123,13 @@ const toggle = (event: Event) => {
             menuitemicon="pi pi-link"
             class="min-h-full py-0 my-0 mb-2 space-y-0"
             @click="() => (object.type !== 'dummy' ? handleClick() : null)"
-            @contextmenu="$refs.button.onDropdownButtonClick()"
+            @contextmenu="
+                () => {
+                    const button = $refs.button as typeof ref<SplitButton>;
+                    //@ts-ignore
+                    button.onDropdownButtonClick();
+                }
+            "
             :style="`--p-color: ${calcBgColor(object, props.projectProfiles)}; --p-border-color: ${calcBorderColor(object, props.projectProfiles)};`"
         >
             <span class="mx-2 truncate flex items-center space-x-2">

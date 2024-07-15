@@ -1,6 +1,3 @@
-import { PropertyController } from "../PropertyController";
-import { PropertySet } from "../PropertySet";
-
 /**
  * The exporter identifier type.
  */
@@ -9,7 +6,7 @@ export type ExporterID = string;
 /**
  * Dynamic MenuItem Vue component loader.
  */
-export type ExporterDownloader = (controller: PropertyController<PropertySet | PropertySet[]>, title: string) => any;
+export type ExporterDownloader = (controller: any, title: string) => any;
 
 /**
  * Options to initialize a exporter.
