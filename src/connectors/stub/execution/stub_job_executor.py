@@ -72,7 +72,7 @@ class StubJobExecutor(ConnectorJobExecutor):
         callbacks.progress(_report_each_file)
         callbacks.done(lambda res, buffer: self._download_done(res, buffer))
         callbacks.failed(lambda res, reason: self._download_failed(res, reason))
-        callbacks.all_done(lambda: self.set_done())
+        callbacks.all_done(lambda _: self.set_done())
 
         self._transmitter.download_list(files, callbacks=callbacks)
 

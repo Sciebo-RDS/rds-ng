@@ -179,6 +179,10 @@ class OSFClient(RequestsExecutor):
                 session, osf_storage, path=file_path.parent
             )
 
+            # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
+            if file.seekable():
+                file.seek(0)
+
             resp = self.put(
                 session,
                 target_storage.file_link,
@@ -187,10 +191,18 @@ class OSFClient(RequestsExecutor):
             )
             return OSFFileData(resp)
 
+        def _upload_done(data: OSFFileData) -> None:
+            callbacks.invoke_done_callbacks(data)
+            file.close()  # Free up the buffer to save memory
+
+        def _upload_failed(reason: str) -> None:
+            callbacks.invoke_fail_callbacks(reason)
+            file.close()  # Free up the buffer to save memory
+
         self._execute(
             cb_exec=_execute,
-            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
-            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+            cb_done=_upload_done,
+            cb_failed=_upload_failed,
         )
 
     def _create_directory_tree(

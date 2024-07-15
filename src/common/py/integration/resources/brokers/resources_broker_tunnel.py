@@ -99,6 +99,13 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
 
     # Default implementations
 
+    def seek(self, *args, **kwargs):
+        if not self.seekable():
+            raise OSError("The tunnel isn't seekable")
+
+    def seekable(self) -> bool:
+        return False
+
     def close(self) -> None:
         super().close()
 
@@ -129,12 +136,6 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
 
     def fileno(self) -> int:
         return self._tunnel_id
-
-    def seek(self, *args, **kwargs):
-        raise OSError("Tunnels aren't seekable")
-
-    def seekable(self) -> bool:
-        return False
 
     def tell(self) -> int:
         return super().tell()
