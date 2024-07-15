@@ -11,7 +11,7 @@ import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
 import { stringToColor } from "./utils/Colors";
 
-const props = defineProps(["controller", "profile", "project", "exporters", "projectProfiles", "projectObjects", "sharedObjectStore"]);
+const props = defineProps(["controller", "project", "exporters", "projectProfiles", "projectObjects", "sharedObjectStore"]);
 
 /* const menu = ref();
 const items = computed(() => {
@@ -40,14 +40,14 @@ const toggle = (event: Event) => {
 
 const getLayout = () => {
     let layout = [];
-    for (const profiles of props.projectProfiles.list()) {
-        for (const p of profiles["layout"]) {
+    for (const profile of props.projectProfiles.list()) {
+        for (const p of profile["layout"]) {
             const x = layout.find((xd) => p.id == xd.id);
             if (x !== undefined) {
-                x["profiles"].push(profiles["metadata"]["id"]);
+                x["profiles"].push(profile["metadata"]["id"]);
                 if (p.required) x["required"] = true;
             } else {
-                p["profiles"] = [profiles["metadata"]["id"]];
+                p["profiles"] = [profile["metadata"]["id"]];
                 layout.push(p);
             }
         }

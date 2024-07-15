@@ -8,11 +8,7 @@ import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/pro
 import { ProjectObject, ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
-import { PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
 import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
-import { osf } from "@common/ui/components/propertyeditor/profiles/osf";
-import { zenodo } from "@common/ui/components/propertyeditor/profiles/zenodo";
-import { deepClone } from "@common/utils/ObjectUtils";
 
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
@@ -41,7 +37,6 @@ projectProfiles.mountProfile(dataCite as Profile);
 // TODO: Testing data only
 
 // TODO fix auto merging connector profiles
-const mergeSets: PropertySet[] = [];
 connectors.value.forEach((connector) => {
     if (
         !userSettings.value.connector_instances.find((instance) => {
@@ -59,8 +54,12 @@ connectors.value.forEach((connector) => {
     }
 
     const metadataProfile = connector.metadata_profile;
-    if (metadataProfile.hasOwnProperty("profile_id")) {
-        mergeSets.push(new PropertySet(connector.metadata_profile));
+    if (metadataProfile.hasOwnProperty("metadata")) {
+        try {
+            projectProfiles.mountProfile(connector.metadata_profile as Profile);
+        } catch (e) {
+            console.error(e);
+        }
     }
 });
 
@@ -84,7 +83,8 @@ watch(
     { deep: true }
 );
 
-
+// projectProfiles.mountProfile(zenodo as Profile);
+// projectProfiles.mountProfile(osf as Profile);
 </script>
 
 <template>

@@ -93,7 +93,6 @@ selectActiveObject(id);
                         :key="t"
                         :type="t"
                         :parentId="object.id"
-                        :profileId="profileId"
                         :projectObjects="projectObjects"
                         :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"

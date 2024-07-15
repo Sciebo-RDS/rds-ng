@@ -1,4 +1,17 @@
+import { plainToInstance } from "class-transformer";
 import { Profile, ProfileClass, type ProfileID } from "./PropertyProfile";
+
+const isProfile = (profile: any): profile is Profile => {
+    return (
+        profile.metadata &&
+        profile.metadata.id &&
+        profile.metadata.version &&
+        profile.layout &&
+        profile.metadata.name &&
+        profile.layout.length > 0 &&
+        profile.metadata.id.length == 2
+    );
+};
 
 export class PropertyProfileStore {
     private _profiles: Profile[];
@@ -8,20 +21,26 @@ export class PropertyProfileStore {
     }
 
     public mountProfile(profile: Profile) {
-        this._profiles.push(profile);
+        try {
+            if (isProfile(profile)) {
+                this._profiles.push(plainToInstance(Profile, profile) as Profile);
+                console.log("mounted profile: ", profile);
+            } else {
+                console.log("Invalid profile: ", profile);
+            }
+        } catch (e) {
+            console.log("Error mounting profile");
+        }
     }
 
     public unmountProfile(profileId: ProfileID) {
         this._profiles = this._profiles.filter((profile) => profile.metadata.id !== profileId);
     }
 
-    public getClassById(profileId: ProfileID, classId: string): ProfileClass | undefined {
-/*         const profile = this._profiles.find((profile) => profile.metadata.id === profileId);
-        return profile?.classes ? profile.classes[classId] : undefined;
- */
-        let classes = {}
-        this._profiles.forEach((profile) => classes = {...classes, ...profile.classes});
-        return classes[classId] ? classes[classId] : undefined;
+    public getClassById(classId: string): ProfileClass | undefined {
+        let classes = {} as { [key: string]: ProfileClass };
+        this._profiles.forEach((profile) => (classes = { ...classes, ...profile.classes }));
+        return classes[classId];
     }
 
     public getLabelTemplateById(classId: string): string | undefined {
