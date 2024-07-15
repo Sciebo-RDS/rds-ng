@@ -9,7 +9,7 @@ import { stringToColor } from "./utils/Colors";
 
 import Chip from "primevue/chip";
 import OverlayPanel from "primevue/overlaypanel";
-import { ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+import { LayoutObject, ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
 
 const emit = defineEmits(["hide"]);
 const { index, propertyClass, profileId, projectObjects, projectProfiles, sharedObjectStore, layoutProfiles } = defineProps({
@@ -42,16 +42,16 @@ const { index, propertyClass, profileId, projectObjects, projectProfiles, shared
     }
 });
 
-projectObjects.add(new ProjectObject(profileId, null, propertyClass.id));
+projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id));
 
 const propertyObject = computed(
-    () => projectObjects.get(propertyClass.id) || projectObjects.add(new ProjectObject(profileId, null, propertyClass.id))
+    () => projectObjects.get(propertyClass.id) || projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id))
 ) as Ref<ProjectObject>;
 
 watch(
     () => projectObjects.get(propertyClass.id),
     (obj) => {
-        if (!obj) projectObjects.add(new ProjectObject(profileId, null, propertyClass.id));
+        if (!obj) projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id));
     }
 );
 

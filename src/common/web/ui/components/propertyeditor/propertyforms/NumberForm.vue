@@ -8,7 +8,7 @@ import { type ProfileID } from "../PropertyProfile";
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    profileId: { type: Object as PropType<ProfileID>, required: true },
+    profileId: { type: Object as PropType<ProfileID[]>, required: false },
     projectObjects: { type: ProjectObjectStore, required: true }
 });
 
@@ -24,7 +24,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
             v-model="value[inputId]"
             :useGrouping="false"
             class="w-full"
-            @input="(e: InputNumberInputEvent) => projectObjects.update(profileId, inputId, propertyObjectId, e.value)"
+            @input="(e: InputNumberInputEvent) => projectObjects.update(profileId || [], inputId, propertyObjectId, e.value)"
         />
     </div>
 </template>

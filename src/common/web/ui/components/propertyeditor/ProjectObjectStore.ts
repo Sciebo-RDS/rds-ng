@@ -5,27 +5,39 @@ import { type ProfileID } from "./PropertyProfile";
 /**
  * Represents a project object.
  */
-export class ProjectObject {
+export abstract class ProjectObject {
     id: string;
-    profile: ProfileID[];
     value: { [key: string]: any };
     refs: string[];
-    type?: string;
 
     /**
      * Creates a new instance of ProjectObject.
-     * @param profile The profile ID.
-     * @param type The object type.
      * @param id The object ID.
      * @param value The object value.
      * @param refs The object references.
      */
-    constructor(profile: ProfileID, type: string | null, id?: string, value: any = {}, refs: string[] = []) {
+    constructor(id?: string, value: any = {}, refs: string[] = []) {
         this.id = id || uuidv4();
-        this.profile = [profile];
-        if (type !== null) this.type = type;
         this.value = value;
         this.refs = refs;
+    }
+}
+
+export class LayoutObject extends ProjectObject {
+    profiles: ProfileID[];
+
+    constructor(profiles: ProfileID[], id?: string, value: any = {}, refs: string[] = []) {
+        super(id, value, refs);
+        this.profiles = profiles;
+    }
+}
+
+export class SharedObject extends ProjectObject {
+    type: string;
+
+    constructor(type: string, id?: string, value: any = {}, refs: string[] = []) {
+        super(id, value, refs);
+        this.type = type;
     }
 }
 
@@ -35,7 +47,7 @@ export class ProjectObject {
  * @param id - The ID of the project object.
  * @returns A new instance of the ProjectObject class.
  */
-export const dummyProjectObject = (id: string) => new ProjectObject(["", ""], "dummy", id, {}, []);
+export const dummyProjectObject = (id: string) => new SharedObject("dummy", id, {}, []);
 
 /**
  * Represents a store for project objects.
@@ -112,13 +124,19 @@ export class ProjectObjectStore {
 
     /**
      * Updates the value of a project object.
-     * @param profileId - The profile ID of the project object.
+     * @param profileId - The profile ID of the project object (only for LayoutObjects).
      * @param inputId - The input ID of the project object.
      * @param id - The ID of the project object.
      * @param value - The new value for the project object.
      */
-    public update(profileId: ProfileID, inputId: string, id: string, value: any): void {
-        const object: ProjectObject = this.add(new ProjectObject(profileId, null, id)) as ProjectObject;
+    public update(profileId: ProfileID[] = [], inputId: string, id: string, value: any): void {
+        var object: ProjectObject;
+
+        if (profileId.length > 0) {
+            object = this.add(new LayoutObject(profileId, id)) as LayoutObject;
+        } else {
+            object = this.get(id)!;
+        }
         if (object !== undefined) {
             object["value"][inputId] = value;
         }
@@ -170,6 +188,6 @@ export class ProjectObjectStore {
      * @returns An array of project objects of the specified type.
      */
     public getObjectsByType(type: string): ProjectObject[] {
-        return this._objects.filter((object) => object.type === type);
+        return this._objects.filter((obj) => obj instanceof SharedObject && obj.type === type);
     }
 }

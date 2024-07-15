@@ -1,6 +1,3 @@
-import { type ProfileID } from "../PropertyProfile";
-import { PropertyProfileStore } from "../PropertyProfileStore";
-
 /**
  * Calculates the color for a property class based on the given parameters.
  * @param projectProfiles - The property profile store.
@@ -11,15 +8,10 @@ import { PropertyProfileStore } from "../PropertyProfileStore";
  *
  * @returns An object containing css-lch definitions for background color and border color.
  */
-export function calculateClassColor(projectProfiles: PropertyProfileStore, profileId: ProfileID, type: string, brightness: number, chroma: number) {
-    const objectClass = projectProfiles.getClassById(profileId, type);
-    const classes = projectProfiles.listClasses();
-    const position = classes.findIndex((e) => e.id == objectClass?.id);
-    const hue = (360 / projectProfiles.listClasses().length) * position;
-
+export function calculateClassColor(type: string, brightness: number, chroma: number) {
     return {
-        bgColor: `lch(${brightness}% ${chroma} ${hue})`,
-        borderColor: `lch(${(brightness - 19) % 100}% ${(chroma + 10) % 100} ${hue})`
+        bgColor: `lch(${brightness}% ${chroma} ${_stringToHue(type)})`,
+        borderColor: `lch(${(brightness - 19) % 100}% ${(chroma + 10) % 100} ${_stringToHue(type)})`
     };
 }
 
@@ -31,7 +23,14 @@ export function calculateClassColor(projectProfiles: PropertyProfileStore, profi
  * @returns The css-lch definition of the color value.
  */
 export function stringToColor(str: any, alpha: number = 1) {
+    return `lch(90 25 ${_stringToHue(str)} / ${alpha})`;
+}
+
+function _stringToHue(str: any) {
+    const chars = [...str];
     var num = 0;
-    for (let i in str) num += str.charCodeAt(i);
-    return `lch(90 25 ${num % 360} / ${alpha})`;
+    chars.forEach((char, i) => {
+        num += str.charCodeAt(i) * i + 57;
+    });
+    return num % 360;
 }

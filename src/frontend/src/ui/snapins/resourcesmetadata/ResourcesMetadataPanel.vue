@@ -10,10 +10,9 @@ import { computed, nextTick, reactive, ref, toRefs, watch, type PropType } from 
 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
-import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
 import { ResourcesMetadataFeature, type ResourcesMetadata } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { ProjectObject, ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
@@ -80,13 +79,13 @@ const projectProfiles = reactive(new PropertyProfileStore());
 const debounce = makeDebounce(500);
 
 const resourceData = ref(new ProjectObjectStore());
-resourceData.value.setObjects(deepClone(project!.value.features.dmp.plan));
+resourceData.value.setObjects(project!.value.features.dmp.plan as ProjectObject[]);
 
 const sharedObjects = ref(new ProjectObjectStore());
-sharedObjects.value.setObjects(deepClone(project!.value.features.metadata.shared_objects));
+sharedObjects.value.setObjects(project!.value.features.metadata.shared_objects as ProjectObject[]);
 
-watch( () =>
-    resourceData.value._objects,
+watch(
+    () => resourceData.value._objects,
     (metadata) => {
         if (blockResourcesUpdate) {
             return;
@@ -122,23 +121,11 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
         persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
     }); */
 
-    resourceData.value.setObjects(metadata[selectedPaths[0]] || []);
+    resourceData.value.setObjects((metadata[selectedPaths[0]] || []) as ProjectObject[]);
 
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));
 });
-
-watch(
-    () => sharedObjects.value._objects,
-    (shared_objects) => {
-        debounce(() => {
-            const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new MetadataFeature(project!.value.features.metadata.metadata as ProjectMetadata, shared_objects)]);
-            action.execute();
-        });
-    },
-    { deep: true }
-);
 
 projectProfiles.mountProfile(shoes as Profile);
 //projectProfiles.mountProfile(dataCite as Profile);

@@ -8,7 +8,7 @@ import { type ProfileID } from "../PropertyProfile";
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    profileId: { type: Object as PropType<ProfileID>, required: true },
+    profileId: { type: Object as PropType<ProfileID[]>, required: false },
     projectObjects: { type: ProjectObjectStore, required: true },
     inputOptions: { type: Array as PropType<string[]>, required: true }
 });
@@ -20,7 +20,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
     <div class="flex">
         <Dropdown
             :modelValue="value[inputId]"
-            @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, propertyObjectId, value)"
+            @update:modelValue="(value: String[]) => projectObjects.update(profileId || [], inputId, propertyObjectId, value)"
             :options="inputOptions"
             class="grow"
             placeholder="Select"

@@ -8,7 +8,7 @@ import { type ProfileID } from "../PropertyProfile";
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    profileId: { type: Object as PropType<ProfileID>, required: true },
+    profileId: { type: Object as PropType<ProfileID[]>, required: false },
     projectObjects: { type: ProjectObjectStore, required: true }
 });
 
@@ -17,6 +17,10 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
 
 <template>
     <div>
-        <Calendar @date-select="(date: Date) => projectObjects.update(profileId, inputId, propertyObjectId, date)" v-model="value[inputId]" class="w-full" />
+        <Calendar
+            @date-select="(date: Date) => projectObjects.update(profileId || [], inputId, propertyObjectId, date)"
+            v-model="value[inputId]"
+            class="w-full"
+        />
     </div>
 </template>

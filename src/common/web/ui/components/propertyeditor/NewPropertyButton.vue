@@ -2,12 +2,12 @@
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { computed } from "vue";
-import { ProjectObject } from "./ProjectObjectStore";
+import { SharedObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
 import { injectTemplate } from "./utils/Templates";
 
 const dialog = useDialog();
-const props = defineProps(["type", "profileId", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
+const props = defineProps(["type", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
 
 const emit = defineEmits(["loadObject"]);
 const label = props.projectProfiles.getClassLabelById(props.type);
@@ -15,10 +15,10 @@ const linkableItems = computed(() => {
     const linkedItems = [...props.projectObjects.getReferencedObjects(props.parentId), ...props.sharedObjectStore.getReferencedObjects(props.parentId)].flat();
     const linkable = props.sharedObjectStore
         .getObjectsByType(props.type)
-        .filter((item: ProjectObject) => !linkedItems.includes(item.id))
-        .filter((item: ProjectObject) => item.id != props.parentId);
+        .filter((item: SharedObject) => !linkedItems.includes(item.id))
+        .filter((item: SharedObject) => item.id != props.parentId);
     return linkable.length > 0
-        ? linkable.map((item: ProjectObject) => ({
+        ? linkable.map((item: SharedObject) => ({
               label: injectTemplate(props.projectProfiles.getLabelTemplateById(item.type), props.sharedObjectStore.get(item.id)),
               command: () => {
                   props.projectObjects.addRef(props.parentId, item.id) || props.sharedObjectStore.addRef(props.parentId, item.id);
@@ -28,7 +28,7 @@ const linkableItems = computed(() => {
 });
 
 function createObject() {
-    const newObject = new ProjectObject(props.profileId, props.type);
+    const newObject = new SharedObject(props.type);
     props.sharedObjectStore.add(newObject);
     props.projectObjects.addRef(props.parentId, newObject["id"]) || props.sharedObjectStore.addRef(props.parentId, newObject["id"]);
 
@@ -53,8 +53,7 @@ function createObject() {
                 id: newObject["id"],
                 projectObjects: props.projectObjects,
                 sharedObjectStore: props.sharedObjectStore,
-                projectProfiles: props.projectProfiles,
-                profileId: props.profileId
+                projectProfiles: props.projectProfiles
             }
         });
     }

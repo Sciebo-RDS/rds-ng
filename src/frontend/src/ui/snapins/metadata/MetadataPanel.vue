@@ -5,7 +5,7 @@ import { reactive, ref, toRefs, watch, type PropType } from "vue";
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
-import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { ProjectObject, ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
@@ -37,6 +37,7 @@ const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
 const projectProfiles = reactive(new PropertyProfileStore());
 
+projectProfiles.mountProfile(dataCite as Profile);
 // TODO: Testing data only
 
 // TODO fix auto merging connector profiles
@@ -66,10 +67,10 @@ connectors.value.forEach((connector) => {
 const debounce = makeDebounce(500);
 
 const projectObjects = ref(new ProjectObjectStore());
-projectObjects.value.setObjects(deepClone(project!.value.features.metadata.metadata));
+projectObjects.value.setObjects(project!.value.features.metadata.metadata as ProjectObject[]);
 
 const sharedObjects = ref(new ProjectObjectStore());
-sharedObjects.value.setObjects(deepClone(project!.value.features.metadata.shared_objects));
+sharedObjects.value.setObjects(project!.value.features.metadata.shared_objects as ProjectObject[]);
 
 watch(
     () => projectObjects.value._objects,
@@ -83,21 +84,7 @@ watch(
     { deep: true }
 );
 
-watch(
-    () => sharedObjects.value._objects,
-    (shared_objects) => {
-        debounce(() => {
-            const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new MetadataFeature(projectObjects.value._objects as ProjectMetadata, shared_objects)]);
-            action.execute();
-        });
-    },
-    { deep: true }
-);
 
-projectProfiles.mountProfile(dataCite as Profile);
-projectProfiles.mountProfile(zenodo as Profile);
-projectProfiles.mountProfile(osf as Profile);
 </script>
 
 <template>

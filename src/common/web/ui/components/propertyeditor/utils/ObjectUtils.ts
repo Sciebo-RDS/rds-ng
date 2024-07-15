@@ -1,4 +1,4 @@
-import { ProjectObject } from "../ProjectObjectStore";
+import { SharedObject } from "../ProjectObjectStore";
 import { PropertyProfileStore } from "../PropertyProfileStore";
 import { calculateClassColor } from "./Colors";
 import { injectTemplate } from "./Templates";
@@ -11,9 +11,9 @@ import { injectTemplate } from "./Templates";
  *
  * @returns - A css lch color definition.
  */
-export function calcBgColor(obj: ProjectObject, profileStore: PropertyProfileStore): string {
+export function calcBgColor(obj: SharedObject, profileStore: PropertyProfileStore): string {
     if (obj.type === "dummy") return "#eeeeee";
-    return calculateClassColor(profileStore, obj.profile[0], obj.type!, 99, 10)["bgColor"];
+    return calculateClassColor(obj.type!, 99, 10)["bgColor"];
 }
 
 /**
@@ -24,9 +24,9 @@ export function calcBgColor(obj: ProjectObject, profileStore: PropertyProfileSto
  *
  * @returns - A css lch color definition.
  */
-export function calcBorderColor(obj: ProjectObject, profileStore: PropertyProfileStore): string {
+export function calcBorderColor(obj: SharedObject, profileStore: PropertyProfileStore): string {
     if (obj.type === "dummy") return "#ee0000";
-    return calculateClassColor(profileStore, obj.profile[0], obj.type!, 99, 10)["borderColor"];
+    return calculateClassColor(obj.type!, 99, 10)["borderColor"];
 }
 
 /**
@@ -37,7 +37,7 @@ export function calcBorderColor(obj: ProjectObject, profileStore: PropertyProfil
  *
  * @returns - An object label string.
  */
-export function calcObjLabel(obj: ProjectObject, profileStore: PropertyProfileStore): string {
+export function calcObjLabel(obj: SharedObject, profileStore: PropertyProfileStore): string {
     if (obj.type === "dummy") return obj.id.slice(0, 6);
     const labelTemplate = profileStore.getLabelTemplateById(obj.type!)!;
     return injectTemplate(labelTemplate, obj);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, reactive, ref } from "vue";
+import { computed, inject, reactive, ref, type Ref } from "vue";
 
 import Breadcrumb from "primevue/breadcrumb";
 import Button from "primevue/button";
@@ -9,8 +9,8 @@ import OverlayPanel from "primevue/overlaypanel";
 import { History } from "./Breadcrumbs";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
-import { ProjectObjectStore } from "./ProjectObjectStore";
-import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
+import { ProjectObjectStore, SharedObject } from "./ProjectObjectStore";
+import { ProfileClass, PropertyDataType, propertyDataForms } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 import { calcObjLabel } from "./utils/ObjectUtils";
 
@@ -19,35 +19,37 @@ const {
     id,
     projectObjects,
     sharedObjectStore,
-    projectProfiles,
-    profileId
-}: { id: string; projectObjects: ProjectObjectStore; sharedObjectStore: ProjectObjectStore; projectProfiles: PropertyProfileStore; profileId: ProfileID } =
-    dialogRef.value.data;
+    projectProfiles
+}: { id: string; projectObjects: ProjectObjectStore; sharedObjectStore: ProjectObjectStore; projectProfiles: PropertyProfileStore } = dialogRef.value.data;
 
-const object = ref(sharedObjectStore.get(id)!);
-let objectClass = reactive(projectProfiles.getClassById(profileId, object.value["type"]!)!) as ProfileClass;
+// selected object
+const object = ref(sharedObjectStore.get(id)!) as Ref<SharedObject>;
+let objectClass = reactive(projectProfiles.getClassById(object.value["type"]!)!) as ProfileClass;
+
 const displayableInputs = ref(objectClass["input"] || []);
 const addableTypes = ref(objectClass["type"] || []);
 
 const linkedObjects = computed(() => sharedObjectStore.getReferencedObjects(object.value.id));
 
+// History for Breadcrumbs
 const history = new History();
 const menuPath = ref();
 
+// Description Overlay
 const op = ref();
 const toggle = (event: Event) => {
     op.value.toggle(event);
 };
 
 function selectActiveObject(id: string) {
-    object.value = sharedObjectStore.get(id)!;
-    objectClass = projectProfiles.getClassById(profileId, object.value["type"]!)! as ProfileClass;
+    object.value = sharedObjectStore.get(id)! as SharedObject;
+    objectClass = projectProfiles.getClassById(object.value["type"]!)! as ProfileClass;
     addableTypes.value = objectClass["type"] || [];
     displayableInputs.value = objectClass["input"] || [];
     history.navigateTo(object.value);
     // TODO optimize by only updating necessary elements
-    menuPath.value = history.list().map((item) => {
-        const obj = sharedObjectStore.get(item.id);
+    menuPath.value = history.list().map((item: SharedObject) => {
+        const obj = sharedObjectStore.get(item.id) as SharedObject;
 
         return {
             label: `${projectProfiles.getClassLabelById(item.type!)}:  ${calcObjLabel(obj!, projectProfiles)}`,

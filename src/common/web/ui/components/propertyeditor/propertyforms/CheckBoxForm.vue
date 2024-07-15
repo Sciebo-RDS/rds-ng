@@ -10,7 +10,7 @@ import { type ProfileID } from "../PropertyProfile";
 const props = defineProps({
     propertyObjectId: { type: String, required: true },
     inputId: { type: String, required: true },
-    profileId: { type: Object as PropType<ProfileID>, required: true },
+    profileId: { type: Object as PropType<ProfileID[]>, required: false },
     projectObjects: { type: ProjectObjectStore, required: true },
     inputOptions: { type: Array as PropType<string[]>, required: true }
 });
@@ -29,7 +29,7 @@ const id = getRandomId();
                 :name="option"
                 :value="option"
                 class="mr-2"
-                @update:modelValue="(value: String[]) => projectObjects.update(profileId, inputId, propertyObjectId, value)"
+                @update:modelValue="(value: String[]) => projectObjects.update(profileId || [], inputId, propertyObjectId, value)"
             />
             <label class="break-all" :for="option + id">{{ option }}</label>
         </div>

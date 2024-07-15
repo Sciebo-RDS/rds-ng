@@ -2,14 +2,12 @@
 import { reactive, ref, toRefs, watch, type PropType } from "vue";
 
 import { DataManagementPlanFeature, type DataManagementPlan } from "@common/data/entities/project/features/DataManagementPlanFeature";
-import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
-import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { ProjectObject, ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
-import { deepClone } from "@common/utils/ObjectUtils";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
@@ -38,11 +36,10 @@ const debounce = makeDebounce(500);
 const projectProfiles = reactive(new PropertyProfileStore());
 
 const projectObjects = ref(new ProjectObjectStore());
-projectObjects.value.setObjects(deepClone(project!.value.features.dmp.plan));
+projectObjects.value.setObjects(project!.value.features.dmp.plan as ProjectObject[]);
 
 const sharedObjects = ref(new ProjectObjectStore());
-sharedObjects.value.setObjects(deepClone(project!.value.features.metadata.shared_objects));
-
+sharedObjects.value.setObjects(project!.value.features.metadata.shared_objects as ProjectObject[]);
 
 watch(
     () => projectObjects.value._objects,
@@ -50,18 +47,6 @@ watch(
         debounce(() => {
             const action = new UpdateProjectFeaturesAction(comp);
             action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
-            action.execute();
-        });
-    },
-    { deep: true }
-);
-
-watch(
-    () => sharedObjects.value._objects,
-    (shared_objects) => {
-        debounce(() => {
-            const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new MetadataFeature(project!.value.features.metadata.metadata as ProjectMetadata, shared_objects)]);
             action.execute();
         });
     },

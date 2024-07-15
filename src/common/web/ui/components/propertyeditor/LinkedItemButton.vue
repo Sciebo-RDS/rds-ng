@@ -7,16 +7,16 @@ import OverlayPanel from "primevue/overlaypanel";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { computed, ref } from "vue";
-import { ProjectObject, dummyProjectObject } from "./ProjectObjectStore";
+import { SharedObject, dummyProjectObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
 import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils";
 
 SplitButton.components.PVSMenu = Menu;
 const comp = FrontendComponent.inject();
 const dialog = useDialog();
-const props = defineProps(["itemId", "parentId", "projectObjects", "sharedObjectStore", "profileId", "projectProfiles", "mode"]);
+const props = defineProps(["itemId", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
 
-const object = (props.projectObjects.get(props.itemId) || props.sharedObjectStore.get(props.itemId) || dummyProjectObject(props.itemId)) as ProjectObject;
+const object = (props.projectObjects.get(props.itemId) || props.sharedObjectStore.get(props.itemId) || dummyProjectObject(props.itemId)) as SharedObject;
 
 const instanceLabel = computed(() => calcObjLabel(object, props.projectProfiles));
 const linkedItemActions = computed(() => [
@@ -100,8 +100,7 @@ function handleClick() {
                 id: object["id"],
                 projectObjects: props.projectObjects,
                 sharedObjectStore: props.sharedObjectStore,
-                projectProfiles: props.projectProfiles,
-                profileId: props.profileId
+                projectProfiles: props.projectProfiles
             }
         });
     }
