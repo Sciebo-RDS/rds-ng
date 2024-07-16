@@ -22,6 +22,19 @@ def get_host_authorization_token_id(user_id: "UserID") -> AuthorizationTokenID:
     return user_id, AuthorizationToken.TokenType.HOST
 
 
+def get_connector_instance_authorization_id(instance: "ConnectorInstanceID") -> str:
+    """
+    Retrieves the authorization ID for a connector instance.
+
+    Args:
+        instance: The connector instance ID.
+
+    Returns:
+        The authorization ID.
+    """
+    return f"{AuthorizationToken.TokenType.CONNECTOR}:{instance}"
+
+
 def get_connector_instance_authorization_token_id(
     user: "User", instance: "ConnectorInstanceID"
 ) -> AuthorizationTokenID:
@@ -35,7 +48,7 @@ def get_connector_instance_authorization_token_id(
     Returns:
         The authorization token ID.
     """
-    return user.user_id, f"{AuthorizationToken.TokenType.CONNECTOR}:{instance}"
+    return user.user_id, get_connector_instance_authorization_id(instance)
 
 
 def has_authorization_token_expired(token: AuthorizationToken) -> bool:

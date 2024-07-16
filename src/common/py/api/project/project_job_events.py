@@ -12,6 +12,7 @@ from ...core.messaging.composers import (
 )
 from ...data.entities.connector import ConnectorInstanceID
 from ...data.entities.project import ProjectJob, ProjectID
+from ...data.entities.project.logbook import ProjectJobHistoryRecordExtData
 
 
 @Message.define("event/project-job/list")
@@ -110,6 +111,8 @@ class ProjectJobCompletionEvent(Event):
     success: bool
     message: str
 
+    ext_data: ProjectJobHistoryRecordExtData
+
     @staticmethod
     def build(
         message_builder: MessageBuilder,
@@ -118,6 +121,7 @@ class ProjectJobCompletionEvent(Event):
         connector_instance: ConnectorInstanceID,
         success: bool,
         message: str = "",
+        ext_data: ProjectJobHistoryRecordExtData | None = None,
         chain: Message | None = None
     ) -> EventComposer:
         """
@@ -130,4 +134,5 @@ class ProjectJobCompletionEvent(Event):
             connector_instance=connector_instance,
             success=success,
             message=message,
+            ext_data=ext_data if ext_data is not None else {},
         )

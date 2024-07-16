@@ -12,6 +12,7 @@ from .oauth2_utils import format_oauth2_error_response
 from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
+from .....data.entities import clone_entity
 from .....data.entities.authorization import AuthorizationToken
 from .....data.entities.user import UserID, UserToken
 from .....services import Service
@@ -137,6 +138,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "grant_type": "refresh_token",
                 "client_id": oauth2_data.client_id,
                 "client_secret": client_secret,
+                "access_type": "offline",
                 "scope": oauth2_data.scope,
                 "refresh_token": oauth2_token.refresh_token,
             },
@@ -148,8 +150,16 @@ class OAuth2Strategy(AuthorizationStrategy):
             try:
                 self._verify_oauth2_token_data(resp_data)
 
-                token.expiration_timestamp = self._get_expiration_timestamp(resp_data)
-                token.token = self._create_oauth2_token(resp_data)
+                refreshed_token = self._create_oauth2_token(resp_data)
+                if refreshed_token.refresh_token is None:
+                    refreshed_token = clone_entity(
+                        refreshed_token, refresh_token=oauth2_token.refresh_token
+                    )
+
+                token.expiration_timestamp = self._get_expiration_timestamp(
+                    resp_data, default=3600.0
+                )
+                token.token = refreshed_token
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 raise RuntimeError(f"Invalid OAuth2 token received: {exc}")
         else:
@@ -211,14 +221,15 @@ class OAuth2Strategy(AuthorizationStrategy):
         return client_secret
 
     def _get_expiration_timestamp(
-        self, resp_data: typing.Dict[str, typing.Any]
+        self, resp_data: typing.Dict[str, typing.Any], *, default=0.0
     ) -> float:
         # We reduce the lifespan by 10% to refresh tokens early on
-        return (
-            time.time() + (resp_data["expires_in"] * 0.9)
-            if "expires_in" in resp_data
-            else 0
-        )
+        expires_in = (
+            resp_data["expires_in"]
+            if "expires_in" in resp_data and "refresh_token" in resp_data
+            else default
+        ) * 0.9
+        return time.time() + expires_in
 
     def _verify_oauth2_token_data(self, data: typing.Dict[str, typing.Any]) -> None:
         if "access_token" not in data or data["access_token"] == "":

@@ -150,6 +150,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Column("connector_instance", Uuid),
         Column("success", Boolean),
         Column("message", Text),
+        Column("ext_data", JSONEncodedDataType),
     )
 
     # Map all tables

@@ -23,12 +23,21 @@ class ResourcesTransmitterContext:
 
     download_list: typing.List[Resource] | None = None
     download_index: int = 0
+    download_failed: bool = False
+
+    def begin_downloads(self, resources: typing.List[Resource]) -> None:
+        self.download_list = resources
+        self.download_index = 0
+        self.download_failed = False
 
     @property
     def all_downloads_done(self) -> bool:
         """
         Checks if the entire list of downloads has been processed.
         """
+        if self.download_failed:
+            return True
+
         return (
             self.download_index >= len(self.download_list)
             if self.download_list is not None

@@ -42,6 +42,8 @@ export class OAuth2Strategy extends AuthorizationStrategy {
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this._config.client.client_id);
         url.searchParams.set("scope", this._config.server.scope);
+        url.searchParams.set("access_type", "offline");
+        url.searchParams.set("approval_prompt", "auto");
         url.searchParams.set("redirect_uri", this._config.client.redirect_url);
         url.searchParams.set("state", authRequest.encodedPayload);
         this.redirect(url.toString());
