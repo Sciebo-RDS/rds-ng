@@ -86,6 +86,11 @@ html {
     @apply text-red-500 #{!important};
 }
 
+.r-text-link,
+.r-text-link * {
+    @apply text-cyan-600 #{!important};
+}
+
 .r-bg-success,
 .r-bg-success * {
     @apply bg-green-400 #{!important};
