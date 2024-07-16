@@ -35,7 +35,6 @@ export async function userSettingsDialog(comp: FrontendComponent, userSettings: 
         {
             hasAcceptButton: true,
             acceptLabel: "Close",
-            acceptIcon: "material-icons-outlined mi-close",
             acceptOnClose: true,
         },
     );

@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import { useUserStore } from "@/data/stores/UserStore";
+import { connectorInstanceIsAuthorized } from "@common/data/entities/connector/ConnectorInstanceUtils";
+import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 import ProgressBar from "primevue/progressbar";
 import { computed, type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorOptions } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
-import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
 import { errorMessageDialog } from "@common/ui/dialogs/MessageDialog";
@@ -20,6 +23,7 @@ import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsActio
 
 const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
+const userStore = useUserStore();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
@@ -32,7 +36,11 @@ const props = defineProps({
 });
 
 const { project, instance } = toRefs(props);
+const { userAuthorizations } = storeToRefs(userStore);
 const connector = computed(() => findConnectorByID(consStore.connectors, unref(instance)!.connector_id));
+const publishOnce = computed(() => (unref(connector)!.options & ConnectorOptions.PublishOnce) == ConnectorOptions.PublishOnce);
+const requiresAuth = computed(() => connectorRequiresAuthorization(unref(connector)!));
+const isAuthorized = computed(() => connectorInstanceIsAuthorized(unref(instance)!, unref(userAuthorizations)));
 const category = unref(connector) ? findConnectorCategory(unref(connector)!) : undefined;
 
 const activeJob = computed(() => getActiveProjectJob(unref(project)!, unref(instance)!));
@@ -41,10 +49,17 @@ const jobStats = computed(() => new ProjectStatistics(unref(project)!).getJobSta
 const initiatePublish = ref(false);
 const disablePublish = computed(() => {
     if (unref(connector)) {
-        const publishOnce = (unref(connector)!.options & ConnectorOptions.PublishOnce) == ConnectorOptions.PublishOnce;
-        return publishOnce && unref(jobStats).totalCount.succeeded >= 1;
+        return (unref(publishOnce) && unref(jobStats).totalCount.succeeded >= 1) || (unref(requiresAuth) && !unref(isAuthorized));
     }
     return true;
+});
+const disableReason = computed(() => {
+    if (unref(publishOnce)) {
+        return "The project has already been " + category?.verbStatusDone.toLowerCase();
+    } else if (unref(requiresAuth)) {
+        return "The connector has not been connected yet";
+    }
+    return "";
 });
 const publishTitle = computed(() => (unref(initiatePublish) ? "Initiating..." : category?.verbAction));
 
@@ -86,17 +101,16 @@ function onPublishInitDone(success: boolean, msg: string): void {
 
         <div class="row-span-2 pl-1 content-center">
             <div v-if="activeJob" class="grid grid-flow-row text-sm">
-                <span class="r-text-light italic justify-self-end truncate"
-                    ><b>{{ category?.verbStatusProgressing }}:</b> {{ activeJob.message }}</span
-                >
+                <span class="r-text-light italic justify-self-end truncate">
+                    <b>{{ category?.verbStatusProgressing }}:</b> {{ activeJob.message }}
+                </span>
                 <ProgressBar class="h-3" :value="Math.trunc(activeJob.progress * 100)" />
             </div>
-            <div v-else>
+            <div v-else :title="disablePublish ? disableReason : category?.verbAction + ' the project'">
                 <Button
                     v-if="category"
                     :label="publishTitle"
                     :aria-label="publishTitle"
-                    :title="disablePublish ? 'The project has already been ' + category.verbStatusDone.toLowerCase() : category.verbAction + ' the project'"
                     :loading="initiatePublish"
                     :disabled="disablePublish"
                     rounded
