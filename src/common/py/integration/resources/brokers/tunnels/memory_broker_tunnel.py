@@ -17,6 +17,9 @@ class MemoryBrokerTunnel(ResourcesBrokerTunnel):
         self._buffer = io.BytesIO()
         self._data_ready = False
 
+    def fileno(self) -> int:
+        return self._buffer.fileno()
+
     def seek(self, *args, **kwargs):
         if self._data_ready:  # We only support seek during reads
             self._buffer.seek(*args, **kwargs)

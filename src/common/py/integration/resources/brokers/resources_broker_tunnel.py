@@ -17,8 +17,6 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
     Tunnels are file-like objects and need to be used as context managers (i.e., using *with*).
     """
 
-    _next_tunnel_id = 1
-
     class CallbackTypes(enum.StrEnum):
         OPEN = "open"
         DONE = "done"
@@ -26,9 +24,6 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
         PROGRESS = "progress"
 
     def __init__(self, resource: Resource):
-        self._tunnel_id = ResourcesBrokerTunnel._next_tunnel_id
-        ResourcesBrokerTunnel._next_tunnel_id += 1
-
         self._resource = resource
         self._bytes_written = 0
 
@@ -135,7 +130,7 @@ class ResourcesBrokerTunnel(io.RawIOBase, metaclass=abc.ABCMeta):
         return False
 
     def fileno(self) -> int:
-        return self._tunnel_id
+        raise OSError("The tunnel doesn't support file descriptors")
 
     def tell(self) -> int:
         return super().tell()
