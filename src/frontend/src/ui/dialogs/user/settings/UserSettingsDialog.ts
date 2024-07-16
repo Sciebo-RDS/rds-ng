@@ -19,31 +19,24 @@ export interface UserSettingsDialogData {
  * @param comp - The global component.
  * @param userSettings - The current user settings.
  */
-export async function userSettingsDialog(
-    comp: FrontendComponent,
-    userSettings: UserSettings
-): ExtendedDialogResult<UserSettingsDialogData> {
+export async function userSettingsDialog(comp: FrontendComponent, userSettings: UserSettings): ExtendedDialogResult<UserSettingsDialogData> {
     return extendedDialog<UserSettingsDialogData>(
         comp,
-        defineAsyncComponent(
-            () => import("@/ui/dialogs/user/settings/UserSettingsDialog.vue")
-        ),
+        defineAsyncComponent(() => import("@/ui/dialogs/user/settings/UserSettingsDialog.vue")),
         {
             header: "User settings",
             modal: true,
-            contentClass: "w-[70rem] h-[40rem]"
+            dismissableMask: true,
+            contentClass: "w-[70rem] h-[40rem]",
         },
         {
-            userSettings: deepClone<UserSettings>(userSettings)
+            userSettings: deepClone<UserSettings>(userSettings),
         },
         {
             hasAcceptButton: true,
-            acceptLabel: "Save",
-            acceptIcon: "material-icons-outlined mi-done",
-
-            hasRejectButton: true,
-            rejectLabel: "Cancel",
-            rejectIcon: "material-icons-outlined mi-clear"
-        }
+            acceptLabel: "Close",
+            acceptIcon: "material-icons-outlined mi-close",
+            acceptOnClose: true,
+        },
     );
 }
