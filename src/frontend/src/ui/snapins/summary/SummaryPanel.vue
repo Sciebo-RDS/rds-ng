@@ -4,7 +4,7 @@ import { type PropType, toRefs } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
-import ObjectsPanel from "@/ui/snapins/summary/ObjectsPanel.vue";
+import StatisticsPanel from "@/ui/snapins/summary/StatisticsPanel.vue";
 import ProjectPanel from "@/ui/snapins/summary/ProjectPanel.vue";
 import TimelinePanel from "@/ui/snapins/summary/TimelinePanel.vue";
 
@@ -36,11 +36,11 @@ const { project } = toRefs(props);
 
             <div class="panel-container">
                 <Panel
-                    header="Object statistics"
+                    header="Statistics"
                     class="panel-container-content r-shade-gray"
                     :pt="{ title: 'text-xl', toggleableContent: 'h-[calc(100%-4rem)]', content: 'h-full' }"
                 >
-                    <ObjectsPanel :project="project" />
+                    <StatisticsPanel :project="project" />
                 </Panel>
             </div>
         </div>
