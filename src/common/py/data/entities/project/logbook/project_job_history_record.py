@@ -16,6 +16,7 @@ class ProjectJobHistoryRecordExtDataIDs(enum.StrEnum):
     """
 
     EXTERNAL_ID = "external_id"
+    EXTERNAL_LINK = "external_link"
     DOI = "doi"
 
 

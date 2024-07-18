@@ -40,6 +40,13 @@ class OSFProjectData(OSFRequestData):
         """
         return self.value("data.id")
 
+    @property
+    def project_link(self) -> str:
+        """
+        The external link for the project.
+        """
+        return self.value("data.links.html")
+
 
 class OSFStorageData(OSFRequestData):
     """

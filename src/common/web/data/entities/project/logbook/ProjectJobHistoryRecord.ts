@@ -11,6 +11,7 @@ export type ProjectJobHistoryRecordExtData = Record<string, any>;
  */
 export const enum ProjectJobHistoryRecordExtDataIDs {
     ExternalID = "external_id",
+    ExternalLink = "external_link",
     DOI = "doi",
 }
 
