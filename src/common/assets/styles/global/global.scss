@@ -91,6 +91,11 @@ html {
     @apply text-cyan-600 #{!important};
 }
 
+.r-bg-info,
+.r-bg-info * {
+    @apply bg-cyan-600 #{!important};
+}
+
 .r-bg-success,
 .r-bg-success * {
     @apply bg-green-400 #{!important};

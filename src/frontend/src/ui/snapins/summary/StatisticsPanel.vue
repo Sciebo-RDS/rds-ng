@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/ConnectorUtils";
-import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-import { useUserStore } from "@/data/stores/UserStore";
-import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
-import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
-
-import { Project } from "@common/data/entities/project/Project";
-import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
-import { ResourcesStatistics } from "@common/data/entities/resource/ResourcesStatistics";
-import { formatLocaleTimestamp, humanReadableFileSize } from "@common/utils/Strings";
 import { storeToRefs } from "pinia";
 import Column from "primevue/column";
 import DataTable from "primevue/datatable";
 import ScrollPanel from "primevue/scrollpanel";
 import { computed, onMounted, type PropType, ref, toRefs, unref } from "vue";
+
+import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
+import { Project } from "@common/data/entities/project/Project";
+import { ProjectStatistics } from "@common/data/entities/project/ProjectStatistics";
+import { ResourcesStatistics } from "@common/data/entities/resource/ResourcesStatistics";
+import { formatLocaleTimestamp, humanReadableFileSize } from "@common/utils/Strings";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/ConnectorUtils";
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { useUserStore } from "@/data/stores/UserStore";
+import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
 const comp = FrontendComponent.inject();
 const consStore = useConnectorsStore();
@@ -82,7 +83,7 @@ const values = computed(() => {
         values.push({
             group: "Publish & Export",
             name: instance.name,
-            value: `${succeeded} ${category ? (succeeded > 1 ? category.verbNounPlural : category.verbNoun) : ""} (${failed} failed)`,
+            value: `${succeeded} ${category ? (succeeded > 1 ? category.verbNounPlural.toLowerCase() : category.verbNoun.toLowerCase()) : ""} (${failed} failed)`,
         });
     }
 

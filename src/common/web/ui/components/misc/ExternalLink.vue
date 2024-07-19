@@ -14,12 +14,12 @@ const { link, text } = toRefs(props);
 </script>
 
 <template>
-    <div class="r-text-link">
+    <span class="r-text-link inline-block">
         <a :href="link" class="grid grid-cols-[max-content_min-content] items-center" target="_blank">
             {{ text || link }}
             <span class="material-icons-outlined mi-open-in-new ml-1 !text-lg" />
         </a>
-    </div>
+    </span>
 </template>
 
 <style scoped lang="scss"></style>
