@@ -57,7 +57,7 @@ const timeline = computed(() => {
             links["Project link"] = projectLink;
         }
 
-        values.push({
+        values.unshift({
             date: formatLocaleTimestamp(record.timestamp),
             title: title,
             category: connectorCategory?.verbNoun || "Export",
