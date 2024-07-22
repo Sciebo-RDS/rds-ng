@@ -58,6 +58,10 @@ html {
     opacity: 0.7;
 }
 
+.r-text-gray, .r-text-gray * {
+    @apply text-slate-600;
+}
+
 .r-text-caption {
     @apply font-bold;
 }

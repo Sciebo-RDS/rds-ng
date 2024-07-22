@@ -1,7 +1,5 @@
 <script setup lang="ts">
 // @ts-nocheck
-
-import { useProjectTools } from "@/ui/tools/project/ProjectTools";
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
 import { watch } from "vue";
@@ -11,6 +9,7 @@ import { Project, type ProjectID, ProjectStatus } from "@common/data/entities/pr
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
+import { useProjectTools } from "@/ui/tools/project/ProjectTools";
 
 import ProjectsListboxItem from "@/ui/content/main/projectslist/ProjectsListboxItem.vue";
 
@@ -18,7 +17,7 @@ const comp = FrontendComponent.inject();
 const route = useRoute();
 const projStore = useProjectsStore();
 const { projects, activeProject } = storeToRefs(projStore);
-const { editProject, deleteProject } = useProjectTools(comp);
+const { publishProject, editProject, deleteProject } = useProjectTools(comp);
 
 const unwatchProjects = watch(projects, () => {
     // If the current URL contains a project ID, select that project once we received our projects list
@@ -82,6 +81,7 @@ function isProjectDeleted(project: Project): boolean {
                     :is-selected="isProjectSelected(projectEntry.option)"
                     :is-deleted="isProjectDeleted(projectEntry.option)"
                     @dblclick="editProject(projectEntry.option)"
+                    @publish-project="publishProject(projectEntry.option)"
                     @edit-project="editProject(projectEntry.option)"
                     @delete-project="deleteProject(projectEntry.option)"
                 />

@@ -78,7 +78,7 @@ const emits = defineEmits<{
 
                         <ProgressBar v-if="progress >= 0.0" class="h-3 mt-1 mb-1" :value="Math.trunc(progress * 100)" :pt="{ value: 'bg-current' }" />
 
-                        <div class="pt-2 text-slate-600">
+                        <div class="pt-2 r-text-gray">
                             <span class="font-normal">{{ connectorCategory?.verbNoun || "Export" }} &#x2022; </span>
                             <span class="font-light text-xs">
                                 <span>{{ formatLocaleTimestamp(timestamp) }}</span>

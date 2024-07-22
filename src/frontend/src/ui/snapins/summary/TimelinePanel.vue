@@ -100,7 +100,7 @@ const timeline = computed(() => {
 
                     <template v-if="Object.entries(entry.item.links).length > 0" #footer>
                         <div class="grid grid-flow-row pt-2">
-                            <span v-for="(link, title) in entry.item.links" class="text-slate-600 text-sm">
+                            <span v-for="(link, title) in entry.item.links" class="text-sm r-text-gray">
                                 <span class="font-semibold pr-1">{{ title }} &#x2022;</span>
                                 <ExternalLink :link="link" />
                             </span>
