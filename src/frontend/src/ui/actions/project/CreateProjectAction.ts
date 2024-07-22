@@ -32,6 +32,7 @@ export class CreateProjectAction extends FrontendCommandAction<CreateProjectComm
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Creating project", `Project '${title}' is being created...`),
+            true,
         );
         this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Creating project", `Project '${title}' has been created.`));
         this.addNotifier(

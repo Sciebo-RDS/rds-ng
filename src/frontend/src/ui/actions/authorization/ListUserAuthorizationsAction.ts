@@ -22,10 +22,12 @@ export class ListUserAuthorizationsAction extends FrontendCommandAction<ListUser
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Fetching user authorizations", "The granted user authorizations are being downloaded..."),
+            true,
         );
         this.addNotifier(
             ActionState.Done,
             new OverlayNotifier(OverlayNotificationType.Success, "Fetching user authorizations", "All user authorizations have been downloaded."),
+            true,
         );
         this.addNotifier(
             ActionState.Failed,

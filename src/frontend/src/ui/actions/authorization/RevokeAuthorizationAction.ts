@@ -21,10 +21,12 @@ export class RevokeAuthorizationAction extends FrontendCommandAction<RevokeAutho
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Revoking authorization", `The authorization for ${title} is being revoked...`),
+            true,
         );
         this.addNotifier(
             ActionState.Done,
             new OverlayNotifier(OverlayNotificationType.Success, "Revoking authorization", `The authorization for ${title} has been revoked.`),
+            true,
         );
         this.addNotifier(
             ActionState.Failed,

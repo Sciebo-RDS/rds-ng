@@ -22,10 +22,12 @@ export class GetUserSettingsAction extends FrontendCommandAction<GetUserSettings
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Fetching user settings", "Your settings are being downloaded..."),
+            true,
         );
         this.addNotifier(
             ActionState.Done,
             new OverlayNotifier(OverlayNotificationType.Success, "Fetching user settings", "Your settings have been downloaded."),
+            true,
         );
         this.addNotifier(
             ActionState.Failed,

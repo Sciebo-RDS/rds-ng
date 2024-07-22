@@ -1,3 +1,5 @@
+import { WebComponent } from "../../component/WebComponent";
+import { GeneralSettingIDs } from "../../settings/GeneralSettingIDs";
 import { ExecutionCallbacks } from "../../utils/ExecutionCallbacks";
 import { ActionNotifier, type ActionNotifiers } from "./notifiers/ActionNotifier";
 
@@ -59,8 +61,15 @@ export abstract class ActionBase {
      *
      * @param state - The state the notifier should react to.
      * @param notifier - The notifier.
+     * @param debugOnly - If true, the notification will only be added in debug mode.
      */
-    public addNotifier(state: ActionState, notifier: ActionNotifier | ActionNotifier[]): void {
+    public addNotifier(state: ActionState, notifier: ActionNotifier | ActionNotifier[], debugOnly: boolean = false): void {
+        if (debugOnly) {
+            if (!WebComponent.instance.data.config.value<boolean>(GeneralSettingIDs.Debug)) {
+                return;
+            }
+        }
+
         if (!(state in this._notifiers)) {
             this._notifiers[state] = [];
         }

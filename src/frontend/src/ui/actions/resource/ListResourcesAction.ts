@@ -27,10 +27,12 @@ export class ListResourcesAction extends FrontendCommandAction<ListResourcesComm
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Fetching resources", "The list of your resources is being downloaded..."),
+            true,
         );
         this.addNotifier(
             ActionState.Done,
             new OverlayNotifier(OverlayNotificationType.Success, "Fetching resources", "The list of your resources has been downloaded."),
+            true,
         );
         this.addNotifier(
             ActionState.Failed,
