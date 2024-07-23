@@ -8,7 +8,7 @@ import { type TreeNode } from "primevue/treenode";
 import TreeTable from "primevue/treetable";
 import { onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
 
-import { ResourceType } from "../../../data/entities/resource/Resource";
+import { Resource, ResourceType } from "../../../data/entities/resource/Resource";
 import { filterResourcesTreeNodes, flattenResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
 import { humanReadableFileSize } from "../../../utils/Strings";
 
@@ -24,7 +24,7 @@ const props = defineProps({
 });
 const { data, refreshable } = toRefs(props);
 const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
-const selectedData = defineModel<Array>("selectedData", { default: [] });
+const selectedData = defineModel<Resource[]>("selectedData", { default: [] });
 const emits = defineEmits<{
     (e: "refresh"): void;
 }>();
