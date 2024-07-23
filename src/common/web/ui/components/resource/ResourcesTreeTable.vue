@@ -4,7 +4,6 @@ import Column from "primevue/column";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
-import { type TreeNode } from "primevue/treenode";
 import TreeTable from "primevue/treetable";
 import { onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
 
@@ -61,7 +60,7 @@ function collapseAll(): void {
 watch(selectedNodes, () => {
     const selectedPaths = Object.keys(unref(selectedNodes));
     const selectedTreeNodes = filterResourcesTreeNodes(unref(data), selectedPaths);
-    selectedData.value = selectedTreeNodes.map((node: TreeNode) => node.data);
+    selectedData.value = selectedTreeNodes.map((node) => node.data);
 });
 </script>
 
