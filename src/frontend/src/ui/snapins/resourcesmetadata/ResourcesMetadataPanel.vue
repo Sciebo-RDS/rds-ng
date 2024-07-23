@@ -23,7 +23,7 @@ import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
-import ResourcePreview from "@/ui/snapins/resourcesmetadata/ResourcePreview.vue";
+import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -149,7 +149,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                         </div>
                         <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
                             <div v-if="showPreview" class="mt-5">
-                                <ResourcePreview :resources="selectedData" />
+                                <ResourcesPreview :resources="selectedData" />
                             </div>
                             <PropertyEditor v-model="resourcesData" :controller="controller as MetadataController" :logging="logging" oneCol class="w-full" />
                         </div>

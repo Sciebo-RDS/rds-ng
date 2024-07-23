@@ -19,9 +19,11 @@ import createUserService from "@/services/UserService";
 import { getFrontendSettings } from "@/settings/FrontendSettings";
 import { IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 
-import Frontend from "@/ui/Frontend.vue";
+import { registerResourcePreviewers } from "@/ui/components/resource/ResourcePreviewers";
 import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
+
+import Frontend from "@/ui/Frontend.vue";
 
 /**
  * The main frontend component class.
@@ -47,6 +49,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         // Reigster global items
         registerIntegrationSchemes();
         registerConnectorCategories();
+        registerResourcePreviewers();
         registerSnapIns();
 
         // Mount the integration scheme
