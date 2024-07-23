@@ -47,7 +47,8 @@ function createObject() {
                     "960px": "75vw",
                     "640px": "90vw"
                 },
-                modal: true
+                modal: true,
+                dismissableMask: true
             },
             data: {
                 id: newObject["id"],
