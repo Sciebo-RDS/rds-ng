@@ -14,3 +14,4 @@ class WebdavResource:
     isdir: bool
 
     size: int | None  # Only filled for files
+    content_type: str | None  # Might not be provided by the underlying system

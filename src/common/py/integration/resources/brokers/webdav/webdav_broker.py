@@ -179,6 +179,7 @@ class WebdavBroker(ResourcesBroker):
                                     basename=child_path.name,
                                     type=Resource.Type.FILE,
                                     size=resource.size,
+                                    mime_type=resource.content_type,
                                 )
                             )
                             total_size += resource.size

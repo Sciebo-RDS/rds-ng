@@ -2,7 +2,8 @@ import pathlib
 import typing
 
 from .resource import Resource
-from .resources_list import ResourcesList, ResourceFiles, ResourceFolders
+from .resources_list import ResourceFiles, ResourceFolders, ResourcesList
+from ....utils import get_mime_type
 
 
 def resources_list_from_syspath(
@@ -48,6 +49,7 @@ def resources_list_from_syspath(
                             basename=child_path.name,
                             type=Resource.Type.FILE,
                             size=file_size,
+                            mime_type=get_mime_type(str(child_path)),
                         )
                     )
                     total_size += file_size
