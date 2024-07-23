@@ -139,7 +139,7 @@ const toggleRemoveProperty = (e: Event) => {
                         :type="t"
                         :parentId="propertyObject['id']"
                         :profileId="profileId"
-                        :projectObjects="projectObjects"
+                        :projectObjects="projectObjects as ProjectObjectStore"
                         :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                         :projectProfiles="projectProfiles"
                     />

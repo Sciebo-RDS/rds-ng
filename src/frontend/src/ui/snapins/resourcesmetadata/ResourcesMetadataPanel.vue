@@ -6,13 +6,12 @@ import InputSwitch from "primevue/inputswitch";
 import Panel from "primevue/panel";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import { computed, nextTick, reactive, ref, toRefs, watch, type PropType } from "vue";
+import { computed, nextTick, reactive, ref, toRefs, unref, watch, type PropType } from "vue";
 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
 import { ResourcesMetadataFeature, type ResourcesMetadata } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { ProjectObject, ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
@@ -77,22 +76,17 @@ const propertyHeader = computed(() => {
 
 const projectProfiles = reactive(new PropertyProfileStore());
 const debounce = makeDebounce(500);
-
-const resourceData = ref(new ProjectObjectStore());
-resourceData.value.setObjects(project!.value.features.dmp.plan as ProjectObject[]);
-
-const sharedObjects = ref(new ProjectObjectStore());
-sharedObjects.value.setObjects(project!.value.features.metadata.shared_objects as ProjectObject[]);
+const resourcesData = ref();
 
 watch(
-    () => resourceData.value._objects,
+    () => resourcesData,
     (metadata) => {
         if (blockResourcesUpdate) {
             return;
         }
 
         debounce(() => {
-            const resourcesSet = metadata;
+            const resourcesSet = unref(metadata);
             const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
 
             const selectedPaths = Object.keys(selectedNodes.value);
@@ -100,6 +94,7 @@ watch(
                 updatedData[path] = resourcesSet;
             });
             const action = new UpdateProjectFeaturesAction(comp);
+            console.log(resourcesSet);
             action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
             action.execute();
 
@@ -121,14 +116,13 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
         persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
     }); */
 
-    resourceData.value.setObjects((metadata[selectedPaths[0]] || []) as ProjectObject[]);
+    resourcesData.value = metadata[selectedPaths[0]] || [];
 
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));
 });
 
 projectProfiles.mountProfile(shoes as Profile);
-//projectProfiles.mountProfile(dataCite as Profile);
 const showObjects = ref(false);
 const showIndex = ref(true);
 </script>
@@ -196,8 +190,8 @@ const showIndex = ref(true);
                                 <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
                             </div>
                             <PropertyEditor
-                                v-model="resourceData as ProjectObjectStore"
-                                v-model:shared-objects="sharedObjects as ProjectObjectStore"
+                                v-model="resourcesData"
+                                v-model:shared-objects="project!.features.metadata.shared_objects"
                                 :projectProfiles="projectProfiles as PropertyProfileStore"
                                 class="w-full"
                             />

@@ -17,9 +17,13 @@ const comp = FrontendComponent.inject();
 const dialog = useDialog();
 const props = defineProps(["itemId", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
 
-const object = (props.projectObjects.get(props.itemId) || props.sharedObjectStore.get(props.itemId) || dummyProjectObject(props.itemId)) as SharedObject;
+const object = computed(() => {
+    const obj = props.sharedObjectStore.get(props.itemId) || (dummyProjectObject(props.itemId) as SharedObject);
+    if (obj["type"] === "dummy") props.projectObjects.removeRef(props.parentId, props.itemId);
+    return obj;
+});
 
-const instanceLabel = computed(() => calcObjLabel(object, props.projectProfiles));
+const instanceLabel = computed(() => calcObjLabel(object.value, props.projectProfiles));
 const linkedItemActions = computed(() => [
     {
         label: `${instanceLabel.value}`,
@@ -46,9 +50,9 @@ const linkedItemActions = computed(() => [
                         rejectIcon: "pi pi-times",
                         rejectClass: "p-button-secondary"
                     }).then(() => {
-                        console.log("Unlinking " + object.id);
-                        props.projectObjects.removeRef(props.parentId, object.id);
-                        props.sharedObjectStore.removeRef(props.parentId, object.id);
+                        console.log("Unlinking " + object.value.id);
+                        props.projectObjects.removeRef(props.parentId, object.value.id);
+                        props.sharedObjectStore.removeRef(props.parentId, object.value.id);
                     });
                 }
             },
@@ -66,9 +70,9 @@ const linkedItemActions = computed(() => [
                         rejectIcon: "pi pi-times",
                         rejectClass: "p-button-secondary"
                     }).then(() => {
-                        console.log("Deleting " + object.id);
-                        props.projectObjects.remove(object.id);
-                        props.sharedObjectStore.remove(object.id);
+                        console.log("Deleting " + object.value.id);
+                        props.projectObjects.remove(object.value.id);
+                        props.sharedObjectStore.remove(object.value.id);
                     });
                 }
             }
@@ -78,11 +82,8 @@ const linkedItemActions = computed(() => [
 
 const emit = defineEmits(["loadObject"]);
 function handleClick() {
-    if (object["type"] === "dummy") {
-        return;
-    }
     if (props.mode == "dialog") {
-        emit("loadObject", object["id"]);
+        emit("loadObject", object.value["id"]);
     } else {
         dialog.open(PropertyDialog, {
             props: {
@@ -99,7 +100,7 @@ function handleClick() {
                 dismissableMask: true
             },
             data: {
-                id: object["id"],
+                id: object.value["id"],
                 projectObjects: props.projectObjects,
                 sharedObjectStore: props.sharedObjectStore,
                 projectProfiles: props.projectProfiles
@@ -115,15 +116,14 @@ const toggle = (event: Event) => {
 </script>
 
 <template>
-    <div :title="object['type'] !== 'dummy' ? JSON.stringify(object, null, 4) : undefined" @contextmenu="(e: Event) => e.preventDefault()">
+    <div :title="JSON.stringify(object, null, 4)" @contextmenu="(e: Event) => e.preventDefault()">
         <SplitButton
-            v-if="object.type !== 'dummy'"
             ref="button"
             menuButtonIcon="pi pi-ellipsis-v"
             :model="linkedItemActions"
             menuitemicon="pi pi-link"
             class="min-h-full py-0 my-0 mb-2 space-y-0 w-full"
-            @click="() => (object.type !== 'dummy' ? handleClick() : null)"
+            @click="handleClick"
             @contextmenu="
                 () => {
                     const button = $refs.button as typeof ref<SplitButton>;
@@ -142,24 +142,6 @@ const toggle = (event: Event) => {
                 </span>
             </span>
         </SplitButton>
-        <Button
-            v-else
-            menuButtonIcon="pi pi-ellipsis-v"
-            :model="linkedItemActions"
-            menuitemicon="pi pi-link"
-            :style="`background-color: ${calcBgColor(object, props.projectProfiles)}; border-color: ${calcBorderColor(
-                object,
-                props.projectProfiles
-            )}; height: 2rem`"
-            class="text-gray-600 min-h-full py-0 my-0 mb-2 space-y-0"
-            @click="toggle"
-            @contextmenu="toggle"
-        >
-            <span class="truncate flex items-center space-x-2">
-                <i class="text-sm pi pi-exclamation-circle" style="color: #ee0000" />
-                <span class="text-sm text-gray-700"> broken link </span> <span class="text-lg text-gray-800"> [{{ instanceLabel }}]</span>
-            </span>
-        </Button>
 
         <OverlayPanel ref="op" class="border-red-400">
             <div class="m-2 gap-3 w-25rem">

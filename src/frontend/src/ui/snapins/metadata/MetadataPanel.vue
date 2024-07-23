@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { reactive, ref, toRefs, watch, type PropType } from "vue";
+import { reactive, toRefs, watch, type PropType } from "vue";
 
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
-import { ProjectObject, ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
@@ -65,33 +64,25 @@ connectors.value.forEach((connector) => {
 
 const debounce = makeDebounce(500);
 
-const projectObjects = ref(new ProjectObjectStore());
-projectObjects.value.setObjects(project!.value.features.metadata.metadata as ProjectObject[]);
-
-const sharedObjects = ref(new ProjectObjectStore());
-sharedObjects.value.setObjects(project!.value.features.metadata.shared_objects as ProjectObject[]);
-
 watch(
-    () => projectObjects.value._objects,
+    () => project!.value.features.metadata.metadata,
     (metadata) => {
+        console.log("update");
         debounce(() => {
             const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata, sharedObjects.value._objects as ProjectMetadata)]);
+            action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata, project!.value.features.metadata.shared_objects)]);
             action.execute();
         });
     },
     { deep: true }
 );
-
-// projectProfiles.mountProfile(zenodo as Profile);
-// projectProfiles.mountProfile(osf as Profile);
 </script>
 
 <template>
     <div>
         <PropertyEditor
-            v-model="projectObjects as ProjectObjectStore"
-            v-model:shared-objects="sharedObjects as ProjectObjectStore"
+            v-model="project!.features.metadata.metadata"
+            v-model:shared-objects="project!.features.metadata.shared_objects"
             :projectProfiles="projectProfiles as PropertyProfileStore"
         />
     </div>
