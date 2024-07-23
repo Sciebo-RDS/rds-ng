@@ -42,14 +42,6 @@ export class SharedObject extends ProjectObject {
 }
 
 /**
- * Creates a dummy project object.
- *
- * @param id - The ID of the project object.
- * @returns A new instance of the ProjectObject class.
- */
-export const dummyProjectObject = (id: string) => new SharedObject("dummy", id, {}, []);
-
-/**
  * Represents a store for project objects.
  */
 export class ProjectObjectStore {
@@ -116,7 +108,11 @@ export class ProjectObjectStore {
      * Removes references to a project object by its ID.
      * @param id - The ID of the project object.
      */
-    public _removeRefs(id: string): void {
+    public _removeRefs(id: string | string[]): void {
+        if (Array.isArray(id)) {
+            id.forEach((i) => this._removeRefs(i));
+            return;
+        }
         this._objects.forEach((object) => {
             object.refs = object.refs.filter((ref) => ref !== id);
         });

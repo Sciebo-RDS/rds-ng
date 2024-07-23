@@ -12,7 +12,7 @@ import { injectTemplate } from "./Templates";
  * @returns - A css lch color definition.
  */
 export function calcBgColor(obj: SharedObject, profileStore: PropertyProfileStore): string {
-    if (obj.type === "dummy") return "#eeeeee";
+    if (obj === undefined) return "#eeeeee";
     return calculateClassColor(obj.type!, 99, 10)["bgColor"];
 }
 
@@ -25,7 +25,7 @@ export function calcBgColor(obj: SharedObject, profileStore: PropertyProfileStor
  * @returns - A css lch color definition.
  */
 export function calcBorderColor(obj: SharedObject, profileStore: PropertyProfileStore): string {
-    if (obj.type === "dummy") return "#ee0000";
+    if (obj === undefined) return "#ee0000";
     return calculateClassColor(obj.type!, 99, 10)["borderColor"];
 }
 
@@ -38,7 +38,7 @@ export function calcBorderColor(obj: SharedObject, profileStore: PropertyProfile
  * @returns - An object label string.
  */
 export function calcObjLabel(obj: SharedObject, profileStore: PropertyProfileStore): string {
-    if (obj.type === "dummy") return obj.id.slice(0, 6);
+    if (obj === undefined) return "";
     const labelTemplate = profileStore.getLabelTemplateById(obj.type!)!;
     return injectTemplate(labelTemplate, obj);
 }

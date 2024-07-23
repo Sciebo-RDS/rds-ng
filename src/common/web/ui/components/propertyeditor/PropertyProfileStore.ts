@@ -50,7 +50,7 @@ export class PropertyProfileStore {
 
     public getClassLabelById(classId: string): string | undefined {
         const profile = this._profiles.find((profile) => !!profile.classes && !!profile.classes[classId]);
-        return profile?.classes![classId]["label"];
+        return profile?.classes![classId]["label"] || "";
     }
 
     public getProfileLabelById(profileId: ProfileID): string | undefined {

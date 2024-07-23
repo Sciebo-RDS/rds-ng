@@ -7,7 +7,7 @@ import OverlayPanel from "primevue/overlaypanel";
 import SplitButton from "primevue/splitbutton";
 import { useDialog } from "primevue/usedialog";
 import { computed, ref } from "vue";
-import { SharedObject, dummyProjectObject } from "./ProjectObjectStore";
+import { SharedObject } from "./ProjectObjectStore";
 import PropertyDialog from "./PropertyDialog.vue";
 import { calcBgColor, calcBorderColor, calcObjLabel } from "./utils/ObjectUtils";
 
@@ -18,8 +18,8 @@ const dialog = useDialog();
 const props = defineProps(["itemId", "parentId", "projectObjects", "sharedObjectStore", "projectProfiles", "mode"]);
 
 const object = computed(() => {
-    const obj = props.sharedObjectStore.get(props.itemId) || (dummyProjectObject(props.itemId) as SharedObject);
-    if (obj["type"] === "dummy") props.projectObjects.removeRef(props.parentId, props.itemId);
+    const obj = props.sharedObjectStore.get(props.itemId) as SharedObject;
+    if (obj === undefined) props.projectObjects._removeRefs(props.itemId);
     return obj;
 });
 
@@ -135,7 +135,7 @@ const toggle = (event: Event) => {
         >
             <span class="mx-2 truncate flex items-center space-x-2">
                 <span class="text-sm text-gray-700">
-                    {{ props.projectProfiles.getClassLabelById(object["type"]) }}
+                    {{ !!object && props.projectProfiles.getClassLabelById(object["type"]) }}
                 </span>
                 <span class="text-lg text-gray-800 truncate">
                     {{ instanceLabel }}
