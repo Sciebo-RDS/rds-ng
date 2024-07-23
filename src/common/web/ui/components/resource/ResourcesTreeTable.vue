@@ -4,11 +4,12 @@ import Column from "primevue/column";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
+import { type TreeNode } from "primevue/treenode";
 import TreeTable from "primevue/treetable";
-import { onMounted, type PropType, ref, toRefs, watch } from "vue";
+import { onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
 
 import { ResourceType } from "../../../data/entities/resource/Resource";
-import { flattenResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
+import { filterResourcesTreeNodes, flattenResourcesTreeNodes } from "../../../data/entities/resource/ResourceUtils";
 import { humanReadableFileSize } from "../../../utils/Strings";
 
 const props = defineProps({
@@ -23,6 +24,7 @@ const props = defineProps({
 });
 const { data, refreshable } = toRefs(props);
 const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
+const selectedData = defineModel<Array>("selectedData", { default: [] });
 const emits = defineEmits<{
     (e: "refresh"): void;
 }>();
@@ -55,6 +57,12 @@ function expandAll(): void {
 function collapseAll(): void {
     expandedNodes.value = {};
 }
+
+watch(selectedNodes, () => {
+    const selectedPaths = Object.keys(unref(selectedNodes));
+    const selectedTreeNodes = filterResourcesTreeNodes(unref(data), selectedPaths);
+    selectedData.value = selectedTreeNodes.map((node: TreeNode) => node.data);
+});
 </script>
 
 <template>

@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { GetResourceAction } from "@/ui/actions/resource/GetResourceAction";
-import { Resource, ResourceType } from "@common/data/entities/resource/Resource";
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
-import Image from "primevue/image";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import { nextTick, reactive, ref, toRefs, watch, computed, type PropType } from "vue";
@@ -12,6 +9,7 @@ import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
 import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
@@ -19,14 +17,13 @@ import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/
 import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import { deepClone } from "@common/utils/ObjectUtils";
 
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
-import previewImage from "@assets/img/preview.png";
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
+import ResourcePreview from "@/ui/snapins/resourcesmetadata/ResourcePreview.vue";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -39,6 +36,7 @@ const { project } = toRefs(props);
 
 const resourcesNodes = ref<Object[]>([]);
 const selectedNodes = ref({} as Record<string, boolean>);
+const selectedData = ref([] as Array<Resource>);
 const resourcesRefreshing = ref(false);
 const resourcesError = ref("");
 
@@ -66,28 +64,6 @@ function refreshResources(): void {
         resourcesRefreshing.value = false;
     });
     action.execute();
-}
-
-function updateResourcesMetadata(selectedPaths: string[]): void {
-    const persistedSets: PersistedSet[] = [];
-    const metadata = project!.value.features.resources_metadata.resources_metadata;
-    selectedPaths.forEach((path) => {
-        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
-    });
-
-    resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
-}
-
-function updateResourcePreview(selectedPaths: string[]): void {
-    if (selectedPaths.length != 1) {
-        // TODO: Disable preview
-        return;
-    }
-    /*
-        const action = new GetResourceAction(comp);
-        action.prepare(new Resource(selectedPaths[0], selectedPaths[0], ResourceType.File));
-        action.execute();
-     */
 }
 
 const propertyHeader = computed(() => {
@@ -127,9 +103,13 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     blockResourcesUpdate = true;
 
     const selectedPaths = Object.keys(nodes);
+    const persistedSets: PersistedSet[] = [];
+    const metadata = project!.value.features.resources_metadata.resources_metadata;
+    selectedPaths.forEach((path) => {
+        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
+    });
 
-    updateResourcesMetadata(selectedPaths);
-    updateResourcePreview(selectedPaths);
+    resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
 
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));
@@ -144,6 +124,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                     <ResourcesTreeTable
                         :data="resourcesNodes"
                         v-model:selected-nodes="selectedNodes"
+                        v-model:selected-data="selectedData"
                         class="p-treetable-sm text-sm border border-b-0 h-full"
                         refreshable
                         @refresh="refreshResources"
@@ -168,7 +149,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                         </div>
                         <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
                             <div v-if="showPreview" class="mt-5">
-                                <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
+                                <ResourcePreview :resources="selectedData" />
                             </div>
                             <PropertyEditor v-model="resourcesData" :controller="controller as MetadataController" :logging="logging" oneCol class="w-full" />
                         </div>
