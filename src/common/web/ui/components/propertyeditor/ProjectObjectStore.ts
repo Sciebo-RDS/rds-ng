@@ -187,7 +187,7 @@ export class ProjectObjectStore {
      *
      * @returns An array of project objects of the specified type.
      */
-    public getObjectsByType(type: string): ProjectObject[] {
-        return this._objects.filter((obj) => obj instanceof SharedObject && obj.type === type);
+    public getObjectsByType(type: string): SharedObject[] {
+        return this._objects.filter((obj) => !!obj.type && obj.type === type);
     }
 }
