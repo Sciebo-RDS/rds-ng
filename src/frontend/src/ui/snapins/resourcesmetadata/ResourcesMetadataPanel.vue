@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { GetResourceAction } from "@/ui/actions/resource/GetResourceAction";
+import { Resource, ResourceType } from "@common/data/entities/resource/Resource";
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
 import Image from "primevue/image";
@@ -66,6 +68,28 @@ function refreshResources(): void {
     action.execute();
 }
 
+function updateResourcesMetadata(selectedPaths: string[]): void {
+    const persistedSets: PersistedSet[] = [];
+    const metadata = project!.value.features.resources_metadata.resources_metadata;
+    selectedPaths.forEach((path) => {
+        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
+    });
+
+    resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
+}
+
+function updateResourcePreview(selectedPaths: string[]): void {
+    if (selectedPaths.length != 1) {
+        // TODO: Disable preview
+        return;
+    }
+    /*
+        const action = new GetResourceAction(comp);
+        action.prepare(new Resource(selectedPaths[0], selectedPaths[0], ResourceType.File));
+        action.execute();
+     */
+}
+
 const propertyHeader = computed(() => {
     switch (Object.keys(selectedNodes.value).length) {
         case 0:
@@ -102,14 +126,10 @@ watch(resourcesData, (metadata) => {
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
     blockResourcesUpdate = true;
 
-    const persistedSets: PersistedSet[] = [];
     const selectedPaths = Object.keys(nodes);
-    const metadata = project!.value.features.resources_metadata.resources_metadata;
-    selectedPaths.forEach((path) => {
-        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
-    });
 
-    resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
+    updateResourcesMetadata(selectedPaths);
+    updateResourcePreview(selectedPaths);
 
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));
