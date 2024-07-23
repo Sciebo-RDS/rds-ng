@@ -137,7 +137,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                             <span class="truncate mx-1" :title="Object.keys(selectedNodes).sort().join('\n')"> {{ propertyHeader }}</span>
                             <span>
                                 <Button
-                                    icon="material-icons-outlined mi-visibility"
+                                    :icon="'material-icons-outlined ' + (showPreview ? 'mi-visibility' : 'mi-visibility-off')"
                                     title="Toggle preview"
                                     size="small"
                                     :severity="showPreview ? '' : 'secondary'"

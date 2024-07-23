@@ -38,7 +38,7 @@ watch(resources, (data) => console.log(data));
             <span class="material-icons-outlined mi-folder !text-7xl" />
             <p class="w-full text-center truncate">{{ resources[0].filename }}</p>
         </div>
-        <Image v-else :src="previewImage" alt="Preview" title="This is just a placeholder..." preview />
+        <Image v-else :src="previewImage" alt="Preview" :title="resources[0].filename" class="w-full h-full" preview />
     </div>
 </template>
 
