@@ -30,13 +30,13 @@ watch(resources, (data) => console.log(data));
 
 <template>
     <div class="!w-48 !h-48 border rounded-xl">
-        <div v-if="noPreview" title="No preview available" class="h-full r-centered-grid content-center r-text-light-gray">
+        <div v-if="noPreview" title="No preview available" class="w-full h-full r-centered-grid content-center r-text-light-gray p-2">
             <span class="material-icons-outlined mi-preview !text-7xl" />
-            <p>No preview available</p>
+            <p class="w-full text-center">No preview available</p>
         </div>
-        <div v-else-if="isFolder" :title="resources[0].filename" class="h-full r-centered-grid content-center r-text-light-gray p-2">
+        <div v-else-if="isFolder" :title="resources[0].filename" class="w-full h-full r-centered-grid content-center r-text-light-gray p-2">
             <span class="material-icons-outlined mi-folder !text-7xl" />
-            <p class="w-full truncate">{{ resources[0].filename }}</p>
+            <p class="w-full text-center truncate">{{ resources[0].filename }}</p>
         </div>
         <Image v-else :src="previewImage" alt="Preview" title="This is just a placeholder..." preview />
     </div>
