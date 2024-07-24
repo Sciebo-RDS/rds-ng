@@ -65,21 +65,22 @@ export function intersectObjects<ObjType extends Record<any, any> = object>(obj1
     }
 
     // @ts-ignore
-    return Object.assign(...Object.keys(obj1).map(k => {
-        let temp;
-        if (!(k in obj2)) {
+    return Object.assign(
+        ...Object.keys(obj1).map((k) => {
+            let temp;
+            if (!(k in obj2)) {
+                return {} as ObjType;
+            }
+            if (obj1[k] && typeof obj1[k] === "object" && obj2[k] && typeof obj2[k] === "object") {
+                temp = intersectObjects<ObjType>(obj1[k], obj2[k]);
+                return (Object.keys(temp).length ? { [k]: temp } : {}) as ObjType;
+            }
+            if (obj1[k] === obj2[k]) {
+                return { [k]: obj1[k] } as ObjType;
+            }
             return {} as ObjType;
-        }
-        if (obj1[k] && typeof obj1[k] === "object" &&
-            obj2[k] && typeof obj2[k] === "object") {
-            temp = intersectObjects<ObjType>(obj1[k], obj2[k]);
-            return (Object.keys(temp).length ? { [k]: temp } : {}) as ObjType;
-        }
-        if (obj1[k] === obj2[k]) {
-            return { [k]: obj1[k] } as ObjType;
-        }
-        return {} as ObjType;
-    })) as ObjType;
+        }),
+    ) as ObjType;
 }
 
 /**
@@ -94,6 +95,8 @@ export function shortenDataStrings(obj: any): any {
         } else if (typeof value === "string") {
             if (value.startsWith("data:")) {
                 obj[name] = value.split(",", 1).join() + `,<data:${humanReadableFileSize(value.length)}>`;
+            } else if (value.length > 256) {
+                obj[name] = value.slice(0, 256) + `... [${humanReadableFileSize(value.length)} total]`;
             }
         }
     }

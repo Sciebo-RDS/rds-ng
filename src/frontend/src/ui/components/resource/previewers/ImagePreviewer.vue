@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import Image from "primevue/image";
-import { type PropType, toRefs } from "vue";
+import Skeleton from "primevue/skeleton";
+import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import { Resource } from "@common/data/entities/resource/Resource";
 
-import previewImage from "@assets/img/preview.png";
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { useResourceTools } from "@/ui/tools/resource/ResourceTools";
 
+const comp = FrontendComponent.inject();
 const props = defineProps({
     resource: {
         type: Object as PropType<Resource>,
@@ -13,10 +16,30 @@ const props = defineProps({
     },
 });
 const { resource } = toRefs(props);
+
+const imageData = ref("");
+
+onMounted(() => {
+    const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
+
+    retrieveResourceData(unref(resource)!).then((data: string) => {
+        imageData.value = resourceDataToTagValue(unref(resource)!, data);
+    });
+});
 </script>
 
 <template>
-    <Image :src="previewImage" alt="Preview" :title="resource.filename" class="w-full h-full" preview />
+    <div class="r-centered-grid content-center">
+        <Image
+            v-if="!!imageData"
+            :src="imageData"
+            alt="Preview"
+            :title="resource.filename"
+            preview
+            :pt="{ image: 'max-w-[calc(12rem-0.5rem)] max-h-[calc(12rem-0.5rem)]' }"
+        />
+        <Skeleton v-else title="Loading image..." class="!w-[calc(12rem-0.5rem)] !h-[calc(12rem-0.5rem)]"></Skeleton>
+    </div>
 </template>
 
 <style scoped lang="scss"></style>

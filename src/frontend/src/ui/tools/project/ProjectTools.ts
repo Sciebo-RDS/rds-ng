@@ -10,7 +10,7 @@ import { publishProjectDialog, type PublishProjectDialogData } from "@/ui/dialog
  * Tools for working with projects.
  */
 export function useProjectTools(comp: FrontendComponent) {
-    function newProject(): Promise<void> {
+    async function newProject(): Promise<void> {
         const action = new CreateProjectAction(comp);
         return action.showEditDialog().then((data) => {
             action.prepare(data.datapath, data.title, data.description, data.options);
@@ -18,7 +18,7 @@ export function useProjectTools(comp: FrontendComponent) {
         });
     }
 
-    function editProject(project: Project): Promise<void> {
+    async function editProject(project: Project): Promise<void> {
         const action = new UpdateProjectAction(comp);
         return action.showEditDialog(project).then((data) => {
             action.prepare(project.project_id, data.title, data.description, data.options);
@@ -42,6 +42,6 @@ export function useProjectTools(comp: FrontendComponent) {
         newProject,
         editProject,
         publishProject,
-        deleteProject
+        deleteProject,
     };
 }

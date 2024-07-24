@@ -24,9 +24,9 @@ const resourcePreviewer = computed(() => {
 </script>
 
 <template>
-    <div class="!w-48 !h-48 border rounded-lg">
+    <div class="preview-box border rounded-lg">
         <div v-if="!!resource && !!resourcePreviewer" class="w-full h-full r-centered-grid content-center">
-            <component :is="resourcePreviewer" :resource="resource!" :title="resource.filename" />
+            <component :is="resourcePreviewer" :resource="resource!" :title="resource.filename" class="preview-box" />
         </div>
         <div
             v-else-if="!!resource && resource.type == ResourceType.Folder"
@@ -43,4 +43,8 @@ const resourcePreviewer = computed(() => {
     </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.preview-box {
+    @apply w-48 h-48 #{!important};
+}
+</style>
