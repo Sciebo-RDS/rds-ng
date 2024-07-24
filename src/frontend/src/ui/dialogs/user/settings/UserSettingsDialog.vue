@@ -24,8 +24,8 @@ const userSettings = ref<UserSettings>(dialogData.userData.userSettings);
 
 const tabs = ref([
     { title: "Connections", component: markRaw(ConnectionsTab), icon: "mi-hub" },
-    { title: "Appearance", component: markRaw(AppearanceTab), icon: "mi-brightness-medium" },
-    { title: "Help & Support", component: markRaw(SupportTab), icon: "mi-help-outline" },
+    //{ title: "Appearance", component: markRaw(AppearanceTab), icon: "mi-brightness-medium" }, // TODO: add later
+    { title: "Help & About", component: markRaw(SupportTab), icon: "mi-help-outline" },
 ]);
 const tabIndices = {
     connections: 0,

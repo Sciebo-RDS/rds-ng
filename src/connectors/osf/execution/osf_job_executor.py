@@ -233,4 +233,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
     def _get_job_ext_data(
         self, osf_project: OSFProjectData
     ) -> ProjectJobHistoryRecordExtData:
-        return {ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: osf_project.project_id}
+        return {
+            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: osf_project.project_id,
+            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_LINK: osf_project.project_link,
+        }

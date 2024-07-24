@@ -48,9 +48,6 @@ function onSelectConnector(connector: Connector): void {
             class="w-full"
             :autoOptionFocus="false"
             @change="(event) => onSelectConnector(event.value as Connector)"
-            :pt="{
-                panel: 'r-z-index-toplevel',
-            }"
         >
             <template #option="connectorItem">
                 <ConnectorHeader :connector-id="connectorItem.option.connector_id" />

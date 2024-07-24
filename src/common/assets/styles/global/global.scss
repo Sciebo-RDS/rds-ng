@@ -58,6 +58,14 @@ html {
     opacity: 0.7;
 }
 
+.r-text-gray, .r-text-gray * {
+    @apply text-slate-600;
+}
+
+.r-text-light-gray, .r-text-light-gray * {
+    @apply text-slate-400;
+}
+
 .r-text-caption {
     @apply font-bold;
 }
@@ -84,6 +92,16 @@ html {
 .r-text-error,
 .r-text-error * {
     @apply text-red-500 #{!important};
+}
+
+.r-text-link,
+.r-text-link * {
+    @apply text-cyan-600 #{!important};
+}
+
+.r-bg-info,
+.r-bg-info * {
+    @apply bg-cyan-600 #{!important};
 }
 
 .r-bg-success,

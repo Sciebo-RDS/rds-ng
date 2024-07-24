@@ -111,3 +111,50 @@ export class ListResourcesReply extends CommandReply {
         return messageBuilder.buildCommandReply(ListResourcesReply, cmd, success, message, { resources: resources });
     }
 }
+
+/**
+ * Command to fetch a single resource.
+ *
+ * @param resource - The resource.
+ */
+@Message.define("command/resource/get")
+export class GetResourceCommand extends Command {
+    // @ts-ignore
+    @Type(() => Resource)
+    public readonly resource: Resource = new Resource("", "", ResourceType.Folder);
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(messageBuilder: MessageBuilder, resource: Resource, chain: Message | null = null): CommandComposer<GetResourceCommand> {
+        return messageBuilder.buildCommand(GetResourceCommand, { resource: resource }, chain);
+    }
+}
+
+/**
+ * Reply to ``GetResourceCommand``.
+ *
+ * @param resource - The resource path.
+ * @param data - The file data (currently base64-encoded).
+ */
+@Message.define("command/resource/get/reply")
+export class GetResourceReply extends CommandReply {
+    // @ts-ignore
+    @Type(() => Resource)
+    public readonly resource: Resource = new Resource("", "", ResourceType.Folder);
+    public readonly data: string = ""; // TODO: Support binary data
+
+    /**
+     * Helper function to easily build this message.
+     */
+    public static build(
+        messageBuilder: MessageBuilder,
+        cmd: GetResourceCommand,
+        resource: Resource,
+        data: string,
+        success: boolean = true,
+        message: string = "",
+    ): CommandReplyComposer<GetResourceReply> {
+        return messageBuilder.buildCommandReply(GetResourceReply, cmd, success, message, { resource: resource, data: data });
+    }
+}

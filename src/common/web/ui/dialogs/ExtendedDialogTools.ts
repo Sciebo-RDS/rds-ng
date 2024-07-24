@@ -32,8 +32,7 @@ export function useExtendedDialogTools() {
                 try {
                     const firstError = Object.keys(errors)[0];
                     scrollElementIntoView(`[name="${firstError}"]`);
-                } catch (e) {
-                }
+                } catch (e) {}
             }
 
             dialogData.validator.handleSubmit(accept, selectFirstError)();
@@ -50,12 +49,14 @@ export function useExtendedDialogTools() {
     }
 
     function useValidator<SchemaType>(schema: SchemaType, validateImmediately: boolean = true) {
-        const validator = reactive(new ExtendedDialogValidator(
-            useForm({
-                // @ts-ignore
-                validationSchema: toTypedSchema(yobject(schema))
-            })
-        ));
+        const validator = reactive(
+            new ExtendedDialogValidator(
+                useForm({
+                    // @ts-ignore
+                    validationSchema: toTypedSchema(yobject(schema)),
+                }),
+            ),
+        );
 
         // @ts-ignore
         dialogData.validator = validator;
@@ -75,6 +76,6 @@ export function useExtendedDialogTools() {
         dialogData,
         acceptDialog,
         rejectDialog,
-        useValidator
+        useValidator,
     };
 }

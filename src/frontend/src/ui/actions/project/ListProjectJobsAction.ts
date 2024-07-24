@@ -22,8 +22,13 @@ export class ListProjectJobsAction extends FrontendCommandAction<ListProjectJobs
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Fetching jobs", "Your project jobs are being downloaded..."),
+            true,
         );
-        this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Fetching jobs", "Your project jobs have been downloaded."));
+        this.addNotifier(
+            ActionState.Done,
+            new OverlayNotifier(OverlayNotificationType.Success, "Fetching jobs", "Your project jobs have been downloaded."),
+            true,
+        );
         this.addNotifier(
             ActionState.Failed,
             new OverlayNotifier(

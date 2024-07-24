@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
-import Image from "primevue/image";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import { nextTick, reactive, ref, toRefs, watch, computed, type PropType } from "vue";
@@ -10,6 +9,7 @@ import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
 import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
 import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
@@ -17,14 +17,13 @@ import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/
 import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import { deepClone } from "@common/utils/ObjectUtils";
 
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
-import previewImage from "@assets/img/preview.png";
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
+import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -37,6 +36,7 @@ const { project } = toRefs(props);
 
 const resourcesNodes = ref<Object[]>([]);
 const selectedNodes = ref({} as Record<string, boolean>);
+const selectedData = ref([] as Array<Resource>);
 const resourcesRefreshing = ref(false);
 const resourcesError = ref("");
 
@@ -102,8 +102,8 @@ watch(resourcesData, (metadata) => {
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
     blockResourcesUpdate = true;
 
-    const persistedSets: PersistedSet[] = [];
     const selectedPaths = Object.keys(nodes);
+    const persistedSets: PersistedSet[] = [];
     const metadata = project!.value.features.resources_metadata.resources_metadata;
     selectedPaths.forEach((path) => {
         persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
@@ -124,6 +124,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                     <ResourcesTreeTable
                         :data="resourcesNodes"
                         v-model:selected-nodes="selectedNodes"
+                        v-model:selected-data="selectedData"
                         class="p-treetable-sm text-sm border border-b-0 h-full"
                         refreshable
                         @refresh="refreshResources"
@@ -136,7 +137,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                             <span class="truncate mx-1" :title="Object.keys(selectedNodes).sort().join('\n')"> {{ propertyHeader }}</span>
                             <span>
                                 <Button
-                                    icon="material-icons-outlined mi-visibility"
+                                    :icon="'material-icons-outlined ' + (showPreview ? 'mi-visibility' : 'mi-visibility-off')"
                                     title="Toggle preview"
                                     size="small"
                                     :severity="showPreview ? '' : 'secondary'"
@@ -148,7 +149,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                         </div>
                         <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
                             <div v-if="showPreview" class="mt-5">
-                                <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
+                                <ResourcesPreview :resources="selectedData" />
                             </div>
                             <PropertyEditor v-model="resourcesData" :controller="controller as MetadataController" :logging="logging" oneCol class="w-full" />
                         </div>

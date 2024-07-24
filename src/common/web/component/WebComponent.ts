@@ -34,6 +34,7 @@ import MainContainer from "../ui/views/main/MainViewContainer.vue";
 
 // Load various icons
 import "material-icons/css/material-icons.css";
+import "material-icons/iconfont/material-icons.css";
 import "material-icons/iconfont/outlined.css";
 import "primeicons/primeicons.css";
 

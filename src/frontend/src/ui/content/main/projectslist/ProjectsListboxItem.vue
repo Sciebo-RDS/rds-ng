@@ -48,6 +48,7 @@ const props = defineProps({
 });
 const { project, isSelected, isDeleted } = toRefs(props);
 const emits = defineEmits<{
+    (e: "publish-project", project: Project): void;
     (e: "edit-project", project: Project): void;
     (e: "delete-project", project: Project): void;
 }>();
@@ -89,6 +90,13 @@ const editMenuItems = ref([
     {
         label: "Edit project",
         items: [
+            {
+                label: "Publish & Export",
+                icon: "material-icons-outlined mi-rocket-launch",
+                command: () => {
+                    emits("publish-project", project!.value);
+                },
+            },
             {
                 label: "Settings",
                 icon: "material-icons-outlined mi-engineering",
@@ -138,7 +146,7 @@ const editMenuShown = ref(false);
         <div v-if="!isDeleted" id="project-description" class="overflow-hidden line-clamp" :title="project.description">{{ project!.description }}</div>
         <div v-else class="italic">The project is currently being deleted...</div>
 
-        <div class="grid grid-cols-[1fr_min-content] self-end text-slate-600 col-span-2">
+        <div class="grid grid-cols-[1fr_min-content] self-end col-span-2 r-text-gray">
             <span v-if="runningJobs.length > 0" class="grid grid-cols-[min-content_auto] items-center text-sm">
                 <span class="material-icons-outlined mi-rocket-launch mr-1 !text-lg" />
                 <span class="pt-0.5">

@@ -1,4 +1,5 @@
 from .entry_guard import EntryGuard
+from .files import get_mime_type
 from .items_catalog import ItemsCatalog
 from .paths import relativize_path
 from .random import generate_random_string

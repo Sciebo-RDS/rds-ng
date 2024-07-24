@@ -110,12 +110,17 @@ class Message(abc.ABC):
     def __str__(self) -> str:
         def cleanup(cur_obj, parent_obj, parent_key):
             if isinstance(cur_obj, str):
-                if cur_obj.startswith("data:"):
-                    from ...utils import human_readable_file_size
+                from ...utils import human_readable_file_size
 
+                if cur_obj.startswith("data:"):
                     parent_obj[parent_key] = (
                         cur_obj.split(",", 1)[0]
                         + f",<data:{human_readable_file_size(len(cur_obj))}>"
+                    )
+                elif len(cur_obj) > 256:
+                    parent_obj[parent_key] = (
+                        cur_obj[0:256]
+                        + f"... [{human_readable_file_size(len(cur_obj))} total]"
                     )
             elif isinstance(cur_obj, dict):
                 for key, value in cur_obj.items():

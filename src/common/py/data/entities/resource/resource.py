@@ -15,6 +15,7 @@ class Resource:
         basename: The name (w/o path) of the resource.
         type: The type of the resource (folder or file).
         size: The size of the resource; for folders, this is the size of all its contents.
+        mime_type: The MIME type of the resource.
     """
 
     class Type(StrEnum):
@@ -30,3 +31,4 @@ class Resource:
     type: Type
 
     size: int = 0
+    mime_type: str = ""

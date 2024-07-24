@@ -18,6 +18,8 @@ export interface ExtendedDialogOptions {
     acceptLabel?: string;
     /** The icon of the Accept button */
     acceptIcon?: string;
+    /** If true, closing the dialog always will accept it. */
+    acceptOnClose?: boolean;
 
     /** Whether the dialog has a Reject button. */
     hasRejectButton?: boolean;
@@ -76,15 +78,15 @@ export function extendedDialog<UserDataType>(
     data: UserDataType,
     options: ExtendedDialogOptions | undefined = undefined,
     processDataCallback: ((data: UserDataType) => void) | undefined = undefined,
-    ignoreReject: boolean = true
+    ignoreReject: boolean = true,
 ): ExtendedDialogResult<UserDataType> {
     const dialog = comp.vue.config.globalProperties.$dialog;
 
     return new Promise<UserDataType>((resolve, reject) => {
         const dialogData: ExtendedDialogData<UserDataType> = {
             userData: data,
-            options: options || {} as ExtendedDialogOptions,
-            processData: processDataCallback
+            options: options || ({} as ExtendedDialogOptions),
+            processData: processDataCallback,
         };
 
         dialogData.accept = (result: UserDataType) => {
@@ -100,10 +102,20 @@ export function extendedDialog<UserDataType>(
         const dialogOptions: DynamicDialogOptions = {
             props: dialogProps,
             templates: {
-                footer: markRaw(ExtendedDialogFooter)
+                footer: markRaw(ExtendedDialogFooter),
             },
-            data: dialogData
+            data: dialogData,
         };
+
+        if (dialogData.options.acceptOnClose) {
+            dialogOptions.onClose = () => {
+                if (dialogData.processData) {
+                    dialogData.processData(dialogData.userData);
+                }
+
+                resolve(dialogData.userData);
+            };
+        }
 
         dialog.open(dialogComponent, dialogOptions);
     });

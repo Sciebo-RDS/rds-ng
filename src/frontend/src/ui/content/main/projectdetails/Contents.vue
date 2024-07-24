@@ -29,13 +29,13 @@ const panels = computed(() => {
 </script>
 
 <template>
-    <div>
+    <div class="h-full">
         <TabView
+            class="h-full"
             :pt="{
                 nav: 'tab-view',
                 panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full', // TODO: Hacky height
             }"
-            class="h-full"
         >
             <TabPanel
                 v-for="panel in panels"

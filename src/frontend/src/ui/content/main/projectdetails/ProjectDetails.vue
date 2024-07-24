@@ -13,7 +13,7 @@ const currentProject = computed(() => projStore.resolveActiveProject());
 </script>
 
 <template>
-    <div class="grid grid-rows-[5rem_1fr] grid-cols-1 gap-0 w-full">
+    <div class="grid grid-rows-[5rem_1fr] grid-cols-1 gap-0 w-full h-full">
         <Header v-if="currentProject" :project="currentProject" />
         <HeaderEmpty v-else />
 
@@ -22,5 +22,4 @@ const currentProject = computed(() => projStore.resolveActiveProject());
     </div>
 </template>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

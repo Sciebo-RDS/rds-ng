@@ -32,6 +32,7 @@ export class InitiateProjectJobAction extends FrontendCommandAction<InitiateProj
                 "Initiating job",
                 `${category?.verbNoun} of project '${project.title}' through connection ${connectorInstance.name} is being started...`,
             ),
+            true,
         );
         this.addNotifier(
             ActionState.Done,

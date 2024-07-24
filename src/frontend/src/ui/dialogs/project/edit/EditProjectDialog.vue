@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
+import InputSwitch from "primevue/inputswitch";
 import InputText from "primevue/inputtext";
-import RadioButton from "primevue/radiobutton";
 import Textarea from "primevue/textarea";
 import { onMounted, ref, watch } from "vue";
 import { array as yarray, string as ystring } from "yup";
@@ -142,28 +142,18 @@ watch(
             <div class="r-form-field">
                 <div class="grid grid-flow-row">
                     <div class="flex align-items-center">
-                        <RadioButton
-                            v-model="dialogData.userData.options.use_all_connector_instances"
-                            inputId="useAllConnectorInstances"
-                            :value="true"
-                            @change="validator.validate()"
-                            class="self-center"
-                        />
-                        <label for="useAllConnectorInstances" class="pl-1.5">Use all available connections</label>
-                    </div>
-
-                    <div class="flex align-items-center">
-                        <RadioButton
+                        <InputSwitch
                             v-model="dialogData.userData.options.use_all_connector_instances"
                             inputId="useSelectConnectorInstances"
-                            :value="false"
+                            :true-value="false"
+                            :false-value="true"
                             @change="validator.validate()"
                             class="self-center"
                         />
                         <label for="useSelectConnectorInstances" class="pl-1.5">Use only the following connections:</label>
                     </div>
 
-                    <div class="border border-solid rounded p-1 ml-2 mr-2 mt-1" :class="{ 'r-border-error': validator.errors.activeInstances }">
+                    <div class="border border-solid rounded p-1 ml-3.5 mr-3.5 mt-1.5" :class="{ 'r-border-error': validator.errors.activeInstances }">
                         <ConnectorInstancesSelect
                             v-bind="activeInstances"
                             v-model="dialogData.userData.options.active_connector_instances"

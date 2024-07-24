@@ -25,10 +25,12 @@ export class MarkProjectLogbookSeenAction extends FrontendCommandAction<MarkProj
             this.addNotifier(
                 ActionState.Executing,
                 new OverlayNotifier(OverlayNotificationType.Info, "Updating project logbook", `Project logbook '${title}' is being updated...`),
+                true,
             );
             this.addNotifier(
                 ActionState.Done,
                 new OverlayNotifier(OverlayNotificationType.Success, "Updating project logbook", `Project logbook '${title}' has been updated.`),
+                true,
             );
             this.addNotifier(
                 ActionState.Failed,
@@ -43,10 +45,12 @@ export class MarkProjectLogbookSeenAction extends FrontendCommandAction<MarkProj
             this.addNotifier(
                 ActionState.Executing,
                 new OverlayNotifier(OverlayNotificationType.Info, "Updating project logbooks", "All project logbooks are being updated..."),
+                true,
             );
             this.addNotifier(
                 ActionState.Done,
                 new OverlayNotifier(OverlayNotificationType.Success, "Updating project logbooks", "All project logbooks have been updated."),
+                true,
             );
             this.addNotifier(
                 ActionState.Failed,

@@ -22,8 +22,13 @@ export class ListConnectorsAction extends FrontendCommandAction<ListConnectorsCo
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Fetching connectors", "The available connectors are being downloaded..."),
+            true,
         );
-        this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Fetching connectors", "All connectors have been downloaded."));
+        this.addNotifier(
+            ActionState.Done,
+            new OverlayNotifier(OverlayNotificationType.Success, "Fetching connectors", "All connectors have been downloaded."),
+            true,
+        );
         this.addNotifier(
             ActionState.Failed,
             new OverlayNotifier(

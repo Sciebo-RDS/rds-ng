@@ -1,3 +1,4 @@
+import base64
 import dataclasses
 import typing
 
@@ -11,7 +12,7 @@ from ...core.messaging.composers import (
     CommandComposer,
     CommandReplyComposer,
 )
-from ...data.entities.resource import ResourcesList
+from ...data.entities.resource import Resource, ResourcesList
 
 
 @Message.define("command/resource/assign-broker")
@@ -141,4 +142,71 @@ class ListResourcesReply(CommandReply):
         """
         return message_builder.build_command_reply(
             ListResourcesReply, cmd, success, message, resources=resources
+        )
+
+
+@Message.define("command/resource/get")
+class GetResourceCommand(Command):
+    """
+    Command to fetch a single resource.
+
+    Notes:
+        Requires a ``GetResourceReply`` reply.
+
+    Args:
+        resource: The resource.
+    """
+
+    resource: Resource
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        resource: Resource,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            ListResourcesCommand,
+            chain,
+            resource=resource,
+        )
+
+
+@Message.define("command/resource/get/reply")
+class GetResourceReply(CommandReply):
+    """
+    Reply to ``GetResourceCommand``.
+
+    Args:
+        resource: The resource path.
+        data: The file data (currently base64-encoded).
+    """
+
+    resource: Resource
+    data: str  # TODO: Support binary data
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: GetResourceCommand,
+        *,
+        resource: Resource,
+        data: str | bytes,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            GetResourceReply,
+            cmd,
+            success,
+            message,
+            resource=resource,
+            data=data if isinstance(data, str) else base64.b64encode(data).decode(),
         )

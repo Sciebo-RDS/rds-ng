@@ -37,8 +37,13 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`),
+            true,
         );
-        this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Updating project", `Project '${title}' has been updated.`));
+        this.addNotifier(
+            ActionState.Done,
+            new OverlayNotifier(OverlayNotificationType.Success, "Updating project", `Project '${title}' has been updated.`),
+            true,
+        );
         this.addNotifier(
             ActionState.Failed,
             new OverlayNotifier(

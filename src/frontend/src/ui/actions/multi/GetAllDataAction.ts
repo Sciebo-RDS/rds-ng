@@ -34,8 +34,8 @@ export class GetAllDataAction extends MultiAction {
     }
 
     protected addDefaultNotifiers(): void {
-        this.addNotifier(ActionState.Executing, new OverlayNotifier(OverlayNotificationType.Info, "Fetching data", "The data are being downloaded..."));
-        this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Fetching data", "All data have been downloaded."));
+        this.addNotifier(ActionState.Executing, new OverlayNotifier(OverlayNotificationType.Info, "Fetching data", "The data are being downloaded..."), true);
+        this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Fetching data", "All data have been downloaded."), true);
         this.addNotifier(
             ActionState.Failed,
             new OverlayNotifier(

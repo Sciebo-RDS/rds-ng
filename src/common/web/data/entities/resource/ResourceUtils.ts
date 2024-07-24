@@ -12,7 +12,7 @@ import { ResourcesList } from "./ResourcesList";
  */
 export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: boolean = false): TreeNode[] {
     const sortNodes = (nodes: TreeNode[]): TreeNode[] => {
-        return nodes.sort((node1, node2) => node1.label && node2.label ? node1.label.localeCompare(node2.label) : 0);
+        return nodes.sort((node1, node2) => (node1.label && node2.label ? node1.label.localeCompare(node2.label) : 0));
     };
 
     const folderNodes: TreeNode[] = [];
@@ -26,17 +26,19 @@ export function resourcesListToTreeNodes(resources: ResourcesList, simpleData: b
             key: fileResource.filename,
             label: fileResource.basename,
             data: simpleData ? fileResource.filename : fileResource,
-            icon: "material-icons-outlined mi-description"
+            icon: "material-icons-outlined mi-description",
         } as TreeNode);
     }
 
-    return [{
-        key: resources.resource.filename,
-        label: resources.resource.basename || "/",
-        data: simpleData ? resources.resource.filename : resources.resource,
-        icon: "material-icons-outlined mi-folder",
-        children: [...sortNodes(folderNodes), ...sortNodes(fileNodes)]
-    } as TreeNode];
+    return [
+        {
+            key: resources.resource.filename,
+            label: resources.resource.basename || "/",
+            data: simpleData ? resources.resource.filename : resources.resource,
+            icon: "material-icons-outlined mi-folder",
+            children: [...sortNodes(folderNodes), ...sortNodes(fileNodes)],
+        } as TreeNode,
+    ];
 }
 
 /**
@@ -58,4 +60,31 @@ export function flattenResourcesTreeNodes(nodes: TreeNode[]): string[] {
     let results: string[] = [];
     flatten(nodes, results);
     return results;
+}
+
+/**
+ * Filters a list of resources tree nodes according to the provided keys.
+ *
+ * @param nodes - The nodes to filter.
+ * @param keys - The keys to keep.
+ *
+ * @returns - A flat list of all matching nodes.
+ */
+export function filterResourcesTreeNodes(nodes: TreeNode[], keys: string[]): TreeNode[] {
+    const filteredNodes: TreeNode[] = [];
+
+    function _filter(nodes: TreeNode[]): void {
+        for (const node of nodes) {
+            if (node.key && keys.includes(node.key)) {
+                filteredNodes.push(node);
+            }
+
+            if (node.children) {
+                _filter(node.children);
+            }
+        }
+    }
+
+    _filter(nodes);
+    return filteredNodes;
 }

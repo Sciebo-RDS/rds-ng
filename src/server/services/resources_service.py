@@ -1,4 +1,4 @@
-import os.path
+import pathlib
 
 from common.py.component import BackendComponent
 from common.py.data.entities.authorization import (
@@ -13,6 +13,7 @@ from common.py.integration.resources.brokers import (
     create_resources_broker,
     ResourcesBroker,
 )
+from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
 from common.py.services import Service
 
 
@@ -32,6 +33,8 @@ def create_resources_service(comp: BackendComponent) -> Service:
         AssignResourcesBrokerReply,
         ListResourcesCommand,
         ListResourcesReply,
+        GetResourceCommand,
+        GetResourceReply,
     )
 
     from .server_service_context import ServerServiceContext
@@ -97,7 +100,7 @@ def create_resources_service(comp: BackendComponent) -> Service:
         resources = ResourcesList(
             resource=Resource(
                 filename=msg.root,
-                basename=os.path.basename(msg.root),
+                basename=pathlib.PurePosixPath(msg.root).name,
                 type=Resource.Type.FOLDER,
             )
         )
@@ -119,6 +122,37 @@ def create_resources_service(comp: BackendComponent) -> Service:
             ctx.message_builder,
             msg,
             resources=resources,
+            success=success,
+            message=message,
+        ).emit()
+
+    @svc.message_handler(GetResourceCommand)
+    def get_resource(msg: GetResourceCommand, ctx: ServerServiceContext) -> None:
+        if not ctx.ensure_user(
+            msg, GetResourceReply, resource=msg.resource, size=0, mime_type="", data=""
+        ):
+            return
+
+        data: bytes | None = None
+        success = False
+        message = ""
+
+        try:
+            # For resource requests, we always use a simple memory broker tunnel
+            tunnel = MemoryBrokerTunnel(msg.resource)
+            broker = _create_broker(ctx)
+            broker.download_resource(msg.resource, tunnel=tunnel)
+            data = tunnel.readall()
+
+            success = True
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            message = str(exc)
+
+        GetResourceReply.build(
+            ctx.message_builder,
+            msg,
+            resource=msg.resource,
+            data=data,
             success=success,
             message=message,
         ).emit()

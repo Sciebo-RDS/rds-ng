@@ -35,6 +35,19 @@ export class ProjectStatistics {
         return connectorInstance in this._jobStatistics ? this._jobStatistics[connectorInstance] : this.createEmptyJobStatistics();
     }
 
+    /**
+     * Gets combined statistics about all jobs.
+     */
+    public getTotalJobStatistics(): JobStatistics {
+        const statistics = this.createEmptyJobStatistics();
+        for (const [_, jobStatistics] of Object.entries(this._jobStatistics)) {
+            statistics.lastJob = Math.max(statistics.lastJob, jobStatistics.lastJob);
+            statistics.totalCount.succeeded += jobStatistics.totalCount.succeeded;
+            statistics.totalCount.failed += jobStatistics.totalCount.failed;
+        }
+        return statistics;
+    }
+
     private collectJobStatistics(): void {
         this._jobStatistics = {};
 

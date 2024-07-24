@@ -30,7 +30,7 @@ export class EditUserSettingsAction extends FrontendCommandAction<SetUserSetting
     }
 
     protected addDefaultNotifiers(): void {
-        this.addNotifier(ActionState.Executing, new OverlayNotifier(OverlayNotificationType.Info, "Updating user settings", "Updating your settings..."));
+        this.addNotifier(ActionState.Executing, new OverlayNotifier(OverlayNotificationType.Info, "Updating user settings", "Updating your settings..."), true);
         this.addNotifier(ActionState.Done, new OverlayNotifier(OverlayNotificationType.Success, "Updating user settings", "Your settings have been updated."));
         this.addNotifier(
             ActionState.Failed,
