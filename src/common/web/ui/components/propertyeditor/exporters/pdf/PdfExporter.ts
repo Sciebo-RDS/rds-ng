@@ -1,7 +1,6 @@
 import { Exporter, type ExporterID } from "../Exporter";
 import { PdfExporterExport } from "./_PdfExporter";
 import { DmpDocumentDefinition } from "./DocumentDefinition";
-import { PropertyController, type S } from "../../PropertyController";
 
 export class PdfExporter extends Exporter {
     public static readonly ExporterID: ExporterID = "pdf";
@@ -15,13 +14,13 @@ export class PdfExporter extends Exporter {
                 icon: "pi pi-file-pdf",
                 command: (controller, title) => {
                     main(controller, title);
-                },
-            },
+                }
+            }
         });
     }
 }
 
-function main(controller: PropertyController<S>, title: string) {
+function main(controller: any, title: string) {
     const profileIds = controller.getProfileIds();
 
     const documentDefinition = new DmpDocumentDefinition(controller, profileIds[0]);

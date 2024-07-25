@@ -1,4 +1,3 @@
-import { PropertyController } from "../../PropertyController";
 import { Exporter, type ExporterID } from "../Exporter";
 
 export class RawExporter extends Exporter {
@@ -13,13 +12,13 @@ export class RawExporter extends Exporter {
                 icon: "pi pi-code",
                 command: (controller, title) => {
                     this._downloadRaw(controller, title);
-                },
-            },
+                }
+            }
         });
     }
 
     // https://www.raymondcamden.com/2020/12/15/vue-quick-shot-downloading-data-as-a-file
-    private _downloadRaw(controller: PropertyController<any>, title: string) {
+    private _downloadRaw(controller: any, title: string) {
         const filename = `DMP_${title.replaceAll(" ", "_")}_${new Date().toLocaleDateString()}.json`;
         const text = JSON.stringify(controller.exportData());
 

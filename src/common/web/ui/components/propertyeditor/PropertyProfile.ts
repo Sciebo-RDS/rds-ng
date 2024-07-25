@@ -1,42 +1,64 @@
 import { type Component } from "vue";
 
-import StringForm from "./propertyforms/StringForm.vue";
-import NumberForm from "./propertyforms/NumberForm.vue";
-import TextAreaForm from "./propertyforms/TextAreaForm.vue";
-import MultiSelectForm from "./propertyforms/MultiSelectForm.vue";
-import StringListForm from "./propertyforms/StringListForm.vue";
-import RadioButtonForm from "./propertyforms/RadioButtonForm.vue";
+import CheckBoxForm from "./propertyforms/CheckBoxForm.vue";
 import DateForm from "./propertyforms/DateForm.vue";
 import DropDownForm from "./propertyforms/DropdownForm.vue";
-import CheckBoxForm from "./propertyforms/CheckBoxForm.vue";
+import MultiSelectForm from "./propertyforms/MultiSelectForm.vue";
+import NumberForm from "./propertyforms/NumberForm.vue";
+import RadioButtonForm from "./propertyforms/RadioButtonForm.vue";
+import StringForm from "./propertyforms/StringForm.vue";
+import StringListForm from "./propertyforms/StringListForm.vue";
+import TextAreaForm from "./propertyforms/TextAreaForm.vue";
 
-export type ProfileID = { name: string; version: string };
+/**
+ * Represents a profile ID. usually [profilename, profileversion]
+ * @typedef {Array<string, string>} ProfileID
+ */
+export type ProfileID = [string, string];
 
-export type PropertyProfile = {
-    profile_id: ProfileID;
-    categories: PropertyCategory[];
-};
+/**
+ * Represents the metadata of a profile.
+ */
+class ProfileMetadata {
+    /**
+     * Creates an instance of `ProfileMetadata`.
+     * @param id - The ID of the profile.
+     * @param name - The name of the profile.
+     * @param description - The description of the profile.
+     * @param version - The version of the profile.
+     */
+    public constructor(
+        public readonly id: ProfileID,
+        public readonly name: string,
+        public readonly description: string,
+        public readonly version: string
+    ) {}
+}
 
-export type PropertyCategory = {
-    id: string;
-    name: string;
-    description?: string;
-    properties: (Property | SelectionProperty)[];
-};
+// make inputs its own class, distinguish inputs that have options
+export class ProfileClass {
+    public constructor(
+        public readonly id: string,
+        public readonly label: string,
+        public readonly description?: string,
+        public readonly labelTemplate?: string,
+        public readonly required?: boolean,
+        public readonly multiple?: boolean,
+        public readonly example?: string,
+        public readonly type?: string[],
+        public readonly input?: { id: string; label: string; type: string; description?: string; example?: string; options?: string[] }[]
+    ) {}
+}
 
-export type Property = {
-    id: string;
-    name: string;
-    type: PropertyDataType;
-    description: string;
-    required?: boolean;
-    showAlways?: boolean;
-    filter?: string[];
-};
+export class ProfileLayoutClass extends ProfileClass {}
 
-type SelectionProperty = Property & {
-    options: string[];
-};
+export class Profile {
+    public constructor(
+        public readonly metadata: ProfileMetadata,
+        public readonly layout: ProfileLayoutClass[],
+        public readonly classes?: { [key: string]: ProfileClass }
+    ) {}
+}
 
 export enum PropertyDataType {
     STRING = "string",
@@ -49,7 +71,7 @@ export enum PropertyDataType {
     RADIOBUTTONS = "radiobuttons",
     DATE = "date",
     DROPDOWN = "dropdown",
-    CHECKBOX = "checkbox",
+    CHECKBOX = "checkbox"
 }
 
 export const propertyDataForms: { [key in PropertyDataType]?: Component } = {
@@ -61,5 +83,5 @@ export const propertyDataForms: { [key in PropertyDataType]?: Component } = {
     [PropertyDataType.RADIOBUTTONS]: RadioButtonForm,
     [PropertyDataType.DATE]: DateForm,
     [PropertyDataType.DROPDOWN]: DropDownForm,
-    [PropertyDataType.CHECKBOX]: CheckBoxForm,
+    [PropertyDataType.CHECKBOX]: CheckBoxForm
 };

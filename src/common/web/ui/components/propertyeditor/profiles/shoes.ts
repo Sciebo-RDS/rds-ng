@@ -1,77 +1,38 @@
-import { type Profile } from "./PropertyProfile";
+import { type Profile } from "../PropertyProfile";
 
-export const testProfile: Profile = {
+export const shoes: Profile = {
     metadata: {
-        id: ["TestProfile", "1.1"],
-        name: "Test Profile",
-        version: "1.1",
-        description: "Test stuff"
+        id: ["Shoes", "2024.2.21"],
+        name: "Shoes",
+        version: "2024.2.21",
+        description: "A Profile for individual resources."
     },
     layout: [
         {
-            id: "Author",
-            label: "Author",
-            description: "The Authors name",
-            input: [{ id: "Author", label: "Authorname", type: "string" }],
-            type: ["creator"],
-            required: true,
-            multiple: true
-        },
-        {
-            id: "NumberOfAuthors",
-            label: "Number of Authors",
-            description:
-                "This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! This is a very looooooooong description that should be wrapped! ",
-            required: true,
-            input: [{ id: "NumberOfAuthors", label: "Number of Authors", type: "number" }]
-        },
-        {
-            id: "SomeMultiselect",
-            label: "Some Multiselect",
-            description: "Here are some options",
-            input: [{ id: "SomeMultiselect", label: "Some Multiselect", type: "multiselect", options: ["asd", "something else", "another thing"] }],
-            required: true
-        },
-        {
-            id: "Radio",
-            label: "Some Radio Buttons",
-            description: "Here are some Radio Buttons",
-            input: [{ id: "Radio", label: "Some Radio Buttons", type: "radiobuttons", options: ["asd", "something else", "another thing"] }],
-            required: true
-        },
-        {
-            id: "checkbox",
-            label: "A checkbox",
-            description: "Here are some Radio Buttons",
-            input: [{ id: "checkbox", label: "A checkbox", type: "checkbox", options: ["asd", "something else", "another thing"] }],
-            required: true
-        },
-        {
-            id: "number",
-            label: "Number",
-            description: "The number of authors",
-            input: [{ id: "number", label: "Number", type: "number" }],
-            required: true
-        },
-        {
-            id: "authors",
-            label: "Authors",
-            description: "The Authors name",
-            input: [{ id: "authors", label: "Authors", type: "textarea" }],
-            required: true
-        },
-        {
-            id: "authorslist",
-            label: "Authors list",
-            description: "Comma separated list of authors",
-            input: [{ id: "authorslist", label: "Authors list", type: "stringlist" }],
-            required: true
-        },
-        {
-            id: "publishdate",
-            label: "Publishing date",
-            description: "When was this made publicly available?",
-            input: [{ id: "publishdate", label: "Publishing date", type: "date" }],
+            id: "Shoe",
+            label: "Shoe",
+            description: "Shoe descriptions",
+            input: [
+                {
+                    id: "Name",
+                    label: "Name",
+                    type: "string",
+                    description: "The name of the shoes."
+                },
+                {
+                    id: "ShoeType",
+                    label: "Type",
+                    type: "dropdown",
+                    description: "The type of the shoes.",
+                    options: ["nice shoes", "fancy shoes", "shoey shoes"]
+                },
+                {
+                    id: "Description",
+                    label: "Description",
+                    type: "textarea",
+                    description: "The shoes' description."
+                }
+            ],
             required: true
         },
         {
@@ -106,19 +67,19 @@ export const testProfile: Profile = {
             label: "Name Identifier",
             description: "Uniquely identifies an individual or legal entity, according to various schemes.",
             example: "Jane Doe",
-            labelTemplate: "${nameIdentifier} (${nameIdentifierScheme})",
+            labelTemplate: "${nameIdentifier}",
             input: [
                 {
                     id: "nameIdentifier",
                     label: "Name Identifier",
-                    type: "string"
+                    type: "string",
+                    description: "Uniquely identifies an individual or legal entity, according to various schemes."
                 },
                 {
                     id: "nameIdentifierScheme",
                     label: "Name Identifier Scheme",
                     type: "string",
-                    description: "The name of the name identifier scheme.",
-                    example: "ORCID"
+                    description: "The name of the name identifier scheme."
                 },
                 {
                     id: "schemeURI",

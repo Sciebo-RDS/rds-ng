@@ -4,6 +4,7 @@ import Column from "primevue/column";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
+import type { TreeNode } from "primevue/treenode";
 import TreeTable from "primevue/treetable";
 import { onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
 
@@ -48,7 +49,7 @@ function refresh(): void {
 function expandAll(): void {
     if (data!.value) {
         const allResources: Record<string, boolean> = {};
-        flattenResourcesTreeNodes(data!.value).forEach((resource) => (allResources[resource] = true));
+        flattenResourcesTreeNodes(data!.value as TreeNode[]).forEach((resource) => (allResources[resource] = true));
         expandedNodes.value = allResources;
     }
 }
@@ -66,7 +67,7 @@ watch(selectedNodes, () => {
 
 <template>
     <TreeTable
-        :value="data"
+        :value="data as TreeNode[]"
         selection-mode="multiple"
         meta-key-selection
         v-model:selection-keys="selectedNodes"

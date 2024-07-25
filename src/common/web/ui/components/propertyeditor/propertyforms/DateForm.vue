@@ -1,30 +1,26 @@
 <script setup lang="ts">
-// @ts-nocheck
-import { ref, inject } from "vue";
 import Calendar from "primevue/calendar";
+import { computed, type PropType } from "vue";
 
-import { PropertyController } from "../PropertyController";
-import { PropertySet } from "../PropertySet";
+import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
 
-const props = defineProps(["property"]);
+const props = defineProps({
+    propertyObjectId: { type: String, required: true },
+    inputId: { type: String, required: true },
+    profileId: { type: Object as PropType<ProfileID[]>, required: false },
+    projectObjects: { type: ProjectObjectStore, required: true }
+});
 
-const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
-const categoryId = inject("categoryId") as string;
-const profileId = inject("profileId") as ProfileID;
-
-const value = ref(controller.getValue(profileId, categoryId, props.property.id));
-
-let debounce: number | null = null;
-
-const handleInput = (eValue: string) => {
-    const ms: number = new Date(eValue).getTime();
-    debounce = controller.setValue(profileId, debounce, categoryId, props.property.id, ms);
-};
+const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
 </script>
 
 <template>
-    <div class="">
-        <Calendar @update:modelValue="handleInput" dateFormat="yy" v-model="value" class="w-full" view="year" />
+    <div>
+        <Calendar
+            @date-select="(date: Date) => projectObjects.update(profileId || [], inputId, propertyObjectId, date)"
+            v-model="value[inputId]"
+            class="w-full"
+        />
     </div>
 </template>

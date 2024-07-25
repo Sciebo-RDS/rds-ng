@@ -1,48 +1,45 @@
 <script setup lang="ts">
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
+import Image from "primevue/image";
+import InputSwitch from "primevue/inputswitch";
+import Panel from "primevue/panel";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import { nextTick, reactive, ref, toRefs, watch, computed, type PropType } from "vue";
+import { computed, nextTick, reactive, ref, toRefs, unref, watch, type PropType } from "vue";
 
-import logging from "@common/core/logging/Logging";
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { Project } from "@common/data/entities/project/Project";
-import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
-import { Resource } from "@common/data/entities/resource/Resource";
+import { ResourcesMetadataFeature, type ResourcesMetadata } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { resources } from "@common/ui/components/propertyeditor/profiles/resources";
-import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
-import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
-import { extractPersistedSetFromArray, intersectPersistedSets } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import { deepClone } from "@common/utils/ObjectUtils";
+
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
-import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
+import previewImage from "@assets/img/preview.png";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
 const resourcesNodes = ref<Object[]>([]);
 const selectedNodes = ref({} as Record<string, boolean>);
-const selectedData = ref([] as Array<Resource>);
 const resourcesRefreshing = ref(false);
 const resourcesError = ref("");
-
-const resourcesProfile = new PropertySet(resources);
-const resourcesData = ref<PersistedSet[]>([]);
-const controller = reactive(new MetadataController(resourcesProfile, [], []));
 
 const showPreview = ref(true);
 
@@ -77,43 +74,57 @@ const propertyHeader = computed(() => {
     }
 });
 
-watch(resourcesData, (metadata) => {
-    if (blockResourcesUpdate) {
-        return;
-    }
+const projectProfiles = reactive(new PropertyProfileStore());
+const debounce = makeDebounce(500);
+const resourcesData = ref();
 
-    const resourcesSet = extractPersistedSetFromArray(metadata, resources.profile_id);
-    const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
+watch(
+    () => resourcesData,
+    (metadata) => {
+        if (blockResourcesUpdate) {
+            return;
+        }
 
-    const selectedPaths = Object.keys(selectedNodes.value);
-    selectedPaths.forEach((path) => {
-        updatedData[path] = resourcesSet;
-    });
+        debounce(() => {
+            const resourcesSet = unref(metadata);
+            const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
 
-    const action = new UpdateProjectFeaturesAction(comp);
-    action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
-    action.execute();
+            const selectedPaths = Object.keys(selectedNodes.value);
+            selectedPaths.forEach((path) => {
+                updatedData[path] = resourcesSet;
+            });
+            const action = new UpdateProjectFeaturesAction(comp);
+            console.log(resourcesSet);
+            action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
+            action.execute();
 
-    // TODO: A hack to update the local data; nedds to be changed later
-    // @ts-ignore
-    project!.value.features.resources_metadata.resources_metadata = updatedData;
-});
+            // TODO: A hack to update the local data; nedds to be changed later
+            // @ts-ignore
+            project!.value.features.resources_metadata.resources_metadata = updatedData;
+        });
+    },
+    { deep: true }
+);
 
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
     blockResourcesUpdate = true;
 
+    /* const persistedSets: PersistedSet[] = []; */
     const selectedPaths = Object.keys(nodes);
-    const persistedSets: PersistedSet[] = [];
     const metadata = project!.value.features.resources_metadata.resources_metadata;
-    selectedPaths.forEach((path) => {
+    /* selectedPaths.forEach((path) => {
         persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
-    });
+    }); */
 
-    resourcesData.value = [intersectPersistedSets(persistedSets, resources.profile_id)];
+    resourcesData.value = metadata[selectedPaths[0]] || [];
 
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));
 });
+
+projectProfiles.mountProfile(shoes as Profile);
+const showObjects = ref(false);
+const showIndex = ref(true);
 </script>
 
 <template>
@@ -124,7 +135,6 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                     <ResourcesTreeTable
                         :data="resourcesNodes"
                         v-model:selected-nodes="selectedNodes"
-                        v-model:selected-data="selectedData"
                         class="p-treetable-sm text-sm border border-b-0 h-full"
                         refreshable
                         @refresh="refreshResources"
@@ -137,7 +147,8 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                             <span class="truncate mx-1" :title="Object.keys(selectedNodes).sort().join('\n')"> {{ propertyHeader }}</span>
                             <span>
                                 <Button
-                                    :icon="'material-icons-outlined ' + (showPreview ? 'mi-visibility' : 'mi-visibility-off')"
+                                    v-if="Object.keys(selectedNodes).length == 1"
+                                    icon="material-icons-outlined mi-visibility"
                                     title="Toggle preview"
                                     size="small"
                                     :severity="showPreview ? '' : 'secondary'"
@@ -148,10 +159,42 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
                             </span>
                         </div>
                         <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
-                            <div v-if="showPreview" class="mt-5">
-                                <ResourcesPreview :resources="selectedData" />
+                            <div v-if="Object.keys(selectedNodes).length > 1" class="w-full">
+                                <Panel class="mx-5 mt-5">
+                                    <template #header>
+                                        <span class="flex w-full mx-2 gap-2">
+                                            <span class="grow font-bold">
+                                                <i class="pi pi-exclamation-circle mr-2" /> Changes will apply to
+                                                {{ Object.keys(selectedNodes).length }} objects.
+                                            </span>
+                                            <label for="switch1">Show Objects</label> <InputSwitch v-model="showObjects" />
+                                        </span>
+                                    </template>
+                                    <div v-if="showObjects">
+                                        <div class="m-2 mt-0 flex gap-2 flex-row-reverse">
+                                            <InputSwitch v-model="showIndex" input-id="switch1" /> <label for="switch1">Show Index</label>
+                                        </div>
+                                        <div class="m-2 p-2 rounded bg-gray-100">
+                                            <p
+                                                v-for="[i, path] of Object.keys(selectedNodes).sort().entries()"
+                                                class="m-0 font-mono text-ellipsis overflow-hidden text-nowrap"
+                                                :title="path"
+                                            >
+                                                {{ showIndex ? i + 1 : null }} {{ path }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </Panel>
                             </div>
-                            <PropertyEditor v-model="resourcesData" :controller="controller as MetadataController" :logging="logging" oneCol class="w-full" />
+                            <div v-else-if="showPreview" class="mt-5">
+                                <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
+                            </div>
+                            <PropertyEditor
+                                v-model="resourcesData"
+                                v-model:shared-objects="project!.features.metadata.shared_objects"
+                                :projectProfiles="projectProfiles as PropertyProfileStore"
+                                class="w-full"
+                            />
                         </div>
                         <div v-else class="r-centered-grid italic pt-8">Select one or more file objects on the left to edit their metadata.</div>
                     </div>
