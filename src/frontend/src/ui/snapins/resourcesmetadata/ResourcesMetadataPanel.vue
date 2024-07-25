@@ -1,31 +1,29 @@
 <script setup lang="ts">
 import BlockUI from "primevue/blockui";
 import Button from "primevue/button";
-import Image from "primevue/image";
 import InputSwitch from "primevue/inputswitch";
 import Panel from "primevue/panel";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import { computed, nextTick, reactive, ref, toRefs, unref, watch, type PropType } from "vue";
+import { computed, nextTick, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
+import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
-import { ResourcesMetadataFeature, type ResourcesMetadata } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import type { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
+import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
-import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
-import { deepClone } from "@common/utils/ObjectUtils";
-
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
+import { deepClone } from "@common/utils/ObjectUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
-
-import previewImage from "@assets/img/preview.png";
+import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -38,10 +36,27 @@ const { project } = toRefs(props);
 
 const resourcesNodes = ref<Object[]>([]);
 const selectedNodes = ref({} as Record<string, boolean>);
+const selectedData = ref([] as Array<Resource>);
 const resourcesRefreshing = ref(false);
 const resourcesError = ref("");
 
 const showPreview = ref(true);
+const showObjects = ref(true);
+
+const propertyHeader = computed(() => {
+    switch (Object.keys(selectedNodes.value).length) {
+        case 0:
+            return "Object Metadata";
+        case 1:
+            return Object.keys(selectedNodes.value)[0];
+        default:
+            return `${Object.keys(selectedNodes.value).length} objects selected`;
+    }
+});
+
+const projectProfiles = reactive(new PropertyProfileStore());
+const debounce = makeDebounce(500);
+const resourcesData = ref();
 
 let blockResourcesUpdate = false;
 
@@ -62,21 +77,6 @@ function refreshResources(): void {
     });
     action.execute();
 }
-
-const propertyHeader = computed(() => {
-    switch (Object.keys(selectedNodes.value).length) {
-        case 0:
-            return "Object Metadata";
-        case 1:
-            return Object.keys(selectedNodes.value)[0];
-        default:
-            return `${Object.keys(selectedNodes.value).length} objects selected`;
-    }
-});
-
-const projectProfiles = reactive(new PropertyProfileStore());
-const debounce = makeDebounce(500);
-const resourcesData = ref();
 
 watch(
     () => resourcesData,
@@ -123,8 +123,6 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
 });
 
 projectProfiles.mountProfile(shoes as Profile);
-const showObjects = ref(false);
-const showIndex = ref(true);
 </script>
 
 <template>
@@ -135,6 +133,7 @@ const showIndex = ref(true);
                     <ResourcesTreeTable
                         :data="resourcesNodes"
                         v-model:selected-nodes="selectedNodes"
+                        v-model:selected-data="selectedData"
                         class="p-treetable-sm text-sm border border-b-0 h-full"
                         refreshable
                         @refresh="refreshResources"
@@ -160,34 +159,39 @@ const showIndex = ref(true);
                         </div>
                         <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
                             <div v-if="Object.keys(selectedNodes).length > 1" class="w-full">
-                                <Panel class="mx-5 mt-5">
+                                <Panel
+                                    class="mx-5 mt-5"
+                                    :pt="{
+                                        toggleableContent: () => {
+                                            return showObjects ? '' : 'h-0';
+                                        }
+                                    }"
+                                >
                                     <template #header>
-                                        <span class="flex w-full mx-2 gap-2">
+                                        <span class="flex w-full gap-2">
                                             <span class="grow font-bold">
-                                                <i class="pi pi-exclamation-circle mr-2" /> Changes will apply to
+                                                <i class="pi pi-exclamation-circle mr-2" /> Changes will be applied to
                                                 {{ Object.keys(selectedNodes).length }} objects.
                                             </span>
-                                            <label for="switch1">Show Objects</label> <InputSwitch v-model="showObjects" />
+                                            <label for="switch1">Show objects</label> <InputSwitch v-model="showObjects" />
                                         </span>
                                     </template>
                                     <div v-if="showObjects">
-                                        <div class="m-2 mt-0 flex gap-2 flex-row-reverse">
-                                            <InputSwitch v-model="showIndex" input-id="switch1" /> <label for="switch1">Show Index</label>
-                                        </div>
-                                        <div class="m-2 p-2 rounded bg-gray-100">
+                                        <div class="p-2 rounded bg-gray-100">
                                             <p
                                                 v-for="[i, path] of Object.keys(selectedNodes).sort().entries()"
                                                 class="m-0 font-mono text-ellipsis overflow-hidden text-nowrap"
                                                 :title="path"
                                             >
-                                                {{ showIndex ? i + 1 : null }} {{ path }}
+                                                {{ path }}
                                             </p>
                                         </div>
                                     </div>
+                                    <div v-else class="h-0" />
                                 </Panel>
                             </div>
                             <div v-else-if="showPreview" class="mt-5">
-                                <Image :src="previewImage" alt="Preview" title="This is just a placeholder..." class="border rounded-2xl" width="200" preview />
+                                <ResourcesPreview :resources="selectedData" />
                             </div>
                             <PropertyEditor
                                 v-model="resourcesData"
