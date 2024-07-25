@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { type PropType, reactive, toRefs, watch } from "vue";
+import { reactive, toRefs, watch, type PropType } from "vue";
 
-import logging from "@common/core/logging/Logging";
+import { DataManagementPlanFeature, type DataManagementPlan } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
-import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
-import { DmpController } from "@common/ui/components/propertyeditor/PropertyController";
-import { PropertySet, PersistedSet } from "@common/ui/components/propertyeditor/PropertySet";
+import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
@@ -18,36 +18,41 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
 // TODO: Testing data only
 const exporters: ExporterID[] = ["pdf", "raw"];
 
-const dmpProfile = new PropertySet(dfgDmp);
-const controller = reactive(new DmpController(dmpProfile));
+const debounce = makeDebounce(500);
+
+const projectProfiles = reactive(new PropertyProfileStore());
 
 watch(
     () => project!.value.features.dmp.plan,
-    (dmpSet: PersistedSet[]) => {
-        const action = new UpdateProjectFeaturesAction(comp);
-        action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
-        action.execute();
+    (dmpSet) => {
+        debounce(() => {
+            const action = new UpdateProjectFeaturesAction(comp);
+            action.prepare(project!.value, [new DataManagementPlanFeature(dmpSet as DataManagementPlan)]);
+            action.execute();
+        });
     },
+    { deep: true }
 );
+
+projectProfiles.mountProfile(dfgDmp as Profile);
 </script>
 
 <template>
-    <PropertyEditor
-        v-model="project!.features.dmp.plan as PersistedSet[]"
-        :controller="controller as DmpController"
-        :logging="logging"
-        :exporters="exporters"
-        :project="project"
-        oneCol
-    />
+    <div>
+        <PropertyEditor
+            v-model="project!.features.dmp.plan"
+            v-model:shared-objects="project!.features.metadata.shared_objects"
+            :projectProfiles="projectProfiles as PropertyProfileStore"
+        />
+    </div>
 </template>
 
 <style scoped lang="scss"></style>

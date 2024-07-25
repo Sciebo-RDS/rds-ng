@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { type PropType, reactive, toRefs, watch } from "vue";
+import { reactive, toRefs, watch, type PropType } from "vue";
 
-import logging from "@common/core/logging/Logging";
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
-import { testProfile } from "@common/ui/components/propertyeditor/DummyData";
+import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
-import { MetadataController } from "@common/ui/components/propertyeditor/PropertyController";
-import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
-import { PersistedSet, PropertySet } from "@common/ui/components/propertyeditor/PropertySet";
+
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 
@@ -23,17 +22,20 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Object as PropType<Project>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 const consStore = useConnectorsStore();
 const userStore = useUserStore();
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
+const projectProfiles = reactive(new PropertyProfileStore());
 
+projectProfiles.mountProfile(dataCite as Profile);
 // TODO: Testing data only
-const mergeSets: PropertySet[] = [];
+
+// TODO fix auto merging connector profiles
 connectors.value.forEach((connector) => {
     if (
         !userSettings.value.connector_instances.find((instance) => {
@@ -51,34 +53,37 @@ connectors.value.forEach((connector) => {
     }
 
     const metadataProfile = connector.metadata_profile;
-    if (metadataProfile.hasOwnProperty("profile_id")) {
-        mergeSets.push(new PropertySet(connector.metadata_profile as PropertyProfile));
+    if (metadataProfile.hasOwnProperty("metadata")) {
+        try {
+            projectProfiles.mountProfile(connector.metadata_profile as Profile);
+        } catch (e) {
+            console.error(e);
+        }
     }
 });
 
-const baseSet = new PropertySet(dataCite);
-const profiles: PropertySet[] = [new PropertySet(testProfile)];
-const controller = reactive(new MetadataController(baseSet, mergeSets, profiles));
+const debounce = makeDebounce(500);
 
 watch(
     () => project!.value.features.metadata.metadata,
     (metadata) => {
-        const action = new UpdateProjectFeaturesAction(comp);
-        action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata)]);
-        action.execute();
+        console.log("update");
+        debounce(() => {
+            const action = new UpdateProjectFeaturesAction(comp);
+            action.prepare(project!.value, [new MetadataFeature(metadata as ProjectMetadata, project!.value.features.metadata.shared_objects)]);
+            action.execute();
+        });
     },
+    { deep: true }
 );
 </script>
 
 <template>
     <div>
         <PropertyEditor
-            v-model="project!.features.metadata.metadata as PersistedSet[]"
-            :controller="controller as MetadataController"
-            :logging="logging"
-            twoCol
+            v-model="project!.features.metadata.metadata"
+            v-model:shared-objects="project!.features.metadata.shared_objects"
+            :projectProfiles="projectProfiles as PropertyProfileStore"
         />
     </div>
 </template>
-
-<style scoped lang="scss"></style>

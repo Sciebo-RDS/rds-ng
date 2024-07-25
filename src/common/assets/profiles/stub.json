@@ -1,17 +1,20 @@
 {
-    "profile_id": {
-        "name": "Stub",
-        "version": "1.0.0"
+    "metadata": {
+        "id": ["Stub", "1.0.0"],
+        "name": "stub",
+        "version": "1.0.0",
+        "description": "Stubby stuff"
     },
-    "categories": [
+    "layout": [
         {
             "id": "STUB",
-            "name": "Stub",
+            "label": "Stub",
             "description": "Stubby stuff",
-            "properties": [
+            "required": true,
+            "input": [
                 {
                     "id": "Stubstuff",
-                    "name": "Stub value",
+                    "label": "Stub value",
                     "type": "string",
                     "description": "Stubby stuffy value"
                 }

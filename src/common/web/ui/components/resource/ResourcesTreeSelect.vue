@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TreeNode } from "primevue/treenode";
 import TreeSelect from "primevue/treeselect";
 import { type PropType, ref, toRefs, watch } from "vue";
 
@@ -52,7 +53,7 @@ watch(model, (newPath) => {
 
 <template>
     <TreeSelect
-        :options="options"
+        :options="options as TreeNode[]"
         v-model="selectedResources"
         selection-mode="single"
         :placeholder="placeholder"

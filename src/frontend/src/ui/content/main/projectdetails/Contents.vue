@@ -1,18 +1,24 @@
 <script setup lang="ts">
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, defineAsyncComponent, toRefs } from "vue";
+import { computed, defineAsyncComponent, reactive, toRefs, watch } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
+import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
+import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
+import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 
+const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
         type: Project,
-        required: true,
-    },
+        required: true
+    }
 });
 const { project } = toRefs(props);
 
@@ -26,6 +32,23 @@ const panels = computed(() => {
         return { title: snapIn.options.tabPanel!.label, component: defineAsyncComponent(snapIn.options.tabPanel!.loader) };
     });
 });
+
+const sharedObjectStore = reactive(new ProjectObjectStore());
+
+const debounce = makeDebounce(500);
+watch(
+    () => project!.value.features.metadata.shared_objects,
+    (shared_objects) => {
+        debounce(() => {
+            const action = new UpdateProjectFeaturesAction(comp);
+            action.prepare(project!.value, [
+                new MetadataFeature(project!.value.features.metadata.metadata as ProjectMetadata, shared_objects as ProjectMetadata)
+            ]);
+            action.execute();
+        });
+    },
+    { deep: true }
+);
 </script>
 
 <template>
@@ -34,7 +57,7 @@ const panels = computed(() => {
             class="h-full"
             :pt="{
                 nav: 'tab-view',
-                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full', // TODO: Hacky height
+                panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full' // TODO: Hacky height
             }"
         >
             <TabPanel
@@ -44,10 +67,10 @@ const panels = computed(() => {
                 :pt="{
                     header: 'tab-view-panel',
                     headerAction: 'tab-view-panel-action',
-                    content: 'h-full',
+                    content: 'h-full'
                 }"
             >
-                <component :is="panel.component" :project="project" />
+                <component :is="panel.component" :project="project" :sharedObjectStore="sharedObjectStore" />
             </TabPanel>
         </TabView>
     </div>

@@ -1,39 +1,34 @@
 <script setup lang="ts">
-import { ref, inject, computed } from "vue";
 import Dropdown from "primevue/dropdown";
+import { computed, type PropType } from "vue";
 
-import { PropertyController } from "../PropertyController";
-import { PropertySet } from "../PropertySet";
+import { ProjectObjectStore } from "../ProjectObjectStore";
 import { type ProfileID } from "../PropertyProfile";
 
-const props = defineProps(["property"]);
+const props = defineProps({
+    propertyObjectId: { type: String, required: true },
+    inputId: { type: String, required: true },
+    profileId: { type: Object as PropType<ProfileID[]>, required: false },
+    projectObjects: { type: ProjectObjectStore, required: true },
+    inputOptions: { type: Array as PropType<string[]>, required: true }
+});
 
-const controller = inject("controller") as PropertyController<PropertySet | PropertySet[]>;
-const categoryId = inject("categoryId") as string;
-const profileId = inject("profileId") as ProfileID;
-
-const value = computed(() => controller.getValue(profileId, categoryId, props.property.id));
-
-let debounce: number | null = null;
-
-const handleInput = (e: any) => {
-    debounce = controller.setValue(profileId, debounce, categoryId, props.property.id, e.value);
-};
+const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.value as Record<string, any>);
 </script>
 
 <template>
     <div class="flex">
         <Dropdown
-            :modelValue="value"
-            @change="handleInput"
-            :options="property.options"
+            :modelValue="value[inputId]"
+            @update:modelValue="(value: String[]) => projectObjects.update(profileId || [], inputId, propertyObjectId, value)"
+            :options="inputOptions"
             class="grow"
             placeholder="Select"
             filter
             :pt="{
                 panel: {
-                    class: 'w-0',
-                },
+                    class: 'w-0'
+                }
             }"
         />
     </div>
