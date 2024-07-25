@@ -64,8 +64,8 @@ export function intersectObjects<ObjType extends Record<any, any> = object>(obj1
         return obj1;
     }
 
-    // @ts-ignore
     return Object.assign(
+        // @ts-ignore
         ...Object.keys(obj1).map((k) => {
             let temp;
             if (!(k in obj2)) {
@@ -79,7 +79,7 @@ export function intersectObjects<ObjType extends Record<any, any> = object>(obj1
                 return { [k]: obj1[k] } as ObjType;
             }
             return {} as ObjType;
-        }),
+        })
     ) as ObjType;
 }
 
