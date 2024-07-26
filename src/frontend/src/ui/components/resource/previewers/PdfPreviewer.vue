@@ -33,7 +33,7 @@ const previewVisible = ref(false);
 
 <template>
     <div class="r-centered-grid content-center max-w-inherit grid group flex place-items-center" @click="() => (!!pdfData ? (previewVisible = true) : '')">
-        <div v-if="!!pdfData" class="group-hover:brightness-[35%] group-hover:grayscale col-start-1 row-start-1 transition duration-150">
+        <div v-if="!!pdfData" class="group-hover:brightness-[35%] group-hover:grayscale col-start-1 row-start-1 transition duration-200">
             <object :data="pdfData" type="application/pdf" class="max-w-full" style="pointer-events: none"></object>
         </div>
         <div v-if="!!pdfData" class="max-w-full col-start-1 row-start-1 hidden group-hover:inline">
