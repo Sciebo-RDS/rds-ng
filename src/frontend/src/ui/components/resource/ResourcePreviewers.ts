@@ -2,6 +2,7 @@ import { AudioPreviewer } from "./previewers/AudioPreviewer";
 import { ImagePreviewer } from "./previewers/ImagePreviewer";
 import { PdfPreviewer } from "./previewers/PdfPreviewer";
 import { TextPreviewer } from "./previewers/TextPreviewer";
+import { VideoPreviewer } from "./previewers/VideoPreviewer";
 import { ResourcePreviewersCatalog } from "./ResourcePreviewersCatalog";
 
 /**
@@ -15,4 +16,5 @@ export function registerResourcePreviewers(): void {
     ResourcePreviewersCatalog.registerItem("pdfs", new PdfPreviewer());
     ResourcePreviewersCatalog.registerItem("text", new TextPreviewer());
     ResourcePreviewersCatalog.registerItem("audio", new AudioPreviewer());
+    ResourcePreviewersCatalog.registerItem("video", new VideoPreviewer());
 }
