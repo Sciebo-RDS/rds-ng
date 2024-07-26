@@ -1,4 +1,5 @@
 import { ImagePreviewer } from "./previewers/ImagePreviewer";
+import { PdfPreviewer } from "./previewers/PdfPreviewer";
 import { ResourcePreviewersCatalog } from "./ResourcePreviewersCatalog";
 
 /**
@@ -9,4 +10,5 @@ import { ResourcePreviewersCatalog } from "./ResourcePreviewersCatalog";
 export function registerResourcePreviewers(): void {
     // New previewers go here
     ResourcePreviewersCatalog.registerItem("images", new ImagePreviewer());
+    ResourcePreviewersCatalog.registerItem("pdfs", new PdfPreviewer());
 }

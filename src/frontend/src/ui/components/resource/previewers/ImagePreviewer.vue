@@ -12,8 +12,8 @@ const comp = FrontendComponent.inject();
 const props = defineProps({
     resource: {
         type: Object as PropType<Resource>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { resource } = toRefs(props);
 
@@ -37,7 +37,11 @@ onMounted(() => {
             :title="resource.filename"
             preview
             :pt="{ image: 'max-w-[calc(12rem-0.5rem)] max-h-[calc(12rem-0.5rem)]' }"
-        />
+        >
+            <template #indicatoricon>
+                <i class="pi pi-search"></i>
+            </template>
+        </Image>
         <Skeleton v-else title="Loading image..." class="!w-[calc(12rem-0.5rem)] !h-[calc(12rem-0.5rem)]"></Skeleton>
     </div>
 </template>
