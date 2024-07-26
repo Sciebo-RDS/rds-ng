@@ -1,3 +1,4 @@
+import { AudioPreviewer } from "./previewers/AudioPreviewer";
 import { ImagePreviewer } from "./previewers/ImagePreviewer";
 import { PdfPreviewer } from "./previewers/PdfPreviewer";
 import { TextPreviewer } from "./previewers/TextPreviewer";
@@ -13,4 +14,5 @@ export function registerResourcePreviewers(): void {
     ResourcePreviewersCatalog.registerItem("images", new ImagePreviewer());
     ResourcePreviewersCatalog.registerItem("pdfs", new PdfPreviewer());
     ResourcePreviewersCatalog.registerItem("text", new TextPreviewer());
+    ResourcePreviewersCatalog.registerItem("audio", new AudioPreviewer());
 }
