@@ -48,7 +48,7 @@ const previewVisible = ref(false);
                 <div class="fixed inset-0 flex justify-center items-center z-50 w-full flex flex-col">
                     <Button @click="previewVisible = false" class="absolute right-0 top-0" size="large" style="color: white" icon="pi pi-times" text></Button>
 
-                    <object :data="pdfData" type="application/pdf" class="w-[80%] h-full" @keydown.esc="previewVisible = false"></object>
+                    <object :data="pdfData" type="application/pdf" class="w-[80%] h-full"></object>
                 </div>
             </div>
         </Portal>

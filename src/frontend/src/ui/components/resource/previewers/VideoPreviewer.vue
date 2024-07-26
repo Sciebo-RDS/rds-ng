@@ -50,7 +50,7 @@ const previewVisible = ref(false);
                     <Button @click="previewVisible = false" class="absolute right-0 top-0" size="large" style="color: white" icon="pi pi-times" text></Button>
                     <div class="w-[80%] h-full bg-white flex flex-col divide-y-4 divide-slate-800/25" @click="(e) => e.stopPropagation()">
                         <div :innerText="resource.filename" class="text-xl text-center my-5 font-mono" />
-                        <video v-if="!!videoData" controls @click="() => (!!videoData ? (previewVisible = true) : '')">
+                        <video v-if="!!videoData" controls autoplay>
                             <source :src="videoData" :type="resource.mime_type" />
                         </video>
                     </div>
