@@ -30,14 +30,7 @@ onMounted(() => {
 
 <template>
     <div class="r-centered-grid content-center">
-        <Image
-            v-if="!!imageData"
-            :src="imageData"
-            alt="Preview"
-            :title="resource.filename"
-            preview
-            :pt="{ image: 'max-w-[calc(12rem-0.5rem)] max-h-[calc(12rem-0.5rem)]' }"
-        >
+        <Image v-if="!!imageData" :src="imageData" alt="Preview" :title="resource.filename" preview :pt="{ image: 'max-h-[calc(12rem-0.5rem)]' }">
             <template #indicatoricon>
                 <i class="pi pi-search"></i>
             </template>

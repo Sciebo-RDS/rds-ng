@@ -34,7 +34,13 @@ const previewVisible = ref(false);
 <template>
     <div class="r-centered-grid content-center max-w-inherit grid group flex place-items-center" @click="() => (!!videoData ? (previewVisible = true) : '')">
         <div v-if="!!videoData" class="group-hover:brightness-[35%] group-hover:grayscale col-start-1 row-start-1 transition duration-200">
-            <video :src="videoData" :type="resource.mime_type" v-if="!!videoData" @click="() => (!!videoData ? (previewVisible = true) : '')"></video>
+            <video
+                :src="videoData"
+                :type="resource.mime_type"
+                v-if="!!videoData"
+                @click="() => (!!videoData ? (previewVisible = true) : '')"
+                class="max-h-[calc(12rem-0.5rem)]"
+            ></video>
         </div>
         <div v-if="!!videoData" class="max-w-full col-start-1 row-start-1">
             <i class="pi pi-play-circle brightness-100" style="color: white"></i>

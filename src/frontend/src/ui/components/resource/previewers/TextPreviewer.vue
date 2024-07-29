@@ -34,7 +34,7 @@ const previewVisible = ref(false);
 <template>
     <div class="r-centered-grid content-center max-w-inherit grid group flex place-items-center" @click="() => (!!textData ? (previewVisible = true) : '')">
         <div v-if="!!textData" class="group-hover:opacity-[25%] col-start-1 row-start-1 transition duration-200">
-            <div v-if="!!textData" :innerText="textData" class="overflow-hidden !w-[calc(12rem-0.5rem)] !h-[calc(12rem-0.5rem)] truncate" />
+            <div v-if="!!textData" :innerText="textData" class="!h-[calc(12rem-0.5rem)] overflow-hidden" />
         </div>
         <div v-if="!!textData" class="max-w-full col-start-1 row-start-1 hidden group-hover:inline">
             <i class="pi pi-search" style="color: black"></i>
