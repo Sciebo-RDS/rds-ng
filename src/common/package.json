@@ -30,6 +30,7 @@
         "@rushstack/eslint-patch": "^1.10.3",
         "@tailwindcss/typography": "^0.5.13",
         "@tsconfig/node18": "^18.2.4",
+        "@types/markdown-it": "^14.1.2",
         "@types/node": "^20.14.12",
         "@vitejs/plugin-vue": "^4.5.1",
         "@vue/eslint-config-typescript": "^13.0.0",
