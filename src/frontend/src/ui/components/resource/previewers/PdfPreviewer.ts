@@ -8,7 +8,7 @@ import { defineAsyncComponent } from "vue";
  */
 export class PdfPreviewer extends ResourcePreviewer {
     public constructor() {
-        super("application/pdf");
+        super(["application/pdf"]);
     }
 
     public get component(): VueComponent {

@@ -8,7 +8,7 @@ import { defineAsyncComponent } from "vue";
  */
 export class MarkdownPreviewer extends ResourcePreviewer {
     public constructor() {
-        super("text/markdown");
+        super(["text/markdown"]);
     }
 
     public get component(): VueComponent {

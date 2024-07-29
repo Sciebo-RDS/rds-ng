@@ -8,7 +8,7 @@ import { defineAsyncComponent } from "vue";
  */
 export class ImagePreviewer extends ResourcePreviewer {
     public constructor() {
-        super("image/*");
+        super(["image/*"]);
     }
 
     public get component(): VueComponent {

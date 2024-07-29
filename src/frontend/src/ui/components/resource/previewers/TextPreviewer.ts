@@ -8,7 +8,7 @@ import { defineAsyncComponent } from "vue";
  */
 export class TextPreviewer extends ResourcePreviewer {
     public constructor() {
-        super("text/*");
+        super(["text/plain", "text/html", "text/css", "text/csv", "*/json", "text/calendar", "*/javascript", "text/tab-separated-values", "*/xml"]);
     }
 
     public get component(): VueComponent {

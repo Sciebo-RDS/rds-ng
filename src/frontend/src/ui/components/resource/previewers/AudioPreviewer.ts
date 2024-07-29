@@ -8,7 +8,7 @@ import { defineAsyncComponent } from "vue";
  */
 export class AudioPreviewer extends ResourcePreviewer {
     public constructor() {
-        super("audio/*");
+        super(["audio/*"]);
     }
 
     public get component(): VueComponent {
