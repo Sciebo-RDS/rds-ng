@@ -15,7 +15,7 @@ const { resources } = toRefs(props);
 
 const resource = computed(() => (unref(resources)!.length == 1 ? unref(resources)![0] : null));
 const resourcePreviewer = computed(() => {
-    if (!unref(resource)) {
+    if (!unref(resource) || unref(resource)!.size == 0) {
         return null;
     }
     const previewer = ResourcePreviewersCatalog.find(unref(resource)!.mime_type);
