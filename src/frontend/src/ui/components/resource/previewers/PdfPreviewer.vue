@@ -46,9 +46,11 @@ const previewVisible = ref(false);
                 <div class="fixed inset-0 bg-black bg-opacity-85 z-49"></div>
 
                 <div class="fixed inset-0 flex justify-center items-center z-50 w-full flex flex-col">
-                    <Button @click="previewVisible = false" class="absolute right-0 top-0" size="large" style="color: white" icon="pi pi-times" text></Button>
-
-                    <object :data="pdfData" :type="resource.mime_type" class="w-[80%] h-full"></object>
+                    <Button @click="previewVisible = false" class="absolute right-5 top-0" size="large" style="color: white" icon="pi pi-times" text></Button>
+                    <div class="w-[80%] h-full bg-white flex flex-col divide-y-4 divide-slate-800/25" @click="(e) => e.stopPropagation()">
+                        <div :innerText="resource.filename" class="text-xl text-center my-5 font-mono z-49" />
+                        <object :data="pdfData" :type="resource.mime_type" class="w-full h-full z-50"></object>
+                    </div>
                 </div>
             </div>
         </Portal>

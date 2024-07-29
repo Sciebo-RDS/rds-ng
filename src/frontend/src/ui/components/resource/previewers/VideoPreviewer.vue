@@ -53,7 +53,7 @@ const previewVisible = ref(false);
                 <div class="fixed inset-0 bg-black bg-opacity-85 z-50"></div>
 
                 <div class="fixed inset-0 flex justify-center items-center z-50 w-full flex-col">
-                    <Button @click="previewVisible = false" class="absolute right-0 top-0" size="large" style="color: white" icon="pi pi-times" text></Button>
+                    <Button @click="previewVisible = false" class="absolute right-5 top-0" size="large" style="color: white" icon="pi pi-times" text></Button>
                     <div class="w-[80%] h-full bg-white flex flex-col divide-y-4 divide-slate-800/25" @click="(e) => e.stopPropagation()">
                         <div :innerText="resource.filename" class="text-xl text-center my-5 font-mono" />
                         <video v-if="!!videoData" controls autoplay>
