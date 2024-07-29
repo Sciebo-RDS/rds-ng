@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useUserStore } from "@/data/stores/UserStore";
+import { useUserTools } from "@/ui/tools/user/UserTools";
 import { storeToRefs } from "pinia";
 import Listbox from "primevue/listbox";
 import { computed, type PropType, toRefs, unref } from "vue";
@@ -22,13 +23,15 @@ const userStore = useUserStore();
 const props = defineProps({
     userSettings: {
         type: Object as PropType<UserSettings>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { connectors } = storeToRefs(consStore);
 const { userAuthorizations } = storeToRefs(userStore);
 const { userSettings } = toRefs(props);
+
 const { editInstance, deleteInstance, requestInstanceAuthorization, revokeInstanceAuthorization } = useConnectorInstancesTools(comp);
+const { saveUserSettings } = useUserTools(comp);
 
 const groupedInstances = computed(() => groupConnectorInstances(unref(userSettings)!.connector_instances, unref(connectors)));
 const selectedInstance = defineModel<ConnectorInstanceID | undefined>();
@@ -38,14 +41,21 @@ function isInstanceSelected(instance: ConnectorInstance): boolean {
 }
 
 function onEditInstance(instance: ConnectorInstance): void {
-    editInstance(unref(userSettings)!.connector_instances, instance, findConnectorByID(unref(connectors), instance.connector_id));
+    editInstance(unref(userSettings)!.connector_instances, instance, findConnectorByID(unref(connectors), instance.connector_id)).then(() => {
+        saveUserSettings(unref(userSettings)!);
+    });
+}
+
+function onDeleteInstance(instance: ConnectorInstance) {
+    deleteInstance(unref(userSettings)!.connector_instances, instance);
+    saveUserSettings(unref(userSettings)!);
 }
 
 function onDeleteKey() {
     if (unref(selectedInstance)) {
         const instance = findConnectorInstanceByID(unref(userSettings)!.connector_instances, unref(selectedInstance)!);
         if (instance) {
-            deleteInstance(unref(userSettings)!.connector_instances, instance);
+            onDeleteInstance(instance);
         }
     }
 }
@@ -63,7 +73,7 @@ function onDeleteKey() {
             root: 'coninst-listbox',
             list: 'coninst-listbox-list',
             item: 'coninst-listbox-item',
-            itemGroup: 'coninst-listbox-item-group',
+            itemGroup: 'coninst-listbox-item-group'
         }"
         @keydown="
             (event: KeyboardEvent) => {
@@ -79,11 +89,11 @@ function onDeleteKey() {
             <ConnectorInstancesListboxItem
                 :instance="instanceEntry.option"
                 :is-selected="isInstanceSelected(instanceEntry.option)"
-                @dblclick="onEditInstance(instanceEntry.option)"
                 @authorize-instance="requestInstanceAuthorization(instanceEntry.option, connectors, userAuthorizations)"
                 @unauthorize-instance="revokeInstanceAuthorization(instanceEntry.option)"
+                @dblclick="onEditInstance(instanceEntry.option)"
                 @edit-instance="onEditInstance(instanceEntry.option)"
-                @delete-instance="deleteInstance(userSettings!.connector_instances, instanceEntry.option)"
+                @delete-instance="onDeleteInstance(instanceEntry.option)"
             />
         </template>
 

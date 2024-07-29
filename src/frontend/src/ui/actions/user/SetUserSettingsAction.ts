@@ -12,9 +12,9 @@ import { userSettingsDialog } from "@/ui/dialogs/user/settings/UserSettingsDialo
 import { type UserSettingsDialogData } from "@/ui/dialogs/user/settings/UserSettingsDialog";
 
 /**
- * Action to create a project.
+ * Action to edit and set user settings.
  */
-export class EditUserSettingsAction extends FrontendCommandAction<SetUserSettingsCommand, CommandComposer<SetUserSettingsCommand>> {
+export class SetUserSettingsAction extends FrontendCommandAction<SetUserSettingsCommand, CommandComposer<SetUserSettingsCommand>> {
     /**
      * Shows the user settings dialog.
      */
@@ -38,8 +38,8 @@ export class EditUserSettingsAction extends FrontendCommandAction<SetUserSetting
                 OverlayNotificationType.Error,
                 "Error updating user settings",
                 `An error occurred while updating your settings: ${ActionNotifier.MessagePlaceholder}.`,
-                true,
-            ),
+                true
+            )
         );
     }
 }
