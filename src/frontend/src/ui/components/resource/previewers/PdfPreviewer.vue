@@ -34,7 +34,7 @@ const previewVisible = ref(false);
 <template>
     <div class="r-centered-grid content-center max-w-inherit grid group flex place-items-center" @click="() => (!!pdfData ? (previewVisible = true) : '')">
         <div v-if="!!pdfData" class="group-hover:brightness-[35%] group-hover:grayscale col-start-1 row-start-1 transition duration-200">
-            <object :data="pdfData" type="application/pdf" class="max-w-full" style="pointer-events: none"></object>
+            <object :data="pdfData" :type="resource.mime_type" class="max-w-full" style="pointer-events: none"></object>
         </div>
         <div v-if="!!pdfData" class="max-w-full col-start-1 row-start-1 hidden group-hover:inline">
             <i class="pi pi-search brightness-100" style="color: white"></i>
@@ -48,7 +48,7 @@ const previewVisible = ref(false);
                 <div class="fixed inset-0 flex justify-center items-center z-50 w-full flex flex-col">
                     <Button @click="previewVisible = false" class="absolute right-0 top-0" size="large" style="color: white" icon="pi pi-times" text></Button>
 
-                    <object :data="pdfData" type="application/pdf" class="w-[80%] h-full"></object>
+                    <object :data="pdfData" :type="resource.mime_type" class="w-[80%] h-full"></object>
                 </div>
             </div>
         </Portal>

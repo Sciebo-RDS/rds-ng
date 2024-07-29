@@ -6,6 +6,7 @@
         "@vueuse/core": "^10.11.0",
         "autoprefixer": "^10.4.19",
         "class-transformer": "^0.5.1",
+        "markdown-it": "^14.1.0",
         "material-icons": "^1.13.12",
         "pdfmake": "^0.2.10",
         "pinia": "^2.1.7",
@@ -27,6 +28,7 @@
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.10.3",
+        "@tailwindcss/typography": "^0.5.13",
         "@tsconfig/node18": "^18.2.4",
         "@types/node": "^20.14.12",
         "@vitejs/plugin-vue": "^4.5.1",
