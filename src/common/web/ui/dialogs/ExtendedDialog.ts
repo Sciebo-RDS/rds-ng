@@ -1,12 +1,10 @@
 import { type DialogProps } from "primevue/dialog";
 import { type DynamicDialogOptions } from "primevue/dynamicdialogoptions";
-import { markRaw } from "vue";
+import { defineAsyncComponent } from "vue";
 
 import { type VueComponent, WebComponent } from "../../component/WebComponent";
 
 import { ExtendedDialogValidator } from "./ExtendedDialogValidator";
-
-import ExtendedDialogFooter from "./ExtendedDialogFooter.vue";
 
 /**
  * Various display options of the extended dialog.
@@ -27,6 +25,9 @@ export interface ExtendedDialogOptions {
     rejectLabel?: string;
     /** The icon of the Reject button */
     rejectIcon?: string;
+
+    /** Whether to hide the default footer. */
+    hideFooter?: boolean;
 
     /** Additional options. */
     [key: string]: any;
@@ -78,7 +79,7 @@ export function extendedDialog<UserDataType>(
     data: UserDataType,
     options: ExtendedDialogOptions | undefined = undefined,
     processDataCallback: ((data: UserDataType) => void) | undefined = undefined,
-    ignoreReject: boolean = true,
+    ignoreReject: boolean = true
 ): ExtendedDialogResult<UserDataType> {
     const dialog = comp.vue.config.globalProperties.$dialog;
 
@@ -86,7 +87,7 @@ export function extendedDialog<UserDataType>(
         const dialogData: ExtendedDialogData<UserDataType> = {
             userData: data,
             options: options || ({} as ExtendedDialogOptions),
-            processData: processDataCallback,
+            processData: processDataCallback
         };
 
         dialogData.accept = (result: UserDataType) => {
@@ -102,9 +103,9 @@ export function extendedDialog<UserDataType>(
         const dialogOptions: DynamicDialogOptions = {
             props: dialogProps,
             templates: {
-                footer: markRaw(ExtendedDialogFooter),
+                footer: !dialogData.options.hideFooter ? defineAsyncComponent(() => import("./ExtendedDialogFooter.vue")) : undefined
             },
-            data: dialogData,
+            data: dialogData
         };
 
         if (dialogData.options.acceptOnClose) {
