@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import Button from "primevue/button";
-import Portal from "primevue/portal";
-import Skeleton from "primevue/skeleton";
 import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import { Resource } from "@common/data/entities/resource/Resource";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useResourceTools } from "@/ui/tools/resource/ResourceTools";
+import MiniPreview from "../MiniPreview.vue";
+import PreviewOverlay from "../PreviewOverlay.vue";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -25,7 +24,6 @@ onMounted(() => {
 
     retrieveResourceData(unref(resource)!).then((data: string) => {
         textData.value = atob(data);
-        console.log(textData.value);
     });
 });
 
@@ -34,28 +32,15 @@ const previewVisible = ref(false);
 
 <template>
     <div class="r-centered-grid content-center max-w-inherit grid group flex place-items-center" @click="() => (!!textData ? (previewVisible = true) : '')">
-        <div v-if="!!textData" class="group-hover:opacity-[25%] col-start-1 row-start-1 transition duration-200">
-            <div v-if="!!textData" :innerText="textData" class="!h-[calc(12rem-0.5rem)] overflow-hidden whitespace-pre-wrap break-all" />
-        </div>
-        <div v-if="!!textData" class="max-w-full col-start-1 row-start-1 hidden group-hover:inline">
-            <i class="pi pi-search" style="color: black"></i>
-        </div>
+        <MiniPreview :loading="!textData" hoverIcon="pi-search">
+            <template #preview>
+                <div v-if="!!textData" :innerText="textData" class="!h-[calc(12rem-0.5rem)] overflow-hidden whitespace-pre-wrap break-all p-2" />
+            </template>
+        </MiniPreview>
 
-        <Skeleton v-else title="Loading image..." class="!w-[calc(12rem-0.5rem)] !h-[calc(12rem-0.5rem)]"></Skeleton>
-
-        <Portal v-if="previewVisible">
-            <div @click="previewVisible = false" class="z-50">
-                <div class="fixed inset-0 bg-black bg-opacity-85 z-50"></div>
-
-                <div class="fixed inset-0 flex justify-center items-center z-50 w-full flex-col">
-                    <Button @click="previewVisible = false" class="absolute right-5 top-0" size="large" style="color: white" icon="pi pi-times" text></Button>
-                    <div class="w-[80%] h-full bg-white flex flex-col divide-y-4 divide-slate-800/25" @click="(e) => e.stopPropagation()">
-                        <div :innerText="resource.filename" class="text-xl text-center my-5 font-mono" />
-                        <div v-if="!!textData" :innerHTML="textData" class="p-5 overflow-auto bg-gray font-mono whitespace-pre-wrap break-all" />
-                    </div>
-                </div>
-            </div>
-        </Portal>
+        <PreviewOverlay v-if="previewVisible" @close="previewVisible = false" :header="resource.filename">
+            <div v-if="!!textData" :innerHTML="textData" class="p-5 overflow-auto bg-white whitespace-pre-wrap break-all font-mono" />
+        </PreviewOverlay>
     </div>
 </template>
 
