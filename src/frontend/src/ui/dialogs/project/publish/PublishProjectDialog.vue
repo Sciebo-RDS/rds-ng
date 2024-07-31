@@ -18,7 +18,7 @@ const { userSettings } = storeToRefs(userStore);
 
 <template>
     <div class="grid grid-rows-auto grid-flow-row grid-cols-[1fr] gap-1.5 w-full h-full">
-        <div>To publish or export a project to a service, click on its corresponding button.</div>
+        <div class="mb-2">To publish or export a project to a service, click on its corresponding button.</div>
 
         <PublishConnectionsListbox :project="project" :user-settings="userSettings" />
     </div>

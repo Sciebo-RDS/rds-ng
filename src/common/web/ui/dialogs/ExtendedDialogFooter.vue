@@ -4,6 +4,8 @@ import { ref, watch } from "vue";
 
 import { useExtendedDialogTools } from "./ExtendedDialogTools";
 
+import ErrorsMessage from "../components/misc/ErrorsMessage.vue";
+
 const { acceptDialog, rejectDialog, dialogData } = useExtendedDialogTools();
 
 const errors = ref([]);
@@ -24,18 +26,9 @@ watch(
 </script>
 
 <template>
-    <div
-        class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] w-full items-center !pt-[1.5rem]"
-    >
+    <div class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] w-full items-center !pt-[1.5rem]">
         <small v-if="errors.length" class="p-error mr-auto text-left">
-            <span class="font-bold"
-            >One or more fields are missing or invalid:</span
-            >
-            <br />
-            <span class="italic">
-                {{ errors[0] }}
-                <span v-if="errors.length > 1" :title="errors.join('\n')">(+ <b>{{ errors.length - 1 }} more</b>)</span>
-            </span>
+            <ErrorsMessage :errors="errors" />
         </small>
         <small v-else>&nbsp;</small>
         <Button
