@@ -21,7 +21,7 @@ import SupportTab from "@/ui/dialogs/user/settings/support/UserSettingsSupportTa
 
 const comp = FrontendComponent.inject();
 
-const { updatingUserSettings } = useUserTools(comp);
+const { userSettingsUpdating } = useUserTools(comp);
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 
 const consStore = useConnectorsStore();
@@ -60,7 +60,7 @@ watch(userSettings.value.connector_instances, (newConInsts) => {
 </script>
 
 <template>
-    <BlockUI :blocked="updatingUserSettings">
+    <BlockUI :blocked="userSettingsUpdating">
         <form @submit.prevent="acceptDialog">
             <VerticalTabView v-model:active-tab="activeTab" :tabs="tabs" :tab-data="userSettings" />
         </form>

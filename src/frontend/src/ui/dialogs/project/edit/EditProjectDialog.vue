@@ -41,7 +41,7 @@ const stepIndices = {
     connections: 2
 };
 const lastStepIndex = Object.entries(stepIndices).length - 1;
-const activeStep = ref(0);
+const activeStep = ref(stepIndices.main);
 
 const validator = useValidator({
     title: ystring().trim().required().label("Title").default(dialogData.userData.title),
