@@ -42,6 +42,6 @@ export function useProjectTools(comp: FrontendComponent) {
         newProject,
         editProject,
         publishProject,
-        deleteProject,
+        deleteProject
     };
 }

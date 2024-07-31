@@ -25,23 +25,25 @@ export interface EditProjectDialogData {
  * @param project - The project to edit.
  */
 export async function editProjectDialog(comp: FrontendComponent, project?: Project): ExtendedDialogResult<EditProjectDialogData> {
+    const newProject = !project;
+
     return extendedDialog<EditProjectDialogData>(
         comp,
         defineAsyncComponent(() => import("@/ui/dialogs/project/edit/EditProjectDialog.vue")),
         {
             header: project ? "Project settings" : "New project",
             modal: true,
-            contentClass: "w-[46rem] h-[42rem] pb-0"
+            contentClass: newProject ? "w-[46rem] h-[44rem] pb-0" : "w-[46rem] h-[39rem] pb-0"
         },
         {
-            newProject: !project,
+            newProject: newProject,
             title: project?.title || "",
             description: project?.description || "",
             datapath: project?.resources_path || "",
             options: deepClone<ProjectOptions>(project?.options, new ProjectOptions())
         },
         {
-            hideFooter: true,
+            hideFooter: newProject,
 
             hasAcceptButton: true,
             acceptLabel: project ? "Save" : "Create",

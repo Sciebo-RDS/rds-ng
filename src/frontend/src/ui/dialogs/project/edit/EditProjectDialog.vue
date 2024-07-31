@@ -33,6 +33,7 @@ const comp = FrontendComponent.inject();
 const optSnapIns = SnapInsCatalog.allOptionals();
 const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
 const showDataPathSelector = dialogData.options["showDataPathSelector"];
+const newProject = dialogData.userData.newProject;
 
 const stepIndices = {
     main: 0,
@@ -104,7 +105,7 @@ const nextCallback = computed(() => {
 });
 const nextName = computed(() => {
     if (unref(activeStep) >= lastStepIndex) {
-        return !!dialogData.userData.newProject ? "Create" : "Save";
+        return newProject ? "Create" : "Save";
     } else {
         return undefined;
     }
@@ -115,152 +116,152 @@ function onClickStep(event: Event, callback: (event: Event) => void) {
     callback(event);
 }
 
-function onPrevStep(event: Event, callback: (event: Event) => void) {
+function onPrevStep() {
     validator.validate();
     activeStep.value -= 1;
 }
 
-function onNextStep(event: Event, callback: (event: Event) => void) {
+function onNextStep() {
     validator.validate();
     activeStep.value += 1;
 }
 </script>
 
 <template>
-    <Stepper v-model:activeStep="activeStep" :linear="!!dialogData.userData.newProject" class="h-[calc(100%-4rem)]" :pt="{ panelContainer: 'h-full' }">
-        <StepperPanel header="Main settings" :pt="{ root: 'h-full' }">
-            <template #header="{ index, clickCallback }">
-                <StepperIconHeader
-                    :click-callback="(event: Event) => onClickStep(event, clickCallback)"
-                    :active-index="activeStep"
-                    :index="index"
-                    icon="mi-edit"
-                />
-            </template>
+    <form @submit.prevent="!newProject ? acceptDialog : undefined" :class="[{ 'h-[calc(100%-4rem)]': newProject }, 'r-form']">
+        <Stepper v-model:activeStep="activeStep" :linear="newProject" :pt="{ panelContainer: newProject ? 'h-full' : '' }">
+            <StepperPanel header="Main settings" :pt="{ root: 'h-full', separator: !newProject ? 'r-border-bg' : '' }">
+                <template #header="{ index, clickCallback }">
+                    <StepperIconHeader
+                        :active="newProject ? index <= activeStep : index == activeStep"
+                        :click-callback="(event: Event) => onClickStep(event, clickCallback)"
+                        icon="mi-edit"
+                    />
+                </template>
 
-            <template #content>
-                <div class="mb-2">
-                    Set your main project settings, like its title, here. Note that the data path cannot be changed once the project has been created.
-                </div>
-
-                <Fieldset legend="General">
-                    <span class="r-form-field">
-                        <label>Title <MandatoryMark /></label>
-                        <InputText
-                            name="title"
-                            v-bind="title"
-                            v-model="dialogData.userData.title"
-                            placeholder="Title"
-                            :class="{ 'p-invalid': validator.errors.title }"
-                            v-focus
-                        />
-                        <small>The title of the project.</small>
-                    </span>
-
-                    <span class="r-form-field">
-                        <label>Description</label>
-                        <Textarea name="description" v-model="dialogData.userData.description" placeholder="Description" rows="3" />
-                        <small>An (optional) project description.</small>
-                    </span>
-                </Fieldset>
-
-                <Fieldset legend="Data" class="h-fit">
-                    <span class="r-form-field">
-                        <label>Data path <MandatoryMark /></label>
-                        <span v-if="showDataPathSelector" class="grid grid-flow-row">
-                            <ResourcesTreeSelect
-                                v-bind="datapath"
-                                v-model="dialogData.userData.datapath"
-                                :options="resourcesNodes"
-                                :loading-error="resourcesError"
-                                placeholder="Select where the data of this project is stored"
-                                loading
-                                :class="{ 'p-invalid': validator.errors.datapath }"
-                            />
-                            <small><b>Important:</b> This path cannot be changed after the project has been created!</small>
-                        </span>
-                        <span v-else class="grid grid-flow-row">
-                            <span class="flex border border-solid rounded p-2">
-                                <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
-                                <span>{{ dialogData.userData.datapath }}</span>
-                            </span>
-                            <small><b>Note:</b> This path cannot be changed anymore after project creation.</small>
-                        </span>
-                    </span>
-                </Fieldset>
-            </template>
-        </StepperPanel>
-
-        <StepperPanel header="Features" :pt="{ root: 'h-full' }">
-            <template #header="{ index, clickCallback }">
-                <StepperIconHeader
-                    :click-callback="(event: Event) => onClickStep(event, clickCallback)"
-                    :active-index="activeStep"
-                    :index="index"
-                    icon="mi-checklist"
-                />
-            </template>
-
-            <template #content>
-                <div class="mb-2">
-                    Select the features you want to use in this project. You can always turn additional features on or existing ones off later.
-                </div>
-
-                <Fieldset legend="Features">
-                    <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
-                        <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" class="self-center" />
-                        <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
+                <template #content>
+                    <div class="mb-2">
+                        Set your main project settings, like its title, here. Note that the data path cannot be changed once the project has been created.
                     </div>
-                </Fieldset>
-            </template>
-        </StepperPanel>
 
-        <StepperPanel header="Connections" :pt="{ root: 'h-full' }">
-            <template #header="{ index, clickCallback }">
-                <StepperIconHeader
-                    :click-callback="(event: Event) => onClickStep(event, clickCallback)"
-                    :active-index="activeStep"
-                    :index="index"
-                    icon="mi-hub"
-                />
-            </template>
+                    <Fieldset legend="General">
+                        <span class="r-form-field">
+                            <label>Title <MandatoryMark /></label>
+                            <InputText
+                                name="title"
+                                v-bind="title"
+                                v-model="dialogData.userData.title"
+                                placeholder="Title"
+                                :class="{ 'p-invalid': validator.errors.title }"
+                                v-focus
+                            />
+                            <small>The title of the project.</small>
+                        </span>
 
-            <template #content>
-                <div class="mb-2">
-                    Here you can select which connections - all or only specific ones - to make available for publishing or exporting your project. You can
-                    always change this selection later.
-                </div>
+                        <span class="r-form-field mt-5">
+                            <label>Description</label>
+                            <Textarea name="description" v-model="dialogData.userData.description" placeholder="Description" rows="3" />
+                            <small>An (optional) project description.</small>
+                        </span>
+                    </Fieldset>
 
-                <Fieldset legend="Connections">
-                    <div class="r-form-field">
-                        <div class="grid grid-flow-row">
-                            <div class="flex align-items-center">
-                                <InputSwitch
-                                    v-model="dialogData.userData.options.use_all_connector_instances"
-                                    inputId="useSelectConnectorInstances"
-                                    :true-value="false"
-                                    :false-value="true"
-                                    @change="validator.validate()"
-                                    class="self-center"
+                    <Fieldset legend="Data" class="h-fit">
+                        <span class="r-form-field">
+                            <label>Data path <MandatoryMark /></label>
+                            <span v-if="showDataPathSelector" class="grid grid-flow-row">
+                                <ResourcesTreeSelect
+                                    v-bind="datapath"
+                                    v-model="dialogData.userData.datapath"
+                                    :options="resourcesNodes"
+                                    :loading-error="resourcesError"
+                                    placeholder="Select where the data of this project is stored"
+                                    loading
+                                    :class="{ 'p-invalid': validator.errors.datapath }"
                                 />
-                                <label for="useSelectConnectorInstances" class="pl-1.5">Use only the following connections:</label>
-                            </div>
+                                <small class="pt-1"><b>Important:</b> This path cannot be changed after the project has been created!</small>
+                            </span>
+                            <span v-else class="grid grid-flow-row">
+                                <span class="flex border border-solid rounded p-2">
+                                    <span class="material-icons-outlined mi-folder opacity-75 pr-2" />
+                                    <span>{{ dialogData.userData.datapath }}</span>
+                                </span>
+                                <small class="pt-1"><b>Note:</b> This path cannot be changed anymore after project creation.</small>
+                            </span>
+                        </span>
+                    </Fieldset>
+                </template>
+            </StepperPanel>
 
-                            <div class="!h-full border border-solid rounded p-1 ml-3.5 mr-3.5 mt-1.5">
-                                <ConnectorInstancesSelect
-                                    v-model="dialogData.userData.options.active_connector_instances"
-                                    :disabled="dialogData.userData.options.use_all_connector_instances"
-                                    class="w-full h-full"
-                                />
+            <StepperPanel header="Features" :pt="{ root: 'h-full', separator: !newProject ? 'r-border-bg' : '' }">
+                <template #header="{ index, clickCallback }">
+                    <StepperIconHeader
+                        :active="newProject ? index <= activeStep : index == activeStep"
+                        :click-callback="(event: Event) => onClickStep(event, clickCallback)"
+                        icon="mi-checklist"
+                    />
+                </template>
+
+                <template #content>
+                    <div class="mb-2">
+                        Select the features you want to use in this project. You can always turn additional features on or existing ones off later.
+                    </div>
+
+                    <Fieldset legend="Features">
+                        <div v-for="snapIn of optSnapIns" :key="snapIn.snapInID" class="flex align-items-center pb-1">
+                            <Checkbox v-model="uiOptions.optional_snapins" :inputId="snapIn.snapInID" :value="snapIn.snapInID" class="self-center" />
+                            <label :for="snapIn.snapInID" class="pl-1.5">{{ snapIn.options.optional!.label }}</label>
+                        </div>
+                    </Fieldset>
+                </template>
+            </StepperPanel>
+
+            <StepperPanel header="Connections" :pt="{ root: 'h-full', separator: !newProject ? 'r-border-bg' : '' }">
+                <template #header="{ index, clickCallback }">
+                    <StepperIconHeader
+                        :active="newProject ? index <= activeStep : index == activeStep"
+                        :click-callback="(event: Event) => onClickStep(event, clickCallback)"
+                        icon="mi-hub"
+                    />
+                </template>
+
+                <template #content>
+                    <div class="mb-2">
+                        Here you can select which connections - all or only specific ones - to make available for publishing or exporting your project. You can
+                        always change this selection later.
+                    </div>
+
+                    <Fieldset legend="Connections">
+                        <div class="r-form-field">
+                            <div class="grid grid-flow-row">
+                                <div class="flex align-items-center">
+                                    <InputSwitch
+                                        v-model="dialogData.userData.options.use_all_connector_instances"
+                                        inputId="useSelectConnectorInstances"
+                                        :true-value="false"
+                                        :false-value="true"
+                                        @change="validator.validate()"
+                                        class="self-center"
+                                    />
+                                    <label for="useSelectConnectorInstances" class="pl-1.5">Use only the following connections:</label>
+                                </div>
+
+                                <div class="!h-full border border-solid rounded p-1 ml-3.5 mr-3.5 mt-1.5">
+                                    <ConnectorInstancesSelect
+                                        v-model="dialogData.userData.options.active_connector_instances"
+                                        :disabled="dialogData.userData.options.use_all_connector_instances"
+                                        class="w-full h-full"
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </Fieldset>
-            </template>
-        </StepperPanel>
-    </Stepper>
+                    </Fieldset>
+                </template>
+            </StepperPanel>
+        </Stepper>
+    </form>
 
     <EditProjectDialogFooter
+        v-if="newProject"
         :prev-callback="prevCallback"
         :next-callback="nextCallback"
         :next-name="nextName"
@@ -270,4 +271,8 @@ function onNextStep(event: Event, callback: (event: Event) => void) {
     />
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.fixed-border-color {
+    background-color: var(--r-border-color);
+}
+</style>

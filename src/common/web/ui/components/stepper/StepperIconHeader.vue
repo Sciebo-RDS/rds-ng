@@ -2,12 +2,8 @@
 import { toRefs } from "vue";
 
 const props = defineProps({
-    index: {
-        type: Number,
-        required: true
-    },
-    activeIndex: {
-        type: Number,
+    active: {
+        type: Boolean,
         required: true
     },
     clickCallback: {
@@ -19,7 +15,7 @@ const props = defineProps({
         required: true
     }
 });
-const { index, activeIndex, clickCallback, icon } = toRefs(props);
+const { active, clickCallback, icon } = toRefs(props);
 </script>
 
 <template>
@@ -27,10 +23,10 @@ const { index, activeIndex, clickCallback, icon } = toRefs(props);
         <span
             :class="[
                 'border-2 rounded-md r-border-color w-12 h-12 inline-flex items-center justify-center',
-                { 'r-primary-bg': index <= activeIndex, 'surface-border': index > activeIndex }
+                { 'r-primary-bg': active, 'surface-border': !active }
             ]"
         >
-            <i class="r-text material-icons-outlined" :class="[{ 'r-primary-text': index <= activeIndex }, icon]" />
+            <i class="r-text material-icons-outlined" :class="[{ 'r-primary-text': active }, icon]" />
         </span>
     </button>
 </template>
