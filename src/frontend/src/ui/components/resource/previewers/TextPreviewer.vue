@@ -31,10 +31,10 @@ const previewVisible = ref(false);
 </script>
 
 <template>
-    <div class="r-centered-grid content-center max-w-inherit grid group flex place-items-center" @click="() => (!!textData ? (previewVisible = true) : '')">
-        <MiniPreview :loading="!textData" hoverIcon="pi-search">
+    <div @click="() => (!!textData ? (previewVisible = true) : '')">
+        <MiniPreview :loading="!textData" icon="pi-search">
             <template #preview>
-                <div v-if="!!textData" :innerText="textData" class="!h-[calc(12rem-0.5rem)] overflow-hidden whitespace-pre-wrap break-all p-2" />
+                <div v-if="!!textData" :innerText="textData" class="!h-[calc(12rem-0.5rem)] overflow-hidden whitespace-pre-wrap break-all p-2 font-mono" />
             </template>
         </MiniPreview>
 

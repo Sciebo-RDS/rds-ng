@@ -32,8 +32,8 @@ const previewVisible = ref(false);
 </script>
 
 <template>
-    <div class="r-centered-grid content-center max-w-inherit grid group flex place-items-center" @click="() => (!!videoData ? (previewVisible = true) : '')">
-        <MiniPreview :loading="!videoData" overlayIcon="pi-play-circle" hoverIcon="pi-play-circle">
+    <div @click="() => (!!videoData ? (previewVisible = true) : '')">
+        <MiniPreview :loading="!videoData" iconAlwaysVisible="true" icon="pi-play-circle" iconSize="1.5">
             <template #preview>
                 <video
                     :src="videoData"

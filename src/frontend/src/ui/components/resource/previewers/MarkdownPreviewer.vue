@@ -38,9 +38,9 @@ const previewVisible = ref(false);
 
 <template>
     <div @click="() => (!!textData ? (previewVisible = true) : '')">
-        <MiniPreview :loading="!textData" hoverIcon="pi-search">
+        <MiniPreview :loading="!textData" icon="pi-search">
             <template #preview>
-                <div v-if="!!textData" :innerText="textData" class="overflow-hidden !h-[calc(12rem-0.5rem)] whitespace-pre-wrap break-all p-2" />
+                <div v-if="!!textData" :innerText="textData" class="overflow-hidden !h-[calc(12rem-0.5rem)] whitespace-pre-wrap break-all p-2 font-mono" />
             </template>
         </MiniPreview>
 

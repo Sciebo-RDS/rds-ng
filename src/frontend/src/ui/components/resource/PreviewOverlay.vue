@@ -14,7 +14,7 @@ const emit = defineEmits(["close"]);
             <div class="fixed inset-0 flex justify-center items-center z-50 w-full flex-col h-full">
                 <Button
                     @click="$emit('close')"
-                    class="absolute right-5 top-0 opacity-50 hover:opacity-100"
+                    class="absolute right-5 top-2 opacity-50 hover:opacity-100"
                     size="large"
                     style="color: white"
                     icon="pi pi-times"
