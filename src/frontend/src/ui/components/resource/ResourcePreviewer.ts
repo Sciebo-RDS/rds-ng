@@ -12,30 +12,35 @@ export type ResourcePreviewComponentLoader = () => any;
  * A resource previewer encapsulates a preview component for specific MIME types.
  */
 export abstract class ResourcePreviewer {
-    private readonly _mimeType: string;
+    private readonly _mimeTypes: string[];
 
     /**
-     * @param mimeType - The MIME type; wildcards are supported.
+     * @param mimeTypes - List of MIME types; wildcards are supported.
      */
-    protected constructor(mimeType: string) {
-        this._mimeType = mimeType;
+    protected constructor(mimeTypes: string[]) {
+        this._mimeTypes = mimeTypes;
     }
 
     /**
-     * Checks if the MIME type matches the type of this previewer.
+     * Checks if the MIME type matches the types supported by this previewer.
      *
      * @param mimeType - The MIME type to check.
      */
     public matches(mimeType: string): boolean {
-        let matcher = wildcardMatch(this._mimeType);
-        return matcher(mimeType);
+        for (const mt of this._mimeTypes) {
+            let matcher = wildcardMatch(mt);
+            if (matcher(mimeType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * The MIME type.
+     * The MIME types.
      */
-    public get mimeType(): string {
-        return this._mimeType;
+    public get mimeTypes(): string[] {
+        return this._mimeTypes;
     }
 
     /**

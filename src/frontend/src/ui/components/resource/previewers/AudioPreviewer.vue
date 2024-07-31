@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Image from "primevue/image";
 import Skeleton from "primevue/skeleton";
 import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
@@ -17,38 +16,22 @@ const props = defineProps({
 });
 const { resource } = toRefs(props);
 
-const imageData = ref("");
+const audioData = ref("");
 
 onMounted(() => {
     const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
 
     retrieveResourceData(unref(resource)!).then((data: string) => {
-        imageData.value = resourceDataToTagValue(unref(resource)!, data);
+        audioData.value = resourceDataToTagValue(unref(resource)!, data);
     });
 });
 </script>
 
 <template>
     <div class="r-centered-grid content-center">
-        <Image
-            v-if="!!imageData"
-            :src="imageData"
-            alt="Preview"
-            :title="resource.filename"
-            preview
-            :pt="{ image: 'max-h-[calc(12rem-0.5rem)] rounded' }"
-            class="rounded"
-        >
-            <template #indicatoricon>
-                <i class="pi pi-search"></i>
-            </template>
-        </Image>
+        <audio v-if="!!audioData" controls :src="audioData" />
         <Skeleton v-else title="Loading image..." class="!w-[calc(12rem-0.5rem)] !h-[calc(12rem-0.5rem)]"></Skeleton>
     </div>
 </template>
 
-<style scoped lang="scss">
-:deep(.p-image-preview-indicator) {
-    @apply rounded;
-}
-</style>
+<style scoped lang="scss"></style>

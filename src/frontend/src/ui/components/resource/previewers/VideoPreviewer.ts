@@ -6,12 +6,12 @@ import { defineAsyncComponent } from "vue";
 /**
  * A resource previewer for images.
  */
-export class ImagePreviewer extends ResourcePreviewer {
+export class VideoPreviewer extends ResourcePreviewer {
     public constructor() {
-        super(["image/*"]);
+        super(["video/*"]);
     }
 
     public get component(): VueComponent {
-        return defineAsyncComponent(() => import("./ImagePreviewer.vue"));
+        return defineAsyncComponent(() => import("./VideoPreviewer.vue"));
     }
 }

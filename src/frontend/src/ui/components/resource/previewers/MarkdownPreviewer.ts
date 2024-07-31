@@ -4,14 +4,14 @@ import { ResourcePreviewer } from "@/ui/components/resource/ResourcePreviewer";
 import { defineAsyncComponent } from "vue";
 
 /**
- * A resource previewer for images.
+ * A resource previewer for Markdown files.
  */
-export class ImagePreviewer extends ResourcePreviewer {
+export class MarkdownPreviewer extends ResourcePreviewer {
     public constructor() {
-        super(["image/*"]);
+        super(["text/markdown"]);
     }
 
     public get component(): VueComponent {
-        return defineAsyncComponent(() => import("./ImagePreviewer.vue"));
+        return defineAsyncComponent(() => import("./MarkdownPreviewer.vue"));
     }
 }

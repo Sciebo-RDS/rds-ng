@@ -79,11 +79,11 @@ function createObject() {
 .p-splitbutton {
     @apply h-6 text-gray-600 border border-[#608f00];
 }
-:deep(.p-splitbutton-defaultbutton) {
-    @apply bg-[#eaffbe] bg-opacity-50 border-0 px-2 text-inherit;
+:deep(.p-splitbutton-defaultbutton.p-button) {
+    @apply bg-[#eaffbe] [&:not(:hover)]:bg-opacity-50 border-0 px-2 text-inherit;
 }
 
 :deep(.p-splitbutton-menubutton) {
-    @apply bg-[#eaffbe] bg-opacity-50 border-0 border-l border-[#608f00] text-inherit;
+    @apply bg-[#eaffbe] [&:not(:hover)]:bg-opacity-50 border-0 border-l border-[#608f00] text-inherit;
 }
 </style>

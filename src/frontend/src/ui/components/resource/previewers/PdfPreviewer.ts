@@ -4,14 +4,14 @@ import { ResourcePreviewer } from "@/ui/components/resource/ResourcePreviewer";
 import { defineAsyncComponent } from "vue";
 
 /**
- * A resource previewer for images.
+ * A resource previewer for PDFs.
  */
-export class ImagePreviewer extends ResourcePreviewer {
+export class PdfPreviewer extends ResourcePreviewer {
     public constructor() {
-        super(["image/*"]);
+        super(["application/pdf"]);
     }
 
     public get component(): VueComponent {
-        return defineAsyncComponent(() => import("./ImagePreviewer.vue"));
+        return defineAsyncComponent(() => import("./PdfPreviewer.vue"));
     }
 }

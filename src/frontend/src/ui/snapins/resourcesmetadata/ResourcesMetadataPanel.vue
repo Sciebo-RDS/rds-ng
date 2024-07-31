@@ -142,7 +142,7 @@ projectProfiles.mountProfile(shoes as Profile);
 
                 <SplitterPanel :size="50" :min-size="25">
                     <div class="overflow-auto h-full">
-                        <div class="grid grid-cols-[1fr_min-content] items-center r-shade-gray r-text-caption-big p-2.5 border-b pb-[0.7rem]">
+                        <div class="grid grid-cols-[1fr_min-content] items-center r-shade-gray r-text-caption-big p-2.5 border-b pb-[0.7rem] h-[3.85rem]">
                             <span class="truncate mx-1" :title="Object.keys(selectedNodes).sort().join('\n')"> {{ propertyHeader }}</span>
                             <span>
                                 <Button

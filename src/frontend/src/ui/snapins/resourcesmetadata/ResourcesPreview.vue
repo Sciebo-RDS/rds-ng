@@ -8,14 +8,14 @@ import { ResourcePreviewersCatalog } from "@/ui/components/resource/ResourcePrev
 const props = defineProps({
     resources: {
         type: Object as PropType<Resource[]>,
-        required: true,
-    },
+        required: true
+    }
 });
 const { resources } = toRefs(props);
 
 const resource = computed(() => (unref(resources)!.length == 1 ? unref(resources)![0] : null));
 const resourcePreviewer = computed(() => {
-    if (!unref(resource)) {
+    if (!unref(resource) || unref(resource)!.size == 0) {
         return null;
     }
     const previewer = ResourcePreviewersCatalog.find(unref(resource)!.mime_type);
@@ -24,9 +24,9 @@ const resourcePreviewer = computed(() => {
 </script>
 
 <template>
-    <div class="preview-box border rounded-lg">
-        <div v-if="!!resource && !!resourcePreviewer" class="w-full h-full r-centered-grid content-center">
-            <component :is="resourcePreviewer" :resource="resource!" :title="resource.filename" class="preview-box" />
+    <div class="border rounded-lg p-2 mx-5">
+        <div v-if="!!resource && !!resourcePreviewer" class="r-centered-grid content-center">
+            <component :is="resourcePreviewer" :resource="resource!" :title="resource.filename" />
         </div>
         <div
             v-else-if="!!resource && resource.type == ResourceType.Folder"
@@ -43,8 +43,4 @@ const resourcePreviewer = computed(() => {
     </div>
 </template>
 
-<style scoped lang="scss">
-.preview-box {
-    @apply w-48 h-48 #{!important};
-}
-</style>
+<style scoped lang="scss"></style>
