@@ -33,7 +33,7 @@ const previewVisible = ref(false);
 
 <template>
     <div @click="() => (!!videoData ? (previewVisible = true) : '')">
-        <MiniPreview :loading="!videoData" iconAlwaysVisible="true" icon="pi-play-circle" iconSize="1.5">
+        <MiniPreview :loading="!videoData" :iconAlwaysVisible="true" icon="pi-play-circle" iconSize="2.0">
             <template #preview>
                 <video
                     :src="videoData"

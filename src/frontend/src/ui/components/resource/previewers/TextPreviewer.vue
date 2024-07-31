@@ -5,6 +5,7 @@ import { Resource } from "@common/data/entities/resource/Resource";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useResourceTools } from "@/ui/tools/resource/ResourceTools";
+
 import MiniPreview from "../MiniPreview.vue";
 import PreviewOverlay from "../PreviewOverlay.vue";
 
