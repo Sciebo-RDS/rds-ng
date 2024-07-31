@@ -34,7 +34,7 @@ const previewVisible = ref(false);
     <div @click="() => (!!pdfData ? (previewVisible = true) : '')">
         <MiniPreview :loading="!pdfData" icon="pi-search">
             <template #preview>
-                <object :data="pdfData" :type="resource.mime_type" style="pointer-events: none" class="h-[calc(12rem-0.5rem)]"></object>
+                <object :data="pdfData" :type="resource.mime_type" style="pointer-events: none" class="h-[calc(12rem-0.5rem)] rounded"></object>
             </template>
         </MiniPreview>
 

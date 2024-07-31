@@ -30,7 +30,15 @@ onMounted(() => {
 
 <template>
     <div class="r-centered-grid content-center">
-        <Image v-if="!!imageData" :src="imageData" alt="Preview" :title="resource.filename" preview :pt="{ image: 'max-h-[calc(12rem-0.5rem)]' }">
+        <Image
+            v-if="!!imageData"
+            :src="imageData"
+            alt="Preview"
+            :title="resource.filename"
+            preview
+            :pt="{ image: 'max-h-[calc(12rem-0.5rem)] rounded' }"
+            class="rounded"
+        >
             <template #indicatoricon>
                 <i class="pi pi-search"></i>
             </template>
@@ -39,4 +47,8 @@ onMounted(() => {
     </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+:deep(.p-image-preview-indicator) {
+    @apply rounded;
+}
+</style>

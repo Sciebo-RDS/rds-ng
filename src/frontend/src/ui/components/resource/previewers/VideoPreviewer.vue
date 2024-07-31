@@ -40,7 +40,7 @@ const previewVisible = ref(false);
                     :type="resource.mime_type"
                     v-if="!!videoData"
                     @click="() => (!!videoData ? (previewVisible = true) : '')"
-                    class="max-h-[calc(12rem-0.5rem)]"
+                    class="max-h-[calc(12rem-0.5rem)] rounded"
                 ></video>
             </template>
         </MiniPreview>
