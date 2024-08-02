@@ -77,6 +77,18 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
+        project_connector_metadata = list(
+            filter(
+                lambda y: self.comp.metadata_profile_name
+                in map(lambda z: z[0], y["profiles"]),
+                project.features.metadata,
+            )
+        )
+
+        _get_prop = lambda prop: next(
+            (e for e in project_connector_metadata if e["id"] == prop), None
+        )
+
         def _execute(session: requests.Session) -> OSFProjectData:
             resp = self.post(
                 session,
@@ -86,7 +98,7 @@ class OSFClient(RequestsExecutor):
                         "type": "nodes",
                         "attributes": {
                             "title": project.title,
-                            "category": "project",
+                            "category": _get_prop("category") or "project",
                             "description": project.description,
                         },
                     }

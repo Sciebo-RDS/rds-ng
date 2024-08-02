@@ -9,5 +9,5 @@
         "default": "/component/common/assets/img/logos/osf.png",
         "horizontal": "/component/common/assets/img/logos/osf.png"
     },
-    "metadata_profile": "/component/common/assets/profiles/stub.json"
+    "metadata_profile": "/component/common/assets/profiles/osf.json"
 }
