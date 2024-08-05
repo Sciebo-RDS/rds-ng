@@ -412,7 +412,7 @@ export const dataCite: Profile = {
             label: "Contributor",
             description:
                 "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
-            labelTemplate: "${contributor}",
+            labelTemplate: "${contributorName}",
             example: "Charpy, Antoine; Foo Data Center",
             type: ["nameIdentifier", "affiliation"],
             input: [
@@ -718,7 +718,7 @@ export const dataCite: Profile = {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation",
             label: "Geolocation",
             description: "Spatial region or named place where the data was gathered or about which the data is focused.",
-            labelTemplate: "${geoLocation}",
+            labelTemplate: "${geoLocationPlace}",
             type: ["geoLocationPoint", "geoLocationBox", "geoLocationPolygon"],
             input: [
                 {
