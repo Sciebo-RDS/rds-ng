@@ -1,15 +1,11 @@
 import typing
 
-from common.py.component import (
-    ComponentType,
-    ComponentUnit,
-    BackendComponent,
-)
+from common.py.component import BackendComponent, ComponentType, ComponentUnit
 from common.py.component.roles import LeafRole
 from common.py.utils import UnitID
 
+from ..execution import ConnectorJobExecutorType, ConnectorJobsEngine
 from .connector_information import ConnectorInformation
-from ..execution import ConnectorJobsEngine, ConnectorJobExecutorType
 
 
 class ConnectorComponent(BackendComponent):
@@ -44,11 +40,12 @@ class ConnectorComponent(BackendComponent):
         from ..integration.authorization.strategies import (
             register_authorization_strategy_configurations,
         )
+        from ..metadata import register_connector_metadata_factories
         from ..services import (
-            create_connector_service,
-            create_authorization_service,
-            create_project_jobs_service,
             ConnectorServiceContext,
+            create_authorization_service,
+            create_connector_service,
+            create_project_jobs_service,
         )
 
         # Assign the global jobs engine to the service context
@@ -57,6 +54,7 @@ class ConnectorComponent(BackendComponent):
         # Register global items
         register_connector_categories()
         register_authorization_strategy_configurations()
+        register_connector_metadata_factories()
 
         # Create connector-specific services
         create_connector_service(self)

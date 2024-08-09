@@ -11,19 +11,17 @@ from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
+from connectors.base.metadata import ConnectorMetadataFactoryCatalog
 
+from ...base.integration.execution import RequestsExecutor
+from ..metadata.osf_metadata import OSFMetadataFactory
 from .osf_callbacks import (
     OSFCreateProjectCallbacks,
     OSFDeleteProjectCallbacks,
     OSFGetStorageCallbacks,
     OSFUploadFileCallbacks,
 )
-from .osf_request_data import (
-    OSFFileData,
-    OSFProjectData,
-    OSFStorageData,
-)
-from ...base.integration.execution import RequestsExecutor
+from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
 
 
 class OSFClient(RequestsExecutor):
@@ -77,17 +75,9 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        project_connector_metadata = list(
-            filter(
-                lambda y: self.comp.metadata_profile_name
-                in map(lambda z: z[0], y["profiles"]),
-                project.features.metadata,
-            )
-        )
-
-        _get_prop = lambda prop: next(
-            (e for e in project_connector_metadata if e["id"] == prop), None
-        )
+        factory = ConnectorMetadataFactoryCatalog.find_item("OSF")
+        metadata = factory.create(project.features.metadata)
+        factory.validate(metadata)
 
         def _execute(session: requests.Session) -> OSFProjectData:
             resp = self.post(
@@ -97,9 +87,9 @@ class OSFClient(RequestsExecutor):
                     "data": {
                         "type": "nodes",
                         "attributes": {
-                            "title": project.title,
-                            "category": _get_prop("category") or "project",
-                            "description": project.description,
+                            "title": metadata.title,
+                            "category": metadata.category,
+                            "description": metadata.description,
                         },
                     }
                 },
