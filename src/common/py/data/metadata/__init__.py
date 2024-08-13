@@ -1,1 +1,1 @@
-from metadata_parser import MetadataParser
+from .metadata_parser import MetadataParser, MetadataParserQuery
