@@ -77,19 +77,19 @@ selectActiveObject(id);
             />
         </template>
         <template #title>
-            <div class="row-span-1 text-gray-800 justify-between flex items-center">
-                <span :title="objectClass.label">
+            <div class="row-span-1 text-gray-800 justify-between flex items-start">
+                <span :title="objectClass.label" class="flex-none">
                     <span class="text-xl"> {{ objectClass.label }}</span>
                     <Button v-if="objectClass.description" unstyled @click="toggle">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem" />
                     </Button>
                     <OverlayPanel ref="op" class="max-w-lg">
                         {{ objectClass.description }}
-                        <span v-if="objectClass.example" v-html="`<br/><b>Example</b>: ${objectClass.example}`" />
+                        <span v-if="objectClass.example" v-html="`<br/>Example: ${objectClass.example}`" />
                     </OverlayPanel>
                 </span>
 
-                <span class="mr-auto ml-5 flex space-x-1 gap-1">
+                <span class="mr-auto ml-5 flex gap-1 flex-wrap">
                     <NewPropertyButton
                         v-for="t in addableTypes"
                         :key="t"
@@ -139,14 +139,25 @@ selectActiveObject(id);
                             mode="dialog"
                             @loadObject="(id) => selectActiveObject(id)"
                         />
-                        <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block">No {{ addableTypes.join(" / ") }} linked</span>
+                        <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block"
+                            >No
+                            <span class="italic">
+                                {{
+                                    addableTypes
+                                        .map((e) => projectProfiles.getClassLabelById(e))
+                                        .join(", ")
+                                        .replace(/, ([^,]*)$/, " or $1")
+                                }}
+                            </span>
+                            linked</span
+                        >
                     </div>
                     <!-- Simple Input Row -->
                     <div class="space-y-5">
                         <div v-for="input in displayableInputs" class="row-span-1 space-y-1">
                             <div v-if="input.label !== objectClass.label" class="font-bold mb-1 font">{{ input.label }}</div>
                             {{ input.description }}
-                            <span v-if="input.example" v-html="`<br/><b>Example</b>: ${input.example}`" />
+                            <span v-if="input.example" v-html="`<br/>Example: ${input.example}`" />
                             <component
                                 :is="propertyDataForms[input['type'] as PropertyDataType]"
                                 class="w-full"

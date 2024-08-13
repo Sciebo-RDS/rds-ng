@@ -200,7 +200,7 @@ projectProfiles.mountProfile(shoes as Profile);
                                 class="w-full"
                             />
                         </div>
-                        <div v-else class="r-centered-grid italic pt-8">Select one or more file objects on the left to edit their metadata.</div>
+                        <div v-else class="r-centered-grid italic p-8">Select one or more file objects on the left to edit their metadata.</div>
                     </div>
                 </SplitterPanel>
             </Splitter>

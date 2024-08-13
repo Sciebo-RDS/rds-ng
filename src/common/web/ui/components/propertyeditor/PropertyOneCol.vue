@@ -132,7 +132,7 @@ const toggleRemoveProperty = (e: Event) => {
                         <p v-if="propertyClass.example" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.example}`" />
                     </OverlayPanel>
                 </span>
-                <span class="mr-auto gap-1">
+                <span class="mr-auto ml-5 flex gap-1 flex-wrap">
                     <NewPropertyButton
                         v-for="t in addableTypes"
                         :key="t"
@@ -183,7 +183,18 @@ const toggleRemoveProperty = (e: Event) => {
                     :sharedObjectStore="sharedObjectStore as ProjectObjectStore"
                     :projectProfiles="projectProfiles"
                 />
-                <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block">No {{ addableTypes.join(" / ") }} linked</span>
+                <span v-else class="text-gray-500 m-1 my-3 place-self-center align-middle inline-block"
+                    >No
+                    <span class="italic">
+                        {{
+                            addableTypes
+                                .map((e) => projectProfiles.getClassLabelById(e))
+                                .join(", ")
+                                .replace(/, ([^,]*)$/, " or $1")
+                        }}
+                    </span>
+                    linked</span
+                >
             </div>
             <!-- Simple Input Row -->
             <div v-if="displayableInputs.length > 0" class="space-y-2 mt-2">
