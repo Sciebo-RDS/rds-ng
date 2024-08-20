@@ -2,7 +2,7 @@
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, defineAsyncComponent, reactive, toRefs, watch } from "vue";
+import { computed, defineAsyncComponent, reactive, ref, toRefs, watch } from "vue";
 
 import { Project } from "@common/data/entities/project/Project";
 
@@ -49,8 +49,17 @@ watch(
     },
     { deep: true }
 );
-</script>
+const activeTabIndex = ref(0);
 
+watch(
+    () => panels.value,
+    (panelsNew, panelsOld) => {
+        const newCurrent = panelsNew.findIndex((e) => e === panelsOld[activeTabIndex.value]);
+        if (newCurrent !== -1) activeTabIndex.value = newCurrent;
+        else activeTabIndex.value = Math.max(0, activeTabIndex.value - 1);
+    }
+);
+</script>
 <template>
     <div class="h-full">
         <TabView
@@ -59,6 +68,8 @@ watch(
                 nav: 'tab-view',
                 panelContainer: 'overflow-y-auto max-h-[calc(100vh-8.0rem)] p-0 h-full' // TODO: Hacky height
             }"
+            :activeIndex="activeTabIndex"
+            @update:activeIndex="activeTabIndex = $event"
         >
             <TabPanel
                 v-for="panel in panels"
