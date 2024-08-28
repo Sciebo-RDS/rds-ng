@@ -1,6 +1,6 @@
 import typing
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import IntEnum, StrEnum
 
 from dataclasses_json import dataclass_json
 
@@ -25,7 +25,10 @@ class AuthorizationToken:
         auth_type: The token type.
         auth_issuer: The entity that requires the authorization.
         auth_bearer: The bearer that will be authorized against.
+        state: The state of the token.
+        timestamp: The timestamp of the token.
         expiration_timestamp: Timestamp when the token becomes invalid; a value of 0 means that the token never becomes invalid.
+        refresh_attempts: The number of refresh attempts.
         strategy: The token strategy (e.g., OAuth2).
         token: The actual token data.
         data: Arbitrary strategy data (usually configuration).
@@ -41,6 +44,14 @@ class AuthorizationToken:
         HOST = "host"
         CONNECTOR = "connector"
 
+    class TokenState(StrEnum):
+        """
+        The state of a token.
+        """
+
+        INVALID = "invalid"
+        VALID = "valid"
+
     user_id: UserID
 
     auth_id: str
@@ -48,7 +59,12 @@ class AuthorizationToken:
     auth_issuer: str
     auth_bearer: str
 
+    state: TokenState
+
+    timestamp: float
     expiration_timestamp: float
+
+    refresh_attempts: int
 
     strategy: str
     token: typing.Dict[str, typing.Any]

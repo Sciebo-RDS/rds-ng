@@ -10,9 +10,13 @@ def get_server_settings() -> typing.Dict[SettingID, typing.Any]:
     Returns:
         A dictionary mapping the setting identifiers to their default values.
     """
+    from .authorization_setting_ids import AuthorizationSettingIDs
     from .storage_setting_ids import StorageSettingIDs, DatabaseStorageSettingIDs
 
     return {
+        # Authorization
+        AuthorizationSettingIDs.REFRESH_ATTEMPTS_DELAY: 5,
+        AuthorizationSettingIDs.REFRESH_ATTEMPTS_LIMIT: 3,
         # Storage
         StorageSettingIDs.DRIVER: "memory",
         # Database storage

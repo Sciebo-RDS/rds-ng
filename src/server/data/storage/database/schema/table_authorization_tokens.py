@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from sqlalchemy import (
+    Integer,
     MetaData,
     Table,
     Column,
@@ -45,7 +46,10 @@ def register_authorization_tokens_tables(
         Column("auth_issuer", Text),
         Column("auth_bearer", Text),
         # Settings
+        Column("state", Text),
+        Column("timestamp", Numeric(32, 8, asdecimal=False)),
         Column("expiration_timestamp", Numeric(32, 8, asdecimal=False)),
+        Column("refresh_attempts", Integer),
         # Data
         Column("strategy", Text),
         Column("token", JSONEncodedDataType),
