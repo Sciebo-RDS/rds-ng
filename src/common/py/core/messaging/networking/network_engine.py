@@ -158,7 +158,9 @@ class NetworkEngine:
             from ...logging import debug
 
             debug(
-                f"Received message: {msg}", scope="network", entrypoint=entrypoint.name
+                f"Received message: {msg}",
+                scope="network",
+                entrypoint=entrypoint.name,
             )
 
             con_type = (

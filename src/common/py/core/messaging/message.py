@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
 
 from .channel import Channel
+from .message_payload import MessagePayload
 from ...utils import UnitID
 
 MessageName = str
@@ -106,6 +107,16 @@ class Message(abc.ABC):
             return cls
 
         return decorator
+
+    def __post_init__(self):
+        object.__setattr__(self, "_payload", MessagePayload())
+
+    @property
+    def payload(self) -> MessagePayload:
+        """
+        The message payload.
+        """
+        return typing.cast(MessagePayload, object.__getattribute__(self, "_payload"))
 
     def __str__(self) -> str:
         def cleanup(cur_obj, parent_obj, parent_key):
