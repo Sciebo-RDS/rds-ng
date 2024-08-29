@@ -6,6 +6,7 @@ from http import HTTPStatus
 
 import requests
 from dataclasses_json import dataclass_json
+from marshmallow.utils import timestamp
 
 from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
 from .oauth2_utils import format_oauth2_error_response
@@ -82,7 +83,6 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_data = self._get_oauth2_request_data(request_data)
         client_secret = self._get_client_secret(payload.auth_bearer)
 
-        # TODO: Timeout etc. handling
         response = requests.post(
             urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
             data={
@@ -107,7 +107,10 @@ class OAuth2Strategy(AuthorizationStrategy):
                     auth_type=payload.auth_type,
                     auth_issuer=payload.auth_issuer,
                     auth_bearer=payload.auth_bearer,
+                    state=AuthorizationToken.TokenState.VALID,
+                    timestamp=time.time(),
                     expiration_timestamp=self._get_expiration_timestamp(resp_data),
+                    refresh_attempts=0,
                     strategy=self.strategy,
                     token=self._create_oauth2_token(resp_data),
                     data=OAuth2TokenData(
@@ -125,13 +128,14 @@ class OAuth2Strategy(AuthorizationStrategy):
             )
 
     def refresh_authorization(self, token: AuthorizationToken) -> None:
+        super()._update_token_refresh_state(token)
+
         oauth2_token, oauth2_data = self._get_oauth2_data_from_token(token)
         client_secret = self._get_client_secret(token.auth_bearer)
 
         if oauth2_token.refresh_token is None:
             raise RuntimeError("Tried to refresh without a refresh token")
 
-        # TODO: Timeout etc. handling
         response = requests.post(
             urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
             data={
@@ -155,6 +159,8 @@ class OAuth2Strategy(AuthorizationStrategy):
                     refreshed_token = clone_entity(
                         refreshed_token, refresh_token=oauth2_token.refresh_token
                     )
+
+                super()._update_token_refresh_state(token, reset=True)
 
                 token.expiration_timestamp = self._get_expiration_timestamp(
                     resp_data, default=3600.0

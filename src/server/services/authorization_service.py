@@ -1,18 +1,22 @@
+import time
+
 from common.py.component import BackendComponent
 from common.py.core import logging
 from common.py.data.entities.authorization import (
-    has_authorization_token_expired,
+    AuthorizationToken,
     get_host_authorization_token_id,
+    has_authorization_token_expired,
 )
 from common.py.data.verifiers.authorization import AuthorizationTokenVerifier
 from common.py.integration.authorization.strategies import (
-    create_authorization_strategy,
     AuthorizationStrategy,
+    create_authorization_strategy,
 )
 from common.py.services import Service
 from common.py.utils import EntryGuard
 
 from .tools import handle_authorization_token_changes
+from ..settings import AuthorizationSettingIDs
 
 
 def create_authorization_service(comp: BackendComponent) -> Service:
@@ -42,16 +46,27 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         "Authorization service", context_type=ServerServiceContext
     )
 
+    refresh_attempts_delay = comp.data.config.value(
+        AuthorizationSettingIDs.REFRESH_ATTEMPTS_DELAY
+    )
+    refresh_attempts_limit = comp.data.config.value(
+        AuthorizationSettingIDs.REFRESH_ATTEMPTS_LIMIT
+    )
+
     def _create_auth_strategy(
-        ctx: ServerServiceContext, strategy: str
+        ctx: ServerServiceContext,
+        strategy: str,
+        *,
+        auth_token: AuthorizationToken | None = None,
     ) -> AuthorizationStrategy:
-        auth_token = (
-            ctx.storage_pool.authorization_token_storage.get(
-                get_host_authorization_token_id(ctx.user.user_id)
+        if auth_token is None:
+            auth_token = (
+                ctx.storage_pool.authorization_token_storage.get(
+                    get_host_authorization_token_id(ctx.user.user_id)
+                )
+                if ctx.user
+                else None
             )
-            if ctx.user
-            else None
-        )
 
         return create_authorization_strategy(
             comp,
@@ -114,7 +129,17 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                 (user_id, msg.auth_id)
             )
         ) is not None:
-            ctx.storage_pool.authorization_token_storage.remove(auth_token)
+            if msg.force:
+                ctx.storage_pool.authorization_token_storage.remove(auth_token)
+            else:
+                # Invalidate the token, ensuring that a refresh will be tried (if possible)
+                auth_token.state = AuthorizationToken.TokenState.INVALID
+                auth_token.timestamp = time.time()
+                auth_token.expiration_timestamp = (
+                    1 if auth_token.expiration_timestamp else 0
+                )
+                auth_token.refresh_attempts = 0
+
             handle_authorization_token_changes(auth_token, msg, ctx)
 
             success = True
@@ -145,6 +170,9 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             (msg.user_id, msg.auth_id)
         )
 
+        if auth_token.state != AuthorizationToken.TokenState.VALID:
+            auth_token = None
+
         GetAuthorizationTokenReply.build(
             ctx.message_builder,
             msg,
@@ -164,12 +192,22 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             if not guard.can_execute:
                 return
 
+            def _attempt_refresh(token: AuthorizationToken) -> bool:
+                return (
+                    token.refresh_attempts == 0
+                    or token.timestamp + refresh_attempts_delay <= time.time()
+                )
+
             for auth_token in ctx.storage_pool.authorization_token_storage.list():
-                if has_authorization_token_expired(auth_token):
+                if has_authorization_token_expired(auth_token) and _attempt_refresh(
+                    auth_token
+                ):
                     try:
                         AuthorizationTokenVerifier(auth_token).verify_update()
 
-                        strategy = _create_auth_strategy(ctx, auth_token.strategy)
+                        strategy = _create_auth_strategy(
+                            ctx, auth_token.strategy, auth_token=auth_token
+                        )
                         strategy.refresh_authorization(auth_token)
 
                         logging.debug(
@@ -180,17 +218,19 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                             strategy=auth_token.strategy,
                         )
                     except Exception as exc:  # pylint: disable=broad-exception-caught
-                        logging.warning(
-                            "Unable to refresh authorization token - removing token",
-                            scope="authorization",
-                            user_id=auth_token.user_id,
-                            auth_id=auth_token.auth_id,
-                            strategy=auth_token.strategy,
-                            error=str(exc),
-                        )
+                        if 0 < refresh_attempts_limit <= auth_token.refresh_attempts:
+                            logging.warning(
+                                "Unable to refresh authorization token - removing token",
+                                scope="authorization",
+                                user_id=auth_token.user_id,
+                                auth_id=auth_token.auth_id,
+                                strategy=auth_token.strategy,
+                                error=str(exc),
+                            )
 
-                        # TODO: Less harsh
-                        ctx.storage_pool.authorization_token_storage.remove(auth_token)
-                        handle_authorization_token_changes(auth_token, msg, ctx)
+                            ctx.storage_pool.authorization_token_storage.remove(
+                                auth_token
+                            )
+                            handle_authorization_token_changes(auth_token, msg, ctx)
 
     return svc

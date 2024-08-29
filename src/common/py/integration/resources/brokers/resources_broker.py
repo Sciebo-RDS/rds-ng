@@ -132,7 +132,7 @@ class ResourcesBroker(IntegrationHandler):
             root if root != "" else self._default_root
         )
 
-    def _revoke_auth_token(self) -> None:
+    def _invalidate_auth_token(self) -> None:
         if self.has_authorization:
             from ....api.authorization import RevokeAuthorizationCommand
 
@@ -140,6 +140,7 @@ class ResourcesBroker(IntegrationHandler):
                 self._service.message_builder,
                 user_id=self._user_token.user_id,
                 auth_id=self._auth_token.auth_id,
+                force=False,
             ).failed(lambda _, msg: None).emit(Channel.local())
 
     @property

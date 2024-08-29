@@ -72,11 +72,14 @@ export class RequestAuthorizationReply extends CommandReply {
  *
  * @param user_id - The user ID.
  * @param auth_id - The ID of the token to revoke.
+ * @param force - If true, the token will be removed immediately; otherwise, it will be marked as invalid only
  */
 @Message.define("command/authorization/revoke")
 export class RevokeAuthorizationCommand extends Command {
     public readonly user_id: UserID = "";
     public readonly auth_id: string = "";
+
+    public readonly force: boolean = true;
 
     /**
      * Helper function to easily build this message.
@@ -85,9 +88,10 @@ export class RevokeAuthorizationCommand extends Command {
         messageBuilder: MessageBuilder,
         userID: UserID,
         authID: string,
+        force: boolean = true,
         chain: Message | null = null,
     ): CommandComposer<RevokeAuthorizationCommand> {
-        return messageBuilder.buildCommand(RevokeAuthorizationCommand, { user_id: userID, auth_id: authID }, chain);
+        return messageBuilder.buildCommand(RevokeAuthorizationCommand, { user_id: userID, auth_id: authID, force: force }, chain);
     }
 }
 

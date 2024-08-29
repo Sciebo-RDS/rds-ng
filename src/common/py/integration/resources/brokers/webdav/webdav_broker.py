@@ -116,25 +116,25 @@ class WebdavBroker(ResourcesBroker):
             return cb()
         except webdav3.client.ResponseErrorCode as exc:
             # If the request throws a 401 (unauthorized), first try to refresh the auth token and re-do the call
-            # If the second try fails, the auth token is removed and an error is thrown
-            if exc.code == HTTPStatus.UNAUTHORIZED and refresh_unauthorized_token:
-                try:
-                    self._auth_strategy.refresh_authorization(self._auth_token)
-                    return self._execute_request(
-                        cb, resource=resource, refresh_unauthorized_token=False
-                    )
-                except:  # pylint: disable=bare-except
-                    pass
+            # If the second try fails, the auth token is marked as invalid
+            if exc.code == HTTPStatus.UNAUTHORIZED:
+                if refresh_unauthorized_token:
+                    try:
+                        self._auth_strategy.refresh_authorization(self._auth_token)
+                        return self._execute_request(
+                            cb, resource=resource, refresh_unauthorized_token=False
+                        )
+                    except:  # pylint: disable=bare-except
+                        pass
 
-            logging.warning(
-                "Resource access error - removing authorization token",
-                scope="webdav",
-                resource=str(resource),
-                error=str(exc),
-            )
+                logging.warning(
+                    "Resource unauthorized access error - invalidating authorization token",
+                    scope="webdav",
+                    resource=str(resource),
+                    error=str(exc),
+                )
 
-            # TODO: Less harsh
-            self._revoke_auth_token()
+                self._invalidate_auth_token()
 
             raise exc
 
