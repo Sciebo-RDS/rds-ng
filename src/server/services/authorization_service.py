@@ -54,15 +54,19 @@ def create_authorization_service(comp: BackendComponent) -> Service:
     )
 
     def _create_auth_strategy(
-        ctx: ServerServiceContext, strategy: str
+        ctx: ServerServiceContext,
+        strategy: str,
+        *,
+        auth_token: AuthorizationToken | None = None,
     ) -> AuthorizationStrategy:
-        auth_token = (
-            ctx.storage_pool.authorization_token_storage.get(
-                get_host_authorization_token_id(ctx.user.user_id)
+        if auth_token is None:
+            auth_token = (
+                ctx.storage_pool.authorization_token_storage.get(
+                    get_host_authorization_token_id(ctx.user.user_id)
+                )
+                if ctx.user
+                else None
             )
-            if ctx.user
-            else None
-        )
 
         return create_authorization_strategy(
             comp,
@@ -191,7 +195,9 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                     try:
                         AuthorizationTokenVerifier(auth_token).verify_update()
 
-                        strategy = _create_auth_strategy(ctx, auth_token.strategy)
+                        strategy = _create_auth_strategy(
+                            ctx, auth_token.strategy, auth_token=auth_token
+                        )
                         strategy.refresh_authorization(auth_token)
 
                         logging.debug(
