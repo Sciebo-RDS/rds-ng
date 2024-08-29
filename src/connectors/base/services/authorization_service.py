@@ -30,6 +30,7 @@ def create_authorization_service(comp: BackendComponent) -> Service:
             ctx.message_builder,
             user_id=msg.user_id,
             auth_id=msg.auth_id,
+            force=msg.force,
         ).failed(lambda _, err: None).emit(ctx.remote_channel)
 
         RevokeAuthorizationReply.build(

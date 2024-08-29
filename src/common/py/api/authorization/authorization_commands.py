@@ -86,10 +86,13 @@ class RevokeAuthorizationCommand(Command):
     Args:
         user_id: The user ID.
         auth_id: The ID of the token to revoke.
+        force: If true, the token will be removed immediately; otherwise, it will be marked as invalid only
     """
 
     user_id: UserID
     auth_id: str
+
+    force: bool
 
     @staticmethod
     def build(
@@ -97,6 +100,7 @@ class RevokeAuthorizationCommand(Command):
         *,
         user_id: UserID,
         auth_id: str,
+        force: bool = True,
         chain: Message | None = None,
     ) -> CommandComposer:
         """
@@ -107,6 +111,7 @@ class RevokeAuthorizationCommand(Command):
             chain,
             user_id=user_id,
             auth_id=auth_id,
+            force=force,
         )
 
 

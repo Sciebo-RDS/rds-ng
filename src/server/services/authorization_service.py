@@ -129,7 +129,17 @@ def create_authorization_service(comp: BackendComponent) -> Service:
                 (user_id, msg.auth_id)
             )
         ) is not None:
-            ctx.storage_pool.authorization_token_storage.remove(auth_token)
+            if msg.force:
+                ctx.storage_pool.authorization_token_storage.remove(auth_token)
+            else:
+                # Invalidate the token, ensuring that a refresh will be tried (if possible)
+                auth_token.state = AuthorizationToken.TokenState.INVALID
+                auth_token.timestamp = time.time()
+                auth_token.expiration_timestamp = (
+                    1 if auth_token.expiration_timestamp else 0
+                )
+                auth_token.refresh_attempts = 0
+
             handle_authorization_token_changes(auth_token, msg, ctx)
 
             success = True
