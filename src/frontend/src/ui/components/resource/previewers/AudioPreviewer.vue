@@ -21,7 +21,7 @@ const audioData = ref("");
 onMounted(() => {
     const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
 
-    retrieveResourceData(unref(resource)!).then((data: string) => {
+    retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
         audioData.value = resourceDataToTagValue(unref(resource)!, data);
     });
 });

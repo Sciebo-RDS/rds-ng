@@ -23,7 +23,7 @@ const videoData = ref("");
 onMounted(() => {
     const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
 
-    retrieveResourceData(unref(resource)!).then((data: string) => {
+    retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
         videoData.value = resourceDataToTagValue(unref(resource)!, data);
     });
 });

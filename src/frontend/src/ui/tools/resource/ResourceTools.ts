@@ -1,15 +1,16 @@
 import { GetResourceReply } from "@common/api/resource/ResourceCommands";
 import { Resource } from "@common/data/entities/resource/Resource";
+import { encodeBase64 } from "@common/utils/Strings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useResourcesStore } from "@/data/stores/ResourcesStore";
 import { GetResourceAction } from "@/ui/actions/resource/GetResourceAction";
 
 export function useResourceTools(comp: FrontendComponent) {
-    async function retrieveResourceData(resource: Resource): Promise<string> {
+    async function retrieveResourceData(resource: Resource): Promise<ArrayBuffer | undefined> {
         const resourcesStore = useResourcesStore();
 
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<ArrayBuffer | undefined>((resolve, reject) => {
             if (resourcesStore.resourcesCache.hasData(resource)) {
                 resourcesStore.resourcesCache.bump(resource);
                 resolve(resourcesStore.resourcesCache.getData(resource));
@@ -29,12 +30,12 @@ export function useResourceTools(comp: FrontendComponent) {
         });
     }
 
-    function resourceDataToTagValue(resource: Resource, data: string): string {
-        return `data:${resource.mime_type};base64,${data}`;
+    function resourceDataToTagValue(resource: Resource, data: ArrayBuffer | undefined): string {
+        return !!data ? `data:${resource.mime_type};base64,${encodeBase64(data)}` : "";
     }
 
     return {
         retrieveResourceData,
-        resourceDataToTagValue,
+        resourceDataToTagValue
     };
 }

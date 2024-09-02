@@ -23,7 +23,7 @@ const textData = ref("");
 onMounted(() => {
     const { retrieveResourceData } = useResourceTools(comp);
 
-    retrieveResourceData(unref(resource)!).then((data: string) => {
+    retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
         textData.value = atob(data);
     });
 });

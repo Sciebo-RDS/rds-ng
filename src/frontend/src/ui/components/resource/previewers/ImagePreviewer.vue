@@ -22,7 +22,7 @@ const imageData = ref("");
 onMounted(() => {
     const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
 
-    retrieveResourceData(unref(resource)!).then((data: string) => {
+    retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
         imageData.value = resourceDataToTagValue(unref(resource)!, data);
     });
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
+import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import { Resource } from "@common/data/entities/resource/Resource";
 
@@ -23,7 +23,7 @@ const pdfData = ref("");
 onMounted(() => {
     const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
 
-    retrieveResourceData(unref(resource)!).then((data: string) => {
+    retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
         pdfData.value = resourceDataToTagValue(unref(resource)!, data);
     });
 });

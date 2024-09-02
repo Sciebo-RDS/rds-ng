@@ -142,7 +142,25 @@ export class GetResourceReply extends CommandReply {
     // @ts-ignore
     @Type(() => Resource)
     public readonly resource: Resource = new Resource("", "", ResourceType.Folder);
-    public readonly data: string = ""; // TODO: Support binary data
+
+    /**
+     * The data of the resource.
+     */
+    public get data(): ArrayBuffer | undefined {
+        if (this.payload.contains("data")) {
+            return this.payload.get("data") as ArrayBuffer;
+        }
+        return undefined;
+    }
+
+    /**
+     * Sets the data of the resource.
+     *
+     * @param data - The resource data.
+     */
+    public set data(data: ArrayBuffer): void {
+        this.payload.set("data", data);
+    }
 
     /**
      * Helper function to easily build this message.
@@ -151,12 +169,12 @@ export class GetResourceReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: GetResourceCommand,
         resource: Resource,
-        data: string,
+        data: ArrayBuffer,
         success: boolean = true,
         message: string = ""
     ): CommandReplyComposer<GetResourceReply> {
-        const composer = messageBuilder.buildCommandReply(GetResourceReply, cmd, success, message, { resource: resource, data: data });
-        composer.addPayload("resource_data", data);
+        const composer = messageBuilder.buildCommandReply(GetResourceReply, cmd, success, message, { resource: resource });
+        composer.addPayload("data", data);
         return composer;
     }
 }
