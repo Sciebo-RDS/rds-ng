@@ -141,6 +141,7 @@ class Message(abc.ABC):
                     cleanup(value, parent_obj, parent_key)
 
         obj_dict = self.to_dict()
+        obj_dict["payload"] = str(self.payload)
         cleanup(obj_dict, None, None)
         return str(obj_dict)
 

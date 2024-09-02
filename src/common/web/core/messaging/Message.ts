@@ -1,6 +1,7 @@
 import { plainToInstance, Type, Exclude } from "class-transformer";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
+import { string } from "yup";
 
 import { Channel } from "./Channel";
 import { MessagePayload } from "./MessagePayload";
@@ -153,7 +154,8 @@ export abstract class Message {
      */
     public toString(): string {
         // Remove all data fields from the output to not clutter the output
-        let obj = JSON.parse(this.convertToJSON());
+        const obj = JSON.parse(this.convertToJSON());
+        obj["payload"] = this.payload.toString();
         return JSON.stringify(shortenDataStrings(obj));
     }
 }

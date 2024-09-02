@@ -6,13 +6,13 @@ from enum import IntEnum, auto
 
 import socketio
 
-from .. import Message
+from .. import Message, Payload
 from ..composers import MessageBuilder
 from ...logging import info, warning, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
 
-ServerMessageHandler = typing.Callable[[str, str], None]
+ServerMessageHandler = typing.Callable[[str, str, Payload], None]
 
 
 class Server(socketio.Server):
@@ -142,7 +142,7 @@ class Server(socketio.Server):
             send_to = self._get_message_recipient(msg)
             self.emit(
                 msg.name,
-                data=msg.to_json(),
+                data=(msg.to_json(), msg.payload.encode()),
                 to=send_to,
                 skip_sid=self._component_ids_to_clients(skip_components),
             )
@@ -211,13 +211,13 @@ class Server(socketio.Server):
 
             info("Client disconnected", scope="server", session=sid)
 
-    def _on_message(self, msg_name: str, sid: str, data: str) -> None:
+    def _on_message(self, msg_name: str, sid: str, data: str, payload: Payload) -> None:
         with self._lock:
             if (comp_id := self._lookup_client(sid)) is not None:
                 self._timestamp_component(comp_id)
 
             if self._message_handler is not None:
-                self._message_handler(msg_name, data)
+                self._message_handler(msg_name, data, payload)
 
     def _timestamp_component(self, comp_id: UnitID) -> None:
         if comp_id in self._connected_components:

@@ -6,7 +6,15 @@ from .network_filter import NetworkFilter
 from .network_filters import NetworkFilters
 from .network_router import NetworkRouter
 from .server import Server
-from .. import Message, MessageBusProtocol, MessageType, Command, CommandReply, Event
+from .. import (
+    Message,
+    MessageBusProtocol,
+    MessageType,
+    Command,
+    CommandReply,
+    Event,
+    Payload,
+)
 from ..meta import (
     MessageMetaInformation,
     MessageMetaInformationType,
@@ -89,16 +97,16 @@ class NetworkEngine:
         """
         if self.has_server:
             self._server.set_message_handler(
-                lambda msg_name, data: self._handle_received_message(
-                    MessageMetaInformation.Entrypoint.SERVER, msg_name, data
+                lambda msg_name, data, payload: self._handle_received_message(
+                    MessageMetaInformation.Entrypoint.SERVER, msg_name, data, payload
                 )
             )
             self._server.run()
 
         if self.has_client:
             self._client.set_message_handler(
-                lambda msg_name, data: self._handle_received_message(
-                    MessageMetaInformation.Entrypoint.CLIENT, msg_name, data
+                lambda msg_name, data, payload: self._handle_received_message(
+                    MessageMetaInformation.Entrypoint.CLIENT, msg_name, data, payload
                 ),
             )
             self._client.run()
@@ -147,10 +155,14 @@ class NetworkEngine:
         self._filters.install(fltr)
 
     def _handle_received_message(
-        self, entrypoint: MessageMetaInformation.Entrypoint, msg_name: str, data: str
+        self,
+        entrypoint: MessageMetaInformation.Entrypoint,
+        msg_name: str,
+        data: str,
+        payload: Payload,
     ) -> None:
         try:
-            msg = self._unpack_message(msg_name, data)
+            msg = self._unpack_message(msg_name, data, payload)
             msg_meta = self._create_message_meta_information(msg, entrypoint)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             self._routing_error(str(exc), data=data)
@@ -187,7 +199,7 @@ class NetworkEngine:
                     skip_components=[self._comp_data.comp_id, msg.sender],
                 )
 
-    def _unpack_message(self, msg_name: str, data: str) -> Message:
+    def _unpack_message(self, msg_name: str, data: str, payload: Payload) -> Message:
         # Look up the actual message via its name
         from .. import MessageTypesCatalog
 
@@ -200,6 +212,8 @@ class NetworkEngine:
         self._router.verify_message(NetworkRouter.Direction.IN, msg)
 
         msg.hops.append(self._comp_data.comp_id)
+        msg.payload.decode(payload)
+
         return msg
 
     def _route_message(

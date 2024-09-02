@@ -68,4 +68,8 @@ export class MessagePayload {
     public decode(payload: Payload): void {
         this._payload = payload;
     }
+
+    public toString(): string {
+        return JSON.stringify(this._payload);
+    }
 }

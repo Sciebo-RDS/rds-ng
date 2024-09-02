@@ -1,3 +1,4 @@
+import json
 import typing
 
 PayloadData = typing.Any
@@ -76,3 +77,6 @@ class MessagePayload:
             payload: The incoming payload.
         """
         self._payload = payload
+
+    def __str__(self) -> str:
+        return json.dumps(self._payload)
