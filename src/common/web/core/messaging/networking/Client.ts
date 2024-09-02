@@ -8,8 +8,9 @@ import logging from "../../logging/Logging";
 import { MessageBuilder } from "../composers/MessageBuilder";
 import { Channel } from "../Channel";
 import { Message } from "../Message";
+import { type Payload } from "../MessagePayload";
 
-type ClientMessageHandler = (msgName: string, data: string) => void;
+type ClientMessageHandler = (msgName: string, data: string, payload: Payload) => void;
 
 /**
  * The client connection, based on ``socketio``.
@@ -63,7 +64,7 @@ export class Client {
         this._socket.on("connect", () => this.onConnect());
         this._socket.on("connect_error", (reason: any) => this.onConnectError(reason));
         this._socket.on("disconnect", () => this.onDisconnect());
-        this._socket.onAny((msgName: string, data: string) => this.onMessage(msgName, data));
+        this._socket.onAny((msgName: string, data: string, payload: Payload) => this.onMessage(msgName, data, payload));
     }
 
     /**
@@ -76,8 +77,7 @@ export class Client {
     /**
      * Periodically performs certain tasks.
      */
-    public process(): void {
-    }
+    public process(): void {}
 
     /**
      * Establishes the connection to the server.
@@ -113,7 +113,7 @@ export class Client {
     public sendMessage(msg: Message): void {
         if (this._socket.connected) {
             logging.debug(`Sending message: ${String(msg)}`, "client");
-            this._socket.emit(msg.name, msg.convertToJSON());
+            this._socket.emit(msg.name, msg.convertToJSON(), msg.payload.encode());
         }
     }
 
@@ -135,13 +135,13 @@ export class Client {
         logging.info("Disconnected from server", "client");
     }
 
-    private onMessage(msgName: string, data: string): void {
+    private onMessage(msgName: string, data: string, payload: Payload): void {
         if (this._messageHandler) {
-            this._messageHandler(msgName, data);
+            this._messageHandler(msgName, data, payload);
         }
     }
 
     private getAuthentication(): Record<string, any> {
-        return { "component_id": this._compID.toString() };
+        return { component_id: this._compID.toString() };
     }
 }

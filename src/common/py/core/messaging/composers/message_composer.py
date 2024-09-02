@@ -6,6 +6,8 @@ from .. import (
     MessageType,
     MessageBusProtocol,
     Channel,
+    Payload,
+    PayloadData,
 )
 from ..meta import MessageMetaInformation
 from ....utils import UnitID
@@ -42,8 +44,19 @@ class MessageComposer(abc.ABC):
 
         self._msg_type = msg_type
         self._params = kwargs
+        self._payload: Payload = {}
 
         self._before_callbacks: typing.List[BeforeDispatchCallback] = []
+
+    def add_payload(self, key: str, data: PayloadData) -> None:
+        """
+        Adds a payload item to the message.
+
+        Args:
+            key: The item key.
+            data: The item data.
+        """
+        self._payload[key] = data
 
     def before(self, callback: BeforeDispatchCallback) -> typing.Self:
         """
@@ -89,10 +102,15 @@ class MessageComposer(abc.ABC):
     ) -> MessageMetaInformation: ...
 
     def _create_message(self, target: Channel) -> MessageType:
-        return self._msg_type(
-            origin=self._origin_id,
-            sender=self._origin_id,
-            target=target,
-            hops=[self._origin_id],
-            **self._params,
+        msg = typing.cast(
+            Message,
+            self._msg_type(
+                origin=self._origin_id,
+                sender=self._origin_id,
+                target=target,
+                hops=[self._origin_id],
+                **self._params,
+            ),
         )
+        msg.payload.decode(self._payload)
+        return typing.cast(MessageType, msg)

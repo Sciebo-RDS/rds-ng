@@ -30,13 +30,15 @@ def create_network_service(comp: BackendComponent) -> Service:
 
     @svc.message_handler(PingCommand)
     def ping(msg: PingCommand, ctx: ServiceContext) -> None:
-        ctx.logger.debug("Received PING", scope="network", payload=msg.payload)
+        ctx.logger.debug("Received PING", scope="network", payload=msg.ping_payload)
 
         PingReply.build(ctx.message_builder, msg).emit()
 
     @svc.message_handler(PingReply)
     def ping_reply(msg: PingReply, ctx: ServiceContext) -> None:
-        ctx.logger.debug("Received PING reply", scope="network", payload=msg.payload)
+        ctx.logger.debug(
+            "Received PING reply", scope="network", payload=msg.ping_payload
+        )
 
     @svc.message_handler(ServerConnectedEvent)
     def server_connected(msg: ServerConnectedEvent, ctx: ServiceContext) -> None:

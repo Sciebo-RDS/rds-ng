@@ -17,12 +17,12 @@ import { type AuthorizationRequestPayload } from "../../integration/authorizatio
  */
 @Message.define("command/authorization/request")
 export class RequestAuthorizationCommand extends Command {
-    public readonly payload: AuthorizationRequestPayload = {
+    public readonly request_payload: AuthorizationRequestPayload = {
         auth_id: "",
         auth_type: AuthorizationTokenType.Invalid,
         auth_issuer: "",
         auth_bearer: "",
-        fingerprint: "",
+        fingerprint: ""
     };
     public readonly strategy: string = "";
     public readonly data: any = null;
@@ -32,19 +32,19 @@ export class RequestAuthorizationCommand extends Command {
      */
     public static build(
         messageBuilder: MessageBuilder,
-        payload: AuthorizationRequestPayload,
+        request_payload: AuthorizationRequestPayload,
         strategy: string,
         data: any,
-        chain: Message | null = null,
+        chain: Message | null = null
     ): CommandComposer<RequestAuthorizationCommand> {
         return messageBuilder.buildCommand(
             RequestAuthorizationCommand,
             {
-                payload: payload,
+                request_payload: request_payload,
                 strategy: strategy,
-                data: data,
+                data: data
             },
-            chain,
+            chain
         );
     }
 }
@@ -61,7 +61,7 @@ export class RequestAuthorizationReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: RequestAuthorizationCommand,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<RequestAuthorizationReply> {
         return messageBuilder.buildCommandReply(RequestAuthorizationReply, cmd, success, message);
     }
@@ -89,7 +89,7 @@ export class RevokeAuthorizationCommand extends Command {
         userID: UserID,
         authID: string,
         force: boolean = true,
-        chain: Message | null = null,
+        chain: Message | null = null
     ): CommandComposer<RevokeAuthorizationCommand> {
         return messageBuilder.buildCommand(RevokeAuthorizationCommand, { user_id: userID, auth_id: authID, force: force }, chain);
     }
@@ -107,7 +107,7 @@ export class RevokeAuthorizationReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: RevokeAuthorizationCommand,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<RevokeAuthorizationReply> {
         return messageBuilder.buildCommandReply(RevokeAuthorizationReply, cmd, success, message);
     }

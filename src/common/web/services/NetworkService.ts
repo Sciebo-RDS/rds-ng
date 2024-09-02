@@ -12,18 +12,18 @@ import { ServiceContext } from "./ServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function(comp: WebComponent): Service {
+export default function (comp: WebComponent): Service {
     return comp.createService("Network service", (svc: Service) => {
         const nwStore = useNetworkStore();
 
         svc.messageHandler(PingCommand, (msg: PingCommand, ctx: ServiceContext) => {
-            ctx.logger.debug("Received PING", "network", { payload: msg.payload });
+            ctx.logger.debug("Received PING", "network", { payload: msg.ping_payload });
 
             PingReply.build(ctx.messageBuilder, msg).emit();
         });
 
         svc.messageHandler(PingReply, (msg: PingReply, ctx: ServiceContext) => {
-            ctx.logger.debug("Received PING reply", "network", { payload: msg.payload });
+            ctx.logger.debug("Received PING reply", "network", { payload: msg.ping_payload });
         });
 
         svc.messageHandler(ClientConnectedEvent, (msg: ClientConnectedEvent, ctx: ServiceContext) => {

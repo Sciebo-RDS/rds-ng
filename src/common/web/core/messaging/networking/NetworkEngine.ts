@@ -7,6 +7,7 @@ import { CommandReply } from "../CommandReply";
 import { Event } from "../Event";
 import { Message, type MessageCategory } from "../Message";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
+import { type Payload } from "../MessagePayload";
 import { MessageTypesCatalog } from "../MessageTypesCatalog";
 import { CommandMetaInformation } from "../meta/CommandMetaInformation";
 import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
@@ -56,8 +57,8 @@ export class NetworkEngine {
      * Listens to incoming messages in order to properly route them.
      */
     public run(): void {
-        this._client.setMessageHandler((msgName: string, data: string) => {
-            this.handleReceivedMessage(MessageEntrypoint.Client, msgName, data);
+        this._client.setMessageHandler((msgName: string, data: string, payload: Payload) => {
+            this.handleReceivedMessage(MessageEntrypoint.Client, msgName, data, payload);
         });
 
         this._client.run();
@@ -91,9 +92,9 @@ export class NetworkEngine {
         }
     }
 
-    private handleReceivedMessage(entrypoint: MessageEntrypoint, msgName: string, data: string): void {
+    private handleReceivedMessage(entrypoint: MessageEntrypoint, msgName: string, data: string, payload: Payload): void {
         try {
-            let msg = this.unpackMessage(msgName, data);
+            let msg = this.unpackMessage(msgName, data, payload);
             let msgMeta = this.createMessageMetaInformation(msg, entrypoint);
 
             logging.debug(`Received message: ${String(msg)}`, "network", { entrypoint: String(entrypoint) });
@@ -106,7 +107,7 @@ export class NetworkEngine {
         }
     }
 
-    private unpackMessage(msgName: string, data: string): Message {
+    private unpackMessage(msgName: string, data: string, payload: Payload): Message {
         // Look up the actual message via its name
         let msgType = MessageTypesCatalog.findItem(msgName);
         if (!msgType) {
@@ -117,6 +118,7 @@ export class NetworkEngine {
         this._router.verifyMessage(NetworkRouterDirection.In, msg);
 
         msg.hops.push(this._compData.compID);
+        msg.payload.decode(payload);
 
         return msg;
     }

@@ -21,12 +21,12 @@ class RequestAuthorizationCommand(Command):
         Requires a ``RequestAuthorizationReply`` reply.
 
     Args:
-        payload: The authorization request information.
+        request_payload: The authorization request information.
         strategy: The token strategy (e.g., OAuth2).
         data: The actual token request data.
     """
 
-    payload: AuthorizationRequestPayload = field(
+    request_payload: AuthorizationRequestPayload = field(
         default_factory=AuthorizationRequestPayload
     )
     strategy: str
@@ -36,7 +36,7 @@ class RequestAuthorizationCommand(Command):
     def build(
         message_builder: MessageBuilder,
         *,
-        payload: AuthorizationRequestPayload,
+        request_payload: AuthorizationRequestPayload,
         strategy: str,
         data: typing.Dict[str, typing.Any],
         chain: Message | None = None,
@@ -47,7 +47,7 @@ class RequestAuthorizationCommand(Command):
         return message_builder.build_command(
             RequestAuthorizationCommand,
             chain,
-            payload=payload,
+            request_payload=request_payload,
             strategy=strategy,
             data=data,
         )

@@ -19,7 +19,7 @@ class PingCommand(Command):
         Requires a ``PingReply`` reply.
     """
 
-    payload: str = "PING"
+    ping_payload: str = "PING"
 
     @staticmethod
     def build(
@@ -37,7 +37,7 @@ class PingReply(CommandReply):
     Reply to ``PingCommand``.
     """
 
-    payload: str = "PONG"
+    ping_payload: str = "PONG"
 
     @staticmethod
     def build(

@@ -183,11 +183,29 @@ class GetResourceReply(CommandReply):
 
     Args:
         resource: The resource path.
-        data: The file data (currently base64-encoded).
     """
 
     resource: Resource
-    data: str  # TODO: Support binary data
+
+    @property
+    def data(self) -> bytes | None:
+        """
+        The data of the resource.
+
+        Returns:
+            The binary data of the resource.
+        """
+        return self.payload.get("data") if "data" in self.payload else None
+
+    @data.setter
+    def data(self, data: bytes) -> None:
+        """
+        Sets the data of the resource.
+
+        Args:
+            data: The resource data.
+        """
+        self.payload.set("data", data)
 
     @staticmethod
     def build(
@@ -195,18 +213,19 @@ class GetResourceReply(CommandReply):
         cmd: GetResourceCommand,
         *,
         resource: Resource,
-        data: str | bytes,
+        data: bytes,
         success: bool = True,
         message: str = "",
     ) -> CommandReplyComposer:
         """
         Helper function to easily build this message.
         """
-        return message_builder.build_command_reply(
+        composer = message_builder.build_command_reply(
             GetResourceReply,
             cmd,
             success,
             message,
             resource=resource,
-            data=data if isinstance(data, str) else base64.b64encode(data).decode(),
         )
+        composer.add_payload("data", data)
+        return composer
