@@ -29,8 +29,11 @@ onMounted(() => {
     const { retrieveResourceData } = useResourceTools(comp);
 
     retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
-        textData.value = atob(data);
-        parsedText.value = md.render(atob(data));
+        const decoder = new TextDecoder();
+        const text = decoder.decode(data);
+
+        textData.value = text;
+        parsedText.value = md.render(text);
     });
 });
 
