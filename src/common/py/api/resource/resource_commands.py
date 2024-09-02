@@ -202,7 +202,7 @@ class GetResourceReply(CommandReply):
         """
         Helper function to easily build this message.
         """
-        return message_builder.build_command_reply(
+        composer = message_builder.build_command_reply(
             GetResourceReply,
             cmd,
             success,
@@ -210,3 +210,5 @@ class GetResourceReply(CommandReply):
             resource=resource,
             data=data if isinstance(data, str) else base64.b64encode(data).decode(),
         )
+        composer.add_payload("resource_data", data)
+        return composer

@@ -1,3 +1,5 @@
+import { humanReadableFileSize } from "../../utils/Strings";
+
 export type PayloadData = any;
 export type Payload = Record<string, PayloadData>;
 
@@ -70,6 +72,9 @@ export class MessagePayload {
     }
 
     public toString(): string {
-        return JSON.stringify(this._payload);
+        if (Object.entries(this._payload).length == 0) {
+            return "(empty)";
+        }
+        return Object.keys(this._payload).join(", ");
     }
 }
