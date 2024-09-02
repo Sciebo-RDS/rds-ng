@@ -49,7 +49,6 @@ export abstract class Message {
 
     public readonly api_key: string = "";
 
-    @Exclude()
     public readonly payload: MessagePayload = new MessagePayload();
 
     /**

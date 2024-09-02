@@ -19,7 +19,9 @@ export function useResourceTools(comp: FrontendComponent) {
                 action
                     .prepare(resource)
                     .done((reply: GetResourceReply) => {
-                        resourcesStore.resourcesCache.push(resource, reply.data);
+                        if (!!reply.data) {
+                            resourcesStore.resourcesCache.push(resource, reply.data);
+                        }
                         resolve(reply.data);
                     })
                     .failed((_, reason: string) => {

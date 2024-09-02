@@ -10,7 +10,7 @@
         "material-icons": "^1.13.12",
         "pdfmake": "^0.2.12",
         "pinia": "^2.2.2",
-        "postcss": "^8.4.41",
+        "postcss": "^8.4.44",
         "primeicons": "^7.0.0",
         "primevue": "^3.52.0",
         "reflect-metadata": "^0.2.2",
@@ -31,7 +31,7 @@
         "@tailwindcss/typography": "^0.5.15",
         "@tsconfig/node18": "^18.2.4",
         "@types/markdown-it": "^14.1.2",
-        "@types/node": "^22.5.1",
+        "@types/node": "^22.5.2",
         "@types/semver": "^7.5.8",
         "@vitejs/plugin-vue": "^4.5.1",
         "@vue/eslint-config-typescript": "^13.0.0",
@@ -43,6 +43,6 @@
         "typedoc": "^0.26.6",
         "typescript": "~5.5.4",
         "vite": "^4.5.1",
-        "vue-tsc": "^2.1.2"
+        "vue-tsc": "^2.1.4"
     }
 }

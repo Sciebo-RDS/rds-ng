@@ -158,7 +158,7 @@ export class GetResourceReply extends CommandReply {
      *
      * @param data - The resource data.
      */
-    public set data(data: ArrayBuffer): void {
+    public set data(data: ArrayBuffer) {
         this.payload.set("data", data);
     }
 

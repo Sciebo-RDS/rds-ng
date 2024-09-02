@@ -2,7 +2,7 @@ import { UnitID } from "../../../utils/UnitID";
 import { Channel } from "../Channel";
 import { type ConstructableMessage, Message } from "../Message";
 import { type MessageBusProtocol } from "../MessageBusProtocol";
-import { type Payload, PayloadData } from "../MessagePayload";
+import { type Payload, type PayloadData } from "../MessagePayload";
 import { MessageMetaInformation } from "../meta/MessageMetaInformation";
 
 export type BeforeDispatchCallback = (msg: Message, msgMeta: MessageMetaInformation) => void;

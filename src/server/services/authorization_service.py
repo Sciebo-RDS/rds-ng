@@ -86,12 +86,12 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         success = False
         message = ""
 
-        if msg.payload.fingerprint == ctx.session.fingerprint:
+        if msg.request_payload.fingerprint == ctx.session.fingerprint:
             try:
                 strategy = _create_auth_strategy(ctx, msg.strategy)
                 auth_token = strategy.request_authorization(
                     ctx.user.user_id,
-                    msg.payload,
+                    msg.request_payload,
                     msg.data,
                 )
                 AuthorizationTokenVerifier(auth_token).verify_create()
