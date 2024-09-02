@@ -34,8 +34,16 @@ export function useResourceTools(comp: FrontendComponent) {
         return !!data ? `data:${resource.mime_type};base64,${encodeBase64(data)}` : "";
     }
 
+    function resourceDataToBlob(resource: Resource, data: ArrayBuffer | undefined): string {
+        if (!!data) {
+            return URL.createObjectURL(new Blob([data], { type: resource.mime_type }));
+        }
+        return "";
+    }
+
     return {
         retrieveResourceData,
-        resourceDataToTagValue
+        resourceDataToTagValue,
+        resourceDataToBlob
     };
 }

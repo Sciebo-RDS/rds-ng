@@ -17,14 +17,13 @@ const props = defineProps({
 });
 const { resource } = toRefs(props);
 
-const pdfFrame = ref(undefined);
 const pdfData = ref("");
 
 onMounted(() => {
-    const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
+    const { retrieveResourceData, resourceDataToBlob } = useResourceTools(comp);
 
     retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
-        pdfData.value = resourceDataToTagValue(unref(resource)!, data);
+        pdfData.value = resourceDataToBlob(unref(resource)!, data);
     });
 });
 
@@ -40,7 +39,7 @@ const previewVisible = ref(false);
         </MiniPreview>
 
         <PreviewOverlay v-if="previewVisible" @close="previewVisible = false" :header="resource.filename">
-            <object ref="pdfFrame" :data="pdfData" :type="resource.mime_type" class="w-full h-screen z-50" />
+            <object :data="pdfData" :type="resource.mime_type" class="w-full h-screen z-50" />
         </PreviewOverlay>
     </div>
 </template>

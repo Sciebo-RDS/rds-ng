@@ -21,10 +21,10 @@ const { resource } = toRefs(props);
 const videoData = ref("");
 
 onMounted(() => {
-    const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
+    const { retrieveResourceData, resourceDataToBlob } = useResourceTools(comp);
 
     retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
-        videoData.value = resourceDataToTagValue(unref(resource)!, data);
+        videoData.value = resourceDataToBlob(unref(resource)!, data);
     });
 });
 

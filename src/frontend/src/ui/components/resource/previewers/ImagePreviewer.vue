@@ -20,10 +20,10 @@ const { resource } = toRefs(props);
 const imageData = ref("");
 
 onMounted(() => {
-    const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
+    const { retrieveResourceData, resourceDataToBlob } = useResourceTools(comp);
 
     retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
-        imageData.value = resourceDataToTagValue(unref(resource)!, data);
+        imageData.value = resourceDataToBlob(unref(resource)!, data);
     });
 });
 </script>
