@@ -4,7 +4,7 @@ from common.py.core.messaging.composers import MessageBuilder
 from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
 from common.py.services import Service
 
-from ..zenodo import ZenodoClient
+from ..zenodo import ZenodoClient, ZenodoCreateProjectCallbacks, ZenodoProjectData
 from ...base.data.entities.connector import ConnectorJob
 from ...base.execution import ConnectorJobExecutor
 from ...base.settings import TransmissionSettingIDs
@@ -15,7 +15,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
     Job executor for Zenodo.
 
     The executor performs the following steps:
-
+        1. Create a Zenodo project
     """
 
     def __init__(
@@ -57,4 +57,23 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         )
 
     def start(self) -> None:
-        self.set_done()
+        self._project_create()
+
+    # -- Project creation
+
+    def _project_create(self) -> None:
+        self.report_message("Creating project...")
+
+        callbacks = ZenodoCreateProjectCallbacks()
+        callbacks.done(lambda data: self._project_create_done(data))
+        callbacks.failed(lambda reason: self._project_create_failed(reason))
+
+        self._zenodo_client.create_project(self._job.project, callbacks=callbacks)
+
+    def _project_create_done(self, zenodo_project: ZenodoProjectData) -> None:
+        self.report_message(f"Project created (Zenodo ID: {zenodo_project.project_id})")
+
+        # TODO: Next step
+
+    def _project_create_failed(self, reason: str) -> None:
+        self.set_failed(f"Unable to create project: {reason}")

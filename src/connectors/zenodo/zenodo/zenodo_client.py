@@ -1,9 +1,14 @@
+import requests
+
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
+from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
 from common.py.services import Service
 
+from .zenodo_callbacks import ZenodoCreateProjectCallbacks, ZenodoDeleteProjectCallbacks
+from .zenodo_request_data import ZenodoProjectData
 from ...base.integration.execution import RequestsExecutor
 
 
@@ -42,4 +47,69 @@ class ZenodoClient(RequestsExecutor):
             base_url="https://sandbox.zenodo.org/api/",
             max_attempts=max_attempts,
             attempts_delay=attempts_delay,
+            trailing_slashes=False,
+        )
+
+    def create_project(
+        self,
+        project: Project,
+        *,
+        callbacks: ZenodoCreateProjectCallbacks = ZenodoCreateProjectCallbacks(),
+    ) -> None:
+        """
+        Creates a new Zenodo project.
+
+        Args:
+            project: The originating project.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> ZenodoProjectData:
+            resp = self.post(
+                session,
+                ["deposit", "depositions"],
+                json={
+                    "metadata": {
+                        "upload_type": "publication",
+                        "publication_type": "other",
+                        "title": project.title,
+                        "creators": [{"name": "Doe, John"}],
+                        "description": project.description,
+                        "access_right": "open",
+                        "license": "cc-by",
+                    }
+                },
+            )
+            return ZenodoProjectData(resp)
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
+        )
+
+    def delete_project(
+        self,
+        zenodo_project: ZenodoProjectData,
+        *,
+        callbacks: ZenodoDeleteProjectCallbacks = ZenodoDeleteProjectCallbacks(),
+    ):
+        """
+        Deletes an existing Zenodo project.
+
+        Args:
+            zenodo_project: The Zenodo project.
+            callbacks: Optional request callbacks.
+        """
+
+        def _execute(session: requests.Session) -> None:
+            resp = self.delete(
+                session,
+                ["deposit", "depositions", zenodo_project.project_id],
+            )
+
+        self._execute(
+            cb_exec=_execute,
+            cb_done=lambda _: callbacks.invoke_done_callbacks(),
+            cb_failed=lambda reason: callbacks.invoke_fail_callbacks(reason),
         )

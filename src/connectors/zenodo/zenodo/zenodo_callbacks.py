@@ -14,3 +14,14 @@ class ZenodoCreateProjectCallbacks(
     """
     Callbacks for the create project API call.
     """
+
+
+class ZenodoDeleteProjectCallbacks(
+    ExecutionCallbacks[
+        typing.Callable[[], None],
+        typing.Callable[[str], None],
+    ]
+):
+    """
+    Callbacks for the delete project API call.
+    """

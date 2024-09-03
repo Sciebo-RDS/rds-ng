@@ -33,6 +33,7 @@ class RequestsExecutor(AuthorizedExecutor):
         base_url: str,
         max_attempts: int = 1,
         attempts_delay: float = 3.0,
+        trailing_slashes: bool = True,
     ):
         """
         Args:
@@ -44,6 +45,7 @@ class RequestsExecutor(AuthorizedExecutor):
             base_url: The base URL for all requests.
             max_attempts: The number of attempts for each operation; cannot be less than 1.
             attempts_delay: The delay (in seconds) between each attempt.
+            trailing_slashes: Add trailing slashes to URLs.
         """
         from common.py.data.entities.authorization import (
             get_connector_instance_authorization_id,
@@ -61,6 +63,7 @@ class RequestsExecutor(AuthorizedExecutor):
         )
 
         self._base_url = base_url.rstrip("/")
+        self._trailing_slashes = trailing_slashes
 
         self._request_timeout = comp.data.config.value(
             NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
@@ -163,12 +166,12 @@ class RequestsExecutor(AuthorizedExecutor):
             **kwargs,
         )
 
-    def _url(self, path: typing.List[str] | str, trailing_slash: bool = True) -> str:
+    def _url(self, path: typing.List[str] | str) -> str:
         if isinstance(path, str):
             return path
         else:
             parts = [self._base_url, *path]
-            return "/".join(parts) + ("/" if trailing_slash else "")
+            return "/".join(parts) + ("/" if self._trailing_slashes else "")
 
     def _execute(
         self,
@@ -201,7 +204,7 @@ class RequestsExecutor(AuthorizedExecutor):
         session = requests.Session()
         session.headers.update(
             {
-                "Accept": "application/vnd.api+json",
+                "Accept": "*/*",
                 "Accept-Charset": "utf-8",
                 "Content-Type": "application/json",
                 "User-Agent": f"{self._component.data.title} {self._component.data.version}",
