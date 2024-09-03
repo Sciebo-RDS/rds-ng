@@ -52,6 +52,21 @@ services:
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
+    # Connector: Zenodo
+    connector-zenodo:
+        image: rds-ng/connector-zenodo:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/zenodo"
+        depends_on:
+            - py-base
+        ports:
+            - "4400:6969"
+        environment:
+            - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
+
     # Connector: Stub
     connector-stub:
         image: rds-ng/connector-stub:latest
@@ -63,7 +78,7 @@ services:
         depends_on:
             - py-base
         ports:
-            - "4400:6969"
+            - "4900:6969"
         environment:
             - RDS_NETWORK_SERVER_ALLOWED_ORIGINS=*
 
