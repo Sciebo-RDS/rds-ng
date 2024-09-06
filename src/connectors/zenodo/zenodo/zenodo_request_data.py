@@ -37,9 +37,23 @@ class ZenodoProjectData(ZenodoRequestData):
     @property
     def project_id(self) -> str:
         """
-        The ID  of the project.
+        The ID of the project.
         """
         return str(self.value("id"))
+
+    @property
+    def project_link(self) -> str:
+        """
+        The link to the project.
+        """
+        return str(self.value("links.html"))
+
+    @property
+    def bucket_link(self) -> str:
+        """
+        The link to the project.
+        """
+        return str(self.value("links.bucket"))
 
 
 class ZenodoFileData(ZenodoRequestData):

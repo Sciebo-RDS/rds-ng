@@ -152,11 +152,10 @@ class ZenodoClient(RequestsExecutor):
             if file.seekable():
                 file.seek(0)
 
-            resp = self.post(
+            resp = self.put(
                 session,
-                path=["deposit", "depositions", zenodo_project.project_id, "files"],
-                data={"name": file_path.name},
-                files={"file": BytesIO(file.readall())},
+                f"{zenodo_project.bucket_link}/{file_path.name}",
+                data=BytesIO(file.readall()),
             )
             return ZenodoFileData(resp)
 

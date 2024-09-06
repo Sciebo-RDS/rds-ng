@@ -213,4 +213,5 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
     ) -> ProjectJobHistoryRecordExtData:
         return {
             ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: zenodo_project.project_id,
+            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_LINK: zenodo_project.project_link,
         }
