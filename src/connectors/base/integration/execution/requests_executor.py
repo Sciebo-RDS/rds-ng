@@ -1,5 +1,6 @@
 import json
 import typing
+from dataclasses import dataclass
 
 import requests
 
@@ -17,6 +18,21 @@ from common.py.integration.execution import AuthorizedExecutor
 from common.py.services import Service
 
 
+@dataclass(frozen=True, kw_only=True)
+class RequestsExecutorOptions:
+    """
+    Additional options for the requests executor.
+
+    Attributes:
+        content_type: The content type to send.
+        trailing_slashes: Add trailing slashes to URLs.
+    """
+
+    content_type: str | None = "application/json"
+
+    trailing_slashes: bool = True
+
+
 class RequestsExecutor(AuthorizedExecutor):
     """
     Executes HTTP API calls via `requests`. It supports automatic authorization and attempt retries.
@@ -31,9 +47,9 @@ class RequestsExecutor(AuthorizedExecutor):
         auth_channel: Channel,
         user_token: UserToken,
         base_url: str,
+        requests_options: RequestsExecutorOptions = RequestsExecutorOptions(),
         max_attempts: int = 1,
         attempts_delay: float = 3.0,
-        trailing_slashes: bool = True,
     ):
         """
         Args:
@@ -43,9 +59,9 @@ class RequestsExecutor(AuthorizedExecutor):
             auth_channel: Channel to fetch authorization tokens from.
             user_token: The user token.
             base_url: The base URL for all requests.
+            requests_options: Additional requests options.
             max_attempts: The number of attempts for each operation; cannot be less than 1.
             attempts_delay: The delay (in seconds) between each attempt.
-            trailing_slashes: Add trailing slashes to URLs.
         """
         from common.py.data.entities.authorization import (
             get_connector_instance_authorization_id,
@@ -63,7 +79,7 @@ class RequestsExecutor(AuthorizedExecutor):
         )
 
         self._base_url = base_url.rstrip("/")
-        self._trailing_slashes = trailing_slashes
+        self._requests_options = requests_options
 
         self._request_timeout = comp.data.config.value(
             NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
@@ -171,7 +187,9 @@ class RequestsExecutor(AuthorizedExecutor):
             return path
         else:
             parts = [self._base_url, *path]
-            return "/".join(parts) + ("/" if self._trailing_slashes else "")
+            return "/".join(parts) + (
+                "/" if self._requests_options.trailing_slashes else ""
+            )
 
     def _execute(
         self,
@@ -206,10 +224,14 @@ class RequestsExecutor(AuthorizedExecutor):
             {
                 "Accept": "*/*",
                 "Accept-Charset": "utf-8",
-                "Content-Type": "application/json",
                 "User-Agent": f"{self._component.data.title} {self._component.data.version}",
             }
         )
+
+        if self._requests_options.content_type is not None:
+            session.headers.update(
+                {"Content-Type": self._requests_options.content_type}
+            )
 
         if (
             auth_strategy := (

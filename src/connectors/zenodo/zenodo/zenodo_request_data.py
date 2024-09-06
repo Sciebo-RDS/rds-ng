@@ -35,8 +35,14 @@ class ZenodoProjectData(ZenodoRequestData):
     """
 
     @property
-    def project_id(self) -> int:
+    def project_id(self) -> str:
         """
         The ID  of the project.
         """
-        return self.value("id")
+        return str(self.value("id"))
+
+
+class ZenodoFileData(ZenodoRequestData):
+    """
+    Zenodo file data.
+    """

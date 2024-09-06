@@ -227,6 +227,7 @@ class OSFJobExecutor(ConnectorJobExecutor):
         self.set_failed(f"Failed to upload {res.filename}: {reason}")
 
     # Miscellaneous
+
     def _delete_failed_project(self, osf_project: OSFProjectData) -> None:
         self._osf_client.delete_project(osf_project)
 

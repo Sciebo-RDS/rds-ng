@@ -1,3 +1,7 @@
-from .zenodo_callbacks import ZenodoCreateProjectCallbacks, ZenodoDeleteProjectCallbacks
+from .zenodo_callbacks import (
+    ZenodoCreateProjectCallbacks,
+    ZenodoDeleteProjectCallbacks,
+    ZenodoUploadFileCallbacks,
+)
 from .zenodo_client import ZenodoClient
-from .zenodo_request_data import ZenodoProjectData
+from .zenodo_request_data import ZenodoProjectData, ZenodoFileData
