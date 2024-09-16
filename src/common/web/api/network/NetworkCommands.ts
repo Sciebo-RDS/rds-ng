@@ -10,7 +10,7 @@ import { Message } from "../../core/messaging/Message";
  */
 @Message.define("command/general/ping")
 export class PingCommand extends Command {
-    public readonly payload: string = "PING";
+    public readonly ping_payload: string = "PING";
 
     /**
      * Helper function to easily build this message.
@@ -25,13 +25,12 @@ export class PingCommand extends Command {
  */
 @Message.define("command/general/ping/reply")
 export class PingReply extends CommandReply {
-    public readonly payload: string = "PONG";
+    public readonly ping_payload: string = "PONG";
 
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, cmd: PingCommand, success: boolean = true, message: string = ""):
-        CommandReplyComposer<PingReply> {
+    public static build(messageBuilder: MessageBuilder, cmd: PingCommand, success: boolean = true, message: string = ""): CommandReplyComposer<PingReply> {
         return messageBuilder.buildCommandReply(PingReply, cmd, success, message);
     }
 }

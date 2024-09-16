@@ -3,13 +3,13 @@ import typing
 
 import socketio
 
-from .. import Message
+from .. import Message, Payload
 from ..composers import MessageBuilder
 from ...logging import info, warning, error, debug
 from ....utils import UnitID
 from ....utils.config import Configuration
 
-ClientMessageHandler = typing.Callable[[str, str], None]
+ClientMessageHandler = typing.Callable[[str, str, Payload], None]
 
 
 class Client(socketio.Client):
@@ -106,7 +106,7 @@ class Client(socketio.Client):
         if self.connected:
             debug(f"Sending message: {msg}", scope="client")
             with self._lock:
-                self.emit(msg.name, data=msg.to_json())
+                self.emit(msg.name, data=(msg.to_json(), msg.payload.encode()))
 
     def _on_connect(self) -> None:
         with self._lock:
@@ -137,10 +137,10 @@ class Client(socketio.Client):
 
             info("Disconnected from server", scope="client")
 
-    def _on_message(self, msg_name: str, data: str) -> None:
+    def _on_message(self, msg_name: str, data: str, payload: Payload) -> None:
         with self._lock:
             if self._message_handler is not None:
-                self._message_handler(msg_name, data)
+                self._message_handler(msg_name, data, payload)
 
     def _get_authentication(self) -> typing.Dict[str, str]:
         return {"component_id": str(self._comp_id)}

@@ -1,8 +1,10 @@
-import { plainToInstance, Type } from "class-transformer";
+import { plainToInstance, Type, Exclude } from "class-transformer";
 // @ts-ignore
 import { v4 as uuidv4 } from "uuid";
+import { string } from "yup";
 
 import { Channel } from "./Channel";
+import { MessagePayload } from "./MessagePayload";
 import { MessageTypesCatalog } from "./MessageTypesCatalog";
 import { shortenDataStrings } from "../../utils/ObjectUtils";
 import { type Constructable } from "../../utils/Types";
@@ -47,6 +49,8 @@ export abstract class Message {
 
     public readonly api_key: string = "";
 
+    public readonly payload: MessagePayload = new MessagePayload();
+
     /**
      * @param name - The name of the message.
      * @param origin - The initial source component of the message.
@@ -70,7 +74,12 @@ export abstract class Message {
      * Converts this message to JSON.
      */
     public convertToJSON(): string {
-        return JSON.stringify(this);
+        return JSON.stringify(this, (key: string, value: any): any | undefined => {
+            if (key == "payload") {
+                return undefined;
+            }
+            return value;
+        });
     }
 
     /**
@@ -144,7 +153,8 @@ export abstract class Message {
      */
     public toString(): string {
         // Remove all data fields from the output to not clutter the output
-        let obj = JSON.parse(this.convertToJSON());
+        const obj = JSON.parse(this.convertToJSON());
+        obj["payload"] = this.payload.toString();
         return JSON.stringify(shortenDataStrings(obj));
     }
 }

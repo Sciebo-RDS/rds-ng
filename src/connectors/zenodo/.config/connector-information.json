@@ -1,0 +1,13 @@
+{
+    "name": "Zenodo",
+    "description": "Zenodo makes the sharing, curation and publication of data and software a reality for all researchers.",
+    "category": "repository",
+    "options": {
+        "publish_once": false
+    },
+    "logos": {
+        "default": "/component/common/assets/img/logos/zenodo.png",
+        "horizontal": "/component/common/assets/img/logos/zenodo.png"
+    },
+    "metadata_profile": "/component/common/assets/profiles/stub.json"
+}

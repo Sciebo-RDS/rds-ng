@@ -1,4 +1,5 @@
 import abc
+import time
 import typing
 from enum import auto, Flag
 
@@ -60,9 +61,7 @@ class AuthorizationStrategy(IntegrationHandler):
     ) -> AuthorizationToken: ...
 
     @abc.abstractmethod
-    def refresh_authorization(
-        self, token: AuthorizationToken
-    ) -> None: ...  # TODO: Token raus, Übergabe an ctor
+    def refresh_authorization(self, token: AuthorizationToken) -> None: ...
 
     def provides_token_content(self, content: ContentType) -> bool:
         """
@@ -93,6 +92,19 @@ class AuthorizationStrategy(IntegrationHandler):
             return self._get_token_content(token, content)
         except:  # pylint: disable=bare-except
             return None
+
+    def _update_token_refresh_state(
+        self, token: AuthorizationToken, *, reset: bool = False
+    ) -> None:
+        token.timestamp = time.time()
+
+        if reset:
+            token.state = AuthorizationToken.TokenState.VALID
+            token.refresh_attempts = 0
+        else:
+            # This needs to be reset if and only if the refresh succeeds
+            token.state = AuthorizationToken.TokenState.INVALID
+            token.refresh_attempts += 1
 
     @abc.abstractmethod
     def _get_token_content(

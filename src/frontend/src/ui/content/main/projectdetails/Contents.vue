@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, defineAsyncComponent, reactive, toRefs, watch } from "vue";
-
-import { Project } from "@common/data/entities/project/Project";
+import { computed, defineAsyncComponent, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
+
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
+import { Project } from "@common/data/entities/project/Project";
 import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -22,12 +22,18 @@ const props = defineProps({
 });
 const { project } = toRefs(props);
 
+const activePanelIndex = ref(0);
 const panels = computed(() => {
     // Select all snap-ins that provide a tab panel and are either non-optional or turned on by the user
     const panelSnapIns = SnapInsCatalog.allWithTabPanel().filter((snapIn) => {
         const uiOptions = project!.value.options.ui as UIOptions;
         return !snapIn.isOptional() || uiOptions.optional_snapins?.includes(snapIn.snapInID);
     });
+
+    if (unref(activePanelIndex) >= panelSnapIns.length) {
+        activePanelIndex.value = panelSnapIns.length - 1;
+    }
+
     return panelSnapIns.map((snapIn) => {
         return { title: snapIn.options.tabPanel!.label, component: defineAsyncComponent(snapIn.options.tabPanel!.loader) };
     });
@@ -54,6 +60,7 @@ watch(
 <template>
     <div class="h-full">
         <TabView
+            v-model:active-index="activePanelIndex"
             class="h-full"
             :pt="{
                 nav: 'tab-view',

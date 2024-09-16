@@ -2,9 +2,9 @@ import { Resource } from "@common/data/entities/resource/Resource";
 
 class ResourcesDataCacheEntry {
     private readonly _resource: Resource;
-    private readonly _data: string;
+    private readonly _data: ArrayBuffer;
 
-    constructor(resource: Resource, data: string) {
+    constructor(resource: Resource, data: ArrayBuffer) {
         this._resource = resource;
         this._data = data;
     }
@@ -13,7 +13,7 @@ class ResourcesDataCacheEntry {
         return this._resource;
     }
 
-    public get data(): string {
+    public get data(): ArrayBuffer {
         return this._data;
     }
 }
@@ -40,7 +40,7 @@ export class ResourcesDataCache {
      * @param resource - The resource to add.
      * @param data - The resource data.
      */
-    public push(resource: Resource, data: string): void {
+    public push(resource: Resource, data: ArrayBuffer): void {
         if (this.hasData(resource)) {
             this.bump(resource);
         } else {
@@ -66,7 +66,7 @@ export class ResourcesDataCache {
      * @returns - The resource data.
      * @throws Error - If no data exists for the resource.
      */
-    public getData(resource: Resource): string {
+    public getData(resource: Resource): ArrayBuffer {
         const entry = this.findEntry(resource);
         if (entry) {
             return entry.data;

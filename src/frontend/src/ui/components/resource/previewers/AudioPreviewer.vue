@@ -19,10 +19,10 @@ const { resource } = toRefs(props);
 const audioData = ref("");
 
 onMounted(() => {
-    const { retrieveResourceData, resourceDataToTagValue } = useResourceTools(comp);
+    const { retrieveResourceData, resourceDataToBlob } = useResourceTools(comp);
 
-    retrieveResourceData(unref(resource)!).then((data: string) => {
-        audioData.value = resourceDataToTagValue(unref(resource)!, data);
+    retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
+        audioData.value = resourceDataToBlob(unref(resource)!, data);
     });
 });
 </script>

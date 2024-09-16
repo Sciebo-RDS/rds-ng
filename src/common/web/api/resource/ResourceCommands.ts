@@ -27,7 +27,7 @@ export class AssignResourcesBrokerCommand extends Command {
         messageBuilder: MessageBuilder,
         broker: string,
         config: any,
-        chain: Message | null = null,
+        chain: Message | null = null
     ): CommandComposer<AssignResourcesBrokerCommand> {
         return messageBuilder.buildCommand(AssignResourcesBrokerCommand, { broker: broker, config: config }, chain);
     }
@@ -45,7 +45,7 @@ export class AssignResourcesBrokerReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: AssignResourcesBrokerCommand,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<AssignResourcesBrokerReply> {
         return messageBuilder.buildCommandReply(AssignResourcesBrokerReply, cmd, success, message);
     }
@@ -77,12 +77,12 @@ export class ListResourcesCommand extends Command {
         includeFolders: boolean = true,
         includeFiles: boolean = true,
         recursive: boolean = true,
-        chain: Message | null = null,
+        chain: Message | null = null
     ): CommandComposer<ListResourcesCommand> {
         return messageBuilder.buildCommand(
             ListResourcesCommand,
             { root: root, include_folders: includeFolders, include_files: includeFiles, recursive: recursive },
-            chain,
+            chain
         );
     }
 }
@@ -106,7 +106,7 @@ export class ListResourcesReply extends CommandReply {
         cmd: ListResourcesCommand,
         resources: ResourcesList,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<ListResourcesReply> {
         return messageBuilder.buildCommandReply(ListResourcesReply, cmd, success, message, { resources: resources });
     }
@@ -142,7 +142,25 @@ export class GetResourceReply extends CommandReply {
     // @ts-ignore
     @Type(() => Resource)
     public readonly resource: Resource = new Resource("", "", ResourceType.Folder);
-    public readonly data: string = ""; // TODO: Support binary data
+
+    /**
+     * The data of the resource.
+     */
+    public get data(): ArrayBuffer | undefined {
+        if (this.payload.contains("data")) {
+            return this.payload.get("data") as ArrayBuffer;
+        }
+        return undefined;
+    }
+
+    /**
+     * Sets the data of the resource.
+     *
+     * @param data - The resource data.
+     */
+    public set data(data: ArrayBuffer) {
+        this.payload.set("data", data);
+    }
 
     /**
      * Helper function to easily build this message.
@@ -151,10 +169,12 @@ export class GetResourceReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: GetResourceCommand,
         resource: Resource,
-        data: string,
+        data: ArrayBuffer,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<GetResourceReply> {
-        return messageBuilder.buildCommandReply(GetResourceReply, cmd, success, message, { resource: resource, data: data });
+        const composer = messageBuilder.buildCommandReply(GetResourceReply, cmd, success, message, { resource: resource });
+        composer.addPayload("data", data);
+        return composer;
     }
 }

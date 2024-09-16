@@ -23,8 +23,9 @@ const textData = ref("");
 onMounted(() => {
     const { retrieveResourceData } = useResourceTools(comp);
 
-    retrieveResourceData(unref(resource)!).then((data: string) => {
-        textData.value = atob(data);
+    retrieveResourceData(unref(resource)!).then((data: ArrayBuffer | undefined) => {
+        const decoder = new TextDecoder();
+        textData.value = decoder.decode(data);
     });
 });
 

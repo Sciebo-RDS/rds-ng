@@ -17,12 +17,12 @@ import { type AuthorizationRequestPayload } from "../../integration/authorizatio
  */
 @Message.define("command/authorization/request")
 export class RequestAuthorizationCommand extends Command {
-    public readonly payload: AuthorizationRequestPayload = {
+    public readonly request_payload: AuthorizationRequestPayload = {
         auth_id: "",
         auth_type: AuthorizationTokenType.Invalid,
         auth_issuer: "",
         auth_bearer: "",
-        fingerprint: "",
+        fingerprint: ""
     };
     public readonly strategy: string = "";
     public readonly data: any = null;
@@ -32,19 +32,19 @@ export class RequestAuthorizationCommand extends Command {
      */
     public static build(
         messageBuilder: MessageBuilder,
-        payload: AuthorizationRequestPayload,
+        request_payload: AuthorizationRequestPayload,
         strategy: string,
         data: any,
-        chain: Message | null = null,
+        chain: Message | null = null
     ): CommandComposer<RequestAuthorizationCommand> {
         return messageBuilder.buildCommand(
             RequestAuthorizationCommand,
             {
-                payload: payload,
+                request_payload: request_payload,
                 strategy: strategy,
-                data: data,
+                data: data
             },
-            chain,
+            chain
         );
     }
 }
@@ -61,7 +61,7 @@ export class RequestAuthorizationReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: RequestAuthorizationCommand,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<RequestAuthorizationReply> {
         return messageBuilder.buildCommandReply(RequestAuthorizationReply, cmd, success, message);
     }
@@ -72,11 +72,14 @@ export class RequestAuthorizationReply extends CommandReply {
  *
  * @param user_id - The user ID.
  * @param auth_id - The ID of the token to revoke.
+ * @param force - If true, the token will be removed immediately; otherwise, it will be marked as invalid only
  */
 @Message.define("command/authorization/revoke")
 export class RevokeAuthorizationCommand extends Command {
     public readonly user_id: UserID = "";
     public readonly auth_id: string = "";
+
+    public readonly force: boolean = true;
 
     /**
      * Helper function to easily build this message.
@@ -85,9 +88,10 @@ export class RevokeAuthorizationCommand extends Command {
         messageBuilder: MessageBuilder,
         userID: UserID,
         authID: string,
-        chain: Message | null = null,
+        force: boolean = true,
+        chain: Message | null = null
     ): CommandComposer<RevokeAuthorizationCommand> {
-        return messageBuilder.buildCommand(RevokeAuthorizationCommand, { user_id: userID, auth_id: authID }, chain);
+        return messageBuilder.buildCommand(RevokeAuthorizationCommand, { user_id: userID, auth_id: authID, force: force }, chain);
     }
 }
 
@@ -103,7 +107,7 @@ export class RevokeAuthorizationReply extends CommandReply {
         messageBuilder: MessageBuilder,
         cmd: RevokeAuthorizationCommand,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<RevokeAuthorizationReply> {
         return messageBuilder.buildCommandReply(RevokeAuthorizationReply, cmd, success, message);
     }
