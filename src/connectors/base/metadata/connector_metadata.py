@@ -19,5 +19,5 @@ class ConnectorMetadataFactory(ABC):
     def validate(metadata: ConnectorMetadata) -> None:
         if not all(metadata):
             raise ValueError(
-                f"Invalid metadata, property {[field.name for field in fields(metadata) if getattr(metadata, field.name) is None]} missing"
+                f"Invalid metadata, property {[field.name for field in fields(metadata) if getattr(metadata, field.name) is None or getattr(metadata, field.name) is '']} missing"
             )

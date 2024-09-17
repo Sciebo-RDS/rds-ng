@@ -46,7 +46,7 @@ export function profileToColor(profileID: ProfileID) {
         .sort()
         .findIndex((c) => c[0] == profileID[0]);
 
-    const hue = profileIndex * (360 / conStore.connectors.length);
+    const hue = profileIndex * (360 / (conStore.connectors.length + 1));
 
     return `lch(90 25 ${hue})`;
 }

@@ -1,0 +1,136 @@
+{
+    "metadata": {
+        "id": ["Zenodo", "2024.09.17"],
+        "displayLabel": "Zenodo",
+        "description": "A Profile for the Zenodo connector."
+    },
+    "layout": [
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
+            "label": "Title",
+            "description": "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            "input": [{ "id": "title", "label": "Title", "type": "string" }],
+            "required": true,
+            "multiple": true
+        },
+        {
+            "id": "ZenodoUploadType",
+            "label": "Zenodo Upload Type",
+            "input": [
+                {
+                    "id": "ZenodoUploadType",
+                    "label": "Zenodo Upload Type",
+                    "type": "dropdown",
+                    "options": [
+                        "publication",
+                        "poster",
+                        "presentation",
+                        "dataset",
+                        "image",
+                        "video",
+                        "software",
+                        "lesson",
+                        "physicalobject",
+                        "other"
+                    ]
+                }
+            ],
+            "description": "The type of the upload, as defined by Zenodo.",
+            "required": true,
+            "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
+            "label": "Description (Abstract)",
+            "description":
+                "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
+            "input": [{ "id": "abstract", "label": "Description (Abstract)", "type": "textarea" }],
+            "required": true,
+            "multiple": false
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
+            "label": "Creator",
+            "description":
+                "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
+            "type": ["creator"],
+            "required": true,
+            "multiple": true
+        }
+    ],
+    "classes": {
+        "creator": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
+            "label": "Creator",
+            "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
+            "labelTemplate": "${name}",
+            "type": ["nameIdentifier", "affiliation"],
+            "input": [
+                {
+                    "id": "name",
+                    "label": "Name",
+                    "type": "string",
+                    "description": "The full name of the creator."
+                }
+            ]
+        },
+        "nameIdentifier": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
+            "label": "Name Identifier",
+            "description": "Uniquely identifies an individual or legal entity, according to various schemes.",
+            "example": "Jane Doe",
+            "labelTemplate": "${nameIdentifier} (${nameIdentifierScheme})",
+            "input": [
+                {
+                    "id": "nameIdentifier",
+                    "label": "Name Identifier",
+                    "type": "string"
+                },
+                {
+                    "id": "nameIdentifierScheme",
+                    "label": "Name Identifier Scheme",
+                    "type": "string",
+                    "description": "The name of the name identifier scheme.",
+                    "example": "ORCID"
+                },
+                {
+                    "id": "schemeURI",
+                    "label": "Scheme URI",
+                    "type": "string",
+                    "description": "The URI of the name identifier scheme."
+                }
+            ]
+        },
+        "affiliation": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#affiliation",
+            "label": "Affiliation",
+            "labelTemplate": "${affiliation}",
+            "input": [
+                {
+                    "id": "affiliation",
+                    "label": "Affiliation",
+                    "type": "string",
+                    "description": "The organizational or institutional affiliation of the creator."
+                },
+                {
+                    "id": "affiliationIdentifier",
+                    "label": "Affiliation Identifier",
+                    "type": "string",
+                    "description": "Uniquely identifies the organizational affiliation of the creator."
+                },
+                {
+                    "id": "affiliationIdentifierScheme",
+                    "label": "Affiliation Identifier Scheme",
+                    "type": "string",
+                    "description": "The name of the affiliation identifier scheme."
+                },
+                {
+                    "id": "schemeURI",
+                    "label": "Affiliation Scheme URI",
+                    "type": "string",
+                    "description": "The URI of the affiliation identifier scheme."
+                }
+            ]
+        }
+    }
+}
