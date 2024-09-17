@@ -1,8 +1,7 @@
 {
     "metadata": {
         "id": ["Stub", "1.0.0"],
-        "name": "stub",
-        "version": "1.0.0",
+        "displayLabel": "stub",
         "description": "Stubby stuff"
     },
     "layout": [

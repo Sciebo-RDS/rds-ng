@@ -5,9 +5,8 @@ const isProfile = (profile: any): profile is PropertyProfile => {
     return (
         profile.metadata &&
         profile.metadata.id &&
-        profile.metadata.version &&
         profile.layout &&
-        profile.metadata.name &&
+        profile.metadata.displayLabel &&
         profile.layout.length > 0 &&
         profile.metadata.id.length == 2
     );
@@ -55,7 +54,7 @@ export class PropertyProfileStore {
 
     public getProfileLabelById(profileId: ProfileID): string | undefined {
         const profile = this._profiles.find((profile) => profile.metadata.id === profileId);
-        return profile?.metadata.name;
+        return profile?.metadata.displayLabel;
     }
 
     public list(): PropertyProfile[] {

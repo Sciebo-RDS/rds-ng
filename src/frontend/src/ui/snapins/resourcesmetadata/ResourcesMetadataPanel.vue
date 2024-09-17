@@ -12,7 +12,7 @@ import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/e
 import { Project } from "@common/data/entities/project/Project";
 import type { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
+import { objects } from "@common/ui/components/propertyeditor/profiles/objects";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import { PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
@@ -122,7 +122,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     nextTick(() => (blockResourcesUpdate = false));
 });
 
-projectProfiles.mountProfile(shoes as PropertyProfile);
+projectProfiles.mountProfile(objects as PropertyProfile);
 </script>
 
 <template>

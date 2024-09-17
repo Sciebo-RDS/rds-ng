@@ -41,12 +41,12 @@ const toggle = (event: Event) => {
 };*/
 
 const getLayout = () => {
-    let layout = [];
+    let layout: ProfileLayoutClass[] = [];
     for (const profile of props.projectProfiles.list()) {
         for (const p of profile["layout"]) {
-            const x = layout.find((xd) => p.id == xd.id);
+            const x: ProfileLayoutClass | undefined = layout.find((xd: ProfileLayoutClass) => p.id == xd.id);
             if (x !== undefined) {
-                x["profiles"].push(profile["metadata"]["id"]);
+                x["profiles"]!.push(profile["metadata"]["id"]);
                 if (p.required) x["required"] = true;
             } else {
                 p["profiles"] = [profile["metadata"]["id"]];
@@ -59,7 +59,10 @@ const getLayout = () => {
 
 const layout = getLayout();
 
-const propsToShow = ref(layout.filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined));
+const propsToShow = ref<ProfileLayoutClass[]>(
+    layout.filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined)
+        .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
+    );
 
 const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
 const unselectProperties = () => (selectedProperties.value = []);
@@ -75,7 +78,7 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
 
 const filteredProperties = computed(() =>
     hiddenPropertys.value.filter(
-        (e) => e.label.toLowerCase().includes(searchString.value.toLowerCase()) || e.description.toLowerCase().includes(searchString.value.toLowerCase())
+        (e: ProfileLayoutClass) => e.label.toLowerCase().includes(searchString.value.toLowerCase()) || e.description?.toLowerCase().includes(searchString.value.toLowerCase())
     )
 );
 

@@ -3,25 +3,24 @@ import { PropertyProfile } from "../PropertyProfile";
 export const dataCite: PropertyProfile = {
     metadata: {
         id: ["DataCite", "4.5"],
-        name: "DataCite",
-        version: "4.5",
+        displayLabel: "DataCite",
         description: "DataCite Metadata Profile"
     },
     layout: [
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
+            "label": "Title",
+            "description": "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            "input": [{ "id": "title", "label": "Title", "type": "string" }],
+            "required": true,
+            "multiple": true
+        },
         {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
             label: "Creator",
             description:
                 "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             type: ["creator"],
-            required: true,
-            multiple: true
-        },
-        {
-            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
-            label: "Title",
-            description: "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
-            type: ["title"],
             required: true,
             multiple: true
         },
@@ -187,11 +186,11 @@ export const dataCite: PropertyProfile = {
         },
         {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
-            label: "Description",
+            label: "Description (Abstract)",
             description:
                 "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
-            type: ["description"],
-            //input: [{ id: "description", label: "Description", type: "string" }],
+            //type: ["description"],
+            input: [{ id: "abstract", label: "Description (Abstract)", type: "textarea" }],
             required: false,
             multiple: false
         },

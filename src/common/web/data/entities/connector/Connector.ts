@@ -92,7 +92,7 @@ export class Connector {
         authorization: AuthorizationSettings = { strategy: "", config: {} },
         options: ConnectorOptions = ConnectorOptions.Default,
         logos: ConnectorLogos = new ConnectorLogos(),
-        metadataProfile: ConnectorMetadataProfile = new PropertyProfile({ id: ["", ""], name: "", description: "", version: "" }, [])
+        metadataProfile: ConnectorMetadataProfile = new PropertyProfile({ id: ["", ""], displayLabel: "", description: "" }, [])
     ) {
         this.connector_id = connectorID;
         this.connector_address = connectorAddress;

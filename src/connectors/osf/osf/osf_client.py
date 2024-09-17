@@ -76,7 +76,7 @@ class OSFClient(RequestsExecutor):
         """
 
         factory = ConnectorMetadataFactoryCatalog.find_item("OSF")
-        metadata = factory.create(project.features.metadata)
+        metadata = factory.create(project.features.metadata.metadata)
         factory.validate(metadata)
 
         def _execute(session: requests.Session) -> OSFProjectData:

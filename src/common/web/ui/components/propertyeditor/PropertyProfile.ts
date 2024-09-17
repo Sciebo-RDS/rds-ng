@@ -23,15 +23,13 @@ class ProfileMetadata {
     /**
      * Creates an instance of `ProfileMetadata`.
      * @param id - The ID of the profile.
-     * @param name - The name of the profile.
+     * @param displayLabel - The name of the profile.
      * @param description - The description of the profile.
-     * @param version - The version of the profile.
      */
     public constructor(
         public readonly id: ProfileID,
-        public readonly name: string,
+        public readonly displayLabel: string,
         public readonly description: string,
-        public readonly version: string
     ) {}
 }
 
@@ -42,7 +40,7 @@ export class ProfileClass {
         public readonly label: string,
         public readonly description?: string,
         public readonly labelTemplate?: string,
-        public readonly required?: boolean,
+        public required?: boolean,
         public readonly multiple?: boolean,
         public readonly example?: string,
         public readonly type?: string[],
@@ -50,7 +48,9 @@ export class ProfileClass {
     ) {}
 }
 
-export class ProfileLayoutClass extends ProfileClass {}
+export class ProfileLayoutClass extends ProfileClass {
+    profiles?: ProfileID[] = [];
+}
 
 export class PropertyProfile {
     public constructor(

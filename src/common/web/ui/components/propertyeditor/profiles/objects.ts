@@ -1,35 +1,21 @@
 import { type PropertyProfile } from "../PropertyProfile";
 
-export const shoes: PropertyProfile = {
+export const objects: PropertyProfile = {
     metadata: {
-        id: ["Shoes", "2024.2.21"],
-        displayLabel: "Shoes",
+        id: ["objects", "2024.09.17"],
+        displayLabel: "File description",
         description: "A Profile for individual resources."
     },
     layout: [
         {
-            id: "Shoe",
-            label: "Shoe",
-            description: "Shoe descriptions",
+            id: "comment",
+            label: "Comment",
+            description: "Descriptive comment about the file object.",
             input: [
                 {
-                    id: "Name",
-                    label: "Name",
-                    type: "string",
-                    description: "The name of the shoes."
-                },
-                {
-                    id: "ShoeType",
-                    label: "Type",
-                    type: "dropdown",
-                    description: "The type of the shoes.",
-                    options: ["nice shoes", "fancy shoes", "shoey shoes"]
-                },
-                {
-                    id: "Description",
-                    label: "Description",
+                    id: "comment",
+                    label: "Comment",
                     type: "textarea",
-                    description: "The shoes' description."
                 }
             ],
             required: true

@@ -3,8 +3,7 @@ import { type PropertyProfile } from "../PropertyProfile";
 export const dfgDmp: PropertyProfile = {
     metadata: {
         id: ["Deutsche Forschungsgemeinschaft", "21.12.2021"],
-        name: "DFG Profile",
-        version: "21.12.2021",
+        displayLabel: "DFG Profile",
         description: "Deutsche Forschungsgemeinschaft DMP Profile"
     },
     layout: [

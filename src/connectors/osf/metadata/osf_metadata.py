@@ -34,8 +34,8 @@ class OSFMetadataFactory(ConnectorMetadataFactory):
         product.description = MetadataParser.getattr(
             osf_metadata,
             MetadataParserQuery(
-                "Description",
-                "description",
+                "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
+                "abstract",
             ),
         )
 

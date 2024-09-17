@@ -1,10 +1,9 @@
-import { type Profile } from "../PropertyProfile";
+import { type PropertyProfile } from "../PropertyProfile";
 
-export const osf: Profile = {
+export const osf: PropertyProfile = {
     metadata: {
         id: ["OSF", "2024.2.21"],
-        name: "OSF",
-        version: "2024.2.21",
+        displayLabel: "OSF",
         description: "A Profile for OSF DMP."
     },
     layout: [
