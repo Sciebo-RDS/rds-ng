@@ -1,3 +1,7 @@
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
+import { type ProfileID } from "../PropertyProfile";
+
+
 /**
  * Calculates the color for a property class based on the given parameters.
  * @param projectProfiles - The property profile store.
@@ -33,4 +37,16 @@ function _stringToHue(str: any) {
         num += str.charCodeAt(i) * i + 57;
     });
     return num % 360;
+}
+
+export function profileToColor(profileID: ProfileID) {
+    const conStore = useConnectorsStore();
+
+    const profileIndex = [["DataCite", ""], ...conStore.connectors.map((e) => e.metadata_profile.metadata.id)]
+        .sort()
+        .findIndex((c) => c[0] == profileID[0]);
+
+    const hue = profileIndex * (360 / conStore.connectors.length);
+
+    return `lch(90 25 ${hue})`;
 }
