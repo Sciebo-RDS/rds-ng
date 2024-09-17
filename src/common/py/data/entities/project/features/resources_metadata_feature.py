@@ -5,7 +5,9 @@ from dataclasses_json import dataclass_json
 
 from .project_feature import ProjectFeature, ProjectFeatureID
 
-ResourcesMetadata = typing.List[typing.Dict[str, typing.Any]]  # TODO: Use proper type
+ResourcesMetadata = typing.Dict[
+    str, typing.List[typing.Dict[str, typing.Any]]
+]  # TODO: Use proper type
 
 
 @dataclass_json
