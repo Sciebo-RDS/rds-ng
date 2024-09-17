@@ -6,7 +6,7 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
  *
  * TODO: Use proper type
  */
-export type ResourcesMetadata = ProjectObject[];
+export type ResourcesMetadata = Record<string, ProjectObject[]>;
 
 /**
  * Data class for the files project feature.
@@ -16,7 +16,7 @@ export class ResourcesMetadataFeature extends ProjectFeature {
 
     public readonly resources_metadata: ResourcesMetadata;
 
-    public constructor(resourcesMetadata: ResourcesMetadata = []) {
+    public constructor(resourcesMetadata: ResourcesMetadata = {}) {
         super();
 
         this.resources_metadata = resourcesMetadata;
