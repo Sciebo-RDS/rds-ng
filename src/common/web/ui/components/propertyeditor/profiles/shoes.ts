@@ -1,6 +1,6 @@
-import { type Profile } from "../PropertyProfile";
+import { type PropertyProfile } from "../PropertyProfile";
 
-export const shoes: Profile = {
+export const shoes: PropertyProfile = {
     metadata: {
         id: ["Shoes", "2024.2.21"],
         name: "Shoes",

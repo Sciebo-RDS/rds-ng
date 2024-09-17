@@ -1,3 +1,4 @@
+import { ProjectObject } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -5,7 +6,7 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
  *
  * TODO: Use proper type
  */
-export type DataManagementPlan = Record<string, any>[];
+export type DataManagementPlan = ProjectObject[];
 
 /**
  * Data class for the data management plan project feature.

@@ -14,7 +14,7 @@ import type { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
@@ -122,7 +122,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     nextTick(() => (blockResourcesUpdate = false));
 });
 
-projectProfiles.mountProfile(shoes as Profile);
+projectProfiles.mountProfile(shoes as PropertyProfile);
 </script>
 
 <template>

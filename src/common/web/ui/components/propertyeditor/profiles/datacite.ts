@@ -1,6 +1,6 @@
-import { Profile } from "../PropertyProfile";
+import { PropertyProfile } from "../PropertyProfile";
 
-export const dataCite: Profile = {
+export const dataCite: PropertyProfile = {
     metadata: {
         id: ["DataCite", "4.5"],
         name: "DataCite",
@@ -8,15 +8,6 @@ export const dataCite: Profile = {
         description: "DataCite Metadata Profile"
     },
     layout: [
-        {
-            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/identifier/",
-            label: "Identifier",
-            description: "The Identifier is a unique string that identifies a resource. Should be a URL or a DOI.",
-            example: "https://doi.org/10.1234/abc",
-            input: [{ id: "identifier", label: "Identifier", type: "string" }],
-            required: true,
-            multiple: false
-        },
         {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
             label: "Creator",

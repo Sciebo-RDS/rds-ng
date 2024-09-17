@@ -52,7 +52,7 @@ export class ProfileClass {
 
 export class ProfileLayoutClass extends ProfileClass {}
 
-export class Profile {
+export class PropertyProfile {
     public constructor(
         public readonly metadata: ProfileMetadata,
         public readonly layout: ProfileLayoutClass[],
