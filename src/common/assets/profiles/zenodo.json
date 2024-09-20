@@ -56,6 +56,16 @@
             "type": ["creator"],
             "required": true,
             "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/",
+            "label": "Contributor",
+            "description":
+                "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property.",
+            "example": "Charpy, Antoine; Foo Data Center",
+            "type": ["contributor"],
+            "required": false,
+            "multiple": true
         }
     ],
     "classes": {
@@ -70,7 +80,8 @@
                     "id": "name",
                     "label": "Name",
                     "type": "string",
-                    "description": "The full name of the creator."
+                    "description": "The full name of the creator.",
+                    "required": true
                 }
             ]
         },
@@ -129,6 +140,60 @@
                     "label": "Affiliation Scheme URI",
                     "type": "string",
                     "description": "The URI of the affiliation identifier scheme."
+                }
+            ]
+        },
+        "contributor": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor",
+            "label": "Contributor",
+            "description":
+                "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
+            "labelTemplate": "${contributorName}",
+            "example": "Charpy, Antoine; Foo Data Center",
+            "type": ["nameIdentifier", "affiliation"],
+            "input": [
+                {
+                    "id": "contributorName",
+                    "label": "Contributor Name",
+                    "type": "string",
+                    "description": "The full name of the contributor.",
+                    "example": "Patel, Emily; ABC Foundation"
+                },
+                {
+                    "id": "nameType",
+                    "label": "Name Type",
+                    "type": "dropdown",
+                    "options": ["Organizational", "Personal"],
+                    "description": "The type of name."
+                },
+                {
+                    "id": "contributorType",
+                    "label": "Contributor Type",
+                    "type": "dropdown",
+                    "options": [
+                        "ContactPerson",
+                        "DataCollector",
+                        "DataCurator",
+                        "DataManager",
+                        "Distributor",
+                        "Editor",
+                        "HostingInstitution",
+                        "Producer",
+                        "ProjectLeader",
+                        "ProjectManager",
+                        "ProjectMember",
+                        "RegistrationAgency",
+                        "RegistrationAuthority",
+                        "RelatedPerson",
+                        "Researcher",
+                        "ResearchGroup",
+                        "RightsHolder",
+                        "Sponsor",
+                        "Supervisor",
+                        "WorkPackageLeader",
+                        "Other"
+                    ],
+                    "description": "The type of contributor of the resource."
                 }
             ]
         }
