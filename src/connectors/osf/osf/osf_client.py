@@ -71,9 +71,9 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        factory = MetadataCreatorCatalog.find_item("OSF")
-        metadata = factory.create(project.features.metadata.metadata)
-        factory.validate(metadata)
+        creator = MetadataCreatorCatalog.find_item("OSF")
+        metadata = creator.create(project.features.metadata.metadata)
+        creator.validate(metadata)
 
         def _execute(session: requests.Session) -> OSFProjectData:
             resp = self.post(
