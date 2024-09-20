@@ -1,1 +1,1 @@
-from .osf_metadata import OSFMetadata, OSFMetadataFactory
+from .osf_metadata import OSFMetadata, OSFMetadataCreator

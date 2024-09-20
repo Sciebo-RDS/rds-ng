@@ -9,18 +9,14 @@ from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
+from common.py.data.metadata import MetadataCreatorCatalog
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
-from connectors.base.metadata import ConnectorMetadataFactoryCatalog
 
 from ...base.integration.execution import RequestsExecutor
-from ..metadata.osf_metadata import OSFMetadataFactory
-from .osf_callbacks import (
-    OSFCreateProjectCallbacks,
-    OSFDeleteProjectCallbacks,
-    OSFGetStorageCallbacks,
-    OSFUploadFileCallbacks,
-)
+from .osf_callbacks import (OSFCreateProjectCallbacks,
+                            OSFDeleteProjectCallbacks, OSFGetStorageCallbacks,
+                            OSFUploadFileCallbacks)
 from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
 
 
@@ -75,7 +71,7 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        factory = ConnectorMetadataFactoryCatalog.find_item("OSF")
+        factory = MetadataCreatorCatalog.find_item("OSF")
         metadata = factory.create(project.features.metadata.metadata)
         factory.validate(metadata)
 

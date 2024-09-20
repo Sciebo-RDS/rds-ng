@@ -1,3 +1,0 @@
-from .connector_metadata import ConnectorMetadata, ConnectorMetadataFactory
-from .connector_metadata_factories import register_connector_metadata_factories
-from .connector_metadata_factory_catalog import ConnectorMetadataFactoryCatalog

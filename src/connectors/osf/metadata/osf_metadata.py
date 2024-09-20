@@ -2,18 +2,18 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, fields
 from typing import Any, Dict, List
 
-from common.py.data.metadata import MetadataParser, MetadataParserQuery
-from connectors.base.metadata import ConnectorMetadata, ConnectorMetadataFactory
+from common.py.data.metadata import (Metadata, MetadataCreator, MetadataParser,
+                                     MetadataParserQuery)
 
 
 @dataclass
-class OSFMetadata(ConnectorMetadata):
+class OSFMetadata(Metadata):
     title: str = None
     category: str = None
     description: str = None
 
 
-class OSFMetadataFactory(ConnectorMetadataFactory):
+class OSFMetadataCreator(MetadataCreator):
 
     def create(metadata: List[Dict[str, Any]]) -> OSFMetadata:
 
