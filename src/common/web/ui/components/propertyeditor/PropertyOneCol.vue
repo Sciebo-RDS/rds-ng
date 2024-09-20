@@ -5,7 +5,7 @@ import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
 import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
-import { profileToColor } from "./utils/Colors";
+import { stringToColor } from "./utils/Colors";
 
 import Chip from "primevue/chip";
 import OverlayPanel from "primevue/overlaypanel";
@@ -150,9 +150,8 @@ const toggleRemoveProperty = (e: Event) => {
                         :label="projectProfiles.getProfileLabelById(p)"
                         size="small"
                         class="h-4 !rounded py-3 text-sm bg-opacity-40"
-                        :style="`background-color: ${profileToColor(p)}`"
-                />
-            </span>
+                        :style="`background-color: ${stringToColor(p[0])}`"
+                /></span>
             </div>
             <!--  Linked Items Row -->
             <div
