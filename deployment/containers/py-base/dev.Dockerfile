@@ -16,6 +16,9 @@ WORKDIR /base
 COPY    /deployment/containers/py-base/requirements.txt .
 RUN     pip install -r ./requirements.txt
 
+# Copy Typst
+COPY    --from=ghcr.io/typst/typst:latest /bin/typst /bin
+
 # Add project configuration
 WORKDIR /config
 COPY    /config .
