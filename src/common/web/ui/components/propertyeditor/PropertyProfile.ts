@@ -29,7 +29,7 @@ class ProfileMetadata {
     public constructor(
         public readonly id: ProfileID,
         public readonly displayLabel: string,
-        public readonly description: string,
+        public readonly description: string
     ) {}
 }
 
@@ -44,7 +44,7 @@ export class ProfileClass {
         public readonly multiple?: boolean,
         public readonly example?: string,
         public readonly type?: string[],
-        public readonly input?: { id: string; label: string; type: string; description?: string; example?: string; options?: string[] }[]
+        public readonly input?: { id: string; label: string; type: string; description?: string; example?: string; options?: string[]; required?: boolean }[]
     ) {}
 }
 

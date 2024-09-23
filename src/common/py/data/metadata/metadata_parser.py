@@ -37,3 +37,7 @@ class MetadataParser:
             ),
             None,
         )
+    
+    @staticmethod
+    def getobj(metadata: List[Dict[str, Any]], id: str):
+        return [e for e in metadata if e['id'] == id][0]

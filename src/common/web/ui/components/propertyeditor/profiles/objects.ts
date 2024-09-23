@@ -15,7 +15,7 @@ export const objects: PropertyProfile = {
                 {
                     id: "comment",
                     label: "Comment",
-                    type: "textarea",
+                    type: "textarea"
                 }
             ],
             required: true
@@ -43,7 +43,7 @@ export const objects: PropertyProfile = {
                     id: "name",
                     label: "Name",
                     type: "string",
-                    description: "The full name of the creator."
+                    description: "The full name of the creator. Format: Family name, Given names.."
                 }
             ]
         },

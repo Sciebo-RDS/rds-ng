@@ -78,7 +78,7 @@ class ZenodoClient(RequestsExecutor):
         """
 
         creator = MetadataCreatorCatalog.find_item("Zenodo")
-        metadata = creator.create(project.features.metadata.metadata)
+        metadata = creator.create(project.features.metadata.metadata, project.features.metadata.shared_objects)
         creator.validate(metadata)
 
         def _execute(session: requests.Session) -> ZenodoProjectData:
@@ -90,7 +90,8 @@ class ZenodoClient(RequestsExecutor):
                         "upload_type": metadata.upload_type,
                         "publication_type": "other",
                         "title": metadata.title,
-                        "creators": [{"name": "Doe, John"}],
+                        "creators": metadata.creators,
+                        "contributors": metadata.contributors,
                         "description": metadata.description,
                         "access_right": "closed",
                         "license": "cc-by",

@@ -57,7 +57,8 @@ export const shoes: PropertyProfile = {
                     id: "name",
                     label: "Name",
                     type: "string",
-                    description: "The full name of the creator."
+                    description: "The full name of the creator. Format: Family name, Given names..",
+                    required: true
                 }
             ]
         },

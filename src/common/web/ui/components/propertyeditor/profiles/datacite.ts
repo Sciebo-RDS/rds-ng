@@ -8,12 +8,12 @@ export const dataCite: PropertyProfile = {
     },
     layout: [
         {
-            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
-            "label": "Title",
-            "description": "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
-            "input": [{ "id": "title", "label": "Title", "type": "string" }],
-            "required": true,
-            "multiple": true
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
+            label: "Title",
+            description: "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            input: [{ id: "title", label: "Title", type: "string" }],
+            required: true,
+            multiple: true
         },
         {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
@@ -236,7 +236,8 @@ export const dataCite: PropertyProfile = {
                     id: "name",
                     label: "Name",
                     type: "string",
-                    description: "The full name of the creator."
+                    description: "The full name of the creator. Format: Family name, Given names..",
+                    required: true
                 }
             ]
         },
@@ -410,8 +411,9 @@ export const dataCite: PropertyProfile = {
                     id: "contributorName",
                     label: "Contributor Name",
                     type: "string",
-                    description: "The full name of the contributor.",
-                    example: "Patel, Emily; ABC Foundation"
+                    description: "The full name of the contributor. Format: Family name, Given names.",
+                    example: "Patel, Emily; ABC Foundation",
+                    required: true
                 },
                 {
                     id: "nameType",

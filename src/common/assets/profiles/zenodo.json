@@ -21,18 +21,7 @@
                     "id": "ZenodoUploadType",
                     "label": "Zenodo Upload Type",
                     "type": "dropdown",
-                    "options": [
-                        "publication",
-                        "poster",
-                        "presentation",
-                        "dataset",
-                        "image",
-                        "video",
-                        "software",
-                        "lesson",
-                        "physicalobject",
-                        "other"
-                    ]
+                    "options": ["publication", "poster", "presentation", "dataset", "image", "video", "software", "lesson", "physicalobject", "other"]
                 }
             ],
             "description": "The type of the upload, as defined by Zenodo.",
@@ -42,8 +31,7 @@
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
             "label": "Description (Abstract)",
-            "description":
-                "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
+            "description": "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
             "input": [{ "id": "abstract", "label": "Description (Abstract)", "type": "textarea" }],
             "required": true,
             "multiple": false
@@ -51,8 +39,7 @@
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
             "label": "Creator",
-            "description":
-                "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
+            "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "type": ["creator"],
             "required": true,
             "multiple": true
@@ -60,8 +47,7 @@
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/",
             "label": "Contributor",
-            "description":
-                "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property.",
+            "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property.",
             "example": "Charpy, Antoine; Foo Data Center",
             "type": ["contributor"],
             "required": false,
@@ -80,7 +66,7 @@
                     "id": "name",
                     "label": "Name",
                     "type": "string",
-                    "description": "The full name of the creator.",
+                    "description": "The full name of the creator. Format: Family name, Given names..",
                     "required": true
                 }
             ]
@@ -146,8 +132,7 @@
         "contributor": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor",
             "label": "Contributor",
-            "description":
-                "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
+            "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
             "labelTemplate": "${contributorName}",
             "example": "Charpy, Antoine; Foo Data Center",
             "type": ["nameIdentifier", "affiliation"],
@@ -156,8 +141,9 @@
                     "id": "contributorName",
                     "label": "Contributor Name",
                     "type": "string",
-                    "description": "The full name of the contributor.",
-                    "example": "Patel, Emily; ABC Foundation"
+                    "description": "The full name of the contributor. Format: Family name, Given names.",
+                    "example": "Patel, Emily; ABC Foundation",
+                    "required": true
                 },
                 {
                     "id": "nameType",
