@@ -1,0 +1,90 @@
+# Docker compose file to build/run the entire components stack in development mode
+# Note that the local source tree is mounted into the containers so that changes are applied automagically
+services:
+    # -- Base images --
+    # Build-only Python base image
+    py-base:
+        image: rds-ng/py-base:develop
+        build:
+            context: ../../
+            dockerfile: deployment/containers/py-base/dev.Dockerfile
+        deploy:
+            mode: replicated
+            replicas: 0
+
+    # Build-only Node base image
+    node-base:
+        image: rds-ng/node-base:develop
+        build:
+            context: ../../
+            dockerfile: deployment/containers/node-base/dev.Dockerfile
+        deploy:
+            mode: replicated
+            replicas: 0
+
+    # -- Component images --
+    # Server service
+    server:
+        image: rds-ng/server:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/dev.Dockerfile
+            args:
+                COMPONENT_NAME: "server"
+        depends_on:
+            - py-base
+        ports:
+            - "4200:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}server.env
+
+    # Connector: Stub
+    connector-stub:
+        image: rds-ng/connector-stub:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/dev.Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/stub"
+        depends_on:
+            - py-base
+        ports:
+            - "4900:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-stub.env
+
+    # Web frontend
+    frontend:
+        image: rds-ng/frontend:develop
+        volumes:
+            -   type: bind
+                source: ../../src/frontend/src
+                target: /app/frontend/src
+            -   type: bind
+                source: ../../src/common
+                target: /app/common
+        build:
+            context: ../../
+            dockerfile: deployment/containers/web-component/dev.Dockerfile
+            args:
+                COMPONENT_NAME: "frontend"
+        depends_on:
+            - node-base
+        ports:
+            - "8000:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}frontend.env

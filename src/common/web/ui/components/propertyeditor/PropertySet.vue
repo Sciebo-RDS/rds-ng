@@ -9,7 +9,7 @@ import { computed, ref, type Ref } from "vue";
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
-import { stringToColor } from "./utils/Colors";
+import { ColorTable } from "./utils/ColorTable";
 
 const props = defineProps(["controller", "project", "exporters", "projectProfiles", "projectObjects", "sharedObjectStore"]);
 
@@ -91,7 +91,7 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
                 @click="toggle"
                 aria-haspopup="true"
                 aria-controls="overlay_menu"
-            /> 
+            />
             <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
         </template>
     </Toolbar> -->
@@ -137,8 +137,8 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
                                 v-for="p in slotProps.item.profiles"
                                 :label="p[0]"
                                 size="small"
-                                :style="`background-color: ${stringToColor(p[0], 0.3)}; border-color: ${stringToColor(p[0])}`"
-                                class="h-4 !rounded py-2 px-2 text-sm border self-center"
+                                :style="`background-color: ${ColorTable.color(p[0])}`"
+                                class="h-4 !rounded p-2.5 text-sm self-center bg-opacity-40"
                         /></span>
                         <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.item.description">{{ slotProps.item.description }}</span>
                     </div>
@@ -154,8 +154,8 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
                         unselectProperties();
                         showAddProperties = false;
                     "
-                    >Add</Button
-                >
+                    >Add
+                </Button>
                 <Button
                     outlined
                     severity="secondary"
@@ -163,8 +163,8 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
                         unselectProperties();
                         showAddProperties = false;
                     "
-                    >Cancel</Button
-                >
+                    >Cancel
+                </Button>
             </div>
         </template>
     </Dialog>

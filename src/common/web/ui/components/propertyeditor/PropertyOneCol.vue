@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import { computed, ref, watch, type PropType, type Ref } from "vue";
+import MandatoryMark from "../misc/MandatoryMark.vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
 import { ProfileClass, PropertyDataType, propertyDataForms, type ProfileID } from "./PropertyProfile";
 import { PropertyProfileStore } from "./PropertyProfileStore";
-import { stringToColor } from "./utils/Colors";
 
 import Chip from "primevue/chip";
 import OverlayPanel from "primevue/overlaypanel";
 import { LayoutObject, ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
+import { ColorTable } from "./utils/ColorTable";
 
 const emit = defineEmits(["hide"]);
 const { index, propertyClass, profileId, projectObjects, projectProfiles, sharedObjectStore, layoutProfiles } = defineProps({
@@ -67,7 +68,17 @@ const addableTypes = propertyClass["type"];
 
 const linkedObjects = computed(() => projectObjects.getReferencedObjects(propertyClass.id));
 
-const profiles = layoutProfiles?.find((e) => e.id == propertyObject.value.id)!.profiles as ProfileID[];
+const profiles = computed(() => {
+    const profileIDs = layoutProfiles?.find((e) => e.id == propertyObject.value.id)!.profiles as ProfileID[];
+    const filteredProfileIDs: ProfileID[] = [];
+
+    profileIDs.forEach((id) => {
+        if (!filteredProfileIDs.find((e) => e[0] == id[0])) {
+            filteredProfileIDs.push(id);
+        }
+    });
+    return filteredProfileIDs;
+});
 
 const removeProperty = ref();
 const toggleRemoveProperty = (e: Event) => {
@@ -102,8 +113,8 @@ const toggleRemoveProperty = (e: Event) => {
                                     toggleRemoveProperty(e);
                                 }
                             "
-                            >Cancel</Button
-                        >
+                            >Cancel
+                        </Button>
                     </div>
                 </div>
             </OverlayPanel>
@@ -124,9 +135,12 @@ const toggleRemoveProperty = (e: Event) => {
             <div class="row-span-1 text-gray-800 justify-between flex flex-wrap gap-4 max-w-full w-full">
                 <span :title="propertyClass.label" class="min-w-fit">
                     <span class="text-lg"> {{ propertyClass.label }} </span>
+                    <span v-if="propertyClass.required" v-for="p in profiles">
+                        <MandatoryMark class="pl-1" :color="ColorTable.color(p[0], 70, 100)" :title="`This field is required by ${p[0]}`" />
+                    </span>
                     <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink">
-                        <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" /> </Button
-                    ><!-- <span v-if="propertyClass.required" class="text-red-500">*</span> -->
+                        <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />
+                    </Button>
                     <OverlayPanel ref="op" class="max-w-lg">
                         {{ propertyClass.description }}
                         <p v-if="propertyClass.example" class="mt-2" v-html="`<b>Example</b>: ${propertyClass.example}`" />
@@ -150,8 +164,9 @@ const toggleRemoveProperty = (e: Event) => {
                         :label="projectProfiles.getProfileLabelById(p)"
                         size="small"
                         class="h-4 !rounded py-3 text-sm bg-opacity-40"
-                        :style="`background-color: ${stringToColor(p[0])}`"
-                /></span>
+                        :style="`background-color: ${ColorTable.color(p[0])}`"
+                    />
+                </span>
             </div>
             <!--  Linked Items Row -->
             <div
