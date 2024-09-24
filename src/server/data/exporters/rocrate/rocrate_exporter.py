@@ -5,7 +5,11 @@ from common.py.data.entities.project.features import (
     ProjectFeatureID,
 )
 
-from .. import ProjectExporter, ProjectExporterID, ProjectExporterResult
+from common.py.data.exporters import (
+    ProjectExporter,
+    ProjectExporterID,
+    ProjectExporterResult,
+)
 
 
 class ROCrateExporter(ProjectExporter):

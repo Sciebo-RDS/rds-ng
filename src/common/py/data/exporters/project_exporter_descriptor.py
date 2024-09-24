@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 from dataclasses_json.api import dataclass_json
 
-from common.py.data.entities.project.features import ProjectFeatureID
+from ..entities.project.features import ProjectFeatureID
 
 from .project_exporter import ProjectExporter, ProjectExporterID
 

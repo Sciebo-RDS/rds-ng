@@ -1,8 +1,8 @@
 import abc
 import typing
 
-from common.py.data.entities.project import Project
-from common.py.data.entities.project.features import ProjectFeatureID
+from ..entities.project import Project
+from ..entities.project.features import ProjectFeatureID
 
 from .project_exporter_result import ProjectExporterResult
 

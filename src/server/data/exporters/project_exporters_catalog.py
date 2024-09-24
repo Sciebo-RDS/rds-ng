@@ -1,6 +1,6 @@
 from common.py.utils import ItemsCatalog
 
-from .project_exporter import ProjectExporter
+from common.py.data.exporters.project_exporter import ProjectExporter
 
 
 @ItemsCatalog.define()
