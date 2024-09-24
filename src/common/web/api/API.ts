@@ -11,6 +11,7 @@ import "./connector/ConnectorEvents";
 
 import "./project/ProjectCommands";
 import "./project/ProjectEvents";
+import "./project/ProjectExportersCommands";
 import "./project/ProjectFeaturesCommands";
 import "./project/ProjectJobCommands";
 import "./project/ProjectEvents";

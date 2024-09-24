@@ -17,7 +17,7 @@ class ProjectExporterDescriptor:
     Attributes:
         exporter_id: The global exporter ID.
         name: The display name.
-        description. The exporter's description.
+        description: The exporter's description.
         scope: The scope where the exporter applies; if empty, it applies to the overall project.
     """
 

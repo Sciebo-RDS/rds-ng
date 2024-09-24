@@ -34,6 +34,7 @@ class ServerComponent(BackendComponent):
         from ..services import (
             create_authorization_service,
             create_connectors_service,
+            create_project_exporters_service,
             create_project_jobs_service,
             create_projects_service,
             create_resources_service,
@@ -52,6 +53,7 @@ class ServerComponent(BackendComponent):
         create_resources_service(self)
         create_project_jobs_service(self)
         create_authorization_service(self)
+        create_project_exporters_service(self)
 
         self._install_network_filters()
 
