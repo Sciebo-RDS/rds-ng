@@ -1,4 +1,4 @@
-import type { FrontendComponent } from "@/component/FrontendComponent";
+import { FrontendComponent } from "@/component/FrontendComponent";
 
 /**
  * Base class for all integration handlers.

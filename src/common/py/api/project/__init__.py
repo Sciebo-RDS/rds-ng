@@ -11,6 +11,12 @@ from .project_commands import (
     UpdateProjectReply,
 )
 from .project_events import ProjectLogbookEvent, ProjectsListEvent
+from .project_exporters_commands import (
+    ExportProjectCommand,
+    ExportProjectReply,
+    ListProjectExportersCommand,
+    ListProjectExportersReply,
+)
 from .project_features_commands import (
     UpdateProjectFeaturesCommand,
     UpdateProjectFeaturesReply,
@@ -27,8 +33,4 @@ from .project_job_events import (
     ProjectJobCompletionEvent,
     ProjectJobProgressEvent,
     ProjectJobsListEvent,
-)
-from .project_exporters_commands import (
-    ListProjectExportersCommand,
-    ListProjectExportersReply,
 )

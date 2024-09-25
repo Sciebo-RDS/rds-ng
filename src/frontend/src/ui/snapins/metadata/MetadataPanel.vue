@@ -80,7 +80,7 @@ watch(
 </script>
 
 <template>
-    <ProjectExportersBar :scope="MetadataFeature.FeatureID" class="p-2 grid justify-end" />
+    <ProjectExportersBar :project="project" :scope="MetadataFeature.FeatureID" class="p-2 grid justify-end" />
     <PropertyEditor
         v-model="project!.features.metadata.metadata"
         v-model:shared-objects="project!.features.metadata.shared_objects"

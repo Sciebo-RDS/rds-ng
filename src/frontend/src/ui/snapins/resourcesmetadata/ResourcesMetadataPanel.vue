@@ -10,7 +10,7 @@ import { computed, nextTick, type PropType, reactive, ref, toRefs, unref, watch 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
-import type { Resource } from "@common/data/entities/resource/Resource";
+import { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
@@ -130,7 +130,7 @@ projectProfiles.mountProfile(shoes as Profile);
 <template>
     <BlockUI :blocked="resourcesRefreshing" class="h-full">
         <div v-if="!resourcesError" class="h-full">
-            <ProjectExportersBar :scope="ResourcesMetadataFeature.FeatureID" class="p-2 grid justify-end" />
+            <ProjectExportersBar :project="project" :scope="ResourcesMetadataFeature.FeatureID" class="p-2 grid justify-end" />
             <Splitter state-key="resources-splitter-state" class="h-full rounded-none border-0">
                 <SplitterPanel :size="50" :min-size="35">
                     <ResourcesTreeTable

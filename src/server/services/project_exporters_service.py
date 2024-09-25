@@ -23,6 +23,8 @@ def create_project_exporters_service(comp: BackendComponent) -> Service:
     from common.py.api.project import (
         ListProjectExportersCommand,
         ListProjectExportersReply,
+        ExportProjectCommand,
+        ExportProjectReply,
     )
 
     from .server_service_context import ServerServiceContext
@@ -41,6 +43,25 @@ def create_project_exporters_service(comp: BackendComponent) -> Service:
 
         ListProjectExportersReply.build(
             ctx.message_builder, msg, exporters=exporters
+        ).emit()
+
+    @svc.message_handler(ExportProjectCommand)
+    def export_project(msg: ExportProjectCommand, ctx: ServerServiceContext) -> None:
+        if not ctx.ensure_user(msg, ExportProjectReply, mimetype="", data=bytes()):
+            return
+
+        # TODO: Get project, exporter; initiate etc
+        import time
+
+        time.sleep(5)
+
+        ExportProjectReply.build(
+            ctx.message_builder,
+            msg,
+            mimetype="",
+            data=bytes(),
+            success=False,
+            message="not done yet",
         ).emit()
 
     return svc

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
-import { computed, defineAsyncComponent, reactive, ref, toRefs, unref, watch } from "vue";
+import { computed, defineAsyncComponent, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
@@ -16,7 +16,7 @@ import { makeDebounce } from "@common/ui/components/propertyeditor/utils/Propert
 const comp = FrontendComponent.inject();
 const props = defineProps({
     project: {
-        type: Project,
+        type: Object as PropType<Project>,
         required: true
     }
 });

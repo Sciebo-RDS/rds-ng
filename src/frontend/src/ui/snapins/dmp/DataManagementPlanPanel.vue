@@ -44,7 +44,7 @@ projectProfiles.mountProfile(dfgDmp as Profile);
 </script>
 
 <template>
-    <ProjectExportersBar :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
+    <ProjectExportersBar :project="project" :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
     <PropertyEditor
         v-model="project!.features.dmp.plan"
         v-model:shared-objects="project!.features.metadata.shared_objects"
