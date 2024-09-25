@@ -3,7 +3,6 @@ import { reactive, toRefs, watch, type PropType } from "vue";
 
 import { DataManagementPlanFeature, type DataManagementPlan } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
-import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
 import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
@@ -22,9 +21,6 @@ const props = defineProps({
     }
 });
 const { project } = toRefs(props);
-
-// TODO: Testing data only
-const exporters: ExporterID[] = ["pdf", "raw"];
 
 const debounce = makeDebounce(500);
 

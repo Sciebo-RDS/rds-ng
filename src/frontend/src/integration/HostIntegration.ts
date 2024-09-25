@@ -1,4 +1,4 @@
-import { type KeyLike } from "jose";
+import { type JWK } from "jose";
 import * as jose from "jose";
 
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
@@ -15,7 +15,7 @@ export function useHostIntegration(comp: FrontendComponent) {
         return new Promise<HostUserToken>(async (resolve, reject) => {
             const UserTokenDataName = "user-token";
 
-            api.getPublicKey().then(async (pubKey: KeyLike) => {
+            api.getPublicKey().then(async (pubKey: JWK) => {
                 const userToken = getURLQueryParam(UserTokenDataName);
                 if (!userToken) {
                     reject("No user token has been provided");
@@ -50,6 +50,6 @@ export function useHostIntegration(comp: FrontendComponent) {
     return {
         getHostUserToken,
         getHostAuthorizationSettings,
-        getHostResources,
+        getHostResources
     };
 }

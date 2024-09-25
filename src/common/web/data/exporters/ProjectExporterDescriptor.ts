@@ -1,6 +1,5 @@
 import { Type } from "class-transformer";
 
-import { type ExporterID } from "../../ui/components/propertyeditor/exporters/Exporter";
 import { type ProjectFeatureID } from "../entities/project/features/ProjectFeature";
 
 /**
@@ -26,7 +25,7 @@ export class ProjectExporterDescriptor {
     @Type(() => String)
     public readonly scope: ProjectFeatureID[];
 
-    public constructor(exporterID: ExporterID, name: string, description: string, scope: ProjectFeatureID[]) {
+    public constructor(exporterID: ProjectExporterID, name: string, description: string, scope: ProjectFeatureID[]) {
         this.exporter_id = exporterID;
 
         this.name = name;

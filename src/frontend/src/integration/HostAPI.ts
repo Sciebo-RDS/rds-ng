@@ -1,5 +1,5 @@
 import { useAxios } from "@vueuse/integrations/useAxios";
-import { type KeyLike } from "jose";
+import { type JWK } from "jose";
 import { unref } from "vue";
 
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
@@ -15,7 +15,7 @@ import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 const enum HostAPIEndpoints {
     PublicKey = "public-key",
     Authorization = "authorization",
-    Resources = "resources",
+    Resources = "resources"
 }
 
 /**
@@ -32,8 +32,8 @@ export class HostAPI {
         this._apiURL = terminatePath(this._apiURL);
     }
 
-    public async getPublicKey(): Promise<KeyLike> {
-        return this.getEndpointData<KeyLike>(HostAPIEndpoints.PublicKey, "public-key", true);
+    public async getPublicKey(): Promise<JWK> {
+        return this.getEndpointData<JWK>(HostAPIEndpoints.PublicKey, "public-key", true);
     }
 
     public async getAuthorizationSettings(): Promise<AuthorizationSettings> {

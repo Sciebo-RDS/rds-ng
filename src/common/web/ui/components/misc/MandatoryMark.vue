@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { toRefs } from "vue";
-
 const props = defineProps({
     color: {
         type: String,
@@ -11,7 +9,6 @@ const props = defineProps({
         default: "This field is required"
     }
 });
-const { colorClass } = toRefs(props);
 </script>
 
 <template>
