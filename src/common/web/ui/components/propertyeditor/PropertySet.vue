@@ -11,32 +11,7 @@ import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
 import { ColorTable } from "./utils/ColorTable";
 
-const props = defineProps(["controller", "project", "exporters", "projectProfiles", "projectObjects", "sharedObjectStore"]);
-
-/* const menu = ref();
-const items = computed(() => {
-    const downloadItems = ExportersCatalog.byID(props.exporters).map((e) => {
-        return {
-            label: e.options.menuItem.label,
-            icon: e.options.menuItem.icon,
-            command: () => {
-                e.options.menuItem.command(props.controller, props.project?.title);
-            }
-        };
-    });
-    return !!downloadItems.length
-        ? [
-              {
-                  label: "Download",
-                  items: downloadItems
-              }
-          ]
-        : [];
-});
-
-const toggle = (event: Event) => {
-    menu.value.toggle(event);
-};*/
+const props = defineProps(["controller", "project", "projectProfiles", "projectObjects", "sharedObjectStore"]);
 
 const getLayout = () => {
     let layout = [];
