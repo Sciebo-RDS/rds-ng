@@ -12,6 +12,7 @@ import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
@@ -79,11 +80,10 @@ watch(
 </script>
 
 <template>
-    <div>
-        <PropertyEditor
-            v-model="project!.features.metadata.metadata"
-            v-model:shared-objects="project!.features.metadata.shared_objects"
-            :projectProfiles="projectProfiles as PropertyProfileStore"
-        />
-    </div>
+    <ProjectExportersBar :scope="MetadataFeature.FeatureID" class="p-2 grid justify-end" />
+    <PropertyEditor
+        v-model="project!.features.metadata.metadata"
+        v-model:shared-objects="project!.features.metadata.shared_objects"
+        :projectProfiles="projectProfiles as PropertyProfileStore"
+    />
 </template>

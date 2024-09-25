@@ -26,7 +26,7 @@ class ROCrateExporter(ProjectExporter):
             ROCrateExporter.ExporterID,
             name="ROCrate",
             description="Exports to an RO (Research Object) Crate file",
-            scope=[MetadataFeature.feature_id, DataManagementPlanFeature.feature_id],
+            scope=[MetadataFeature.feature_id],
         )
 
     def export(

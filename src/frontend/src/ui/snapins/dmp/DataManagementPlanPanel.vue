@@ -8,7 +8,9 @@ import { PropertyProfileStore } from "@common/ui/components/propertyeditor/Prope
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
+
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
@@ -42,13 +44,12 @@ projectProfiles.mountProfile(dfgDmp as Profile);
 </script>
 
 <template>
-    <div>
-        <PropertyEditor
-            v-model="project!.features.dmp.plan"
-            v-model:shared-objects="project!.features.metadata.shared_objects"
-            :projectProfiles="projectProfiles as PropertyProfileStore"
-        />
-    </div>
+    <ProjectExportersBar :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
+    <PropertyEditor
+        v-model="project!.features.dmp.plan"
+        v-model:shared-objects="project!.features.metadata.shared_objects"
+        :projectProfiles="projectProfiles as PropertyProfileStore"
+    />
 </template>
 
 <style scoped lang="scss"></style>

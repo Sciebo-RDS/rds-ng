@@ -23,6 +23,8 @@ import { deepClone } from "@common/utils/ObjectUtils";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
+
+import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
 
 const comp = FrontendComponent.inject();
@@ -128,6 +130,7 @@ projectProfiles.mountProfile(shoes as Profile);
 <template>
     <BlockUI :blocked="resourcesRefreshing" class="h-full">
         <div v-if="!resourcesError" class="h-full">
+            <ProjectExportersBar :scope="ResourcesMetadataFeature.FeatureID" class="p-2 grid justify-end" />
             <Splitter state-key="resources-splitter-state" class="h-full rounded-none border-0">
                 <SplitterPanel :size="50" :min-size="35">
                     <ResourcesTreeTable
