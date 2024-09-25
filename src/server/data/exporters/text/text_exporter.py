@@ -23,7 +23,7 @@ class TextExporter(ProjectExporter):
     ):
         super().__init__(
             TextExporter.ExporterID,
-            name="Text exporter",
+            name="Plain Text",
             description="Exports to a plain text file",
             scope=[DataManagementPlanFeature.feature_id],
         )

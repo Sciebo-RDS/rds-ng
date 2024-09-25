@@ -7,6 +7,7 @@ import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotific
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUserAuthorizationsAction";
 import { ListConnectorsAction } from "@/ui/actions/connector/ListConnectorsAction";
+import { ListProjectgExportersAction } from "@/ui/actions/project/ListProjectgExportersAction";
 import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";
 import { ListProjectsAction } from "@/ui/actions/project/ListProjectsAction";
 import { GetUserSettingsAction } from "@/ui/actions/user/GetUserSettingsAction";
@@ -23,14 +24,16 @@ export class GetAllDataAction extends MultiAction {
         const listAuthorizationsAction = new ListUserAuthorizationsAction(comp, true);
         const listProjectsAction = new ListProjectsAction(comp, true);
         const listJobsAction = new ListProjectJobsAction(comp, true);
+        const listExportersAction = new ListProjectgExportersAction(comp, true);
 
         listConAction.prepare();
         getUserSettingsAction.prepare();
         listAuthorizationsAction.prepare();
         listProjectsAction.prepare();
         listJobsAction.prepare();
+        listExportersAction.prepare();
 
-        this.addActions([listConAction, getUserSettingsAction, listAuthorizationsAction, listProjectsAction, listJobsAction]);
+        this.addActions([listConAction, getUserSettingsAction, listAuthorizationsAction, listProjectsAction, listJobsAction, listExportersAction]);
     }
 
     protected addDefaultNotifiers(): void {
@@ -42,8 +45,8 @@ export class GetAllDataAction extends MultiAction {
                 OverlayNotificationType.Error,
                 "Error fetching data",
                 `An error occurred while downloading the data: ${ActionNotifier.MessagePlaceholder}.`,
-                true,
-            ),
+                true
+            )
         );
     }
 }

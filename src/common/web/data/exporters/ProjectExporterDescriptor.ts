@@ -23,7 +23,7 @@ export class ProjectExporterDescriptor {
     public readonly description: string;
 
     // @ts-ignore
-    @Type(() => ProjectFeatureID)
+    @Type(() => String)
     public readonly scope: ProjectFeatureID[];
 
     public constructor(exporterID: ExporterID, name: string, description: string, scope: ProjectFeatureID[]) {

@@ -14,6 +14,7 @@ import createConnectorsService from "@/services/ConnectorsService";
 import createFrontendService from "@/services/FrontendService";
 import createProjectsService from "@/services/ProjectsService";
 import createProjectJobsService from "@/services/ProjectJobsService";
+import createProjectExportersService from "@/services/ProjectExportersService";
 import createUserService from "@/services/UserService";
 
 import { getFrontendSettings } from "@/settings/FrontendSettings";
@@ -36,6 +37,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _connectorsService: Service | null = null;
     private _projectsService: Service | null = null;
     private _projectJobsService: Service | null = null;
+    private _projectExportersService: Service | null = null;
 
     public constructor() {
         super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendUserInterface);
@@ -61,6 +63,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this._connectorsService = createConnectorsService(this);
         this._projectsService = createProjectsService(this);
         this._projectJobsService = createProjectJobsService(this);
+        this._projectExportersService = createProjectExportersService(this);
     }
 
     private addFrontendSettings(): void {

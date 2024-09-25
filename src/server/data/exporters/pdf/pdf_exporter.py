@@ -23,7 +23,7 @@ class PDFExporter(ProjectExporter):
     ):
         super().__init__(
             PDFExporter.ExporterID,
-            name="PDF exporter",
+            name="PDF",
             description="Exports to a PDF file",
             scope=[DataManagementPlanFeature.feature_id],
         )
