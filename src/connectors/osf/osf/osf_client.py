@@ -3,13 +3,13 @@ import pathlib
 from http import HTTPStatus
 
 import requests
+from metadata import OSFMetadataCreator
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
-from common.py.data.metadata import MetadataCreatorCatalog
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 
@@ -71,7 +71,7 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        creator = MetadataCreatorCatalog.find_item("OSF")
+        creator = OSFMetadataCreator()
         metadata = creator.create(project.features.metadata.metadata)
         creator.validate(metadata)
 

@@ -19,5 +19,5 @@ class MetadataCreator(ABC):
     def validate(metadata: Metadata) -> None:
         if not all(metadata):
             raise ValueError(
-                f"Invalid metadata, property {[field.name for field in fields(metadata) if getattr(metadata, field.name) == None or getattr(metadata, field.name) is '']} missing"
+                f"Invalid metadata, property {[field.name for field in fields(metadata) if getattr(metadata, field.name) == None or getattr(metadata, field.name) == '']} missing"
             )

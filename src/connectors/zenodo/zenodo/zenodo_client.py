@@ -2,13 +2,13 @@ import pathlib
 from io import BytesIO
 
 import requests
+from metadata import ZenodoMetadataCreator
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
-from common.py.data.metadata import MetadataCreatorCatalog
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 
@@ -77,7 +77,7 @@ class ZenodoClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        creator = MetadataCreatorCatalog.find_item("Zenodo")
+        creator = ZenodoMetadataCreator()
         metadata = creator.create(project.features.metadata.metadata, project.features.metadata.shared_objects)
         creator.validate(metadata)
 
