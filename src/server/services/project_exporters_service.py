@@ -50,18 +50,40 @@ def create_project_exporters_service(comp: BackendComponent) -> Service:
         if not ctx.ensure_user(msg, ExportProjectReply, mimetype="", data=bytes()):
             return
 
-        # TODO: Get project, exporter; initiate etc
-        import time
+        def _reply(
+            *,
+            mimetype: str = "",
+            data: bytes = bytes(),
+            success: bool = True,
+            message: msg = "",
+        ) -> None:
+            ExportProjectReply.build(
+                ctx.message_builder,
+                msg,
+                mimetype=mimetype,
+                data=data,
+                success=success,
+                message=message,
+            ).emit()
 
-        time.sleep(5)
+        if (project := ctx.storage_pool.project_storage.get(msg.project_id)) is None:
+            _reply(
+                success=False,
+                message=f"A project with ID {msg.project_id} was not found",
+            )
+            return
 
-        ExportProjectReply.build(
-            ctx.message_builder,
-            msg,
-            mimetype="",
-            data=bytes(),
-            success=False,
-            message="not done yet",
-        ).emit()
+        if (exporter := ProjectExportersCatalog.find_item(msg.exporter)) is None:
+            _reply(
+                success=False,
+                message=f"A project exporter with ID {msg.exporter} was not found",
+            )
+            return
+
+        try:
+            result = exporter.export(project, msg.scope)
+            _reply(mimetype=result.mimetype, data=result.data)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            _reply(success=False, message=str(exc))
 
     return svc

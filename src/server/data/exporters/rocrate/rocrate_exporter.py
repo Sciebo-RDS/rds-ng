@@ -32,4 +32,5 @@ class ROCrateExporter(ProjectExporter):
     def export(
         self, project: Project, scope: ProjectFeatureID | None = None
     ) -> ProjectExporterResult:
-        pass
+        # TODO
+        return ProjectExporterResult(mimetype="text/plain", data=b"RO stuff data")

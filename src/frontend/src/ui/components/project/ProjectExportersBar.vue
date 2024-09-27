@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { saveAs } from "file-saver";
 import Button from "primevue/button";
 import ButtonGroup from "primevue/buttongroup";
+import sanitize from "sanitize-filename";
 import { computed, type PropType, ref } from "vue";
 
 import { ExportProjectReply } from "@common/api/project/ProjectExportersCommands";
@@ -35,7 +37,10 @@ function onExport(exporter: ProjectExporterDescriptor): void {
     action
         .prepare(props.project, exporter, props.scope)
         .done((reply: ExportProjectReply, success: boolean, _: string) => {
-            // TODO: Save etc
+            // TODO: Add extension to exporter
+            const filename = sanitize(`${props.project.title}.${props.scope}.txt`);
+            saveAs(new Blob([reply.data], { type: reply.mimetype }), filename);
+
             exportRunning.value = false;
         })
         .failed(() => {
