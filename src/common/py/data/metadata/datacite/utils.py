@@ -1,87 +1,44 @@
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
+
+trimDict: Callable[[dict], dict] = lambda d : {k: v for k, v in d.items() if v}
+
+def parse_metadata(layout_objects: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Parses metadata from layout and shared objects according to the DataCite schema.
+    Args:
+        layout_objects (List[Dict[str, Any]]): A list of dictionaries representing layout objects.
+        shared_objects (List[Dict[str, Any]]): A list of dictionaries representing shared objects.
+    Returns:
+        Dict[str, Any]: A dictionary containing the parsed metadata.
+    """
+
+    metadata = {"schemaVersion": "http://datacite.org/schema/kernel-4"}
+
+    for id in ['https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/', 'https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/']:
+        property = [e for e in layout_objects if e['id'] == id][0]
+        metadata[id.split('/')[-2:-1][0]] = [property['value']]
+        layout_objects = [e for e in layout_objects if e['id'] != id]
 
 
-def parse_creators(creators_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    creators = []
-    for creator_id in creators_raw["refs"]:
-        creator_raw = [c for c in shared_objects if c['id'] == creator_id][0]
 
-        creator = {}
-        creator_objects = [e for e in shared_objects if e['id'] in creator_raw['refs']]
-
-        creator["name"] = creator_raw["value"]["name"]
-        creator['affiliation'] = '; '.join([a['value']['affiliation'] for a in creator_objects if a["type"] == "affiliation"])
-        creator['orcid'] = '; '.join([a['value']['nameIdentifier'] for a in creator_objects if a["type"] == "nameIdentifier" and a['value']['nameIdentifierScheme'].lower() == "orcid"])
-        creator['gnd'] = '; '.join([a['value']['nameIdentifier'] for a in creator_objects if a["type"] == "nameIdentifier" and a['value']['nameIdentifierScheme'].lower() == "gnd"])
-        
-        creators.append(creator)
-
-    return creators
-
-def parse_contributors(contributors_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    contributors = []
-    for contributor_id in contributors_raw["refs"]:
-        contributor_raw = [c for c in shared_objects if c['id'] == contributor_id][0]
-        if contributor_raw["value"]["nameType"] == "Personal":
-
-            contributor = {}
-            contributor_objects = [e for e in shared_objects if e['id'] in contributor_raw['refs']]
-
-            contributor["name"] = contributor_raw["value"]["contributorName"]
-            contributor["type"] = contributor_raw["value"]["contributorType"]
-            contributor['affiliation'] = '; '.join([a['value']['affiliation'] for a in contributor_objects if a["type"] == "affiliation"])
-            contributor['orcid'] = '; '.join([a['value']['nameIdentifier'] for a in contributor_objects if a["type"] == "nameIdentifier" and a['value']['nameIdentifierScheme'].lower() == "orcid"])
-            contributor['gnd'] = '; '.join([a['value']['nameIdentifier'] for a in contributor_objects if a["type"] == "nameIdentifier" and a['value']['nameIdentifierScheme'].lower() == "gnd"])
+    def parse_recursively(layout_objects: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> Dict[str, Any]:
+        md = {}
+        for property in layout_objects:
             
-            contributors.append(contributor)
+            refs = parse_recursively([o for o in shared_objects if o['id'] in property['refs']], shared_objects)
 
-    return contributors
+            if "type" in property:
+                if property["type"] not in md:
+                    md[property["type"]] = []
 
-def parse_publisher(publishers_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    publisher = {}
+                md[property["type"]].append(property["value"]  | refs)
 
-    publisher_raw = [e for e in shared_objects if e['id'] == publishers_raw[0]["refs"][0]][0]
+            elif len(property["value"]) > 0:
+                md[property["id"]] = property["value"]  | refs
 
-    publisher["name"] = publisher_raw["value"]["publisher"]
-    publisher["schemeUri"] = publisher_raw["value"]["schemeURI"]
-    publisher["publisherIdentifier"] = publisher_raw["value"]["publisherIdentifier"]
-    publisher["publisherIdentifierScheme"] = publisher_raw["value"]["publisherIdentifierScheme"]
+            else:
+                md[property["id"]] = refs
 
-    return publisher
+        return md
 
-def parse_dates(dates_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    dates = []
-
-    for date_id in dates_raw["refs"]:
-        date_raw = [c for c in shared_objects if c['id'] == date_id][0]
-
-        date = {}
-
-        date["date"] = date_raw["value"]["date"]
-        date["dateType"] = date_raw["value"]["dateType"]
-        date["dateInformation"] = date_raw["value"]["dateInformation"]
-
-        dates.append(date)
-
-    return dates
-
-def parse_subjects(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    pass
-
-def parse_alternateIdentifiers(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    pass
-
-def parse_relatedIdentifiers(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    pass
-
-def parse_rights(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    pass
-
-def parse_geoLocations(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    pass
-
-def parse_fundingReferences(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    pass
-
-def parse_relatedItems(subjects_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    pass
+    return trimDict(parse_recursively(layout_objects, shared_objects)) | metadata

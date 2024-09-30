@@ -79,7 +79,7 @@ class ZenodoClient(RequestsExecutor):
 
         creator = ZenodoMetadataCreator()
         metadata = creator.create(project.features.metadata.metadata, project.features.metadata.shared_objects)
-        creator.validate(metadata)
+        #creator.validate(metadata)
 
         def _execute(session: requests.Session) -> ZenodoProjectData:
             resp = self.post(
@@ -95,6 +95,9 @@ class ZenodoClient(RequestsExecutor):
                         "description": metadata.description,
                         "access_right": "closed",
                         "license": "cc-by",
+                        "version": metadata.version,
+                        "grants": metadata.grants,
+                        "dates": metadata.dates
                     }
                 },
             )

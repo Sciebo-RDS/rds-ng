@@ -13,8 +13,25 @@ class OSFMetadata(Metadata):
 
 
 class OSFMetadataCreator(MetadataCreator):
+    """
+    A class used to create OSF metadata objects from a list of metadata dictionaries.
 
-    def create(metadata: List[Dict[str, Any]]) -> OSFMetadata:
+    Methods
+    -------
+    create(metadata: List[Dict[str, Any]]) -> OSFMetadata
+        Creates an OSFMetadata object from the provided metadata.
+    """
+
+    def create(self, metadata: List[Dict[str, Any]]) -> OSFMetadata:
+        """
+        Creates an OSFMetadata object from a list of metadata dictionaries.
+
+        Args:
+            metadata (List[Dict[str, Any]]): A list of dictionaries containing metadata.
+
+        Returns:
+            OSFMetadata: An instance of OSFMetadata populated with the parsed metadata.
+        """
 
         osf_metadata = MetadataParser.filter_by_profile("OSF", metadata)
 
