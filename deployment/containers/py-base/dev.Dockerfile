@@ -1,6 +1,6 @@
 # Base image for all Python-based components (development mode)
 # --
-FROM    python:3.11
+FROM    python:3.12
 
 # Update the image first (and install some helpful tools)
 RUN     apt-get update \
