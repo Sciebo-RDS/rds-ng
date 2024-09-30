@@ -24,8 +24,9 @@ class ROCrateExporter(ProjectExporter):
     ):
         super().__init__(
             ROCrateExporter.ExporterID,
-            name="ROCrate",
-            description="Exports to an RO (Research Object) Crate file",
+            name="RO-Crate",
+            description="Exports to an RO-Crate (Research Object) file",
+            extension="json",
             scope=[MetadataFeature.feature_id],
         )
 

@@ -37,8 +37,7 @@ function onExport(exporter: ProjectExporterDescriptor): void {
     action
         .prepare(props.project, exporter, props.scope)
         .done((reply: ExportProjectReply, success: boolean, _: string) => {
-            // TODO: Add extension to exporter
-            const filename = sanitize(`${props.project.title}.${props.scope}.txt`);
+            const filename = sanitize(`${props.project.title}.${props.scope}.${exporter.extension}`);
             saveAs(new Blob([reply.data], { type: reply.mimetype }), filename);
 
             exportRunning.value = false;

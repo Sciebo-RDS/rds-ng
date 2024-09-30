@@ -13,6 +13,7 @@ export type ProjectExporterID = string;
  * @param exporter_id - The global exporter ID.
  * @param name - The display name.
  * @param description - The exporter's description.
+ * @param extension - The extension of exported files.
  * @param scope - The scope where the exporter applies; if empty, it applies to the overall project.
  */
 export class ProjectExporterDescriptor {
@@ -20,6 +21,7 @@ export class ProjectExporterDescriptor {
 
     public readonly name: string;
     public readonly description: string;
+    public readonly extension: string;
 
     // @ts-ignore
     @Type(() => String)

@@ -18,6 +18,7 @@ class ProjectExporterDescriptor:
         exporter_id: The global exporter ID.
         name: The display name.
         description: The exporter's description.
+        extension: The extension of exported files.
         scope: The scope where the exporter applies; if empty, it applies to the overall project.
     """
 
@@ -25,6 +26,7 @@ class ProjectExporterDescriptor:
 
     name: str
     description: str
+    extension: str
 
     scope: typing.List[ProjectFeatureID] = field(default_factory=list)
 
@@ -45,5 +47,6 @@ def descriptor_from_project_exporter(
         exporter_id=exporter.exporter_id,
         name=exporter.name,
         description=exporter.description,
+        extension=exporter.extension,
         scope=exporter.scope,
     )

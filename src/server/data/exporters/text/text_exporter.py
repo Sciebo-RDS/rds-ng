@@ -25,6 +25,7 @@ class TextExporter(ProjectExporter):
             TextExporter.ExporterID,
             name="Plain Text",
             description="Exports to a plain text file",
+            extension="txt",
             scope=[DataManagementPlanFeature.feature_id],
         )
 

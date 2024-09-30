@@ -25,6 +25,7 @@ class PDFExporter(ProjectExporter):
             PDFExporter.ExporterID,
             name="PDF",
             description="Exports to a PDF file",
+            extension="pdf",
             scope=[DataManagementPlanFeature.feature_id],
         )
 

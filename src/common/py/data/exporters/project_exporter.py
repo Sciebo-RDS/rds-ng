@@ -21,6 +21,7 @@ class ProjectExporter(abc.ABC):
         *,
         name: str,
         description: str,
+        extension: str,
         scope: ProjectExporterScope,
     ):
         """
@@ -28,12 +29,14 @@ class ProjectExporter(abc.ABC):
             exporter_id: The unique ID of the exporter.
             name: The name.
             description: The description.
+            extension: The extension of exported files.
             scope: The scope the exporter applies to.
         """
         self._exporter_id = exporter_id
 
         self._name = name
         self._description = description
+        self._extension = extension
 
         self._scope = scope
 
@@ -62,6 +65,13 @@ class ProjectExporter(abc.ABC):
         The exporter description.
         """
         return self._description
+
+    @property
+    def extension(self) -> str:
+        """
+        The extension of exported files.
+        """
+        return self._extension
 
     @property
     def scope(self) -> ProjectExporterScope:
