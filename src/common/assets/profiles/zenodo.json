@@ -52,6 +52,40 @@
             "type": ["contributor"],
             "required": false,
             "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/",
+            "label": "Subject",
+            "description": "Subject, keyword, classification code, or key phrase describing the resource.",
+            "example": "",
+            "type": ["subject"],
+            "required": true,
+            "multiple": false
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/version/",
+            "label": "Version",
+            "description": "The version number of the resource. Suggested practice: track major_version.minor_version. Register a new identifier for a major version change.",
+            "example": "2.1",
+            "input": [{ "id": "version", "label": "Version", "type": "string" }],
+            "required": false,
+            "multiple": false
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/",
+            "label": "Funding Reference",
+            "description": "Information about financial support (funding) for the resource being registered.",
+            "type": ["fundingReference"],
+            "required": false,
+            "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/",
+            "label": "Date",
+            "description": "Different dates relevant to the work.",
+            "type": ["date"],
+            "required": false,
+            "multiple": true
         }
     ],
     "classes": {
@@ -180,6 +214,147 @@
                         "Other"
                     ],
                     "description": "The type of contributor of the resource."
+                }
+            ]
+        },
+        "subject": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject",
+            "label": "Subject",
+            "description": "Subject, keyword, classification code, or key phrase describing the resource.",
+            "labelTemplate": "${subject}",
+            "input": [
+                {
+                    "id": "subject",
+                    "label": "Subject",
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "id": "subjectScheme",
+                    "label": "Subject Scheme",
+                    "type": "string",
+                    "description": "The name of the subject identifier scheme.",
+                    "example": "Library of Congress Subject Headings (LCSH), ANZSRC Fields of Research",
+                    "required": true
+                },
+                {
+                    "id": "schemeURI",
+                    "label": "Subject Scheme URI",
+                    "type": "string",
+                    "description": "The URI of the subject identifier scheme.",
+                    "example": "https://id.loc.gov/authorities/subjects.html"
+                },
+                {
+                    "id": "valueURI",
+                    "label": "Value URI",
+                    "type": "string",
+                    "description": "The URI of the subject term.",
+                    "example": "https://id.loc.gov/authorities/subjects/sh85035852.html",
+                    "required": true
+                },
+                {
+                    "id": "classificationCode",
+                    "label": "Classification Code",
+                    "type": "string",
+                    "description": "The classification code used for the subject term in the subject scheme.",
+                    "example": "310607 (where 310607 is the classification code associated with the subject term “Nanobiotechnology” in the ANZSRC Fields of Research subject scheme)"
+                }
+            ]
+        },
+        "fundingReference": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference",
+            "label": "Funding Reference",
+            "description": "Information about financial support (funding) for the resource being registered.",
+            "labelTemplate": "${funderName}, ${awardNumber}",
+            "input": [
+                {
+                    "id": "funderName",
+                    "label": "Funder Name",
+                    "type": "string",
+                    "description": "Name of the funding provider.",
+                    "example": "Gordon and Betty Moore Foundation"
+                },
+                {
+                    "id": "funderIdentifier",
+                    "label": "Funder Identifier",
+                    "type": "string",
+                    "description": "Uniquely identifies the funder, according to various schemes.",
+                    "example": "https://doi.org/10.13039/100000936",
+                    "required": true
+                },
+                {
+                    "id": "funderIdentifierType",
+                    "label": "Funder Identifier Type",
+                    "type": "dropdown",
+                    "description": "The type of the funderIdentifier.",
+                    "options": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"]
+                },
+                {
+                    "id": "schemeURI",
+                    "label": "Funder Scheme URI",
+                    "type": "string",
+                    "description": "The URI of the funder identifier scheme.",
+                    "example": "https://www.crossref.org/services/funder-registry/, https://ror.org/"
+                },
+                {
+                    "id": "awardNumber",
+                    "label": "Award Number",
+                    "type": "string",
+                    "description": "The code assigned by the funder to a sponsored award (grant).",
+                    "example": "GBMF3852.01",
+                    "required": true
+                },
+                {
+                    "id": "awardURI",
+                    "label": "Award URI",
+                    "type": "string",
+                    "description": "The URI leading to a page provided by the funder for more information about the award (grant).",
+                    "example": "https://www.moore.org/grants/list/GBMF3859.01"
+                },
+                {
+                    "id": "awardTitle",
+                    "label": "Award Title",
+                    "type": "string",
+                    "description": "The human readable title or name of the award (grant).",
+                    "example": "Socioenvironmental Monitoring of the Amazon Basin and Xingu"
+                }
+            ]
+        },
+        "date": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date",
+            "label": "Date",
+            "description": "Different dates relevant to the work. Formats: YYYY, YYYY-MM-DD, YYYY- MM-DDThh:mm:ssTZD.",
+            "labelTemplate": "${dateType}: ${date}",
+            "input": [
+                {
+                    "id": "date",
+                    "label": "Date",
+                    "type": "date"
+                },
+                {
+                    "id": "dateType",
+                    "label": "Date Type",
+                    "type": "dropdown",
+                    "options": [
+                        "Accepted",
+                        "Available",
+                        "Copyrighted",
+                        "Collected",
+                        "Created",
+                        "Issued",
+                        "Submitted",
+                        "Updated",
+                        "Valid",
+                        "Withdrawn",
+                        "Other"
+                    ],
+                    "description": "The type of date."
+                },
+                {
+                    "id": "dateInformation",
+                    "label": "Date Information",
+                    "type": "string",
+                    "description": "Additional information about the date, if appropriate. May be used to provide more information about the publication, release, or collection date details, for example. May also be used to clarify dates in ancient history. Examples: 55 BC, 55 BCE."
                 }
             ]
         }

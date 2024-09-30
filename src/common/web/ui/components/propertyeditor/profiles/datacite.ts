@@ -46,8 +46,7 @@ export const dataCite: PropertyProfile = {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/",
             label: "Subject",
             description: "Subject, keyword, classification code, or key phrase describing the resource.",
-            example:
-                "World Data Center for Climate (WDCC), GeoForschungsZentrum Potsdam (GFZ), Consejo Superior de Investigaciones Científicas, University of Tokyo, GitHub",
+            example: "",
             type: ["subject"],
             required: true,
             multiple: false
@@ -365,14 +364,16 @@ export const dataCite: PropertyProfile = {
                 {
                     id: "subject",
                     label: "Subject",
-                    type: "string"
+                    type: "string",
+                    required: true
                 },
                 {
                     id: "subjectScheme",
                     label: "Subject Scheme",
                     type: "string",
                     description: "The name of the subject identifier scheme.",
-                    example: "Library of Congress Subject Headings (LCSH), ANZSRC Fields of Research"
+                    example: "Library of Congress Subject Headings (LCSH), ANZSRC Fields of Research",
+                    required: true
                 },
                 {
                     id: "schemeURI",
@@ -386,7 +387,8 @@ export const dataCite: PropertyProfile = {
                     label: "Value URI",
                     type: "string",
                     description: "The URI of the subject term.",
-                    example: "https://id.loc.gov/authorities/subjects/sh85035852.html"
+                    example: "https://id.loc.gov/authorities/subjects/sh85035852.html",
+                    required: true
                 },
                 {
                     id: "classificationCode",
@@ -462,13 +464,13 @@ export const dataCite: PropertyProfile = {
                 {
                     id: "date",
                     label: "Date",
-                    type: "string"
+                    type: "date"
                 },
                 {
                     id: "dateType",
                     label: "Date Type",
                     type: "dropdown",
-                    options: ["Accepted", "Available", "Collected", "Created", "Issued", "Submitted", "Updated", "Valid"],
+                    options: ["Accepted", "Available", "Copyrighted", "Collected", "Created", "Issued", "Submitted", "Updated", "Valid", "Withdrawn", "Other"],
                     description: "The type of date."
                 },
                 {
@@ -800,7 +802,8 @@ export const dataCite: PropertyProfile = {
                     label: "Funder Identifier",
                     type: "string",
                     description: "Uniquely identifies the funder, according to various schemes.",
-                    example: "https://doi.org/10.13039/100000936"
+                    example: "https://doi.org/10.13039/100000936",
+                    required: true
                 },
                 {
                     id: "funderIdentifierType",
@@ -821,7 +824,8 @@ export const dataCite: PropertyProfile = {
                     label: "Award Number",
                     type: "string",
                     description: "The code assigned by the funder to a sponsored award (grant).",
-                    example: "GBMF3852.01"
+                    example: "GBMF3852.01",
+                    required: true
                 },
                 {
                     id: "awardURI",
