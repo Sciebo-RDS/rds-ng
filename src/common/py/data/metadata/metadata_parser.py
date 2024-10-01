@@ -164,7 +164,7 @@ class MetadataParser:
         return True
 
     @staticmethod
-    def get_value_list(metadata, prop_id, shared_objects = [], profile = {}) -> List[Dict[str, str]]:
+    def get_value_list(metadata: List[Dict[str, Any]], prop_id: str, shared_objects: List[Dict[str, Any]] = [], profile: Dict[str, Dict[str, Any]] = {}) -> List[Dict[str, str]]:
         """
         Retrieves a dictionary of values based on the provided metadata, property ID, shared objects, and profile.
 
