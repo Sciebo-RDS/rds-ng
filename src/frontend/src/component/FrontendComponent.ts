@@ -2,6 +2,7 @@ import { ComponentType, ComponentUnit } from "@common/component/ComponentIDs";
 import { WebComponent } from "@common/component/WebComponent";
 import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
+import { ColorTable } from "@common/ui/components/propertyeditor/utils/ColorTable";
 import { UnitID } from "@common/utils/UnitID";
 
 import { registerConnectorCategories } from "@/data/entities/connector/categories/ConnectorCategories";
@@ -25,6 +26,11 @@ import { FrontendUserInterface } from "@/ui/FrontendUserInterface";
 import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
 import Frontend from "@/ui/Frontend.vue";
+
+// TODO: Remove
+import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
+import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
+import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
 
 /**
  * The main frontend component class.
@@ -64,6 +70,9 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this._projectsService = createProjectsService(this);
         this._projectJobsService = createProjectJobsService(this);
         this._projectExportersService = createProjectExportersService(this);
+
+        // TODO: Remove later
+        this.assignGlobalProfileColors();
     }
 
     private addFrontendSettings(): void {
@@ -86,6 +95,14 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this._integrationScheme = new intScheme(this);
 
         debug(`Using integration scheme: ${scheme}`, "frontend");
+    }
+
+    // TODO: Drop later
+    private assignGlobalProfileColors(): void {
+        // Assign colors to global profiles
+        ColorTable.color(dfgDmp.metadata.id[0]);
+        ColorTable.color(dataCite.metadata.id[0]);
+        ColorTable.color(shoes.metadata.id[0]);
     }
 
     /**

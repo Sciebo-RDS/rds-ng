@@ -3,9 +3,10 @@ import { ConnectorsListEvent } from "@common/api/connector/ConnectorEvents";
 import { WebComponent } from "@common/component/WebComponent";
 import { Connector } from "@common/data/entities/connector/Connector";
 import { Service } from "@common/services/Service";
-
-import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 import { deepClone, shortenDataStrings } from "@common/utils/ObjectUtils";
+
+import { assignConnectorProfileColors } from "@/data/entities/connector/ConnectorUtils";
+import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 
 /**
  * Creates the connectors service.
@@ -29,6 +30,8 @@ export default function (comp: WebComponent): Service {
 
                     // @ts-ignore
                     ctx.connectorsStore.connectors = msg.connectors;
+
+                    assignConnectorProfileColors(msg.connectors);
                 } else {
                     ctx.logger.error("Unable to retrieve the connectors list", "connectors", { reason: msg.message });
                 }
@@ -39,8 +42,10 @@ export default function (comp: WebComponent): Service {
 
                 // @ts-ignore
                 ctx.connectorsStore.connectors = msg.connectors;
+
+                assignConnectorProfileColors(msg.connectors);
             });
         },
-        FrontendServiceContext,
+        FrontendServiceContext
     );
 }
