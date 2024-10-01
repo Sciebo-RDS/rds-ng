@@ -114,7 +114,7 @@ class MetadataParser:
         return profile_metadata['layout']
 
     @staticmethod
-    def is_property_filled_out(metadata, profile, prop_id):
+    def is_property_filled_out(metadata: List[Dict[str, Any]], profile: Dict[str, Dict[str, Any]], prop_id: str) -> bool:
         """
         Checks if a specific property in the metadata is filled out according to the given profile.
         Args:
@@ -164,7 +164,7 @@ class MetadataParser:
         return True
 
     @staticmethod
-    def get_value_list(metadata, prop_id, shared_objects = [], profile = {}):
+    def get_value_list(metadata, prop_id, shared_objects = [], profile = {}) -> List[Dict[str, str]]:
         """
         Retrieves a dictionary of values based on the provided metadata, property ID, shared objects, and profile.
 
@@ -178,13 +178,13 @@ class MetadataParser:
             dict: A dictionary of values where keys are object IDs and values are the transformed values based on the metadata and profile.
         """
         
-        values = {}
+        values = []
 
         def _transform_simple_values(obj):
-            return obj['value'] if 'value' in obj else {}
+            return [obj['value']] if 'value' in obj else []
 
         def _transform_complex_values(obj, shared_objects, profile, prop_id):
-            values = {}
+            values = []
             objs = [MetadataParser.getobj(shared_objects, ref) for ref in obj['refs']]
 
             def _replace_template(obj, template, profile):
@@ -201,11 +201,13 @@ class MetadataParser:
                 type = obj['type']
                 property_layout = profile['classes'][type]
 
-                values[obj['id']] = _replace_template(obj, property_layout['labelTemplate'], profile)
+                values.append({
+                    property_layout['label'] : _replace_template(obj, property_layout['labelTemplate'], profile)
+                    })
 
             return values
 
         if (obj := MetadataParser.getobj(metadata, prop_id)) != []:
-            values = values | _transform_simple_values(obj) | _transform_complex_values(obj, shared_objects, profile, prop_id)
+            values = values + _transform_simple_values(obj) + _transform_complex_values(obj, shared_objects, profile, prop_id)
 
         return values
