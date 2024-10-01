@@ -1,10 +1,7 @@
 import typing
 
 from common.py.component import BackendComponent
-from common.py.data.exporters import (
-    ProjectExporterDescriptor,
-    descriptor_from_project_exporter,
-)
+from common.py.data.exporters import ProjectExporterDescriptor
 from common.py.services import Service
 
 from ..data.exporters import ProjectExportersCatalog
@@ -39,7 +36,7 @@ def create_project_exporters_service(comp: BackendComponent) -> Service:
     ) -> None:
         exporters: typing.List[ProjectExporterDescriptor] = []
         for _, exporter in ProjectExportersCatalog.items():
-            exporters.append(descriptor_from_project_exporter(exporter))
+            exporters.append(exporter.descriptor)
 
         ListProjectExportersReply.build(
             ctx.message_builder, msg, exporters=exporters

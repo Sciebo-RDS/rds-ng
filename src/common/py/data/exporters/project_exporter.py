@@ -1,13 +1,9 @@
 import abc
-import typing
 
+from .project_exporter_descriptor import ProjectExporterDescriptor, ProjectExporterID, ProjectExporterScope
+from .project_exporter_result import ProjectExporterResult
 from ..entities.project import Project
 from ..entities.project.features import ProjectFeatureID
-
-from .project_exporter_result import ProjectExporterResult
-
-ProjectExporterID = str
-ProjectExporterScope = typing.List[ProjectFeatureID]
 
 
 class ProjectExporter(abc.ABC):
@@ -32,50 +28,57 @@ class ProjectExporter(abc.ABC):
             extension: The extension of exported files.
             scope: The scope the exporter applies to.
         """
-        self._exporter_id = exporter_id
-
-        self._name = name
-        self._description = description
-        self._extension = extension
-
-        self._scope = scope
+        self._descriptor = ProjectExporterDescriptor(
+            exporter_id=exporter_id,
+            name=name,
+            description=description,
+            extension=extension,
+            scope=scope
+        )
 
     @abc.abstractmethod
     def export(
         self, project: Project, scope: ProjectFeatureID | None = None
     ) -> ProjectExporterResult: ...
+    
+    @property
+    def descriptor(self) -> ProjectExporterDescriptor:
+        """
+        The exporter descriptor.
+        """
+        return self._descriptor
 
     @property
     def exporter_id(self) -> ProjectExporterID:
         """
         The ID of the exporter.
         """
-        return self._exporter_id
+        return self._descriptor.exporter_id
 
     @property
     def name(self) -> str:
         """
         The exporter name.
         """
-        return self._name
+        return self._descriptor.name
 
     @property
     def description(self) -> str:
         """
         The exporter description.
         """
-        return self._description
+        return self._descriptor.description
 
     @property
     def extension(self) -> str:
         """
         The extension of exported files.
         """
-        return self._extension
+        return self._descriptor.extension
 
     @property
     def scope(self) -> ProjectExporterScope:
         """
         The exporter's scope.
         """
-        return self._scope
+        return self._descriptor.scope

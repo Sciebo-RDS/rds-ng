@@ -5,7 +5,8 @@ from dataclasses_json.api import dataclass_json
 
 from ..entities.project.features import ProjectFeatureID
 
-from .project_exporter import ProjectExporter, ProjectExporterID
+ProjectExporterID = str
+ProjectExporterScope = typing.List[ProjectFeatureID]
 
 
 @dataclass_json
@@ -29,24 +30,3 @@ class ProjectExporterDescriptor:
     extension: str
 
     scope: typing.List[ProjectFeatureID] = field(default_factory=list)
-
-
-def descriptor_from_project_exporter(
-    exporter: ProjectExporter,
-) -> ProjectExporterDescriptor:
-    """
-    Creates a project exporter descriptor from an exporter.
-
-    Args:
-        exporter: The exporter to describe.
-
-    Returns:
-        The exporter descriptor.
-    """
-    return ProjectExporterDescriptor(
-        exporter_id=exporter.exporter_id,
-        name=exporter.name,
-        description=exporter.description,
-        extension=exporter.extension,
-        scope=exporter.scope,
-    )
