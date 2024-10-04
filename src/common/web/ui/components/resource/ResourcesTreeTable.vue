@@ -60,7 +60,7 @@ function collapseAll(): void {
 
 watch(selectedNodes, () => {
     const selectedPaths = Object.keys(unref(selectedNodes));
-    const selectedTreeNodes = filterResourcesTreeNodes(unref(data), selectedPaths);
+    const selectedTreeNodes = filterResourcesTreeNodes(unref(data) as TreeNode[], selectedPaths);
     selectedData.value = selectedTreeNodes.map((node) => node.data);
 });
 </script>

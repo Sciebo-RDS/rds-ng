@@ -1,0 +1,362 @@
+{
+    "metadata": {
+        "id": ["Zenodo", "2024.09.17"],
+        "displayLabel": "Zenodo",
+        "description": "A Profile for the Zenodo connector."
+    },
+    "layout": [
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
+            "label": "Title",
+            "description": "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            "input": [{ "id": "title", "label": "Title", "type": "string" }],
+            "required": true,
+            "multiple": true
+        },
+        {
+            "id": "ZenodoUploadType",
+            "label": "Zenodo Upload Type",
+            "input": [
+                {
+                    "id": "ZenodoUploadType",
+                    "label": "Zenodo Upload Type",
+                    "type": "dropdown",
+                    "options": ["publication", "poster", "presentation", "dataset", "image", "video", "software", "lesson", "physicalobject", "other"]
+                }
+            ],
+            "description": "The type of the upload, as defined by Zenodo.",
+            "required": true,
+            "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
+            "label": "Description (Abstract)",
+            "description": "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
+            "input": [{ "id": "abstract", "label": "Description (Abstract)", "type": "textarea" }],
+            "required": true,
+            "multiple": false
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
+            "label": "Creator",
+            "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
+            "type": ["creator"],
+            "required": true,
+            "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/",
+            "label": "Contributor",
+            "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property.",
+            "example": "Charpy, Antoine; Foo Data Center",
+            "type": ["contributor"],
+            "required": false,
+            "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/",
+            "label": "Subject",
+            "description": "Subject, keyword, classification code, or key phrase describing the resource.",
+            "example": "",
+            "type": ["subject"],
+            "required": true,
+            "multiple": false
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/version/",
+            "label": "Version",
+            "description": "The version number of the resource. Suggested practice: track major_version.minor_version. Register a new identifier for a major version change.",
+            "example": "2.1",
+            "input": [{ "id": "version", "label": "Version", "type": "string" }],
+            "required": false,
+            "multiple": false
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/",
+            "label": "Funding Reference",
+            "description": "Information about financial support (funding) for the resource being registered.",
+            "type": ["fundingReference"],
+            "required": false,
+            "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/",
+            "label": "Date",
+            "description": "Different dates relevant to the work.",
+            "type": ["date"],
+            "required": false,
+            "multiple": true
+        }
+    ],
+    "classes": {
+        "creator": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
+            "label": "Creator",
+            "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
+            "labelTemplate": "${name}",
+            "type": ["nameIdentifier", "affiliation"],
+            "input": [
+                {
+                    "id": "name",
+                    "label": "Name",
+                    "type": "string",
+                    "description": "The full name of the creator. Format: Family name, Given names..",
+                    "required": true
+                }
+            ]
+        },
+        "nameIdentifier": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
+            "label": "Name Identifier",
+            "description": "Uniquely identifies an individual or legal entity, according to various schemes.",
+            "example": "Jane Doe",
+            "labelTemplate": "${nameIdentifier} (${nameIdentifierScheme})",
+            "input": [
+                {
+                    "id": "nameIdentifier",
+                    "label": "Name Identifier",
+                    "type": "string"
+                },
+                {
+                    "id": "nameIdentifierScheme",
+                    "label": "Name Identifier Scheme",
+                    "type": "string",
+                    "description": "The name of the name identifier scheme.",
+                    "example": "ORCID"
+                },
+                {
+                    "id": "schemeURI",
+                    "label": "Scheme URI",
+                    "type": "string",
+                    "description": "The URI of the name identifier scheme."
+                }
+            ]
+        },
+        "affiliation": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#affiliation",
+            "label": "Affiliation",
+            "labelTemplate": "${affiliation}",
+            "input": [
+                {
+                    "id": "affiliation",
+                    "label": "Affiliation",
+                    "type": "string",
+                    "description": "The organizational or institutional affiliation of the creator."
+                },
+                {
+                    "id": "affiliationIdentifier",
+                    "label": "Affiliation Identifier",
+                    "type": "string",
+                    "description": "Uniquely identifies the organizational affiliation of the creator."
+                },
+                {
+                    "id": "affiliationIdentifierScheme",
+                    "label": "Affiliation Identifier Scheme",
+                    "type": "string",
+                    "description": "The name of the affiliation identifier scheme."
+                },
+                {
+                    "id": "schemeURI",
+                    "label": "Affiliation Scheme URI",
+                    "type": "string",
+                    "description": "The URI of the affiliation identifier scheme."
+                }
+            ]
+        },
+        "contributor": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor",
+            "label": "Contributor",
+            "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
+            "labelTemplate": "${contributorName}",
+            "example": "Charpy, Antoine; Foo Data Center",
+            "type": ["nameIdentifier", "affiliation"],
+            "input": [
+                {
+                    "id": "contributorName",
+                    "label": "Contributor Name",
+                    "type": "string",
+                    "description": "The full name of the contributor. Format: Family name, Given names.",
+                    "example": "Patel, Emily; ABC Foundation",
+                    "required": true
+                },
+                {
+                    "id": "nameType",
+                    "label": "Name Type",
+                    "type": "dropdown",
+                    "options": ["Organizational", "Personal"],
+                    "description": "The type of name."
+                },
+                {
+                    "id": "contributorType",
+                    "label": "Contributor Type",
+                    "type": "dropdown",
+                    "options": [
+                        "ContactPerson",
+                        "DataCollector",
+                        "DataCurator",
+                        "DataManager",
+                        "Distributor",
+                        "Editor",
+                        "HostingInstitution",
+                        "Producer",
+                        "ProjectLeader",
+                        "ProjectManager",
+                        "ProjectMember",
+                        "RegistrationAgency",
+                        "RegistrationAuthority",
+                        "RelatedPerson",
+                        "Researcher",
+                        "ResearchGroup",
+                        "RightsHolder",
+                        "Sponsor",
+                        "Supervisor",
+                        "WorkPackageLeader",
+                        "Other"
+                    ],
+                    "description": "The type of contributor of the resource."
+                }
+            ]
+        },
+        "subject": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject",
+            "label": "Subject",
+            "description": "Subject, keyword, classification code, or key phrase describing the resource.",
+            "labelTemplate": "${subject}",
+            "input": [
+                {
+                    "id": "subject",
+                    "label": "Subject",
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "id": "subjectScheme",
+                    "label": "Subject Scheme",
+                    "type": "string",
+                    "description": "The name of the subject identifier scheme.",
+                    "example": "Library of Congress Subject Headings (LCSH), ANZSRC Fields of Research",
+                    "required": true
+                },
+                {
+                    "id": "schemeURI",
+                    "label": "Subject Scheme URI",
+                    "type": "string",
+                    "description": "The URI of the subject identifier scheme.",
+                    "example": "https://id.loc.gov/authorities/subjects.html"
+                },
+                {
+                    "id": "valueURI",
+                    "label": "Value URI",
+                    "type": "string",
+                    "description": "The URI of the subject term.",
+                    "example": "https://id.loc.gov/authorities/subjects/sh85035852.html",
+                    "required": true
+                },
+                {
+                    "id": "classificationCode",
+                    "label": "Classification Code",
+                    "type": "string",
+                    "description": "The classification code used for the subject term in the subject scheme.",
+                    "example": "310607 (where 310607 is the classification code associated with the subject term “Nanobiotechnology” in the ANZSRC Fields of Research subject scheme)"
+                }
+            ]
+        },
+        "fundingReference": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference",
+            "label": "Funding Reference",
+            "description": "Information about financial support (funding) for the resource being registered.",
+            "labelTemplate": "${funderName}, ${awardNumber}",
+            "input": [
+                {
+                    "id": "funderName",
+                    "label": "Funder Name",
+                    "type": "string",
+                    "description": "Name of the funding provider.",
+                    "example": "Gordon and Betty Moore Foundation"
+                },
+                {
+                    "id": "funderIdentifier",
+                    "label": "Funder Identifier",
+                    "type": "string",
+                    "description": "Uniquely identifies the funder, according to various schemes.",
+                    "example": "https://doi.org/10.13039/100000936",
+                    "required": true
+                },
+                {
+                    "id": "funderIdentifierType",
+                    "label": "Funder Identifier Type",
+                    "type": "dropdown",
+                    "description": "The type of the funderIdentifier.",
+                    "options": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"]
+                },
+                {
+                    "id": "schemeURI",
+                    "label": "Funder Scheme URI",
+                    "type": "string",
+                    "description": "The URI of the funder identifier scheme.",
+                    "example": "https://www.crossref.org/services/funder-registry/, https://ror.org/"
+                },
+                {
+                    "id": "awardNumber",
+                    "label": "Award Number",
+                    "type": "string",
+                    "description": "The code assigned by the funder to a sponsored award (grant).",
+                    "example": "GBMF3852.01",
+                    "required": true
+                },
+                {
+                    "id": "awardURI",
+                    "label": "Award URI",
+                    "type": "string",
+                    "description": "The URI leading to a page provided by the funder for more information about the award (grant).",
+                    "example": "https://www.moore.org/grants/list/GBMF3859.01"
+                },
+                {
+                    "id": "awardTitle",
+                    "label": "Award Title",
+                    "type": "string",
+                    "description": "The human readable title or name of the award (grant).",
+                    "example": "Socioenvironmental Monitoring of the Amazon Basin and Xingu"
+                }
+            ]
+        },
+        "date": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date",
+            "label": "Date",
+            "description": "Different dates relevant to the work. Formats: YYYY, YYYY-MM-DD, YYYY- MM-DDThh:mm:ssTZD.",
+            "labelTemplate": "${dateType}: ${date}",
+            "input": [
+                {
+                    "id": "date",
+                    "label": "Date",
+                    "type": "date"
+                },
+                {
+                    "id": "dateType",
+                    "label": "Date Type",
+                    "type": "dropdown",
+                    "options": [
+                        "Accepted",
+                        "Available",
+                        "Copyrighted",
+                        "Collected",
+                        "Created",
+                        "Issued",
+                        "Submitted",
+                        "Updated",
+                        "Valid",
+                        "Withdrawn",
+                        "Other"
+                    ],
+                    "description": "The type of date."
+                },
+                {
+                    "id": "dateInformation",
+                    "label": "Date Information",
+                    "type": "string",
+                    "description": "Additional information about the date, if appropriate. May be used to provide more information about the publication, release, or collection date details, for example. May also be used to clarify dates in ancient history. Examples: 55 BC, 55 BCE."
+                }
+            ]
+        }
+    }
+}

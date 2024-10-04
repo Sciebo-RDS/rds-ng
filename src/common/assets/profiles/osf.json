@@ -1,0 +1,52 @@
+{
+    "metadata": {
+        "id": ["OSF", "2024.09.17"],
+        "displayLabel": "OSF",
+        "description": "A Profile for the OSF connector."
+    },
+    "layout": [
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
+            "label": "Title",
+            "description": "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            "input": [{ "id": "title", "label": "Title", "type": "string" }],
+            "required": true,
+            "multiple": true
+        },
+        {
+            "id": "OsfCategory",
+            "label": "OSF Category",
+            "input": [
+                {
+                    "id": "category",
+                    "label": "OSF Category",
+                    "type": "dropdown",
+                    "options": [
+                        "analysis",
+                        "communication",
+                        "data",
+                        "hypothesis",
+                        "instrumentation",
+                        "methods and measures",
+                        "procedure",
+                        "project",
+                        "software",
+                        "other"
+                    ]
+                }
+            ],
+            "description": "The category of the node, as selected by project contributors.",
+            "required": true,
+            "multiple": true
+        },
+        {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
+            "label": "Description (Abstract)",
+            "description":
+                "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
+            "input": [{ "id": "abstract", "label": "Description (Abstract)", "type": "textarea" }],
+            "required": true,
+            "multiple": false
+        }
+    ]
+}

@@ -1,29 +1,28 @@
 import { plainToInstance } from "class-transformer";
-import { Profile, ProfileClass, type ProfileID } from "./PropertyProfile";
+import { ProfileClass, PropertyProfile, type ProfileID } from "./PropertyProfile";
 
-const isProfile = (profile: any): profile is Profile => {
+const isProfile = (profile: any): profile is PropertyProfile => {
     return (
         profile.metadata &&
         profile.metadata.id &&
-        profile.metadata.version &&
         profile.layout &&
-        profile.metadata.name &&
+        profile.metadata.displayLabel &&
         profile.layout.length > 0 &&
         profile.metadata.id.length == 2
     );
 };
 
 export class PropertyProfileStore {
-    private _profiles: Profile[];
+    private _profiles: PropertyProfile[];
 
     constructor() {
         this._profiles = [];
     }
 
-    public mountProfile(profile: Profile) {
+    public mountProfile(profile: PropertyProfile) {
         try {
             if (isProfile(profile)) {
-                this._profiles.push(plainToInstance(Profile, profile) as Profile);
+                this._profiles.push(plainToInstance(PropertyProfile, profile) as PropertyProfile);
                 console.log("mounted profile: ", profile);
             } else {
                 console.log("Invalid profile: ", profile);
@@ -55,10 +54,10 @@ export class PropertyProfileStore {
 
     public getProfileLabelById(profileId: ProfileID): string | undefined {
         const profile = this._profiles.find((profile) => profile.metadata.id === profileId);
-        return profile?.metadata.name;
+        return profile?.metadata.displayLabel;
     }
 
-    public list(): Profile[] {
+    public list(): PropertyProfile[] {
         return this._profiles;
     }
 

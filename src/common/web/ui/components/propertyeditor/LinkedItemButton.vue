@@ -126,6 +126,7 @@ const toggle = (event: Event) => {
             @click="handleClick"
             @contextmenu="
                 () => {
+                    //@ts-ignore
                     const button = $refs.button as typeof ref<SplitButton>;
                     //@ts-ignore
                     button.onDropdownButtonClick();

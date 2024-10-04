@@ -1,15 +1,11 @@
 import typing
 
-from common.py.component import (
-    ComponentType,
-    ComponentUnit,
-    BackendComponent,
-)
+from common.py.component import BackendComponent, ComponentType, ComponentUnit
 from common.py.component.roles import LeafRole
 from common.py.utils import UnitID
 
+from ..execution import ConnectorJobExecutorType, ConnectorJobsEngine
 from .connector_information import ConnectorInformation
-from ..execution import ConnectorJobsEngine, ConnectorJobExecutorType
 
 
 class ConnectorComponent(BackendComponent):
@@ -40,16 +36,16 @@ class ConnectorComponent(BackendComponent):
         self._jobs_engine = ConnectorJobsEngine(executor_type=executor_type)
 
     def run(self) -> None:
-        from ..data.entities.connector.categories import register_connector_categories
-        from ..integration.authorization.strategies import (
-            register_authorization_strategy_configurations,
-        )
-        from ..services import (
-            create_connector_service,
-            create_authorization_service,
-            create_project_jobs_service,
-            ConnectorServiceContext,
-        )
+        from common.py.data.metadata import register_metadata_creators
+
+        from ..data.entities.connector.categories import \
+            register_connector_categories
+        from ..integration.authorization.strategies import \
+            register_authorization_strategy_configurations
+        from ..services import (ConnectorServiceContext,
+                                create_authorization_service,
+                                create_connector_service,
+                                create_project_jobs_service)
 
         # Assign the global jobs engine to the service context
         ConnectorServiceContext.set_jobs_engine(self._jobs_engine)
@@ -57,6 +53,7 @@ class ConnectorComponent(BackendComponent):
         # Register global items
         register_connector_categories()
         register_authorization_strategy_configurations()
+        register_metadata_creators()
 
         # Create connector-specific services
         create_connector_service(self)
@@ -76,6 +73,13 @@ class ConnectorComponent(BackendComponent):
         The global connector information.
         """
         return self._connector_info
+
+    @property
+    def metadata_profile_name(self) -> str:
+        """
+        The name of the metadata profile.
+        """
+        return self.connector_info.metadata_profile.metadata.id[0]
 
     @staticmethod
     def instance() -> "ConnectorComponent":

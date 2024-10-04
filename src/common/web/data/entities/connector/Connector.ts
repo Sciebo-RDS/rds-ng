@@ -3,6 +3,8 @@ import { Type } from "class-transformer";
 import { UnitID } from "../../../utils/UnitID";
 import { type AuthorizationSettings } from "../authorization/AuthorizationSettings";
 
+import { PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
+
 /**
  * The connector ID type.
  */
@@ -44,7 +46,7 @@ export class ConnectorLogos {
  *
  * TODO: Use proper type
  */
-export type ConnectorMetadataProfile = Record<string, any>;
+export type ConnectorMetadataProfile = PropertyProfile;
 
 /**
  * Data for a single **Connector**.
@@ -90,7 +92,7 @@ export class Connector {
         authorization: AuthorizationSettings = { strategy: "", config: {} },
         options: ConnectorOptions = ConnectorOptions.Default,
         logos: ConnectorLogos = new ConnectorLogos(),
-        metadataProfile: ConnectorMetadataProfile = {},
+        metadataProfile: ConnectorMetadataProfile = new PropertyProfile({ id: ["", ""], displayLabel: "", description: "" }, [])
     ) {
         this.connector_id = connectorID;
         this.connector_address = connectorAddress;

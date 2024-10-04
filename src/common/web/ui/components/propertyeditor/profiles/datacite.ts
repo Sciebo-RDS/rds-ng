@@ -1,21 +1,19 @@
-import { Profile } from "../PropertyProfile";
+import { PropertyProfile } from "../PropertyProfile";
 
-export const dataCite: Profile = {
+export const dataCite: PropertyProfile = {
     metadata: {
         id: ["DataCite", "4.5"],
-        name: "DataCite",
-        version: "4.5",
+        displayLabel: "DataCite",
         description: "DataCite Metadata Profile"
     },
     layout: [
         {
-            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/identifier/",
-            label: "Identifier",
-            description: "The Identifier is a unique string that identifies a resource. Should be a URL or a DOI.",
-            example: "https://doi.org/10.1234/abc",
-            input: [{ id: "identifier", label: "Identifier", type: "string" }],
+            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
+            label: "Title",
+            description: "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
+            input: [{ id: "title", label: "Title", type: "string" }],
             required: true,
-            multiple: false
+            multiple: true
         },
         {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
@@ -23,14 +21,6 @@ export const dataCite: Profile = {
             description:
                 "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             type: ["creator"],
-            required: true,
-            multiple: true
-        },
-        {
-            id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
-            label: "Title",
-            description: "A name or title by which a resource is known. May be the title of a dataset or the name of a piece of software or an instrument.",
-            type: ["title"],
             required: true,
             multiple: true
         },
@@ -56,8 +46,7 @@ export const dataCite: Profile = {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/",
             label: "Subject",
             description: "Subject, keyword, classification code, or key phrase describing the resource.",
-            example:
-                "World Data Center for Climate (WDCC), GeoForschungsZentrum Potsdam (GFZ), Consejo Superior de Investigaciones Científicas, University of Tokyo, GitHub",
+            example: "",
             type: ["subject"],
             required: true,
             multiple: false
@@ -196,11 +185,11 @@ export const dataCite: Profile = {
         },
         {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
-            label: "Description",
+            label: "Description (Abstract)",
             description:
                 "All additional information that does not fit in any of the other categories. May be used for technical information or detailed information associated with a scientific instrument.",
-            type: ["description"],
-            //input: [{ id: "description", label: "Description", type: "string" }],
+            //type: ["description"],
+            input: [{ id: "abstract", label: "Description (Abstract)", type: "textarea" }],
             required: false,
             multiple: false
         },
@@ -246,7 +235,8 @@ export const dataCite: Profile = {
                     id: "name",
                     label: "Name",
                     type: "string",
-                    description: "The full name of the creator."
+                    description: "The full name of the creator. Format: Family name, Given names..",
+                    required: true
                 }
             ]
         },
@@ -374,14 +364,16 @@ export const dataCite: Profile = {
                 {
                     id: "subject",
                     label: "Subject",
-                    type: "string"
+                    type: "string",
+                    required: true
                 },
                 {
                     id: "subjectScheme",
                     label: "Subject Scheme",
                     type: "string",
                     description: "The name of the subject identifier scheme.",
-                    example: "Library of Congress Subject Headings (LCSH), ANZSRC Fields of Research"
+                    example: "Library of Congress Subject Headings (LCSH), ANZSRC Fields of Research",
+                    required: true
                 },
                 {
                     id: "schemeURI",
@@ -395,7 +387,8 @@ export const dataCite: Profile = {
                     label: "Value URI",
                     type: "string",
                     description: "The URI of the subject term.",
-                    example: "https://id.loc.gov/authorities/subjects/sh85035852.html"
+                    example: "https://id.loc.gov/authorities/subjects/sh85035852.html",
+                    required: true
                 },
                 {
                     id: "classificationCode",
@@ -412,7 +405,7 @@ export const dataCite: Profile = {
             label: "Contributor",
             description:
                 "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
-            labelTemplate: "${contributor}",
+            labelTemplate: "${contributorName}",
             example: "Charpy, Antoine; Foo Data Center",
             type: ["nameIdentifier", "affiliation"],
             input: [
@@ -420,8 +413,9 @@ export const dataCite: Profile = {
                     id: "contributorName",
                     label: "Contributor Name",
                     type: "string",
-                    description: "The full name of the contributor.",
-                    example: "Patel, Emily; ABC Foundation"
+                    description: "The full name of the contributor. Format: Family name, Given names.",
+                    example: "Patel, Emily; ABC Foundation",
+                    required: true
                 },
                 {
                     id: "nameType",
@@ -470,13 +464,13 @@ export const dataCite: Profile = {
                 {
                     id: "date",
                     label: "Date",
-                    type: "string"
+                    type: "date"
                 },
                 {
                     id: "dateType",
                     label: "Date Type",
                     type: "dropdown",
-                    options: ["Accepted", "Available", "Collected", "Created", "Issued", "Submitted", "Updated", "Valid"],
+                    options: ["Accepted", "Available", "Copyrighted", "Collected", "Created", "Issued", "Submitted", "Updated", "Valid", "Withdrawn", "Other"],
                     description: "The type of date."
                 },
                 {
@@ -718,7 +712,7 @@ export const dataCite: Profile = {
             id: "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation",
             label: "Geolocation",
             description: "Spatial region or named place where the data was gathered or about which the data is focused.",
-            labelTemplate: "${geoLocation}",
+            labelTemplate: "${geoLocationPlace}",
             type: ["geoLocationPoint", "geoLocationBox", "geoLocationPolygon"],
             input: [
                 {
@@ -808,7 +802,8 @@ export const dataCite: Profile = {
                     label: "Funder Identifier",
                     type: "string",
                     description: "Uniquely identifies the funder, according to various schemes.",
-                    example: "https://doi.org/10.13039/100000936"
+                    example: "https://doi.org/10.13039/100000936",
+                    required: true
                 },
                 {
                     id: "funderIdentifierType",
@@ -829,7 +824,8 @@ export const dataCite: Profile = {
                     label: "Award Number",
                     type: "string",
                     description: "The code assigned by the funder to a sponsored award (grant).",
-                    example: "GBMF3852.01"
+                    example: "GBMF3852.01",
+                    required: true
                 },
                 {
                     id: "awardURI",

@@ -4,7 +4,7 @@ import { reactive, toRefs, watch, type PropType } from "vue";
 import { DataManagementPlanFeature, type DataManagementPlan } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
-import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
@@ -42,7 +42,7 @@ watch(
     { deep: true }
 );
 
-projectProfiles.mountProfile(dfgDmp as Profile);
+projectProfiles.mountProfile(dfgDmp as PropertyProfile);
 </script>
 
 <template>

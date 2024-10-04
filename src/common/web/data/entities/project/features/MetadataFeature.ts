@@ -1,3 +1,4 @@
+import { ProjectObject } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -5,14 +6,14 @@ import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
  *
  * TODO: Use proper type
  */
-export type ProjectMetadata = Record<string, any>[];
+export type ProjectMetadata = ProjectObject[];
 
 /**
  * The metadata objects type.
  *
  * TODO: Use proper type
  */
-export type MetadataObjects = Record<string, any>[];
+export type MetadataObjects = ProjectObject[];
 
 /**
  * Data class for the metadata project feature.
