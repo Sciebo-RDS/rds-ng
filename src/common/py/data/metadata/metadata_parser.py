@@ -31,6 +31,58 @@ class MetadataParser:
     """
 
     @staticmethod
+    def validate_profile(profile: Dict[str, Dict[str, Any]]) -> bool:
+        """
+        Validates the given profile dictionary to ensure it contains the required metadata and layout information.
+        Args:
+            profile (Dict[str, Dict[str, Any]]): The profile dictionary to validate. It should contain 'metadata' and optionally 'layout' and 'classes'.
+        Returns:
+            bool: True if the profile is valid, False otherwise.
+        Raises:
+            ValueError: If the profile is missing required metadata keys or if the layout references missing classes.
+        The profile dictionary should have the following structure:
+        {
+            'metadata': {
+                'id': str,
+                'displayLabel': str,
+                'description': str,
+                ...
+            },
+            'layout': [
+                {
+                    'type': str,
+                    ...
+                },
+                ...
+            ],
+            'classes': {
+                ...
+            }
+        }
+        """
+        try:
+            if (profile_meta := profile.get('metadata')) is None:
+                raise ValueError("Profile metadata is missing")
+            
+            if not all(e in profile_meta for e in ['id', 'displayLabel', 'description']) or len(profile_meta['id']) != 2:
+                raise ValueError("Profile metadata is missing required keys")
+            
+            if (layout := profile.get('layout')) is not None:
+                import itertools
+                types_in_layout = [e.get('type', []) for e in layout]
+                types_in_layout = list(itertools.chain.from_iterable(types_in_layout))
+
+                if not all(e in profile['classes'] for e in types_in_layout):
+                    raise ValueError("Profile is missing classes referenced in layout")
+            
+            return True
+
+        except ValueError as e:
+            print(f"Validation error: {e}")
+            return False
+
+
+    @staticmethod
     def filter_by_profile(
         profile_name: str | List, metadata: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
@@ -58,6 +110,7 @@ class MetadataParser:
                 metadata,
             )
         )
+    
 
     @staticmethod
     def getattr(metadata: List[Dict[str, Any]], query: MetadataParserQuery) -> List[Dict[str, Any]]:
@@ -80,6 +133,7 @@ class MetadataParser:
             None,
         )
     
+
     @staticmethod
     def getobj(metadata: List[Dict[str, Any]], id: str) -> Dict[str, Any]:
         """
@@ -111,7 +165,8 @@ class MetadataParser:
         Returns:
             List[Dict[str, Any]]: A list of dictionaries representing the layout information.
         """
-        return profile_metadata['layout']
+        return profile_metadata.get('layout', [])
+
 
     @staticmethod
     def is_property_filled_out(metadata: List[Dict[str, Any]], profile: Dict[str, Dict[str, Any]], prop_id: str) -> bool:
@@ -137,10 +192,9 @@ class MetadataParser:
         if obj == None:
             raise MetadataPropertyMissingError(f"Property {prop_id} is missing")
         
-        if len(property_layout := [e for e in profile['layout'] if e['id'] == prop_id]) == 0:
+        if (property_layout :=  next(e for e in profile['layout'] if e['id'] == prop_id)) == None:
             raise MetadataPropertyMissingError(f"Property {prop_id} not defined in profile")
         
-        property_layout = property_layout[0]
 
         if "input" in property_layout and len(property_layout['input']) > 0:
 
@@ -153,7 +207,7 @@ class MetadataParser:
                     ),
                 )
                 if value == None or value == '':
-                    print(f"Value {required_value_id} is missing for property {prop_id}")
+                    print(f"Value '{required_value_id}' is missing for property {prop_id}")
                     return False
                 
         if "type" in property_layout and len(property_layout['type']) > 0:
@@ -162,9 +216,75 @@ class MetadataParser:
                 return False
 
         return True
+    
 
     @staticmethod
-    def get_value_list(metadata: List[Dict[str, Any]], prop_id: str, shared_objects: List[Dict[str, Any]] = [], profile: Dict[str, Dict[str, Any]] = {}) -> List[Dict[str, str]]:
+    def _transform_simple_values(obj, profile):
+        values = []
+
+        if (obj_profile := next(e for e in profile['layout'] if e['id'] == obj['id'])) == None or 'value' not in obj:
+                return values
+        
+        for key, value in obj['value'].items():
+
+            value_definition = next((e for e in obj_profile['input'] if e['id'] == key), None)
+
+            if not value_definition or 'label' not in value_definition:
+                continue
+            
+            label = value_definition['label']
+            value = {
+                "label": label,
+                "values": [value] if isinstance(value, list) else [value]
+            }
+
+            values.append(value)
+
+        return values
+
+
+    @staticmethod
+    def _transform_complex_values(obj, shared_objects, profile):
+        values = []
+        objs = [MetadataParser.getobj(shared_objects, ref) for ref in obj.get('refs', [])]
+
+        def _replace_template(obj, template, profile):
+            import re
+            
+            result = template
+            matches = re.findall("\${[a-zA-z0-9]*}", result)
+
+            for match in [m for m in matches if m != None]:
+                fallback_str = f"{{{next(e for e in profile['classes'][obj['type']]['input'] if e['id'] == match[2:-1])['label']}}}"
+                replacement_str = obj['value'].get(match[2:-1], fallback_str)
+                result = result.replace(result, replacement_str)
+
+            return result
+
+        for obj in [o for o in objs if o]:
+            type = obj['type']
+            property_layout = profile['classes'][type]
+
+            replaced_template = _replace_template(obj, property_layout['labelTemplate'], profile)
+
+            if property_layout['label'] not in [e['label'] for e in values if e]:
+                values.append({
+                    "label": property_layout['label'],
+                        "values":  [replaced_template]
+                                })
+
+                continue
+            
+            for v in values:
+                if v['label'] == property_layout['label']:
+                    v['values'].append(replaced_template)
+                    break
+
+        return values
+
+
+    @staticmethod
+    def get_value_list(metadata: List[Dict[str, Any]], prop_id: str, shared_objects: List[Dict[str, Any]] = [], profile:  Dict[str, Dict[str, Any]] = {}) -> List[Dict[str, str]]:
         """
         Retrieves a dictionary of values based on the provided metadata, property ID, shared objects, and profile.
 
@@ -177,37 +297,15 @@ class MetadataParser:
         Returns:
             dict: A dictionary of values where keys are object IDs and values are the transformed values based on the metadata and profile.
         """
+
+
+        try:
+            if (obj := MetadataParser.getobj(metadata, prop_id)) == [] or not MetadataParser.validate_profile(profile):
+                return []
+            
+        except Exception as e:
+            print(f"Exception: {e}")
+            return []
         
-        values = []
-
-        def _transform_simple_values(obj):
-            return [obj['value']] if 'value' in obj else []
-
-        def _transform_complex_values(obj, shared_objects, profile, prop_id):
-            values = []
-            objs = [MetadataParser.getobj(shared_objects, ref) for ref in obj['refs']]
-
-            def _replace_template(obj, template, profile):
-                import re
-                result = template
-                matches = re.findall("\${[a-zA-z0-9]*}", result)
-
-                for match in [m for m in matches if m != None]:
-                    result = result.replace(result, obj['value'].get(match[2:-1], f"[{[e for e in profile['classes'][obj['type']]['input'] if e['id'] == match[2:-1]][0]['label']}]"))
-
-                return result
-
-            for obj in [o for o in objs if o != None]:
-                type = obj['type']
-                property_layout = profile['classes'][type]
-
-                values.append({
-                    property_layout['label'] : _replace_template(obj, property_layout['labelTemplate'], profile)
-                    })
-
-            return values
-
-        if (obj := MetadataParser.getobj(metadata, prop_id)) != []:
-            values = values + _transform_simple_values(obj) + _transform_complex_values(obj, shared_objects, profile, prop_id)
-
-        return values
+        return MetadataParser._transform_simple_values(obj, profile) + MetadataParser._transform_complex_values(obj, shared_objects, profile)
+    
