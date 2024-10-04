@@ -13,6 +13,7 @@ from .tools import (
     handle_project_job_message,
     send_project_logbook,
 )
+from ..data.verifiers.project import ProjectJobVerifier
 from ..networking.session import Session
 
 
@@ -155,7 +156,7 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             )
             return
 
-        # All checks have passed, so initiate the job and send it to the connector
+        # All base checks have passed
         job = ProjectJob(
             user_id=ctx.user.user_id,
             project_id=msg.project_id,
@@ -163,20 +164,28 @@ def create_project_jobs_service(comp: BackendComponent) -> Service:
             message="Job initiated",
         )
 
-        _initiate(True, "", job)
+        try:
+            # Ensure that the project job is valid before sending it to the connector
+            ProjectJobVerifier(project, job, connector).verify_create()
 
-        StartProjectJobCommand.build(
-            ctx.message_builder,
-            project=project,
-            connector_instance=msg.connector_instance,
-            user_token=ctx.session.user_token,
-            broker_token=broker_token,
-            chain=msg,
-        ).failed(
-            lambda _, message: _remove_failed_job(job, project, ctx, message=message)
-        ).emit(
-            Channel.direct(connector.connector_address)
-        )
+            _initiate(True, "", job)
+
+            StartProjectJobCommand.build(
+                ctx.message_builder,
+                project=project,
+                connector_instance=msg.connector_instance,
+                user_token=ctx.session.user_token,
+                broker_token=broker_token,
+                chain=msg,
+            ).failed(
+                lambda _, message: _remove_failed_job(
+                    job, project, ctx, message=message
+                )
+            ).emit(
+                Channel.direct(connector.connector_address)
+            )
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            _initiate(False, str(exc))
 
     @svc.message_handler(StartProjectJobReply)
     def job_started(msg: StartProjectJobReply, ctx: ServerServiceContext) -> None:

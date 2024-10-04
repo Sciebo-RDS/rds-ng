@@ -17,12 +17,12 @@ const userStore = useUserStore();
 const props = defineProps({
     instance: {
         type: Object as PropType<ConnectorInstance>,
-        required: true,
+        required: true
     },
     isSelected: {
         type: Boolean,
-        default: false,
-    },
+        default: false
+    }
 });
 const emits = defineEmits<{
     (e: "authorize-instance", instance: ConnectorInstance): void;
@@ -35,7 +35,7 @@ const { instance, isSelected } = toRefs(props);
 const { userAuthorizations } = storeToRefs(userStore);
 
 const connector = computed(() => findConnectorByID(consStore.connectors, instance.value.connector_id));
-const requiresAuthorization = computed(() => connectorRequiresAuthorization(unref(connector)!));
+const requiresAuthorization = computed(() => (!!unref(connector) ? connectorRequiresAuthorization(unref(connector)!) : false));
 const isAuthorized = computed(() => connectorInstanceIsAuthorized(unref(instance)!, unref(userAuthorizations)));
 const isUnAuthorizing = ref(false);
 
@@ -43,7 +43,7 @@ const editMenu = ref();
 const editMenuItems = computed(() => {
     const menuItems = {
         label: "Edit connection",
-        items: [] as Record<any, any>[],
+        items: [] as Record<any, any>[]
     };
 
     if (unref(requiresAuthorization)) {
@@ -52,14 +52,14 @@ const editMenuItems = computed(() => {
                 label: () => (unref(isUnAuthorizing) ? "Disconnecting..." : "Disconnect"),
                 icon: "material-icons-outlined mi-link-off",
                 disabled: () => unref(isUnAuthorizing),
-                command: onUnauthorize,
+                command: onUnauthorize
             });
         } else {
             menuItems.items.push({
                 label: () => (unref(isUnAuthorizing) ? "Connecting..." : "Connect"),
                 icon: "material-icons-outlined mi-link",
                 disabled: () => unref(isUnAuthorizing),
-                command: onAuthorize,
+                command: onAuthorize
             });
         }
     }
@@ -68,15 +68,15 @@ const editMenuItems = computed(() => {
         {
             label: "Settings",
             icon: "material-icons-outlined mi-engineering",
-            command: () => emits("edit-instance", unref(instance)!),
+            command: () => emits("edit-instance", unref(instance)!)
         },
         { separator: true },
         {
             label: "Delete",
             icon: "material-icons-outlined mi-delete-forever",
             class: "r-text-error",
-            command: () => emits("delete-instance", unref(instance)!),
-        },
+            command: () => emits("delete-instance", unref(instance)!)
+        }
     );
 
     return [menuItems];

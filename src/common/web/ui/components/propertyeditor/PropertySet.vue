@@ -11,7 +11,7 @@ import { computed, ref, type Ref } from "vue";
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
-import { stringToColor } from "./utils/Colors";
+import { ColorTable } from "./utils/ColorTable";
 
 const props = defineProps(["controller", "project", "exporters", "projectProfiles", "projectObjects", "sharedObjectStore"]);
 
@@ -104,7 +104,7 @@ const searchString = ref("");
                 @click="toggle"
                 aria-haspopup="true"
                 aria-controls="overlay_menu"
-            /> 
+            />
             <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
         </template>
     </Toolbar> -->
@@ -136,6 +136,7 @@ const searchString = ref("");
             searchString = '';
         "
     >
+
         <template #default>
             <div class="h-full flex-col flex space-y-4">
                 <FloatLabel>
@@ -158,14 +159,15 @@ const searchString = ref("");
                                     v-for="p in slotProps.item.profiles"
                                     :label="p[0]"
                                     size="small"
-                                    :style="`background-color: ${stringToColor(p[0], 0.3)}; border-color: ${stringToColor(p[0])}`"
-                                    class="h-4 !rounded py-2 px-2 text-sm border self-center"
-                            /></span>
+                                    :style="`background-color: ${ColorTable.color(p[0])}`"
+                                class="h-4 !rounded p-2.5 text-sm self-center bg-opacity-40"
+                        /></span>
                             <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.item.description">{{ slotProps.item.description }}</span>
                         </div>
                     </template>
                 </OrderList>
             </div>
+
         </template>
         <template #footer>
             <div class="flex justify-end gap-2 mt-5">
@@ -177,8 +179,8 @@ const searchString = ref("");
                         searchString = '';
                         showAddProperties = false;
                     "
-                    >Add {{ selectedProperties.length ? "(" + selectedProperties.length + ")" : "" }}</Button
-                >
+                    >Add {{ selectedProperties.length ? "(" + selectedProperties.length + ")" : "" }}
+                </Button>
                 <Button
                     outlined
                     severity="secondary"
@@ -187,8 +189,8 @@ const searchString = ref("");
                         searchString = '';
                         showAddProperties = false;
                     "
-                    >Cancel</Button
-                >
+                    >Cancel
+                </Button>
             </div>
         </template>
     </Dialog>
