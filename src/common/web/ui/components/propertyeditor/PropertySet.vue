@@ -2,6 +2,8 @@
 import Button from "primevue/button";
 import Chip from "primevue/chip";
 import Dialog from "primevue/dialog";
+import FloatLabel from "primevue/floatlabel";
+import InputText from "primevue/inputtext";
 import OrderList from "primevue/orderlist";
 
 import { computed, ref, type Ref } from "vue";
@@ -14,12 +16,12 @@ import { ColorTable } from "./utils/ColorTable";
 const props = defineProps(["controller", "project", "projectProfiles", "projectObjects", "sharedObjectStore"]);
 
 const getLayout = () => {
-    let layout = [];
+    let layout: ProfileLayoutClass[] = [];
     for (const profile of props.projectProfiles.list()) {
         for (const p of profile["layout"]) {
-            const x = layout.find((xd) => p.id == xd.id);
+            const x: ProfileLayoutClass | undefined = layout.find((xd: ProfileLayoutClass) => p.id == xd.id);
             if (x !== undefined) {
-                x["profiles"].push(profile["metadata"]["id"]);
+                x["profiles"]!.push(profile["metadata"]["id"]);
                 if (p.required) x["required"] = true;
             } else {
                 p["profiles"] = [profile["metadata"]["id"]];
@@ -32,7 +34,10 @@ const getLayout = () => {
 
 const layout = getLayout();
 
-const propsToShow = ref(layout.filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined));
+const propsToShow = ref<ProfileLayoutClass[]>(
+    layout.filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined)
+        .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
+    );
 
 const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
 const unselectProperties = () => (selectedProperties.value = []);
@@ -45,6 +50,14 @@ const hideProperty = (id: string) => {
 
 const showAddProperties = ref(false);
 const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.id).includes(e.id)));
+
+const filteredProperties = computed(() =>
+    hiddenPropertys.value.filter(
+        (e: ProfileLayoutClass) => e.label.toLowerCase().includes(searchString.value.toLowerCase()) || e.description?.toLowerCase().includes(searchString.value.toLowerCase())
+    )
+);
+
+const searchString = ref("");
 </script>
 
 <template>
@@ -90,35 +103,46 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
     <Dialog
         v-model:visible="showAddProperties"
         modal
-        :header="`Add Properties ${selectedProperties.length ? '(' + selectedProperties.length + ')' : ''} `"
+        header="Add Properties"
         :pt="{ content: { class: 'h-full' } }"
         :style="{ width: '50vw', height: '80vh' }"
-        @hide="selectedProperties = []"
+        @after-hide="
+            unselectProperties();
+            searchString = '';
+        "
     >
-        <template #default class="h-full">
-            <OrderList
-                v-model="hiddenPropertys"
-                @update:selection="(selection: ProfileLayoutClass[]) => selectProperties(selection)"
-                dataKey="id"
-                class="h-full"
-                :pt="{ list: { class: 'min-h-full' } }"
-                :stripedRows="true"
-            >
-                <template #item="slotProps">
-                    <div class="flex flex-col">
-                        <span class="font-semibold flex gap-4" :title="slotProps.item.label"
-                            >{{ slotProps.item.label }}
-                            <Chip
-                                v-for="p in slotProps.item.profiles"
-                                :label="p[0]"
-                                size="small"
-                                :style="`background-color: ${ColorTable.color(p[0])}`"
+
+        <template #default>
+            <div class="h-full flex-col flex space-y-4">
+                <FloatLabel>
+                    <InputText type="text" v-model="searchString" id="searchString" class="w-full" />
+                    <label for="searchString">Search...</label>
+                </FloatLabel>
+                <OrderList
+                    v-model="filteredProperties"
+                    @update:selection="(selection: ProfileLayoutClass[]) => selectProperties(selection)"
+                    dataKey="id"
+                    class="h-full"
+                    :pt="{ list: { class: 'min-h-full' } }"
+                    :stripedRows="true"
+                >
+                    <template #item="slotProps">
+                        <div class="flex flex-col">
+                            <span class="font-semibold flex gap-4" :title="slotProps.item.label"
+                                >{{ slotProps.item.label }}
+                                <Chip
+                                    v-for="p in slotProps.item.profiles"
+                                    :label="p[0]"
+                                    size="small"
+                                    :style="`background-color: ${ColorTable.color(p[0])}`"
                                 class="h-4 !rounded p-2.5 text-sm self-center bg-opacity-40"
                         /></span>
-                        <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.item.description">{{ slotProps.item.description }}</span>
-                    </div>
-                </template>
-            </OrderList>
+                            <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.item.description">{{ slotProps.item.description }}</span>
+                        </div>
+                    </template>
+                </OrderList>
+            </div>
+
         </template>
         <template #footer>
             <div class="flex justify-end gap-2 mt-5">
@@ -127,15 +151,17 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
                     @click="
                         propsToShow.push(...selectedProperties);
                         unselectProperties();
+                        searchString = '';
                         showAddProperties = false;
                     "
-                    >Add
+                    >Add {{ selectedProperties.length ? "(" + selectedProperties.length + ")" : "" }}
                 </Button>
                 <Button
                     outlined
                     severity="secondary"
                     @click="
                         unselectProperties();
+                        searchString = '';
                         showAddProperties = false;
                     "
                     >Cancel

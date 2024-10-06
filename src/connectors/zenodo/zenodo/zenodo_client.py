@@ -2,6 +2,7 @@ import pathlib
 from io import BytesIO
 
 import requests
+from metadata import ZenodoMetadataCreator
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
@@ -11,14 +12,13 @@ from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 
-from .zenodo_callbacks import (
-    ZenodoCreateProjectCallbacks,
-    ZenodoDeleteProjectCallbacks,
-    ZenodoUploadFileCallbacks,
-)
-from .zenodo_request_data import ZenodoFileData, ZenodoProjectData
 from ...base.integration.execution import RequestsExecutor
-from ...base.integration.execution.requests_executor import RequestsExecutorOptions
+from ...base.integration.execution.requests_executor import \
+    RequestsExecutorOptions
+from .zenodo_callbacks import (ZenodoCreateProjectCallbacks,
+                               ZenodoDeleteProjectCallbacks,
+                               ZenodoUploadFileCallbacks)
+from .zenodo_request_data import ZenodoFileData, ZenodoProjectData
 
 
 class ZenodoClient(RequestsExecutor):
@@ -77,19 +77,27 @@ class ZenodoClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
+        creator = ZenodoMetadataCreator()
+        metadata = creator.create(project.features.metadata.metadata, project.features.metadata.shared_objects)
+        #creator.validate(metadata)
+
         def _execute(session: requests.Session) -> ZenodoProjectData:
             resp = self.post(
                 session,
                 ["deposit", "depositions"],
                 json={
                     "metadata": {
-                        "upload_type": "publication",
+                        "upload_type": metadata.upload_type,
                         "publication_type": "other",
-                        "title": project.title,
-                        "creators": [{"name": "Doe, John"}],
-                        "description": project.description,
-                        "access_right": "open",
+                        "title": metadata.title,
+                        "creators": metadata.creators,
+                        "contributors": metadata.contributors,
+                        "description": metadata.description,
+                        "access_right": "closed",
                         "license": "cc-by",
+                        "version": metadata.version,
+                        "grants": metadata.grants,
+                        "dates": metadata.dates
                     }
                 },
             )

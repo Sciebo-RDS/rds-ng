@@ -19,6 +19,7 @@ const value = computed(() => props.projectObjects.get(props.propertyObjectId)?.v
     <div>
         <Calendar
             @date-select="(date: Date) => projectObjects.update(profileId || [], inputId, propertyObjectId, date)"
+            dateFormat="dd/mm/yy"
             v-model="value[inputId]"
             class="w-full"
         />

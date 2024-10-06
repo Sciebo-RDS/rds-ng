@@ -5,7 +5,7 @@ import { reactive, toRefs, watch, type PropType } from "vue";
 import { findConnectorByInstanceID } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
-import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
 
@@ -33,7 +33,7 @@ const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
 const projectProfiles = reactive(new PropertyProfileStore());
 
-projectProfiles.mountProfile(dataCite as Profile);
+projectProfiles.mountProfile(dataCite as PropertyProfile);
 // TODO: Testing data only
 
 // TODO fix auto merging connector profiles
@@ -56,7 +56,7 @@ connectors.value.forEach((connector) => {
     const metadataProfile = connector.metadata_profile;
     if (metadataProfile.hasOwnProperty("metadata")) {
         try {
-            projectProfiles.mountProfile(connector.metadata_profile as Profile);
+            projectProfiles.mountProfile(connector.metadata_profile as PropertyProfile);
         } catch (e) {
             console.error(e);
         }

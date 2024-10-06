@@ -12,9 +12,9 @@ import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/e
 import { Project } from "@common/data/entities/project/Project";
 import { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
+import { objects } from "@common/ui/components/propertyeditor/profiles/objects";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import { Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
@@ -124,7 +124,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     nextTick(() => (blockResourcesUpdate = false));
 });
 
-projectProfiles.mountProfile(shoes as Profile);
+projectProfiles.mountProfile(objects as PropertyProfile);
 </script>
 
 <template>
@@ -203,7 +203,7 @@ projectProfiles.mountProfile(shoes as Profile);
                                 class="w-full"
                             />
                         </div>
-                        <div v-else class="r-centered-grid italic pt-8">Select one or more file objects on the left to edit their metadata.</div>
+                        <div v-else class="r-centered-grid italic p-8">Select one or more file objects on the left to edit their metadata.</div>
                     </div>
                 </SplitterPanel>
             </Splitter>

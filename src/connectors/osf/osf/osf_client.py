@@ -3,6 +3,7 @@ import pathlib
 from http import HTTPStatus
 
 import requests
+from metadata import OSFMetadataCreator
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
@@ -12,18 +13,11 @@ from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 
-from .osf_callbacks import (
-    OSFCreateProjectCallbacks,
-    OSFDeleteProjectCallbacks,
-    OSFGetStorageCallbacks,
-    OSFUploadFileCallbacks,
-)
-from .osf_request_data import (
-    OSFFileData,
-    OSFProjectData,
-    OSFStorageData,
-)
 from ...base.integration.execution import RequestsExecutor
+from .osf_callbacks import (OSFCreateProjectCallbacks,
+                            OSFDeleteProjectCallbacks, OSFGetStorageCallbacks,
+                            OSFUploadFileCallbacks)
+from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
 
 
 class OSFClient(RequestsExecutor):
@@ -77,6 +71,10 @@ class OSFClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
+        creator = OSFMetadataCreator()
+        metadata = creator.create(project.features.metadata.metadata)
+        creator.validate(metadata)
+
         def _execute(session: requests.Session) -> OSFProjectData:
             resp = self.post(
                 session,
@@ -85,9 +83,9 @@ class OSFClient(RequestsExecutor):
                     "data": {
                         "type": "nodes",
                         "attributes": {
-                            "title": project.title,
-                            "category": "project",
-                            "description": project.description,
+                            "title": metadata.title,
+                            "category": metadata.category,
+                            "description": metadata.description,
                         },
                     }
                 },
