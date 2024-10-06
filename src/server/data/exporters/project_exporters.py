@@ -18,7 +18,7 @@ def register_project_exporters() -> None:
     # New exporters go here
     ProjectExportersCatalog.register_item(TextExporter.ExporterID, TextExporter())
     ProjectExportersCatalog.register_item(PDFExporter.ExporterID, PDFExporter())
-    ProjectExportersCatalog.register_item(ROCrateExporter.ExporterID, ROCrateExporter())
+    # ProjectExportersCatalog.register_item(ROCrateExporter.ExporterID, ROCrateExporter())  # TODO
 
     # Print all available exporters for debugging purposes
     names: typing.List[str] = []
