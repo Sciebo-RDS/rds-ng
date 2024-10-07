@@ -253,6 +253,29 @@ class MetadataParser:
         )
 
     @staticmethod
+    def validate_metadata(
+        profile: Dict[str, Dict[str, Any]],
+        metadata: List[Dict[str, Any]],
+        shared_objects: List[Dict[str, Any]] | None = None,
+    ) -> None:
+        """
+        Validates all property values of a filled-out profile.
+
+        Args:
+            profile: The profile.
+            metadata: The profile metadata values.
+            shared_objects: List of shared objects.
+        """
+        layout = MetadataParser.get_profile_layout(profile)
+        for item in layout:
+            prop_id = item["id"]
+            prop_label = item["label"]
+
+            if not MetadataParser.is_property_valid(metadata, profile, prop_id):
+                error = f"The required value '{prop_label}' ({profile['metadata']['id'][0]}) is either missing or invalid"
+                raise ValueError(error)
+
+    @staticmethod
     def is_property_valid(
         metadata: List[Dict[str, Any]], profile: Dict[str, Dict[str, Any]], prop_id: str
     ) -> bool:
@@ -286,7 +309,6 @@ class MetadataParser:
             )
 
         if "input" in property_layout and len(property_layout["input"]) > 0:
-
             for required_value_id in [
                 input["id"]
                 for input in property_layout["input"]

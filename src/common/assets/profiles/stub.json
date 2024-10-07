@@ -1,6 +1,9 @@
 {
     "metadata": {
-        "id": ["Stub", "1.0.0"],
+        "id": [
+            "Stub",
+            "1.0.0"
+        ],
         "displayLabel": "stub",
         "description": "Stubby stuff"
     },
@@ -15,7 +18,8 @@
                     "id": "Stubstuff",
                     "label": "Stub value",
                     "type": "string",
-                    "description": "Stubby stuffy value"
+                    "description": "Stubby stuffy value",
+                    "required": true
                 }
             ]
         }

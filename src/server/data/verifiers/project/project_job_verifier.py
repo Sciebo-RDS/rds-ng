@@ -1,5 +1,8 @@
+import json
+
 from common.py.data.entities.connector import Connector
 from common.py.data.entities.project import Project, ProjectJob
+from common.py.data.metadata import MetadataParser
 from common.py.data.verifiers import VerificationException, Verifier
 
 
@@ -33,5 +36,14 @@ class ProjectJobVerifier(Verifier):
             raise VerificationException("Invalid connector instance")
 
     def _verify_metadata(self) -> None:
-        # TODO: Verify metadata
-        pass
+        # TODO: Do not use a hardcoded profile
+        with open("/component/common/assets/profiles/datacite.json") as file:
+            datacite_profile = json.load(file)
+
+        MetadataParser.validate_metadata(
+            datacite_profile, self._project.features.metadata.metadata
+        )
+
+        MetadataParser.validate_metadata(
+            self._connector.metadata_profile, self._project.features.metadata.metadata
+        )
