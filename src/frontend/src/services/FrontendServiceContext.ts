@@ -1,8 +1,9 @@
 import { ServiceContext } from "@common/services/ServiceContext";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
-import { useProjectsStore } from "@/data/stores/ProjectsStore";
+import { useProjectExportersStore } from "@/data/stores/ProjectExportersStore";
 import { useProjectJobsStore } from "@/data/stores/ProjectJobsStore";
+import { useProjectsStore } from "@/data/stores/ProjectsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
 /**
@@ -11,10 +12,11 @@ import { useUserStore } from "@/data/stores/UserStore";
  * Note that the store type isn't explicitely defined due to Pinia's excessive type definitions.
  */
 export class FrontendServiceContext extends ServiceContext {
-    private _connectorsStore = useConnectorsStore();
-    private _userStore = useUserStore();
-    private _projectsStore = useProjectsStore();
-    private _projectJobsStore = useProjectJobsStore();
+    private readonly _connectorsStore = useConnectorsStore();
+    private readonly _userStore = useUserStore();
+    private readonly _projectsStore = useProjectsStore();
+    private readonly _projectJobsStore = useProjectJobsStore();
+    private readonly _projectExportersStore = useProjectExportersStore();
 
     /**
      * The connectors store.
@@ -42,5 +44,12 @@ export class FrontendServiceContext extends ServiceContext {
      */
     public get projectJobsStore() {
         return this._projectJobsStore;
+    }
+
+    /**
+     * The project exporters store.
+     */
+    public get projectExportersStore() {
+        return this._projectExportersStore;
     }
 }

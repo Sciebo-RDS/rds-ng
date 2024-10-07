@@ -1,19 +1,19 @@
 from typing import Any, Dict, List
 
-from datacite import schema43
-
-from common.py.data.metadata import (Metadata, MetadataCreator, MetadataParser,
-                                     MetadataParserQuery)
+from common.py.data.metadata import (
+    MetadataParser,
+)
 from common.py.data.metadata.metadata import MetadataCreator
-
 from .utils import parse_metadata
 
 Metadata = DataciteMetadata = List[Dict[str, Any]]
 
 
 class DataciteMetadataCreator(MetadataCreator):
-    
-    def create(self, metadata: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]] = []) -> DataciteMetadata:
+
+    def create(
+        self, metadata: List[Dict[str, Any]], shared_objects: List[Dict[str, Any]] = []
+    ) -> DataciteMetadata:
         """
         Creates a DataciteMetadata object from the provided metadata and shared objects.
 

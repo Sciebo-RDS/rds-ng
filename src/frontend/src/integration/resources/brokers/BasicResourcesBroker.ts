@@ -1,6 +1,6 @@
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { ResourcesBroker } from "@/integration/resources/brokers/ResourcesBroker";
-import type { HostResources } from "@/integration/HostTypes";
+import { type HostResources } from "@/integration/HostTypes";
 
 /**
  * Resources broker for basic integration.

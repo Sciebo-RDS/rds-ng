@@ -10,7 +10,7 @@ import { computed, nextTick, type PropType, reactive, ref, toRefs, unref, watch 
 import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
 import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
-import type { Resource } from "@common/data/entities/resource/Resource";
+import { Resource } from "@common/data/entities/resource/Resource";
 import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 import { objects } from "@common/ui/components/propertyeditor/profiles/objects";
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
@@ -23,6 +23,8 @@ import { deepClone } from "@common/utils/ObjectUtils";
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
+
+import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
 
 const comp = FrontendComponent.inject();
@@ -128,6 +130,7 @@ projectProfiles.mountProfile(objects as PropertyProfile);
 <template>
     <BlockUI :blocked="resourcesRefreshing" class="h-full">
         <div v-if="!resourcesError" class="h-full">
+            <ProjectExportersBar :project="project" :scope="ResourcesMetadataFeature.FeatureID" class="p-2 grid justify-end" />
             <Splitter state-key="resources-splitter-state" class="h-full rounded-none border-0">
                 <SplitterPanel :size="50" :min-size="35">
                     <ResourcesTreeTable

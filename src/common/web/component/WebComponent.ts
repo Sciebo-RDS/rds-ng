@@ -19,7 +19,6 @@ import { registerAuthorizationStrategies } from "../integration/authorization/st
 import { Service } from "../services/Service";
 import { ServiceContext } from "../services/ServiceContext";
 import { getDefaultSettings } from "../settings/DefaultSettings";
-import { registerExporters } from "../ui/components/propertyeditor/exporters/Exporters";
 import { UserInterface } from "../ui/UserInterface";
 import { Configuration, type SettingsContainer } from "../utils/config/Configuration";
 import { type Constructable } from "../utils/Types";
@@ -78,7 +77,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         env: SettingsContainer,
         compID: UnitID,
         appRoot: VueComponent,
-        userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>,
+        userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>
     ) {
         if (WebComponent._instance) {
             throw new Error("A component instance has already been created");
@@ -118,7 +117,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     private createRouter(): Router {
         return createRouter({
             history: createWebHistory(),
-            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()],
+            routes: [...this.configureDefaultRoutes(), ...this.configureRoutes()]
         });
     }
 
@@ -189,7 +188,6 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
 
         // Reigster global items
         registerAuthorizationStrategies();
-        registerExporters();
 
         // Create all basic services
         createComponentService(this);
@@ -210,7 +208,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     public createService<CtxType extends ServiceContext>(
         name: string,
         initializer: ((svc: Service) => void) | null = null,
-        contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>,
+        contextType: Constructable<CtxType> = ServiceContext as Constructable<CtxType>
     ): Service {
         let svc = new Service<CtxType>(this._data.compID, name, this._core.messageBus, contextType);
         this._core.registerService(svc);

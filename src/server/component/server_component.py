@@ -9,6 +9,8 @@ from common.py.component.roles import ServerRole
 from common.py.core.logging import error, info, debug
 from common.py.utils import UnitID
 
+from ..data.exporters import register_project_exporters
+
 # Make the entire API known
 from common.py.api import *
 
@@ -32,6 +34,7 @@ class ServerComponent(BackendComponent):
         from ..services import (
             create_authorization_service,
             create_connectors_service,
+            create_project_exporters_service,
             create_project_jobs_service,
             create_projects_service,
             create_resources_service,
@@ -39,6 +42,10 @@ class ServerComponent(BackendComponent):
             create_users_service,
         )
 
+        # Register additional global items
+        register_project_exporters()
+
+        # Create all server services
         create_session_service(self)
         create_connectors_service(self)
         create_users_service(self)
@@ -46,6 +53,7 @@ class ServerComponent(BackendComponent):
         create_resources_service(self)
         create_project_jobs_service(self)
         create_authorization_service(self)
+        create_project_exporters_service(self)
 
         self._install_network_filters()
 

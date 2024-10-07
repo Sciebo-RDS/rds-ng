@@ -3,13 +3,14 @@ import { reactive, toRefs, watch, type PropType } from "vue";
 
 import { DataManagementPlanFeature, type DataManagementPlan } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
-import { type ExporterID } from "@common/ui/components/propertyeditor/exporters/Exporter";
-import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
+import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
+
 import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
@@ -22,9 +23,6 @@ const props = defineProps({
     }
 });
 const { project } = toRefs(props);
-
-// TODO: Testing data only
-const exporters: ExporterID[] = ["pdf", "raw"];
 
 const debounce = makeDebounce(500);
 
@@ -42,17 +40,16 @@ watch(
     { deep: true }
 );
 
-projectProfiles.mountProfile(dfgDmp as PropertyProfile);
+projectProfiles.mountProfile(dfgDmp as Profile);
 </script>
 
 <template>
-    <div>
-        <PropertyEditor
-            v-model="project!.features.dmp.plan"
-            v-model:shared-objects="project!.features.metadata.shared_objects"
-            :projectProfiles="projectProfiles as PropertyProfileStore"
-        />
-    </div>
+    <ProjectExportersBar :project="project" :scope="DataManagementPlanFeature.FeatureID" class="p-2 grid justify-end" />
+    <PropertyEditor
+        v-model="project!.features.dmp.plan"
+        v-model:shared-objects="project!.features.metadata.shared_objects"
+        :projectProfiles="projectProfiles as PropertyProfileStore"
+    />
 </template>
 
 <style scoped lang="scss"></style>
