@@ -42,7 +42,7 @@ class TextExporter(ProjectExporter):
         raise ProjectExporterException(f"Unsupported scope {scope}")
 
     def _export_dmp(self, project: Project) -> ProjectExporterResult:
-        # TODO: Use a mako template; handle errors
+        # TODO: Use a mako template
         output_lines: typing.List[str] = [
             f"{project.title} - Data Management Plan",
             "============================================================",

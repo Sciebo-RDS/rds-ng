@@ -1,7 +1,4 @@
 import json
-import subprocess
-import sys
-import tempfile
 import typing
 
 from common.py.data.entities.project import Project
@@ -17,6 +14,7 @@ from common.py.data.exporters import (
     ProjectExporterResult,
 )
 from common.py.data.metadata import MetadataParser
+from ....utils import typst_compile
 
 
 class PDFExporter(ProjectExporter):
@@ -46,7 +44,7 @@ class PDFExporter(ProjectExporter):
         raise ProjectExporterException(f"Unsupported scope {scope}")
 
     def _export_dmp(self, project: Project) -> ProjectExporterResult:
-        # TODO: Use a mako template; handle errors
+        # TODO: Use a mako template
         output_lines: typing.List[str] = [
             f"= {project.title} - Data Management Plan",
             "",
@@ -55,9 +53,6 @@ class PDFExporter(ProjectExporter):
         # TODO: Do not use a hardcoded profile
         with open("/component/common/assets/profiles/dfg.json") as file:
             profile = json.load(file)
-
-        output_file = tempfile.NamedTemporaryFile(suffix=".typ")
-        input_file = tempfile.NamedTemporaryFile(suffix=".pdf")
 
         values = MetadataParser.list_values(
             profile, project.features.dmp.plan, project.features.metadata.shared_objects
@@ -73,15 +68,6 @@ class PDFExporter(ProjectExporter):
                 output_lines.append("")
 
         output_lines.append("")
-        output_file.write("\n".join(output_lines).encode())
 
-        # TODO: Write Typst wrapper
-        output_file.seek(0)
-        subprocess.check_call(
-            ["typst", "compile", output_file.name, input_file.name],
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-        )
-        input_file.seek(0)
-
-        return ProjectExporterResult(mimetype="text/plain", data=input_file.read())
+        pdf_data = typst_compile("\n".join(output_lines))
+        return ProjectExporterResult(mimetype="text/plain", data=pdf_data)
