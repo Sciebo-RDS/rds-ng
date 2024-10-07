@@ -271,9 +271,15 @@ class MetadataParser:
             prop_id = item["id"]
             prop_label = item["label"]
 
-            if not MetadataParser.is_property_valid(metadata, profile, prop_id):
+            def _raise():
                 error = f"The required value '{prop_label}' ({profile['metadata']['id'][0]}) is either missing or invalid"
                 raise ValueError(error)
+
+            try:
+                if not MetadataParser.is_property_valid(metadata, profile, prop_id):
+                    _raise()
+            except:  # pylint: disable=bare-except
+                _raise()
 
     @staticmethod
     def is_property_valid(
