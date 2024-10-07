@@ -1,5 +1,4 @@
 import json
-import typing
 
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
@@ -12,7 +11,7 @@ from common.py.data.exporters import (
     ProjectExporterID,
     ProjectExporterResult,
 )
-from common.py.data.metadata import MetadataParser
+from .. import render_exporter_template
 
 
 class TextExporter(ProjectExporter):
@@ -42,34 +41,26 @@ class TextExporter(ProjectExporter):
         raise ProjectExporterException(f"Unsupported scope {scope}")
 
     def _export_dmp(self, project: Project) -> ProjectExporterResult:
-        # TODO: Use a mako template
-        output_lines: typing.List[str] = [
-            f"{project.title} - Data Management Plan",
-            "============================================================",
-            "",
-        ]
+        # TODO: Use an external file
+        template = """${project.title} - Data Management Plan
+============================================================
+
+% for key, value in dmp_metadata.items():
+${value.label}
+------------------------------------------------------------
+% for item_value in value.values:
+${item_value.label}
+% for value_line in item_value.values:
+${value_line}
+% endfor
+
+% endfor
+% endfor
+"""
 
         # TODO: Do not use a hardcoded profile
         with open("/component/common/assets/profiles/dfg.json") as file:
             profile = json.load(file)
 
-        values = MetadataParser.list_values(
-            profile, project.features.dmp.plan, project.features.metadata.shared_objects
-        )
-
-        for key, value in values.items():
-            output_lines.append(f"{value.label}")
-            output_lines.append(
-                "------------------------------------------------------------"
-            )
-
-            for item_value in value.values:
-                output_lines.append(f"{item_value.label}")
-                output_lines.append("\n".join(item_value.values))
-                output_lines.append("")
-
-        output_lines.append("")
-
-        return ProjectExporterResult(
-            mimetype="text/plain", data="\n".join(output_lines).encode()
-        )
+        output = render_exporter_template(project, template, dmp_profile=profile)
+        return ProjectExporterResult(mimetype="text/plain", data=output.encode())
