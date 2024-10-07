@@ -59,25 +59,18 @@ class PDFExporter(ProjectExporter):
         output_file = tempfile.NamedTemporaryFile(suffix=".typ")
         input_file = tempfile.NamedTemporaryFile(suffix=".pdf")
 
-        layout = MetadataParser.get_profile_layout(profile)
-        for item in layout:
-            item_id = item["id"]
-            item_label = item["label"]
-            item_values = MetadataParser.get_value_list(
-                project.features.dmp.plan,
-                item_id,
-                project.features.metadata.shared_objects,
-                profile,
-            )
+        values = MetadataParser.list_values(
+            profile, project.features.dmp.plan, project.features.metadata.shared_objects
+        )
 
-            if len(item_values) > 0:
-                output_lines.append(f"== {item_label}")
+        for key, value in values.items():
+            output_lines.append(f"== {value.label}")
 
-                for item_value in item_values:
-                    output_lines.append(f"*{item_value['label']}*")
-                    output_lines.append("")
-                    output_lines.append("\n".join(item_value["values"]))
-                    output_lines.append("")
+            for item_value in value.values:
+                output_lines.append(f"*{item_value.label}*")
+                output_lines.append("")
+                output_lines.append("\n".join(item_value.values))
+                output_lines.append("")
 
         output_lines.append("")
         output_file.write("\n".join(output_lines).encode())
