@@ -328,11 +328,12 @@ class MetadataParser:
                     return False
 
         if "type" in property_layout and len(property_layout["type"]) > 0:
-            if "refs" not in obj or len(obj["refs"]) == 0:
-                print(
-                    f"{property_layout['label']} does not have any refs, but is has types {property_layout['type']}"
-                )
-                return False
+            if "required" in property_layout and property_layout["required"]:
+                if "refs" not in obj or len(obj["refs"]) == 0:
+                    print(
+                        f"{property_layout['label']} does not have any refs, but is has types {property_layout['type']}"
+                    )
+                    return False
 
         return True
 
