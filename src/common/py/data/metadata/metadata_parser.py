@@ -194,7 +194,7 @@ class MetadataParser:
         )
 
     @staticmethod
-    def getobj(metadata: List[Dict[str, Any]], oid: str) -> Dict[str, Any]:
+    def getobj(metadata: List[Dict[str, Any]], oid: str) -> Dict[str, Any] | None:
         """
         Retrieve an object from a list of metadata dictionaries by its ID.
 
@@ -208,9 +208,9 @@ class MetadataParser:
         Raises:
             IndexError: If no object with the specified ID is found.
         """
-        if len(objs := [e for e in metadata if e["id"] == oid]) > 0:
-            return objs[0]
-        raise IndexError(f"ID {id} not found")
+        if objs := next([e for e in metadata if e["id"] == oid], None) != None:
+            return objs
+        return None
 
     @staticmethod
     def get_profile_layout(
@@ -305,14 +305,14 @@ class MetadataParser:
         obj = MetadataParser.getobj(metadata, prop_id)
 
         if obj is None:
-            raise MetadataPropertyMissingError(f"Property {prop_id} is missing")
+            print(f"Property {prop_id} is missing")
+            return False
 
         if (
             property_layout := next(e for e in profile["layout"] if e["id"] == prop_id)
         ) is None:
-            raise MetadataPropertyMissingError(
-                f"Property {prop_id} not defined in profile"
-            )
+            print(f"Property {prop_id} not defined in profile")
+            return False
 
         if "input" in property_layout and len(property_layout["input"]) > 0:
             for required_value_id in [
@@ -333,13 +333,13 @@ class MetadataParser:
                     )
                     return False
 
-        if "type" in property_layout and len(property_layout["type"]) > 0:
+        """if "type" in property_layout and len(property_layout["type"]) > 0:
             if "required" in property_layout and property_layout["required"]:
                 if "refs" not in obj or len(obj["refs"]) == 0:
                     print(
                         f"{property_layout['label']} does not have any refs, but is has types {property_layout['type']}"
                     )
-                    return False
+                    return False"""
 
         return True
 
