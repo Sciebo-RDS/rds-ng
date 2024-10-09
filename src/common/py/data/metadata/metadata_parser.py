@@ -208,8 +208,10 @@ class MetadataParser:
         Raises:
             IndexError: If no object with the specified ID is found.
         """
-        if objs := next([e for e in metadata if e["id"] == oid], None) != None:
+        if (objs := next((e for e in metadata if e["id"] == oid), None)) != None:
+            print(f"Found object with ID {oid} {objs}", flush=True)
             return objs
+        print(f"Object with ID {oid} not found", flush=True)
         return None
 
     @staticmethod
@@ -302,16 +304,19 @@ class MetadataParser:
             - If the property has a type defined in the profile, it ensures that the property has references.
         """
 
-        obj = MetadataParser.getobj(metadata, prop_id)
-
-        if obj is None:
-            print(f"Property {prop_id} is missing")
-            return False
-
         if (
             property_layout := next(e for e in profile["layout"] if e["id"] == prop_id)
         ) is None:
             print(f"Property {prop_id} not defined in profile")
+            return False
+        
+        if "required" not in property_layout or not property_layout["required"]:
+            return True
+        
+        obj = MetadataParser.getobj(metadata, prop_id)
+
+        if obj is None:
+            print(f"Property {prop_id} is missing")
             return False
 
         if "input" in property_layout and len(property_layout["input"]) > 0:
@@ -332,6 +337,7 @@ class MetadataParser:
                         f"Value '{required_value_id}' is missing for property {prop_id}"
                     )
                     return False
+
 
         """if "type" in property_layout and len(property_layout["type"]) > 0:
             if "required" in property_layout and property_layout["required"]:

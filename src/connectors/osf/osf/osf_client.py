@@ -73,7 +73,7 @@ class OSFClient(RequestsExecutor):
 
         creator = OSFMetadataCreator()
         metadata = creator.create(project.features.metadata.metadata)
-        creator.validate(metadata)
+        #creator.validate(metadata)
 
         def _execute(session: requests.Session) -> OSFProjectData:
             resp = self.post(
@@ -83,9 +83,9 @@ class OSFClient(RequestsExecutor):
                     "data": {
                         "type": "nodes",
                         "attributes": {
-                            "title": metadata.title,
-                            "category": metadata.category,
-                            "description": metadata.description,
+                            "title": metadata.title if metadata.title else 'Uploaded via Sciebo RDS',
+                            "category": metadata.category if metadata.category else 'other',
+                            "description": metadata.description if metadata.description else '',
                         },
                     }
                 },

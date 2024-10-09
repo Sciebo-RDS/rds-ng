@@ -33,7 +33,7 @@ class OSFMetadataCreator(MetadataCreator):
             OSFMetadata: An instance of OSFMetadata populated with the parsed metadata.
         """
 
-        osf_metadata = MetadataParser.filter_by_profile("OSF", metadata)
+        osf_metadata = metadata # = MetadataParser.filter_by_profile("OSF", metadata)
 
         product = OSFMetadata()
 

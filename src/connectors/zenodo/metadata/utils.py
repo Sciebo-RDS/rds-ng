@@ -11,6 +11,10 @@ def parse_creators(creators_raw: List[Dict[str, Any]], shared_objects: List[Dict
         List[Dict[str, Any]]: A list of dictionaries, each containing parsed creator information including name, affiliation, ORCID, and GND identifiers.
     """
     creators = []
+
+    if creators_raw is None or "refs" not in creators_raw:
+        return creators
+
     for creator_id in creators_raw["refs"]:
         creator_raw = [c for c in shared_objects if c['id'] == creator_id][0]
 
@@ -37,6 +41,10 @@ def parse_contributors(contributors_raw: List[Dict[str, Any]], shared_objects: L
                               name, type, affiliation, ORCID, and GND identifiers.
     """
     contributors = []
+
+    if contributors_raw is None or "refs" not in contributors_raw:
+        return contributors
+    
     for contributor_id in contributors_raw["refs"]:
         contributor_raw = [c for c in shared_objects if c['id'] == contributor_id][0]
         if contributor_raw["value"].get("nameType", '') == "Personal":
@@ -83,6 +91,9 @@ def parse_grants(grants_raw: List[Dict[str, Any]], shared_objects: List[Dict[str
     """
 
     grants = []
+
+    if grants_raw is None or "refs" not in grants_raw:
+        return grants
 
     funder_ids = [
     "10.13039/501100002341",
@@ -141,6 +152,9 @@ def parse_dates(dates_raw: List[Dict[str, Any]], shared_objects: List[Dict[str, 
     """
 
     dates = []
+
+    if dates_raw is None or "refs" not in dates_raw:
+        return dates
 
     for date_id in dates_raw["refs"]:
         date_raw = [c for c in shared_objects if c['id'] == date_id][0]
