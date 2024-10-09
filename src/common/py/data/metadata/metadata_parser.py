@@ -194,7 +194,7 @@ class MetadataParser:
         )
 
     @staticmethod
-    def getobj(metadata: List[Dict[str, Any]], oid: str) -> Dict[str, Any]:
+    def getobj(metadata: List[Dict[str, Any]], oid: str) -> Dict[str, Any] | None:
         """
         Retrieve an object from a list of metadata dictionaries by its ID.
 
@@ -210,7 +210,7 @@ class MetadataParser:
         """
         if len(objs := [e for e in metadata if e["id"] == oid]) > 0:
             return objs[0]
-        raise IndexError(f"ID {id} not found")
+        return None
 
     @staticmethod
     def get_profile_layout(
@@ -302,17 +302,20 @@ class MetadataParser:
             - If the property has a type defined in the profile, it ensures that the property has references.
         """
 
-        obj = MetadataParser.getobj(metadata, prop_id)
-
-        if obj is None:
-            raise MetadataPropertyMissingError(f"Property {prop_id} is missing")
-
         if (
             property_layout := next(e for e in profile["layout"] if e["id"] == prop_id)
         ) is None:
             raise MetadataPropertyMissingError(
                 f"Property {prop_id} not defined in profile"
             )
+
+        if "required" not in property_layout or not property_layout["required"]:
+            return True
+
+        obj = MetadataParser.getobj(metadata, prop_id)
+
+        if obj is None:
+            raise MetadataPropertyMissingError(f"Property {prop_id} is missing")
 
         if "input" in property_layout and len(property_layout["input"]) > 0:
             for required_value_id in [
@@ -334,12 +337,11 @@ class MetadataParser:
                     return False
 
         if "type" in property_layout and len(property_layout["type"]) > 0:
-            if "required" in property_layout and property_layout["required"]:
-                if "refs" not in obj or len(obj["refs"]) == 0:
-                    print(
-                        f"{property_layout['label']} does not have any refs, but is has types {property_layout['type']}"
-                    )
-                    return False
+            if "refs" not in obj or len(obj["refs"]) == 0:
+                print(
+                    f"{property_layout['label']} does not have any refs, but is has types {property_layout['type']}"
+                )
+                return False
 
         return True
 
