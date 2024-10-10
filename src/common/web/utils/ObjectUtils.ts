@@ -89,14 +89,16 @@ export function intersectObjects<ObjType extends Record<any, any> = object>(obj1
  * @param obj - The object to clean up.
  */
 export function shortenDataStrings(obj: any): any {
-    for (const [name, value] of Object.entries(obj)) {
-        if (typeof value === "object") {
-            shortenDataStrings(value);
-        } else if (typeof value === "string") {
-            if (value.startsWith("data:")) {
-                obj[name] = value.split(",", 1).join() + `,<data:${humanReadableFileSize(value.length)}>`;
-            } else if (value.length > 256) {
-                obj[name] = value.slice(0, 256) + `... [${humanReadableFileSize(value.length)} total]`;
+    if (typeof obj === "object" && !Array.isArray(obj) && obj !== null) {
+        for (const [name, value] of Object.entries(obj)) {
+            if (typeof value === "object") {
+                shortenDataStrings(value);
+            } else if (typeof value === "string") {
+                if (value.startsWith("data:")) {
+                    obj[name] = value.split(",", 1).join() + `,<data:${humanReadableFileSize(value.length)}>`;
+                } else if (value.length > 256) {
+                    obj[name] = value.slice(0, 256) + `... [${humanReadableFileSize(value.length)} total]`;
+                }
             }
         }
     }
