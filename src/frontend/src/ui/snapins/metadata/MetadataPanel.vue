@@ -63,7 +63,7 @@ connectors.value.forEach((connector) => {
     }
 });
 
-const debounce = makeDebounce(500);
+const debounce = makeDebounce();
 
 watch(
     () => project!.value.features.metadata.metadata,

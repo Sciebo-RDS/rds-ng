@@ -3,8 +3,8 @@ import { reactive, toRefs, watch, type PropType } from "vue";
 
 import { DataManagementPlanFeature, type DataManagementPlan } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
-import { type Profile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
 import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
@@ -24,7 +24,7 @@ const props = defineProps({
 });
 const { project } = toRefs(props);
 
-const debounce = makeDebounce(500);
+const debounce = makeDebounce();
 
 const projectProfiles = reactive(new PropertyProfileStore());
 
@@ -40,7 +40,7 @@ watch(
     { deep: true }
 );
 
-projectProfiles.mountProfile(dfgDmp as Profile);
+projectProfiles.mountProfile(dfgDmp as PropertyProfile);
 </script>
 
 <template>

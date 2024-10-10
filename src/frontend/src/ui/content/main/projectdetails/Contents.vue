@@ -41,7 +41,7 @@ const panels = computed(() => {
 
 const sharedObjectStore = reactive(new ProjectObjectStore());
 
-const debounce = makeDebounce(500);
+const debounce = makeDebounce();
 watch(
     () => project!.value.features.metadata.shared_objects,
     (shared_objects) => {

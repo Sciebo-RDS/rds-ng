@@ -57,7 +57,7 @@ const propertyHeader = computed(() => {
 });
 
 const projectProfiles = reactive(new PropertyProfileStore());
-const debounce = makeDebounce(500);
+const debounce = makeDebounce();
 const resourcesData = ref();
 
 let blockResourcesUpdate = false;
