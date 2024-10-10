@@ -87,17 +87,19 @@ class ZenodoClient(RequestsExecutor):
                 ["deposit", "depositions"],
                 json={
                     "metadata": {
-                        "upload_type": metadata.upload_type,
                         "publication_type": "other",
-                        "title": metadata.title,
-                        "creators": metadata.creators,
-                        "contributors": metadata.contributors,
-                        "description": metadata.description,
                         "access_right": "closed",
                         "license": "cc-by",
-                        "version": metadata.version,
-                        "grants": metadata.grants,
-                        "dates": metadata.dates
+                        "image_type": 'other',
+                        "title":  metadata.title if metadata.title is not None else 'Uploaded via Sciebo RDS',
+                        "upload_type":  metadata.upload_type if metadata.upload_type is not None else 'other',
+                        "creators":  metadata.creators if metadata.creators is not None else [],
+                        "description":  metadata.description if metadata.description is not None else 'No description provided',
+                        "upload_type":  metadata.upload_type if metadata.upload_type is not None else 'other',
+                        "contributors":  metadata.contributors if metadata.contributors is not None else [],
+                        "version":  metadata.version if metadata.version is not None else '',
+                        "grants":  metadata.grants if metadata.grants is not None else '',
+                        "dates":  metadata.dates if metadata.dates is not None else []
                     }
                 },
             )

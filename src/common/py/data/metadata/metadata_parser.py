@@ -208,8 +208,10 @@ class MetadataParser:
         Raises:
             IndexError: If no object with the specified ID is found.
         """
-        if len(objs := [e for e in metadata if e["id"] == oid]) > 0:
-            return objs[0]
+        if (objs := next((e for e in metadata if e["id"] == oid), None)) != None:
+            print(f"Found object with ID {oid} {objs}", flush=True)
+            return objs
+        print(f"Object with ID {oid} not found", flush=True)
         return None
 
     @staticmethod
@@ -305,17 +307,17 @@ class MetadataParser:
         if (
             property_layout := next(e for e in profile["layout"] if e["id"] == prop_id)
         ) is None:
-            raise MetadataPropertyMissingError(
-                f"Property {prop_id} not defined in profile"
-            )
-
+            print(f"Property {prop_id} not defined in profile")
+            return False
+        
         if "required" not in property_layout or not property_layout["required"]:
             return True
-
+        
         obj = MetadataParser.getobj(metadata, prop_id)
 
         if obj is None:
-            raise MetadataPropertyMissingError(f"Property {prop_id} is missing")
+            print(f"Property {prop_id} is missing")
+            return False
 
         if "input" in property_layout and len(property_layout["input"]) > 0:
             for required_value_id in [
@@ -336,12 +338,14 @@ class MetadataParser:
                     )
                     return False
 
-        if "type" in property_layout and len(property_layout["type"]) > 0:
-            if "refs" not in obj or len(obj["refs"]) == 0:
-                print(
-                    f"{property_layout['label']} does not have any refs, but is has types {property_layout['type']}"
-                )
-                return False
+
+        """if "type" in property_layout and len(property_layout["type"]) > 0:
+            if "required" in property_layout and property_layout["required"]:
+                if "refs" not in obj or len(obj["refs"]) == 0:
+                    print(
+                        f"{property_layout['label']} does not have any refs, but is has types {property_layout['type']}"
+                    )
+                    return False"""
 
         return True
 
