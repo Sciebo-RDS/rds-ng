@@ -2,7 +2,11 @@
 
 ## Environment files
 
-Variables are passed to the containers via environment files found under `/deployment/env/`. By default, the `Release` deployment uses no prefixes for these files, while the `Debug` one uses a `dev.` prefix.
+Variables are passed to the containers via environment files found under `/deployment/env/`. We do not supply any defaults here, but examples can be found under `/deployment/env/examples`. Copy these to `/deployment/env` and adjust them to match your own deployment environment.
+
+### Prefixes
+
+By default, the `Release` deployment uses no prefixes for these files, while the `Debug` one uses a `dev.` prefix.
 
 To change the prefix to use, create a `.env` file in `/deployment/containers/` and set the following environment variable:
 
