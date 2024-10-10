@@ -41,9 +41,13 @@ class ProjectJobVerifier(Verifier):
             datacite_profile = json.load(file)
 
         MetadataParser.validate_metadata(
-            datacite_profile, self._project.features.metadata.metadata
+            datacite_profile,
+            self._project.features.metadata.metadata,
+            self._project.features.metadata.shared_objects,
         )
 
         MetadataParser.validate_metadata(
-            self._connector.metadata_profile, self._project.features.metadata.metadata
+            self._connector.metadata_profile,
+            self._project.features.metadata.metadata,
+            self._project.features.metadata.shared_objects,
         )

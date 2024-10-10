@@ -245,14 +245,16 @@ class MetadataParser:
             shared_objects (list, optional): A list of shared objects that may be referenced in the metadata. Defaults to an empty list.
             profile (dict, optional): A dictionary containing profile information, including class layouts and templates. Defaults to an empty dictionary.
         """
-        return (
-            len(
-                MetadataParser.get_value_list(
-                    metadata, prop_id, shared_objects, profile
-                )
-            )
-            > 0
+        values = MetadataParser.get_value_list(
+            metadata, prop_id, shared_objects, profile
         )
+
+        if len(values) > 0:
+            for value in values:
+                if "values" in value and any(value["values"]):
+                    return True
+
+        return False
 
     @staticmethod
     def validate_metadata(
@@ -273,13 +275,18 @@ class MetadataParser:
             prop_id = item["id"]
             prop_label = item["label"]
 
-            if not MetadataParser.is_property_valid(metadata, profile, prop_id):
+            if not MetadataParser.is_property_valid(
+                metadata, profile, prop_id, shared_objects
+            ):
                 error = f"The required value '{prop_label}' ({profile['metadata']['id'][0]}) is either missing or invalid"
                 raise ValueError(error)
 
     @staticmethod
     def is_property_valid(
-        metadata: List[Dict[str, Any]], profile: Dict[str, Dict[str, Any]], prop_id: str
+        metadata: List[Dict[str, Any]],
+        profile: Dict[str, Dict[str, Any]],
+        prop_id: str,
+        shared_objects: List[Dict[str, Any]] | None = None,
     ) -> bool:
         """
         Checks if a specific property in the metadata is valid according to the given profile.
@@ -331,6 +338,11 @@ class MetadataParser:
                         f"Value '{required_value_id}' is missing for property {prop_id}"
                     )
                     return False
+
+        if not MetadataParser.is_property_filled_out(
+            metadata, prop_id, shared_objects, profile
+        ):
+            return False
 
         """if "type" in property_layout and len(property_layout["type"]) > 0:
             if "required" in property_layout and property_layout["required"]:
