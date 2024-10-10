@@ -50,7 +50,7 @@ services:
         ports:
             - "4300:6969"
         env_file:
-            - ../env/connector-osf.env
+            - ../env/examples/connector-osf.env
 
     # Connector: Zenodo
     connector-zenodo:

@@ -41,7 +41,7 @@ class ZenodoMetadataCreator(MetadataCreator):
             ZenodoMetadata: An instance of ZenodoMetadata populated with the parsed metadata.
         """
 
-        zenodo_metadata = MetadataParser.filter_by_profile("Zenodo", metadata)
+        zenodo_metadata = metadata # = MetadataParser.filter_by_profile("Zenodo", metadata)
 
         product = ZenodoMetadata()
 
