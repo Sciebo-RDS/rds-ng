@@ -273,15 +273,9 @@ class MetadataParser:
             prop_id = item["id"]
             prop_label = item["label"]
 
-            def _raise():
+            if not MetadataParser.is_property_valid(metadata, profile, prop_id):
                 error = f"The required value '{prop_label}' ({profile['metadata']['id'][0]}) is either missing or invalid"
                 raise ValueError(error)
-
-            try:
-                if not MetadataParser.is_property_valid(metadata, profile, prop_id):
-                    _raise()
-            except:  # pylint: disable=bare-except
-                _raise()
 
     @staticmethod
     def is_property_valid(
@@ -309,10 +303,10 @@ class MetadataParser:
         ) is None:
             print(f"Property {prop_id} not defined in profile")
             return False
-        
+
         if "required" not in property_layout or not property_layout["required"]:
             return True
-        
+
         obj = MetadataParser.getobj(metadata, prop_id)
 
         if obj is None:
@@ -337,7 +331,6 @@ class MetadataParser:
                         f"Value '{required_value_id}' is missing for property {prop_id}"
                     )
                     return False
-
 
         """if "type" in property_layout and len(property_layout["type"]) > 0:
             if "required" in property_layout and property_layout["required"]:
