@@ -3,18 +3,44 @@ import { type PropertyProfile } from "../PropertyProfile";
 export const objects: PropertyProfile = {
     metadata: {
         id: ["objects", "2024.09.17"],
-        displayLabel: "File description",
-        description: "A Profile for individual resources."
+        displayLabel: "Object annotation",
+        description: "A profile for individual resources."
     },
     layout: [
         {
-            id: "comment",
-            label: "Comment",
-            description: "Descriptive comment about the file object.",
+            id: "title",
+            label: "Title",
+            description: "The title of the file object.",
             input: [
                 {
-                    id: "comment",
-                    label: "Comment",
+                    id: "title",
+                    label: "Title",
+                    type: "string"
+                }
+            ],
+            required: true
+        },
+        {
+            id: "identifier",
+            label: "Identifier",
+            description: "A unique identifier for the file object.",
+            input: [
+                {
+                    id: "identifier",
+                    label: "Identifier",
+                    type: "string"
+                }
+            ],
+            required: true
+        },
+        {
+            id: "description",
+            label: "Description",
+            description: "Description of the file object.",
+            input: [
+                {
+                    id: "description",
+                    label: "Description",
                     type: "textarea"
                 }
             ],
