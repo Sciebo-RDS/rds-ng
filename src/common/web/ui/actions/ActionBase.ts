@@ -10,7 +10,7 @@ export const enum ActionState {
     Pending,
     Executing,
     Done,
-    Failed,
+    Failed
 }
 
 export type ActionDoneCallback = () => void;
@@ -61,11 +61,11 @@ export abstract class ActionBase {
      *
      * @param state - The state the notifier should react to.
      * @param notifier - The notifier.
-     * @param debugOnly - If true, the notification will only be added in debug mode.
+     * @param verboseOnly - If true, the notification will only be added in verbose mode.
      */
-    public addNotifier(state: ActionState, notifier: ActionNotifier | ActionNotifier[], debugOnly: boolean = false): void {
-        if (debugOnly) {
-            if (!WebComponent.instance.data.config.value<boolean>(GeneralSettingIDs.Debug)) {
+    public addNotifier(state: ActionState, notifier: ActionNotifier | ActionNotifier[], verboseOnly: boolean = false): void {
+        if (verboseOnly) {
+            if (!WebComponent.instance.data.config.value<boolean>(GeneralSettingIDs.VerboseNotifications)) {
                 return;
             }
         }

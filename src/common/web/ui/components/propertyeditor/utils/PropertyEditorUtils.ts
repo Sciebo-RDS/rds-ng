@@ -52,7 +52,7 @@ export function compareProfileIDs(id1: ProfileID, id2: ProfileID): boolean {
  * @param waitFor The number of milliseconds to wait before invoking the wrapped function.
  * @returns A debounce wrapper.
  */
-export function makeDebounce(waitFor: number = 1500) {
+export function makeDebounce(waitFor: number = 1000) {
     let t: number;
 
     return <F extends (...args: any[]) => any>(func: F): Promise<ReturnType<F>> =>
