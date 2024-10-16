@@ -27,11 +27,12 @@ export class ProjectExporterDescriptor {
     @Type(() => String)
     public readonly scope: ProjectFeatureID[];
 
-    public constructor(exporterID: ProjectExporterID, name: string, description: string, scope: ProjectFeatureID[]) {
+    public constructor(exporterID: ProjectExporterID, name: string, description: string, extension: string, scope: ProjectFeatureID[]) {
         this.exporter_id = exporterID;
 
         this.name = name;
         this.description = description;
+        this.extension = extension;
 
         this.scope = scope;
     }

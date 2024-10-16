@@ -5,14 +5,8 @@ import { MessageBuilder } from "../../core/messaging/composers/MessageBuilder";
 import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
 import { type AuthorizationSettings } from "../../data/entities/authorization/AuthorizationSettings";
-import {
-    Connector,
-    type ConnectorCategoryID,
-    type ConnectorID,
-    ConnectorLogos,
-    type ConnectorMetadataProfile,
-    ConnectorOptions,
-} from "../../data/entities/connector/Connector";
+import { Connector, type ConnectorCategoryID, type ConnectorID, ConnectorLogos, ConnectorOptions } from "../../data/entities/connector/Connector";
+import { PropertyProfile } from "../../ui/components/propertyeditor/PropertyProfile";
 
 /**
  * Emitted whenever the list of available connectors has been updated.
@@ -51,7 +45,9 @@ export class ConnectorAnnounceEvent extends Event {
     @Type(() => ConnectorLogos)
     public readonly logos: ConnectorLogos = new ConnectorLogos();
 
-    public readonly metadata_profile: ConnectorMetadataProfile = {};
+    // @ts-ignore
+    @Type(() => PropertyProfile)
+    public readonly metadata_profile: PropertyProfile = new PropertyProfile({ id: ["", ""], displayLabel: "", description: "" }, []);
 
     /**
      * Helper function to easily build this message.
@@ -65,8 +61,8 @@ export class ConnectorAnnounceEvent extends Event {
         authorization: AuthorizationSettings,
         options: ConnectorOptions,
         logos: ConnectorLogos,
-        metadataProfile: ConnectorMetadataProfile,
-        chain: Message | null = null,
+        metadataProfile: PropertyProfile,
+        chain: Message | null = null
     ): EventComposer<ConnectorAnnounceEvent> {
         return messageBuilder.buildEvent(
             ConnectorAnnounceEvent,
@@ -78,9 +74,9 @@ export class ConnectorAnnounceEvent extends Event {
                 authorization: authorization,
                 options: options,
                 logos: logos,
-                metadata_profile: metadataProfile,
+                metadata_profile: metadataProfile
             },
-            chain,
+            chain
         );
     }
 }

@@ -3,12 +3,12 @@ __pycache__
 
 # Node specifics
 node_modules
-package-lock.json
 
 # Distribution files
 dist
 
-# Data
+# Internal directories
+.bin
 .data
 
 # IDE specific files
