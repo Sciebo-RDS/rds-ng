@@ -6,4 +6,5 @@ from .metadata_profile_container_utils import (
     filter_containers_by_category,
     filter_containers_by_role,
     filter_containers,
+    containers_from_folder,
 )
