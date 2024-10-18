@@ -8,7 +8,6 @@ node_modules
 dist
 
 # Internal directories
-.bin
 .data
 
 # IDE specific files
