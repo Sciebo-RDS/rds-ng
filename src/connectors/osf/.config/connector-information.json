@@ -6,8 +6,8 @@
         "publish_once": false
     },
     "logos": {
-        "default": "/component/common/assets/img/logos/osf.png",
-        "horizontal": "/component/common/assets/img/logos/osf.png"
+        "default": "/component/connectors/osf/.assets/logo.png",
+        "horizontal": "/component/connectors/osf/.assets/logo.png"
     },
-    "metadata_profile": "/component/common/assets/profiles/osf.json"
+    "metadata_profile": "/component/connectors/osf/.assets/metadata-profile.json"
 }
