@@ -46,9 +46,7 @@ class ProjectFeaturesVerifier(Verifier):
             self._verify_dmp_feature()
 
     def _verify_metadata_feature(self) -> None:
-        # TODO
         pass
 
     def _verify_dmp_feature(self) -> None:
-        # TODO
         pass

@@ -11,6 +11,7 @@ from common.py.data.exporters import (
     ProjectExporterID,
     ProjectExporterResult,
 )
+from server.data.exporters import ExporterTemplateProfileData
 
 
 class PDFExporter(ProjectExporter):
@@ -70,7 +71,14 @@ class PDFExporter(ProjectExporter):
         output = render_exporter_template(project, template_header)
         for profile in profiles:
             output += render_exporter_template(
-                project, template_body, dmp_profile=profile.profile
+                project,
+                template_body,
+                profile_data={
+                    "dmp_metadata": ExporterTemplateProfileData(
+                        profile=profile.profile,
+                        metadata=project.features.dmp.plan,
+                    )
+                },
             )
         pdf_data = typst_compile(output)
         return ProjectExporterResult(mimetype="text/plain", data=pdf_data)

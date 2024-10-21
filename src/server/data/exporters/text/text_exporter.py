@@ -10,6 +10,7 @@ from common.py.data.exporters import (
     ProjectExporterID,
     ProjectExporterResult,
 )
+from server.data.exporters import ExporterTemplateProfileData
 
 
 class TextExporter(ProjectExporter):
@@ -57,7 +58,7 @@ ${value_line}
 % endfor
 
 """
-        
+
         from .. import render_exporter_template
         from ....component import ServerComponent
 
@@ -70,6 +71,13 @@ ${value_line}
         output = render_exporter_template(project, template_header)
         for profile in profiles:
             output += render_exporter_template(
-                project, template_body, dmp_profile=profile.profile
+                project,
+                template_body,
+                profile_data={
+                    "dmp_metadata": ExporterTemplateProfileData(
+                        profile=profile.profile,
+                        metadata=project.features.dmp.plan,
+                    )
+                },
             )
         return ProjectExporterResult(mimetype="text/plain", data=output.encode())

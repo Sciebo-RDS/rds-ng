@@ -1,17 +1,28 @@
-from typing import Any, Dict
+import typing
+from dataclasses import dataclass
+from typing import Any, Dict, List
 
 from mako.template import Template
 
 from common.py.data.entities.project import Project
-from common.py.data.metadata import MetadataParser
+from common.py.data.metadata import MetadataParser, MetadataValueList
+
+
+@dataclass(kw_only=True, frozen=True)
+class ExporterTemplateProfileData:
+    """
+    Additional profile data for rendering exporter templates.
+    """
+
+    profile: Dict[str, Dict[str, Any]]
+    metadata: List[Dict[str, Any]]
 
 
 def render_exporter_template(
     project: Project,
     template: str,
     *,
-    metadata_profile: Dict[str, Dict[str, Any]] | None = None,
-    dmp_profile: Dict[str, Dict[str, Any]] | None = None,
+    profile_data: Dict[str, ExporterTemplateProfileData] | None = None,
 ) -> str:
     """
     Renders a Mako template.
@@ -19,31 +30,19 @@ def render_exporter_template(
     Args:
         project: The project.
         template: The Mako template.
-        metadata_profile: Optional project metadata profile.
-        dmp_profile: Optional DMP metadata profile.
+        profile_data: Optional profile data.
 
     Returns:
         The rendered output.
     """
-    # TODO: Improve metadata handling
-    return Template(template).render(
-        project=project,
-        project_metadata=(
-            MetadataParser.list_values(
-                metadata_profile,
-                project.features.metadata.metadata,
+    data_params: typing.Dict[str, MetadataValueList] = {}
+
+    if profile_data is not None:
+        for name, data in profile_data.items():
+            data_params[name] = MetadataParser.list_values(
+                data.profile,
+                data.metadata,
                 project.features.metadata.shared_objects,
             )
-            if metadata_profile is not None
-            else {}
-        ),
-        dmp_metadata=(
-            MetadataParser.list_values(
-                dmp_profile,
-                project.features.dmp.plan,
-                project.features.metadata.shared_objects,
-            )
-            if dmp_profile is not None
-            else {}
-        ),
-    )
+
+    return Template(template).render(project=project, **data_params)
