@@ -1,3 +1,6 @@
+import { type MetadataProfileContainerList, MetadataProfileContainerRole } from "../../../../data/entities/metadata/MetadataProfileContainer";
+import { filterContainersByRole } from "../../../../data/entities/metadata/MetadataProfileContainerUtils";
+
 /**
  * Global color table based on item IDs.
  */
@@ -18,5 +21,11 @@ export class ColorTable {
         }
         const index = ColorTable._colorIDs.indexOf(colorID);
         return `lch(${lightness} ${amount} ${(360.0 / Math.min(5, ColorTable._colorIDs.length)) * index} / ${alpha})`;
+    }
+
+    public static populateFromProfileContainerList(profiles: MetadataProfileContainerList): void {
+        filterContainersByRole(profiles, MetadataProfileContainerRole.Global)
+            .sort((p1, p2) => p1.profile.metadata.id[0].localeCompare(p2.profile.metadata.id[0]))
+            .forEach((profile) => ColorTable.color(profile.profile.metadata.id[0]));
     }
 }

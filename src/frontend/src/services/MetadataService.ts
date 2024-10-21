@@ -2,9 +2,10 @@ import { GetMetadataProfilesReply } from "@common/api/metadata/MetadataCommands"
 import { WebComponent } from "@common/component/WebComponent";
 import { MetadataProfileContainer } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { Service } from "@common/services/Service";
+import { ColorTable } from "@common/ui/components/propertyeditor/utils/ColorTable";
+import { deepClone, shortenDataStrings } from "@common/utils/ObjectUtils";
 
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
-import { deepClone, shortenDataStrings } from "@common/utils/ObjectUtils";
 
 /**
  * Creates the metadata service.
@@ -28,6 +29,8 @@ export default function (comp: WebComponent): Service {
 
                     // @ts-ignore
                     ctx.metadataStore.profiles = msg.profiles;
+
+                    ColorTable.populateFromProfileContainerList(ctx.metadataStore.profiles);
                 } else {
                     ctx.logger.error("Unable to retrieve the metadata profiles", "metadata", { reason: msg.message });
                 }
