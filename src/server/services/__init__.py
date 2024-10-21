@@ -2,6 +2,7 @@ from .server_service_context import ServerServiceContext
 
 from .authorization_service import create_authorization_service
 from .connectors_service import create_connectors_service
+from .metadata_service import create_metadata_service
 from .project_exporters_service import create_project_exporters_service
 from .project_jobs_service import create_project_jobs_service
 from .projects_service import create_projects_service

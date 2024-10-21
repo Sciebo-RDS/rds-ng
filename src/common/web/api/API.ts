@@ -3,11 +3,13 @@ import "./authorization/AuthorizationCommands";
 
 import "./component/ComponentEvents";
 
-import "./network/NetworkCommands";
-import "./network/NetworkEvents";
-
 import "./connector/ConnectorCommands";
 import "./connector/ConnectorEvents";
+
+import "./metadata/MetadataCommands";
+
+import "./network/NetworkCommands";
+import "./network/NetworkEvents";
 
 import "./project/ProjectCommands";
 import "./project/ProjectEvents";

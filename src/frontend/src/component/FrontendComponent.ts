@@ -13,6 +13,7 @@ import { IntegrationSchemesCatalog } from "@/integration/IntegrationSchemesCatal
 
 import createConnectorsService from "@/services/ConnectorsService";
 import createFrontendService from "@/services/FrontendService";
+import createMetadataService from "@/services/MetadataService";
 import createProjectsService from "@/services/ProjectsService";
 import createProjectJobsService from "@/services/ProjectJobsService";
 import createProjectExportersService from "@/services/ProjectExportersService";
@@ -41,6 +42,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _frontendService: Service | null = null;
     private _userService: Service | null = null;
     private _connectorsService: Service | null = null;
+    private _metadataService: Service | null = null;
     private _projectsService: Service | null = null;
     private _projectJobsService: Service | null = null;
     private _projectExportersService: Service | null = null;
@@ -67,11 +69,12 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this._frontendService = createFrontendService(this);
         this._userService = createUserService(this);
         this._connectorsService = createConnectorsService(this);
+        this._metadataService = createMetadataService(this);
         this._projectsService = createProjectsService(this);
         this._projectJobsService = createProjectJobsService(this);
         this._projectExportersService = createProjectExportersService(this);
 
-        // TODO: Remove later
+        // TODO: Move to metadata service
         this.assignGlobalProfileColors();
     }
 
@@ -143,6 +146,16 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
             throw new Error("Tried to access the connectors service before its creation");
         }
         return this._connectorsService;
+    }
+
+    /**
+     * The metadata service.
+     */
+    public get metadataService(): Service {
+        if (!this._metadataService) {
+            throw new Error("Tried to access the metadata service before its creation");
+        }
+        return this._metadataService;
     }
 
     /**

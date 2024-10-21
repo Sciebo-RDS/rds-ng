@@ -7,6 +7,7 @@ import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotific
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUserAuthorizationsAction";
 import { ListConnectorsAction } from "@/ui/actions/connector/ListConnectorsAction";
+import { GetMetadataProfilesAction } from "@/ui/actions/metadata/GetMetadataProfilesAction";
 import { ListProjectgExportersAction } from "@/ui/actions/project/ListProjectgExportersAction";
 import { ListProjectJobsAction } from "@/ui/actions/project/ListProjectJobsAction";
 import { ListProjectsAction } from "@/ui/actions/project/ListProjectsAction";
@@ -20,6 +21,7 @@ export class GetAllDataAction extends MultiAction {
         this.prepareNotifiers();
 
         const listConAction = new ListConnectorsAction(comp, true);
+        const getProfilesAction = new GetMetadataProfilesAction(comp, true);
         const getUserSettingsAction = new GetUserSettingsAction(comp, true);
         const listAuthorizationsAction = new ListUserAuthorizationsAction(comp, true);
         const listProjectsAction = new ListProjectsAction(comp, true);
@@ -27,13 +29,22 @@ export class GetAllDataAction extends MultiAction {
         const listExportersAction = new ListProjectgExportersAction(comp, true);
 
         listConAction.prepare();
+        getProfilesAction.prepare();
         getUserSettingsAction.prepare();
         listAuthorizationsAction.prepare();
         listProjectsAction.prepare();
         listJobsAction.prepare();
         listExportersAction.prepare();
 
-        this.addActions([listConAction, getUserSettingsAction, listAuthorizationsAction, listProjectsAction, listJobsAction, listExportersAction]);
+        this.addActions([
+            listConAction,
+            getProfilesAction,
+            getUserSettingsAction,
+            listAuthorizationsAction,
+            listProjectsAction,
+            listJobsAction,
+            listExportersAction
+        ]);
     }
 
     protected addDefaultNotifiers(): void {

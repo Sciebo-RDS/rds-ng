@@ -1,4 +1,3 @@
-from common.py.component import BackendComponent
 from common.py.core.logging import debug, error
 from common.py.core.messaging import Channel
 from common.py.data.entities.project import Project, ProjectJob
@@ -13,11 +12,12 @@ from .tools import (
     handle_project_job_message,
     send_project_logbook,
 )
+from ..component import ServerComponent
 from ..data.verifiers.project import ProjectJobVerifier
 from ..networking.session import Session
 
 
-def create_project_jobs_service(comp: BackendComponent) -> Service:
+def create_project_jobs_service(comp: ServerComponent) -> Service:
     """
     Creates the jobs service.
 

@@ -1,6 +1,5 @@
 import time
 
-from common.py.component import BackendComponent
 from common.py.core import logging
 from common.py.data.entities.authorization import (
     AuthorizationToken,
@@ -16,10 +15,11 @@ from common.py.services import Service
 from common.py.utils import EntryGuard
 
 from .tools import handle_authorization_token_changes
+from ..component import ServerComponent
 from ..settings import AuthorizationSettingIDs
 
 
-def create_authorization_service(comp: BackendComponent) -> Service:
+def create_authorization_service(comp: ServerComponent) -> Service:
     """
     Creates the authorization service.
 

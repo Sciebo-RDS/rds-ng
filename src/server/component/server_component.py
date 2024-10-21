@@ -37,6 +37,7 @@ class ServerComponent(BackendComponent):
         from ..services import (
             create_authorization_service,
             create_connectors_service,
+            create_metadata_service,
             create_project_exporters_service,
             create_project_jobs_service,
             create_projects_service,
@@ -51,6 +52,7 @@ class ServerComponent(BackendComponent):
         # Create all server services
         create_session_service(self)
         create_connectors_service(self)
+        create_metadata_service(self)
         create_users_service(self)
         create_projects_service(self)
         create_resources_service(self)

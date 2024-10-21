@@ -1,12 +1,12 @@
 import time
 
-from common.py.component import BackendComponent
 from common.py.services import Service
 
 from .tools import send_projects_list
+from ..component import ServerComponent
 
 
-def create_projects_service(comp: BackendComponent) -> Service:
+def create_projects_service(comp: ServerComponent) -> Service:
     """
     Creates the projects service.
 
