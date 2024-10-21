@@ -1,7 +1,7 @@
 import { UpdateProjectFeaturesCommand } from "@common/api/project/ProjectFeaturesCommands";
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
 import { DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
-import { MetadataFeature } from "@common/data/entities/project/features/MetadataFeature";
+import { ProjectMetadataFeature } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { ProjectFeature, type ProjectFeatureID } from "@common/data/entities/project/features/ProjectFeature";
 import { ProjectFeatures } from "@common/data/entities/project/features/ProjectFeatures";
 import { ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
@@ -25,10 +25,10 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
             project.project_id,
             updatedFeatures.map((feature) => feature.featureID),
             new ProjectFeatures(
-                this.getFeatureFromArray<MetadataFeature>(updatedFeatures, MetadataFeature.FeatureID),
+                this.getFeatureFromArray<ProjectMetadataFeature>(updatedFeatures, ProjectMetadataFeature.FeatureID),
                 this.getFeatureFromArray<ResourcesMetadataFeature>(updatedFeatures, ResourcesMetadataFeature.FeatureID),
-                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID),
-            ),
+                this.getFeatureFromArray<DataManagementPlanFeature>(updatedFeatures, DataManagementPlanFeature.FeatureID)
+            )
         );
         return this._composer;
     }
@@ -37,12 +37,12 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
         this.addNotifier(
             ActionState.Executing,
             new OverlayNotifier(OverlayNotificationType.Info, "Updating project", `Project '${title}' is being updated...`),
-            true,
+            true
         );
         this.addNotifier(
             ActionState.Done,
             new OverlayNotifier(OverlayNotificationType.Success, "Updating project", `Project '${title}' has been updated.`),
-            true,
+            true
         );
         this.addNotifier(
             ActionState.Failed,
@@ -50,8 +50,8 @@ export class UpdateProjectFeaturesAction extends FrontendCommandAction<UpdatePro
                 OverlayNotificationType.Error,
                 "Error updating project",
                 `An error occurred while updating the features of project '${title}': ${ActionNotifier.MessagePlaceholder}.`,
-                true,
-            ),
+                true
+            )
         );
     }
 

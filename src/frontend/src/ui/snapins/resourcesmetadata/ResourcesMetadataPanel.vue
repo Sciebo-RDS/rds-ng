@@ -90,7 +90,7 @@ watch(
 
         debounce(() => {
             const resourcesSet = unref(metadata);
-            const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
+            const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.metadata);
 
             const selectedPaths = Object.keys(selectedNodes.value);
             selectedPaths.forEach((path) => {
@@ -103,7 +103,7 @@ watch(
 
             // TODO: A hack to update the local data; nedds to be changed later
             // @ts-ignore
-            project!.value.features.resources_metadata.resources_metadata = updatedData;
+            project!.value.features.resources_metadata.metadata = updatedData;
         });
     },
     { deep: true }
@@ -114,7 +114,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
 
     /* const persistedSets: PersistedSet[] = []; */
     const selectedPaths = Object.keys(nodes);
-    const metadata = project!.value.features.resources_metadata.resources_metadata;
+    const metadata = project!.value.features.resources_metadata.metadata;
     /* selectedPaths.forEach((path) => {
         persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
     }); */
@@ -201,7 +201,7 @@ for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadata
                             </div>
                             <PropertyEditor
                                 v-model="resourcesData"
-                                v-model:shared-objects="project!.features.metadata.shared_objects"
+                                v-model:shared-objects="project!.features.project_metadata.shared_objects"
                                 :projectProfiles="projectProfiles as PropertyProfileStore"
                                 class="w-full"
                             />

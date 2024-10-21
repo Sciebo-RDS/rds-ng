@@ -2,7 +2,6 @@ import pathlib
 from io import BytesIO
 
 import requests
-from metadata import ZenodoMetadataCreator
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
@@ -11,14 +10,15 @@ from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
-
-from ...base.integration.execution import RequestsExecutor
-from ...base.integration.execution.requests_executor import \
-    RequestsExecutorOptions
-from .zenodo_callbacks import (ZenodoCreateProjectCallbacks,
-                               ZenodoDeleteProjectCallbacks,
-                               ZenodoUploadFileCallbacks)
+from .zenodo_callbacks import (
+    ZenodoCreateProjectCallbacks,
+    ZenodoDeleteProjectCallbacks,
+    ZenodoUploadFileCallbacks,
+)
 from .zenodo_request_data import ZenodoFileData, ZenodoProjectData
+from ..metadata import ZenodoMetadataCreator
+from ...base.integration.execution import RequestsExecutor
+from ...base.integration.execution.requests_executor import RequestsExecutorOptions
 
 
 class ZenodoClient(RequestsExecutor):
@@ -78,8 +78,11 @@ class ZenodoClient(RequestsExecutor):
         """
 
         creator = ZenodoMetadataCreator()
-        metadata = creator.create(project.features.metadata.metadata, project.features.metadata.shared_objects)
-        #creator.validate(metadata)
+        metadata = creator.create(
+            project.features.project_metadata.metadata,
+            project.features.project_metadata.shared_objects,
+        )
+        # creator.validate(metadata)
 
         def _execute(session: requests.Session) -> ZenodoProjectData:
             resp = self.post(
@@ -90,16 +93,42 @@ class ZenodoClient(RequestsExecutor):
                         "publication_type": "other",
                         "access_right": "closed",
                         "license": "cc-by",
-                        "image_type": 'other',
-                        "title":  metadata.title if metadata.title is not None else 'Uploaded via Sciebo RDS',
-                        "upload_type":  metadata.upload_type if metadata.upload_type is not None else 'other',
-                        "creators":  metadata.creators if metadata.creators is not None else [],
-                        "description":  metadata.description if metadata.description is not None else 'No description provided',
-                        "upload_type":  metadata.upload_type if metadata.upload_type is not None else 'other',
-                        "contributors":  metadata.contributors if metadata.contributors is not None else [],
-                        "version":  metadata.version if metadata.version is not None else '',
-                        "grants":  metadata.grants if metadata.grants is not None else '',
-                        "dates":  metadata.dates if metadata.dates is not None else []
+                        "image_type": "other",
+                        "title": (
+                            metadata.title
+                            if metadata.title is not None
+                            else "Uploaded via Sciebo RDS"
+                        ),
+                        "upload_type": (
+                            metadata.upload_type
+                            if metadata.upload_type is not None
+                            else "other"
+                        ),
+                        "creators": (
+                            metadata.creators if metadata.creators is not None else []
+                        ),
+                        "description": (
+                            metadata.description
+                            if metadata.description is not None
+                            else "No description provided"
+                        ),
+                        "upload_type": (
+                            metadata.upload_type
+                            if metadata.upload_type is not None
+                            else "other"
+                        ),
+                        "contributors": (
+                            metadata.contributors
+                            if metadata.contributors is not None
+                            else []
+                        ),
+                        "version": (
+                            metadata.version if metadata.version is not None else ""
+                        ),
+                        "grants": (
+                            metadata.grants if metadata.grants is not None else ""
+                        ),
+                        "dates": metadata.dates if metadata.dates is not None else [],
                     }
                 },
             )

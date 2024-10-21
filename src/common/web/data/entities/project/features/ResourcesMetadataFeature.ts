@@ -1,4 +1,4 @@
-import { ProjectObject } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { ProjectObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -14,14 +14,13 @@ export type ResourcesMetadata = Record<string, ProjectObject[]>;
 export class ResourcesMetadataFeature extends ProjectFeature {
     public static readonly FeatureID: ProjectFeatureID = "resources_metadata";
 
-    public readonly resources_metadata: ResourcesMetadata;
+    public readonly metadata: ResourcesMetadata;
 
     public constructor(resourcesMetadata: ResourcesMetadata = {}) {
         super();
 
-        this.resources_metadata = resourcesMetadata;
+        this.metadata = resourcesMetadata;
     }
-
 
     public get featureID(): ProjectFeatureID {
         return ResourcesMetadataFeature.FeatureID;

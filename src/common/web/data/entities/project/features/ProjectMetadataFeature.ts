@@ -1,4 +1,4 @@
-import { ProjectObject } from "@common/ui/components/propertyeditor/ProjectObjectStore";
+import { ProjectObject } from "../../../../ui/components/propertyeditor/ProjectObjectStore";
 import { ProjectFeature, type ProjectFeatureID } from "./ProjectFeature";
 
 /**
@@ -18,8 +18,8 @@ export type MetadataObjects = ProjectObject[];
 /**
  * Data class for the metadata project feature.
  */
-export class MetadataFeature extends ProjectFeature {
-    public static readonly FeatureID: ProjectFeatureID = "metadata";
+export class ProjectMetadataFeature extends ProjectFeature {
+    public static readonly FeatureID: ProjectFeatureID = "project_metadata";
 
     public readonly metadata: ProjectMetadata;
     public readonly shared_objects: MetadataObjects;
@@ -32,6 +32,6 @@ export class MetadataFeature extends ProjectFeature {
     }
 
     public get featureID(): ProjectFeatureID {
-        return MetadataFeature.FeatureID;
+        return ProjectMetadataFeature.FeatureID;
     }
 }

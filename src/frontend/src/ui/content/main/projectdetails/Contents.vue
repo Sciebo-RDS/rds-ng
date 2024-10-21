@@ -8,7 +8,7 @@ import { type UIOptions } from "@/data/entities/ui/UIOptions";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
 
-import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
+import { ProjectMetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/ProjectMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { ProjectObjectStore } from "@common/ui/components/propertyeditor/ProjectObjectStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
@@ -43,13 +43,11 @@ const sharedObjectStore = reactive(new ProjectObjectStore());
 
 const debounce = makeDebounce();
 watch(
-    () => project!.value.features.metadata.shared_objects,
+    () => project!.value.features.project_metadata.shared_objects,
     (shared_objects) => {
         debounce(() => {
             const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [
-                new MetadataFeature(project!.value.features.metadata.metadata as ProjectMetadata, shared_objects as ProjectMetadata)
-            ]);
+            action.prepare(project!.value, [new ProjectMetadataFeature(project!.value.features.project_metadata.metadata, shared_objects as ProjectMetadata)]);
             action.execute();
         });
     },

@@ -19,4 +19,4 @@ class ResourcesMetadataFeature(ProjectFeature):
 
     feature_id: typing.ClassVar[ProjectFeatureID] = "resources_metadata"
 
-    resources_metadata: ResourcesMetadata = field(default_factory=dict)
+    metadata: ResourcesMetadata = field(default_factory=dict)
