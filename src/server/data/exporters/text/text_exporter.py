@@ -1,5 +1,4 @@
-import json
-
+from common.py.data.entities.metadata import filter_containers, MetadataProfileContainer
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
     DataManagementPlanFeature,
@@ -11,7 +10,6 @@ from common.py.data.exporters import (
     ProjectExporterID,
     ProjectExporterResult,
 )
-from .. import render_exporter_template
 
 
 class TextExporter(ProjectExporter):
@@ -42,10 +40,11 @@ class TextExporter(ProjectExporter):
 
     def _export_dmp(self, project: Project) -> ProjectExporterResult:
         # TODO: Use an external file
-        template = """${project.title} - Data Management Plan
+        template_header = """${project.title} - Data Management Plan
 ============================================================
 
-% for key, value in dmp_metadata.items():
+"""
+        template_body = """% for key, value in dmp_metadata.items():
 ${value.label}
 ------------------------------------------------------------
 % for item_value in value.values:
@@ -56,11 +55,21 @@ ${value_line}
 
 % endfor
 % endfor
+
 """
+        
+        from .. import render_exporter_template
+        from ....component import ServerComponent
 
-        # TODO: Do not use a hardcoded profile
-        with open("/component/common/assets/profiles/dfg.json") as file:
-            profile = json.load(file)
+        profiles = filter_containers(
+            ServerComponent.instance().server_data.profile_containers,
+            category=DataManagementPlanFeature.feature_id,
+            role=MetadataProfileContainer.Role.GLOBAL,
+        )
 
-        output = render_exporter_template(project, template, dmp_profile=profile)
+        output = render_exporter_template(project, template_header)
+        for profile in profiles:
+            output += render_exporter_template(
+                project, template_body, dmp_profile=profile.profile
+            )
         return ProjectExporterResult(mimetype="text/plain", data=output.encode())

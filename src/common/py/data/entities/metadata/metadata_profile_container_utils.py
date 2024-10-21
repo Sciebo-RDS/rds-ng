@@ -43,6 +43,7 @@ def filter_containers_by_role(
 
 def filter_containers(
     containers: MetadataProfileContainerList,
+    *,
     category: str,
     role: MetadataProfileContainer.Role,
 ) -> MetadataProfileContainerList:
