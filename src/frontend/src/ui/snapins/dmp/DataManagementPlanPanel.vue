@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import { reactive, toRefs, watch, type PropType } from "vue";
+import { type PropType, reactive, toRefs, watch } from "vue";
 
-import { DataManagementPlanFeature, type DataManagementPlan } from "@common/data/entities/project/features/DataManagementPlanFeature";
+import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
+import { type DataManagementPlan, DataManagementPlanFeature } from "@common/data/entities/project/features/DataManagementPlanFeature";
 import { Project } from "@common/data/entities/project/Project";
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
-import { PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
-import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
-
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useMetadataStore } from "@/data/stores/MetadataStore";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
+import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -23,6 +22,7 @@ const props = defineProps({
     }
 });
 const { project } = toRefs(props);
+const metadataStore = useMetadataStore();
 
 const debounce = makeDebounce();
 
@@ -40,7 +40,9 @@ watch(
     { deep: true }
 );
 
-projectProfiles.mountProfile(dfgDmp as PropertyProfile);
+for (const profile of filterContainers(metadataStore.profiles, DataManagementPlanFeature.FeatureID, MetadataProfileContainerRole.Global)) {
+    projectProfiles.mountProfile(profile.profile);
+}
 </script>
 
 <template>
