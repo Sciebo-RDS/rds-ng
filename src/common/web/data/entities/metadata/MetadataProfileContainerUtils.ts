@@ -34,5 +34,5 @@ export function filterContainersByRole(containers: MetadataProfileContainerList,
  * @returns - List of all matching containers.
  */
 export function filterContainers(containers: MetadataProfileContainerList, category: string, role: MetadataProfileContainerRole): MetadataProfileContainerList {
-    return containers.filter((container) => container.category == container && container.role == role);
+    return containers.filter((container) => container.category == category && container.role == role);
 }

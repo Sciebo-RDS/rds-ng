@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useMetadataStore } from "@/data/stores/MetadataStore";
+import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { storeToRefs } from "pinia";
 import { reactive, toRefs, watch, type PropType } from "vue";
 
@@ -7,7 +10,6 @@ import { Project } from "@common/data/entities/project/Project";
 import { MetadataFeature, type ProjectMetadata } from "@common/data/entities/project/features/MetadataFeature";
 import { type PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
-import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
 
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
 
@@ -27,14 +29,16 @@ const props = defineProps({
     }
 });
 const { project } = toRefs(props);
+const metadataStore = useMetadataStore();
 const consStore = useConnectorsStore();
 const userStore = useUserStore();
 const { connectors } = storeToRefs(consStore);
 const { userSettings } = storeToRefs(userStore);
 const projectProfiles = reactive(new PropertyProfileStore());
 
-projectProfiles.mountProfile(dataCite as PropertyProfile);
-// TODO: Testing data only
+for (const profile of filterContainers(metadataStore.profiles, MetadataFeature.FeatureID, MetadataProfileContainerRole.Global)) {
+    projectProfiles.mountProfile(profile.profile);
+}
 
 // TODO fix auto merging connector profiles
 connectors.value.forEach((connector) => {
