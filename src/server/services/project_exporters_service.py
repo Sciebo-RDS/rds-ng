@@ -1,13 +1,13 @@
 import typing
 
-from common.py.component import BackendComponent
 from common.py.data.exporters import ProjectExporterDescriptor
 from common.py.services import Service
 
+from ..component import ServerComponent
 from ..data.exporters import ProjectExportersCatalog
 
 
-def create_project_exporters_service(comp: BackendComponent) -> Service:
+def create_project_exporters_service(comp: ServerComponent) -> Service:
     """
     Creates the exporters service.
 

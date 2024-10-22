@@ -1,8 +1,8 @@
 import { CreateProjectReply, DeleteProjectReply, ListProjectsReply, UpdateProjectReply } from "@common/api/project/ProjectCommands";
 import { ProjectLogbookEvent, ProjectsListEvent } from "@common/api/project/ProjectEvents";
-import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 
 /**
@@ -12,7 +12,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function (comp: FrontendComponent): Service {
     return comp.createService(
         "Projects service",
         (svc: Service) => {
@@ -45,7 +45,7 @@ export default function (comp: WebComponent): Service {
                 } else {
                     ctx.logger.warning("Received project logbook for an invalid project", "projects", {
                         project: msg.project_id,
-                        logbook: JSON.stringify(msg.logbook),
+                        logbook: JSON.stringify(msg.logbook)
                     });
                 }
             });
@@ -79,6 +79,6 @@ export default function (comp: WebComponent): Service {
                 }
             });
         },
-        FrontendServiceContext,
+        FrontendServiceContext
     );
 }

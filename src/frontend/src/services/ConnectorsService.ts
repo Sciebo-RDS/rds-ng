@@ -1,11 +1,11 @@
 import { ListConnectorsReply } from "@common/api/connector/ConnectorCommands";
 import { ConnectorsListEvent } from "@common/api/connector/ConnectorEvents";
-import { WebComponent } from "@common/component/WebComponent";
 import { Connector } from "@common/data/entities/connector/Connector";
+import { useColorsStore } from "@common/data/stores/ColorsStore";
 import { Service } from "@common/services/Service";
 import { deepClone, shortenDataStrings } from "@common/utils/ObjectUtils";
 
-import { assignConnectorProfileColors } from "@/data/entities/connector/ConnectorUtils";
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 
 /**
@@ -15,7 +15,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function (comp: FrontendComponent): Service {
     function printableConnector(connector: Connector): string {
         let obj = deepClone<Connector>(connector);
         return JSON.stringify(shortenDataStrings(obj));
@@ -26,12 +26,14 @@ export default function (comp: WebComponent): Service {
         (svc: Service) => {
             svc.messageHandler(ListConnectorsReply, (msg: ListConnectorsReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
+                    const colorsStore = useColorsStore();
+
                     ctx.logger.debug("Retrieved connectors list", "connectors", { connectors: msg.connectors.map(printableConnector) });
 
                     // @ts-ignore
                     ctx.connectorsStore.connectors = msg.connectors;
 
-                    assignConnectorProfileColors(msg.connectors);
+                    colorsStore.populateFromConnectorsList(msg.connectors);
                 } else {
                     ctx.logger.error("Unable to retrieve the connectors list", "connectors", { reason: msg.message });
                 }

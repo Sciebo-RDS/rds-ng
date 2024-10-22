@@ -35,20 +35,22 @@ def apply_project_features_update(
         apply_to: The features to update.
     """
     from common.py.data.entities.project.features import (
-        MetadataFeature,
+        ProjectMetadataFeature,
         ResourcesMetadataFeature,
         DataManagementPlanFeature,
     )
 
-    if apply_to is None or MetadataFeature.feature_id in apply_to:
-        project.features.metadata.metadata = updated_features.metadata.metadata
-        project.features.metadata.shared_objects = (
-            updated_features.metadata.shared_objects
+    if apply_to is None or ProjectMetadataFeature.feature_id in apply_to:
+        project.features.project_metadata.metadata = (
+            updated_features.project_metadata.metadata
+        )
+        project.features.project_metadata.shared_objects = (
+            updated_features.project_metadata.shared_objects
         )
 
     if apply_to is None or ResourcesMetadataFeature.feature_id in apply_to:
-        project.features.resources_metadata.resources_metadata = (
-            updated_features.resources_metadata.resources_metadata
+        project.features.resources_metadata.metadata = (
+            updated_features.resources_metadata.metadata
         )
 
     if apply_to is None or DataManagementPlanFeature.feature_id in apply_to:

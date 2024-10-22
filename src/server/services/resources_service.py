@@ -1,6 +1,5 @@
 import pathlib
 
-from common.py.component import BackendComponent
 from common.py.data.entities.authorization import (
     get_host_authorization_token_id,
 )
@@ -16,8 +15,10 @@ from common.py.integration.resources.brokers import (
 from common.py.integration.resources.brokers.tunnels import MemoryBrokerTunnel
 from common.py.services import Service
 
+from ..component import ServerComponent
 
-def create_resources_service(comp: BackendComponent) -> Service:
+
+def create_resources_service(comp: ServerComponent) -> Service:
     """
     Creates the resources service.
 

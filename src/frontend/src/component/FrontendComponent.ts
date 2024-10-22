@@ -2,7 +2,6 @@ import { ComponentType, ComponentUnit } from "@common/component/ComponentIDs";
 import { WebComponent } from "@common/component/WebComponent";
 import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
-import { ColorTable } from "@common/ui/components/propertyeditor/utils/ColorTable";
 import { UnitID } from "@common/utils/UnitID";
 
 import { registerConnectorCategories } from "@/data/entities/connector/categories/ConnectorCategories";
@@ -13,6 +12,7 @@ import { IntegrationSchemesCatalog } from "@/integration/IntegrationSchemesCatal
 
 import createConnectorsService from "@/services/ConnectorsService";
 import createFrontendService from "@/services/FrontendService";
+import createMetadataService from "@/services/MetadataService";
 import createProjectsService from "@/services/ProjectsService";
 import createProjectJobsService from "@/services/ProjectJobsService";
 import createProjectExportersService from "@/services/ProjectExportersService";
@@ -27,11 +27,6 @@ import { registerSnapIns } from "@/ui/snapins/SnapIns";
 
 import Frontend from "@/ui/Frontend.vue";
 
-// TODO: Remove
-import { dataCite } from "@common/ui/components/propertyeditor/profiles/datacite";
-import { dfgDmp } from "@common/ui/components/propertyeditor/profiles/dfg";
-import { shoes } from "@common/ui/components/propertyeditor/profiles/shoes";
-
 /**
  * The main frontend component class.
  */
@@ -41,6 +36,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _frontendService: Service | null = null;
     private _userService: Service | null = null;
     private _connectorsService: Service | null = null;
+    private _metadataService: Service | null = null;
     private _projectsService: Service | null = null;
     private _projectJobsService: Service | null = null;
     private _projectExportersService: Service | null = null;
@@ -67,12 +63,10 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this._frontendService = createFrontendService(this);
         this._userService = createUserService(this);
         this._connectorsService = createConnectorsService(this);
+        this._metadataService = createMetadataService(this);
         this._projectsService = createProjectsService(this);
         this._projectJobsService = createProjectJobsService(this);
         this._projectExportersService = createProjectExportersService(this);
-
-        // TODO: Remove later
-        this.assignGlobalProfileColors();
     }
 
     private addFrontendSettings(): void {
@@ -95,14 +89,6 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
         this._integrationScheme = new intScheme(this);
 
         debug(`Using integration scheme: ${scheme}`, "frontend");
-    }
-
-    // TODO: Drop later
-    private assignGlobalProfileColors(): void {
-        // Assign colors to global profiles
-        ColorTable.color(dfgDmp.metadata.id[0]);
-        ColorTable.color(dataCite.metadata.id[0]);
-        ColorTable.color(shoes.metadata.id[0]);
     }
 
     /**
@@ -143,6 +129,16 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
             throw new Error("Tried to access the connectors service before its creation");
         }
         return this._connectorsService;
+    }
+
+    /**
+     * The metadata service.
+     */
+    public get metadataService(): Service {
+        if (!this._metadataService) {
+            throw new Error("Tried to access the metadata service before its creation");
+        }
+        return this._metadataService;
     }
 
     /**

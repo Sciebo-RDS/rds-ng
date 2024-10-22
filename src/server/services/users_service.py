@@ -1,13 +1,13 @@
-from common.py.component import BackendComponent
 from common.py.data.entities import clone_entity
 from common.py.data.entities.authorization import AuthorizationState
 from common.py.data.entities.user import User
 from common.py.services import Service
 
 from .tools import send_projects_list, get_user_authorizations
+from ..component import ServerComponent
 
 
-def create_users_service(comp: BackendComponent) -> Service:
+def create_users_service(comp: ServerComponent) -> Service:
     """
     Creates the users service.
 

@@ -1,5 +1,4 @@
-import json
-
+from common.py.data.entities.metadata import filter_containers, MetadataProfileContainer
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
     DataManagementPlanFeature,
@@ -12,8 +11,7 @@ from common.py.data.exporters import (
     ProjectExporterID,
     ProjectExporterResult,
 )
-from .. import render_exporter_template
-from ....utils import typst_compile
+from server.data.exporters import ExporterTemplateProfileData
 
 
 class PDFExporter(ProjectExporter):
@@ -44,9 +42,8 @@ class PDFExporter(ProjectExporter):
 
     def _export_dmp(self, project: Project) -> ProjectExporterResult:
         # TODO: Use an external file
-        template = """= #str("${project.title}") - Data Management Plan
-
-% for key, value in dmp_metadata.items():
+        template_header = """= #str("${project.title}") - Data Management Plan\n\n"""
+        template_body = """% for key, value in dmp_metadata.items():
 == #str("${value.label}")
 % for item_value in value.values:
 *#str("${item_value.label}")*
@@ -58,12 +55,30 @@ class PDFExporter(ProjectExporter):
 
 % endfor
 % endfor
+
 """
 
-        # TODO: Do not use a hardcoded profile
-        with open("/component/common/assets/profiles/dfg.json") as file:
-            profile = json.load(file)
+        from .. import render_exporter_template
+        from ....utils import typst_compile
+        from ....component import ServerComponent
 
-        output = render_exporter_template(project, template, dmp_profile=profile)
+        profiles = filter_containers(
+            ServerComponent.instance().server_data.profile_containers,
+            category=DataManagementPlanFeature.feature_id,
+            role=MetadataProfileContainer.Role.GLOBAL,
+        )
+
+        output = render_exporter_template(project, template_header)
+        for profile in profiles:
+            output += render_exporter_template(
+                project,
+                template_body,
+                profile_data={
+                    "dmp_metadata": ExporterTemplateProfileData(
+                        profile=profile.profile,
+                        metadata=project.features.dmp.plan,
+                    )
+                },
+            )
         pdf_data = typst_compile(output)
         return ProjectExporterResult(mimetype="text/plain", data=pdf_data)

@@ -1,18 +1,19 @@
 import time
 
-from common.py.component import BackendComponent
 from common.py.core.logging import info, debug, warning
 from common.py.data.entities.connector import Connector
 from common.py.data.verifiers.connector import ConnectorVerifier
 from common.py.services import Service
 from common.py.utils import EntryGuard
 
+from ..component import ServerComponent
+
 _MAX_CONNECTOR_AGE = (
     2.5 * 3600
 )  # If no connector announce has been received within the last 2.5 hours, it will be purged
 
 
-def create_connectors_service(comp: BackendComponent) -> Service:
+def create_connectors_service(comp: ServerComponent) -> Service:
     """
     Creates the connectors service.
 

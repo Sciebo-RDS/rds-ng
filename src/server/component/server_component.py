@@ -10,6 +10,7 @@ from common.py.core.logging import error, info, debug
 from common.py.utils import UnitID
 
 from ..data.exporters import register_project_exporters
+from ..data.server import ServerData
 
 # Make the entire API known
 from common.py.api import *
@@ -30,10 +31,13 @@ class ServerComponent(BackendComponent):
         self._add_server_settings()
         self._prepare_storage_pool()
 
+        self._server_data = ServerData()
+
     def run(self) -> None:
         from ..services import (
             create_authorization_service,
             create_connectors_service,
+            create_metadata_service,
             create_project_exporters_service,
             create_project_jobs_service,
             create_projects_service,
@@ -48,6 +52,7 @@ class ServerComponent(BackendComponent):
         # Create all server services
         create_session_service(self)
         create_connectors_service(self)
+        create_metadata_service(self)
         create_users_service(self)
         create_projects_service(self)
         create_resources_service(self)
@@ -92,6 +97,13 @@ class ServerComponent(BackendComponent):
             )
 
             raise exc
+
+    @property
+    def server_data(self) -> ServerData:
+        """
+        The global server data.
+        """
+        return self._server_data
 
     @staticmethod
     def instance() -> "ServerComponent":

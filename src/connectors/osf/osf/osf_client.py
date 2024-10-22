@@ -1,9 +1,7 @@
-import os
 import pathlib
 from http import HTTPStatus
 
 import requests
-from metadata import OSFMetadataCreator
 
 from common.py.component import BackendComponent
 from common.py.core.messaging import Channel
@@ -12,12 +10,15 @@ from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
-
-from ...base.integration.execution import RequestsExecutor
-from .osf_callbacks import (OSFCreateProjectCallbacks,
-                            OSFDeleteProjectCallbacks, OSFGetStorageCallbacks,
-                            OSFUploadFileCallbacks)
+from .osf_callbacks import (
+    OSFCreateProjectCallbacks,
+    OSFDeleteProjectCallbacks,
+    OSFGetStorageCallbacks,
+    OSFUploadFileCallbacks,
+)
 from .osf_request_data import OSFFileData, OSFProjectData, OSFStorageData
+from ..metadata import OSFMetadataCreator
+from ...base.integration.execution import RequestsExecutor
 
 
 class OSFClient(RequestsExecutor):
@@ -72,8 +73,8 @@ class OSFClient(RequestsExecutor):
         """
 
         creator = OSFMetadataCreator()
-        metadata = creator.create(project.features.metadata.metadata)
-        #creator.validate(metadata)
+        metadata = creator.create(project.features.project_metadata.metadata)
+        # creator.validate(metadata)
 
         def _execute(session: requests.Session) -> OSFProjectData:
             resp = self.post(
@@ -83,9 +84,17 @@ class OSFClient(RequestsExecutor):
                     "data": {
                         "type": "nodes",
                         "attributes": {
-                            "title": metadata.title if metadata.title else 'Uploaded via Sciebo RDS',
-                            "category": metadata.category if metadata.category else 'other',
-                            "description": metadata.description if metadata.description else '',
+                            "title": (
+                                metadata.title
+                                if metadata.title
+                                else "Uploaded via Sciebo RDS"
+                            ),
+                            "category": (
+                                metadata.category if metadata.category else "other"
+                            ),
+                            "description": (
+                                metadata.description if metadata.description else ""
+                            ),
                         },
                     }
                 },

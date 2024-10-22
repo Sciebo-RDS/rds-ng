@@ -5,13 +5,13 @@ from common.py.api.session import (
     SetSessionValueCommand,
     SetSessionValueReply,
 )
-from common.py.component import BackendComponent
 from common.py.services import Service
 
 from .server_service_context import ServerServiceContext
+from ..component import ServerComponent
 
 
-def create_session_service(comp: BackendComponent) -> Service:
+def create_session_service(comp: ServerComponent) -> Service:
     """
     Creates the session service that handles all session-related messages.
 

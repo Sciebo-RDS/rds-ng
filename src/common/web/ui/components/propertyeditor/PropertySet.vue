@@ -7,13 +7,14 @@ import InputText from "primevue/inputtext";
 import OrderList from "primevue/orderlist";
 
 import { computed, ref, type Ref } from "vue";
+import { useColorsStore } from "../../../data/stores/ColorsStore";
 
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
 import { ProfileLayoutClass } from "./PropertyProfile";
-import { ColorTable } from "./utils/ColorTable";
 
 const props = defineProps(["controller", "project", "projectProfiles", "projectObjects", "sharedObjectStore"]);
+const colorsStore = useColorsStore();
 
 const getLayout = () => {
     let layout: ProfileLayoutClass[] = [];
@@ -35,9 +36,10 @@ const getLayout = () => {
 const layout = getLayout();
 
 const propsToShow = ref<ProfileLayoutClass[]>(
-    layout.filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined)
+    layout
+        .filter((e: ProfileLayoutClass) => e.required || props.projectObjects.get(e.id) !== undefined)
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
-    );
+);
 
 const selectedProperties = ref([]) as Ref<ProfileLayoutClass[]>;
 const unselectProperties = () => (selectedProperties.value = []);
@@ -53,7 +55,8 @@ const hiddenPropertys = computed(() => layout.filter((e: ProfileLayoutClass) => 
 
 const filteredProperties = computed(() =>
     hiddenPropertys.value.filter(
-        (e: ProfileLayoutClass) => e.label.toLowerCase().includes(searchString.value.toLowerCase()) || e.description?.toLowerCase().includes(searchString.value.toLowerCase())
+        (e: ProfileLayoutClass) =>
+            e.label.toLowerCase().includes(searchString.value.toLowerCase()) || e.description?.toLowerCase().includes(searchString.value.toLowerCase())
     )
 );
 
@@ -111,7 +114,6 @@ const searchString = ref("");
             searchString = '';
         "
     >
-
         <template #default>
             <div class="h-full flex-col flex space-y-4">
                 <FloatLabel>
@@ -134,15 +136,14 @@ const searchString = ref("");
                                     v-for="p in slotProps.item.profiles"
                                     :label="p[0]"
                                     size="small"
-                                    :style="`background-color: ${ColorTable.color(p[0])}`"
-                                class="h-4 !rounded p-2.5 text-sm self-center bg-opacity-40"
-                        /></span>
+                                    :style="`background-color: ${colorsStore.color(p[0])}`"
+                                    class="h-4 !rounded p-2.5 text-sm self-center bg-opacity-40"
+                            /></span>
                             <span class="text-gray-500 ellipsis line-clamp-1" :title="slotProps.item.description">{{ slotProps.item.description }}</span>
                         </div>
                     </template>
                 </OrderList>
             </div>
-
         </template>
         <template #footer>
             <div class="flex justify-end gap-2 mt-5">

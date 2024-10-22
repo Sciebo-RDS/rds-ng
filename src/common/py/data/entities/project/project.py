@@ -6,7 +6,7 @@ from dataclasses_json import dataclass_json
 
 from .features import (
     ProjectFeatureID,
-    MetadataFeature,
+    ProjectMetadataFeature,
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
@@ -53,12 +53,14 @@ class Project:
         Data for all **Project** features.
 
         Attributes:
-            metadata: The metadata project feature.
-            resources_metadata: The resources metadata project feature.
+            project_metadata: The project metadata feature.
+            resources_metadata: The resources metadata feature.
             dmp: The data management plan feature.
         """
 
-        metadata: MetadataFeature = field(default_factory=MetadataFeature)
+        project_metadata: ProjectMetadataFeature = field(
+            default_factory=ProjectMetadataFeature
+        )
         resources_metadata: ResourcesMetadataFeature = field(
             default_factory=ResourcesMetadataFeature
         )

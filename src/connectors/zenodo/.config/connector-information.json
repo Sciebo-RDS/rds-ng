@@ -6,8 +6,8 @@
         "publish_once": false
     },
     "logos": {
-        "default": "/component/common/assets/img/logos/zenodo.png",
-        "horizontal": "/component/common/assets/img/logos/zenodo.png"
+        "default": "/component/connectors/zenodo/.assets/logo.png",
+        "horizontal": "/component/connectors/zenodo/.assets/logo.png"
     },
-    "metadata_profile": "/component/common/assets/profiles/zenodo.json"
+    "metadata_profile": "/component/connectors/zenodo/.assets/metadata-profile.json"
 }

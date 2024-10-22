@@ -7,25 +7,26 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import { computed, nextTick, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
 
-import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
-import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
-import { Project } from "@common/data/entities/project/Project";
-import { Resource } from "@common/data/entities/resource/Resource";
-import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { objects } from "@common/ui/components/propertyeditor/profiles/objects";
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import { PropertyProfile } from "@common/ui/components/propertyeditor/PropertyProfile";
-import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
-import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
-import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
-import { deepClone } from "@common/utils/ObjectUtils";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useMetadataStore } from "@/data/stores/MetadataStore";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
 
 import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
+
+import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
+import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
+import { type ResourcesMetadata, ResourcesMetadataFeature } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import { Project } from "@common/data/entities/project/Project";
+import { Resource } from "@common/data/entities/resource/Resource";
+import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
+import { deepClone } from "@common/utils/ObjectUtils";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -35,7 +36,7 @@ const props = defineProps({
     }
 });
 const { project } = toRefs(props);
-
+const metadataStore = useMetadataStore();
 const resourcesNodes = ref<Object[]>([]);
 const selectedNodes = ref({} as Record<string, boolean>);
 const selectedData = ref([] as Array<Resource>);
@@ -89,7 +90,7 @@ watch(
 
         debounce(() => {
             const resourcesSet = unref(metadata);
-            const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.resources_metadata);
+            const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.metadata);
 
             const selectedPaths = Object.keys(selectedNodes.value);
             selectedPaths.forEach((path) => {
@@ -102,7 +103,7 @@ watch(
 
             // TODO: A hack to update the local data; nedds to be changed later
             // @ts-ignore
-            project!.value.features.resources_metadata.resources_metadata = updatedData;
+            project!.value.features.resources_metadata.metadata = updatedData;
         });
     },
     { deep: true }
@@ -113,7 +114,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
 
     /* const persistedSets: PersistedSet[] = []; */
     const selectedPaths = Object.keys(nodes);
-    const metadata = project!.value.features.resources_metadata.resources_metadata;
+    const metadata = project!.value.features.resources_metadata.metadata;
     /* selectedPaths.forEach((path) => {
         persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
     }); */
@@ -124,7 +125,9 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     nextTick(() => (blockResourcesUpdate = false));
 });
 
-projectProfiles.mountProfile(objects as PropertyProfile);
+for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, MetadataProfileContainerRole.Global)) {
+    projectProfiles.mountProfile(profile.profile);
+}
 </script>
 
 <template>
@@ -198,7 +201,7 @@ projectProfiles.mountProfile(objects as PropertyProfile);
                             </div>
                             <PropertyEditor
                                 v-model="resourcesData"
-                                v-model:shared-objects="project!.features.metadata.shared_objects"
+                                v-model:shared-objects="project!.features.project_metadata.shared_objects"
                                 :projectProfiles="projectProfiles as PropertyProfileStore"
                                 class="w-full"
                             />

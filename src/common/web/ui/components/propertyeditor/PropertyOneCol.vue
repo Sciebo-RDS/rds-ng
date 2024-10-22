@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import { computed, ref, watch, type PropType, type Ref } from "vue";
+import { useColorsStore } from "../../../data/stores/ColorsStore";
 import MandatoryMark from "../misc/MandatoryMark.vue";
 import LinkedItemButton from "./LinkedItemButton.vue";
 import NewPropertyButton from "./NewPropertyButton.vue";
@@ -10,7 +11,6 @@ import { PropertyProfileStore } from "./PropertyProfileStore";
 import Chip from "primevue/chip";
 import OverlayPanel from "primevue/overlaypanel";
 import { LayoutObject, ProjectObject, ProjectObjectStore } from "./ProjectObjectStore";
-import { ColorTable } from "./utils/ColorTable";
 
 const emit = defineEmits(["hide"]);
 const { index, propertyClass, profileId, projectObjects, projectProfiles, sharedObjectStore, layoutProfiles } = defineProps({
@@ -43,6 +43,7 @@ const { index, propertyClass, profileId, projectObjects, projectProfiles, shared
         required: true
     }
 });
+const colorsStore = useColorsStore();
 
 projectObjects.add(new LayoutObject(propertyClass.profiles, propertyClass.id));
 
@@ -136,7 +137,7 @@ const toggleRemoveProperty = (e: Event) => {
                 <span :title="propertyClass.label" class="min-w-fit">
                     <span class="text-lg"> {{ propertyClass.label }} </span>
                     <span v-if="propertyClass.required" v-for="p in profiles">
-                        <MandatoryMark class="pl-1" :color="ColorTable.color(p[0], 70, 100)" :title="`This field is required by ${p[0]}`" />
+                        <MandatoryMark class="pl-1" :color="colorsStore.color(p[0], 70, 100)" :title="`This field is required by ${p[0]}`" />
                     </span>
                     <Button v-if="propertyClass.description" unstyled @click="toggleRemoveDeadLink">
                         <i class="pi pi-question-circle mx-2" style="font-size: 1rem; color: gray" />
@@ -164,7 +165,7 @@ const toggleRemoveProperty = (e: Event) => {
                         :label="projectProfiles.getProfileLabelById(p)"
                         size="small"
                         class="h-4 !rounded py-3 text-sm bg-opacity-40"
-                        :style="`background-color: ${ColorTable.color(p[0])}`"
+                        :style="`background-color: ${colorsStore.color(p[0])}`"
                     />
                 </span>
             </div>

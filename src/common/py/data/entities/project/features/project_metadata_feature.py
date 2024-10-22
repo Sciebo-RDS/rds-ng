@@ -11,12 +11,12 @@ MetadataObjects = typing.List[typing.Dict[str, typing.Any]]  # TODO: Use proper 
 
 @dataclass_json
 @dataclass
-class MetadataFeature(ProjectFeature):
+class ProjectMetadataFeature(ProjectFeature):
     """
-    Data class for the metadata project feature.
+    Data class for the project metadata project feature.
     """
 
-    feature_id: typing.ClassVar[ProjectFeatureID] = "metadata"
+    feature_id: typing.ClassVar[ProjectFeatureID] = "project_metadata"
 
     metadata: ProjectMetadata = field(default_factory=list)
     shared_objects: MetadataObjects = field(default_factory=list)

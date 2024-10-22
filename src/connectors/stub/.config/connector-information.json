@@ -6,8 +6,8 @@
         "publish_once": false
     },
     "logos": {
-        "default": "/component/common/assets/img/logos/stub.png",
-        "horizontal": "/component/common/assets/img/logos/stub.png"
+        "default": "/component/connectors/stub/.assets/logo.png",
+        "horizontal": "/component/connectors/stub/.assets/logo.png"
     },
-    "metadata_profile": "/component/common/assets/profiles/stub.json"
+    "metadata_profile": "/component/connectors/stub/.assets/metadata-profile.json"
 }

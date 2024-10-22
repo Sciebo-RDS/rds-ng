@@ -35,20 +35,18 @@ class ProjectFeaturesVerifier(Verifier):
             )
 
         from ...entities.project.features import (
-            MetadataFeature,
+            ProjectMetadataFeature,
             DataManagementPlanFeature,
         )
 
         # Important! When adding new features, include them here as well
-        if is_selected(MetadataFeature.feature_id):
+        if is_selected(ProjectMetadataFeature.feature_id):
             self._verify_metadata_feature()
         if is_selected(DataManagementPlanFeature.feature_id):
             self._verify_dmp_feature()
 
     def _verify_metadata_feature(self) -> None:
-        # TODO
         pass
 
     def _verify_dmp_feature(self) -> None:
-        # TODO
         pass

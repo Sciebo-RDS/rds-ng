@@ -19,7 +19,7 @@ from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
     ProjectFeatureID,
-    MetadataFeature,
+    ProjectMetadataFeature,
     ResourcesMetadataFeature,
     DataManagementPlanFeature,
 )
@@ -33,7 +33,7 @@ class ProjectsTables:
     main: Table
 
     features: Table
-    feature_metadata: Table
+    feature_project_metadata: Table
     feature_resources_metadata: Table
     feature_dmp: Table
 
@@ -88,8 +88,8 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         ),
     )
 
-    table_feature_metadata = Table(
-        "project_feature_metadata",
+    table_feature_project_metadata = Table(
+        "project_feature_project_metadata",
         metadata,
         Column(
             "project_id",
@@ -110,7 +110,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("resources_metadata", JSONEncodedDataType),
+        Column("metadata", JSONEncodedDataType),
     )
 
     table_feature_dmp = Table(
@@ -185,8 +185,8 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Project.Features,
         table_project_features,
         properties={
-            "metadata": relationship(
-                MetadataFeature,
+            "project_metadata": relationship(
+                ProjectMetadataFeature,
                 backref="project_features",
                 uselist=False,
                 cascade="all, delete",
@@ -207,8 +207,8 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
     )
 
     reg.map_imperatively(
-        MetadataFeature,
-        table_feature_metadata,
+        ProjectMetadataFeature,
+        table_feature_project_metadata,
     )
 
     reg.map_imperatively(
@@ -241,7 +241,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
     return ProjectsTables(
         main=table_projects,
         features=table_project_features,
-        feature_metadata=table_feature_metadata,
+        feature_project_metadata=table_feature_project_metadata,
         feature_resources_metadata=table_feature_resources_metadata,
         feature_dmp=table_feature_dmp,
         logbook=table_project_logbook,
