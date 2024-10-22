@@ -1,3 +1,5 @@
+import { Type } from "class-transformer";
+
 import { PropertyProfile } from "../../../ui/components/propertyeditor/PropertyProfile";
 
 /**
@@ -19,6 +21,8 @@ export class MetadataProfileContainer {
     public readonly category: string;
     public readonly role: MetadataProfileContainerRole;
 
+    // @ts-ignore
+    @Type(() => PropertyProfile)
     public readonly profile: PropertyProfile;
 
     public constructor(category: string, role: MetadataProfileContainerRole, profile: PropertyProfile) {

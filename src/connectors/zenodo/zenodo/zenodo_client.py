@@ -126,7 +126,7 @@ class ZenodoClient(RequestsExecutor):
                             metadata.version if metadata.version is not None else ""
                         ),
                         "grants": (
-                            metadata.grants if metadata.grants is not None else ""
+                            metadata.grants if metadata.grants is not None else []
                         ),
                         "dates": metadata.dates if metadata.dates is not None else [],
                     }

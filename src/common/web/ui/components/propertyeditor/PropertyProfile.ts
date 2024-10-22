@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import { type Component } from "vue";
 
 import CheckBoxForm from "./propertyforms/CheckBoxForm.vue";
@@ -26,38 +27,115 @@ class ProfileMetadata {
      * @param displayLabel - The name of the profile.
      * @param description - The description of the profile.
      */
-    public constructor(
-        public readonly id: ProfileID,
-        public readonly displayLabel: string,
-        public readonly description: string
-    ) {}
+
+    public readonly id: ProfileID;
+
+    public readonly displayLabel: string;
+
+    public readonly description: string;
+
+    public constructor(id: ProfileID, displayLabel: string, description: string) {
+        this.id = id;
+        this.displayLabel = displayLabel;
+        this.description = description;
+    }
+}
+
+class ProfileClassInput {
+    /**
+     * Creates an instance of `ProfileClassInput`.
+     * @param id - The ID of the input.
+     * @param label - The label of the input.
+     * @param type - The type of the input.
+     * @param description - The description of the input.
+     * @param example - An example of the input.
+     * @param options - The options of the input.
+     * @param required - Whether the input is required.
+     */
+
+    public readonly id: string;
+    public readonly label: string;
+    public readonly type: string;
+    public readonly description?: string;
+    public readonly example?: string;
+    public readonly options?: string[];
+    public required?: boolean;
+
+    public constructor(id: string, label: string, type: string, description?: string, example?: string, options?: string[], required?: boolean) {
+        this.id = id;
+        this.label = label;
+        this.type = type;
+        this.description = description;
+        this.example = example;
+        this.options = options;
+        this.required = required;
+    }
 }
 
 // make inputs its own class, distinguish inputs that have options
 export class ProfileClass {
+    public readonly id: string;
+    public readonly label: string;
+    public readonly description?: string;
+    public readonly labelTemplate?: string;
+    public required?: boolean;
+    public readonly multiple?: boolean;
+    public readonly example?: string;
+    public readonly type?: string[];
+
+    // @ts-ignore
+    @Type(() => ProfileClassInput)
+    public readonly input?: ProfileClassInput[];
+
     public constructor(
-        public readonly id: string,
-        public readonly label: string,
-        public readonly description?: string,
-        public readonly labelTemplate?: string,
-        public required?: boolean,
-        public readonly multiple?: boolean,
-        public readonly example?: string,
-        public readonly type?: string[],
-        public readonly input?: { id: string; label: string; type: string; description?: string; example?: string; options?: string[]; required?: boolean }[]
-    ) {}
+        id: string,
+        label: string,
+        description?: string,
+        labelTemplate?: string,
+        required?: boolean,
+        multiple?: boolean,
+        example?: string,
+        type?: string[],
+        input?: ProfileClassInput[]
+    ) {
+        this.id = id;
+        this.label = label;
+        this.description = description;
+        this.labelTemplate = labelTemplate;
+        this.required = required;
+        this.multiple = multiple;
+        this.example = example;
+        this.type = type;
+        this.input = input;
+    }
 }
 
 export class ProfileLayoutClass extends ProfileClass {
     profiles?: ProfileID[] = [];
 }
 
+class ProfileClassDictionary {
+    [key: string]: ProfileClass;
+}
+
 export class PropertyProfile {
-    public constructor(
-        public readonly metadata: ProfileMetadata,
-        public readonly layout: ProfileLayoutClass[],
-        public readonly classes?: { [key: string]: ProfileClass }
-    ) {}
+    // @ts-ignore
+    @Type(() => ProfileMetadata)
+    public readonly metadata: ProfileMetadata = new ProfileMetadata(["", ""], "", "");
+
+    // @ts-ignore
+    @Type(() => ProfileLayoutClass)
+    public readonly layout: ProfileLayoutClass[] = [];
+
+    // @ts-ignore
+    @Type(() => ProfileClassDictionary)
+    public readonly classes?: ProfileClassDictionary = {};
+
+    public constructor(metadata: ProfileMetadata, layout: ProfileLayoutClass[], classes?: ProfileClassDictionary) {
+        this.metadata = metadata;
+        this.layout = layout;
+        this.classes = classes;
+    }
 }
 
 export enum PropertyDataType {

@@ -1,4 +1,3 @@
-import { plainToInstance } from "class-transformer";
 import { ProfileClass, PropertyProfile, type ProfileID } from "./PropertyProfile";
 
 const isProfile = (profile: any): profile is PropertyProfile => {
@@ -22,7 +21,7 @@ export class PropertyProfileStore {
     public mountProfile(profile: PropertyProfile) {
         try {
             if (isProfile(profile)) {
-                this._profiles.push(plainToInstance(PropertyProfile, profile) as PropertyProfile);
+                this._profiles.push(profile as PropertyProfile);
                 console.log("mounted profile: ", profile);
             } else {
                 console.log("Invalid profile: ", profile);
