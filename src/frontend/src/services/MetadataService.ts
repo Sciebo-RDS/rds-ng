@@ -1,7 +1,7 @@
 import { GetMetadataProfilesReply } from "@common/api/metadata/MetadataCommands";
 import { MetadataProfileContainer } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { useColorsStore } from "@common/data/stores/ColorsStore";
 import { Service } from "@common/services/Service";
-import { ColorTable } from "@common/ui/components/propertyeditor/utils/ColorTable";
 import { deepClone, shortenDataStrings } from "@common/utils/ObjectUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -25,12 +25,14 @@ export default function (comp: FrontendComponent): Service {
         (svc: Service) => {
             svc.messageHandler(GetMetadataProfilesReply, (msg: GetMetadataProfilesReply, ctx: FrontendServiceContext) => {
                 if (msg.success) {
+                    const colorsStore = useColorsStore();
+
                     ctx.logger.debug("Retrieved metadata profiles", "metadata", { profiles: msg.profiles.map(printableProfile) });
 
                     // @ts-ignore
                     ctx.metadataStore.profiles = msg.profiles;
 
-                    ColorTable.populateFromProfileContainerList(ctx.metadataStore.profiles);
+                    colorsStore.populateFromProfileContainerList(msg.profiles);
                 } else {
                     ctx.logger.error("Unable to retrieve the metadata profiles", "metadata", { reason: msg.message });
                 }
