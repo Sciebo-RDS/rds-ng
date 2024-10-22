@@ -1,8 +1,8 @@
-import { WebComponent } from "@common/component/WebComponent";
+import { ListProjectExportersReply } from "@common/api/project/ProjectExportersCommands";
 import { Service } from "@common/services/Service";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
-import { ListProjectExportersReply } from "@common/api/project/ProjectExportersCommands";
 
 /**
  * Creates the project exporters service.
@@ -11,7 +11,7 @@ import { ListProjectExportersReply } from "@common/api/project/ProjectExportersC
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function (comp: FrontendComponent): Service {
     return comp.createService(
         "Project exporters service",
         (svc: Service) => {

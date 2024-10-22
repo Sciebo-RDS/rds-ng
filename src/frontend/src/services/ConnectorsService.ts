@@ -1,10 +1,10 @@
 import { ListConnectorsReply } from "@common/api/connector/ConnectorCommands";
 import { ConnectorsListEvent } from "@common/api/connector/ConnectorEvents";
-import { WebComponent } from "@common/component/WebComponent";
 import { Connector } from "@common/data/entities/connector/Connector";
 import { Service } from "@common/services/Service";
 import { deepClone, shortenDataStrings } from "@common/utils/ObjectUtils";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { assignConnectorProfileColors } from "@/data/entities/connector/ConnectorUtils";
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 
@@ -15,7 +15,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function (comp: FrontendComponent): Service {
     function printableConnector(connector: Connector): string {
         let obj = deepClone<Connector>(connector);
         return JSON.stringify(shortenDataStrings(obj));

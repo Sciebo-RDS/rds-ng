@@ -1,6 +1,7 @@
-import { FrontendServiceContext } from "@/services/FrontendServiceContext";
-import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 
 /**
  * Creates the main frontend service.
@@ -9,7 +10,6 @@ import { Service } from "@common/services/Service";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
-    return comp.createService("Frontend service", (svc: Service) => {
-    }, FrontendServiceContext);
+export default function (comp: FrontendComponent): Service {
+    return comp.createService("Frontend service", (svc: Service) => {}, FrontendServiceContext);
 }

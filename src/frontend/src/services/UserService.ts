@@ -1,8 +1,8 @@
 import { GetUserSettingsReply, ListUserAuthorizationsReply, SetUserSettingsReply } from "@common/api/user/UserCommands";
 import { UserAuthorizationsListEvent } from "@common/api/user/UserEvents";
-import { WebComponent } from "@common/component/WebComponent";
 import { Service } from "@common/services/Service";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 
 /**
@@ -12,7 +12,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function (comp: FrontendComponent): Service {
     return comp.createService(
         "User service",
         (svc: Service) => {
@@ -56,6 +56,6 @@ export default function (comp: WebComponent): Service {
                 ctx.userStore.userAuthorizations = msg.authorizations;
             });
         },
-        FrontendServiceContext,
+        FrontendServiceContext
     );
 }

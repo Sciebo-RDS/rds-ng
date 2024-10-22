@@ -1,10 +1,10 @@
 import { GetMetadataProfilesReply } from "@common/api/metadata/MetadataCommands";
-import { WebComponent } from "@common/component/WebComponent";
 import { MetadataProfileContainer } from "@common/data/entities/metadata/MetadataProfileContainer";
 import { Service } from "@common/services/Service";
 import { ColorTable } from "@common/ui/components/propertyeditor/utils/ColorTable";
 import { deepClone, shortenDataStrings } from "@common/utils/ObjectUtils";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
 
 /**
@@ -14,7 +14,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function (comp: FrontendComponent): Service {
     function printableProfile(profile: MetadataProfileContainer): string {
         let obj = deepClone<MetadataProfileContainer>(profile);
         return JSON.stringify(shortenDataStrings(obj));

@@ -1,11 +1,11 @@
 import { ListProjectJobsReply } from "@common/api/project/ProjectJobCommands";
 import { ProjectJobCompletionEvent, ProjectJobsListEvent } from "@common/api/project/ProjectJobEvents";
-import { WebComponent } from "@common/component/WebComponent";
 import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { findProjectByID } from "@common/data/entities/project/ProjectUtils";
 import { Service } from "@common/services/Service";
 import { OverlayNotifications } from "@common/ui/notifications/OverlayNotifications";
 
+import { FrontendComponent } from "@/component/FrontendComponent";
 import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/ConnectorUtils";
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useProjectsStore } from "@/data/stores/ProjectsStore";
@@ -19,7 +19,7 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  *
  * @returns - The newly created service.
  */
-export default function (comp: WebComponent): Service {
+export default function (comp: FrontendComponent): Service {
     return comp.createService(
         "Project jobs service",
         (svc: Service) => {
@@ -46,7 +46,7 @@ export default function (comp: WebComponent): Service {
                     projectID: msg.project_id,
                     connectorInstance: msg.connector_instance,
                     success: msg.success,
-                    message: msg.message,
+                    message: msg.message
                 });
 
                 const projStore = useProjectsStore();
@@ -62,17 +62,17 @@ export default function (comp: WebComponent): Service {
                     notifications.success(
                         "Job completed",
                         `${category?.verbNoun || "Execution"} of project '${project?.title || "(unknown project)"}' through connection ${connectorInstance?.name || "(unknown connection)"} has finished successfully.`,
-                        true,
+                        true
                     );
                 } else {
                     notifications.error(
                         "Job failed",
                         `${category?.verbNoun || "Execution"} of project '${project?.title || "(unknown project)"}' through connection ${connectorInstance?.name || "(unknown connection)"} has failed: ${msg.message}`,
-                        true,
+                        true
                     );
                 }
             });
         },
-        FrontendServiceContext,
+        FrontendServiceContext
     );
 }
