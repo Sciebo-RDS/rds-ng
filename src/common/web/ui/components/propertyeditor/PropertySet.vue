@@ -11,21 +11,22 @@ import { useColorsStore } from "../../../data/stores/ColorsStore";
 
 import { ProjectObjectStore } from "./ProjectObjectStore";
 import PropertyOneCol from "./PropertyOneCol.vue";
-import { ProfileLayoutClass } from "./PropertyProfile";
+import { ProfileLayoutClass, PropertyProfile } from "./PropertyProfile";
 
 const props = defineProps(["controller", "project", "projectProfiles", "projectObjects", "sharedObjectStore"]);
 const colorsStore = useColorsStore();
 
 const getLayout = () => {
     let layout: ProfileLayoutClass[] = [];
-    for (const profile of props.projectProfiles.list()) {
-        for (const p of profile["layout"]) {
+    for (const profile of props.projectProfiles.list() as PropertyProfile[]) {
+
+        for (const p of profile.getLayout()) {
             const x: ProfileLayoutClass | undefined = layout.find((xd: ProfileLayoutClass) => p.id == xd.id);
             if (x !== undefined) {
-                x["profiles"]!.push(profile["metadata"]["id"]);
+                x.addProfile(profile.getId());
                 if (p.required) x["required"] = true;
             } else {
-                p["profiles"] = [profile["metadata"]["id"]];
+                p["profiles"] = [profile.getId()];
                 layout.push(p);
             }
         }

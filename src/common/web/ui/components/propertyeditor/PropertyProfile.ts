@@ -112,12 +112,25 @@ export class ProfileClass {
 
 export class ProfileLayoutClass extends ProfileClass {
     profiles?: ProfileID[] = [];
+
+    addProfile(profile: ProfileID) {
+        this.profiles!.push(profile);
+    }
 }
 
 class ProfileClassDictionary {
     [key: string]: ProfileClass;
 }
 
+/**
+ * Represents a property profile with metadata, layout, and classes.
+ * 
+ * @remarks
+ * This class is used to encapsulate the profile metadata, layout, and class dictionary
+ * for a property editor component.
+ * 
+ * @public
+ */
 export class PropertyProfile {
     // @ts-ignore
     @Type(() => ProfileMetadata)
@@ -135,6 +148,46 @@ export class PropertyProfile {
         this.metadata = metadata;
         this.layout = layout;
         this.classes = classes;
+    }
+
+    /**
+     * Gets the layout part of the profile
+     * @returns the profile layout
+     */
+    getLayout(): ProfileLayoutClass[] {
+        return this.layout;
+    }
+
+    /**
+     * Gets the classes part of the profile
+     * @returns the profile classes
+     */
+    getClasses(): ProfileClassDictionary | undefined {
+        return this.classes;
+    }
+
+    /**
+     * Gets the version part of the ProfileID
+     * @returns the ProfileID version
+     */
+    public getId(): ProfileID {
+        return this.metadata.id;
+    }
+
+    /**
+     * Gets the name part of the ProfileID
+     * @returns the ProfileID name
+     */
+    getName(): string {
+        return this.metadata.id[0];
+    }
+
+    /**
+     * Gets the version part of the ProfileID
+     * @returns the ProfileID version
+     */
+    getVersion(): string {
+        return this.metadata.id[1];
     }
 }
 
