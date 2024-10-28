@@ -13,10 +13,10 @@ import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
                         <div class="text font-light uppercase">Sciebo Research Data Services</div>
                         <div class="text-[2.7rem] font-black uppercase leading-none">Research data management, made easy</div>
                     </div>
-                    <div class="text-[1.2rem] font-light mb-10 grid place-items-center">
+                    <div class="text-[1.2rem] font-light mb-10">
                         Your flexible solution for research data managing and publishing. The services are designed to make data management effortless and
                         collaborative, so you can focus on what matters most: your research.
-                        <div class="pl-6">
+                        <div class="pl-2">
                             Learn more:
                             <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
                         </div>
