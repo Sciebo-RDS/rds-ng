@@ -1,0 +1,61 @@
+import { DeleteProjectCommand } from "@common/api/project/ProjectCommands";
+import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
+import { Project } from "@common/data/entities/project/Project";
+import { ActionState } from "@common/ui/actions/ActionBase";
+import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
+import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
+import { StatusNotifier } from "@common/ui/actions/notifiers/StatusNotifier";
+import { type ConfirmDialogResult } from "@common/ui/dialogs/ConfirmDialog";
+import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
+
+import { useProjectsStore } from "@/data/stores/ProjectsStore";
+import { confirmDeleteProjectDialog } from "@/ui/dialogs/project/delete/ConfirmDeleteProjectDialog";
+import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
+
+/**
+ * Action to delete a project.
+ */
+export class DeleteProjectAction extends FrontendCommandAction<DeleteProjectCommand, CommandComposer<DeleteProjectCommand>> {
+    /**
+     * Shows a confirmation dialog.
+     *
+     * @param project - The project to delete.
+     */
+    public showConfirmation(project: Project): ConfirmDialogResult {
+        return confirmDeleteProjectDialog(this._component, project);
+    }
+
+    public prepare(project: Project): CommandComposer<DeleteProjectCommand> {
+        this.markProjectForDeletion(project);
+
+        this.prepareNotifiers(project);
+
+        this._composer = DeleteProjectCommand.build(this.messageBuilder, project.project_id);
+        return this._composer;
+    }
+
+    private markProjectForDeletion(project: Project): void {
+        const projStore = useProjectsStore();
+        projStore.markForDeletion(project.project_id);
+    }
+
+    protected addDefaultNotifiers(project: Project): void {
+        this.addNotifier(
+            ActionState.Done,
+            new StatusNotifier(
+                OverlayNotificationType.Success,
+                `Project '${project.title}' (ID: ${project.project_id}) has been deleted.`,
+                "material-icons-outlined mi-delete"
+            )
+        );
+        this.addNotifier(
+            ActionState.Failed,
+            new OverlayNotifier(
+                OverlayNotificationType.Error,
+                "Error deleting project",
+                `An error occurred while deleting project '${project.title}' (ID: ${project.project_id}): ${ActionNotifier.MessagePlaceholder}.`,
+                true
+            )
+        );
+    }
+}

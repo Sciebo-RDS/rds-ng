@@ -6,6 +6,8 @@ title: utils.unit_id
 ## UnitID Objects
 
 ```python
+@dataclass_json
+
 @dataclass(frozen=True)
 class UnitID()
 ```

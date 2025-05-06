@@ -11,31 +11,16 @@ class EventDispatcher(MessageDispatcher[Event])
 
 Message dispatcher specific to ``Event``.
 
-#### dispatch
+#### pre\_dispatch
 
 ```python
-def dispatch(msg: Event, msg_meta: EventMetaInformation,
-             handler: MessageHandlerMapping, ctx: MessageContextType) -> None
+def pre_dispatch(msg: Event, msg_meta: EventMetaInformation) -> None
 ```
 
-Dispatches a message to locally registered message handlers.
-
-Handlers can be either called synchronously or asynchronously, depending on how the handler was registered.
-
-**Notes**:
-
-  Exceptions arising within a message handler will not interrupt the running program; instead, such errors will only be logged.
-  
+Adds command meta information to a global list so that command replies can be handled properly.
 
 **Arguments**:
 
-- `msg` - The message to be dispatched.
-- `msg_meta` - The message meta information.
-- `handler` - The handler to be invoked.
-- `ctx` - The message context.
-  
-
-**Raises**:
-
-- `RuntimeError` - If the handler requires a different message type.
+- `msg` - The command that is about to be dispatched.
+- `msg_meta` - The command meta information.
 

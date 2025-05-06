@@ -14,6 +14,7 @@ Identifiers for server-specific networking settings.
 **Attributes**:
 
 - `ALLOWED_ORIGINS` - A comma-separated list of allowed origins; use the asterisk (*) to allow all (value type: ``string``).
+- `IDLE_TIMEOUT` - The time (in seconds) until idle clients will be disconnected automatically; set to 0 to disable.
 
 ## NetworkClientSettingIDs Objects
 

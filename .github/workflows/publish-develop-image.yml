@@ -1,0 +1,37 @@
+name: Build and publish a container image for the 'develop' branch
+on:
+    push:
+        branches:
+            - develop
+jobs:
+    build-and-push-image:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v4
+            -   name: Build containers
+                run: cd deployment/containers && make dev-build
+            -   name: Log in to registry
+                run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            -   name: Push images
+                run: |
+                    components=(
+                        server
+                        connector-osf
+                        connector-zenodo
+                        connector-stub
+                        frontend
+                    )
+                    
+                    for comp in "${components[@]}"; do
+                        IMAGE_ID=ghcr.io/sciebo-rds/rds-ng-$comp
+                        VERSION=develop
+                    
+                        echo IMAGE_ID=$IMAGE_ID
+                        echo VERSION=$VERSION
+                        docker tag docker.io/rds-ng/$comp:develop $IMAGE_ID:$VERSION
+                        docker push $IMAGE_ID:$VERSION
+                    done

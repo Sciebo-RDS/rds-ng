@@ -1,0 +1,6 @@
+from .connector_categories import register_connector_categories
+from .connector_categories_catalog import ConnectorCategoriesCatalog
+from .connector_category import ConnectorCategory
+
+from .archive_connector_category import ArchiveConnectorCategory
+from .repository_connector_category import RepositoryConnectorCategory

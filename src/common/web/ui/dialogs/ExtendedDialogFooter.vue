@@ -1,0 +1,45 @@
+<script setup lang="ts">
+import Button from "primevue/button";
+import { computed } from "vue";
+
+import { useExtendedDialogTools } from "./ExtendedDialogTools";
+
+import ErrorsMessage from "../components/misc/ErrorsMessage.vue";
+
+const { acceptDialog, rejectDialog, dialogData } = useExtendedDialogTools();
+
+const errors = computed<string[]>(() => {
+    if (!!dialogData.validator && !dialogData.validator.isValid) {
+        return dialogData.validator.errorMessages;
+    }
+    return [];
+});
+</script>
+
+<template>
+    <div class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] w-full items-center !pt-[1.5rem]">
+        <small v-if="errors.length" class="r-text-error mr-auto text-left">
+            <ErrorsMessage :errors="errors" />
+        </small>
+        <small v-else>&nbsp;</small>
+        <Button
+            v-if="dialogData.options.hasAcceptButton"
+            :label="dialogData.options.acceptLabel || 'OK'"
+            :icon="dialogData.options.acceptIcon"
+            size="small"
+            :disabled="false"
+            @click="acceptDialog"
+            class="!ml-2 !mr-0"
+        />
+        <Button
+            v-if="dialogData.options.hasRejectButton"
+            :label="dialogData.options.rejectLabel || 'Cancel'"
+            :icon="dialogData.options.rejectIcon"
+            size="small"
+            @click="rejectDialog"
+            class="!ml-2 !mr-0"
+        />
+    </div>
+</template>
+
+<style scoped lang="scss"></style>

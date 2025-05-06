@@ -1,5 +1,6 @@
 # Docker compose file to build/run the entire components stack
 services:
+    # -- Base images --
     # Build-only Python py-base image
     py-base:
         image: rds-ng/py-base:latest
@@ -10,15 +11,92 @@ services:
             mode: replicated
             replicas: 0
 
-    # Gate service
-    gate:
-        image: rds-ng/gate:latest
+    # Build-only Node base image
+    node-base:
+        image: rds-ng/node-base:latest
         build:
             context: ../../
-            dockerfile: deployment/containers/component/Dockerfile
+            dockerfile: deployment/containers/node-base/Dockerfile
+        deploy:
+            mode: replicated
+            replicas: 0
+
+    # -- Component images --
+    # Server service
+    server:
+        image: rds-ng/server:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
             args:
-                COMPONENT_NAME: "gate"
+                COMPONENT_NAME: "server"
         depends_on:
             - py-base
         ports:
             - "4200:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}server.env
+
+    # Connector: OSF
+    connector-psf:
+        image: rds-ng/connector-osf:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/osf"
+        depends_on:
+            - py-base
+        ports:
+            - "4300:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-osf.env
+
+    # Connector: Zenodo
+    connector-zenodo:
+        image: rds-ng/connector-zenodo:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/zenodo"
+        depends_on:
+            - py-base
+        ports:
+            - "4400:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-zenodo.env
+
+    # Connector: Stub
+    connector-stub:
+        image: rds-ng/connector-stub:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/stub"
+        depends_on:
+            - py-base
+        ports:
+            - "4900:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-stub.env
+
+    # Web frontend
+    frontend:
+        image: rds-ng/frontend:latest
+        volumes:
+            -   type: bind
+                source: ../config/frontend
+                target: /app/config
+        build:
+            context: ../../
+            dockerfile: deployment/containers/web-component/Dockerfile
+            args:
+                COMPONENT_NAME: "frontend"
+        depends_on:
+            - node-base
+        ports:
+            - "8000:80"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}frontend.env

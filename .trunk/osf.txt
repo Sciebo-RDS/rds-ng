@@ -1,0 +1,48 @@
+Überblick OSF API
+=================
+
+* Access über Bearer token
+* HTTP API
+* GET/POST/PUT/PATCH usw.
+* Eigentlicher Request per JSON:
+    {
+      "data": {
+        "id": "..." // Bei PATCH/PUT
+        "type": "nodes",
+        "attributes": {
+          ...
+        }
+      }
+    }
+* Fehler per HTTP Code und Response (JSON):
+    {
+      "errors": [
+        {
+          "source": {
+            "pointer": "/data/attributes/category"
+          },
+          "detail": "This field is required."
+        }
+      ]
+    }
+* POST etc. Requests senden ebenfalls Daten in Antwort (JSON, in "data")
+* Project = Root level Node
+* Default storage: osfstorage
+* Häufig enthalten die Responses ein "links" Field, die für weitere Aktionen genutzt werden müssen (zB Uploads)
+    * Details: https://developer.osf.io/#operation/nodes_files_list
+    * Nutzt WaterButler: https://waterbutler.readthedocs.io/en/latest/
+
+
+
+OSF Client - Feature Assessment
+===============================
+
+* Requests per Py Requests
+    * Alle Methoden (GET/POST/PUT/PATCH...)
+* Parsen/Verarbeiten der Responses, insb. Errors
+* Grundlegende Funktionen: Projekt anlegen, Storage holen, Dinge hochladen, usw.
+    * Responses müssen jeweils "verpackt" werden in eigene einfache Objekte (z.B. Project, Storage)
+* Nutzen von `attempt` für Retries
+* Ggf. Transmitter absplitten (retry-Funktionalität etc.)
+* Publikation (logbook); muss Metadaten von OSF enthalten (z.B. Projekt-ID)
+* Allgemeines (kleines) Grundgerüst für derartige HTTP APIs; später auch für Zenodo etc.

@@ -20,6 +20,9 @@ def get_components():
 
 if __name__ == "__main__":
     for appid, info in get_components().items():
+        if info['tech'] != 'py':
+            continue
+
         comp_dir = f"./src/{info['directory']}"
         print(f"Type-checking component '{info['name']} ({appid})' in {comp_dir}...", flush=True)
 

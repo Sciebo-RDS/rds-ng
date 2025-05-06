@@ -1,0 +1,1 @@
+from .oauth2_configuration import get_oauth2_strategy_configuration

@@ -1,0 +1,173 @@
+/*
+ * Global colors.
+ */
+:root {
+    --r-border-color: var(--p-surface-200);
+    --r-shade-gray: var(--p-surface-200);
+    --r-shade-dark: var(--p-primary-50);
+    --r-shade-darker: var(--p-primary-100);
+}
+
+/*
+ * Helper classes to encapsulate standard theme variables.
+ */
+html {
+    overflow: hidden;
+}
+
+.r-text {
+    color: var(--p-text-color);
+}
+
+.r-primary-fg {
+    color: var(--p-primary-color);
+}
+
+.r-primary-bg {
+    background-color: var(--p-primary-color);
+}
+
+.r-primary-text {
+    color: var(--p-primary-contrast-color);
+}
+
+.r-highlight-fg {
+    color: var(--p-highlight-background);
+}
+
+.r-highlight-bg {
+    background-color: var(--p-highlight-background);
+}
+
+.r-highlight-text {
+    color: var(--p-highlight-color);
+}
+
+.r-border {
+    border-radius: var(--p-border-radius-sm);
+}
+
+.r-border-bg {
+    background-color: var(--p-surface-300);
+}
+
+/*
+ * Extending theme classes.
+ */
+.r-text-secondary {
+    @apply text-slate-500;
+}
+
+.r-text-light {
+    color: color-mix(in srgb, var(--p-text-color), #fff 30%);
+    opacity: 0.7;
+}
+
+.r-text-gray,
+.r-text-gray * {
+    @apply text-slate-600;
+}
+
+.r-text-light-gray,
+.r-text-light-gray * {
+    @apply text-slate-400;
+}
+
+.r-text-caption {
+    @apply font-bold;
+}
+
+.r-text-caption-big {
+    @apply font-bold text-lg;
+}
+
+.r-text-title {
+    @apply font-bold text-xl mb-2;
+}
+
+.r-text-success,
+.r-text-success * {
+    @apply text-green-500 #{!important};
+}
+
+.r-text-warning,
+.r-text-warning * {
+    @apply text-orange-500 #{!important};
+}
+
+.r-text-error,
+.r-text-error * {
+    @apply text-red-500 #{!important};
+}
+
+.r-text-link,
+.r-text-link * {
+    @apply text-cyan-600 #{!important};
+}
+
+.r-bg-info,
+.r-bg-info * {
+    @apply bg-cyan-600 #{!important};
+}
+
+.r-bg-success,
+.r-bg-success * {
+    @apply bg-green-400 #{!important};
+}
+
+.r-bg-warning,
+.r-bg-warning * {
+    @apply bg-yellow-400 #{!important};
+}
+
+.r-bg-error,
+.r-bg-error * {
+    @apply bg-red-500 #{!important};
+}
+
+.r-border-color {
+    color: var(--r-border-color);
+}
+
+.r-border-error {
+    @apply border-rose-500 #{!important};
+}
+
+.r-shade-dark {
+    background-color: var(--r-shade-dark);
+}
+
+.r-shade-darker {
+    background-color: var(--r-shade-darker);
+}
+
+.r-shade-text {
+    color: var(--p-text-color);
+}
+
+.r-shade-gray {
+    @apply bg-slate-50 #{!important};
+}
+
+.r-shade-dark-gray {
+    @apply bg-slate-100 #{!important};
+}
+
+.r-small-caps {
+    font-variant: small-caps;
+}
+
+.r-button-small {
+    @apply py-1 px-3 #{!important};
+}
+
+/*
+ * Helper classes.
+ */
+.r-z-index-toplevel {
+    @apply z-[9999] #{!important};
+}
+
+.p-scrollpanel-bar-y {
+    background-color: #aaa;
+}

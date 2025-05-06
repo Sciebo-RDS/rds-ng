@@ -1,0 +1,13 @@
+{
+    "name": "Zenodo (Sandbox)",
+    "description": "Zenodo makes the sharing, curation and publication of data and software a reality for all researchers.",
+    "category": "repository",
+    "options": {
+        "upload_once": false
+    },
+    "logos": {
+        "default": "/component/connectors/zenodo/.assets/logo.png",
+        "horizontal": "/component/connectors/zenodo/.assets/logo.png"
+    },
+    "metadata_profile": "/component/connectors/zenodo/.assets/metadata-profile.json"
+}

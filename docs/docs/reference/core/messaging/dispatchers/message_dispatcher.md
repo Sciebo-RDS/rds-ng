@@ -47,11 +47,15 @@ This method is called before any service-registered message handler is invoked.
 
 - `msg` - The message that is about to be dispatched.
 - `msg_meta` - The message meta information.
+  
+
+**Raises**:
+
+- `RuntimeError` - If the meta information type is invalid.
 
 #### dispatch
 
 ```python
-@abc.abstractmethod
 def dispatch(msg: MessageType, msg_meta: MessageMetaInformationType,
              handler: MessageHandlerMapping, ctx: MessageContextType) -> None
 ```

@@ -1,0 +1,88 @@
+import logging from "../../logging/Logging";
+import { Command } from "../Command";
+import { CommandFailType, CommandReply } from "../CommandReply";
+import { type Trace } from "../Message";
+import { CommandMetaInformation } from "../meta/CommandMetaInformation";
+import { CommandReplyMetaInformation } from "../meta/CommandReplyMetaInformation";
+import { MessageDispatcher } from "./MessageDispatcher";
+
+/**
+ * Message dispatcher specific to ``Command``.
+ */
+export class CommandDispatcher extends MessageDispatcher<Command, CommandMetaInformation> {
+    /**
+     * Takes care of checking whether issued commands have already timed out.
+     */
+    public process(): void {
+        super.process();
+
+        for (const unique of MessageDispatcher._metaInformationList.findTimedOutEntries()) {
+            CommandDispatcher.invokeReplyCallbacks(unique, null, null, CommandFailType.Timeout, "The command timed out");
+            MessageDispatcher._metaInformationList.remove(unique);
+        }
+    }
+
+    /**
+     * Called to perform tasks *before* sending a message.
+     *
+     * This method is called before any service-registered message handler is invoked.
+     *
+     * @param msg - The message that is about to be dispatched.
+     * @param msgMeta - The message meta information.
+     *
+     * @throws Error - If the meta information type is invalid.
+     */
+    public preDispatch(msg: Command, msgMeta: CommandMetaInformation): void {
+        super.preDispatch(msg, msgMeta);
+
+        MessageDispatcher._metaInformationList.add(msg.unique, msgMeta, msgMeta.timeout);
+    }
+
+    protected contextError(err: any, msg: Command, msgMeta: CommandMetaInformation): void {
+        CommandDispatcher.invokeReplyCallbacks(msg.unique, null, null, CommandFailType.Exception, String(err));
+        MessageDispatcher._metaInformationList.remove(msg.unique);
+    }
+
+    /**
+     * Invokes command reply handlers.
+     *
+     *  When emitting a command, it is possible to specify reply callbacks that are invoked beside message handlers. This method will call the correct
+     *  callback and take care of intercepting exceptions.
+     *
+     * @param unique - The unique trace of the command.
+     * @param reply - The received command reply (if any).
+     * @param replyMeta - The reply meta information (if any).
+     * @param failType - The type of the command failure (in case of a timeout or exception).
+     * @param failMsg - The failure message.
+     */
+    public static invokeReplyCallbacks(
+        unique: Trace,
+        reply: CommandReply | null = null,
+        replyMeta: CommandReplyMetaInformation | null = null,
+        failType: CommandFailType = CommandFailType.None,
+        failMsg: string = ""
+    ): void {
+        const invoke = (callbacks: Function[], ...args: any[]): void => {
+            for (const callback of callbacks) {
+                try {
+                    callback(...args);
+                } catch (err) {
+                    logging.error(`An error occurred within a command reply callback: ${String(err)}`, "bus", { error: typeof err });
+                }
+            }
+
+            if (replyMeta && callbacks.length > 0) {
+                replyMeta.isHandledExternally = true;
+            }
+        };
+
+        let metaInfo = MessageDispatcher._metaInformationList.find(unique);
+        if (metaInfo && metaInfo instanceof CommandMetaInformation) {
+            if (reply) {
+                invoke(metaInfo.doneCallbacks, reply, reply.success, reply.message);
+            } else {
+                invoke(metaInfo.failCallbacks, failType, failMsg);
+            }
+        }
+    }
+}

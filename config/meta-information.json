@@ -1,18 +1,33 @@
 {
     "global": {
-        "title": "RDS-NG",
-        "version": "0.0.1"
+        "title": "BridgIT",
+        "version": "0.10.0"
     },
-
     "components": {
-        "gate": {
-            "name": "Gate service",
-            "directory": "gate"
+        "server": {
+            "name": "Server",
+            "directory": "server",
+            "tech": "py"
         },
-
-        "testbuddy": {
-            "name": "Debugging test buddy",
-            "directory": "testbuddy"
+        "connector:osf": {
+            "name": "OSF connector",
+            "directory": "connectors/osf",
+            "tech": "py"
+        },
+        "connector:zenodo": {
+            "name": "Zenodo connector",
+            "directory": "connectors/zenodo",
+            "tech": "py"
+        },
+        "connector:stub": {
+            "name": "Stub connector",
+            "directory": "connectors/stub",
+            "tech": "py"
+        },
+        "frontend": {
+            "name": "Web Frontend",
+            "directory": "frontend",
+            "tech": "web"
         }
     }
 }

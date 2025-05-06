@@ -1,15 +1,17 @@
+import typing
 from dataclasses import dataclass
 
-import typing
+from dataclasses_json import dataclass_json
 
 
+@dataclass_json
 @dataclass(frozen=True)
 class UnitID:
     """
     A general unit identifier.
     
     A *unit* basically is something that has a unique identifier consisting of three parts: The general ``type`` (e.g., *'infra'* for components
-    belonging to the overall infrastructure), the ``unit`` name itself (e.g., *'gate'* or *'server'*), and an ``instance`` specifier (used to
+    belonging to the overall infrastructure), the ``unit`` name itself (e.g., *'server'*), and an ``instance`` specifier (used to
     distinguish multiple instances of the same unit).
     
     Attributes:

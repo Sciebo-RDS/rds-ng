@@ -5,7 +5,7 @@ import typing
 class Formatter(logging.Formatter):
     """
     Customized log formatter.
-    
+
     This formatter mainly colorizes log records for better readability.
     """
     _colors = {
@@ -22,18 +22,18 @@ class Formatter(logging.Formatter):
             "value": 126,
         },
     }
-    
+
     def format(self, record: logging.LogRecord) -> str:
         """
         Colorizes the various portions of a log record.
-        
+
         Returns:
             The formatted text.
         """
         scope = self._get_scope(record)
         name_color = self._colors['params']['name']
         val_color = self._colors['params']['value']
-        params = [f"{self._color_wrap(k, name_color, italic=True)}={self._color_wrap(str(v), val_color, italic=True)}"
+        params = [f"{self._color_wrap(k, name_color)}={self._color_wrap(str(v), val_color, italic=True)}"
                   for k, v in self._get_extra_params(record).items()]
         tokens = [
             self._color_wrap(self.formatTime(record, "%Y-%m-%d %H:%M:%S"), self._colors["time"]),
@@ -45,7 +45,7 @@ class Formatter(logging.Formatter):
             f" ({'; '.join(params)})" if len(params) > 0 else "",
         ]
         return "".join(tokens)
-    
+
     def _color_wrap(self, text: str, fg_color: int = 0, bg_color: int | None = None, bold: bool = False, italic: bool = False) -> str:
         wrapped_text: str = f"\x1b[38;5;{fg_color}m"
         if bold:
@@ -55,10 +55,10 @@ class Formatter(logging.Formatter):
         if bg_color is not None:
             wrapped_text += f"\x1b[48;5;{bg_color}m"
         return wrapped_text + text + "\x1b[0m"
-    
+
     def _get_level_color(self, level: int) -> int:
         return self._colors["levels"][level] if level in self._colors["levels"] else 0
-    
+
     def _get_scope(self, record: logging.LogRecord) -> str:
         scope = ""
         if "scope" in record.__dict__ and record.scope is not None:

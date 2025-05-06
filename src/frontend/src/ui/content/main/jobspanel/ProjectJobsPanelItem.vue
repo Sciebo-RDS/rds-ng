@@ -1,0 +1,135 @@
+<script setup lang="ts">
+import Button from "primevue/button";
+import Message from "primevue/message";
+import ProgressBar from "primevue/progressbar";
+import { computed, type PropType, toRefs, unref } from "vue";
+
+import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
+import { Project } from "@common/data/entities/project/Project";
+import { formatLocaleTimestamp } from "@common/utils/Strings";
+
+import { ConnectorCategory } from "@/data/entities/connector/categories/ConnectorCategory";
+
+const props = defineProps({
+    index: {
+        type: Number,
+        required: true
+    },
+    timestamp: {
+        type: Number,
+        required: true
+    },
+    message: {
+        type: String,
+        required: true
+    },
+    resultMessage: {
+        type: String,
+        required: true
+    },
+    project: {
+        type: Object as PropType<Project>
+    },
+    connectorInstance: {
+        type: Object as PropType<ConnectorInstance>
+    },
+    connectorCategory: {
+        type: Object as PropType<ConnectorCategory>
+    },
+    severity: {
+        type: String,
+        default: "info"
+    },
+    progress: {
+        type: Number,
+        default: -1.0
+    },
+    elapsed: {
+        type: String,
+        default: ""
+    },
+    closable: {
+        type: Boolean,
+        default: false
+    },
+    record: {
+        type: Number,
+        default: 0
+    }
+});
+const { index, timestamp, message, resultMessage, project, connectorInstance, connectorCategory, severity, progress, elapsed, closable, record } =
+    toRefs(props);
+const emits = defineEmits<{
+    (e: "dismiss", record: number): void;
+}>();
+
+const icon = computed(() => {
+    switch (unref(severity)) {
+        case "info":
+            return "mi-info";
+
+        case "warn":
+            return "mi-warning-amber";
+
+        case "error":
+            return "mi-error-outline";
+
+        case "success":
+            return "mi-done";
+
+        default:
+            return "";
+    }
+});
+</script>
+
+<template>
+    <div class="grid grid-cols-[1fr_min-content] w-full px-0.5" :class="{ 'pt-2': index != 0 }">
+        <Message
+            :severity="severity"
+            class="flex w-full justify-start group"
+            :icon="`material-icons-outlined ${icon}`"
+            :pt="{ content: 'w-full', text: '!w-full !text-sm', icon: 'place-self-start mt-2 !text-lg' }"
+        >
+            <div>
+                <div class="grid grid-cols-[1fr_min-content] grid-flow-col gap-2 w-full">
+                    <div>
+                        <div class="font-bold">
+                            Your {{ connectorCategory?.verbNoun.toLowerCase() || "export" }} of <b>{{ project?.title || "Unknown project" }}</b> to
+                            <b>{{ connectorInstance?.name || "Unknown connection" }}</b> {{ resultMessage }}
+                        </div>
+                        <div>{{ message }}</div>
+
+                        <ProgressBar v-if="progress >= 0.0" class="h-3 mt-1 mb-1" :value="Math.trunc(progress * 100)" :pt="{ value: 'bg-current' }" />
+
+                        <div class="pt-2 r-text-gray">
+                            <span class="font-normal">{{ connectorCategory?.verbNoun || "Export" }} &#x2022; </span>
+                            <span class="font-light text-xs">
+                                <span>{{ formatLocaleTimestamp(timestamp) }}</span>
+                                <span v-if="elapsed" class="float-right">{{ elapsed }} elapsed</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div v-if="closable">
+                        <Button
+                            icon="material-icons-outlined mi-close"
+                            severity="secondary"
+                            rounded
+                            text
+                            size="small"
+                            title="Dismiss"
+                            class="-top-1 left-1.5 invisible"
+                            :class="{ 'group-hover:visible': true }"
+                            :pt="{ root: 'w-8 h-8', icon: '!text-lg' }"
+                            @click="emits('dismiss', record)"
+                        />
+                    </div>
+                    <div v-else class="w-0" />
+                </div>
+            </div>
+        </Message>
+    </div>
+</template>
+
+<style scoped lang="scss"></style>

@@ -17,7 +17,7 @@ The network engine takes care of listening to incoming messages, routing them pr
 #### \_\_init\_\_
 
 ```python
-def __init__(comp_data: ComponentData, message_bus: MessageBusProtocol)
+def __init__(comp_data: BackendComponentData, message_bus: MessageBusProtocol)
 ```
 
 **Arguments**:
@@ -32,6 +32,14 @@ def run() -> None
 ```
 
 Listens to incoming messages in order to properly route them.
+
+#### process
+
+```python
+def process() -> None
+```
+
+Called to perform periodic tasks.
 
 #### send\_message
 
@@ -48,6 +56,18 @@ client and/or server (the logic of this can be found in ``NetworkRouter``).
 
 - `msg` - The message to be sent.
 - `msg_meta` - The message meta information.
+
+#### install\_filter
+
+```python
+def install_filter(fltr: NetworkFilter) -> None
+```
+
+Installs a new network message filter.
+
+**Arguments**:
+
+- `fltr` - The filter to add.
 
 #### has\_server
 
