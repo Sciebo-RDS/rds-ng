@@ -36,6 +36,6 @@ jobs:
                     
                         echo IMAGE_ID=$IMAGE_ID
                         echo VERSION=$VERSION
-                        docker tag docker.io/rds-ng/$comp:release $IMAGE_ID:$VERSION
+                        docker tag docker.io/rds-ng/$comp:latest $IMAGE_ID:$VERSION
                         docker push $IMAGE_ID:$VERSION
                     done
