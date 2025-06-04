@@ -9,13 +9,12 @@ const { newProject } = useProjectTools(comp);
 </script>
 
 <template>
-    <div class="border-t-2 border-orange-500">
+    <div class="border-t-2 border-[var(--p-rds-highlight-500)]">
         <Button
-            class="w-full h-full text-xl bg-orange-50 hover:bg-orange-100 active:bg-orange-200 grid grid-flow-col place-content-center"
+            class="w-full h-full text-xl text-[var(--p-rds-highlight-600)] bg-[var(--p-rds-highlight-50)] hover:bg-[var(--p-rds-highlight-100)] active:bg-[var(--p-rds-highlight-200)] grid grid-flow-col place-content-center"
             label="New Project"
             icon="material-icons-outlined mi-add-circle-outline"
             icon-class="!text-4xl mr-2"
-            severity="warn"
             @click="newProject"
             :pt="{ label: 'mr-auto' }"
             text

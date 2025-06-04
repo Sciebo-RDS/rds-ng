@@ -42,6 +42,13 @@ export function theme(config: Configuration): any {
                     }
                 }
             }
+        },
+        extend: {
+            rds: {
+                colorScheme: {
+                    highlight: palette(config.value<string>(ThemeSettingIDs.LightHighlightColor)) // TODO: Dark mode support
+                }
+            }
         }
     });
 }

@@ -88,7 +88,7 @@ watch(
 }
 
 :deep(.tab-list-active-bar) {
-    @apply border border-[var(--p-button-warn-background)];
+    @apply border border-[var(--p-rds-highlight-500)];
 }
 
 :deep(.tab) {

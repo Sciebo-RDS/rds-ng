@@ -25,7 +25,9 @@ export function getDefaultSettings(): Map<SettingID, any> {
     // Theme settings
     defaults.set(ThemeSettingIDs.PrimaryColor, ThemeSettings.primaryColor);
     defaults.set(ThemeSettingIDs.LightSurfaceColor, ThemeSettings.light.surfaceColor);
+    defaults.set(ThemeSettingIDs.LightHighlightColor, ThemeSettings.light.highlightColor);
     defaults.set(ThemeSettingIDs.DarkSurfaceColor, ThemeSettings.dark.surfaceColor);
+    defaults.set(ThemeSettingIDs.DarkHighlightColor, ThemeSettings.dark.highlightColor);
 
     return defaults;
 }
