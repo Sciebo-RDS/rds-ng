@@ -96,14 +96,14 @@ watch(userAuthorizations, () => {
 </script>
 
 <template>
-    <div class="grid grid-rows-auto grid-cols-[min-content_1fr_min-content_min-content] gap-2.5 place-content-start coontent-center w-full">
+    <div class="grid grid-rows-auto grid-cols-[min-content_1fr_min-content_min-content] gap-2.5 place-content-start content-center items-center w-full">
         <div :class="{ 'pt-1': instance!.description }">
             <Tag
                 :severity="isAuthorized || !requiresAuthorization ? 'success' : 'danger'"
                 :title="isAuthorized || !requiresAuthorization ? 'Connected' : 'Not connected'"
                 class="w-10 h-10 rounded-full"
             >
-                <span class="material-icons-outlined" :class="isAuthorized ? 'mi-power' : 'mi-power-off'" />
+                <span class="material-icons-outlined" :class="isAuthorized ? 'mi-link' : 'mi-link-off'" />
             </Tag>
         </div>
 
@@ -116,27 +116,25 @@ watch(userAuthorizations, () => {
             <Button
                 v-if="isAuthorized"
                 :label="isUnAuthorizing ? 'Disconnecting...' : 'Disconnect'"
-                severity="warn"
                 size="small"
                 icon="material-icons-outlined mi-link-off"
-                class="r-button-small !min-h-10"
+                class="r-button-small"
                 :loading="isUnAuthorizing"
                 @click="onUnauthorize"
             />
             <Button
                 v-else
                 :label="isUnAuthorizing ? 'Connecting...' : 'Connect'"
-                severity="info"
                 size="small"
                 icon="material-icons-outlined mi-link"
-                class="r-button-small !min-h-10"
+                class="r-button-small"
                 :loading="isUnAuthorizing"
                 @click="onAuthorize"
             />
         </div>
         <div v-else>&nbsp;</div>
 
-        <div>
+        <div class="r-centered-grid">
             <Button
                 text
                 rounded

@@ -14,7 +14,7 @@ const { category } = toRefs(props);
 </script>
 
 <template>
-    <Tag :value="category!.name" :title="category!.description" :pt="{ root: category!.tagClass }" />
+    <Tag :value="category!.name" :title="category!.description" class="opacity-85 !border-0" :pt="{ root: category!.tagClass }" />
 </template>
 
 <style scoped lang="scss"></style>

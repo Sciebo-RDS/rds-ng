@@ -4,13 +4,14 @@ import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { SetUserSettingsAction } from "@/ui/actions/user/SetUserSettingsAction";
+import { UserSettingsPage } from "@/ui/dialogs/user/settings/UserSettingsDialog.ts";
 
 const _updatingUserSettings = ref(false);
 
 export function useUserTools(comp: FrontendComponent) {
-    function editUserSettings(userSettings: UserSettings): void {
+    function editUserSettings(userSettings: UserSettings, activePage: UserSettingsPage = UserSettingsPage.Connections): void {
         const action = new SetUserSettingsAction(comp);
-        action.showUserSettingsDialog(userSettings).then(() => {});
+        action.showUserSettingsDialog(userSettings, activePage).then(() => {});
     }
 
     function saveUserSettings(userSettings: UserSettings): void {

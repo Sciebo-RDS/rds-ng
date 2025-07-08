@@ -2,6 +2,7 @@ import time
 
 from common.py.core import logging
 from common.py.data.entities.authorization import (
+    AuthorizationSettings,
     AuthorizationToken,
     get_host_authorization_token_id,
     has_authorization_token_expired,
@@ -58,6 +59,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         strategy: str,
         *,
         auth_token: AuthorizationToken | None = None,
+        auth_private: AuthorizationSettings | None = None,
     ) -> AuthorizationStrategy:
         if auth_token is None:
             auth_token = (
@@ -74,6 +76,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
             strategy,
             user_token=ctx.session.user_token if ctx.session else None,
             auth_token=auth_token,
+            auth_private=auth_private,
         )
 
     @svc.message_handler(RequestAuthorizationCommand)
@@ -88,7 +91,13 @@ def create_authorization_service(comp: ServerComponent) -> Service:
 
         if msg.request_payload.fingerprint == ctx.session.fingerprint:
             try:
-                strategy = _create_auth_strategy(ctx, msg.strategy)
+                strategy = _create_auth_strategy(
+                    ctx,
+                    msg.strategy,
+                    auth_private=ctx.private_auth_settings.get_settings(
+                        msg.request_payload.auth_bearer
+                    ),
+                )
                 auth_token = strategy.request_authorization(
                     ctx.user.user_id,
                     msg.request_payload,
@@ -209,7 +218,12 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                         AuthorizationTokenVerifier(auth_token).verify_update()
 
                         strategy = _create_auth_strategy(
-                            ctx, auth_token.strategy, auth_token=auth_token
+                            ctx,
+                            auth_token.strategy,
+                            auth_token=auth_token,
+                            auth_private=ctx.private_auth_settings.get_settings(
+                                auth_token.auth_bearer
+                            ),
                         )
                         strategy.refresh_authorization(auth_token)
 

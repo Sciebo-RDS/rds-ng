@@ -49,7 +49,10 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         Column("logos__default", Text),
         Column("logos__horizontal", Text),
         # Metadata
-        Column("metadata_profile", DataclassDataType[PropertyProfile](dataclass_type=PropertyProfile)),
+        Column(
+            "metadata_profile",
+            DataclassDataType[PropertyProfile](dataclass_type=PropertyProfile),
+        ),
         # Miscellaneous
         Column("announce_timestamp", Numeric(32, 8, asdecimal=False)),
     )

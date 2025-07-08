@@ -1,6 +1,6 @@
 # Component service Dockerfile
 # --
-FROM    rds-ng/py-base:latest
+FROM    py_base
 
 # Argument definitions; note that COMPONENT_NAME MUST always be specified externally!
 ARG     COMPONENT_NAME

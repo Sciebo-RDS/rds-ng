@@ -13,19 +13,16 @@ const appVersion = comp.data.version;
         <img src="../../../../../assets/img/rds_ng-octopus-blue.png" alt="Logo" class="logo" />
     </div>
     <div>
-        <h2 class="text-2xl font-extrabold">{{ appTitle }}</h2>
-    </div>
-    <div>
-        <h3 class="text-1xl italic">
-            <span class="font-bold">{{ appName }}</span> - <span class="r-text-light">v{{ appVersion }}</span>
-        </h3>
+        <h2 class="text-2xl font-extrabold">
+            {{ appTitle }} <span class="r-text-light text-lg font-bold">v{{ appVersion }}</span>
+        </h2>
     </div>
     <div>&nbsp;</div>
 </template>
 
 <style scoped lang="scss">
 .logo {
-    width: 500px;
+    width: 400px;
     height: auto;
 }
 </style>

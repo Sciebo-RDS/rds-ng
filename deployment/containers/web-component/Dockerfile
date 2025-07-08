@@ -2,7 +2,7 @@
 # --
 
 # First stage: Build the web application via node and provide it as an internal image
-FROM    rds-ng/node-base:latest AS build-stage
+FROM    node_base AS build-stage
 
 # Argument definitions; note that COMPONENT_NAME MUST always be specified externally!
 ARG     COMPONENT_NAME

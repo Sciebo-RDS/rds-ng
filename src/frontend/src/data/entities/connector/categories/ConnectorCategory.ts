@@ -15,7 +15,6 @@ export class ConnectorCategory {
     public readonly verbStatusDone: string;
 
     public readonly tagClass: string | undefined;
-    public readonly buttonClass: string | undefined;
 
     protected constructor(
         name: string,
@@ -26,7 +25,7 @@ export class ConnectorCategory {
         verbStatusProgressing: string,
         verbStatusDone: string,
         tagClass?: string,
-        buttonClass?: string,
+        buttonClass?: string
     ) {
         this.name = name;
         this.description = description;
@@ -38,6 +37,5 @@ export class ConnectorCategory {
         this.verbStatusDone = verbStatusDone;
 
         this.tagClass = tagClass;
-        this.buttonClass = buttonClass;
     }
 }

@@ -28,11 +28,6 @@ dev-run:
 	docker compose -p rds -f dev.docker-compose.yaml up
 	docker compose -p rds -f dev.docker-compose.yaml down
 
-dev-run-min:
-	docker compose -p rds -f dev-min.docker-compose.yaml build
-	docker compose -p rds -f dev-min.docker-compose.yaml up
-	docker compose -p rds -f dev-min.docker-compose.yaml down
-
 # Helper targets
 # --
 logs:

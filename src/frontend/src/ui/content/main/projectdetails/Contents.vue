@@ -73,7 +73,7 @@ watch(
             </TabList>
             <TabPanels class="overflow-y-hidden max-h-[calc(100vh-8.0rem)] p-0 h-full">
                 <TabPanel v-for="panel in panels" :value="panel.title" class="h-full">
-                    <ScrollPanel class="h-full">
+                    <ScrollPanel class="h-full bg-surface-0">
                         <component :is="panel.component" :project="project" :sharedPropertyObjectStore="sharedPropertyObjectStore" />
                     </ScrollPanel>
                 </TabPanel>

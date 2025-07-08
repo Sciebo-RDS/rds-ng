@@ -67,7 +67,7 @@ Authorization is in most cases performed using OAUTH2. The server takes care of 
 
 | Setting                                           | Description                                                                         | Type   | Default value |
 |---------------------------------------------------|-------------------------------------------------------------------------------------|--------|---------------|
-| <code>authorization.refresh_attempts_delay</code> | The delay between token refresh attempts in seconds.                                | Number | 5.0           |
+| <code>authorization.refresh_attempts_delay</code> | The delay between token refresh attempts in seconds.                                | Number | 30.0          |
 | <code>authorization.refresh_attempts_limit</code> | The maximum number of refresh attempts before removing a token; 0 disables removal. | Number | 3             |
 
 #### Server | Storage
@@ -118,6 +118,7 @@ The server needs to store its data; this can either be in-memory (super volatile
 | <code>authorization.oauth2.server.token_endpoint</code>         | The (relative) token endpoint; this is usually documented by the external service provider.                                                                                | String |               |
 | <code>authorization.oauth2.server.scope</code>                  | The (optional) access scope.                                                                                                                                               | String |               |
 | <code>authorization.oauth2.client.id</code>                     | The OAUTH2 client ID of the connector.                                                                                                                                     | String |               |
+| <code>authorization.oauth2.client.secret</code>                 | The OAUTH2 client secret of the connector.                                                                                                                                 | String |               |
 | <code>authorization.oauth2.client.redirect_url</code>           | The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., `http://localhost:8080/apps/rdsng/main` for a local Nextcloud setup). | String |               |
 | <code>transmission.max_attempts</code>                          | The maximum number of transmission operation (up-/downloads) attempts.                                                                                                     | Number | 3             |
 | <code>transmission.attempts_delay</code>                        | The delay (in seconds) between transmission operation (up-/downloads) attempts.                                                                                            | Number | 3.0           |

@@ -1,7 +1,10 @@
 import abc
 
 from common.py.component import BackendComponent
-from common.py.data.entities.authorization import AuthorizationToken
+from common.py.data.entities.authorization import (
+    AuthorizationSettings,
+    AuthorizationToken,
+)
 from common.py.data.entities.user import UserToken
 from common.py.services import Service
 
@@ -18,6 +21,7 @@ class IntegrationHandler(abc.ABC):
         *,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
+        auth_private: AuthorizationSettings | None = None,
     ):
         """
         Args:
@@ -25,6 +29,7 @@ class IntegrationHandler(abc.ABC):
             svc: The service to use for message sending.
             user_token: An optional user token.
             auth_token: An optional authorization token.
+            auth_private: Optional private authorization settings.
         """
 
         self._component = comp
@@ -32,6 +37,7 @@ class IntegrationHandler(abc.ABC):
 
         self._user_token = user_token
         self._auth_token = auth_token
+        self._auth_private = auth_private
 
     def _replace_user_token_placeholders(self, s: str) -> str:
         if not self._user_token:

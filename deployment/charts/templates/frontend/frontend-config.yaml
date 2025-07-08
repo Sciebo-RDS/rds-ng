@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+data:
+  NODE_TLS_REJECT_UNAUTHORIZED: "0"
+  RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address }}
+  RDS_INTEGRATION_SCHEME: {{ .Values.frontend.integration.scheme }}
+  RDS_INTEGRATION_HOST_API_URL: {{ .Values.frontend.integration.hostApiUrl }}
+  RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL: {{ .Values.server.oauth2.clientRedirectUrl }}
+  RDS_AUTHORIZATION_OAUTH2_CLIENT_ID: {{ .Values.server.oauth2.clientId }}

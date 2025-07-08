@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rds-frontend
+  labels:
+    app: {{ .Values.appName }}
+    component: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        component: frontend
+    spec:
+      volumes:
+        - name: frontend-config-volume
+          configMap:
+            name: frontend-config-file
+
+      containers:
+        - name: rds-frontend
+          image: "{{ .Values.frontend.image.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - containerPort: 6969
+          envFrom:
+          - configMapRef:
+              name: frontend-config
+          volumeMounts:
+            - mountPath: /app/config
+              name: frontend-config-volume
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: {{ .Values.appName }}
+    component: frontend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 6969

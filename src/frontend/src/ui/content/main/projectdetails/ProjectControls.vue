@@ -20,14 +20,22 @@ const { editProject, uploadProject } = useProjectTools(comp);
 
 <template>
     <div class="flex gap-2">
-        <Button label="Project settings" icon="material-icons-outlined mi-settings" icon-class="!text-3xl" @click="editProject(project)" />
+        <Button
+            label="Project settings"
+            icon="material-icons-outlined mi-edit-note text-[var(--p-primary-100)]"
+            icon-class="!text-3xl"
+            @click="editProject(project)"
+            :pt="{ label: 'text-[var(--p-primary-100)]' }"
+            rounded
+        />
         <Button
             severity="contrast"
             label="Upload project"
             icon="material-icons-outlined mi-rocket-launch"
             icon-class="!text-3xl"
-            class="px-8 mr-1"
+            class="px-8 mr-0"
             @click="uploadProject(project)"
+            rounded
         />
     </div>
 </template>

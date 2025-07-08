@@ -14,6 +14,7 @@ const comp = FrontendComponent.inject();
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 import { useUserTools } from "@/ui/tools/user/UserTools";
+
 const { editUserSettings } = useUserTools(comp);
 
 import ConnectorInstancesHeader from "@/ui/components/connector/ConnectorInstancesHeader.vue";
@@ -37,7 +38,7 @@ const model = defineModel({ default: [] });
 <template>
     <ScrollPanel>
         <div v-for="group of groupedInstances" :class="{ 'p-disabled': disabled }">
-            <ConnectorInstancesHeader :connector-id="group.connectorID" class="r-shade-dark rounded list-entry h-11" />
+            <ConnectorInstancesHeader :connector-id="group.connectorID" class="r-shade-dark rounded list-entry !h-10" />
 
             <div v-for="instance of group.connectorInstances" :key="instance.instance_id" class="flex align-items-center list-entry !py-1">
                 <Checkbox v-model="model" :inputId="instance.instance_id" :value="instance.instance_id" :disabled="disabled" size="large" class="self-center" />
@@ -48,7 +49,11 @@ const model = defineModel({ default: [] });
             <i class="pi pi-exclamation-circle" style="font-size: 2.5rem"></i>
             <div class="justify-items-center">
                 <div class="font-bold">No connections</div>
-                <div class="text-sm">Set them up in your <Button @click="editUserSettings(userSettings)" label="settings" class="p-0" text />!</div>
+                <div class="text-sm">
+                    Set them up in your
+                    <Button @click="editUserSettings(userSettings)" label="settings" class="p-0" text />
+                    !
+                </div>
             </div>
         </div>
     </ScrollPanel>

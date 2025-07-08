@@ -6,7 +6,7 @@ from enum import auto, Flag
 from .. import AuthorizationRequestPayload
 from ... import IntegrationHandler
 from ....component import BackendComponent
-from ....data.entities.authorization import AuthorizationToken
+from ....data.entities.authorization import AuthorizationSettings, AuthorizationToken
 from ....data.entities.user import UserID, UserToken
 from ....services import Service
 
@@ -37,6 +37,7 @@ class AuthorizationStrategy(IntegrationHandler):
         contents: ContentType,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
+        auth_private: AuthorizationSettings | None = None,
     ):
         """
         Args:
@@ -46,8 +47,15 @@ class AuthorizationStrategy(IntegrationHandler):
             contents: The contents this strategy provides.
             user_token: An optional user token.
             auth_token: An optional authorization token.
+            auth_private: Optional private authorization settings.
         """
-        super().__init__(comp, svc, user_token=user_token, auth_token=auth_token)
+        super().__init__(
+            comp,
+            svc,
+            user_token=user_token,
+            auth_token=auth_token,
+            auth_private=auth_private,
+        )
 
         self._strategy = strategy
         self._contents = contents

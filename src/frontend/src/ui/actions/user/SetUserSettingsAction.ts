@@ -1,6 +1,9 @@
 import { SetUserSettingsCommand } from "@common/api/user/UserCommands";
+
 import { CommandComposer } from "@common/core/messaging/composers/CommandComposer";
+
 import { UserSettings } from "@common/data/entities/user/UserSettings";
+
 import { ActionState } from "@common/ui/actions/ActionBase";
 import { ActionNotifier } from "@common/ui/actions/notifiers/ActionNotifier";
 import { OverlayNotifier } from "@common/ui/actions/notifiers/OverlayNotifier";
@@ -8,8 +11,7 @@ import { type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 import { OverlayNotificationType } from "@common/ui/notifications/OverlayNotifications";
 
 import { FrontendCommandAction } from "@/ui/actions/FrontendCommandAction";
-import { userSettingsDialog } from "@/ui/dialogs/user/settings/UserSettingsDialog";
-import { type UserSettingsDialogData } from "@/ui/dialogs/user/settings/UserSettingsDialog";
+import { userSettingsDialog, type UserSettingsDialogData, UserSettingsPage } from "@/ui/dialogs/user/settings/UserSettingsDialog";
 
 /**
  * Action to edit and set user settings.
@@ -18,8 +20,11 @@ export class SetUserSettingsAction extends FrontendCommandAction<SetUserSettings
     /**
      * Shows the user settings dialog.
      */
-    public showUserSettingsDialog(userSettings: UserSettings): ExtendedDialogResult<UserSettingsDialogData> {
-        return userSettingsDialog(this._component, userSettings);
+    public showUserSettingsDialog(
+        userSettings: UserSettings,
+        activePage: UserSettingsPage = UserSettingsPage.Connections
+    ): ExtendedDialogResult<UserSettingsDialogData> {
+        return userSettingsDialog(this._component, userSettings, activePage);
     }
 
     public prepare(userSettings: UserSettings): CommandComposer<SetUserSettingsCommand> {

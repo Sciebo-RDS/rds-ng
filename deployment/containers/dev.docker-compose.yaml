@@ -3,7 +3,7 @@
 services:
     # -- Base images --
     # Build-only Python base image
-    py-base:
+    py_base:
         image: rds-ng/py-base:develop
         build:
             context: ../../
@@ -13,7 +13,7 @@ services:
             replicas: 0
 
     # Build-only Node base image
-    node-base:
+    node_base:
         image: rds-ng/node-base:develop
         build:
             context: ../../
@@ -38,8 +38,8 @@ services:
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
             args:
                 COMPONENT_NAME: "server"
-        depends_on:
-            - py-base
+            additional_contexts:
+                py_base: "service:py_base"
         ports:
             - "4200:6969"
         env_file:
@@ -60,8 +60,8 @@ services:
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
             args:
                 COMPONENT_NAME: "connectors/osf"
-        depends_on:
-            - py-base
+            additional_contexts:
+                py_base: "service:py_base"
         ports:
             - "4300:6969"
         env_file:
@@ -82,8 +82,8 @@ services:
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
             args:
                 COMPONENT_NAME: "connectors/zenodo"
-        depends_on:
-            - py-base
+            additional_contexts:
+                py_base: "service:py_base"
         ports:
             - "4400:6969"
         env_file:
@@ -104,8 +104,8 @@ services:
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
             args:
                 COMPONENT_NAME: "connectors/stub"
-        depends_on:
-            - py-base
+            additional_contexts:
+                py_base: "service:py_base"
         ports:
             - "4900:6969"
         env_file:
@@ -130,8 +130,8 @@ services:
             dockerfile: deployment/containers/web-component/dev.Dockerfile
             args:
                 COMPONENT_NAME: "frontend"
-        depends_on:
-            - node-base
+            additional_contexts:
+                node_base: "service:node_base"
         ports:
             - "8000:6969"
         env_file:

@@ -30,6 +30,7 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         OAuth2AuthorizationSettingIDs.SERVER_TOKEN_ENDPOINT: "",
         OAuth2AuthorizationSettingIDs.SERVER_SCOPE: "",
         OAuth2AuthorizationSettingIDs.CLIENT_ID: "",
+        OAuth2AuthorizationSettingIDs.CLIENT_SECRET: "",
         OAuth2AuthorizationSettingIDs.CLIENT_REDIRECT_URL: "",
         # Transmission settings
         TransmissionSettingIDs.MAX_ATTEMPTS: 3,

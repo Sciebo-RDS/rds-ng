@@ -1,8 +1,7 @@
 import typing
 from dataclasses import asdict
 
-from common.py.data.entities.properties.properties_profile import \
-    PropertyProfile
+from common.py.data.entities.properties.properties_profile import PropertyProfile
 
 from .. import clone_entity
 from .connector import Connector, ConnectorID
@@ -40,7 +39,10 @@ def apply_connector_update(
     connector.name = updated_connector.name
     connector.description = updated_connector.description
     connector.category = updated_connector.category
+    connector.authorization = updated_connector.authorization
     connector.options = updated_connector.options
     connector.logos = clone_entity(updated_connector.logos)
-    connector.metadata_profile = PropertyProfile(**asdict(updated_connector.metadata_profile))
+    connector.metadata_profile = PropertyProfile(
+        **asdict(updated_connector.metadata_profile)
+    )
     connector.announce_timestamp = updated_connector.announce_timestamp

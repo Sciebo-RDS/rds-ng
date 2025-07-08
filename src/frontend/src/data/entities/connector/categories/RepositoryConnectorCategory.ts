@@ -14,8 +14,7 @@ export class RepositoryConnectorCategory extends ConnectorCategory {
             "Uploads",
             "Uploading",
             "Uploaded",
-            "r-connector-category-repository-tag",
-            "r-connector-category-repository-button"
+            "r-connector-category-repository-tag"
         );
     }
 }

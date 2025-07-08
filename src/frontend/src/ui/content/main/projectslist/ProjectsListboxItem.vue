@@ -99,7 +99,7 @@ const editMenuItems = ref([
             },
             {
                 label: "Project settings",
-                icon: "material-icons-outlined mi-settings",
+                icon: "material-icons-outlined mi-edit-note",
                 command: () => {
                     emits("edit-project", project!.value);
                 }
@@ -121,8 +121,11 @@ const editMenuShown = ref(false);
 
 <template>
     <div
-        class="p-2 pl-3 grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row w-full gap-0 min-h-24 content-start items-start place-content-start group r-text border-l-4"
-        :class="{ 'border-[var(--p-rds-highlight-500)]': isSelected, 'border-transparent': !isSelected }"
+        class="m-0 p-2 grid grid-rows-[auto_auto_1fr] grid-cols-[1fr_min-content] grid-flow-row w-full gap-0 min-h-24 content-start items-start place-content-start group border-l-4"
+        :class="{
+            'bg-primary r-primary-text border-[var(--p-rds-highlight-500)]': isSelected,
+            'bg-primary-100 border-transparent text-[var(--p-primary-800)]': !isSelected
+        }"
     >
         <div class="r-text-caption-big h-7 truncate" :title="project!.title">{{ project!.title }}</div>
 
@@ -133,11 +136,23 @@ const editMenuShown = ref(false);
                 size="small"
                 aria-label="Options"
                 title="More options"
-                :class="{ invisible: !editMenuShown, 'group-hover:visible': true }"
+                :class="{
+                    invisible: !editMenuShown,
+                    'group-hover:visible': true,
+                    'hover:bg-primary-100': isSelected,
+                    'hover:bg-primary-800': !isSelected
+                }"
                 @click.stop="(event) => editMenu.toggle(event)"
             >
                 <template #icon>
-                    <span class="material-icons-outlined mi-more-vert r-text" style="font-size: 32px" />
+                    <span
+                        class="material-icons-outlined mi-more-vert"
+                        :class="{
+                            'text-[var(--p-primary-100)] hover:text-[var(--p-primary-800)]': isSelected,
+                            'text-[var(--p-primary-800)] hover:text-[var(--p-primary-100)]': !isSelected
+                        }"
+                        style="font-size: 32px"
+                    />
                 </template>
             </Button>
             <Menu ref="editMenu" :model="editMenuItems" popup @focus="editMenuShown = true" @blur="editMenuShown = false" />
@@ -151,7 +166,7 @@ const editMenuShown = ref(false);
         </div>
         <div v-else class="italic">The project is currently being deleted...</div>
 
-        <div class="grid grid-cols-[1fr_min-content] self-end col-span-2 r-text-gray">
+        <div class="grid grid-cols-[1fr_min-content] self-end col-span-2">
             <span v-if="runningJobs.length > 0" class="grid grid-cols-[min-content_auto] items-center text-sm">
                 <span class="material-icons-outlined mi-rocket-launch mr-1 !text-lg" />
                 <span class="pt-0.5">

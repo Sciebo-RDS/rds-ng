@@ -2,56 +2,21 @@
  * Connector categories: Tags
  */
 .r-connector-category-repository-tag {
-    background: var(--p-sky-50);
-    color: var(--p-sky-600);
-    border: 1px solid var(--p-sky-200);
+    background: var(--p-primary-200);
+    color: var(--p-primary-800);
+    border: 1px solid var(--p-primary-400);
 }
 
 .r-connector-category-archive-tag {
-    background: var(--p-emerald-50);
-    color: var(--p-emerald-600);
-    border: 1px solid var(--p-emerald-200);
+    background: var(--p-rds-highlight-200);
+    color: var(--p-rds-highlight-800);
+    border: 1px solid var(--p-rds-highlight-400);
 }
 
 .r-connector-category-unknown-tag {
     background: var(--p-slate-50);
     color: var(--p-slate-600);
     border: 1px solid var(--p-slate-200);
-}
-
-/*
- * Connector categories: Buttons
- */
-.r-connector-category-repository-button {
-    color: #ffffff;
-    background: var(--p-blue-500);
-    border: 1px solid var(--p-blue-500);
-}
-
-.r-connector-category-repository-button:hover {
-    background: var(--p-blue-600);
-    border: 1px solid var(--p-blue-600);
-}
-
-.r-connector-category-repository-button:active {
-    background: var(--p-blue-700);
-    border: 1px solid var(--p-blue-700);
-}
-
-.r-connector-category-archive-button {
-    color: #ffffff;
-    background: var(--p-blue-500);
-    border: 1px solid var(--p-blue-500);
-}
-
-.r-connector-category-archive-button:hover {
-    background: var(--p-blue-600);
-    border: 1px solid var(--p-blue-600);
-}
-
-.r-connector-category-archive-button:active {
-    background: var(--p-blue-700);
-    border: 1px solid var(--p-blue-700);
 }
 
 /*

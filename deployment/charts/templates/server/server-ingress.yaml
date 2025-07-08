@@ -1,0 +1,25 @@
+{{- if .Values.ingress.enabled -}}
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ .Values.appName }}-ingress
+  annotations:
+spec:
+  rules:
+  - {{- if .Values.ingress.hostname }}
+    host: {{ .Values.ingress.hostname }}
+    {{- end }}
+    http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: server-service
+                port:
+                  number: 4200
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{ toYaml .Values.ingress.tls | nindent 4 }}
+  {{- end }}
+{{- end -}}

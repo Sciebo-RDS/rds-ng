@@ -13,7 +13,7 @@ watch(
     () => integrationScheme.isIntegrated,
     (integrated) => {
         isIntegrated.value = integrated;
-    },
+    }
 );
 
 onMounted(() => {

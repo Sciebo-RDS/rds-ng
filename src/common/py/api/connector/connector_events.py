@@ -56,7 +56,10 @@ class ConnectorAnnounceEvent(Event):
     description: str
     category: ConnectorCategoryID
 
-    authorization: AuthorizationSettings = dataclasses.field(
+    authorization_public: AuthorizationSettings = dataclasses.field(
+        default_factory=AuthorizationSettings
+    )
+    authorization_private: AuthorizationSettings = dataclasses.field(
         default_factory=AuthorizationSettings
     )
     options: Connector.Options = Connector.Options.DEFAULT
@@ -77,7 +80,8 @@ class ConnectorAnnounceEvent(Event):
         name: str,
         description: str,
         category: ConnectorCategoryID,
-        authorization: AuthorizationSettings,
+        authorization_public: AuthorizationSettings,
+        authorization_private: AuthorizationSettings,
         options: Connector.Options,
         logos: Connector.Logos,
         metadata_profile: PropertyProfile,
@@ -93,7 +97,8 @@ class ConnectorAnnounceEvent(Event):
             display_name=name,
             description=description,
             category=category,
-            authorization=authorization,
+            authorization_public=authorization_public,
+            authorization_private=authorization_private,
             options=options,
             logos=logos,
             metadata_profile=metadata_profile,

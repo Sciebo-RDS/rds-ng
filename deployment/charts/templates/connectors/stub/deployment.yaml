@@ -1,0 +1,46 @@
+{{- if .Values.connectors.stub.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-{{ .Values.connectors.stub.componentName }}"
+  namespace: {{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.stub.componentName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      component: {{ .Values.connectors.stub.componentName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        component: {{ .Values.connectors.stub.componentName }}
+    spec:
+      containers:
+        - name: "{{ .Values.appName }}-{{ .Values.connectors.stub.componentName }}"
+          image: "{{ .Values.connectors.stub.image.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.connectors.stub.image.pullPolicy }}
+          ports:
+            - containerPort: 6969
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.connectors.stub.componentName }}-config"
+          
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.connectors.stub.componentName }}-service"
+spec:
+  selector:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.stub.componentName }}
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 6969
+{{- end -}}

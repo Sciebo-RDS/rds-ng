@@ -47,13 +47,14 @@ function onSelectConnector(connector: Connector): void {
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-row content-center">
         <Select
             v-model="selectedConnector"
             :options="connectors"
             optionLabel="name"
             placeholder="Add a new connection..."
             class="w-full"
+            variant="filled"
             @change="(event) => onSelectConnector(event.value as Connector)"
         >
             <template #option="connectorItem">

@@ -22,7 +22,7 @@ const { category, value, instanceNames } = toRefs(props);
 </script>
 
 <template>
-    <Tag :title="category.verbStatusDone + ' to: ' + instanceNames.join(', ')" :pt="{ root: category!.tagClass }">
+    <Tag :title="category.verbStatusDone + ' to: ' + instanceNames.join(', ')" :pt="{ root: category!.tagClass }" class="opacity-85 !border-0 !max-h-7">
         <span>{{ category.verbNounPlural }}:&nbsp;</span><span class="font-normal">{{ value }}</span>
     </Tag>
 </template>

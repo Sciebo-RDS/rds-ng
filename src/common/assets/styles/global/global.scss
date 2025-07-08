@@ -4,7 +4,7 @@
 :root {
     --r-border-color: var(--p-surface-200);
     --r-shade-gray: var(--p-surface-200);
-    --r-shade-dark: var(--p-primary-50);
+    --r-shade-dark: var(--p-primary-100);
     --r-shade-darker: var(--p-primary-100);
 }
 
@@ -27,8 +27,12 @@ html {
     background-color: var(--p-primary-color);
 }
 
+.r-primary-bg-dark {
+    background-color: var(--p-primary-800);
+}
+
 .r-primary-text {
-    color: var(--p-primary-contrast-color);
+    color: var(--p-primary-100);
 }
 
 .r-highlight-fg {
@@ -102,7 +106,7 @@ html {
 
 .r-text-link,
 .r-text-link * {
-    @apply text-cyan-600 #{!important};
+    @apply text-[var(--p-primary-400)] #{!important};
 }
 
 .r-bg-info,

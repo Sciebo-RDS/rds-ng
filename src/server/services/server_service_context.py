@@ -10,6 +10,7 @@ from common.py.services import ServiceContext
 from common.py.utils import UnitID
 from common.py.utils.config import Configuration
 
+from ..data.authorization import AuthorizationSettingsStore
 from ..networking.session import SessionManager, Session
 
 
@@ -17,6 +18,8 @@ class ServerServiceContext(ServiceContext):
     """
     Service context specific to the server.
     """
+
+    _private_auth_settings = AuthorizationSettingsStore()
 
     def __init__(
         self,
@@ -126,3 +129,10 @@ class ServerServiceContext(ServiceContext):
         The global storage pool.
         """
         return self._storage_pool
+
+    @property
+    def private_auth_settings(self) -> AuthorizationSettingsStore:
+        """
+        The private authorization settings stored in the server.
+        """
+        return ServerServiceContext._private_auth_settings

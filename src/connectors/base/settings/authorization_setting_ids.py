@@ -23,6 +23,7 @@ class OAuth2AuthorizationSettingIDs:
         SERVER_TOKEN_ENDPOINT: The (relative) token endpoint (value type: ``string``).
         SERVER_SCOPE: The (optional) access scope (value type: ``string``).
         CLIENT_ID: The client ID (value type: ``string``).
+        CLIENT_SECRET: The client secret (value type: ``string``).
         CLIENT_REDIRECT_URL: The redirection URL (value type: ``string``).
     """
     SERVER_HOST = SettingID("authorization.oauth2", "server.host")
@@ -33,4 +34,5 @@ class OAuth2AuthorizationSettingIDs:
     SERVER_SCOPE = SettingID("authorization.oauth2", "server.scope")
 
     CLIENT_ID = SettingID("authorization.oauth2", "client.id")
+    CLIENT_SECRET = SettingID("authorization.oauth2", "client.secret")
     CLIENT_REDIRECT_URL = SettingID("authorization.oauth2", "client.redirect_url")

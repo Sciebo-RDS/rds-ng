@@ -1,9 +1,10 @@
 import typing
 
 from common.py.core import logging
-from common.py.integration.authorization.strategies import OAuth2Strategy
+from common.py.integration.authorization.strategies.oauth2 import OAuth2Strategy
 from common.py.utils.config import Configuration
 
+from .authorization_strategy_configuration import AuthorizationStrategyConfiguration
 from .authorization_strategy_configurations_catalog import (
     AuthorizationStrategyConfigurationsCatalog,
 )
@@ -34,7 +35,7 @@ def register_authorization_strategy_configurations() -> None:
 def create_authorization_strategy_configuration(
     strategy: str,
     config: Configuration,
-) -> typing.Dict[str, typing.Any]:
+) -> AuthorizationStrategyConfiguration:
     """
     Creates an authorization strategy configuration using the specified identifier.
 

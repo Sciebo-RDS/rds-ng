@@ -147,7 +147,6 @@ function onUploadInitDone(success: boolean, msg: string): void {
                     size="small"
                     icon="material-icons-outlined mi-rocket-launch"
                     loading-icon="material-icons-outlined mi-rocket-launch"
-                    :pt="{ root: category.buttonClass }"
                     @click="onUpload"
                 />
                 <div v-else class="text-sm r-text-warning">

@@ -3,7 +3,7 @@ from common.py.data.entities.authorization import AuthorizationSettings
 from common.py.services import Service
 from common.py.utils import EntryGuard
 
-_ANNOUNCE_INTERVAL = 60 * 60  # Once per hour
+_ANNOUNCE_INTERVAL = 1 * 60  # Once per minute
 
 
 def create_connector_service(comp: BackendComponent) -> Service:
@@ -41,23 +41,28 @@ def create_connector_service(comp: BackendComponent) -> Service:
                 from ..settings import AuthorizationSettingIDs
 
                 strategy = ctx.config.value(AuthorizationSettingIDs.STRATEGY)
+                strategy_config = create_authorization_strategy_configuration(
+                    strategy, ctx.config
+                )
+                con_info = ConnectorComponent.instance().connector_info
 
-                info = ConnectorComponent.instance().connector_info
                 ConnectorAnnounceEvent.build(
                     ctx.message_builder,
-                    connector_id=info.connector_id,
-                    name=info.name,
-                    description=info.description,
-                    category=info.category,
-                    authorization=AuthorizationSettings(
+                    connector_id=con_info.connector_id,
+                    name=con_info.name,
+                    description=con_info.description,
+                    category=con_info.category,
+                    authorization_public=AuthorizationSettings(
                         strategy=strategy,
-                        config=create_authorization_strategy_configuration(
-                            strategy, ctx.config
-                        ),
+                        config=strategy_config.public_config,
                     ),
-                    options=info.options,
-                    logos=info.logos,
-                    metadata_profile=info.metadata_profile,
+                    authorization_private=AuthorizationSettings(
+                        strategy=strategy,
+                        config=strategy_config.private_config,
+                    ),
+                    options=con_info.options,
+                    logos=con_info.logos,
+                    metadata_profile=con_info.metadata_profile,
                 ).emit(ctx.remote_channel)
 
                 svc.state.last_announce = msg.timestamp

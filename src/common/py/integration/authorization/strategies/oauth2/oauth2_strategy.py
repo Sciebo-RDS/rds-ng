@@ -6,7 +6,6 @@ from http import HTTPStatus
 
 import requests
 from dataclasses_json import dataclass_json
-from marshmallow.utils import timestamp
 
 from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
 from .oauth2_utils import format_oauth2_error_response
@@ -14,16 +13,16 @@ from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
 from .....data.entities import clone_entity
-from .....data.entities.authorization import AuthorizationToken
+from .....data.entities.authorization import AuthorizationSettings, AuthorizationToken
 from .....data.entities.user import UserID, UserToken
 from .....services import Service
 
 
 @dataclass_json
 @dataclass(frozen=True, kw_only=True)
-class OAuth2StrategyConfiguration:
+class OAuth2StrategyPublicConfiguration:
     """
-    The OAuth2 strategy configuration.
+    The OAuth2 strategy public configuration.
     """
 
     @dataclass_json
@@ -44,6 +43,21 @@ class OAuth2StrategyConfiguration:
     client: Client = field(default_factory=Client)
 
 
+@dataclass_json
+@dataclass(frozen=True, kw_only=True)
+class OAuth2StrategyPrivateConfiguration:
+    """
+    The OAuth2 strategy private configuration.
+    """
+
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Client:
+        client_secret: str = ""
+
+    client: Client = field(default_factory=Client)
+
+
 class OAuth2Strategy(AuthorizationStrategy):
     """
     OAuth2 authorization strategy.
@@ -58,6 +72,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         *,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
+        auth_private: AuthorizationSettings | None = None,
     ):
         from .....settings import NetworkSettingIDs
 
@@ -68,10 +83,18 @@ class OAuth2Strategy(AuthorizationStrategy):
             contents=AuthorizationStrategy.ContentType.AUTH_TOKEN,
             user_token=user_token,
             auth_token=auth_token,
+            auth_private=auth_private,
         )
 
         self._request_timeout = comp.data.config.value(
             NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
+        )
+
+    def _get_private_configuration(self) -> OAuth2StrategyPrivateConfiguration:
+        return (
+            OAuth2StrategyPrivateConfiguration.from_dict(self._auth_private.config)
+            if self._auth_private is not None
+            else OAuth2StrategyPublicConfiguration()
         )
 
     def request_authorization(
@@ -112,12 +135,17 @@ class OAuth2Strategy(AuthorizationStrategy):
                     expiration_timestamp=self._get_expiration_timestamp(resp_data),
                     refresh_attempts=0,
                     strategy=self.strategy,
-                    token=self._create_oauth2_token(resp_data),
-                    data=OAuth2TokenData(
-                        token_host=oauth2_data.token_host,
-                        token_endpoint=oauth2_data.token_endpoint,
-                        client_id=oauth2_data.client_id,
-                        scope=oauth2_data.scope,
+                    token=typing.cast(
+                        typing.Dict[any, str], self._create_oauth2_token(resp_data)
+                    ),
+                    data=typing.cast(
+                        typing.Dict[any, str],
+                        OAuth2TokenData(
+                            token_host=oauth2_data.token_host,
+                            token_endpoint=oauth2_data.token_endpoint,
+                            client_id=oauth2_data.client_id,
+                            scope=oauth2_data.scope,
+                        ),
                     ),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -220,6 +248,11 @@ class OAuth2Strategy(AuthorizationStrategy):
     def _get_client_secret(self, auth_bearer: str) -> str:
         client_secret = self._get_config_value(f"secrets.{auth_bearer}", "")
 
+        # If not set directly, look it up in the private settings if possible
+        if client_secret == "":
+            if (priv_config := self._get_private_configuration()) is not None:
+                client_secret = priv_config.client.client_secret
+
         # Verify the secret
         if client_secret == "":
             raise RuntimeError(f"Missing OAuth2 client secret for {auth_bearer}")
@@ -250,6 +283,7 @@ def create_oauth2_strategy(
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
+    auth_private: AuthorizationSettings | None = None,
 ) -> OAuth2Strategy:
     """
     Creates a new OAuth2 strategy instance.
@@ -259,8 +293,15 @@ def create_oauth2_strategy(
         svc: The service to use for message sending.
         user_token: An optional user token.
         auth_token: An optional authorization token.
+        auth_private: Optional private authorization settings.
 
     Returns:
         The newly created strategy.
     """
-    return OAuth2Strategy(comp, svc, user_token=user_token, auth_token=auth_token)
+    return OAuth2Strategy(
+        comp,
+        svc,
+        user_token=user_token,
+        auth_token=auth_token,
+        auth_private=auth_private,
+    )

@@ -1,7 +1,7 @@
 {
     "global": {
-        "title": "BridgIT",
-        "version": "0.10.0"
+        "title": "bridgit",
+        "version": "1.0.0"
     },
     "components": {
         "server": {

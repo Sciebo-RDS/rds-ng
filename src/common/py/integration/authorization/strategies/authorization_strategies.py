@@ -8,7 +8,7 @@ from .oauth2 import (
 )
 from ....component import BackendComponent
 from ....core import logging
-from ....data.entities.authorization import AuthorizationToken
+from ....data.entities.authorization import AuthorizationSettings, AuthorizationToken
 from ....data.entities.user import UserToken
 from ....services import Service
 
@@ -39,6 +39,7 @@ def create_authorization_strategy(
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
+    auth_private: AuthorizationSettings | None = None,
 ) -> AuthorizationStrategy:
     """
     Creates an authorization strategy using the specified identifier.
@@ -49,6 +50,7 @@ def create_authorization_strategy(
         strategy: The strategy identifier.
         user_token: An optional user token.
         auth_token: An optional authorization token.
+        auth_private: Optional private authorization settings.
 
     Returns:
         The newly created strategy.
@@ -65,4 +67,5 @@ def create_authorization_strategy(
         svc,
         user_token=user_token,
         auth_token=auth_token,
+        auth_private=auth_private,
     )

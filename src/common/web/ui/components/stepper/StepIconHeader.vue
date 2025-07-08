@@ -23,10 +23,10 @@ const { active, clickCallback, icon } = toRefs(props);
         <span
             :class="[
                 'border-2 rounded-md r-border-color w-12 h-12 inline-flex items-center justify-center',
-                { 'r-primary-bg': active, 'surface-border': !active }
+                { 'bg-[var(--p-rds-highlight-500)]': active, 'surface-border': !active }
             ]"
         >
-            <i class="r-text material-icons-outlined" :class="[{ 'r-primary-text': active }, icon]" />
+            <i class="r-text material-icons-outlined" :class="[{ '!text-primary-700': active }, icon]" />
         </span>
     </button>
 </template>

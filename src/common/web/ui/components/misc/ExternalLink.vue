@@ -19,7 +19,7 @@ const { link, text, internal } = toRefs(props);
 
 <template>
     <span class="r-text-link inline-block">
-        <a :href="link" class="grid grid-cols-[max-content_min-content] items-center" :target="internal ? '_blank' : ''">
+        <a :href="link" class="grid grid-cols-[max-content_min-content] items-center" :target="!internal ? '_blank' : ''">
             {{ text || link }}
             <span v-if="!internal" class="material-icons-outlined mi-open-in-new ml-1 !text-lg" />
         </a>

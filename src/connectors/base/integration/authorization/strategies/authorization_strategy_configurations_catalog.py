@@ -3,8 +3,10 @@ import typing
 from common.py.utils import ItemsCatalog
 from common.py.utils.config import Configuration
 
+from .authorization_strategy_configurations import AuthorizationStrategyConfiguration
+
 AuthorizationStrategyConfigurationCreator = typing.Callable[
-    [Configuration], typing.Dict[str, typing.Any]
+    [Configuration], AuthorizationStrategyConfiguration
 ]
 
 

@@ -38,7 +38,8 @@ export class ConnectorAnnounceEvent extends Event {
     public readonly description: string = "";
     public readonly category: ConnectorCategoryID = "";
 
-    public readonly authorization: AuthorizationSettings = { strategy: "", config: {} };
+    public readonly authorization_public: AuthorizationSettings = { strategy: "", config: {} };
+    public readonly authorization_private: AuthorizationSettings = { strategy: "", config: {} };
     public readonly options: ConnectorOptions = ConnectorOptions.Default;
 
     // @ts-ignore
@@ -58,7 +59,8 @@ export class ConnectorAnnounceEvent extends Event {
         name: string,
         description: string,
         category: ConnectorCategoryID,
-        authorization: AuthorizationSettings,
+        authorizationPublic: AuthorizationSettings,
+        authorizationPrivate: AuthorizationSettings,
         options: ConnectorOptions,
         logos: ConnectorLogos,
         metadataProfile: PropertyProfile,
@@ -71,7 +73,8 @@ export class ConnectorAnnounceEvent extends Event {
                 display_name: name,
                 description: description,
                 category: category,
-                authorization: authorization,
+                authorization_public: authorizationPublic,
+                authorization_private: authorizationPrivate,
                 options: options,
                 logos: logos,
                 metadata_profile: metadataProfile
