@@ -39,7 +39,7 @@ const comp = FrontendComponent.inject();
         </div>
 
         <div class="mr-6 justify-self-center">
-            <Card class="bg-primary-50 justify-self-center" :pt="{ body: 'pt-4 pb-0 px-0', content: 'justify-self-center mx-[-2rem]' }">
+            <Card class="bg-primary-50 justify-self-center" :pt="{ body: 'pt-4 pb-0 px-0', content: 'grid justify-self-center mx-[-2rem]' }">
                 <template #content>
                     <img src="@assets/img/landing-steps.svg" class="w-[92%] justify-self-center self-center" alt="First steps" />
                 </template>

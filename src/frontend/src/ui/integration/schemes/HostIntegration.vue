@@ -76,7 +76,13 @@ onMounted(async () => performAuthentication());
     <div class="r-centered-grid r-text">
         <Header />
 
-        <div v-if="requiresAuth">
+        <div v-if="!!errorMessage" class="r-text-error italic">
+            <span class="font-bold">
+                An error occurred while logging in <span class="r-text-light">({{ statusMessage }})</span>:
+            </span>
+            <span>{{ errorMessage }}</span>
+        </div>
+        <div v-else-if="requiresAuth">
             <div class="r-centered-grid content max-w-[55rem]">
                 <div>
                     <h2 class="text-3xl font-extrabold">Welcome to {{ comp.data.title }}!</h2>
@@ -102,7 +108,7 @@ onMounted(async () => performAuthentication());
             </div>
         </div>
         <div v-else>
-            <div v-if="!errorMessage" class="r-centered-grid">
+            <div class="r-centered-grid">
                 <div>
                     <span class="italic">
                         Logging in, please wait <span class="r-text-light">({{ statusMessage }})</span>...
@@ -111,12 +117,6 @@ onMounted(async () => performAuthentication());
                 <div>
                     <span class="material-icons-outlined mi-hourglass-empty animate-spin" style="font-size: 32px" />
                 </div>
-            </div>
-            <div v-else class="r-text-error italic">
-                <span class="font-bold">
-                    An error occurred while logging in <span class="r-text-light">({{ statusMessage }})</span>:
-                </span>
-                <span>{{ errorMessage }}</span>
             </div>
         </div>
     </div>
