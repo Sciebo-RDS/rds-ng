@@ -1,5 +1,16 @@
 # RDS-NG - Changelog
 
+## v1.0.2 - 2025-07-14
+
+#### Improvements
+
+- More helpful error pages
+- Other small UI improvements
+
+### Fixes
+
+- Auto-reload doesn't work in Firefox
+
 ## v1.0.1 - 2025-07-10
 
 ### Fixes

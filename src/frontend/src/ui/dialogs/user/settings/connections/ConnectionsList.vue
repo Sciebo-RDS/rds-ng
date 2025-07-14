@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import Message from "primevue/message";
+import Card from "primevue/card";
 import { type PropType, toRefs, unref } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -58,12 +58,20 @@ function onDeleteInstance(instance: ConnectorInstance) {
             />
         </template>
     </ConnectorInstancesList>
-    <Message v-else severity="warn" :closable="false" class="m-0.5 mt-2">
-        <div>
-            You haven't added any connections to external services yet. To add a connection, select its desired type (i.e., the external service you want to
-            upload your projects to) from the drop-down list below.
-        </div>
-    </Message>
+    <Card v-else class="bg-amber-100 text-amber-700 !p-0 mt-4 w-full" :pt="{ title: '!text-base', caption: 'h-5', body: 'p-3 px-5' }">
+        <template #title>
+            <div class="flex items-center gap-1">
+                <span class="material-icons-outlined mi-warning-amber !text-xl" />
+                <span class="">No connections added</span>
+            </div>
+        </template>
+        <template #content>
+            <span class="text-sm">
+                You haven't added any connections to external services yet. To add a connection, select its desired type (i.e., the external service you want to
+                upload your projects to) from the drop-down list below.
+            </span>
+        </template>
+    </Card>
 </template>
 
 <style scoped lang="scss"></style>

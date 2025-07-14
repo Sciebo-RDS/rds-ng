@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { HostCommuncationAction, sendActionToHost } from "@common/integration/HostCommunication.ts";
+import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
 import Button from "primevue/button";
 import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
@@ -69,6 +71,10 @@ function showError(error: string): void {
     errorMessage.value = error;
 }
 
+function reloadApp() {
+    sendActionToHost(HostCommuncationAction.Reload);
+}
+
 onMounted(async () => performAuthentication());
 </script>
 
@@ -76,11 +82,19 @@ onMounted(async () => performAuthentication());
     <div class="r-centered-grid r-text">
         <Header />
 
-        <div v-if="!!errorMessage" class="r-text-error italic">
-            <span class="font-bold">
-                An error occurred while logging in <span class="r-text-light">({{ statusMessage }})</span>:
-            </span>
-            <span>{{ errorMessage }}</span>
+        <div v-if="!!errorMessage" class="text-center">
+            <div class="r-text-error">
+                <span class="font-bold">
+                    An error occurred while logging in <span class="r-text-light">({{ statusMessage }})</span>:
+                </span>
+                <span>{{ errorMessage }}</span>
+            </div>
+            <div>&nbsp;</div>
+            <div>
+                Please <a href="#" @click.prevent="reloadApp" class="r-text-link">refresh</a> your browser to try again. If this error persists,
+                <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+                describing the error.
+            </div>
         </div>
         <div v-else-if="requiresAuth">
             <div class="r-centered-grid content max-w-[55rem]">
