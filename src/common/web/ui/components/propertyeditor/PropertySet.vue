@@ -11,7 +11,7 @@ import AddPropertiesDialog from "./AddPropertiesDialog.vue";
 import PropertyEditorSearchBar from "./PropertyEditorSearchBar.vue";
 import PropertyRow from "./PropertyRow.vue";
 
-const props = defineProps(["project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore"]);
+const props = defineProps(["project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore", "showProfileTags"]);
 
 var layout = makeLayout(props.projectProfiles);
 
@@ -38,13 +38,13 @@ const propsToShow = computed(() =>
                     v.toLowerCase().includes(searchString.value.toLowerCase())
                 ) ||
                 // search in referenced property objects
-                      // implement search function on objects? this seems buggy
-                      props.propertyObjects
+                // implement search function on objects? this seems buggy
+                props.propertyObjects
                     .getReferencedObjects(e.id)
                     .map((o: String) => props.sharedPropertyObjectStore.get(o).getValues())
-                          .map((e: {}) => Object.values(e))
+                    .map((e: {}) => Object.values(e))
                     .flat()
-                          .findIndex((v: string) => v.toLowerCase().includes(searchString.value.toLowerCase())) >= 0
+                    .findIndex((v: string) => v.toLowerCase().includes(searchString.value.toLowerCase())) >= 0
         )
         .sort((a: ProfileLayoutClass, b: ProfileLayoutClass) => -a.profiles!.length - -b.profiles!.length)
 );
@@ -76,25 +76,26 @@ const hiddenProperties = computed(() =>
             :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
             :projectProfiles="projectProfiles"
             :layoutProfiles="layout"
+            :show-profile-tags="showProfileTags"
         />
 
-    <Button
+        <Button
             v-if="hiddenProperties.length !== 0"
-        class="fixed bottom-10 right-10"
-        icon="material-icons-outlined mi-add"
-        size="large"
-        rounded
-        severity="primary"
-        @click="showAddProperties = true"
-        v-tooltip="{ value: 'Add more properties' }"
-    />
+            class="fixed bottom-10 right-10"
+            icon="material-icons-outlined mi-add"
+            size="large"
+            rounded
+            severity="primary"
+            @click="showAddProperties = true"
+            v-tooltip="{ value: 'Add more properties' }"
+        />
 
         <AddPropertiesDialog
-        v-model:visible="showAddProperties"
+            v-model:visible="showAddProperties"
             @add-properties="(selectedProperties: ProfileLayoutClass[]) => propsToShow.push(...selectedProperties)"
             :hiddenProperties="hiddenProperties"
         />
-            </div>
+    </div>
 </template>
 
 <style scoped lang="scss">

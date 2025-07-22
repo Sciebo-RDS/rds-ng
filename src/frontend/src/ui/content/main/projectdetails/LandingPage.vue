@@ -34,7 +34,7 @@ const comp = FrontendComponent.inject();
                 </Card>
             </div>
             <div class="ml-auto !pb-0">
-                <img src="@assets/img/rds_ng-octopus-blue.png" alt="logo" class="w-[28rem]" />
+                <img src="@assets/img/octopus.svg" alt="logo" class="w-[28rem]" />
             </div>
         </div>
 

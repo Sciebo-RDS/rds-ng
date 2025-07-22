@@ -37,4 +37,4 @@ ENV     FLASK_DEBUG=0
 ENV     FLASK_ENV=production
 
 EXPOSE  ${COMPONENT_PORT}
-CMD     gunicorn -k "geventwebsocket.gunicorn.workers.GeventWebSocketWorker" --workers 1 --threads $COMPONENT_THREADS --timeout 90 -b ":$COMPONENT_PORT" "$COMPONENT_FILE:$COMPONENT_APP"
+CMD     gunicorn -k "geventwebsocket.gunicorn.workers.GeventWebSocketWorker" --workers 1 --threads $COMPONENT_THREADS --timeout 900 -b ":$COMPONENT_PORT" "$COMPONENT_FILE:$COMPONENT_APP"

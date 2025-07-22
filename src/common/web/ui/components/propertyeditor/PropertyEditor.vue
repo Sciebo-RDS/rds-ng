@@ -5,10 +5,14 @@ import PropertySet from "./PropertySet.vue";
 import { PropertyObject, PropertyObjectStore, SharedPropertyObject } from "./PropertyObjectStore";
 import { PropertyProfileStore } from "./PropertyProfileStore";
 
-const { projectProfiles } = defineProps({
+const { projectProfiles, showProfileTags } = defineProps({
     projectProfiles: {
         type: PropertyProfileStore,
         required: true
+    },
+    showProfileTags: {
+        type: Boolean,
+        default: true
     }
 });
 
@@ -44,6 +48,7 @@ watch(
             :propertyObjects="propertyObjects as PropertyObjectStore"
             :sharedPropertyObjectStore="sharedPropertyObjectStore as PropertyObjectStore"
             :projectProfiles="projectProfiles"
+            :show-profile-tags="showProfileTags"
         />
     </div>
 </template>

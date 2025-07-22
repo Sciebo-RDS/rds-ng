@@ -79,7 +79,7 @@ onMounted(async () => performAuthentication());
 </script>
 
 <template>
-    <div class="r-centered-grid r-text">
+    <div class="r-centered-grid r-text mb-8">
         <Header />
 
         <div v-if="!!errorMessage" class="text-center">

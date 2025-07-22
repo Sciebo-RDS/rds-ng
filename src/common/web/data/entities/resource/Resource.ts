@@ -3,7 +3,7 @@
  */
 export enum ResourceType {
     Folder = "folder",
-    File = "file",
+    File = "file"
 }
 
 /**
@@ -20,7 +20,7 @@ export class Resource {
     public readonly basename: string;
     public readonly type: ResourceType;
 
-    public readonly size: number;
+    public size: number;
     public readonly mime_type: string;
 
     public constructor(filename: string, basename: string, type: ResourceType, size: number = 0, mimeType: string = "") {

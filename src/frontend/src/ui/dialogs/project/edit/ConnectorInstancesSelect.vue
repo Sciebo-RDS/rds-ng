@@ -45,7 +45,7 @@ const model = defineModel({ default: [] });
                 <label :for="instance.instance_id" class="pl-1.5">{{ instance.name }}</label>
             </div>
         </div>
-        <div v-if="groupedInstances.length === 0" class="justify-items-center content-center h-full space-y-3">
+        <div v-if="groupedInstances.length === 0" class="grid justify-items-center content-center h-full space-y-3">
             <i class="pi pi-exclamation-circle" style="font-size: 2.5rem"></i>
             <div class="justify-items-center">
                 <div class="font-bold">No connections</div>

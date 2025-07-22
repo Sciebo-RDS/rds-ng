@@ -5,7 +5,7 @@ import EntityColumnHeader from "./EntityColumnHeader.vue";
 import EntityColumnInputs from "./EntityColumnInputs.vue";
 import EntityColumnLinkedItems from "./EntityColumnLinkedItems.vue";
 
-const props = defineProps(["propertyClass", "profiles", "projectProfiles", "sharedPropertyObjectStore", "propertyObjects", "propertyObject"]);
+const props = defineProps(["propertyClass", "profiles", "projectProfiles", "sharedPropertyObjectStore", "propertyObjects", "propertyObject", "showProfileTag"]);
 
 const displayableInputs = props.propertyClass.getInputs();
 
@@ -23,6 +23,7 @@ const addableTypes = props.propertyClass.getRefTypes() as ProfileClassRef[];
             :sharedPropertyObjectStore="sharedPropertyObjectStore"
             :projectProfiles="projectProfiles"
             :profiles="profiles"
+            :show-profile-tag="showProfileTag"
         />
 
         <!--  Linked Items Row -->

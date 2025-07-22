@@ -52,7 +52,7 @@ _(2)_ If the service uses OAUTH2 authorization.
 | <code>network.verify_sll</code>                | If enabled, SSL certificates will be verified.                                                     | Boolean | true          |
 | <code>network.transmission_chunnk_size</code>  | The size (in bytes) for network transmissions.                                                     | Number  | 1048576       |
 | <code>network.regular_command_timeout</code>   | The maximum time (in seconds) for a command-reply to arrive.                                       | Number  | 10.0          |
-| <code>network.external_requests_timeout</code> | The maximum time (in seconds) for requests to external services; set to 0 to disable.              | Number  | 15.0          |
+| <code>network.external_requests_timeout</code> | The maximum time (in seconds) for requests to external services; set to 0 to disable.              | Number  | 60.0          |
 
 #### Server | Network
 

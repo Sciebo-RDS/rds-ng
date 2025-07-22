@@ -10,7 +10,7 @@ const appVersion = comp.data.version;
 
 <template>
     <div>
-        <img src="../../../../../assets/img/rds_ng-octopus-blue.png" alt="Logo" class="logo" />
+        <img src="../../../../../assets/img/octopus.svg" alt="Logo" class="logo" />
     </div>
     <div>
         <h2 class="text-2xl font-extrabold">
@@ -22,7 +22,7 @@ const appVersion = comp.data.version;
 
 <style scoped lang="scss">
 .logo {
-    width: 400px;
+    width: 350px;
     height: auto;
 }
 </style>
