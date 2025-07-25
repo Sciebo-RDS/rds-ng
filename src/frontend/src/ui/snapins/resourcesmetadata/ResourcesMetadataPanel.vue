@@ -74,8 +74,8 @@ onMounted(() => {
         projectProfiles.mountProfile(profile.profile);
     }
 
-    // Initiate the retrieval of the root directory; if this has been done before, it will be fetched from the cache automatically
-    retrieveDataPath("");
+    // Initiate the retrieval of the project directory; if this has been done before, it will be fetched from the cache automatically
+    retrieveDataPath(unref(project)!.resources_path);
 });
 
 watch(
@@ -94,7 +94,6 @@ watch(
                 updatedData[path as ResourcesMetadataKey] = resourcesSet;
             });
             const action = new UpdateProjectFeaturesAction(comp);
-            console.log(resourcesSet);
             action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
             action.execute();
 
@@ -125,12 +124,15 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
 function retrieveDataPath(path: string): void {
     resourcesError.value = "";
 
-    retrieveResourcesList(path, false)
+    const root = unref(project)!.resources_path;
+    retrieveResourcesList(root, path, false)
         .then(() => {
-            const resources = unref(resourcesListCache).resources;
+            const resources = unref(resourcesListCache).root(root).resources;
             if (!!resources) {
                 const nodes = resourcesListToTreeNodes(resources);
-                resourcesNodes.value = adjustResourcesTreeNodesLeafStates(nodes, resources, (path: string) => unref(resourcesListCache).contains(path));
+                resourcesNodes.value = adjustResourcesTreeNodesLeafStates(nodes, resources, (path: string) =>
+                    unref(resourcesListCache).root(root).contains(path)
+                );
             } else {
                 resourcesNodes.value = [];
             }

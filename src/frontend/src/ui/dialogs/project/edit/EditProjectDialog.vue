@@ -114,12 +114,17 @@ const nextName = computed(() => {
 function retrieveDataPath(path: string): void {
     resourcesError.value = "";
 
-    retrieveResourcesList(path, false)
+    retrieveResourcesList("/", path, false)
         .then(() => {
-            const resources = unref(resourcesListCache).resources;
+            const resources = unref(resourcesListCache).root("/").resources;
             if (!!resources) {
                 const nodes = resourcesListToTreeNodes(resources, true, false);
-                resourcesNodes.value = adjustResourcesTreeNodesLeafStates(nodes, resources, (path: string) => unref(resourcesListCache).contains(path), false);
+                resourcesNodes.value = adjustResourcesTreeNodesLeafStates(
+                    nodes,
+                    resources,
+                    (path: string) => unref(resourcesListCache).root("/").contains(path),
+                    false
+                );
             } else {
                 resourcesNodes.value = [];
             }

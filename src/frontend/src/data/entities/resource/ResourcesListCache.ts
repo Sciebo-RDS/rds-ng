@@ -3,13 +3,16 @@ import { ResourcesList } from "@common/data/entities/resource/ResourcesList.ts";
 import { resourcesListFindPath } from "@common/data/entities/resource/ResourceUtils.ts";
 
 /**
- * Cache to store a resources list.
- *
- * This is used to store a resources list incrementally, i.d., the existing list can be extended on demand.
+ * A single resources list entry in the resources lists cache.
  */
-export class ResourcesListCache {
+class ResourcesListCacheEntry {
+    private _root: string;
     private _resourcesList: ResourcesList | null = null;
     private _knownPaths: string[] = [];
+
+    public constructor(root: string) {
+        this._root = root;
+    }
 
     /**
      * Adds a new resources list to the cache.
@@ -22,6 +25,7 @@ export class ResourcesListCache {
      * @throws Error - When a push operation would result in a corrupted cache.
      */
     public push(resources: ResourcesList): void {
+        // TODO: Support gaps in tree
         // Adding a new root replaces everything else
         if (this.isRoot(resources.resource)) {
             this.clear();
@@ -90,7 +94,7 @@ export class ResourcesListCache {
     }
 
     private isRoot(res: Resource): boolean {
-        return res.type == ResourceType.Folder && (res.filename == "" || res.filename == "/");
+        return res.type == ResourceType.Folder && res.filename == this._root;
     }
 
     private insertIntoParent(resources: ResourcesList, child: ResourcesList): boolean {
@@ -136,5 +140,33 @@ export class ResourcesListCache {
         if (!!this._resourcesList) {
             _update(this._resourcesList);
         }
+    }
+}
+
+/**
+ * Cache to store resources lists based on their root path.
+ *
+ * This is used to store resources lists incrementally, i.d., the existing lists can be extended on demand.
+ */
+export class ResourcesListCache {
+    private _cacheEntries: Record<string, ResourcesListCacheEntry> = {};
+
+    /**
+     * Retrieves the cache for a specific root, creating one if necessary.
+     *
+     * @param root - The root path.
+     */
+    public root(root: string): ResourcesListCacheEntry {
+        if (!(root in this._cacheEntries)) {
+            this._cacheEntries[root] = new ResourcesListCacheEntry(root);
+        }
+        return this._cacheEntries[root];
+    }
+
+    /**
+     * Removes all cached lists.
+     */
+    public clear(): void {
+        this._cacheEntries = {};
     }
 }

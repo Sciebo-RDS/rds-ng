@@ -9,11 +9,11 @@ import { GetResourceAction } from "@/ui/actions/resource/GetResourceAction";
 import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction.ts";
 
 export function useResourceTools(comp: FrontendComponent) {
-    async function retrieveResourcesList(path: string, recursive: boolean = true): Promise<ResourcesList> {
+    async function retrieveResourcesList(root: string, path: string, recursive: boolean = true): Promise<ResourcesList> {
         const resourcesStore = useResourcesStore();
 
         return new Promise<ResourcesList>(async (resolve, reject) => {
-            const resources = resourcesStore.resourcesListCache.getPath(path);
+            const resources = resourcesStore.resourcesListCache.root(root).getPath(path);
             if (!!resources) {
                 resolve(resources);
             } else {
@@ -22,7 +22,7 @@ export function useResourceTools(comp: FrontendComponent) {
                     .prepare(path, true, true, recursive)
                     .done((reply: ListResourcesReply, success, msg) => {
                         if (success) {
-                            resourcesStore.resourcesListCache.push(reply.resources);
+                            resourcesStore.resourcesListCache.root(root).push(reply.resources);
                             resolve(reply.resources);
                         } else {
                             reject(`Unable to fetch ${path}: ${msg}`);

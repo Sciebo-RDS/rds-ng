@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { FrontendComponent } from "@/component/FrontendComponent";
 import { storeToRefs } from "pinia";
 import "primeicons/primeicons.css";
 import Button from "primevue/button";
 import Checkbox from "primevue/checkbox";
 import ScrollPanel from "primevue/scrollpanel";
 import { computed, toRefs } from "vue";
+
+import { FrontendComponent } from "@/component/FrontendComponent";
 
 import { groupConnectorInstances } from "@common/data/entities/connector/ConnectorInstanceUtils";
 
