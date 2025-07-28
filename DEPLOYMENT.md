@@ -1,3 +1,9 @@
+# Kubernetes deployment
+
+Charts for a Helm/k8s deployment can be found in `deployment/charts`. Please refer to the included `values.yaml` files for further details.
+
+**Note:** The charts are still under development, so not everything might work as expected yet.
+
 # Local deployment
 
 The following guide will briefly show you how to run a local setup of RDS-NG within a Nextcloud instance.

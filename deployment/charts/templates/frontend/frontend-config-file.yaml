@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config-file
+data:
+  config.toml: |
+    [network.client]
+    server_address = "{{ .Values.server.address }}"
+
+    [integration]
+    scheme = "host"
+
+    [integration.host]
+    api_url = "{{ .Values.frontend.integration.hostApiUrl }}"
+
+    [authorization.oauth2.client]
+    id = "{{ .Values.frontend.integration.clientId }}"
+    redirect_url = "{{ .Values.server.oauth2.clientRedirectUrl }}"
+

@@ -10,7 +10,7 @@ const { pause } = useIntervalFn(() => {
         pause();
         reloadApp();
     }
-}, 100);
+}, 1000);
 
 function reloadApp() {
     sendActionToHost(HostCommuncationAction.Reload);
@@ -21,7 +21,7 @@ function reloadApp() {
     <div class="r-centered-grid r-text">
         <Header></Header>
         <div>The connection to the server has been lost.</div>
-        <div>If you are not being logged in automatically, click <a href="#" @click.prevent="reloadApp" class="text-blue-600">here</a>.</div>
+        <div>If you are not being logged in automatically, click <a href="#" @click.prevent="reloadApp" class="r-text-link">here</a>.</div>
     </div>
 </template>
 

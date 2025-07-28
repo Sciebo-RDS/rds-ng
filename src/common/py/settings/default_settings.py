@@ -30,7 +30,7 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
         NetworkSettingIDs.VERIFY_SSL: True,
         NetworkSettingIDs.TRANSMISSION_CHUNK_SIZE: 1 * 1024 * 1024,
         NetworkSettingIDs.REGULAR_COMMAND_TIMEOUT: 10,
-        NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT: 15,
+        NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT: 60,
         NetworkServerSettingIDs.ALLOWED_ORIGINS: "",
         NetworkServerSettingIDs.IDLE_TIMEOUT: 60 * 60,
         NetworkClientSettingIDs.SERVER_ADDRESS: "",

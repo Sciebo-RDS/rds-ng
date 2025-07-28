@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rds-server
+  labels:
+    app: {{ .Values.appName }}
+    component: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      component: server
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        component: server
+    spec:
+      volumes:
+        - name: server-volume
+          persistentVolumeClaim:
+            claimName: rds-server-pvc
+      containers:
+        - name: rds-server
+          image: "{{ .Values.server.image.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+          ports:
+            - containerPort: 6969
+          envFrom:
+          - configMapRef:
+              name: server-config
+          - secretRef:
+              name: server-secret
+          volumeMounts:
+            - mountPath: /data
+              name: server-volume
+      
+          
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-service
+spec:
+  selector:
+    app: {{ .Values.appName }}
+    component: server
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 6969
+

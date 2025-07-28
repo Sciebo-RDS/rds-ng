@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, watch, type PropType, type Ref } from "vue";
+import { boolean } from "yup";
 
 import { LayoutPropertyObject, PropertyObject, PropertyObjectStore } from "./PropertyObjectStore";
 import { ProfileClass, ProfileLayoutClass, type ProfileID } from "./PropertyProfile";
@@ -8,7 +9,7 @@ import { PropertyProfileStore } from "./PropertyProfileStore";
 import EntityColumn from "./EntityColumn/EntityColumn.vue";
 import IndexColumn from "./IndexColumn.vue";
 
-const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyObjectStore, layoutProfiles } = defineProps({
+const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyObjectStore, layoutProfiles, showProfileTags } = defineProps({
     index: {
         type: Number,
         required: true
@@ -32,6 +33,10 @@ const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyOb
     layoutProfiles: {
         type: Object as PropType<Array<ProfileLayoutClass>>,
         required: true
+    },
+    showProfileTags: {
+        type: boolean,
+        default: true
     }
 });
 propertyObjects.add(new LayoutPropertyObject(propertyClass.getId()));
@@ -78,6 +83,7 @@ const removeFromLayout = (pId: string) => {
             :propertyObjects="propertyObjects"
             :propertyObject="propertyObject"
             :isDialog="false"
+            :show-profile-tag="showProfileTags"
         />
     </div>
 </template>

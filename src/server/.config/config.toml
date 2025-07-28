@@ -2,7 +2,7 @@
 verify_ssl = false
 
 [network.server]
-# idle_timeout = 5
+# idle_timeout = 15
 
 [storage]
 driver = "database"

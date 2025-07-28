@@ -19,7 +19,8 @@ const props = defineProps([
     "propertyObject",
     "sharedPropertyObjectStore",
     "projectProfiles",
-    "profiles"
+    "profiles",
+    "showProfileTag"
 ]);
 const emit = defineEmits(["loadObject"]);
 
@@ -56,7 +57,7 @@ const toggleDescriptionPopover = (event: Event) => {
                 @loadObject="(id) => emit('loadObject', id)"
             />
         </span>
-        <span v-if="!isDialog" class="flex self-center gap-2">
+        <span v-if="showProfileTag" class="flex self-center gap-2">
             <Chip
                 v-for="p in profiles.sort()"
                 :label="projectProfiles.getProfileLabelById(p)"

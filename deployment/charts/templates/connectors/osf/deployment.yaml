@@ -1,0 +1,62 @@
+{{- if .Values.connectors.osf.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-{{ .Values.connectors.osf.componentName }}"
+  namespace: {{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.osf.componentName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      component: {{ .Values.connectors.osf.componentName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        component: {{ .Values.connectors.osf.componentName }}
+    spec:
+      volumes:
+        - name: osf-logo-volume
+          configMap:
+            name: connector-osf-logos-config
+
+      containers:
+        - name: "{{ .Values.appName }}-{{ .Values.connectors.osf.componentName }}"
+          image: "{{ .Values.connectors.osf.image.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.connectors.osf.image.pullPolicy }}
+          ports:
+            - containerPort: 6969
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.connectors.osf.componentName }}-config"
+          volumeMounts:
+            {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "default") (.Files.Get .Values.connectors.osf.logos.default) }}
+            - name: osf-logo-volume
+              mountPath: /component/connectors/osf/.assets/logo.png
+              subPath: logo.png 
+            {{ end }}
+            {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "horizontal") (.Files.Get .Values.connectors.osf.logos.horizontal) }}
+            - name: osf-logo-volume
+              mountPath: /component/connectors/osf/.assets/horizontal.png
+              subPath: horizontal.png 
+            {{ end }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.connectors.osf.componentName }}-service"
+spec:
+  selector:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.osf.componentName }}
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 6969
+{{- end -}}

@@ -7,6 +7,7 @@ import { useFrontendTools } from "@/ui/tools/FrontendTools";
 
 import FrontendViewInitializer from "@/ui/views/frontend/FrontendViewInitializer.vue";
 import MainContent from "@/ui/content/main/MainContent.vue";
+import { RouterView } from "vue-router";
 
 const comp = FrontendComponent.inject();
 const integrationScheme = shallowReactive(comp.integrationScheme);
@@ -40,7 +41,7 @@ onUnmounted(() => {
 
 <template>
     <FrontendViewInitializer :initializing="isInitializing" />
-    <MainContent />
+    <MainContent class="w-full h-full overflow-hidden" />
 </template>
 
 <style scoped lang="scss"></style>

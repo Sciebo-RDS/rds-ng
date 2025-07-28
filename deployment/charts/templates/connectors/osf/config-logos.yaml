@@ -1,0 +1,17 @@
+{{ if and (hasKey .Values.connectors.osf "logos") (or (and (hasKey .Values.connectors.osf.logos "default") (.Files.Get .Values.connectors.osf.logos.default)) (and (hasKey .Values.connectors.osf.logos "horizontal") (.Files.Get .Values.connectors.osf.logos.horizontal))) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.connectors.osf.componentName }}-logos-config"
+  namespace: {{ .Values.nameSpace }}
+
+binaryData:
+{{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "default") }}
+  logo.png: |-
+    {{ .Files.Get .Values.connectors.osf.logos.default  | b64enc  }}
+{{ end }}
+{{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "horizontal") }}
+  horizontal.png: |-
+    {{ .Files.Get .Values.connectors.osf.logos.horizontal  | b64enc  }}
+{{ end }}
+{{ end }}

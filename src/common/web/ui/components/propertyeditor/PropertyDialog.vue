@@ -129,6 +129,7 @@ function createObject(type: string) {
                     :sharedPropertyObjectStore="sharedPropertyObjectStore"
                     :projectProfiles="projectProfiles"
                     :isDialog="true"
+                    :show-profile-tag="false"
                     @loadObject="(id) => selectActiveObject(id)"
                 />
             </template>

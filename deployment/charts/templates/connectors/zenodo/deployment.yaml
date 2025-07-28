@@ -1,0 +1,47 @@
+{{- if .Values.connectors.zenodo.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-{{ .Values.connectors.zenodo.componentName }}"
+  namespace: {{ .Values.nameSpace }}
+  labels:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.zenodo.componentName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      component: {{ .Values.connectors.zenodo.componentName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        component: {{ .Values.connectors.zenodo.componentName }}
+    spec:
+      containers:
+        - name: "{{ .Values.appName }}-{{ .Values.connectors.zenodo.componentName }}"
+          image: "{{ .Values.connectors.zenodo.image.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.connectors.zenodo.image.pullPolicy }}
+          ports:
+            - containerPort: 6969
+          envFrom:
+          - configMapRef:
+              name: "{{ .Values.connectors.zenodo.componentName }}-config"
+      
+          
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.connectors.zenodo.componentName }}-service"
+spec:
+  selector:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.zenodo.componentName }}
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 6969
+{{- end -}}

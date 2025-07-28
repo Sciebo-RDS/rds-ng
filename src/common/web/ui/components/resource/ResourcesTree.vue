@@ -20,29 +20,43 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    dynamic: {
+        type: Boolean,
+        default: false
+    },
     expandFirstOnly: {
         type: Boolean,
         default: false
     }
 });
-const { options, loading, expandFirstOnly } = toRefs(props);
+const { options, loading, dynamic, expandFirstOnly } = toRefs(props);
 const model = defineModel<string>({ default: "" });
 const emits = defineEmits<{
     (e: "changed", path: string): void;
+    (e: "nodeExpand", path: string): void;
+    (e: "nodeCollapse", path: string): void;
 }>();
 const { expandRootNodes, expandAllNodes } = useResourceTreeTools();
 
 const isLoading = ref(loading.value);
+const loadingMode = ref("mask");
 if (isLoading.value) {
-    watch(options, () => {
-        isLoading.value = false;
+    watch(
+        options,
+        () => {
+            isLoading.value = false;
+            if (dynamic.value) {
+                loadingMode.value = "icon";
+            }
 
-        if (unref(expandFirstOnly)) {
-            expandFirst();
-        } else {
-            expandAll();
-        }
-    });
+            if (unref(expandFirstOnly)) {
+                expandFirst();
+            } else {
+                expandAll();
+            }
+        },
+        { once: true }
+    );
 }
 
 const selectedResources = ref<Object>(pathToSelectedResources(model.value));
@@ -59,15 +73,27 @@ watch(model, (newPath) => {
 const expandedNodes = ref<Record<string, boolean>>({});
 
 function expandFirst(): void {
-    if (options!.value) {
+    if (unref(options)) {
         expandRootNodes(unref(options) as TreeNode[], expandedNodes);
     }
 }
 
 function expandAll(): void {
-    if (options!.value) {
+    if (unref(options)) {
         expandAllNodes(unref(options) as TreeNode[], expandedNodes);
     }
+}
+
+function onNodeExpand(node: TreeNode): void {
+    if (dynamic.value) {
+        node.loading = true;
+    }
+
+    emits("nodeExpand", node.key);
+}
+
+function onNodeCollapse(node: TreeNode): void {
+    emits("nodeCollapse", node.key);
 }
 </script>
 
@@ -78,10 +104,13 @@ function expandAll(): void {
         v-model:selection-keys="selectedResources"
         selection-mode="single"
         :loading="isLoading"
+        :loading-mode="loadingMode"
         class="p-0 m-0 bg-transparent rounded"
         :class="{ 'h-full': isLoading }"
         :pt="{ root: 'text-sm', nodeIcon: '!text-xl' }"
         :dt="{ 'node.padding': '0' }"
+        @node-expand="onNodeExpand"
+        @node-collapse="onNodeCollapse"
     />
 </template>
 

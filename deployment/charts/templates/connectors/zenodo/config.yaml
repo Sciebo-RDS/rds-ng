@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.connectors.zenodo.componentName }}-config"
+  namespace: {{ .Values.nameSpace }}
+data:
+  RDS_NETWORK_API_KEY: {{ .Values.server.networkApiKey }}
+  RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}
+  RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL: {{ .Values.server.oauth2.clientRedirectUrl }}
+  RDS_AUTHORIZATION_OAUTH2_CLIENT_ID: {{ .Values.connectors.zenodo.oauth2.clientId }} 
+  RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address }}

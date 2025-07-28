@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form } from "@primevue/forms";
+import { storeToRefs } from "pinia";
 import Checkbox from "primevue/checkbox";
 import Fieldset from "primevue/fieldset";
 import IftaLabel from "primevue/iftalabel";
@@ -15,28 +16,33 @@ import ToggleSwitch from "primevue/toggleswitch";
 import { computed, onMounted, ref, unref, watch } from "vue";
 import * as yup from "yup";
 
-import { ListResourcesReply } from "@common/api/resource/ResourceCommands";
-import { resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
-import { useDirectives } from "@common/ui/Directives";
+import { adjustResourcesTreeNodesLeafStates, resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
 
 import LegendHeader from "@common/ui/components/misc/LegendHeader.vue";
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 import ResourcesTree from "@common/ui/components/resource/ResourcesTree.vue";
 import StepIconHeader from "@common/ui/components/stepper/StepIconHeader.vue";
+import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
+import { useDirectives } from "@common/ui/Directives";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
-import { ListResourcesAction } from "@/ui/actions/resource/ListResourcesAction";
-import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
+import { useResourcesStore } from "@/data/stores/ResourcesStore.ts";
 
 import ConnectorInstancesSelect from "@/ui/dialogs/project/edit/ConnectorInstancesSelect.vue";
 import EditProjectDialogFooter from "@/ui/dialogs/project/edit/EditProjectDialogFooter.vue";
-
-const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
-const { vFocus } = useDirectives();
+import { SnapInsCatalog } from "@/ui/snapins/SnapInsCatalog";
+import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
 
 const comp = FrontendComponent.inject();
+const resourcesStore = useResourcesStore();
+
+const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
+const { retrieveResourcesList } = useResourceTools(comp);
+const { vFocus } = useDirectives();
+
+const { resourcesListCache } = storeToRefs(resourcesStore);
+
 const optSnapIns = SnapInsCatalog.allOptionals();
 const uiOptions = ref<UIOptions>(dialogData.userData.options.ui);
 const showDataPathSelector = dialogData.options["showDataPathSelector"];
@@ -69,20 +75,11 @@ const initialFormValues = ref({ title: dialogData.userData.title, description: d
 
 const resourcesNodes = ref<Object[]>([]);
 const resourcesError = ref("");
+
 onMounted(() => {
     if (showDataPathSelector) {
-        const action = new ListResourcesAction(comp, true);
-        action
-            .prepare("", true, false)
-            .done((reply: ListResourcesReply, success, msg) => {
-                if (success) {
-                    resourcesNodes.value = resourcesListToTreeNodes(reply.resources, true);
-                }
-            })
-            .failed((_, msg) => {
-                resourcesError.value = "Unable to load resources";
-            });
-        action.execute();
+        // Initiate the retrieval of the root directory; if this has been done before, it will be fetched from the cache automatically
+        retrieveDataPath("");
     }
 });
 
@@ -114,7 +111,30 @@ const nextName = computed(() => {
     }
 });
 
-function onClickStep(event: Event, callback: (event: Event) => void) {
+function retrieveDataPath(path: string): void {
+    resourcesError.value = "";
+
+    retrieveResourcesList("/", path, false)
+        .then(() => {
+            const resources = unref(resourcesListCache).root("/").resources;
+            if (!!resources) {
+                const nodes = resourcesListToTreeNodes(resources, true, false);
+                resourcesNodes.value = adjustResourcesTreeNodesLeafStates(
+                    nodes,
+                    resources,
+                    (path: string) => unref(resourcesListCache).root("/").contains(path),
+                    false
+                );
+            } else {
+                resourcesNodes.value = [];
+            }
+        })
+        .catch((reason: string) => {
+            resourcesError.value = `Unable to load resources: ${reason}`;
+        });
+}
+
+function onClickStep(event: Event, callback: (event: Event) => void): void {
     validator
         .validate()
         .then(() => {
@@ -125,11 +145,11 @@ function onClickStep(event: Event, callback: (event: Event) => void) {
         .catch(() => {});
 }
 
-function onPrevStep() {
+function onPrevStep(): void {
     activeStep.value -= 1;
 }
 
-function onNextStep() {
+function onNextStep(): void {
     validator
         .validate()
         .then(() => {
@@ -153,6 +173,16 @@ function onNextStep() {
 
             activeStep.value += 1;
         });
+}
+
+function onDataPathSelected(path: string): void {
+    validator.refresh();
+}
+
+function onDataPathNodeExpand(path: string): void {
+    if (!!path) {
+        retrieveDataPath(path);
+    }
 }
 </script>
 
@@ -255,15 +285,17 @@ function onNextStep() {
                                     <small class="px-2 py-1.5 r-shade-gray rounded-lg truncated inline-block w-full">
                                         <b class="pr-1">Selected path:</b> {{ dialogData.userData.datapath || "(None)" }}
                                     </small>
-                                    <ScrollPanel class="h-48">
+                                    <ScrollPanel class="h-72">
                                         <ResourcesTree
                                             name="datapath"
                                             v-model="dialogData.userData.datapath"
                                             :options="resourcesNodes"
                                             loading
+                                            dynamic
                                             expand-first-only
                                             class="w-full h-fit"
-                                            @changed="validator.refresh()"
+                                            @changed="onDataPathSelected"
+                                            @node-expand="onDataPathNodeExpand"
                                         />
                                     </ScrollPanel>
                                 </div>
