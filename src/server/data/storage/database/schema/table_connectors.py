@@ -5,10 +5,10 @@ from sqlalchemy.orm import composite, registry
 
 from common.py.data.entities.authorization import AuthorizationSettings
 from common.py.data.entities.connector import Connector
-from common.py.data.entities.properties import PropertyProfile
+from common.py.data.entities.metadata import MetadataProfileContainer
 from common.py.utils import UnitID
 
-from .types import DataclassDataType, JSONEncodedDataType
+from .types import ArrayType, DataclassArrayType, DataclassDataType, JSONEncodedDataType
 
 
 @dataclass(kw_only=True)
@@ -27,7 +27,6 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
     Returns:
         The newly created tables.
     """
-    from sqlalchemy import Unicode
 
     table_connectors = Table(
         "connectors",
@@ -50,8 +49,10 @@ def register_connectors_tables(metadata: MetaData, reg: registry) -> ConnectorsT
         Column("logos__horizontal", Text),
         # Metadata
         Column(
-            "metadata_profile",
-            DataclassDataType[PropertyProfile](dataclass_type=PropertyProfile),
+            "metadata_profiles",
+            DataclassArrayType[MetadataProfileContainer](
+                dataclass_type=MetadataProfileContainer
+            ),
         ),
         # Miscellaneous
         Column("announce_timestamp", Numeric(32, 8, asdecimal=False)),

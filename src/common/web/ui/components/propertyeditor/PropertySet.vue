@@ -13,7 +13,7 @@ import PropertyRow from "./PropertyRow.vue";
 
 const props = defineProps(["project", "projectProfiles", "propertyObjects", "sharedPropertyObjectStore", "showProfileTags"]);
 
-var layout = makeLayout(props.projectProfiles);
+const layout = computed(() => makeLayout(props.projectProfiles))
 
 const profileFilter = ref<ProfileID[]>([]);
 const requiredOnly = ref(false);
@@ -21,7 +21,7 @@ const searchString = ref("");
 
 // TODO Comment and maybe refactor to have dynamic filters
 const propsToShow = computed(() =>
-    layout
+    layout.value
         .filter((e: ProfileLayoutClass) => e.required || (requiredOnly.value ? false : props.propertyObjects.get(e.id) !== undefined))
         .filter(
             (e: ProfileLayoutClass) =>
@@ -51,7 +51,7 @@ const propsToShow = computed(() =>
 
 const showAddProperties = ref(false);
 const hiddenProperties = computed(() =>
-    layout.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.getId()).includes(e.getId()))
+    layout.value.filter((e: ProfileLayoutClass) => !propsToShow.value.map((e: ProfileLayoutClass) => e.getId()).includes(e.getId()))
 );
 </script>
 

@@ -3,9 +3,11 @@ from .metadata_profile_container import (
     MetadataProfileContainerList,
 )
 from .metadata_profile_container_utils import (
-    filter_containers_by_category,
-    filter_containers_by_role,
-    filter_containers,
     containers_from_folder,
+    filter_containers,
+    filter_containers_by_category,
+    filter_containers_by_roles,
+    filter_containers_ex,
+    is_container_selected,
 )
 from .types import MetadataObjects

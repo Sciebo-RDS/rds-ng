@@ -62,7 +62,7 @@ def create_connector_service(comp: BackendComponent) -> Service:
                     ),
                     options=con_info.options,
                     logos=con_info.logos,
-                    metadata_profile=con_info.metadata_profile,
+                    metadata_profiles=con_info.metadata_profiles,
                 ).emit(ctx.remote_channel)
 
                 svc.state.last_announce = msg.timestamp

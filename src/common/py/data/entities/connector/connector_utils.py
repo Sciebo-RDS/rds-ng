@@ -42,7 +42,5 @@ def apply_connector_update(
     connector.authorization = updated_connector.authorization
     connector.options = updated_connector.options
     connector.logos = clone_entity(updated_connector.logos)
-    connector.metadata_profile = PropertyProfile(
-        **asdict(updated_connector.metadata_profile)
-    )
+    connector.metadata_profiles = updated_connector.metadata_profiles
     connector.announce_timestamp = updated_connector.announce_timestamp

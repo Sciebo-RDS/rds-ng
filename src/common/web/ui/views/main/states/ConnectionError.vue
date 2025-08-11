@@ -2,8 +2,8 @@
 import { WebComponent } from "../../../../component/WebComponent";
 import { useComponentStore } from "../../../../data/stores/ComponentStore";
 import { HostCommuncationAction, sendActionToHost } from "../../../../integration/HostCommunication";
-import ExternalLink from "../../../components/misc/ExternalLink.vue";
 
+import LinkedText from "../../../components/misc/LinkedText.vue";
 import Header from "./Header.vue";
 
 const comp = WebComponent.injectComponent();
@@ -25,7 +25,7 @@ function reloadApp() {
         <div>&nbsp;</div>
         <div>
             Please <a href="#" @click.prevent="reloadApp" class="r-text-link">refresh</a> your browser to try again. If this error persists,
-            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+            <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
             describing the error.
         </div>
     </div>

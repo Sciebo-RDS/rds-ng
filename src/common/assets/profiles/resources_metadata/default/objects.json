@@ -1,6 +1,9 @@
 {
     "metadata": {
-        "id": ["objects", "2024.09.17"],
+        "id": [
+            "Objects",
+            "2024.09.17"
+        ],
         "displayLabel": "Object resource",
         "description": "A profile for individual resources."
     },
@@ -48,7 +51,11 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
             "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
-            "refs": [{ "classId": "creator" }],
+            "refs": [
+                {
+                    "classId": "creator"
+                }
+            ],
             "required": true,
             "multiple": true
         }
@@ -60,8 +67,14 @@
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "labelTemplate": "${name}",
             "refs": [
-                { "classId": "nameIdentifier", "inline": true },
-                { "classId": "affiliation", "inline": true }
+                {
+                    "classId": "nameIdentifier",
+                    "inline": true
+                },
+                {
+                    "classId": "affiliation",
+                    "inline": true
+                }
             ],
             "input": [
                 {
@@ -83,7 +96,11 @@
                     "id": "nameIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": ["ORCID", "GND", "other"],
+                    "options": [
+                        "ORCID",
+                        "GND",
+                        "other"
+                    ],
                     "description": ""
                 },
                 {
@@ -102,7 +119,11 @@
                     "id": "affiliationIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": ["ORCID", "GND", "other"],
+                    "options": [
+                        "ORCID",
+                        "GND",
+                        "other"
+                    ],
                     "description": ""
                 },
                 {

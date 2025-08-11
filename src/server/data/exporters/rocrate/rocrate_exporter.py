@@ -12,7 +12,8 @@ from common.py.data.exporters import (
     ProjectExporterID,
     ProjectExporterResult,
 )
-from server.data.exporters.rocrate.utils import make_ro_crate
+
+from .utils import make_ro_crate
 
 
 class ROCrateExporter(ProjectExporter):

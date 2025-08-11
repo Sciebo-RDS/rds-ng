@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { HostCommuncationAction, sendActionToHost } from "@common/integration/HostCommunication.ts";
-import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
 import Button from "primevue/button";
 import { onMounted, type PropType, ref, toRefs, unref } from "vue";
 
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest.ts";
+import { HostCommuncationAction, sendActionToHost } from "@common/integration/HostCommunication.ts";
+
+import LinkedText from "@common/ui/components/misc/LinkedText.vue";
 import Header from "@common/ui/views/main/states/Header.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -92,7 +93,7 @@ onMounted(async () => performAuthentication());
             <div>&nbsp;</div>
             <div>
                 Please <a href="#" @click.prevent="reloadApp" class="r-text-link">refresh</a> your browser to try again. If this error persists,
-                <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+                <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
                 describing the error.
             </div>
         </div>

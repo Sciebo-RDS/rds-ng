@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useResourcesStore } from "@/data/stores/ResourcesStore.ts";
-import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 import Panel from "primevue/panel";
@@ -8,30 +6,39 @@ import ScrollPanel from "primevue/scrollpanel";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import ToggleSwitch from "primevue/toggleswitch";
-import { computed, nextTick, onMounted, type PropType, reactive, ref, toRefs, unref, watch } from "vue";
+import { computed, nextTick, onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { getOptionalMetadataProfiles } from "@common/data/entities/project/ProjectUtils.ts";
 import { useMetadataStore } from "@/data/stores/MetadataStore";
+import { useResourcesStore } from "@/data/stores/ResourcesStore.ts";
+import { useUserStore } from "@/data/stores/UserStore.ts";
 import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
+import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
 
+import MetadataProfilesSelector from "@/ui/components/metadata/MetadataProfilesSelector.vue";
 import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
 import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
 
 import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
-import { filterContainers } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
+import { filterContainers, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
 import { ResourcesMetadata, ResourcesMetadataFeature, type ResourcesMetadataKey } from "@common/data/entities/project/features/ResourcesMetadataFeature";
 import { Project } from "@common/data/entities/project/Project";
 import { Resource } from "@common/data/entities/resource/Resource";
 import { adjustResourcesTreeNodesLeafStates, resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
 import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
 import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
-import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
 import { deepClone } from "@common/utils/ObjectUtils";
+
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
 
 const comp = FrontendComponent.inject();
 const resourcesStore = useResourcesStore();
 const metadataStore = useMetadataStore();
+const userStore = useUserStore();
+const { userSettings } = storeToRefs(userStore);
 
 const { retrieveResourcesList } = useResourceTools(comp);
 const { resourcesListCache } = storeToRefs(resourcesStore);
@@ -63,68 +70,47 @@ const propertyHeader = computed(() => {
     }
 });
 
-const projectProfiles = reactive(new PropertyProfileStore());
-const debounce = makeDebounce();
+const enabledProfiles = ref<ProfileID[]>(unref(project).features.resources_metadata.enabled_metadata_profiles);
+const metadataProfiles = computed(() => {
+    const profileStore = new PropertyProfileStore();
+
+    for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, [
+        MetadataProfileContainerRole.Default,
+        MetadataProfileContainerRole.Optional
+    ])) {
+        if (isContainerSelected(profile, unref(enabledProfiles))) {
+            profileStore.mountProfile(profile.profile);
+        }
+    }
+
+    return profileStore;
+});
+const optionalProfiles = computed(() =>
+    getOptionalMetadataProfiles(unref(project), unref(userSettings), [], metadataStore.profiles, ResourcesMetadataFeature.FeatureID)
+);
+
 const resourcesData = ref();
 
+const debounce = makeDebounce();
 let blockResourcesUpdate = false;
 
 onMounted(() => {
-    for (const profile of filterContainers(metadataStore.profiles, ResourcesMetadataFeature.FeatureID, MetadataProfileContainerRole.Global)) {
-        projectProfiles.mountProfile(profile.profile);
-    }
-
     // Initiate the retrieval of the project directory; if this has been done before, it will be fetched from the cache automatically
-    retrieveDataPath(unref(project)!.resources_path);
+    retrieveDataPath(unref(project).resources_path);
 });
 
-watch(
-    () => resourcesData,
-    (metadata) => {
-        if (blockResourcesUpdate) {
-            return;
-        }
-
-        debounce(() => {
-            const resourcesSet = unref(metadata);
-            const updatedData = deepClone<ResourcesMetadata>(project!.value.features.resources_metadata.metadata);
-
-            const selectedPaths = Object.keys(selectedNodes.value);
-            selectedPaths.forEach((path: ResourcesMetadataKey) => {
-                updatedData[path as ResourcesMetadataKey] = resourcesSet;
-            });
-            const action = new UpdateProjectFeaturesAction(comp);
-            action.prepare(project!.value, [new ResourcesMetadataFeature(updatedData)]);
-            action.execute();
-
-            // TODO: A hack to update the local data; needs to be changed later
-            // @ts-ignore
-            project!.value.features.resources_metadata.metadata = updatedData;
-        });
-    },
-    { deep: true }
-);
-
-watch(selectedNodes, (nodes: Record<string, boolean>) => {
-    blockResourcesUpdate = true;
-
-    /* const persistedSets: PersistedSet[] = []; */
-    const selectedPaths = Object.keys(nodes);
-    const metadata = project!.value.features.resources_metadata.metadata;
-    /* selectedPaths.forEach((path) => {
-        persistedSets.push(path in metadata ? (metadata[path] as PersistedSet) : new PersistedSet(resources.profile_id, {}));
-    }); */
-
-    resourcesData.value = metadata[selectedPaths[0]] || [];
-
-    // Unblock only after the resources watcher had a chance to fire
-    nextTick(() => (blockResourcesUpdate = false));
-});
+function saveProject(): void {
+    debounce(() => {
+        const action = new UpdateProjectFeaturesAction(comp);
+        action.prepare(unref(project), [new ResourcesMetadataFeature(unref(project).features.resources_metadata.metadata, unref(enabledProfiles))]);
+        action.execute();
+    });
+}
 
 function retrieveDataPath(path: string): void {
     resourcesError.value = "";
 
-    const root = unref(project)!.resources_path;
+    const root = unref(project).resources_path;
     retrieveResourcesList(root, path, false)
         .then(() => {
             const resources = unref(resourcesListCache).root(root).resources;
@@ -147,6 +133,45 @@ function onDataPathNodeExpand(path: string): void {
         retrieveDataPath(path);
     }
 }
+
+watch(
+    () => resourcesData,
+    (metadata) => {
+        if (blockResourcesUpdate) {
+            return;
+        }
+
+        debounce(() => {
+            const resourcesSet = unref(metadata);
+            const updatedData = deepClone<ResourcesMetadata>(unref(project).features.resources_metadata.metadata);
+
+            const selectedPaths = Object.keys(selectedNodes.value);
+            selectedPaths.forEach((path: ResourcesMetadataKey) => {
+                updatedData[path as ResourcesMetadataKey] = resourcesSet;
+            });
+
+            // TODO: A hack to update the local data; needs to be changed later
+            // @ts-ignore
+            project.value.features.resources_metadata.metadata = updatedData;
+
+            saveProject();
+        });
+    },
+    { deep: true }
+);
+
+watch(selectedNodes, (nodes: Record<string, boolean>) => {
+    blockResourcesUpdate = true;
+
+    const selectedPaths = Object.keys(nodes);
+    const metadata = unref(project).features.resources_metadata.metadata;
+
+    resourcesData.value = metadata[selectedPaths[0]] || [];
+
+    // Unblock only after the resources watcher had a chance to fire
+    nextTick(() => (blockResourcesUpdate = false));
+});
+watch(enabledProfiles, saveProject);
 </script>
 
 <template>
@@ -183,6 +208,9 @@ function onDataPathNodeExpand(path: string): void {
                         </span>
                     </div>
                     <div v-if="Object.keys(selectedNodes).length > 0" class="grid grid-flow-rows grid-cols-1 justify-items-center w-full">
+                        <div v-if="optionalProfiles.length > 0" class="pt-2 pl-2 pr-4 w-full">
+                            <MetadataProfilesSelector :profiles="optionalProfiles" v-model:selected-profiles="enabledProfiles" class="h-min" />
+                        </div>
                         <div v-if="Object.keys(selectedNodes).length > 1" class="w-full">
                             <Panel
                                 class="mx-5 mt-5"
@@ -220,8 +248,8 @@ function onDataPathNodeExpand(path: string): void {
                         </div>
                         <PropertyEditor
                             v-model="resourcesData"
-                            v-model:shared-property-objects="project!.features.shared_objects"
-                            :projectProfiles="projectProfiles as PropertyProfileStore"
+                            v-model:shared-property-objects="project.features.shared_objects"
+                            :projectProfiles="metadataProfiles"
                             class="w-full"
                             :show-profile-tags="false"
                         />

@@ -15,7 +15,7 @@ import { findConnectorCategoryByInstanceID } from "@/data/entities/connector/Con
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
 import { useUserStore } from "@/data/stores/UserStore";
 
-import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
+import LinkedText from "@common/ui/components/misc/LinkedText.vue";
 
 const consStore = useConnectorsStore();
 const userStore = useUserStore();
@@ -102,7 +102,7 @@ const timeline = computed(() => {
                         <div class="grid grid-flow-row pt-2">
                             <span v-for="(link, title) in entry.item.links" class="text-sm r-text-gray">
                                 <span class="font-semibold pr-1">{{ title }} &#x2022;</span>
-                                <ExternalLink :link="link" />
+                                <LinkedText :link="link" />
                             </span>
                         </div>
                     </template>

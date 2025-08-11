@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, watch, type PropType, type Ref } from "vue";
-import { boolean } from "yup";
 
 import { LayoutPropertyObject, PropertyObject, PropertyObjectStore } from "./PropertyObjectStore";
 import { ProfileClass, ProfileLayoutClass, type ProfileID } from "./PropertyProfile";
@@ -35,7 +34,7 @@ const { index, propertyClass, propertyObjects, projectProfiles, sharedPropertyOb
         required: true
     },
     showProfileTags: {
-        type: boolean,
+        type: Boolean,
         default: true
     }
 });

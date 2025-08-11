@@ -61,7 +61,7 @@ function onDeleteInstance(instance: ConnectorInstance) {
     <Card v-else class="bg-amber-100 text-amber-700 !p-0 mt-4 w-full" :pt="{ title: '!text-base', caption: 'h-5', body: 'p-3 px-5' }">
         <template #title>
             <div class="flex items-center gap-1">
-                <span class="material-icons-outlined mi-warning-amber !text-xl" />
+                <span class="material-icons-outlined mi-link-off !text-xl" />
                 <span class="">No connections added</span>
             </div>
         </template>

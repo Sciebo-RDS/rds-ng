@@ -1,6 +1,9 @@
 {
     "metadata": {
-        "id": ["DataCite", "4.5"],
+        "id": [
+            "DataCite",
+            "4.5"
+        ],
         "displayLabel": "DataCite",
         "description": "DataCite Metadata Profile",
         "context": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/"
@@ -24,7 +27,11 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
             "displayLabel": "Creator",
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
-            "refs": [{ "classId": "creator" }],
+            "refs": [
+                {
+                    "classId": "creator"
+                }
+            ],
             "required": false,
             "multiple": true
         },
@@ -32,7 +39,11 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/",
             "displayLabel": "Publisher",
             "description": "The name of the entity that holds, archives, publishes, prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
-            "refs": [{ "classId": "publisher" }],
+            "refs": [
+                {
+                    "classId": "publisher"
+                }
+            ],
             "required": false,
             "multiple": false
         },
@@ -56,7 +67,11 @@
             "displayLabel": "Subject",
             "description": "Subject, keyword, classification code, or key phrase describing the resource.",
             "example": "",
-            "refs": [{ "classId": "subject" }],
+            "refs": [
+                {
+                    "classId": "subject"
+                }
+            ],
             "required": false,
             "multiple": false
         },
@@ -65,7 +80,11 @@
             "displayLabel": "Contributor",
             "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource. To supply multiple contributors, repeat this property.",
             "example": "Charpy, Antoine; Foo Data Center",
-            "refs": [{ "classId": "contributor" }],
+            "refs": [
+                {
+                    "classId": "contributor"
+                }
+            ],
             "required": false,
             "multiple": true
         },
@@ -73,7 +92,11 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/",
             "displayLabel": "Date",
             "description": "Different dates relevant to the work.",
-            "refs": [{ "classId": "date" }],
+            "refs": [
+                {
+                    "classId": "date"
+                }
+            ],
             "required": false,
             "multiple": true
         },
@@ -149,7 +172,11 @@
             "displayLabel": "Alternate Identifier",
             "description": "An identifier other than the primary Identifier applied to the resource being registered. This may be any alphanumeric string which is unique within its domain of issue. May be used for local identifiers, a serial number of an instrument or an inventory number. The AlternateIdentifier should be an additional identifier for the same instance of the resource (i.e., same location, same file).",
             "example": "E-GEOD-34814",
-            "refs": [{ "classId": "alternateIdentifier" }],
+            "refs": [
+                {
+                    "classId": "alternateIdentifier"
+                }
+            ],
             "required": false,
             "multiple": true
         },
@@ -157,7 +184,11 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/relatedidentifier/",
             "displayLabel": "Related Identifier",
             "description": "Identifiers of related resources. These must be globally unique identifiers.",
-            "refs": [{ "classId": "relatedIdentifier" }],
+            "refs": [
+                {
+                    "classId": "relatedIdentifier"
+                }
+            ],
             "required": false,
             "multiple": true
         },
@@ -210,7 +241,11 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/rights/",
             "displayLabel": "Rights",
             "description": "Rights information for the resource.",
-            "refs": [{ "classId": "rights" }],
+            "refs": [
+                {
+                    "classId": "rights"
+                }
+            ],
             "required": false,
             "multiple": false
         },
@@ -232,7 +267,11 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/geolocation/",
             "displayLabel": "Geolocation",
             "description": "Spatial region or named place where the data was gathered or about which the data is focused.",
-            "refs": [{ "classId": "geoLocation" }],
+            "refs": [
+                {
+                    "classId": "geoLocation"
+                }
+            ],
             "required": false,
             "multiple": true
         },
@@ -240,7 +279,11 @@
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/",
             "displayLabel": "Funding Reference",
             "description": "Information about financial support (funding) for the resource being registered.",
-            "refs": [{ "classId": "fundingReference" }],
+            "refs": [
+                {
+                    "classId": "fundingReference"
+                }
+            ],
             "required": false,
             "multiple": true
         }
@@ -252,8 +295,14 @@
             "description": "The main researchers involved in producing the data, or the authors of the publication, in priority order. For instruments this is the manufacturer or developer of the instrument. To supply multiple creators, repeat this property.",
             "labelTemplate": "${name}",
             "refs": [
-                { "classId": "nameIdentifier", "inline": true },
-                { "classId": "affiliation", "inline": true }
+                {
+                    "classId": "nameIdentifier",
+                    "inline": true
+                },
+                {
+                    "classId": "affiliation",
+                    "inline": true
+                }
             ],
             "input": [
                 {
@@ -276,14 +325,27 @@
                     "id": "nameIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": ["ORCID", "GND", "other"],
+                    "options": [
+                        "ORCID",
+                        "GND",
+                        "other"
+                    ],
                     "description": "",
                     "hints": {
                         "ORCID": {
                             "text": "Open Researcher and Contributor ID.",
-                            "link": { "label": "ORCID Search", "url": "https://orcid.org/orcid-search/search" }
+                            "link": {
+                                "label": "ORCID Search",
+                                "url": "https://orcid.org/orcid-search/search"
+                            }
                         },
-                        "GND": { "text": "Gemeinsame Normdatei Identifier.", "link": { "label": "GND Search", "url": "https://explore.gnd.network/" } }
+                        "GND": {
+                            "text": "Gemeinsame Normdatei Identifier.",
+                            "link": {
+                                "label": "GND Search",
+                                "url": "https://explore.gnd.network/"
+                            }
+                        }
                     }
                 },
                 {
@@ -302,17 +364,34 @@
                     "id": "affiliationIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": ["ORCID", "GND", "ROR", "other"],
+                    "options": [
+                        "ORCID",
+                        "GND",
+                        "ROR",
+                        "other"
+                    ],
                     "description": "",
                     "hints": {
                         "ORCID": {
                             "text": "Open Researcher and Contributor ID.",
-                            "link": { "label": "ORCID Search", "url": "https://orcid.org/orcid-search/search" }
+                            "link": {
+                                "label": "ORCID Search",
+                                "url": "https://orcid.org/orcid-search/search"
+                            }
                         },
-                        "GND": { "text": "Gemeinsame Normdatei Identifier.", "link": { "label": "GND Search", "url": "https://explore.gnd.network/" } },
+                        "GND": {
+                            "text": "Gemeinsame Normdatei Identifier.",
+                            "link": {
+                                "label": "GND Search",
+                                "url": "https://explore.gnd.network/"
+                            }
+                        },
                         "ROR": {
                             "text": "Research Organization Registry Identifier.",
-                            "link": { "label": "ROR Search", "url": "https://ror.org/search" }
+                            "link": {
+                                "label": "ROR Search",
+                                "url": "https://ror.org/search"
+                            }
                         }
                     }
                 },
@@ -345,7 +424,12 @@
                     "id": "titleType",
                     "label": "Title Type",
                     "type": "radiobuttons",
-                    "options": ["AlternativeTitle", "Subtitle", "TranslatedTitle", "other"],
+                    "options": [
+                        "AlternativeTitle",
+                        "Subtitle",
+                        "TranslatedTitle",
+                        "other"
+                    ],
                     "description": "The type of Title (other than the Main Title)."
                 }
             ]
@@ -413,7 +497,14 @@
             "description": "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource.",
             "labelTemplate": "${contributorName}",
             "example": "Charpy, Antoine; Foo Data Center",
-            "refs": [{ "classId": "nameIdentifier" }, { "classId": "affiliation" }],
+            "refs": [
+                {
+                    "classId": "nameIdentifier"
+                },
+                {
+                    "classId": "affiliation"
+                }
+            ],
             "input": [
                 {
                     "id": "contributorName",
@@ -427,7 +518,10 @@
                     "id": "nameType",
                     "label": "Name Type",
                     "type": "dropdown",
-                    "options": ["Organizational", "Personal"],
+                    "options": [
+                        "Organizational",
+                        "Personal"
+                    ],
                     "description": "The type of name."
                 },
                 {
@@ -718,7 +812,14 @@
                     "id": "descriptionType",
                     "label": "Description Type",
                     "type": "dropdown",
-                    "options": ["Abstract", "Methods", "SeriesInformation", "TableOfContents", "TechnicalInfo", "Other"],
+                    "options": [
+                        "Abstract",
+                        "Methods",
+                        "SeriesInformation",
+                        "TableOfContents",
+                        "TechnicalInfo",
+                        "Other"
+                    ],
                     "description": "The type of description."
                 }
             ]
@@ -728,7 +829,17 @@
             "displayLabel": "Geolocation",
             "description": "Spatial region or named place where the data was gathered or about which the data is focused.",
             "labelTemplate": "${geoLocationPlace}",
-            "refs": [{ "classId": "geoLocationPoint" }, { "classId": "geoLocationBox" }, { "classId": "geoLocationPolygon" }],
+            "refs": [
+                {
+                    "classId": "geoLocationPoint"
+                },
+                {
+                    "classId": "geoLocationBox"
+                },
+                {
+                    "classId": "geoLocationPolygon"
+                }
+            ],
             "input": [
                 {
                     "id": "geoLocationPlace",
@@ -796,7 +907,11 @@
             "displayLabel": "Geolocation Polygon",
             "description": "A drawn polygon area, defined by a set of points and lines connecting the points in a closed chain.",
             "labelTemplate": "Polygon with ${polygonPoints} points",
-            "refs": [{ "classId": "geoLocationPoint" }]
+            "refs": [
+                {
+                    "classId": "geoLocationPoint"
+                }
+            ]
         },
         "fundingReference": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference",
@@ -824,11 +939,20 @@
                     "label": "Funder Identifier Type",
                     "type": "dropdown",
                     "description": "The type of the funderIdentifier.",
-                    "options": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"],
+                    "options": [
+                        "Crossref Funder ID",
+                        "GRID",
+                        "ISNI",
+                        "ROR",
+                        "Other"
+                    ],
                     "hints": {
                         "ROR": {
                             "text": "Research Organization Registry Identifier.",
-                            "link": { "label": "ROR Search", "url": "https://ror.org/search" }
+                            "link": {
+                                "label": "ROR Search",
+                                "url": "https://ror.org/search"
+                            }
                         }
                     }
                 },

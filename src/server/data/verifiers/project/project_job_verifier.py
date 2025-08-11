@@ -44,7 +44,11 @@ class ProjectJobVerifier(Verifier):
         profiles = filter_containers(
             ServerComponent.instance().server_data.profile_containers,
             category=ProjectMetadataFeature.feature_id,
-            role=MetadataProfileContainer.Role.GLOBAL,
+            roles=[
+                MetadataProfileContainer.Role.DEFAULT,
+                # TODO: Really make optional
+                MetadataProfileContainer.Role.OPTIONAL,
+            ],
         )
 
         for profile in profiles:
@@ -54,9 +58,10 @@ class ProjectJobVerifier(Verifier):
                 self._project.features.shared_objects,
             )
 
-        # Verify the connector profile
-        MetadataParser.validate_metadata(
-            self._connector.metadata_profile,
-            self._project.features.project_metadata.metadata,
-            self._project.features.shared_objects,
-        )
+        # Verify the connector profiles
+        for profile in self._connector.metadata_profiles:
+            MetadataParser.validate_metadata(
+                profile.profile,
+                self._project.features.project_metadata.metadata,
+                self._project.features.shared_objects,
+            )

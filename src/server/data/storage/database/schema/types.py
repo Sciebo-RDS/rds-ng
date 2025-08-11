@@ -20,16 +20,18 @@ class ArrayType(TypeDecorator, typing.Generic[ArrayValueType]):
         self,
         *args,
         separator: str = ";",
-        value_conv: typing.Callable[[str], ArrayValueType] = str,
+        value_read: typing.Callable[[str], ArrayValueType] = str,
+        value_write: typing.Callable[[ArrayValueType], str] = str,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
 
         self._separator = separator
-        self._value_conv = value_conv
+        self._value_read = value_read
+        self._value_write = value_write
 
     def process_bind_param(self, value: typing.List[ArrayValueType], dialect) -> str:
-        return self._separator.join(map(str, value))
+        return self._separator.join(map(self._value_write, value))
 
     def process_result_value(
         self, value: str | None, dialect
@@ -37,7 +39,7 @@ class ArrayType(TypeDecorator, typing.Generic[ArrayValueType]):
         if value is None or value == "":
             return []
 
-        return list(map(self._value_conv, value.split(self._separator)))
+        return list(map(self._value_read, value.split(self._separator)))
 
 
 class JSONEncodedDataType(TypeDecorator):
@@ -76,6 +78,7 @@ class DataclassDataType(TypeDecorator, typing.Generic[DataclassType]):
     def process_result_value(self, value: str | None, dialect) -> DataclassType | None:
         return self._dataclass_type.schema().loads(value) if value is not None else None
 
+
 class DataclassArrayType(TypeDecorator, typing.Generic[DataclassType]):
     """
     Dataclass array type. (De)Serializes arrays of dataclasses.
@@ -86,11 +89,8 @@ class DataclassArrayType(TypeDecorator, typing.Generic[DataclassType]):
 
     cache_ok = True
 
-    def __init__(self,
-                *args,
-                dataclass_type: type[DataclassType],
-                **kwargs):
-        
+    def __init__(self, *args, dataclass_type: type[DataclassType], **kwargs):
+
         super().__init__(*args, **kwargs)
 
         self._dataclass_type = dataclass_type
@@ -98,16 +98,19 @@ class DataclassArrayType(TypeDecorator, typing.Generic[DataclassType]):
     def process_bind_param(self, value: typing.List[DataclassType], dialect) -> str:
         if not value:
             return ""
-        
+
         return json.dumps({i: v.to_dict() for i, v in enumerate(value)})
-    
-    def process_result_value(self, value: str | None, dialect) -> typing.List[DataclassType]:
+
+    def process_result_value(
+        self, value: str | None, dialect
+    ) -> typing.List[DataclassType]:
         if not value:
             return []
-        
+
         value = list(json.loads(value).values())
-        
+
         return [self._dataclass_type.from_dict(i) for i in value]
+
 
 class DataclassArrayDictType(TypeDecorator, typing.Generic[DataclassType]):
     """
@@ -133,29 +136,37 @@ class DataclassArrayDictType(TypeDecorator, typing.Generic[DataclassType]):
     """
 
     impl = Text
-    
+
     cache_ok = True
 
-    def __init__(self,
-                 *args,
-                 dataclass_type: type[DataclassType],
-                 **kwargs):
-                 
+    def __init__(self, *args, dataclass_type: type[DataclassType], **kwargs):
+
         super().__init__(*args, **kwargs)
 
         self._dataclass_type = dataclass_type
 
-    def process_bind_param(self, value: typing.Dict[str, typing.List[DataclassType]], dialect) -> str:
+    def process_bind_param(
+        self, value: typing.Dict[str, typing.List[DataclassType]], dialect
+    ) -> str:
         if not value:
             return ""
 
-        return json.dumps({ key : [v.to_dict() for _, v in enumerate(val)] for key, val in value.items()})
+        return json.dumps(
+            {
+                key: [v.to_dict() for _, v in enumerate(val)]
+                for key, val in value.items()
+            }
+        )
 
-
-    def process_result_value(self, value: str | None, dialect) -> typing.Dict[str, DataclassType]:
+    def process_result_value(
+        self, value: str | None, dialect
+    ) -> typing.Dict[str, DataclassType]:
         if not value:
             return {}
-        
+
         parsed_json = json.loads(value)
-        
-        return { key : [self._dataclass_type.from_dict(e) for e in val] for key, val in parsed_json.items()}
+
+        return {
+            key: [self._dataclass_type.from_dict(e) for e in val]
+            for key, val in parsed_json.items()
+        }

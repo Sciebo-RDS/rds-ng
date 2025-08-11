@@ -4,7 +4,7 @@ import { ref, unref } from "vue";
 import { Connector } from "../entities/connector/Connector";
 import { type MetadataProfileContainerList } from "../entities/metadata/MetadataProfileContainer";
 import { MetadataProfileContainerRole } from "../entities/metadata/MetadataProfileContainer";
-import { filterContainersByRole } from "../entities/metadata/MetadataProfileContainerUtils";
+import { filterContainersByRoles } from "../entities/metadata/MetadataProfileContainerUtils";
 
 /**
  * The global store for auto-assigned colors.
@@ -21,7 +21,7 @@ export const useColorsStore = defineStore("colorsStore", () => {
     }
 
     function populateFromProfileContainerList(profiles: MetadataProfileContainerList): void {
-        filterContainersByRole(profiles, MetadataProfileContainerRole.Global)
+        filterContainersByRoles(profiles, [MetadataProfileContainerRole.Default, MetadataProfileContainerRole.Optional])
             .sort((p1, p2) => p1.profile.metadata.id[0].localeCompare(p2.profile.metadata.id[0]))
             .forEach((profile) => color(profile.profile.metadata.id[0]));
     }
@@ -31,8 +31,10 @@ export const useColorsStore = defineStore("colorsStore", () => {
             .sort((con1, con2) => con1.name.localeCompare(con2.name))
             .forEach((connector) => {
                 try {
-                    const profileID = connector.metadata_profile.metadata.id[0];
-                    color(profileID);
+                    connector.metadata_profiles.forEach((profile) => {
+                        const profileID = profile.profile.metadata.id[0];
+                        color(profileID);
+                    });
                 } catch (e) {
                     // Just ignore any exceptions
                 }

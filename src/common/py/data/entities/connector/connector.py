@@ -5,7 +5,7 @@ from enum import IntFlag
 from dataclasses_json import dataclass_json
 
 from ..authorization import AuthorizationSettings
-from ..properties import ProfileMetadata, PropertyProfile
+from ..metadata import MetadataProfileContainerList
 from ....utils import UnitID
 
 ConnectorID = str
@@ -27,7 +27,7 @@ class Connector:
         authorization: Authorization settings for the connector.
         options: The connector options.
         logos: Image data of the connector logos.
-        metadata_profile: The profile for connector-specific data.
+        metadata_profiles: The profiles for connector-specific data.
         announce_timestamp: The timestamp when the connector was last announced.
     """
 
@@ -70,10 +70,8 @@ class Connector:
 
     logos: Logos = dataclasses.field(default_factory=Logos)
 
-    metadata_profile: PropertyProfile = dataclasses.field(
-        default_factory=lambda: PropertyProfile(
-            metadata=ProfileMetadata(("", ""), "", ""), layout=[]
-        )
+    metadata_profiles: MetadataProfileContainerList = dataclasses.field(
+        default_factory=list
     )
 
     announce_timestamp: float = 0.0

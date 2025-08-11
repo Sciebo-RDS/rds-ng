@@ -9,5 +9,5 @@
         "default": "/component/connectors/zenodo/.assets/logo.png",
         "horizontal": "/component/connectors/zenodo/.assets/logo.png"
     },
-    "metadata_profile": "/component/connectors/zenodo/.assets/metadata-profile.json"
+    "metadata_profiles": "/component/connectors/zenodo/.assets/profiles"
 }

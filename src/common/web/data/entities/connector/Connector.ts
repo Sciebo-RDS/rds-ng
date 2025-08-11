@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
 
-import { PropertyProfile } from "../../../ui/components/propertyeditor/PropertyProfile";
 import { UnitID } from "../../../utils/UnitID";
 import { type AuthorizationSettings } from "../authorization/AuthorizationSettings";
+import { type MetadataProfileContainerList, MetadataProfileContainer } from "../metadata/MetadataProfileContainer";
 
 /**
  * The connector ID type.
@@ -51,7 +51,7 @@ export class ConnectorLogos {
  * @param authorization - Authorization settings for the connector.
  * @param options - The connector options.
  * @param logos - Image data of the connector logos.
- * @param metadata_profile - The profile for connector-specific data.
+ * @param metadata_profiles - The profiles for connector-specific data.
  * @param announce_timestamp - The timestamp when the connector was last announced.
  */
 export class Connector {
@@ -72,8 +72,8 @@ export class Connector {
     public readonly logos: ConnectorLogos;
 
     // @ts-ignore
-    @Type(() => PropertyProfile)
-    public readonly metadata_profile: PropertyProfile;
+    @Type(() => MetadataProfileContainer)
+    public readonly metadata_profiles: MetadataProfileContainerList = [];
 
     public readonly announce_timestamp: Number = 0.0;
 
@@ -86,7 +86,7 @@ export class Connector {
         authorization: AuthorizationSettings = { strategy: "", config: {} },
         options: ConnectorOptions = ConnectorOptions.Default,
         logos: ConnectorLogos = new ConnectorLogos(),
-        metadataProfile: PropertyProfile = new PropertyProfile({ id: ["", ""], displayLabel: "", description: "" }, [])
+        metadataProfiles: MetadataProfileContainerList = []
     ) {
         this.connector_id = connectorID;
         this.connector_address = connectorAddress;
@@ -100,6 +100,6 @@ export class Connector {
 
         this.logos = logos;
 
-        this.metadata_profile = metadataProfile;
+        this.metadata_profiles = metadataProfiles;
     }
 }

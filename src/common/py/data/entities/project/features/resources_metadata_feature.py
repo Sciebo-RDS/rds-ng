@@ -6,10 +6,7 @@ from dataclasses_json import dataclass_json
 from ...properties.properties_object import PropertyObject
 from .project_feature import ProjectFeature, ProjectFeatureID
 
-ResourcesMetadata = typing.Dict[
-    str, typing.List[PropertyObject]
-    ]
-
+ResourcesMetadata = typing.Dict[str, typing.List[PropertyObject]]
 
 
 @dataclass_json

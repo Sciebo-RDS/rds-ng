@@ -1,6 +1,6 @@
 # Sciebo RDS - Next Generation
 
-This is the repository of the next-gen version of **Sciebo** **R**esearch **D**ata **S**ervices, codenamed **_RDS-NG_**, also known as `BridgIT`.
+This is the repository of the next-gen version of **Sciebo** **R**esearch **D**ata **S**ervices, codenamed **_RDS-NG_**, also known as `bridgit`.
 
 ## Directories
 

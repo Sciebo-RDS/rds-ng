@@ -8,6 +8,7 @@ from .project_feature import ProjectFeature, ProjectFeatureID
 
 ProjectMetadata = typing.List[PropertyObject]
 
+
 @dataclass_json
 @dataclass
 class ProjectMetadataFeature(ProjectFeature):

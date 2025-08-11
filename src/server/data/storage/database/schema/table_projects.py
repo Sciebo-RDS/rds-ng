@@ -1,19 +1,38 @@
 import uuid
 from dataclasses import dataclass
 
-from sqlalchemy import (Boolean, Column, ForeignKey, Integer, MetaData,
-                        Numeric, String, Table, Text, Uuid)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    MetaData,
+    Numeric,
+    String,
+    Table,
+    Text,
+    Uuid,
+)
 from sqlalchemy.orm import composite, registry, relationship
 
 from common.py.data.entities.connector import ConnectorInstanceID
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
-    DataManagementPlanFeature, ProjectFeatureID, ProjectMetadataFeature,
-    PropertyObject, ResourcesMetadataFeature)
+    DataManagementPlanFeature,
+    ProjectFeatureID,
+    ProjectMetadataFeature,
+    PropertyObject,
+    ResourcesMetadataFeature,
+)
 from common.py.data.entities.project.logbook import ProjectJobHistoryRecord
+from common.py.data.entities.properties import ProfileID
 
-from .types import (ArrayType, DataclassArrayDictType, DataclassArrayType,
-                    JSONEncodedDataType)
+from .types import (
+    ArrayType,
+    DataclassArrayDictType,
+    DataclassArrayType,
+    JSONEncodedDataType,
+)
 
 
 @dataclass(kw_only=True)
@@ -61,7 +80,7 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Column("opt__use_all_connector_instances", Boolean),
         Column(
             "opt__active_connector_instances",
-            ArrayType[ConnectorInstanceID](value_conv=uuid.UUID),
+            ArrayType[ConnectorInstanceID](value_read=uuid.UUID),
         ),
         Column("opt__ui", JSONEncodedDataType),
     )
@@ -74,7 +93,10 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
         Column(
             "project_id", Integer, ForeignKey("projects.project_id"), primary_key=True
         ),
-        Column("shared_objects", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
+        Column(
+            "shared_objects",
+            DataclassArrayType[PropertyObject](dataclass_type=PropertyObject),
+        ),
     )
 
     table_feature_project_metadata = Table(
@@ -86,7 +108,17 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("metadata", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
+        Column(
+            "enabled_metadata_profiles",
+            ArrayType[ProfileID](
+                value_read=lambda val: tuple(val.split("//")),
+                value_write=lambda val: f"{val[0]}//{val[1]}",
+            ),
+        ),
+        Column(
+            "metadata",
+            DataclassArrayType[PropertyObject](dataclass_type=PropertyObject),
+        ),
     )
 
     table_feature_resources_metadata = Table(
@@ -98,7 +130,17 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("metadata", DataclassArrayDictType[PropertyObject](dataclass_type=PropertyObject)),
+        Column(
+            "enabled_metadata_profiles",
+            ArrayType[ProfileID](
+                value_read=lambda val: tuple(val.split("/")),
+                value_write=lambda val: f"{val[0]}/{val[1]}",
+            ),
+        ),
+        Column(
+            "metadata",
+            DataclassArrayDictType[PropertyObject](dataclass_type=PropertyObject),
+        ),
     )
 
     table_feature_dmp = Table(
@@ -110,7 +152,16 @@ def register_projects_tables(metadata: MetaData, reg: registry) -> ProjectsTable
             ForeignKey("project_features.project_id"),
             primary_key=True,
         ),
-        Column("plan", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)),
+        Column(
+            "enabled_metadata_profiles",
+            ArrayType[ProfileID](
+                value_read=lambda val: tuple(val.split("/")),
+                value_write=lambda val: f"{val[0]}/{val[1]}",
+            ),
+        ),
+        Column(
+            "plan", DataclassArrayType[PropertyObject](dataclass_type=PropertyObject)
+        ),
     )
 
     # -- Logbook
