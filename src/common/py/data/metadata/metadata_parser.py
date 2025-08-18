@@ -102,6 +102,7 @@ class MetadataParser:
         Raises:
             ValueError: If the profile is missing required metadata keys or if the layout references missing classes.
         The profile dictionary should have the following structure:
+        ```
         {
             'metadata': {
                 'id': str,
@@ -120,6 +121,7 @@ class MetadataParser:
                 ...
             }
         }
+        ```
         """
         try:
             if (profile_meta := getattr(profile, "metadata")) is None:
