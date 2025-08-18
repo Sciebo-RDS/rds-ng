@@ -12,7 +12,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 load_dotenv()
 USERNAME    = os.getenv("RDS_USER")
 PASSWORD    = os.getenv("RDS_PASS")
-LOGIN_URL   = "https://rds-ng-internal.uni-muenster.de/login?clear=1"
+LOGIN_URL   = os.getenv("RDS_URL")
 
 
 # Set up headless Firefox

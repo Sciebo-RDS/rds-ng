@@ -12,9 +12,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-USERNAME = os.getenv("RDS_USER")
-PASSWORD = os.getenv("RDS_PASS")
-LOGIN_URL = "https://rds-ng-internal.uni-muenster.de/login?clear=1"
+USERNAME    = os.getenv("RDS_USER")
+PASSWORD    = os.getenv("RDS_PASS")
+LOGIN_URL   = os.getenv("RDS_URL")
 
 # Set up headless Firefox
 options = Options()
