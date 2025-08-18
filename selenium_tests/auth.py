@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 USERNAME    = os.getenv("RDS_USER")
 PASSWORD    = os.getenv("RDS_PASS")
-LOGIN_URL   = os.getenc("RDS_URL")
+LOGIN_URL   = os.getenv("RDS_URL")
 
 # Set up headless Firefox
 options = Options()
