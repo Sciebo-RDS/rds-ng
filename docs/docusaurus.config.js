@@ -1,6 +1,6 @@
 // @ts-ignore
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+const lightCodeTheme = require('prism-react-renderer').themes.github;
+const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -49,12 +49,25 @@ const config = {
       // Replace with your project's social card
       image: "img/docusaurus-social-card.jpg",
       navbar: {
-        title: "RDS-NG",
+        title: "Bridgit",
         logo: {
-          alt: "RDS-NG",
+          alt: "Bridgit",
           src: "img/logo.svg",
         },
         items: [
+          {
+            label: "User Manual",
+            to: "docs/manual"
+          },
+          {
+            label: "About",
+            to: "about"
+          },
+          {
+            label: "Changelog",
+            to: "changelog",
+            position: "right"
+        },
           {
             type: "dropdown",
             label: "Code Reference",
@@ -63,18 +76,24 @@ const config = {
               {
                 type: "docSidebar",
                 sidebarId: "backendSidebar",
-                label: "Python (Backend)",
+                label: "Backend",
               },
               {
                 type: "docSidebar",
                 sidebarId: "frontendSidebar",
-                label: "TypeScript (Frontend)",
+                label: "Frontend",
               },
             ],
           },
         ],
       },
       footer: {
+        links: [
+          {
+              label: "Imprint",
+              to: "imprint"
+            },
+        ],
         style: "dark",
         links: [],
         copyright: `Copyright © ${new Date().getFullYear()} University of Muenster.`,
@@ -95,7 +114,7 @@ const config = {
         exclude: "../src/frontend/src/vue-shim.d.ts",
         entryPointStrategy: "expand",
         tsconfig: "../src/frontend/tsconfig.json",
-        out: "reference/frontend",
+        out: "docs/reference/frontend",
         //readme: "", // currently deleted in refresh_reference.sh after build
         //readmeTitle: "", // only applies to the Readme, set `name` for README, ToC etc. title
         sidebar: {

@@ -18,6 +18,10 @@ const props = defineProps({
     instance: {
         type: Object as PropType<ConnectorInstance>,
         required: true
+    },
+    isNew: {
+        type: Boolean,
+        default: false
     }
 });
 const emits = defineEmits<{
@@ -27,7 +31,7 @@ const emits = defineEmits<{
     (e: "delete-instance", instance: ConnectorInstance): void;
 }>();
 
-const { instance } = toRefs(props);
+const { instance, isNew } = toRefs(props);
 const { userAuthorizations } = storeToRefs(userStore);
 
 const connector = computed(() => findConnectorByID(consStore.connectors, instance.value.connector_id));
@@ -92,6 +96,13 @@ function onUnauthorize(): void {
 // Whenever any authorization state changes, any pending (un)authorizations have completed
 watch(userAuthorizations, () => {
     isUnAuthorizing.value = false;
+});
+
+// If the new state changes, we're automatically performing a connect operation
+watch(isNew, (newValue) => {
+    if (newValue) {
+        isUnAuthorizing.value = true;
+    }
 });
 </script>
 

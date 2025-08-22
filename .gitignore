@@ -9,6 +9,7 @@ dist
 
 # Internal directories
 .data
+testing_data
 
 # IDE specific files
 .idea
@@ -40,3 +41,12 @@ lerna-debug.log*
 
 # Python virtual env
 venv
+
+# config
+src/server/.config
+.gitignore
+deployment/containers/package-lock.json
+src/common/py/data/entities/properties/test_properties_profile.py
+src/common/py/data/metadata/metadata_parser_test.py
+src/connectors/zenodo/metadata/zenodo_metadata_test.py
+src/server/.config/config.toml

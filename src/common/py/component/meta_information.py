@@ -1,4 +1,5 @@
 import typing
+
 from semantic_version import Version
 
 
@@ -7,7 +8,7 @@ class MetaInformation:
     Accesses meta information about the entire project and its various component stored in a *JSON* file.
 
     The JSON file needs to be structured like this::
-
+    ```
         {
             "global": {
                 "title": "RDS-NG",
@@ -23,6 +24,7 @@ class MetaInformation:
                 ...
             }
         }
+    ```
     """
 
     def __init__(self, info_file: str = "/config/meta-information.json"):

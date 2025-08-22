@@ -21,9 +21,13 @@ const props = defineProps({
     userSettings: {
         type: Object as PropType<UserSettings>,
         required: true
+    },
+    newInstance: {
+        type: Object as PropType<ConnectorInstance>,
+        default: undefined
     }
 });
-const { userSettings } = toRefs(props);
+const { userSettings, newInstance } = toRefs(props);
 
 const consStore = useConnectorsStore();
 const userStore = useUserStore();
@@ -50,6 +54,7 @@ function onDeleteInstance(instance: ConnectorInstance) {
         <template #instance="slotProps">
             <ConnectionsListItem
                 :instance="slotProps.instance"
+                :is-new="!!newInstance && slotProps.instance == newInstance"
                 @authorize-instance="requestInstanceAuthorization(slotProps.instance, connectors, userAuthorizations)"
                 @unauthorize-instance="revokeInstanceAuthorization(slotProps.instance)"
                 @dblclick="onEditInstance(slotProps.instance)"
@@ -61,7 +66,7 @@ function onDeleteInstance(instance: ConnectorInstance) {
     <Card v-else class="bg-amber-100 text-amber-700 !p-0 mt-4 w-full" :pt="{ title: '!text-base', caption: 'h-5', body: 'p-3 px-5' }">
         <template #title>
             <div class="flex items-center gap-1">
-                <span class="material-icons-outlined mi-warning-amber !text-xl" />
+                <span class="material-icons-outlined mi-link-off !text-xl" />
                 <span class="">No connections added</span>
             </div>
         </template>

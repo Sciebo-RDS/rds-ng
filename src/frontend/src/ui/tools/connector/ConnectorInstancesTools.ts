@@ -6,9 +6,11 @@ import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entiti
 import { connectorInstanceIsAuthorized, createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
+import { combinePaths } from "@common/utils/Paths.ts";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs.ts";
 import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUserAuthorizationsAction";
 import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
 import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/EditConnectorInstanceDialog";
@@ -64,8 +66,12 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             getConnectorInstanceAuthorizationID(instance),
             AuthorizationTokenType.Connector,
             instance.instance_id,
+            combinePaths(
+                comp.data.config.value<string>(HostIntegrationSettingIDs.URL),
+                comp.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
+            ),
             connector.connector_id,
-            userFingerprint,
+            userFingerprint
         );
         strategy.requestCompleted(() => {
             // Once the request has completed, fetch all user authorizations
@@ -92,6 +98,6 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
         editInstance,
         deleteInstance,
         requestInstanceAuthorization,
-        revokeInstanceAuthorization,
+        revokeInstanceAuthorization
     };
 }

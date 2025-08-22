@@ -6,7 +6,7 @@ import { Event } from "../../core/messaging/Event";
 import { Message } from "../../core/messaging/Message";
 import { type AuthorizationSettings } from "../../data/entities/authorization/AuthorizationSettings";
 import { Connector, type ConnectorCategoryID, type ConnectorID, ConnectorLogos, ConnectorOptions } from "../../data/entities/connector/Connector";
-import { PropertyProfile } from "../../ui/components/propertyeditor/PropertyProfile";
+import { MetadataProfileContainer, type MetadataProfileContainerList } from "../../data/entities/metadata/MetadataProfileContainer";
 
 /**
  * Emitted whenever the list of available connectors has been updated.
@@ -47,8 +47,8 @@ export class ConnectorAnnounceEvent extends Event {
     public readonly logos: ConnectorLogos = new ConnectorLogos();
 
     // @ts-ignore
-    @Type(() => PropertyProfile)
-    public readonly metadata_profile: PropertyProfile = new PropertyProfile({ id: ["", ""], displayLabel: "", description: "" }, []);
+    @Type(() => MetadataProfileContainer)
+    public readonly metadata_profiles: MetadataProfileContainerList = [];
 
     /**
      * Helper function to easily build this message.
@@ -63,7 +63,7 @@ export class ConnectorAnnounceEvent extends Event {
         authorizationPrivate: AuthorizationSettings,
         options: ConnectorOptions,
         logos: ConnectorLogos,
-        metadataProfile: PropertyProfile,
+        metadataProfiles: MetadataProfileContainerList,
         chain: Message | null = null
     ): EventComposer<ConnectorAnnounceEvent> {
         return messageBuilder.buildEvent(
@@ -77,7 +77,7 @@ export class ConnectorAnnounceEvent extends Event {
                 authorization_private: authorizationPrivate,
                 options: options,
                 logos: logos,
-                metadata_profile: metadataProfile
+                metadata_profiles: metadataProfiles
             },
             chain
         );

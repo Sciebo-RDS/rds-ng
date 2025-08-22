@@ -21,6 +21,7 @@ export class RequestAuthorizationCommand extends Command {
         auth_id: "",
         auth_type: AuthorizationTokenType.Invalid,
         auth_issuer: "",
+        auth_issuer_url: "",
         auth_bearer: "",
         fingerprint: ""
     };

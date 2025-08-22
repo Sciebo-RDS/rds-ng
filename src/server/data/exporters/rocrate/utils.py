@@ -7,6 +7,7 @@ from rocrate.model.data_entity import DataEntity
 from rocrate.model.root_dataset import RootDataset
 from rocrate.rocrate import ROCrate
 
+from common.py.data.entities.metadata import filter_containers_ex
 from common.py.data.entities.project.project import Project
 
 
@@ -24,14 +25,23 @@ def with_files(func: Callable) -> Callable:
         project (Project): An object that contains project features with resources metadata and shared objects.
 
     """
+
     def wrapper(*args, **kwargs):
         crate = func(*args, **kwargs)
 
-        for key, propertyObjects in kwargs["project"].features.resources_metadata.metadata.items():
-            file: DataEntity = crate.add_file(key, dest_path=quote(key.removeprefix("/"))) # pyright: ignore[reportAssignmentType]
+        for key, propertyObjects in kwargs[
+            "project"
+        ].features.resources_metadata.metadata.items():
+            file: DataEntity = crate.add_file(
+                key, dest_path=quote(key.removeprefix("/"))
+            )  # pyright: ignore[reportAssignmentType]
 
-            for po in propertyObjects: 
-                refObjects = [o for o in kwargs["project"].features.shared_objects if o.id in po.refs]
+            for po in propertyObjects:
+                refObjects = [
+                    o
+                    for o in kwargs["project"].features.shared_objects
+                    if o.id in po.refs
+                ]
 
                 # add simple values
                 for k, v in po.value.items():
@@ -39,9 +49,14 @@ def with_files(func: Callable) -> Callable:
 
                 # add references
                 for o in refObjects:
-                    file[o.type] =  [ContextEntity(crate=crate, identifier=id) for id in file.get(o.type, [])] + [ContextEntity(crate=crate, identifier=o.id)]
+                    file[o.type] = [
+                        ContextEntity(crate=crate, identifier=id)
+                        for id in file.get(o.type, [])
+                    ] + [ContextEntity(crate=crate, identifier=o.id)]
         return crate
+
     return wrapper
+
 
 def with_context_entities(func: Callable) -> Callable:
     """
@@ -60,19 +75,37 @@ def with_context_entities(func: Callable) -> Callable:
     project (Project): An object that contains project features with shared objects.
 
     """
+
     def wrapper(*args, **kwargs):
         crate = func(*args, **kwargs)
 
         for sharedObject in kwargs["project"].features.shared_objects:
-            properties = {"@type": sharedObject.type} | asdict(sharedObject).get("value", {})
-            entity: ContextEntity = crate.add(ContextEntity(crate=crate, identifier=quote(sharedObject.id), properties=properties)) # pyright: ignore[reportAssignmentType]
+            properties = {"@type": sharedObject.type} | asdict(sharedObject).get(
+                "value", {}
+            )
+            entity: ContextEntity = crate.add(
+                ContextEntity(
+                    crate=crate,
+                    identifier=quote(sharedObject.id),
+                    properties=properties,
+                )
+            )  # pyright: ignore[reportAssignmentType]
 
             # add references
-            refObjects = [o for o in kwargs["project"].features.shared_objects if o.id in sharedObject.refs]
+            refObjects = [
+                o
+                for o in kwargs["project"].features.shared_objects
+                if o.id in sharedObject.refs
+            ]
             for o in refObjects:
-                entity[o.type] =  [ContextEntity(crate=crate, identifier=id) for id in entity.get(o.type, [])] + [ContextEntity(crate=crate, identifier=quote(o.id))]
+                entity[o.type] = [
+                    ContextEntity(crate=crate, identifier=id)
+                    for id in entity.get(o.type, [])
+                ] + [ContextEntity(crate=crate, identifier=quote(o.id))]
         return crate
+
     return wrapper
+
 
 def with_project_metadata(func: Callable) -> Callable:
     """
@@ -90,23 +123,35 @@ def with_project_metadata(func: Callable) -> Callable:
     The wrapped function expects the following keyword arguments:
     project (Project): An object that contains project features with project metadata and shared objects.
     """
+
     def wrapper(*args, **kwargs):
         crate = func(*args, **kwargs)
 
         root: RootDataset = crate.dereference("./")
 
-        for m in [m for m in kwargs["project"].features.project_metadata.metadata if "datacite" in m.id]: # HACK
+        for m in [
+            m
+            for m in kwargs["project"].features.project_metadata.metadata
+            if "datacite" in m.id
+        ]:  # HACK
 
             # add simple values
             for k, v in m.value.items():
                 root[k] = v
 
             # add references
-            refObjects = [o for o in kwargs["project"].features.shared_objects if o.id in m.refs]
+            refObjects = [
+                o for o in kwargs["project"].features.shared_objects if o.id in m.refs
+            ]
             for o in refObjects:
-                root[o.type] =  [ContextEntity(crate=crate, identifier=id) for id in root.get(o.type, [])] + [ContextEntity(crate=crate, identifier=o.id)]
+                root[o.type] = [
+                    ContextEntity(crate=crate, identifier=id)
+                    for id in root.get(o.type, [])
+                ] + [ContextEntity(crate=crate, identifier=o.id)]
         return crate
+
     return wrapper
+
 
 def with_context(func: Callable) -> Callable:
     """
@@ -120,34 +165,45 @@ def with_context(func: Callable) -> Callable:
 
     TODO: Add contexts for future profiles (custom, object resources etc.)
     """
-    def get_global_contexts() -> List[str]:
-        from common.py.data.entities.metadata import (MetadataProfileContainer,
-                                                      filter_containers)
-        from common.py.data.entities.project.features.project_metadata_feature import \
-            ProjectMetadataFeature
+
+    def get_global_contexts(*args, **kwargs) -> List[str]:
+        from common.py.data.entities.metadata import (
+            MetadataProfileContainer,
+            filter_containers_ex,
+        )
+        from common.py.data.entities.project.features.project_metadata_feature import (
+            ProjectMetadataFeature,
+        )
 
         from ....component import ServerComponent
-        
+
         profile_containers = ServerComponent.instance().server_data.profile_containers
-        filtered_containers = filter_containers(
+        filtered_containers = filter_containers_ex(
             profile_containers,
             category=ProjectMetadataFeature.feature_id,
-            role=MetadataProfileContainer.Role.GLOBAL,
+            roles=[
+                MetadataProfileContainer.Role.DEFAULT,
+                MetadataProfileContainer.Role.OPTIONAL,
+            ],
+            enabled_profiles=kwargs[
+                "project"
+            ].features.project_metadata.enabled_metadata_profiles,
         )
         return [
             i.profile.metadata.context
             for i in filtered_containers
             if i.profile.metadata.context is not None
         ]
-    
+
     def wrapper(*args, **kwargs):
         crate = func(*args, **kwargs)
-        
+
         # add future contexts here
-        contexts = [*get_global_contexts()]
+        contexts = [*get_global_contexts(*args, **kwargs)]
         crate.metadata.extra_contexts.extend(contexts)
 
         return crate
+
     return wrapper
 
 

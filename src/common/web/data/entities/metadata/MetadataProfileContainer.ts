@@ -4,10 +4,13 @@ import { PropertyProfile } from "../../../ui/components/propertyeditor/PropertyP
 
 /**
  * The role of a profile.
+ *
+ * @param Default - A default (fixed) profile that will always be used.
+ * @param Default - An optional profile.
  */
 export const enum MetadataProfileContainerRole {
-    Template = "template",
-    Global = "global"
+    Default = "default",
+    Optional = "optional"
 }
 
 /**

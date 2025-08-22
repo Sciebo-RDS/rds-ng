@@ -55,6 +55,11 @@ const initialFormValues = ref({
             </span>
         </Fieldset>
     </Form>
+
+    <div v-if="dialogData.userData.requiresAuth" class="mt-5 text-sm">
+        <b>Note:</b> The connection to this external service must first be authorized. A popup will open automatically after creating the new connection where
+        you can log in to the external service and grant access to it.
+    </div>
 </template>
 
 <style scoped lang="scss"></style>

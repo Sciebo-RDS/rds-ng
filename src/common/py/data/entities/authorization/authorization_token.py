@@ -24,6 +24,7 @@ class AuthorizationToken:
         auth_id: The ID of this token.
         auth_type: The token type.
         auth_issuer: The entity that requires the authorization.
+        auth_issuer_url: The URL of the entity that requires the authorization.
         auth_bearer: The bearer that will be authorized against.
         state: The state of the token.
         timestamp: The timestamp of the token.
@@ -57,6 +58,7 @@ class AuthorizationToken:
     auth_id: str
     auth_type: str
     auth_issuer: str
+    auth_issuer_url: str
     auth_bearer: str
 
     state: TokenState

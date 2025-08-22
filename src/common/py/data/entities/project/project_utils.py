@@ -48,14 +48,23 @@ def apply_project_features_update(
         project.features.project_metadata.metadata = (
             updated_features.project_metadata.metadata
         )
+        project.features.project_metadata.enabled_metadata_profiles = (
+            updated_features.project_metadata.enabled_metadata_profiles
+        )
 
     if apply_to is None or ResourcesMetadataFeature.feature_id in apply_to:
         project.features.resources_metadata.metadata = (
             updated_features.resources_metadata.metadata
         )
+        project.features.resources_metadata.enabled_metadata_profiles = (
+            updated_features.resources_metadata.enabled_metadata_profiles
+        )
 
     if apply_to is None or DataManagementPlanFeature.feature_id in apply_to:
         project.features.dmp.plan = updated_features.dmp.plan
+        project.features.dmp.enabled_metadata_profiles = (
+            updated_features.dmp.enabled_metadata_profiles
+        )
 
     if shared_objects is not None:
         project.features.shared_objects = shared_objects

@@ -5,8 +5,8 @@ server_address = "http://localhost:4200"
 scheme = "host"
 
 [integration.host]
-api_url = "http://localhost:8080/apps/rdsng/api/v1"
+url = "http://localhost:8080/apps/rdsng/"
 
 [authorization.oauth2.client]
-id = "mL1jViwMxAk8GapDuhZeNqVf7ptxI4Wi38kH5HoqjJmvzxbh2P0ohlVWUpEzYLTk"
-redirect_url = "http://localhost:8080/apps/rdsng/main"
+id = "some_key"
+redirect_url = "http://localhost:8080/apps/rdsng/"

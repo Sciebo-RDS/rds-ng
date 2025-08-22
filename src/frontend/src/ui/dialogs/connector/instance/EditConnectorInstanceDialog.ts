@@ -1,10 +1,11 @@
-import { Connector } from "@common/data/entities/connector/Connector";
 import { defineAsyncComponent } from "vue";
 
-import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
-import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
-
 import { FrontendComponent } from "@/component/FrontendComponent";
+
+import { Connector } from "@common/data/entities/connector/Connector";
+import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
+import { connectorRequiresAuthorization } from "@common/data/entities/connector/ConnectorUtils.ts";
+import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
 
 /**
  * The data used by the ``editConnectorInstanceDialog`` dialog.
@@ -12,6 +13,8 @@ import { FrontendComponent } from "@/component/FrontendComponent";
 export interface EditConnectorInstanceDialogData {
     name: string;
     description: string;
+
+    requiresAuth: boolean;
 }
 
 /**
@@ -26,19 +29,21 @@ export async function editConnectorInstanceDialog(
     instance?: ConnectorInstance,
     connector?: Connector
 ): ExtendedDialogResult<EditConnectorInstanceDialogData> {
+    const isNewInstance = !instance;
+    const requiresAuth = !!connector ? connectorRequiresAuthorization(connector) : false;
+
     return extendedDialog<EditConnectorInstanceDialogData>(
         comp,
-        defineAsyncComponent(
-            () => import("@/ui/dialogs/connector/instance/EditConnectorInstanceDialog.vue")
-        ),
+        defineAsyncComponent(() => import("@/ui/dialogs/connector/instance/EditConnectorInstanceDialog.vue")),
         {
-            header: (instance ? "Connection settings" : "New connection") + ` (${connector ? connector.name : "unknown connector"})`,
+            header: (isNewInstance ? "New connection" : "Connection settings") + ` (${connector ? connector.name : "unknown connector"})`,
             modal: true,
-            contentClass: "w-[20vw] w-full min-w-[40rem]"
+            contentClass: "max-w-[20vw] w-[20vw] w-full min-w-[40rem]"
         },
         {
             name: instance?.name || "",
-            description: instance?.description || ""
+            description: instance?.description || "",
+            requiresAuth: isNewInstance && requiresAuth
         },
         {
             hasAcceptButton: true,

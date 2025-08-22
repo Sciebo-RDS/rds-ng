@@ -1,0 +1,27 @@
+{
+    "metadata": {
+        "id": [
+            "Stub",
+            "1.0.0"
+        ],
+        "displayLabel": "Stub",
+        "description": "Stubby stuff"
+    },
+    "layout": [
+        {
+            "id": "STUB",
+            "displayLabel": "Stub",
+            "description": "Stubby stuff",
+            "required": true,
+            "input": [
+                {
+                    "id": "Stubstuff",
+                    "label": "Stub value",
+                    "type": "string",
+                    "description": "Stubby stuffy value",
+                    "required": true
+                }
+            ]
+        }
+    ]
+}

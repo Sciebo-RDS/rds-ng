@@ -433,6 +433,13 @@ export class PropertyProfile {
     getDisplayLabel(): string {
         return this.metadata.displayLabel;
     }
+
+    /**
+     * Retrieves the description from the metadata.
+     */
+    getDescription(): string {
+        return this.metadata.description;
+    }
 }
 
 /**

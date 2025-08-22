@@ -72,9 +72,11 @@ export abstract class IntegrationScheme {
     public startSession(): Promise<void> {
         const promise = new Promise<void>(async (resolve, reject) => {
             // When the session begins, perform any pending authorizations
-            this.handlePendingAuthorizationRequests()
-                .then(resolve)
-                .catch((error) => reject(`Authorization request failed: ${error}`));
+            setTimeout(() => {
+                this.handlePendingAuthorizationRequests()
+                    .then(resolve)
+                    .catch((error) => reject(`Authorization request failed: ${error}`));
+            }, 250);
         });
         promise.catch((error) => {
             const { setInitializationMessage } = useFrontendTools(this._component);

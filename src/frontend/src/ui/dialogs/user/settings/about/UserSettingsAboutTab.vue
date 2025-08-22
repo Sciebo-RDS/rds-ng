@@ -4,7 +4,7 @@ import { type PropType, toRefs } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
-import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
+import LinkedText from "@common/ui/components/misc/LinkedText.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
@@ -41,7 +41,7 @@ const propRefs = toRefs(props);
             <template #content>
                 <span class="text-sm">
                     If you encounter any issues or have other kinds of feedback, feel free to
-                    <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+                    <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
                     !
                 </span>
             </template>
@@ -49,13 +49,13 @@ const propRefs = toRefs(props);
 
         <div class="r-text-caption mt-1">Links</div>
         <div class="grid grid-flow-rows">
-            <ExternalLink link="https://www.research-data-services.org" text="Official website" />
-            <ExternalLink link="https://github.com/Sciebo-RDS" text="GitHub repository" />
+            <LinkedText link="https://www.research-data-services.org" text="Official website" />
+            <LinkedText link="https://github.com/Sciebo-RDS" text="GitHub repository" />
         </div>
 
         <div class="r-text-caption mt-1">Bug reporting &amp; Suggestions</div>
         If you're running into any issues or have further suggestions, use the following link to create an issue on our GitHub repository:
-        <ExternalLink link="https://github.com/Sciebo-RDS/rds-ng/issues" />
+        <LinkedText link="https://github.com/Sciebo-RDS/rds-ng/issues" />
 
         <div class="r-text-caption mt-3">Version</div>
         <div>{{ comp.data.title }} - Version {{ comp.data.version }}</div>
@@ -63,7 +63,7 @@ const propRefs = toRefs(props);
         <div class="r-text-caption mt-3">About</div>
         <div class="grid grid-cols-[max-content_max-content_max-content] items-center">
             {{ comp.data.title }} Copyright &copy;&nbsp;
-            <ExternalLink link="https://www.uni-muenster.de" text="University of Muenster" />
+            <LinkedText link="https://www.uni-muenster.de" text="University of Muenster" />
         </div>
     </div>
 </template>

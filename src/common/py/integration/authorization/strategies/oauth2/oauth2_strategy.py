@@ -129,6 +129,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                     auth_id=payload.auth_id,
                     auth_type=payload.auth_type,
                     auth_issuer=payload.auth_issuer,
+                    auth_issuer_url=payload.auth_issuer_url,
                     auth_bearer=payload.auth_bearer,
                     state=AuthorizationToken.TokenState.VALID,
                     timestamp=time.time(),

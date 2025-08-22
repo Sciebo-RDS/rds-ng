@@ -15,6 +15,8 @@ def get_server_settings() -> typing.Dict[SettingID, typing.Any]:
 
     return {
         # Authorization
+        AuthorizationSettingIDs.REQUEST_ATTEMPTS_DELAY: 1,
+        AuthorizationSettingIDs.REQUEST_ATTEMPTS_LIMIT: 5,
         AuthorizationSettingIDs.REFRESH_ATTEMPTS_DELAY: 30,
         AuthorizationSettingIDs.REFRESH_ATTEMPTS_LIMIT: 3,
         # Storage

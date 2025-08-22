@@ -67,7 +67,7 @@ export abstract class AuthorizationStrategy {
                     success ? resolve(AuthorizationState.Authorized) : reject(msg);
 
                     if (success) {
-                        this.finishRequest();
+                        this.finishRequest(authRequest);
                     }
                 })
                 .failed((_, msg: string) => reject(msg))
@@ -112,7 +112,7 @@ export abstract class AuthorizationStrategy {
 
     protected abstract getRequestData(authRequest: AuthorizationRequest): any;
 
-    protected finishRequest(): void {}
+    protected finishRequest(authRequest: AuthorizationRequest): void {}
 
     protected redirect(url: string): void {
         if (url) {

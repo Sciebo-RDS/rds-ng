@@ -22,10 +22,14 @@ class MetadataProfileContainer:
     class Role(StrEnum):
         """
         The role of a profile.
+
+        Attributes:
+            DEFAULT: A default (fixed) profile that will always be used.
+            OPTIONAL: An optional profile.
         """
 
-        TEMPLATE = "template"
-        GLOBAL = "global"
+        DEFAULT = "default"
+        OPTIONAL = "optional"
 
     category: str
     role: Role

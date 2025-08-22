@@ -9,7 +9,8 @@ import { type PropType, toRefs } from "vue";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
-import ExternalLink from "@common/ui/components/misc/ExternalLink.vue";
+
+import LinkedText from "@common/ui/components/misc/LinkedText.vue";
 
 const comp = FrontendComponent.inject();
 const props = defineProps({
@@ -45,7 +46,7 @@ const propRefs = toRefs(props);
                     </p>
                     <p>
                         What works well? What’s missing? What surprised you? - Please share your feedback directly via
-                        <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="email" />
+                        <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="email" />
                         !
                     </p>
                 </AccordionContent>
@@ -176,7 +177,7 @@ const propRefs = toRefs(props);
                         <p>
                             <strong>Questions or Feedback</strong><br />
                             We’d love to hear from you! Simply
-                            <ExternalLink link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+                            <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
                             to get in touch with us.
                         </p>
                         <p>
@@ -203,18 +204,18 @@ const propRefs = toRefs(props);
                             <li>
                                 <strong>{{ comp.data.title }} GitHub Repository</strong><br />
                                 Discover the source code, contribute to development, or follow updates on {{ comp.data.title }}’s open-source project.<br />
-                                <ExternalLink link="https://github.com/Sciebo-RDS/Sciebo-RDS" text="https://github.com/Sciebo-RDS/Sciebo-RDS" />
+                                <LinkedText link="https://github.com/Sciebo-RDS/Sciebo-RDS" text="https://github.com/Sciebo-RDS/Sciebo-RDS" />
                             </li>
                             <li>
                                 <strong>Sciebo University Cloud (University of Münster)</strong><br />
                                 Access your personal Sciebo cloud storage, the secure environment where your data is stored and managed before publication.<br />
-                                <ExternalLink link="https://uni-muenster.sciebo.de" text="https://uni-muenster.sciebo.de" />
+                                <LinkedText link="https://uni-muenster.sciebo.de" text="https://uni-muenster.sciebo.de" />
                             </li>
                             <li>
                                 <strong>Research Data Management Project Page (University of Münster)</strong><br />
                                 Learn more about the research data management initiatives at the University of Münster, including current projects, policies,
                                 and support services.<br />
-                                <ExternalLink
+                                <LinkedText
                                     link="https://cris.uni-muenster.de/portal/de/project/54015178"
                                     text="https://cris.uni-muenster.de/portal/de/project/54015178"
                                 />
@@ -223,13 +224,13 @@ const propRefs = toRefs(props);
                                 <strong>Research Data Management at the University of Potsdam</strong><br />
                                 Explore resources, guidelines, and support services for effective research data management provided by the University of
                                 Potsdam.<br />
-                                <ExternalLink link="https://www.uni-potsdam.de/de/forschungsdaten" text="https://www.uni-potsdam.de/de/forschungsdaten" />
+                                <LinkedText link="https://www.uni-potsdam.de/de/forschungsdaten" text="https://www.uni-potsdam.de/de/forschungsdaten" />
                             </li>
                             <li>
                                 <strong>DFG Guidelines on Handling Research Data</strong><br />
                                 Understand the standards and best practices recommended by the German Research Foundation (DFG) for responsible research data
                                 management.<br />
-                                <ExternalLink
+                                <LinkedText
                                     link="https://www.dfg.de/foerderung/grundlagen_rahmenbedingungen/forschungsdaten"
                                     text="https://www.dfg.de/foerderung/grundlagen_rahmenbedingungen/forschungsdaten"
                                 />
@@ -238,12 +239,12 @@ const propRefs = toRefs(props);
                                 <strong>Zenodo Repository</strong><br />
                                 A trusted open-access repository where researchers can publish and share datasets, software, and other research outputs with
                                 assigned DOIs.<br />
-                                <ExternalLink link="https://zenodo.org" text="https://zenodo.org" />
+                                <LinkedText link="https://zenodo.org" text="https://zenodo.org" />
                             </li>
                             <li>
                                 <strong>Open Science Framework (OSF)</strong><br />
                                 A free, open platform to support researchers in managing, sharing, and collaborating on their research projects and data.<br />
-                                <ExternalLink link="https://osf.io" text="https://osf.io" />
+                                <LinkedText link="https://osf.io" text="https://osf.io" />
                             </li>
                         </ul>
                     </div>

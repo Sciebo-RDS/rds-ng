@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import ScrollPanel from "primevue/scrollpanel";
-import { type PropType, toRefs, unref } from "vue";
+import { type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
+import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils.ts";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore.ts";
+import { useUserStore } from "@/data/stores/UserStore.ts";
+import { useConnectorInstancesTools } from "@/ui/tools/connector/ConnectorInstancesTools.ts";
 import { useUserTools } from "@/ui/tools/user/UserTools";
 
 import ConnectionsList from "@/ui/dialogs/user/settings/connections/ConnectionsList.vue";
@@ -20,10 +25,23 @@ const props = defineProps({
 });
 const { tabData: userSettings } = toRefs(props);
 
+const consStore = useConnectorsStore();
+const userStore = useUserStore();
+const { userAuthorizations } = storeToRefs(userStore);
+
 const { saveUserSettings } = useUserTools(comp);
+const { requestInstanceAuthorization } = useConnectorInstancesTools(comp);
+
+const newInstance = ref<ConnectorInstance | undefined>(undefined);
 
 function onCreateInstance(instance: ConnectorInstance): void {
     saveUserSettings(unref(userSettings)!);
+
+    const connector = findConnectorByID(consStore.connectors, instance.connector_id);
+    if (!!connector && connectorRequiresAuthorization(connector)) {
+        newInstance.value = instance;
+        requestInstanceAuthorization(instance, consStore.connectors, unref(userAuthorizations));
+    }
 }
 </script>
 
@@ -36,7 +54,7 @@ function onCreateInstance(instance: ConnectorInstance): void {
         </div>
 
         <ScrollPanel class="h-[29rem]">
-            <ConnectionsList :user-settings="userSettings" />
+            <ConnectionsList :user-settings="userSettings" :new-instance="newInstance" />
         </ScrollPanel>
         <NewConnection :user-settings="userSettings" @create-instance="onCreateInstance" />
     </div>

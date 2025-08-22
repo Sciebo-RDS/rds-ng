@@ -14,6 +14,7 @@ from common.py.integration.authorization.strategies import (
 )
 from common.py.services import Service
 from common.py.utils import EntryGuard
+from common.py.utils.func import attempt
 
 from .tools import handle_authorization_token_changes
 from ..component import ServerComponent
@@ -47,6 +48,12 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         "Authorization service", context_type=ServerServiceContext
     )
 
+    request_attempts_delay = comp.data.config.value(
+        AuthorizationSettingIDs.REQUEST_ATTEMPTS_DELAY
+    )
+    request_attempts_limit = comp.data.config.value(
+        AuthorizationSettingIDs.REQUEST_ATTEMPTS_LIMIT
+    )
     refresh_attempts_delay = comp.data.config.value(
         AuthorizationSettingIDs.REFRESH_ATTEMPTS_DELAY
     )
@@ -90,7 +97,8 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         message = ""
 
         if msg.request_payload.fingerprint == ctx.session.fingerprint:
-            try:
+
+            def _perform_auth() -> None:
                 strategy = _create_auth_strategy(
                     ctx,
                     msg.strategy,
@@ -108,9 +116,33 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 ctx.storage_pool.authorization_token_storage.add(auth_token)
                 handle_authorization_token_changes(auth_token, msg, ctx)
 
-                success = True
-            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logging.debug(
+                    f"Requested authorization token",
+                    scope="auth",
+                    user_id=auth_token.user_id,
+                    auth_id=auth_token.auth_id,
+                    strategy=auth_token.strategy,
+                )
+
+            def _perform_auth_failed(exc: Exception) -> None:
+                nonlocal message
                 message = str(exc)
+
+                logging.warning(
+                    "Requesting authorization failed",
+                    scope="auth",
+                    strategy=msg.strategy,
+                    payload=msg.request_payload,
+                    data=msg.data,
+                    error=message,
+                )
+
+            success, _ = attempt(
+                _perform_auth,
+                cb_failed=_perform_auth_failed,
+                attempts=request_attempts_limit,
+                delay=request_attempts_delay,
+            )
         else:
             message = "The provided fingerprint doesn't match"
 
@@ -229,7 +261,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
 
                         logging.debug(
                             "Refreshed authorization token",
-                            scope="authorization",
+                            scope="auth",
                             user_id=auth_token.user_id,
                             auth_id=auth_token.auth_id,
                             strategy=auth_token.strategy,
@@ -238,7 +270,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                         if 0 < refresh_attempts_limit <= auth_token.refresh_attempts:
                             logging.warning(
                                 "Unable to refresh authorization token - removing token",
-                                scope="authorization",
+                                scope="auth",
                                 user_id=auth_token.user_id,
                                 auth_id=auth_token.auth_id,
                                 strategy=auth_token.strategy,

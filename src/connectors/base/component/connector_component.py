@@ -83,13 +83,6 @@ class ConnectorComponent(BackendComponent):
         """
         return self._connector_info
 
-    @property
-    def metadata_profile_name(self) -> str:
-        """
-        The name of the metadata profile.
-        """
-        return self.connector_info.metadata_profile.metadata.id[0]
-
     @staticmethod
     def instance() -> "ConnectorComponent":
         """

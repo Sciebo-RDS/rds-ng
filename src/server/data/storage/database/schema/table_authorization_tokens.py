@@ -44,6 +44,7 @@ def register_authorization_tokens_tables(
         Column("auth_id", String(256), primary_key=True),
         Column("auth_type", String(32)),
         Column("auth_issuer", Text),
+        Column("auth_issuer_url", Text),
         Column("auth_bearer", Text),
         # Settings
         Column("state", Text),

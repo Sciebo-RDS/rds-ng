@@ -2,6 +2,8 @@
 import { storeToRefs } from "pinia";
 import Card from "primevue/card";
 
+import LinkedText from "@common/ui/components/misc/LinkedText.vue";
+
 import { FrontendComponent } from "@/component/FrontendComponent.ts";
 import { useUserStore } from "@/data/stores/UserStore.ts";
 
@@ -21,18 +23,18 @@ const { userSettings } = storeToRefs(userStore);
         <Card
             v-if="userSettings.connector_instances.length == 0"
             class="bg-amber-100 text-amber-700 rounded-none mx-0.5 mt-0.5 !p-0 shadow-none"
-            :pt="{ title: '!text-base', body: 'p-2 px-3' }"
+            :pt="{ title: '!text-base', body: 'p-1.5 px-2.5 text-pretty' }"
         >
             <template #title>
                 <div class="flex items-center gap-1">
                     <span class="material-icons-outlined mi-link-off !text-xl" />
-                    <span class="">No connections yet!</span>
+                    <span class="">No connections added</span>
                 </div>
             </template>
             <template #content>
                 <span class="text-sm">
                     To enter metadata for your projects and to upload them, you need to add connections to external services in your
-                    <a href="#" class="text-amber-600" @click="() => editUserSettings(userSettings)">settings</a>.
+                    <LinkedText text="settings" @click="() => editUserSettings(userSettings)" icon-class="material-icons-outlined mi-settings" />.
                 </span>
             </template>
         </Card>

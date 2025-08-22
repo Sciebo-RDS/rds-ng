@@ -1,4 +1,7 @@
-from common.py.data.entities.metadata import filter_containers, MetadataProfileContainer
+from common.py.data.entities.metadata import (
+    filter_containers_ex,
+    MetadataProfileContainer,
+)
 from common.py.data.entities.project import Project
 from common.py.data.entities.project.features import (
     DataManagementPlanFeature,
@@ -62,20 +65,24 @@ ${value_line}
         from .. import render_exporter_template
         from ....component import ServerComponent
 
-        profiles = filter_containers(
+        containers = filter_containers_ex(
             ServerComponent.instance().server_data.profile_containers,
             category=DataManagementPlanFeature.feature_id,
-            role=MetadataProfileContainer.Role.GLOBAL,
+            roles=[
+                MetadataProfileContainer.Role.DEFAULT,
+                MetadataProfileContainer.Role.OPTIONAL,
+            ],
+            enabled_profiles=project.features.dmp.enabled_metadata_profiles,
         )
 
         output = render_exporter_template(project, template_header)
-        for profile in profiles:
+        for container in containers:
             output += render_exporter_template(
                 project,
                 template_body,
                 profile_data={
                     "dmp_metadata": ExporterTemplateProfileData(
-                        profile=profile.profile,
+                        profile=container.profile,
                         metadata=project.features.dmp.plan,
                     )
                 },

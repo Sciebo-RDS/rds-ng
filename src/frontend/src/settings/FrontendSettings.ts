@@ -13,7 +13,9 @@ export function getFrontendSettings(): Map<SettingID, any> {
 
     // Integration settings
     settings.set(IntegrationSettingIDS.Scheme, "basic");
-    settings.set(HostIntegrationSettingIDs.APIURL, "");
+    settings.set(HostIntegrationSettingIDs.URL, "");
+    settings.set(HostIntegrationSettingIDs.EntrypointEndpoint, "/");
+    settings.set(HostIntegrationSettingIDs.APIEndpoint, "/api/v1");
 
     // Authorization settings
     settings.set(OAuth2AuthorizationSettingIDs.ClientID, "");

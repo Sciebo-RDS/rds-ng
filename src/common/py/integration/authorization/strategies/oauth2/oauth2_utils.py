@@ -24,4 +24,4 @@ def format_oauth2_error_response(response: Response) -> str:
         if "error_description" in resp_data
         else ""
     )
-    return f"{err_type}{err_desc} ({response.status_code})".title()
+    return f"{err_type}{err_desc} ({response.status_code}: {str(response.content)})".title()

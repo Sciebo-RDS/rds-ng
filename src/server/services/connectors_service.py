@@ -2,7 +2,6 @@ import time
 
 from common.py.core.logging import debug, info, warning
 from common.py.data.entities.connector import Connector
-from common.py.data.entities.properties import PropertyProfile
 from common.py.data.verifiers.connector import ConnectorVerifier
 from common.py.services import Service
 from common.py.utils import EntryGuard
@@ -61,7 +60,7 @@ def create_connectors_service(comp: ServerComponent) -> Service:
             authorization=msg.authorization_public,
             options=msg.options,
             logos=msg.logos,
-            metadata_profile=PropertyProfile.from_dict(msg.metadata_profile),
+            metadata_profiles=msg.metadata_profiles,
             announce_timestamp=time.time(),
         )
 

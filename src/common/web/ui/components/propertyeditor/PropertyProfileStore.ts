@@ -23,17 +23,18 @@ export class PropertyProfileStore {
         try {
             if (isProfile(profile)) {
                 this._profiles.push(profile as PropertyProfile);
-                console.log("mounted profile: ", profile);
             } else {
                 console.log("Invalid profile: ", profile);
             }
         } catch (e) {
-            console.log("Error mounting profile");
+            console.log(`Error mounting profile ${profile.getId()}`);
         }
     }
 
     public unmountProfile(profileId: ProfileID) {
-        this._profiles = this._profiles.filter((profile) => profile.metadata.id !== profileId);
+        this._profiles = this._profiles.filter((profile) => {
+            return !(profile.metadata.id[0] == profileId[0] && profile.metadata.id[1] == profileId[1]);
+        });
     }
 
     // HACK FIXME return actual type without class-transformer

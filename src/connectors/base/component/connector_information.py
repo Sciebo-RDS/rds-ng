@@ -1,7 +1,11 @@
-import json
+import pathlib
 import typing
 
 from common.py.data.entities.connector import Connector, ConnectorCategoryID
+from common.py.data.entities.metadata import (
+    MetadataProfileContainer,
+    MetadataProfileContainerList,
+)
 from common.py.data.entities.properties import ProfileMetadata, PropertyProfile
 from common.py.utils.img_conversion import convert_image_to_img_source
 
@@ -23,7 +27,7 @@ class ConnectorInformation:
                 "default": "/some/file.png",
                 "horizontal": "/some/other/file.png"
             },
-            "metadata_profile": "/the/profile_file.json"
+            "metadata_profiles": "/the/profiles_dir"
         }
 
     Notes:
@@ -59,7 +63,7 @@ class ConnectorInformation:
             )
             self._options = self._read_options(data)
             self._logos = self._load_logos(data)
-            self._metadata_profile = self._load_metadata_profile(data)
+            self._metadata_profiles = self._load_metadata_profiles(data)
 
     def _read_general_info(
         self, data: typing.Any
@@ -105,12 +109,13 @@ class ConnectorInformation:
 
         return Connector.Logos(logo_default, logo_horizontal)
 
-    def _load_metadata_profile(self, data: typing.Any) -> PropertyProfile:
-        try:
-            with open(data["metadata_profile"], encoding="utf-8") as file:
-                return PropertyProfile.from_dict(json.load(file))
-        except:  # pylint: disable=bare-except
-            return PropertyProfile(ProfileMetadata(("dummy", ""), "dummy", "dummy"), [])
+    def _load_metadata_profiles(self, data: typing.Any) -> MetadataProfileContainerList:
+        from common.py.data.entities.metadata import containers_from_folder
+
+        return containers_from_folder(
+            pathlib.PosixPath(data["metadata_profiles"]),
+            default_category=f"connector:{self._connector_id}",
+        )
 
     @property
     def connector_id(self) -> str:
@@ -155,8 +160,8 @@ class ConnectorInformation:
         return self._logos
 
     @property
-    def metadata_profile(self) -> PropertyProfile:
+    def metadata_profiles(self) -> MetadataProfileContainerList:
         """
-        The metadata profile.
+        The metadata profiles.
         """
-        return self._metadata_profile
+        return self._metadata_profiles
