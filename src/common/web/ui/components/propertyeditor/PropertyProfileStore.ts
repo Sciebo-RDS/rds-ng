@@ -46,12 +46,12 @@ export class PropertyProfileStore {
 
     public getLabelTemplateById(classId: string): string | undefined {
         const profile = this._profiles.find((profile) => !!profile.classes && !!profile.classes[classId]);
-        return profile?.classes![classId]["labelTemplate"];
+        return profile?.classes![classId]!["labelTemplate"] || undefined;
     }
 
     public getClassLabelById(classId: string): string | undefined {
         const profile = this._profiles.find((profile) => !!profile.classes && !!profile.classes[classId]);
-        return profile?.classes![classId].displayLabel || "";
+        return profile?.classes![classId]?.displayLabel || "";
     }
 
     public getProfileLabelById(profileId: ProfileID): string | undefined {

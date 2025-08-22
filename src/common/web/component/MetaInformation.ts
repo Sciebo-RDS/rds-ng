@@ -1,12 +1,12 @@
 // @ts-ignore
-import metaData from "/config/meta-information.json"
+import metaData from "/config/meta-information.json";
 import { SemVer } from "semver";
 
 type ComponentInformationType = {
     name: string;
     directory: string;
     tech: string;
-}
+};
 
 type MetaInformationType = {
     global: {
@@ -14,7 +14,7 @@ type MetaInformationType = {
         version: string;
     };
     components: Record<string, ComponentInformationType>;
-}
+};
 
 /**
  * Accesses meta information about the entire project and its various component stored in a *JSON* file.
@@ -65,13 +65,13 @@ export class MetaInformation {
      */
     public getComponent(comp: string): ComponentInformationType {
         if (comp in this._data.components) {
-            return this._data.components[comp];
+            return this._data.components[comp]!;
         }
 
         return {
-            "name": "<invalid>",
-            "directory": "",
-            "tech": "",
+            name: "<invalid>",
+            directory: "",
+            tech: ""
         };
     }
 }

@@ -65,7 +65,7 @@ watch(
 
 <template>
     <div class="h-full">
-        <Tabs :value="panels[0].title" class="h-full">
+        <Tabs :value="panels[0]!.title" class="h-full">
             <TabList :pt="{ tabList: 'tab-list', activeBar: 'tab-list-active-bar' }">
                 <Tab v-for="panel in panels" :value="panel.title" class="tab" :title="panel.description">
                     <LegendHeader :title="panel.title" :description="panel.description" />

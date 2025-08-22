@@ -2,16 +2,17 @@ import { type Trace } from "../Message";
 import { MessageMetaInformation } from "./MessageMetaInformation";
 
 class MessageMetaInformationListEntry {
-    public constructor(readonly metaInformation: MessageMetaInformation,
-                       readonly timeout: number = 0.0,
-                       readonly timestamp: number = Date.now() / 1000.0) {
-    }
+    public constructor(
+        readonly metaInformation: MessageMetaInformation,
+        readonly timeout: number = 0.0,
+        readonly timestamp: number = Date.now() / 1000.0
+    ) {}
 
     /**
      * Whether the message has timed out.
      */
     public hasTimedOut(): boolean {
-        return this.timeout > 0.0 ? (Date.now() / 1000.0) - this.timestamp > this.timeout : false;
+        return this.timeout > 0.0 ? Date.now() / 1000.0 - this.timestamp > this.timeout : false;
     }
 }
 
@@ -58,7 +59,7 @@ export class MessageMetaInformationList {
      */
     public find(unique: Trace): MessageMetaInformation | null {
         if (unique in this._list) {
-            return this._list[unique].metaInformation;
+            return this._list[unique]!.metaInformation;
         }
 
         return null;

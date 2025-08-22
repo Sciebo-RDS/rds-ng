@@ -32,7 +32,7 @@ export class ProjectStatistics {
      * @param connectorInstance - The connector instance.
      */
     public getJobStatistics(connectorInstance: ConnectorInstanceID): JobStatistics {
-        return connectorInstance in this._jobStatistics ? this._jobStatistics[connectorInstance] : this.createEmptyJobStatistics();
+        return connectorInstance in this._jobStatistics ? this._jobStatistics[connectorInstance]! : this.createEmptyJobStatistics();
     }
 
     /**
@@ -57,13 +57,13 @@ export class ProjectStatistics {
             }
 
             if (jobRecord.success) {
-                this._jobStatistics[jobRecord.connector_instance].lastJob = Math.max(
-                    this._jobStatistics[jobRecord.connector_instance].lastJob,
-                    jobRecord.timestamp,
+                this._jobStatistics[jobRecord.connector_instance]!.lastJob = Math.max(
+                    this._jobStatistics[jobRecord.connector_instance]!.lastJob,
+                    jobRecord.timestamp
                 );
-                this._jobStatistics[jobRecord.connector_instance].totalCount.succeeded += 1;
+                this._jobStatistics[jobRecord.connector_instance]!.totalCount.succeeded += 1;
             } else {
-                this._jobStatistics[jobRecord.connector_instance].totalCount.failed += 1;
+                this._jobStatistics[jobRecord.connector_instance]!.totalCount.failed += 1;
             }
         }
     }
@@ -73,8 +73,8 @@ export class ProjectStatistics {
             lastJob: 0,
             totalCount: {
                 succeeded: 0,
-                failed: 0,
-            },
+                failed: 0
+            }
         } as JobStatistics;
     }
 }

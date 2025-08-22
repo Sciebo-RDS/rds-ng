@@ -109,22 +109,22 @@ export class Configuration {
     }
 
     private traverseSettings(path: string[], settings: SettingsContainer): any {
-        if (!(path[0] in settings)) {
+        if (!(path[0]! in settings)) {
             throw new Error(`Unknown settings key ${path[0]}}`);
         }
-        settings = settings[path[0]];
+        settings = settings[path[0]!];
         return path.length == 1 ? settings : this.traverseSettings(path.slice(1), settings);
     }
 
     private unfoldSettingsItem(path: string[], settings: SettingsContainer, value: any): void {
         if (path.length == 1) {
-            settings[path[0]] = value;
+            settings[path[0]!] = value;
         } else {
-            if (!(path[0] in settings)) {
-                settings[path[0]] = {};
+            if (!(path[0]! in settings)) {
+                settings[path[0]!] = {};
             }
 
-            settings = settings[path[0]];
+            settings = settings[path[0]!];
             this.unfoldSettingsItem(path.slice(1), settings, value);
         }
     }

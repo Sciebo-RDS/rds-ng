@@ -43,9 +43,12 @@ export class MessageBuilder {
      *
      * @throws Error - If an unknown value was provided in ``values`.
      */
-    public buildCommand<MsgType extends Command>(cmdType: ConstructableMessage<MsgType>,
-                                                 values: Record<string, any> = {}, chain: Message | null = null): CommandComposer<MsgType> {
-        this._counters[Command.Category] += 1;
+    public buildCommand<MsgType extends Command>(
+        cmdType: ConstructableMessage<MsgType>,
+        values: Record<string, any> = {},
+        chain: Message | null = null
+    ): CommandComposer<MsgType> {
+        this._counters[Command.Category]! += 1;
 
         return new CommandComposer(this._originID, this._messageBus, cmdType, values, chain);
     }
@@ -63,10 +66,14 @@ export class MessageBuilder {
      *
      * @throws Error - If an unknown value was provided in ``values`.
      */
-    public buildCommandReply<MsgType extends CommandReply>(replyType: ConstructableMessage<MsgType>,
-                                                           command: Command, success: boolean = true, message: string = "",
-                                                           values: Record<string, any> = {}): CommandReplyComposer<MsgType> {
-        this._counters[CommandReply.Category] += 1;
+    public buildCommandReply<MsgType extends CommandReply>(
+        replyType: ConstructableMessage<MsgType>,
+        command: Command,
+        success: boolean = true,
+        message: string = "",
+        values: Record<string, any> = {}
+    ): CommandReplyComposer<MsgType> {
+        this._counters[CommandReply.Category]! += 1;
 
         values.success = success;
         values.message = message;
@@ -86,9 +93,12 @@ export class MessageBuilder {
      *
      * @throws Error - If an unknown value was provided in ``values`.
      */
-    public buildEvent<MsgType extends Event>(eventType: ConstructableMessage<MsgType>,
-                                             values: Record<string, any> = {}, chain: Message | null = null): EventComposer<MsgType> {
-        this._counters[Event.Category] += 1;
+    public buildEvent<MsgType extends Event>(
+        eventType: ConstructableMessage<MsgType>,
+        values: Record<string, any> = {},
+        chain: Message | null = null
+    ): EventComposer<MsgType> {
+        this._counters[Event.Category]! += 1;
 
         return new EventComposer(this._originID, this._messageBus, eventType, values, chain);
     }
@@ -104,6 +114,6 @@ export class MessageBuilder {
      * @returns - The number of messages already built of the specified type.
      */
     public getMessageCount(counter: MessageCategory): number {
-        return counter in this._counters ? this._counters[counter] : 0;
+        return counter in this._counters ? this._counters[counter]! : 0;
     }
 }

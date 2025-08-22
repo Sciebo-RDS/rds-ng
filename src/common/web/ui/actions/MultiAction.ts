@@ -45,7 +45,7 @@ export class MultiAction extends ActionBase {
     private executeNextAction(): void {
         // If a next action is still available, execute it; otherwise, this action is done
         if (++this._currentAction < this._actions.length) {
-            this._actions[this._currentAction].execute();
+            this._actions[this._currentAction]!.execute();
         } else {
             this.setState(ActionState.Done);
         }

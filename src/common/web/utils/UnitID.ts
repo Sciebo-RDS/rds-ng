@@ -16,7 +16,7 @@ export class UnitID {
     public constructor(
         readonly type: string,
         readonly unit: string,
-        readonly instance?: string,
+        readonly instance?: string
     ) {}
 
     /**
@@ -57,10 +57,10 @@ export class UnitID {
         let path = str.split(UnitID._delimiter);
         switch (path.length) {
             case 2:
-                return new UnitID(path[0], path[1]);
+                return new UnitID(path[0]!, path[1]!);
 
             case 3:
-                return new UnitID(path[0], path[1], path[2]);
+                return new UnitID(path[0]!, path[1]!, path[2]!);
 
             default:
                 throw new Error(`The unit ID '${str}' is invalid`);

@@ -28,7 +28,7 @@ export function useExtendedDialogTools() {
         if (dialogData.validator) {
             function selectFirstError(errors: yup.ValidationError[]) {
                 try {
-                    const firstError = errors[0];
+                    const firstError = errors[0]!;
                     scrollElementIntoView(`[name="${firstError.path}"]`);
                 } catch (e) {}
             }

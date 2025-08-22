@@ -100,7 +100,7 @@ class ResourcesListCacheEntry {
     private insertIntoParent(resources: ResourcesList, child: ResourcesList): boolean {
         // See if the current resources list contains the child
         for (let i = 0; i < resources.folders.length; ++i) {
-            const folder = resources.folders[i];
+            const folder = resources.folders[i]!;
             if (folder.resource.filename == child.resource.filename) {
                 resources.folders[i] = child;
                 return true;
@@ -160,7 +160,7 @@ export class ResourcesListCache {
         if (!(root in this._cacheEntries)) {
             this._cacheEntries[root] = new ResourcesListCacheEntry(root);
         }
-        return this._cacheEntries[root];
+        return this._cacheEntries[root]!;
     }
 
     /**

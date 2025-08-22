@@ -15,6 +15,7 @@ export class History {
      * @returns The updated list of objects in the history.
      */
     public navigateTo(object: SharedPropertyObject) {
+        // @ts-ignore
         const pos = this._items.indexOf(this._items.filter((e) => e.id === object.id)[0]);
         if (pos != -1) {
             this._items = this._items.slice(0, pos + 1);

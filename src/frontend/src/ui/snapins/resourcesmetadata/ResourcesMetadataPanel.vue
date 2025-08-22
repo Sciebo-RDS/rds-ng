@@ -166,7 +166,7 @@ watch(selectedNodes, (nodes: Record<string, boolean>) => {
     const selectedPaths = Object.keys(nodes);
     const metadata = unref(project).features.resources_metadata.metadata;
 
-    resourcesData.value = metadata[selectedPaths[0]] || [];
+    resourcesData.value = metadata[selectedPaths[0]!] || [];
 
     // Unblock only after the resources watcher had a chance to fire
     nextTick(() => (blockResourcesUpdate = false));

@@ -62,7 +62,7 @@ if (isLoading.value) {
 const selectedResources = ref<Object>(pathToSelectedResources(model.value));
 watch(selectedResources, (newResources) => {
     const paths = Object.keys(newResources);
-    model.value = paths.length > 0 ? paths[0] : "";
+    model.value = paths.length > 0 ? paths[0]! : "";
 
     emits("changed", model.value);
 });
