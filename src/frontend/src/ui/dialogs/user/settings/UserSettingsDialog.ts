@@ -2,7 +2,6 @@ import { defineAsyncComponent } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 import { extendedDialog, type ExtendedDialogResult } from "@common/ui/dialogs/ExtendedDialog";
-import { deepClone } from "@common/utils/ObjectUtils";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
@@ -46,7 +45,7 @@ export async function userSettingsDialog(
             contentClass: "w-[75rem] h-[45rem]"
         },
         {
-            userSettings: deepClone<UserSettings>(userSettings),
+            userSettings: userSettings,
             activePage: activePage
         },
         {

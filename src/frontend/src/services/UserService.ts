@@ -4,6 +4,7 @@ import { Service } from "@common/services/Service";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { FrontendServiceContext } from "@/services/FrontendServiceContext";
+import { useUserTools } from "@/ui/tools/user/UserTools.ts";
 
 /**
  * Creates the user service.
@@ -13,6 +14,8 @@ import { FrontendServiceContext } from "@/services/FrontendServiceContext";
  * @returns - The newly created service.
  */
 export default function (comp: FrontendComponent): Service {
+    const { copyUserSettings } = useUserTools(comp);
+
     return comp.createService(
         "User service",
         (svc: Service) => {
@@ -20,8 +23,7 @@ export default function (comp: FrontendComponent): Service {
                 if (msg.success) {
                     ctx.logger.debug("Retrieved user settings", "user", { settings: JSON.stringify(msg.settings) });
 
-                    // @ts-ignore
-                    ctx.userStore.userSettings = msg.settings;
+                    copyUserSettings(msg.settings, ctx.userStore.userSettings);
                 } else {
                     ctx.logger.error("Unable to retrieve the user settings", "user", { reason: msg.message });
                 }
@@ -31,8 +33,7 @@ export default function (comp: FrontendComponent): Service {
                 if (msg.success) {
                     ctx.logger.debug("Updated the user settings", "user", { settings: JSON.stringify(msg.settings) });
 
-                    // @ts-ignore
-                    ctx.userStore.userSettings = msg.settings;
+                    copyUserSettings(msg.settings, ctx.userStore.userSettings);
                 } else {
                     ctx.logger.error("Unable to update the user settings", "user", { reason: msg.message });
                 }

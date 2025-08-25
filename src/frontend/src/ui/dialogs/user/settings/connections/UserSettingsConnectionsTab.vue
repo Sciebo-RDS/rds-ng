@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import ScrollPanel from "primevue/scrollpanel";
-import { type PropType, ref, toRefs, unref } from "vue";
+import { nextTick, type PropType, ref, toRefs, unref } from "vue";
 
 import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance";
-import { connectorRequiresAuthorization, findConnectorByID } from "@common/data/entities/connector/ConnectorUtils.ts";
+import { connectorRequiresAuthorization, findConnectorByID, findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils.ts";
 import { UserSettings } from "@common/data/entities/user/UserSettings";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
@@ -35,13 +35,18 @@ const { requestInstanceAuthorization } = useConnectorInstancesTools(comp);
 const newInstance = ref<ConnectorInstance | undefined>(undefined);
 
 function onCreateInstance(instance: ConnectorInstance): void {
-    saveUserSettings(unref(userSettings)!);
-
-    const connector = findConnectorByID(consStore.connectors, instance.connector_id);
-    if (!!connector && connectorRequiresAuthorization(connector)) {
-        newInstance.value = instance;
-        requestInstanceAuthorization(instance, consStore.connectors, unref(userAuthorizations));
-    }
+    saveUserSettings(unref(userSettings)!).then(() => {
+        nextTick(() => {
+            // Ensure that the instance has been added by the server
+            if (!!findConnectorInstanceByID(unref(userSettings)!.connector_instances, instance.instance_id)) {
+                const connector = findConnectorByID(consStore.connectors, instance.connector_id);
+                if (!!connector && connectorRequiresAuthorization(connector)) {
+                    newInstance.value = instance;
+                    requestInstanceAuthorization(instance, consStore.connectors, unref(userAuthorizations));
+                }
+            }
+        });
+    });
 }
 </script>
 

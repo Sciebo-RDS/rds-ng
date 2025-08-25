@@ -1,4 +1,5 @@
 from common.py.component import BackendComponent
+from common.py.core.logging import info
 from common.py.data.entities.authorization import AuthorizationSettings
 from common.py.services import Service
 from common.py.utils import EntryGuard
@@ -45,6 +46,14 @@ def create_connector_service(comp: BackendComponent) -> Service:
                     strategy, ctx.config
                 )
                 con_info = ConnectorComponent.instance().connector_info
+
+                info(
+                    "Sending connector announce",
+                    scope="connectors",
+                    id=con_info.connector_id,
+                    name=con_info.name,
+                    target=ctx.remote_channel,
+                )
 
                 ConnectorAnnounceEvent.build(
                     ctx.message_builder,

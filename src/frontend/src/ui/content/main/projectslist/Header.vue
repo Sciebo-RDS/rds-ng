@@ -49,11 +49,11 @@ function onShowJobsPanel(event: Event): void {
 }
 
 function onHelp(): void {
-    editUserSettings(userSettings.value, UserSettingsPage.Support);
+    editUserSettings(unref(userSettings), UserSettingsPage.Support);
 }
 
 function onEditUserSettings(): void {
-    editUserSettings(userSettings.value);
+    editUserSettings(unref(userSettings));
 }
 </script>
 

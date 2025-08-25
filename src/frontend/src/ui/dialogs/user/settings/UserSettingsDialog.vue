@@ -19,14 +19,14 @@ const comp = FrontendComponent.inject();
 const { userSettingsUpdating } = useUserTools(comp);
 const { dialogData } = useExtendedDialogTools();
 
-const userSettings = ref<UserSettings>(dialogData.userData.userSettings);
+const userSettings = dialogData.userData.userSettings;
 
 const tabs = ref([
     { title: "Connections", component: markRaw(ConnectionsTab), icon: "mi-add-link" },
     { title: "Help & Support", component: markRaw(SupportTab), icon: "mi-help-outline" },
     { title: "About", component: markRaw(AboutTab), icon: "mi-feedback" }
 ]);
-const activeTab = ref(dialogData.userData.activePage);
+const activeTab = dialogData.userData.activePage;
 </script>
 
 <template>
