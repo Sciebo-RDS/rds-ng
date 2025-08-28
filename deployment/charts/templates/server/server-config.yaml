@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
     name: server-config
 data:
-    RDS_GENERAL_DEBUG: {{ .Values.debugLog }}
+    RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
     RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}
     RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout  | quote }}
     RDS_STORAGE_DATABASE_ENGINE: {{ default "memory" .Values.server.storage.engine | quote }}
