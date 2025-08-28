@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: frontend-config
+  name: frontend-config
 data:
-    NODE_TLS_REJECT_UNAUTHORIZED: "0"
-    RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{.Values.server.address}}
-    RDS_INTEGRATION_SCHEME: {{.Values.frontend.integration.scheme}}
-    RDS_INTEGRATION_HOST_URL: {{.Values.frontend.integration.hostUrl}}
-    RDS_INTEGRATION_HOST_ENDPOINTS_ENTRYPOINT: {{.Values.frontend.integration.endpoints.entrypoint}}
-    RDS_INTEGRATION_HOST_ENDPOINTS_API: {{.Values.frontend.integration.endpoints.api}}
-    RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL: {{.Values.server.oauth2.clientRedirectUrl}}
-    RDS_AUTHORIZATION_OAUTH2_CLIENT_ID: {{.Values.server.oauth2.clientId}}
+  RDS_GENERAL_DEBUG: {{ .Values.debugLog }}
+  NODE_TLS_REJECT_UNAUTHORIZED: "0"
+  RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address }}
+  RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout | quote }}
+  RDS_INTEGRATION_SCHEME: {{ .Values.frontend.integration.scheme }}
+  RDS_INTEGRATION_HOST_API_URL: {{ .Values.frontend.integration.hostApiUrl }}
+  RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL: {{ .Values.server.oauth2.clientRedirectUrl }}
+  RDS_AUTHORIZATION_OAUTH2_CLIENT_ID: {{ .Values.server.oauth2.clientId }}

@@ -1,107 +1,105 @@
 appName: "rds"
 
 tag: "latest"
+debugLog: "true"
 
 ingress:
-    enabled: true
-    hostname: "api.your.domain"                                                       # The rds server domain name
-    path: /
-    tls:
-        -   hosts:
-                - "api.your.domain"                                                             # The rds server domain name
-            secretName: "sciebords-api-tls"                                                 # The name of the secret that holds your rds server domain certificate
+  enabled: true
+  hostname: "api.your.domain" # The rds server domain name
+  path: /
+  tls:
+    - hosts:
+        - "api.your.domain" # The rds server domain name
+      secretName: "sciebords-api-tls" # The name of the secret that holds your rds server domain certificate
 
-    annotations: { }
+  annotations: {}
 
 ### Server
 server:
-    componentName: "server"
-    address: "https://api.your.domain"                                                # The rds server domain name
-    image:
-        name: "ghcr.io/sciebo-rds/rds-ng-server"
-        pullPolicy: "Always"
-    allowedOrigins: "'*'"
-    sqliteFile: "/data/rds.db"                                                        # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
-    oauth2:
-        clientId: "CHANGEME"                                                            # The client Id registered in Nexcloud for the frontend
-        clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/main"                   # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., http://localhost:8080/apps/rdsng/main for a local Nextcloud setup).
-        hostSecret: "CHANGEME"                                                          # The host secret registered in Nexcloud for the frontend
-    networkApiKey: "CHANGEME"                                                         # An arbitrary API key to access protected resources; this must be the same value on all components.
-    storage:
-        driver: "database"                                                              # The driver to use for the storage; possible values are memory or database.
-        engine: "sqlite"                                                                # The database backend to use; can be sqlite, postgresql, mysql or mariadb. Database settings are configured in the next couple lines. Default: sqlite
-        # Only configure what is set in 'Engine' above.
-        sqlite:
-            sqliteFile: "/data/rds.db"                                                    # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
-        postgresql: # postgresql
-            host: ""                                                                      # The host of the database system.
-            port:                                                                         # The port of the database system; if omitted, the default port will be used.
-            database: ""                                                                  # The name of the database to use. Default: "rds_ng"
-            user: ""                                                                      # The database username.
-            password: ""                                                                  # The password for the database user.
-        mysql: # mysql
-            host: ""                                                                      # The host of the database system.
-            port:                                                                         # The port of the database system; if omitted, the default port will be used.
-            database: ""                                                                  # The name of the database to use. Default: "rds_ng"
-            user: ""                                                                      # The database username.
-            password: ""                                                                  # The password for the database user.
-        mariadb: #mariadb
-            host: ""                                                                      # The host of the database system.
-            port: ""                                                                      # The port of the database system; if omitted, the default port will be used.
-            database: ""                                                                  # The name of the database to use. Default: "rds_ng"
-            user: ""                                                                      # The database username.
-            password: ""                                                                  # The password for the database user.
-
-
+  componentName: "server"
+  address: "https://api.your.domain" # The rds server domain name
+  image:
+    name: "ghcr.io/sciebo-rds/rds-ng-server"
+    pullPolicy: "Always"
+  allowedOrigins: "'*'"
+  sqliteFile: "/data/rds.db" # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
+  oauth2:
+    clientId: "CHANGEME" # The client Id registered in Nexcloud for the frontend
+    clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/main" # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., http://localhost:8080/apps/rdsng/main for a local Nextcloud setup).
+    hostSecret: "CHANGEME" # The host secret registered in Nexcloud for the frontend
+  networkApiKey: "CHANGEME" # An arbitrary API key to access protected resources; this must be the same value on all components.
+  storage:
+    driver: "database" # The driver to use for the storage; possible values are memory or database.
+    engine: "sqlite" # The database backend to use; can be sqlite, postgresql, mysql or mariadb. Database settings are configured in the next couple lines. Default: sqlite
+    # Only configure what is set in 'Engine' above.
+    sqlite:
+      sqliteFile: "/data/rds.db" # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
+    postgresql: # postgresql
+      host: "" # The host of the database system.
+      port: # The port of the database system; if omitted, the default port will be used.
+      database: "" # The name of the database to use. Default: "rds_ng"
+      user: "" # The database username.
+      password: "" # The password for the database user.
+    mysql: # mysql
+      host: "" # The host of the database system.
+      port: # The port of the database system; if omitted, the default port will be used.
+      database: "" # The name of the database to use. Default: "rds_ng"
+      user: "" # The database username.
+      password: "" # The password for the database user.
+    mariadb: #mariadb
+      host: "" # The host of the database system.
+      port: "" # The port of the database system; if omitted, the default port will be used.
+      database: "" # The name of the database to use. Default: "rds_ng"
+      user: "" # The database username.
+      password: "" # The password for the database user.
 
 ### Frontend
 frontend:
-    componentName: "frontend"
-    integration:
-        scheme: "host"
-        hostUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng"                                  # The full URL where the host.
-        endpoints:
-            entrypoint: /main                                                             # The relative entrypoint of the host integration application.
-            api: /api/v1                                                                  # The relative path of the host integration API.
-        clientId: ""                                                                    # The client Id registered in Nexcloud for the frontend
+  componentName: "frontend"
+  integration:
+    scheme: "host"
+    hostUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The full URL where the host.
+    endpoints:
+      entrypoint: /main # The relative entrypoint of the host integration application.
+      api: /api/v1 # The relative path of the host integration API.
+    clientId: "" # The client Id registered in Nexcloud for the frontend
 
-    image:
-        name: "ghcr.io/sciebo-rds/rds-ng-frontend"
-        pullPolicy: "Always"
-    ingress:
-        enabled: true
-        hostname: "frontend.your.domain"                                                # The rds frontend domain name
-        path: /
-        tls:
-            -   hosts:
-                    - "frontend.your.domain"                                                      # The rds frontend domain name
-                secretName: "sciebords-frontend-tls"                                          # The name of the secret that holds your rds frontend domain certificate
+  image:
+    name: "ghcr.io/sciebo-rds/rds-ng-frontend"
+    pullPolicy: "Always"
+  ingress:
+    enabled: true
+    hostname: "frontend.your.domain" # The rds frontend domain name
+    path: /
+    tls:
+      - hosts:
+          - "frontend.your.domain" # The rds frontend domain name
+        secretName: "sciebords-frontend-tls" # The name of the secret that holds your rds frontend domain certificate
 
-        annotations: { }
+    annotations: {}
 
 ###
 ### Connectors
 ###
 connectors:
+  ### OSF
+  osf:
+    enabled: true
+    componentName: "connector-osf"
+    image:
+      name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
+      pullPolicy: "Always"
+    oauth2:
+      clientId: "CHANGEME" # The clientId of your osf oauth application
+      clientSecret: "CHANGEME" # The secret of your osf oauth application
 
-    ### OSF
-    osf:
-        enabled: true
-        componentName: "connector-osf"
-        image:
-            name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
-            pullPolicy: "Always"
-        oauth2:
-            clientId: "CHANGEME"                                                          # The clientId of your osf oauth application
-            clientSecret: "CHANGEME"                                                      # The secret of your osf oauth application
-
-    ### Zenodo
-    zenodo:
-        enabled: true
-        componentName: "connector-zenodo"
-        image:
-            name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
-            pullPolicy: "Always"
-        oauth2:
-            clientId: "CHANGEME"                                                          # The clientid of your zenodo oauth application
-            clientSecret: "CHANGEME"                                                      # The secret of your zenodo oauth application
+  ### Zenodo
+  zenodo:
+    enabled: true
+    componentName: "connector-zenodo"
+    image:
+      name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
+      pullPolicy: "Always"
+    oauth2:
+      clientId: "CHANGEME" # The clientid of your zenodo oauth application
+      clientSecret: "CHANGEME" # The secret of your zenodo oauth application
