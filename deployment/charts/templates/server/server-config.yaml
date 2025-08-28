@@ -1,38 +1,39 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: server-config
+    name: server-config
 data:
-  RDS_GENERAL_DEBUG: { { .Values.debugLog } }
-  RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{  .Values.server.allowedOrigins }}
-  RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout  | quote }}
-  RDS_STORAGE_DATABASE_ENGINE: {{ default "memory" .Values.server.storage.engine | quote }}
-  RDS_STORAGE_DRIVER: {{ default "" .Values.server.storage.driver | quote }}
+    RDS_GENERAL_DEBUG: {{ .Values.debugLog }}
+    RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}
+    RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout  | quote }}
+    RDS_STORAGE_DATABASE_ENGINE: {{ default "memory" .Values.server.storage.engine | quote }}
+    RDS_STORAGE_DRIVER: {{ default "" .Values.server.storage.driver | quote }}
 
   {{- if eq .Values.server.storage.databaseEngine "sqlite" }}
-  RDS_STORAGE_DATABASE_SQLITE_FILE: {{ default "" .Values.server.storage.sqlite.sqliteFile | quote }}
-  {{- end }}
+    RDS_STORAGE_DATABASE_SQLITE_FILE: {{ default "" .Values.server.storage.sqlite.sqliteFile | quote }}
+  {{- end}}
 
-  {{- if eq .Values.server.storage.databaseEngine "postgresql" }}
-  RDS_STORAGE_DATABASE_POSTGRESQL_HOST: {{ default "" .Values.server.storage.postgresql.host | quote }}
-  RDS_STORAGE_DATABASE_POSTGRESQL_PORT: {{ default "" .Values.server.storage.postgresql.port | quote }}
-  RDS_STORAGE_DATABASE_POSTGRESQL_DATABASE: {{ default "" .Values.server.storage.postgresql.database | quote }}
-  RDS_STORAGE_DATABASE_POSTGRESQL_USER: {{ default "" .Values.server.storage.postgresql.user | quote }}
-  RDS_STORAGE_DATABASE_POSTGRESQL_PASSWORD: {{ default "" .Values.server.storage.postgresql.password | quote }}
-  {{- end }}
+  {{- if eq .Values.server.storage.databaseEngine "postgresql"}}
+    RDS_STORAGE_DATABASE_POSTGRESQL_HOST: {{ default "" .Values.server.storage.postgresql.host | quote }}
+    RDS_STORAGE_DATABASE_POSTGRESQL_PORT: {{ default "" .Values.server.storage.postgresql.port | quote }}
+    RDS_STORAGE_DATABASE_POSTGRESQL_DATABASE: {{ default "" .Values.server.storage.postgresql.database | quote }}
+    RDS_STORAGE_DATABASE_POSTGRESQL_USER: {{ default "" .Values.server.storage.postgresql.user | quote }}
+    RDS_STORAGE_DATABASE_POSTGRESQL_PASSWORD: {{ default "" .Values.server.storage.postgresql.password | quote }}
+  {{- end}}
 
   {{- if eq .Values.server.storage.databaseEngine "mysql" }}
-  RDS_STORAGE_DATABASE_MYSQL_HOST: {{ default "" .Values.server.storage.mysql.host | quote }}
-  RDS_STORAGE_DATABASE_MYSQL_PORT: {{ default "" .Values.server.storage.mysql.port | quote }}
-  RDS_STORAGE_DATABASE_MYSQL_DATABASE: {{ default "" .Values.server.storage.mysql.database | quote }}
-  RDS_STORAGE_DATABASE_MYSQL_USER: {{ default "" .Values.server.storage.mysql.user | quote }}
-  RDS_STORAGE_DATABASE_MYSQL_PASSWORD: {{ default "" .Values.server.storage.mysql.password | quote }}
-  {{- end }}
+    RDS_STORAGE_DATABASE_MYSQL_HOST: {{ default "" .Values.server.storage.mysql.host | quote }}
+    RDS_STORAGE_DATABASE_MYSQL_PORT: {{ default "" .Values.server.storage.mysql.port | quote }}
+    RDS_STORAGE_DATABASE_MYSQL_DATABASE: {{ default "" .Values.server.storage.mysql.database | quote }}
+    RDS_STORAGE_DATABASE_MYSQL_USER: {{ default "" .Values.server.storage.mysql.user | quote }}
+    RDS_STORAGE_DATABASE_MYSQL_PASSWORD: {{ default "" .Values.server.storage.mysql.password | quote }}
+  {{- end}}
 
   {{- if eq .Values.server.storage.engine "mariadb" }}
-  RDS_STORAGE_DATABASE_MARIADB_HOST: {{ default "" .Values.server.storage.mariadb.host }}
-  RDS_STORAGE_DATABASE_MARIADB_PORT: {{ default "" .Values.server.storage.mariadb.port | quote }}
-  RDS_STORAGE_DATABASE_MARIADB_DATABASE: {{ default "" .Values.server.storage.mariadb.database | quote }}
-  RDS_STORAGE_DATABASE_MARIADB_USER: {{ default "" .Values.server.storage.mariadb.user | quote }}
-  RDS_STORAGE_DATABASE_MARIADB_PASSWORD: {{ default "" .Values.server.storage.mariadb.password | quote }}
-  {{- end }}
+    RDS_STORAGE_DATABASE_MARIADB_HOST: {{ default "" .Values.server.storage.mariadb.host }}
+    RDS_STORAGE_DATABASE_MARIADB_PORT: {{ default "" .Values.server.storage.mariadb.port | quote }}
+    RDS_STORAGE_DATABASE_MARIADB_DATABASE: {{ default "" .Values.server.storage.mariadb.database | quote }}
+    RDS_STORAGE_DATABASE_MARIADB_USER: {{ default "" .Values.server.storage.mariadb.user | quote }}
+    RDS_STORAGE_DATABASE_MARIADB_PASSWORD: {{ default "" .Values.server.storage.mariadb.password | quote }}
+  {{- end}}
+  
