@@ -1,7 +1,7 @@
 appName: "rds"
 
 tag: "latest"
-debugLog: "true" # Enable debug logging
+debugLog: "false" # Enable debug logging
 
 ingress:
     enabled: true
