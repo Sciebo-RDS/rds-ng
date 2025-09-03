@@ -3,6 +3,7 @@ import logging from "../../../core/logging/Logging";
 import { Service } from "../../../services/Service";
 import { AuthorizationStrategiesCatalog } from "./AuthorizationStrategiesCatalog";
 import { AuthorizationStrategy } from "./AuthorizationStrategy";
+import { BasicStrategy, createBasicStrategy } from "./basic/BasicStrategy";
 import { createOAuth2Strategy, OAuth2Strategy } from "./oauth2/OAuth2Strategy";
 
 /**
@@ -13,6 +14,7 @@ import { createOAuth2Strategy, OAuth2Strategy } from "./oauth2/OAuth2Strategy";
 export function registerAuthorizationStrategies(): void {
     // New strategies go here
     AuthorizationStrategiesCatalog.registerItem(OAuth2Strategy.Strategy, createOAuth2Strategy);
+    AuthorizationStrategiesCatalog.registerItem(BasicStrategy.Strategy, createBasicStrategy);
 
     // Print all available strategies for debugging purposes
     const names = Object.keys(AuthorizationStrategiesCatalog.items);

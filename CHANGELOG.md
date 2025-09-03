@@ -1,5 +1,22 @@
 # RDS-NG - Changelog
 
+## v1.2.0 - 2025-??-??
+
+### New
+
+- Basic authentication (username/password) support for connectors
+- More debugging capabilities
+
+### Improvements
+
+- Meta and connector information can be set via environment variables
+- Configurable support email address
+
+### Fixes
+
+- Project state renewals could lead to deadlocks
+- Minor fixes here and there
+
 ## v1.1.1 - 2025-08-25
 
 ### Improvements

@@ -14,6 +14,8 @@ from .tools import send_project_external_states, send_projects_list
 from ..component import ServerComponent
 from ..networking.session import Session
 
+_RENEWAL_INTERVAL = 10.0 * 60  # Once every 10 minutes
+
 
 def create_projects_service(comp: ServerComponent) -> Service:
     """
@@ -53,6 +55,8 @@ def create_projects_service(comp: ServerComponent) -> Service:
     from .server_service_context import ServerServiceContext
 
     svc = comp.create_service("Projects service", context_type=ServerServiceContext)
+
+    svc.state.last_states_renewal = 0.0
 
     @svc.message_handler(ListProjectsCommand, is_async=True)
     def list_projects(msg: ListProjectsCommand, ctx: ServerServiceContext) -> None:
@@ -322,62 +326,67 @@ def create_projects_service(comp: ServerComponent) -> Service:
 
     @svc.message_handler(ComponentProcessEvent, is_async=True)
     def refresh_project_volatile_states(
-        _: ComponentProcessEvent, ctx: ServerServiceContext
+        msg: ComponentProcessEvent, ctx: ServerServiceContext
     ) -> None:
         with EntryGuard("refresh_project_volatile_states") as guard:
             if not guard.can_execute:
                 return
 
-            for session in ctx.session_manager.sessions:
-                # Skip sessions w/o an authenticated user
-                if session.status != Session.Status.AUTHENTICATED:
-                    continue
+            if msg.timestamp - svc.state.last_states_renewal >= _RENEWAL_INTERVAL:
+                for session in ctx.session_manager.sessions:
+                    # Skip sessions w/o an authenticated user
+                    if session.status != Session.Status.AUTHENTICATED:
+                        continue
 
-                # Try to get the user account, skip if none could be found
-                if (
-                    user := ctx.storage_pool.user_storage.get(
-                        session.user_token.user_id
-                    )
-                ) is None:
-                    continue
-
-                for (
-                    outdated_state
-                ) in session.user_data.volatile_project_states.get_outdated_states():
-                    # Skip states for currently running jobs
+                    # Try to get the user account, skip if none could be found
                     if (
-                        ctx.storage_pool.project_job_storage.get(
-                            (
-                                outdated_state.project_id,
+                        user := ctx.storage_pool.user_storage.get(
+                            session.user_token.user_id
+                        )
+                    ) is None:
+                        continue
+
+                    for (
+                        outdated_state
+                    ) in (
+                        session.user_data.volatile_project_states.get_outdated_states()
+                    ):
+                        # Skip states for currently running jobs
+                        if (
+                            ctx.storage_pool.project_job_storage.get(
+                                (
+                                    outdated_state.project_id,
+                                    outdated_state.connector_instance,
+                                )
+                            )
+                            is not None
+                        ):
+                            continue
+
+                        # Get the project and connector; if any of these is None, skip over
+                        if (
+                            project := ctx.storage_pool.project_storage.get(
+                                outdated_state.project_id
+                            )
+                        ) is None:
+                            continue
+
+                        if (
+                            connector := find_connector_by_instance_id(
+                                ctx.storage_pool.connector_storage.list(),
+                                user.user_settings.connector_instances,
                                 outdated_state.connector_instance,
                             )
-                        )
-                        is not None
-                    ):
-                        continue
+                        ) is None:
+                            continue
 
-                    # Get the project and connector; if any of these is None, skip over
-                    if (
-                        project := ctx.storage_pool.project_storage.get(
-                            outdated_state.project_id
-                        )
-                    ) is None:
-                        continue
+                        ProjectExternalStateRenewalEvent.build(
+                            ctx.message_builder,
+                            project=project,
+                            connector_instance=outdated_state.connector_instance,
+                            user_token=session.user_token,
+                        ).emit(Channel.direct(connector.connector_address))
 
-                    if (
-                        connector := find_connector_by_instance_id(
-                            ctx.storage_pool.connector_storage.list(),
-                            user.user_settings.connector_instances,
-                            outdated_state.connector_instance,
-                        )
-                    ) is None:
-                        continue
-
-                    ProjectExternalStateRenewalEvent.build(
-                        ctx.message_builder,
-                        project=project,
-                        connector_instance=outdated_state.connector_instance,
-                        user_token=session.user_token,
-                    ).emit(Channel.direct(connector.connector_address))
+                svc.state.last_states_renewal = msg.timestamp
 
     return svc

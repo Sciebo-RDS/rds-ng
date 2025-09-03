@@ -3,6 +3,7 @@ import typing
 
 from .backend_component_data import BackendComponentData
 from .roles import ComponentRole
+from ..settings import GeneralSettingIDs
 from ..utils import UnitID
 from ..utils.config import Configuration
 
@@ -24,6 +25,7 @@ class BackendComponent:
     def __init__(
         self,
         comp_id: UnitID,
+        comp_name: str,
         role: ComponentRole,
         *,
         module_name: str,
@@ -32,6 +34,7 @@ class BackendComponent:
         """
         Args:
             comp_id: The identifier of this component.
+            comp_name: The display name of this component.
             role: The role of this component.
             module_name: The component module name; simply pass ``__name__`` here.
             config_file: The configuration file to load.
@@ -46,14 +49,13 @@ class BackendComponent:
         from .meta_information import MetaInformation
 
         meta_info = MetaInformation()
-        comp_info = meta_info.get_component(comp_id.unit)
 
         self._data = BackendComponentData(
             comp_id=comp_id,
             role=role,
             config=config,
             title=meta_info.title,
-            name=comp_info["name"],
+            name=comp_name,
             version=meta_info.version,
         )
 
@@ -61,6 +63,11 @@ class BackendComponent:
 
         info(str(self), role=self._data.role.name)
         info("Starting component")
+
+        if config.value(GeneralSettingIDs.DEBUG_TRACE):
+            from ..utils.debug import enable_tracing
+
+            enable_tracing()
 
         from ..core import Core
 

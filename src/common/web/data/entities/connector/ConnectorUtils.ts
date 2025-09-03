@@ -2,9 +2,7 @@ import { WebComponent } from "../../../component/WebComponent";
 import { createAuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategies";
 import { AuthorizationStrategiesCatalog } from "../../../integration/authorization/strategies/AuthorizationStrategiesCatalog";
 import { AuthorizationStrategy } from "../../../integration/authorization/strategies/AuthorizationStrategy";
-import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "../../../integration/authorization/strategies/oauth2/OAuth2Strategy";
 import { Service } from "../../../services/Service";
-import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { Connector, type ConnectorID } from "./Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "./ConnectorInstance";
 
@@ -43,26 +41,6 @@ export function connectorRequiresAuthorization(connector: Connector): boolean {
 }
 
 /**
- * Creates a strategy configuration from the authorization settings of a connector.
- *
- * @param connector - The connector.
- *
- * @returns - The strategy configuration.
- */
-export function getStrategyConfigurationFromConnector(connector: Connector): Record<string, any> {
-    switch (connector.authorization.strategy) {
-        case OAuth2Strategy.Strategy:
-            // For OAuth2, the stored configuration matches the proper structure already
-            const config = connector.authorization.config as OAuth2StrategyConfiguration;
-            config.client.redirect_target = RedirectionTarget.Blank;
-            return config;
-
-        default:
-            return {};
-    }
-}
-
-/**
  * Creates the authorization strategy configured in a connector.
  *
  * @param comp - The global component.
@@ -74,14 +52,14 @@ export function getStrategyConfigurationFromConnector(connector: Connector): Rec
 export function createAuthorizationStrategyFromConnector(
     comp: WebComponent,
     svc: Service,
-    connector: Connector | undefined,
+    connector: Connector | undefined
 ): AuthorizationStrategy | undefined {
     if (!connector || !connectorRequiresAuthorization(connector)) {
         return undefined;
     }
 
     try {
-        return createAuthorizationStrategy(comp, svc, connector.authorization.strategy, getStrategyConfigurationFromConnector(connector));
+        return createAuthorizationStrategy(comp, svc, connector.authorization.strategy, connector.authorization.config);
     } catch (e) {
         return undefined;
     }

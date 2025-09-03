@@ -2,9 +2,9 @@
 flask >= 3.0, < 4.0
 python-socketio >= 5.8, < 6.0
 python-socketio[client] >= 5.8, < 6.0
-gevent >= 24.0, < 25.0
+gevent >= 25.0, < 26.0
 gevent-websocket >= 0.10, < 1.0
-gunicorn >= 22.0, < 23.0
+gunicorn >= 23.0, < 24.0
 requests >= 2.32, < 3.0
 webdavclient3 >= 3.14, < 4.0
 

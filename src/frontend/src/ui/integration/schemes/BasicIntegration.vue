@@ -7,7 +7,6 @@ import InputText from "primevue/inputtext";
 import { type PropType, ref, toRefs, unref } from "vue";
 
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
-import { useDirectives } from "@common/ui/Directives";
 
 import { IntegrationScheme } from "@/integration/IntegrationScheme";
 
@@ -18,7 +17,6 @@ const props = defineProps({
     }
 });
 const { scheme } = toRefs(props);
-const { vFocus } = useDirectives();
 
 const userName = ref("");
 const blockInput = ref(false);
@@ -56,7 +54,7 @@ function performLogin(): void {
                         <InputIcon>
                             <i class="material-icons-outlined mi-account-circle mt-[-4px]" />
                         </InputIcon>
-                        <InputText v-model.trim="userName" placeholder="Username" v-focus class="w-full" />
+                        <InputText v-model.trim="userName" placeholder="Username" class="w-full" autofocus />
                     </IconField>
                 </span>
 

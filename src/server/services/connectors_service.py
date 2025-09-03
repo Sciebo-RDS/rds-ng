@@ -46,7 +46,10 @@ def create_connectors_service(comp: ServerComponent) -> Service:
             name=msg.display_name,
         )
 
-        # Private authorization data is stored in the context
+        # Authorization data is stored in the context
+        ctx.public_auth_settings.store_settings(
+            msg.connector_id, msg.authorization_public
+        )
         ctx.private_auth_settings.store_settings(
             msg.connector_id, msg.authorization_private
         )

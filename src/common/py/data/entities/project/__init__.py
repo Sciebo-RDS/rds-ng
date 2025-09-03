@@ -1,6 +1,7 @@
 from .project import Project, ProjectID
 from .project_external_state import (
     check_reuse_external_project,
+    compare_external_project_states,
     get_last_known_external_project_state,
     ProjectExternalState,
 )

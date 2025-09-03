@@ -1,2 +1,6 @@
 [network.client]
 server_address = "http://rds-server-1:6969"
+
+[authorization.basic]
+user_id_optional = true
+help_link = "https://stubby.for.president"

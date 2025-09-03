@@ -72,12 +72,14 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
     /**
      * @param env - The global environment variables.
      * @param compID - The identifier of this component.
+     * @param compName - The display name of this component.
      * @param appRoot - The root (main) application component.
      * @param userInterfaceType - The type of the user interface class.
      */
     public constructor(
         env: SettingsContainer,
         compID: UnitID,
+        compName: string,
         appRoot: VueComponent,
         userInterfaceType: Constructable<UserInterfaceType> = UserInterface as Constructable<UserInterfaceType>
     ) {
@@ -88,10 +90,9 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
 
         const config = this.createConfig(env);
         const metaInfo = new MetaInformation();
-        const compInfo = metaInfo.getComponent(compID.unit);
 
         this._session = new Session(compID);
-        this._data = new WebComponentData(this.sanitizeComponentID(compID), config, metaInfo.title, compInfo.name, metaInfo.version);
+        this._data = new WebComponentData(this.sanitizeComponentID(compID), config, metaInfo.title, compName, metaInfo.version);
 
         logging.info(this.toString());
         logging.info("Starting component");

@@ -66,6 +66,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         strategy: str,
         *,
         auth_token: AuthorizationToken | None = None,
+        auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
     ) -> AuthorizationStrategy:
         if auth_token is None:
@@ -83,6 +84,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
             strategy,
             user_token=ctx.session.user_token if ctx.session else None,
             auth_token=auth_token,
+            auth_public=auth_public,
             auth_private=auth_private,
         )
 
@@ -102,6 +104,9 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 strategy = _create_auth_strategy(
                     ctx,
                     msg.strategy,
+                    auth_public=ctx.public_auth_settings.get_settings(
+                        msg.request_payload.auth_bearer
+                    ),
                     auth_private=ctx.private_auth_settings.get_settings(
                         msg.request_payload.auth_bearer
                     ),
@@ -253,6 +258,9 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                             ctx,
                             auth_token.strategy,
                             auth_token=auth_token,
+                            auth_public=ctx.public_auth_settings.get_settings(
+                                auth_token.auth_bearer
+                            ),
                             auth_private=ctx.private_auth_settings.get_settings(
                                 auth_token.auth_bearer
                             ),

@@ -1,4 +1,5 @@
 {{- if .Values.connectors.stub.enabled -}}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,8 +29,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: "{{ .Values.connectors.stub.componentName }}-config"
-          
-
+            - secretRef:
+                name: network-api-secret
 ---
 apiVersion: v1
 kind: Service

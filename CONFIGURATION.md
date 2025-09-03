@@ -48,9 +48,10 @@ _(2)_ If the service uses OAUTH2 authorization.
 
 #### All components | General
 
-| Setting                    | Description                                                                             | Type    | Default value |
-|----------------------------|-----------------------------------------------------------------------------------------|---------|---------------|
-| <code>general.debug</code> | Whether to run in `debug` mode, resulting in more textual output and less restrictions. | Boolean | false         |
+| Setting                          | Description                                                                             | Type    | Default value |
+|----------------------------------|-----------------------------------------------------------------------------------------|---------|---------------|
+| <code>general.debug</code>       | Whether to run in `debug` mode, resulting in more textual output and less restrictions. | Boolean | false         |
+| <code>general.debug_trace</code> | Whether to log function calls for extensive debugging.                                  | Boolean | false         |
 
 #### All components | Network
 
@@ -120,18 +121,28 @@ The server needs to store its data; this can either be in-memory (super volatile
 
 #### Connectors | Authorization
 
-| Setting                                                         | Description                                                                                                                                                                | Type   | Default value |
-|-----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|---------------|
-| <code>authorization.strategy</code>                             | The authorization strategy (type) the external service uses; currently, only **oauth2** is supported.                                                                      | String |               |
-| <code>authorization.oauth2.server.host</code>                   | The OAUTH2 host server, as provided by the external service.                                                                                                               | String |               |
-| <code>authorization.oauth2.server.authorization_endpoint</code> | The (relative) authorization endpoint; this is usually documented by the external service provider.                                                                        | String |               |
-| <code>authorization.oauth2.server.token_endpoint</code>         | The (relative) token endpoint; this is usually documented by the external service provider.                                                                                | String |               |
-| <code>authorization.oauth2.server.scope</code>                  | The (optional) access scope.                                                                                                                                               | String |               |
-| <code>authorization.oauth2.client.id</code>                     | The OAUTH2 client ID of the connector.                                                                                                                                     | String |               |
-| <code>authorization.oauth2.client.secret</code>                 | The OAUTH2 client secret of the connector.                                                                                                                                 | String |               |
-| <code>authorization.oauth2.client.redirect_url</code>           | The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., `http://localhost:8080/apps/rdsng/main` for a local Nextcloud setup). | String |               |
-| <code>transmission.max_attempts</code>                          | The maximum number of transmission operation (up-/downloads) attempts.                                                                                                     | Number | 3             |
-| <code>transmission.attempts_delay</code>                        | The delay (in seconds) between transmission operation (up-/downloads) attempts.                                                                                            | Number | 3.0           |
+| Setting                                                         | Description                                                                                                                                                           | Type    | Default value |
+|-----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|---------------|
+| <code>authorization.strategy</code>                             | The authorization strategy (type) the external service uses; currently, only **oauth2** is supported.                                                                 | String  |               |
+| <code>authorization.oauth2.server.host</code>                   | The OAUTH2 host server, as provided by the external service.                                                                                                          | String  |               |
+| <code>authorization.oauth2.server.authorization_endpoint</code> | The (relative) authorization endpoint; this is usually documented by the external service provider.                                                                   | String  |               |
+| <code>authorization.oauth2.server.token_endpoint</code>         | The (relative) token endpoint; this is usually documented by the external service provider.                                                                           | String  |               |
+| <code>authorization.oauth2.server.scope</code>                  | The (optional) access scope.                                                                                                                                          | String  |               |
+| <code>authorization.oauth2.client.id</code>                     | The OAUTH2 client ID of the connector.                                                                                                                                | String  |               |
+| <code>authorization.oauth2.client.secret</code>                 | The OAUTH2 client secret of the connector.                                                                                                                            | String  |               |
+| <code>authorization.oauth2.client.redirect_url</code>           | The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., `http://localhost:8080/apps/rdsng` for a local Nextcloud setup). | String  |               |
+| <code>authorization.basic.user_id_label</code>                  | The display label of the user ID.                                                                                                                                     | String  | User ID       |
+| <code>authorization.basic.user_id_optional</code>               | Whether the user ID is optional.                                                                                                                                      | Boolean | false         |
+| <code>authorization.basic.user_password_label</code>            | The display label of the user password.                                                                                                                               | String  | Password      |
+| <code>authorization.basic.user_password_optional</code>         | Whether the user password is optional.                                                                                                                                | Boolean | false         |
+| <code>authorization.basic.help_link</code>                      | An external help link shown in the credentials dialog.                                                                                                                | String  |               |
+
+#### Connectors | Transmissions
+
+| Setting                                  | Description                                                                     | Type   | Default value |
+|------------------------------------------|---------------------------------------------------------------------------------|--------|---------------|
+| <code>transmission.max_attempts</code>   | The maximum number of transmission operation (up-/downloads) attempts.          | Number | 3             |
+| <code>transmission.attempts_delay</code> | The delay (in seconds) between transmission operation (up-/downloads) attempts. | Number | 3.0           |
 
 ### Frontend settings
 
@@ -146,10 +157,11 @@ _(1)_ If the host uses OAUTH2 authorization.
 
 #### General
 
-| Setting                                    | Description                                                         | Type    | Default value |
-|--------------------------------------------|---------------------------------------------------------------------|---------|---------------|
-| <code>general.verbose_notifications</code> | Whether to display more verbose notifications (good for debugging). | Boolean | false         |
-| <code>general.notification_timeout</code>  | The timeout for overlay notifications in seconds.                   | Number  | 3.0           |
+| Setting                                    | Description                                                         | Type    | Default value              |
+|--------------------------------------------|---------------------------------------------------------------------|---------|----------------------------|
+| <code>general.support_email</code>         | The support email address.                                          | String  | sciebo.rds@uni-muenster.de |
+| <code>general.verbose_notifications</code> | Whether to display more verbose notifications (good for debugging). | Boolean | false                      |
+| <code>general.notification_timeout</code>  | The timeout for overlay notifications in seconds.                   | Number  | 3.0                        |
 
 #### Theming
 

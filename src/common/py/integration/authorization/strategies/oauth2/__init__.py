@@ -1,8 +1,12 @@
 from .oauth2_strategy import (
     OAuth2Strategy,
-    OAuth2StrategyPublicConfiguration,
-    OAuth2StrategyPrivateConfiguration,
     create_oauth2_strategy,
 )
-from .oauth2_types import OAuth2AuthorizationRequestData, OAuth2Token, OAuth2TokenData
+from .oauth2_types import (
+    OAuth2AuthorizationRequestData,
+    OAuth2Token,
+    OAuth2TokenData,
+    OAuth2StrategyPublicConfiguration,
+    OAuth2StrategyPrivateConfiguration,
+)
 from .oauth2_utils import format_oauth2_error_response

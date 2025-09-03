@@ -19,6 +19,7 @@ class ServerServiceContext(ServiceContext):
     Service context specific to the server.
     """
 
+    _public_auth_settings = AuthorizationSettingsStore()
     _private_auth_settings = AuthorizationSettingsStore()
 
     def __init__(
@@ -129,6 +130,13 @@ class ServerServiceContext(ServiceContext):
         The global storage pool.
         """
         return self._storage_pool
+
+    @property
+    def public_auth_settings(self) -> AuthorizationSettingsStore:
+        """
+        The public authorization settings stored in the server.
+        """
+        return ServerServiceContext._public_auth_settings
 
     @property
     def private_auth_settings(self) -> AuthorizationSettingsStore:

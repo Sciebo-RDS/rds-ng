@@ -10,6 +10,8 @@ from ....data.entities.authorization import AuthorizationSettings, Authorization
 from ....data.entities.user import UserID, UserToken
 from ....services import Service
 
+ConfigType = typing.TypeVar("ConfigType")  # pylint: disable=invalid-name
+
 
 class AuthorizationStrategy(IntegrationHandler):
     """
@@ -37,6 +39,7 @@ class AuthorizationStrategy(IntegrationHandler):
         contents: ContentType,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
+        auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
     ):
         """
@@ -47,6 +50,7 @@ class AuthorizationStrategy(IntegrationHandler):
             contents: The contents this strategy provides.
             user_token: An optional user token.
             auth_token: An optional authorization token.
+            auth_public: Optional public authorization settings.
             auth_private: Optional private authorization settings.
         """
         super().__init__(
@@ -54,6 +58,7 @@ class AuthorizationStrategy(IntegrationHandler):
             svc,
             user_token=user_token,
             auth_token=auth_token,
+            auth_public=auth_public,
             auth_private=auth_private,
         )
 
@@ -124,6 +129,20 @@ class AuthorizationStrategy(IntegrationHandler):
 
         setting_id = SettingID(f"authorization.{self._strategy}", key)
         return self._component.data.config.value_with_default(setting_id, default)
+
+    def _get_public_configuration(self, cls: type[ConfigType]) -> ConfigType:
+        return (
+            cls.from_dict(self._auth_public.config)
+            if self._auth_public is not None
+            else cls()
+        )
+
+    def _get_private_configuration(self, cls: type[ConfigType]) -> ConfigType:
+        return (
+            cls.from_dict(self._auth_private.config)
+            if self._auth_private is not None
+            else cls()
+        )
 
     @property
     def strategy(self) -> str:

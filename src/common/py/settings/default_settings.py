@@ -23,6 +23,7 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
     return {
         # General settings
         GeneralSettingIDs.DEBUG: False,
+        GeneralSettingIDs.DEBUG_TRACE: False,
         # Component settings
         ComponentSettingIDs.INSTANCE: "default",
         # Network settings

@@ -1,7 +1,11 @@
+---
 appName: "rds"
 
-tag: "latest"
+### General settings
+tag: "latest" # The release tag to be deployed
 debugLog: "false" # Enable debug logging
+debugTrace: "false" # Enable debug tracing
+supportEmail: "" # The user support email address that will be displayed in the frontend
 
 ingress:
     enabled: true
@@ -13,7 +17,9 @@ ingress:
             secretName: "sciebords-api-tls" # The name of the secret that holds your rds server domain certificate
 
     annotations: {}
+    class: "public"
 
+createSecrets: true                                                                 # If to create server-secret and network-api-secret. It should preferably be created with sealedsecrets or some other secure method, and all plain text ouath2 secrets should be left out of this file
 ### Server
 server:
     componentName: "server"
@@ -28,6 +34,8 @@ server:
         clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/main" # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., http://localhost:8080/apps/rdsng/main for a local Nextcloud setup).
         hostSecret: "CHANGEME" # The host secret registered in Nexcloud for the frontend
     networkApiKey: "CHANGEME" # An arbitrary API key to access protected resources; this must be the same value on all components.
+    pvc:
+        storageClassName: "rdb"
     storage:
         driver: "database" # The driver to use for the storage; possible values are memory or database.
         engine: "sqlite" # The database backend to use; can be sqlite, postgresql, mysql or mariadb. Database settings are configured in the next couple lines. Default: sqlite
@@ -53,6 +61,7 @@ server:
             user: "" # The database username.
             password: "" # The password for the database user.
 
+
 ### Frontend
 frontend:
     componentName: "frontend"
@@ -77,6 +86,7 @@ frontend:
                 secretName: "sciebords-frontend-tls" # The name of the secret that holds your rds frontend domain certificate
 
         annotations: {}
+        class: "public"
 
 ###
 ### Connectors
@@ -103,3 +113,9 @@ connectors:
         oauth2:
             clientId: "CHANGEME" # The clientid of your zenodo oauth application
             clientSecret: "CHANGEME" # The secret of your zenodo oauth application
+    stub:
+        enabled: false
+        componentName: "connector-stub"
+        oauth2:
+            clientId: "CHANGEME"
+            clientSecret: "CHANGEME"

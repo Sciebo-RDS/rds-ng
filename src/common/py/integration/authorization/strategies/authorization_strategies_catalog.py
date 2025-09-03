@@ -14,6 +14,7 @@ AuthorizationStrategyCreator = typing.Callable[
         UserToken | None,
         AuthorizationToken | None,
         AuthorizationSettings | None,
+        AuthorizationSettings | None,
     ],
     AuthorizationStrategy,
 ]

@@ -24,6 +24,7 @@ export interface AuthorizationRequestPayload {
  */
 export class AuthorizationRequest {
     private _payload: AuthorizationRequestPayload;
+    private _extendedData: any;
 
     private constructor() {
         this._payload = {
@@ -34,6 +35,8 @@ export class AuthorizationRequest {
             auth_bearer: "",
             fingerprint: ""
         } as AuthorizationRequestPayload;
+
+        this._extendedData = undefined;
     }
 
     /**
@@ -45,6 +48,7 @@ export class AuthorizationRequest {
      * @param authIssuerURL - The URL of the issuer of the authorization.
      * @param authBearer - The bearer of the authorization.
      * @param fingerprint - The user's fingerprint.
+     * @param extendedData - Arbitrary additional data.
      */
     public static fromValues(
         authID: string,
@@ -52,7 +56,8 @@ export class AuthorizationRequest {
         authIssuer: string,
         authIssuerURL: string,
         authBearer: string,
-        fingerprint: string
+        fingerprint: string,
+        extendedData: any = undefined
     ): AuthorizationRequest {
         const request = new AuthorizationRequest();
         request._payload = {
@@ -63,6 +68,7 @@ export class AuthorizationRequest {
             auth_bearer: authBearer,
             fingerprint: fingerprint
         } as AuthorizationRequestPayload;
+        request._extendedData = extendedData;
         return request;
     }
 
@@ -113,6 +119,22 @@ export class AuthorizationRequest {
      */
     public get payload(): AuthorizationRequestPayload {
         return this._payload;
+    }
+
+    /**
+     * Gets the extended data of the request.
+     */
+    public get extendedData(): any {
+        return this._extendedData;
+    }
+
+    /**
+     * Sets the extended data of the request.
+     *
+     * @param extendedData - The new extended data.
+     */
+    public set extendedData(extendedData: any) {
+        this._extendedData = extendedData;
     }
 
     /**

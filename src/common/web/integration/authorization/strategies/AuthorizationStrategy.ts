@@ -1,5 +1,6 @@
 import { RequestAuthorizationCommand } from "../../../api/authorization/AuthorizationCommands";
 import { WebComponent } from "../../../component/WebComponent";
+import logging from "../../../core/logging/Logging";
 import { AuthorizationState } from "../../../data/entities/authorization/AuthorizationState";
 import { useNetworkStore } from "../../../data/stores/NetworkStore";
 import { Service } from "../../../services/Service";
@@ -7,11 +8,20 @@ import { ExecutionCallbacks } from "../../../utils/ExecutionCallbacks";
 import { RedirectionTarget } from "../../../utils/HTMLUtils";
 import { HostCommuncationAction, sendActionToHost } from "../../HostCommunication";
 import { AuthorizationRequest } from "../AuthorizationRequest";
+import { getAuthorizationRequestLoggingParams } from "../AuthorizationUtils";
 
 /**
  * Notification type of finished requests callbacks.
  */
 export type AuthorizationRequestCallback = () => void;
+
+/**
+ * The execution type of the authorization request.
+ */
+export const enum AuthorizationExecutionType {
+    Direct,
+    FromURL
+}
 
 /**
  * Base class for all authorization strategies.
@@ -48,18 +58,21 @@ export abstract class AuthorizationStrategy {
      * Executes an authorization requests (requires a preceding initiation).
      *
      * @param authRequest - The authorization request.
+     * @param executionType - The type of the authorization execution.
      */
-    public executeAuthorizationRequest(authRequest: AuthorizationRequest): Promise<AuthorizationState> {
-        return new Promise<AuthorizationState>(async (resolve, reject) => {
+    public executeAuthorizationRequest(authRequest: AuthorizationRequest, executionType: AuthorizationExecutionType): Promise<AuthorizationState> {
+        const promise = new Promise<AuthorizationState>(async (resolve, reject) => {
             const nwStore = useNetworkStore();
 
-            // Make sure that we're dealing with the correct request
-            const urlRequest = AuthorizationRequest.fromURLParameters();
-            try {
-                authRequest.verify(urlRequest);
-            } catch (exc) {
-                reject(exc);
-                return;
+            if (executionType == AuthorizationExecutionType.FromURL) {
+                // Make sure that we're dealing with the correct request
+                const urlRequest = AuthorizationRequest.fromURLParameters();
+                try {
+                    authRequest.verify(urlRequest);
+                } catch (exc) {
+                    reject(exc);
+                    return;
+                }
             }
 
             RequestAuthorizationCommand.build(this._service.messageBuilder, authRequest.payload, this.strategy, this.getRequestData(authRequest))
@@ -73,6 +86,13 @@ export abstract class AuthorizationStrategy {
                 .failed((_, msg: string) => reject(msg))
                 .emit(nwStore.serverChannel);
         });
+        promise.then(() => {
+            logging.info("Authorization request succeeded", "authorization", getAuthorizationRequestLoggingParams(authRequest));
+        });
+        promise.catch((error) => {
+            logging.error("Authorization request failed", "authorization", { ...getAuthorizationRequestLoggingParams(authRequest), error: error });
+        });
+        return promise;
     }
 
     /**
@@ -89,7 +109,7 @@ export abstract class AuthorizationStrategy {
         }
 
         if (AuthorizationRequest.requestIssued([authRequest.payload.auth_type])) {
-            return this.executeAuthorizationRequest(authRequest);
+            return this.executeAuthorizationRequest(authRequest, AuthorizationExecutionType.FromURL);
         } else {
             return new Promise<AuthorizationState>(async (resolve, _) => {
                 this.initiateAuthorizationRequest(authRequest);
@@ -116,8 +136,6 @@ export abstract class AuthorizationStrategy {
 
     protected redirect(url: string): void {
         if (url) {
-            // Not sure if this will always work with all browsers and web servers
-            // Might need to open the URL in a new window
             switch (this._redirectionTarget) {
                 case RedirectionTarget.Current:
                     this.handleRequestCompletion();
@@ -148,7 +166,7 @@ export abstract class AuthorizationStrategy {
         }
     }
 
-    private handleRequestCompletion(): void {
+    protected handleRequestCompletion(): void {
         // Give the system some time to get up again
         setTimeout(() => this._executionCallbacks.invokeDoneCallbacks(), 250);
     }

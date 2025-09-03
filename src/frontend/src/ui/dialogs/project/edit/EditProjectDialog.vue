@@ -23,7 +23,6 @@ import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 import ResourcesTree from "@common/ui/components/resource/ResourcesTree.vue";
 import StepIconHeader from "@common/ui/components/stepper/StepIconHeader.vue";
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
-import { useDirectives } from "@common/ui/Directives";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { type UIOptions } from "@/data/entities/ui/UIOptions";
@@ -39,7 +38,6 @@ const resourcesStore = useResourcesStore();
 
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 const { retrieveResourcesList } = useResourceTools(comp);
-const { vFocus } = useDirectives();
 
 const { resourcesListCache } = storeToRefs(resourcesStore);
 
@@ -249,16 +247,16 @@ function onDataPathNodeExpand(path: string): void {
 
                         <span class="r-form-field">
                             <IftaLabel>
+                                <InputText name="title" v-model="dialogData.userData.title" fluid autofocus />
                                 <label>Name <MandatoryMark /></label>
-                                <InputText name="title" v-model="dialogData.userData.title" fluid v-focus />
                             </IftaLabel>
                             <small>The name of the project.</small>
                         </span>
 
                         <span class="r-form-field mt-5">
                             <IftaLabel class="mb-[-0.5rem]">
-                                <label>Description</label>
                                 <Textarea name="description" v-model="dialogData.userData.description" rows="3" fluid />
+                                <label>Description</label>
                             </IftaLabel>
                             <small>The description of the project.</small>
                         </span>

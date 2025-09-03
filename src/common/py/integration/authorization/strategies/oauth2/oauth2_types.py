@@ -1,6 +1,46 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
+
+
+@dataclass_json
+@dataclass(frozen=True, kw_only=True)
+class OAuth2StrategyPublicConfiguration:
+    """
+    The OAuth2 strategy public configuration.
+    """
+
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Server:
+        host: str = ""
+        authorization_endpoint: str = ""
+        token_endpoint: str = ""
+        scope: str = ""
+
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Client:
+        client_id: str = ""
+        redirect_url: str = ""
+
+    server: Server = field(default_factory=Server)
+    client: Client = field(default_factory=Client)
+
+
+@dataclass_json
+@dataclass(frozen=True, kw_only=True)
+class OAuth2StrategyPrivateConfiguration:
+    """
+    The OAuth2 strategy private configuration.
+    """
+
+    @dataclass_json
+    @dataclass(frozen=True, kw_only=True)
+    class Client:
+        client_secret: str = ""
+
+    client: Client = field(default_factory=Client)
 
 
 @dataclass_json

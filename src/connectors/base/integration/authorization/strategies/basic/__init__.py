@@ -1,0 +1,1 @@
+from .basic_configuration import get_basic_strategy_configuration

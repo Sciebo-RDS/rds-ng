@@ -14,6 +14,7 @@ export function getDefaultSettings(): Map<SettingID, any> {
 
     // General settings
     defaults.set(GeneralSettingIDs.Debug, false);
+    defaults.set(GeneralSettingIDs.SupportEmail, "sciebo.rds@uni-muenster.de");
     defaults.set(GeneralSettingIDs.VerboseNotifications, false);
     defaults.set(GeneralSettingIDs.NotificationTimeout, 3.0);
 

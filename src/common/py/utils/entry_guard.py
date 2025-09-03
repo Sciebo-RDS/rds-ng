@@ -22,7 +22,7 @@ class EntryGuard:
                 EntryGuard._guards.append(self._guard_key)
                 self._guard_acquired = True
                 
-            return self
+        return self
     
     def __exit__(self, exc_type, exc_val, exc_tb):
         with EntryGuard._lock:

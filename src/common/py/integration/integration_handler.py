@@ -21,6 +21,7 @@ class IntegrationHandler(abc.ABC):
         *,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
+        auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
     ):
         """
@@ -29,6 +30,7 @@ class IntegrationHandler(abc.ABC):
             svc: The service to use for message sending.
             user_token: An optional user token.
             auth_token: An optional authorization token.
+            auth_public: Optional public authorization settings.
             auth_private: Optional private authorization settings.
         """
 
@@ -37,6 +39,7 @@ class IntegrationHandler(abc.ABC):
 
         self._user_token = user_token
         self._auth_token = auth_token
+        self._auth_public = auth_public
         self._auth_private = auth_private
 
     def _replace_user_token_placeholders(self, s: str) -> str:

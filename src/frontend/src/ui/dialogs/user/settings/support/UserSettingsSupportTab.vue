@@ -7,6 +7,7 @@ import Panel from "primevue/panel";
 import { type PropType, toRefs } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
+import { GeneralSettingIDs } from "@common/settings/GeneralSettingIDs.ts";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 
@@ -46,7 +47,7 @@ const propRefs = toRefs(props);
                     </p>
                     <p>
                         What works well? What’s missing? What surprised you? - Please share your feedback directly via
-                        <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="email" />
+                        <LinkedText :link="`mailto:${comp.data.config.value<string>(GeneralSettingIDs.SupportEmail)}`" text="email" />
                         !
                     </p>
                 </AccordionContent>
@@ -177,7 +178,7 @@ const propRefs = toRefs(props);
                         <p>
                             <strong>Questions or Feedback</strong><br />
                             We’d love to hear from you! Simply
-                            <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+                            <LinkedText :link="`mailto:${comp.data.config.value<string>(GeneralSettingIDs.SupportEmail)}`" text="send us an email" />
                             to get in touch with us.
                         </p>
                         <p>

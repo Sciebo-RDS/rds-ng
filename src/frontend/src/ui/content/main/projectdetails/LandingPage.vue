@@ -2,6 +2,8 @@
 import Card from "primevue/card";
 import ScrollPanel from "primevue/scrollpanel";
 
+import { GeneralSettingIDs } from "@common/settings/GeneralSettingIDs.ts";
+
 import LinkedText from "@common/ui/components/misc/LinkedText.vue";
 
 import { FrontendComponent } from "@/component/FrontendComponent.ts";
@@ -19,7 +21,7 @@ const comp = FrontendComponent.inject();
                         <span class="">This is a beta version!</span>
                         <span class="text-sm font-normal pl-0.5">
                             If you encounter any issues or have other kinds of feedback, feel free to
-                            <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+                            <LinkedText :link="`mailto:${comp.data.config.value<string>(GeneralSettingIDs.SupportEmail)}`" text="send us an email" />
                             !
                         </span>
                     </div>

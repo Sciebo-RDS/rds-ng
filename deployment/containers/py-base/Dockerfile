@@ -4,7 +4,8 @@ FROM    python:3.12
 
 # Update the image first
 RUN     apt-get update \
-&&      apt-get -y upgrade
+&&      apt-get -y upgrade \
+&&      apt-get -y install nano
 
 # Install basic Python libraries
 WORKDIR /base

@@ -54,7 +54,7 @@ function onDeleteInstance(instance: ConnectorInstance) {
         <template #instance="slotProps">
             <ConnectionsListItem
                 :instance="slotProps.instance"
-                :is-new="!!newInstance && slotProps.instance == newInstance"
+                :is-new="!!newInstance && slotProps.instance.instance_id == newInstance.instance_id"
                 @authorize-instance="requestInstanceAuthorization(slotProps.instance, connectors, userAuthorizations)"
                 @unauthorize-instance="revokeInstanceAuthorization(slotProps.instance)"
                 @dblclick="onEditInstance(slotProps.instance)"

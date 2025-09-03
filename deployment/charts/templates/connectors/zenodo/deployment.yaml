@@ -28,6 +28,8 @@ spec:
           envFrom:
           - configMapRef:
               name: "{{ .Values.connectors.zenodo.componentName }}-config"
+          - secretRef:
+              name: network-api-secret
       
           
 

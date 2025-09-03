@@ -3,6 +3,7 @@ import Card from "primevue/card";
 import { type PropType, toRefs } from "vue";
 
 import { UserSettings } from "@common/data/entities/user/UserSettings";
+import { GeneralSettingIDs } from "@common/settings/GeneralSettingIDs.ts";
 
 import LinkedText from "@common/ui/components/misc/LinkedText.vue";
 
@@ -41,7 +42,7 @@ const propRefs = toRefs(props);
             <template #content>
                 <span class="text-sm">
                     If you encounter any issues or have other kinds of feedback, feel free to
-                    <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+                    <LinkedText :link="`mailto:${comp.data.config.value<string>(GeneralSettingIDs.SupportEmail)}`" text="send us an email" />
                     !
                 </span>
             </template>

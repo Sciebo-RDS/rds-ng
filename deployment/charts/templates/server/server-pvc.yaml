@@ -1,3 +1,5 @@
+{{- if eq .Values.server.storage.engine "sqlite" }}
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -8,4 +10,5 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  storageClassName: "rbd"
+  storageClassName: {{ .Values.server.pvc.storageClassName }}
+{{- end }}

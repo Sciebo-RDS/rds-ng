@@ -112,9 +112,13 @@ class Configuration:
         return self._value(key, default)
 
     def _value(self, key: SettingID, default: typing.Any) -> typing.Any:
-        env_key = key.env_name(self._env_prefix)
-        if env_key in os.environ:
-            return self._convert_env_type(os.environ.get(env_key), type(default))
+        try:
+            from .. import get_env_value
+
+            env_key = key.env_name(self._env_prefix)
+            return get_env_value(env_key, type(default))
+        except:  # pylint: disable=bare-except
+            pass
 
         try:
             return self._traverse_dict(key.split(), self._settings)
@@ -136,20 +140,6 @@ class Configuration:
 
             dct = dct[path[0]]
             self._unfold_dict_item(path[1:], dct, value)
-
-    def _convert_env_type(self, value: typing.Any, target_type: type) -> typing.Any:
-        if target_type == bool:
-            if isinstance(value, str):
-                value = value.casefold()
-                return (
-                    value == "1"
-                    or value == "yes".casefold()
-                    or value == "true".casefold()
-                )
-            if isinstance(value, int):
-                return value >= 1
-
-        return target_type(value)
 
     @property
     def settings_file(self) -> str:

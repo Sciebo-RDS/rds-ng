@@ -4,7 +4,8 @@ import { AuthorizationTokenType } from "@common/data/entities/authorization/Auth
 import { createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorInstanceByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
-import { AuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategy";
+import { getAuthorizationRequestLoggingParams } from "@common/integration/authorization/AuthorizationUtils.ts";
+import { AuthorizationExecutionType, AuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategy";
 import { Service } from "@common/services/Service";
 
 import { useConnectorsStore } from "@/data/stores/ConnectorsStore";
@@ -38,17 +39,15 @@ export class AuthorizationRequestsHandler {
         const strategy = this.createAuthStrategy(authRequest);
         if (strategy) {
             strategy
-                .executeAuthorizationRequest(authRequest)
+                .executeAuthorizationRequest(authRequest, AuthorizationExecutionType.FromURL)
                 .then(() => {
-                    logging.info("Authorization request succeeded", "authorization", this.getLoggingParams(authRequest));
                     resolve();
                 })
                 .catch((error) => {
-                    logging.error("Authorization request failed", "authorization", { ...this.getLoggingParams(authRequest), error: error });
                     reject(error);
                 });
         } else {
-            logging.warning("Unable to process authorization request", "authorization", this.getLoggingParams(authRequest));
+            logging.warning("Unable to process authorization request", "authorization", getAuthorizationRequestLoggingParams(authRequest));
             reject("Unable to process authorization request");
         }
     }
@@ -73,13 +72,5 @@ export class AuthorizationRequestsHandler {
             return undefined;
         }
         return createAuthorizationStrategyFromConnectorInstance(this._component, this._service, instance, conStore.connectors);
-    }
-
-    private getLoggingParams(authRequest: AuthorizationRequest): Record<string, any> {
-        return {
-            id: authRequest.payload.auth_id,
-            type: authRequest.payload.auth_type,
-            issuer: authRequest.payload.auth_issuer,
-        };
     }
 }

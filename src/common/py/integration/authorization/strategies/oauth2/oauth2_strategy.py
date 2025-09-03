@@ -7,7 +7,12 @@ from http import HTTPStatus
 import requests
 from dataclasses_json import dataclass_json
 
-from .oauth2_types import OAuth2Token, OAuth2AuthorizationRequestData, OAuth2TokenData
+from .oauth2_types import (
+    OAuth2StrategyPrivateConfiguration,
+    OAuth2Token,
+    OAuth2AuthorizationRequestData,
+    OAuth2TokenData,
+)
 from .oauth2_utils import format_oauth2_error_response
 from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
@@ -16,46 +21,6 @@ from .....data.entities import clone_entity
 from .....data.entities.authorization import AuthorizationSettings, AuthorizationToken
 from .....data.entities.user import UserID, UserToken
 from .....services import Service
-
-
-@dataclass_json
-@dataclass(frozen=True, kw_only=True)
-class OAuth2StrategyPublicConfiguration:
-    """
-    The OAuth2 strategy public configuration.
-    """
-
-    @dataclass_json
-    @dataclass(frozen=True, kw_only=True)
-    class Server:
-        host: str = ""
-        authorization_endpoint: str = ""
-        token_endpoint: str = ""
-        scope: str = ""
-
-    @dataclass_json
-    @dataclass(frozen=True, kw_only=True)
-    class Client:
-        client_id: str = ""
-        redirect_url: str = ""
-
-    server: Server = field(default_factory=Server)
-    client: Client = field(default_factory=Client)
-
-
-@dataclass_json
-@dataclass(frozen=True, kw_only=True)
-class OAuth2StrategyPrivateConfiguration:
-    """
-    The OAuth2 strategy private configuration.
-    """
-
-    @dataclass_json
-    @dataclass(frozen=True, kw_only=True)
-    class Client:
-        client_secret: str = ""
-
-    client: Client = field(default_factory=Client)
 
 
 class OAuth2Strategy(AuthorizationStrategy):
@@ -72,6 +37,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         *,
         user_token: UserToken | None = None,
         auth_token: AuthorizationToken | None = None,
+        auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
     ):
         from .....settings import NetworkSettingIDs
@@ -83,18 +49,12 @@ class OAuth2Strategy(AuthorizationStrategy):
             contents=AuthorizationStrategy.ContentType.AUTH_TOKEN,
             user_token=user_token,
             auth_token=auth_token,
+            auth_public=auth_public,
             auth_private=auth_private,
         )
 
         self._request_timeout = comp.data.config.value(
             NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
-        )
-
-    def _get_private_configuration(self) -> OAuth2StrategyPrivateConfiguration:
-        return (
-            OAuth2StrategyPrivateConfiguration.from_dict(self._auth_private.config)
-            if self._auth_private is not None
-            else OAuth2StrategyPublicConfiguration()
         )
 
     def request_authorization(
@@ -209,7 +169,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_token, _ = self._get_oauth2_data_from_token(token)
         return oauth2_token.access_token
 
-    def _create_oauth2_token(self, resp_data) -> OAuth2Token:
+    def _create_oauth2_token(self, resp_data: typing.Any) -> OAuth2Token:
         return OAuth2Token(
             access_token=resp_data["access_token"],
             token_type=resp_data["token_type"],
@@ -251,7 +211,11 @@ class OAuth2Strategy(AuthorizationStrategy):
 
         # If not set directly, look it up in the private settings if possible
         if client_secret == "":
-            if (priv_config := self._get_private_configuration()) is not None:
+            if (
+                priv_config := self._get_private_configuration(
+                    OAuth2StrategyPrivateConfiguration
+                )
+            ) is not None:
                 client_secret = priv_config.client.client_secret
 
         # Verify the secret
@@ -284,6 +248,7 @@ def create_oauth2_strategy(
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
+    auth_public: AuthorizationSettings | None = None,
     auth_private: AuthorizationSettings | None = None,
 ) -> OAuth2Strategy:
     """
@@ -294,6 +259,7 @@ def create_oauth2_strategy(
         svc: The service to use for message sending.
         user_token: An optional user token.
         auth_token: An optional authorization token.
+        auth_public: Optional public authorization settings.
         auth_private: Optional private authorization settings.
 
     Returns:
@@ -304,5 +270,6 @@ def create_oauth2_strategy(
         svc,
         user_token=user_token,
         auth_token=auth_token,
+        auth_public=auth_public,
         auth_private=auth_private,
     )

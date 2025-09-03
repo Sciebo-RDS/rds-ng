@@ -13,7 +13,6 @@ class OSFConnectorComponent(ConnectorComponent):
         from ..execution import OSFJobExecutor
 
         super().__init__(
-            "osf",
             executor_type=OSFJobExecutor,
             handler_type=OSFRequestsHandler,
             module_name=__name__,

@@ -42,7 +42,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     private _projectExportersService: Service | null = null;
 
     public constructor() {
-        super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), Frontend, FrontendUserInterface);
+        super(import.meta.env, new UnitID(ComponentType.Web, ComponentUnit.Frontend), "Frontend", Frontend, FrontendUserInterface);
 
         this.addFrontendSettings();
     }

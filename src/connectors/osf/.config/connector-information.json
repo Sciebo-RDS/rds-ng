@@ -1,4 +1,5 @@
 {
+    "id": "osf",
     "name": "Open Science Framework",
     "description": "OSF (Open Science Framework) is a free, open platform to support your research and enable collaboration. It helps you and your colleagues to manage your project throughout its entire lifecycle.",
     "category": "repository",

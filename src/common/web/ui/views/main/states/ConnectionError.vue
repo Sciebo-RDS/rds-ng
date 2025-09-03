@@ -3,6 +3,7 @@ import { useIntervalFn } from "@vueuse/core";
 import { WebComponent } from "../../../../component/WebComponent";
 import { useComponentStore } from "../../../../data/stores/ComponentStore";
 import { HostCommuncationAction, sendActionToHost } from "../../../../integration/HostCommunication";
+import { GeneralSettingIDs } from "../../../../settings/GeneralSettingIDs";
 
 import LinkedText from "../../../components/misc/LinkedText.vue";
 import Header from "./Header.vue";
@@ -33,7 +34,7 @@ function reloadApp() {
         <div>&nbsp;</div>
         <div>
             Please <a href="#" @click.prevent="reloadApp" class="r-text-link">refresh</a> your browser to try again. If this error persists,
-            <LinkedText link="mailto:sciebo.rds@uni-muenster.de" text="send us an email" />
+            <LinkedText :link="`mailto:${comp.data.config.value<string>(GeneralSettingIDs.SupportEmail)}`" text="send us an email" />
             describing the error.
         </div>
     </div>

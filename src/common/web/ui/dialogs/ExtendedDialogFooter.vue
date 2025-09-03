@@ -17,7 +17,7 @@ const errors = computed<string[]>(() => {
 </script>
 
 <template>
-    <div class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] w-full items-center !pt-[1.5rem]">
+    <div class="grid grid-rows-1 grid-cols-[1fr_min-content_min-content] w-full h-14 items-center !pt-[1.5rem]">
         <small v-if="errors.length" class="r-text-error mr-auto text-left">
             <ErrorsMessage :errors="errors" />
         </small>

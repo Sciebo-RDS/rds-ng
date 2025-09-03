@@ -15,6 +15,7 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
     from .authorization_setting_ids import (
         AuthorizationSettingIDs,
         OAuth2AuthorizationSettingIDs,
+        BasicAuthorizationSettingIDs,
     )
     from .connector_setting_ids import ConnectorSettingIDs
     from .transmission_setting_ids import TransmissionSettingIDs
@@ -24,7 +25,7 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         ConnectorSettingIDs.TARGET: "",
         # Authorization settings
         AuthorizationSettingIDs.STRATEGY: "",
-        # OAuth2 settings
+        # OAuth2 auth settings
         OAuth2AuthorizationSettingIDs.SERVER_HOST: "",
         OAuth2AuthorizationSettingIDs.SERVER_AUTHORIZATION_ENDPOINT: "",
         OAuth2AuthorizationSettingIDs.SERVER_TOKEN_ENDPOINT: "",
@@ -32,6 +33,12 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         OAuth2AuthorizationSettingIDs.CLIENT_ID: "",
         OAuth2AuthorizationSettingIDs.CLIENT_SECRET: "",
         OAuth2AuthorizationSettingIDs.CLIENT_REDIRECT_URL: "",
+        # Basic auth settings
+        BasicAuthorizationSettingIDs.USER_ID_LABEL: "User ID",
+        BasicAuthorizationSettingIDs.USER_ID_OPTIONAL: False,
+        BasicAuthorizationSettingIDs.USER_PASSWORD_LABEL: "Password",
+        BasicAuthorizationSettingIDs.USER_PASSWORD_OPTIONAL: False,
+        BasicAuthorizationSettingIDs.HELP_LINK: "",
         # Transmission settings
         TransmissionSettingIDs.MAX_ATTEMPTS: 3,
         TransmissionSettingIDs.ATTEMPTS_DELAY: 3.0,

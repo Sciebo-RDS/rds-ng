@@ -13,7 +13,6 @@ class StubConnectorComponent(ConnectorComponent):
         from ..execution import StubJobExecutor
 
         super().__init__(
-            "stub",
             executor_type=StubJobExecutor,
             handler_type=StubRequestsHandler,
             module_name=__name__,

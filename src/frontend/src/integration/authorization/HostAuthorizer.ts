@@ -3,7 +3,8 @@ import { AuthorizationState } from "@common/data/entities/authorization/Authoriz
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
-import { OAuth2Strategy, type OAuth2StrategyConfiguration } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
+import { type OAuth2StrategyConfiguration } from "@common/integration/authorization/strategies/oauth2/OAuth2Types";
 import { RedirectionTarget } from "@common/utils/HTMLUtils";
 import { combinePaths } from "@common/utils/Paths.ts";
 

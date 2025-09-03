@@ -17,10 +17,12 @@ spec:
         app: {{ .Values.appName }}
         component: server
     spec:
+{{- if eq .Values.server.storage.engine "sqlite" }}
       volumes:
         - name: server-volume
           persistentVolumeClaim:
             claimName: rds-server-pvc
+{{- end }}
       containers:
         - name: rds-server
           image: "{{ .Values.server.image.name }}:{{ .Values.tag }}"
@@ -32,11 +34,13 @@ spec:
               name: server-config
           - secretRef:
               name: server-secret
+          - secretRef:
+              name: network-api-secret
+{{- if eq .Values.server.storage.engine "sqlite" }}
           volumeMounts:
             - mountPath: /data
               name: server-volume
-      
-          
+{{- end }}
 
 ---
 apiVersion: v1
@@ -51,4 +55,3 @@ spec:
     - protocol: TCP
       port: 4200
       targetPort: 6969
-

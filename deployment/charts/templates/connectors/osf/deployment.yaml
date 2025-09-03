@@ -1,4 +1,5 @@
-{{- if .Values.connectors.osf.enabled -}}
+{{ if .Values.connectors.osf.enabled }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -33,6 +34,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: "{{ .Values.connectors.osf.componentName }}-config"
+            - secretRef:
+                name: network-api-secret
           volumeMounts:
             {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "default") (.Files.Get .Values.connectors.osf.logos.default) }}
             - name: osf-logo-volume

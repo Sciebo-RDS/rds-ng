@@ -1,34 +1,15 @@
 import pathlib
-import typing
 
 from common.py.data.entities.connector import Connector, ConnectorCategoryID
 from common.py.data.entities.metadata import (
-    MetadataProfileContainer,
     MetadataProfileContainerList,
 )
-from common.py.data.entities.properties import ProfileMetadata, PropertyProfile
-from common.py.utils.img_conversion import convert_image_to_img_source
+from common.py.utils.config import InformationFile
 
 
-class ConnectorInformation:
+class ConnectorInformation(InformationFile):
     """
     Accesses information about the connector stored in a *JSON* file.
-
-    The JSON file needs to be structured like this::
-
-        {
-            "name": "Zenodo",
-            "description": "Connector for Zenodo",
-            "category": "repository",
-            "options": {
-                "upload_once": true
-            },
-            "logos": {
-                "default": "/some/file.png",
-                "horizontal": "/some/other/file.png"
-            },
-            "metadata_profiles": "/the/profiles_dir"
-        }
 
     Notes:
         The logos and metadata profile are loaded from other external files, referenced in the information file.
@@ -36,86 +17,65 @@ class ConnectorInformation:
 
     def __init__(
         self,
-        connector_id: str,
+        *,
         info_file: str = "./.config/connector-information.json",
+        env_prefix: str = "RDS_CONNECTOR",
     ):
         """
         Args:
-            connector_id: The identifier of the connector.
             info_file: The JSON file to load the connector information from.
+            env_prefix: The prefix to use when generating the environment variable name of a setting.
 
         Raises:
             ValueError: If the information file couldn't be loaded.
         """
-        import os.path
+        super().__init__(info_file=info_file, env_prefix=env_prefix)
 
-        self._connector_id = connector_id
+        self._connector_id, self._name, self._description, self._category = (
+            self._read_general_info()
+        )
+        self._options = self._read_options()
+        self._logos = self._load_logos()
+        self._metadata_profiles = self._load_metadata_profiles()
 
-        if info_file == "" or not os.path.exists(info_file):
-            raise ValueError("Invalid connector information file given")
+    def _read_general_info(self) -> tuple[str, str, str, ConnectorCategoryID]:
+        con_id: str = self._value("id", "")
+        name: str = self._value("name", "<invalid>")
+        desc: str = self._value("description", "")
+        category: ConnectorCategoryID = self._value("category", "<invalid>")
+        return con_id, name, desc, category
 
-        with open(info_file, encoding="utf-8") as file:
-            import json
-
-            data = json.load(file)
-            self._name, self._description, self._category = self._read_general_info(
-                data
-            )
-            self._options = self._read_options(data)
-            self._logos = self._load_logos(data)
-            self._metadata_profiles = self._load_metadata_profiles(data)
-
-    def _read_general_info(
-        self, data: typing.Any
-    ) -> tuple[str, str, ConnectorCategoryID]:
-        try:
-            name: str = data["name"]
-            desc: str = data["description"]
-            category: ConnectorCategoryID = data["category"]
-        except Exception:  # pylint: disable=broad-exception-caught
-            return "<invalid>", "<invalid>", "<invalid>"
-
-        return name, desc, category
-
-    def _read_options(self, data: typing.Any) -> Connector.Options:
-        try:
-            options = Connector.Options.DEFAULT
-            options_data = data["options"]
-
-            if "upload_once" in options_data and options_data["upload_once"] is True:
-                options |= Connector.Options.UPLOAD_ONCE
-        except Exception:  # pylint: disable=broad-exception-caught
-            return Connector.Options.DEFAULT
+    def _read_options(self) -> Connector.Options:
+        options = Connector.Options.DEFAULT
+        if self._value("options.upload_once", False):
+            options |= Connector.Options.UPLOAD_ONCE
 
         return options
 
-    def _load_logos(self, data: typing.Any) -> Connector.Logos:
-        try:
-            logo_default = None
-            logo_horizontal = None
+    def _load_logos(self) -> Connector.Logos:
+        from common.py.utils.img_conversion import convert_image_to_img_source
 
-            logo_files = data["logos"]
+        logo_default: str | None = None
+        logo_horizontal: str | None = None
 
-            if "default" in logo_files and (filename := logo_files["default"]) != "":
-                logo_default = convert_image_to_img_source(filename)
+        if (path := self._value("logos.default", "")) != "":
+            logo_default = convert_image_to_img_source(path)
 
-            if (
-                "horizontal" in logo_files
-                and (filename := logo_files["horizontal"]) != ""
-            ):
-                logo_horizontal = convert_image_to_img_source(filename)
-        except:  # pylint: disable=bare-except
-            return Connector.Logos()
+        if (path := self._value("logos.horizontal", "")) != "":
+            logo_horizontal = convert_image_to_img_source(path)
 
         return Connector.Logos(logo_default, logo_horizontal)
 
-    def _load_metadata_profiles(self, data: typing.Any) -> MetadataProfileContainerList:
+    def _load_metadata_profiles(self) -> MetadataProfileContainerList:
         from common.py.data.entities.metadata import containers_from_folder
 
-        return containers_from_folder(
-            pathlib.PosixPath(data["metadata_profiles"]),
-            default_category=f"connector:{self._connector_id}",
-        )
+        if (profiles_path := self._value("metadata_profiles", "")) != "":
+            return containers_from_folder(
+                pathlib.PosixPath(profiles_path),
+                default_category=f"connector:{self._connector_id}",
+            )
+
+        return []
 
     @property
     def connector_id(self) -> str:

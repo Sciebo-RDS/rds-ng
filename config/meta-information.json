@@ -1,33 +1,6 @@
 {
     "global": {
         "title": "bridgit",
-        "version": "1.1.1"
-    },
-    "components": {
-        "server": {
-            "name": "Server",
-            "directory": "server",
-            "tech": "py"
-        },
-        "connector:osf": {
-            "name": "OSF connector",
-            "directory": "connectors/osf",
-            "tech": "py"
-        },
-        "connector:zenodo": {
-            "name": "Zenodo connector",
-            "directory": "connectors/zenodo",
-            "tech": "py"
-        },
-        "connector:stub": {
-            "name": "Stub connector",
-            "directory": "connectors/stub",
-            "tech": "py"
-        },
-        "frontend": {
-            "name": "Web Frontend",
-            "directory": "frontend",
-            "tech": "web"
-        }
+        "version": "1.2.0-pre"
     }
 }

@@ -2,10 +2,8 @@ import typing
 
 from .authorization_strategies_catalog import AuthorizationStrategiesCatalog
 from .authorization_strategy import AuthorizationStrategy
-from .oauth2 import (
-    OAuth2Strategy,
-    create_oauth2_strategy,
-)
+from .basic import BasicStrategy, create_basic_strategy
+from .oauth2 import create_oauth2_strategy, OAuth2Strategy
 from ....component import BackendComponent
 from ....core import logging
 from ....data.entities.authorization import AuthorizationSettings, AuthorizationToken
@@ -24,6 +22,9 @@ def register_authorization_strategies() -> None:
     AuthorizationStrategiesCatalog.register_item(
         OAuth2Strategy.Strategy, create_oauth2_strategy
     )
+    AuthorizationStrategiesCatalog.register_item(
+        BasicStrategy.Strategy, create_basic_strategy
+    )
 
     # Print all available strategies for debugging purposes
     names: typing.List[str] = []
@@ -39,6 +40,7 @@ def create_authorization_strategy(
     *,
     user_token: UserToken | None = None,
     auth_token: AuthorizationToken | None = None,
+    auth_public: AuthorizationSettings | None = None,
     auth_private: AuthorizationSettings | None = None,
 ) -> AuthorizationStrategy:
     """
@@ -50,6 +52,7 @@ def create_authorization_strategy(
         strategy: The strategy identifier.
         user_token: An optional user token.
         auth_token: An optional authorization token.
+        auth_public: Optional public authorization settings.
         auth_private: Optional private authorization settings.
 
     Returns:
@@ -67,5 +70,6 @@ def create_authorization_strategy(
         svc,
         user_token=user_token,
         auth_token=auth_token,
+        auth_public=auth_public,
         auth_private=auth_private,
     )

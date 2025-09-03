@@ -24,6 +24,7 @@ class ServerComponent(BackendComponent):
     def __init__(self):
         super().__init__(
             UnitID(ComponentType.INFRASTRUCTURE, ComponentUnit.SERVER),
+            "Server",
             ServerRole(),
             module_name=__name__,
         )

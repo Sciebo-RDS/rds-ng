@@ -13,7 +13,6 @@ class ZenodoConnectorComponent(ConnectorComponent):
         from ..execution import ZenodoJobExecutor
 
         super().__init__(
-            "zenodo",
             executor_type=ZenodoJobExecutor,
             handler_type=ZenodoRequestsHandler,
             module_name=__name__,

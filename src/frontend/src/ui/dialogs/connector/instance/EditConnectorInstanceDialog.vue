@@ -8,12 +8,10 @@ import { ref } from "vue";
 import * as yup from "yup";
 
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
-import { useDirectives } from "@common/ui/Directives";
 
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
-const { vFocus } = useDirectives();
 
 const form = ref();
 const validator = useValidator(form, {
@@ -40,16 +38,16 @@ const initialFormValues = ref({
         <Fieldset legend="General" class="r-form-fieldset">
             <span class="r-form-field">
                 <IftaLabel>
+                    <InputText name="name" v-model="dialogData.userData.name" fluid autofocus />
                     <label>Name <MandatoryMark /></label>
-                    <InputText name="name" v-model="dialogData.userData.name" fluid v-focus />
                 </IftaLabel>
                 <small>The name of the connection.</small>
             </span>
 
             <span class="r-form-field mt-5">
                 <IftaLabel class="mb-[-0.5rem]">
-                    <label>Description</label>
                     <Textarea name="description" v-model.trim="dialogData.userData.description" rows="3" fluid />
+                    <label>Description</label>
                 </IftaLabel>
                 <small>The description of the connection.</small>
             </span>

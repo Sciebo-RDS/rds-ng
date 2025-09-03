@@ -79,3 +79,22 @@ def check_reuse_external_project(external_state: ProjectExternalState) -> bool:
         external_state.external_state == ProjectExternalState.State.UPLOADED
         and external_state.external_id != ""
     )
+
+
+def compare_external_project_states(
+    state1: ProjectExternalState, state2: ProjectExternalState
+) -> bool:
+    """
+    Checks if two external project states are equal.
+
+    Args:
+        state1: First state.
+        state2: Second state.
+
+    Returns:
+        Whether both states are equal.
+    """
+    return (
+        state1.external_id == state2.external_id
+        and state1.external_state == state2.external_state
+    )
