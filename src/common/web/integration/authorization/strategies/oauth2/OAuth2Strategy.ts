@@ -72,9 +72,6 @@ export class OAuth2Strategy extends AuthorizationStrategy {
 export function createOAuth2Strategy(comp: WebComponent, svc: Service, config: Record<string, any>): OAuth2Strategy {
     const oauth2Config = config as OAuth2StrategyConfiguration;
 
-    // Always redirect to a new window
-    oauth2Config.client.redirect_target = RedirectionTarget.Blank;
-
     // Verify the passed configuration
     if (!oauth2Config.server?.host) {
         throw new Error("Missing authorization host");

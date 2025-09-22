@@ -1,5 +1,5 @@
-import time
 import sys
+import time
 
 
 def enable_tracing() -> None:
@@ -14,7 +14,7 @@ def enable_tracing() -> None:
             if event == "call":
                 depth += 1
                 print(
-                    f">>> {' ' * depth}{time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())}: {frame.f_code.co_name} ({frame.f_code.co_filename}@{frame.f_code.co_firstlineno})",
+                    f">>> {' ' * depth}{time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())}: {frame.f_code.co_name} ({frame.f_code.co_filename}@{frame.f_code.co_firstlineno})",
                     file=sys.stderr,
                 )
             elif event == "return":

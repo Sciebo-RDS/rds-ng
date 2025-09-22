@@ -56,16 +56,40 @@ const config = {
         },
         items: [
           {
-            label: "User Manual",
-            to: "docs/manual"
-          },
-          {
-            label: "About",
+            label: "About bridgit",
             to: "about"
           },
           {
+            type: "dropdown",
+            label: "For Researchers",
+            items: [
+              {
+                label: "Why Bridgit",
+                to: "researchers_why_bridgit"
+              },
+              {
+                label: "User Guide",
+                to: "user_guide"
+              },
+            ],
+          },
+          {
+            label: "For Institutions",
+            to: "for_institutions"
+            
+          },
+          {
+            label: "For Administrators",
+            to: "for_administrators"
+            
+          },
+          {
+            label: "DFG",
+            to: "dfg"
+          },
+          {
             label: "Changelog",
-            to: "changelog",
+            to: "https://github.com/Sciebo-RDS/rds-ng/blob/release/CHANGELOG.md",
             position: "right"
         },
           {
@@ -85,6 +109,10 @@ const config = {
               },
             ],
           },
+          {
+            label: "Contact",
+            to: "contact"
+        },
         ],
       },
       footer: {

@@ -125,15 +125,17 @@ class OSFJobExecutor(ConnectorJobExecutor):
         self._osf_client.get_project(external_state.external_id, callbacks=callbacks)
 
     def _query_external_project_state_done(
-        self, project: OSFProjectObject, state_callbacks: ProjectExternalStateCallbacks
+        self,
+        osf_project: OSFProjectObject,
+        state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
         from .osf_utils import process_external_project_state
 
         external_state = ProjectExternalState(
-            external_id=project.project_id,
+            external_id=osf_project.project_id,
             external_state=ProjectExternalState.State.UNKNOWN,
         )
-        process_external_project_state(project, external_state)
+        process_external_project_state(osf_project, external_state)
 
         state_callbacks.invoke_done_callbacks(external_state)
 

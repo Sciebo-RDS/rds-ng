@@ -91,7 +91,15 @@ def create_resources_service(comp: ServerComponent) -> Service:
     @svc.message_handler(ListResourcesCommand, is_async=True)
     def list_resources(msg: ListResourcesCommand, ctx: ServerServiceContext) -> None:
         if not ctx.ensure_user(
-            msg, ListResourcesReply, resources=ResourcesList(resource=msg.root)
+            msg,
+            ListResourcesReply,
+            resources=ResourcesList(
+                resource=Resource(
+                    filename=msg.root,
+                    basename=pathlib.PurePosixPath(msg.root).name,
+                    type=Resource.Type.FOLDER,
+                )
+            ),
         ):
             return
 

@@ -1,4 +1,29 @@
 <script setup lang="ts">
+import { FrontendComponent } from "@/component/FrontendComponent";
+import { useMetadataStore } from "@/data/stores/MetadataStore";
+import { useResourcesStore } from "@/data/stores/ResourcesStore.ts";
+import { useUserStore } from "@/data/stores/UserStore.ts";
+import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
+
+import MetadataProfilesSelector from "@/ui/components/metadata/MetadataProfilesSelector.vue";
+import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
+import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
+import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
+
+import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
+import { filterContainers, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
+import { ResourcesMetadata, ResourcesMetadataFeature, type ResourcesMetadataKey } from "@common/data/entities/project/features/ResourcesMetadataFeature";
+import { Project } from "@common/data/entities/project/Project";
+import { getOptionalMetadataProfiles } from "@common/data/entities/project/ProjectUtils.ts";
+import { Resource, ResourceType } from "@common/data/entities/resource/Resource";
+import { adjustResourcesTreeNodesLeafStates, resourcesListFindPath, resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
+
+import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
+import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
+import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
+import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
+import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
+import { deepClone } from "@common/utils/ObjectUtils";
 import { storeToRefs } from "pinia";
 import Button from "primevue/button";
 import Panel from "primevue/panel";
@@ -7,32 +32,6 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import ToggleSwitch from "primevue/toggleswitch";
 import { computed, nextTick, onMounted, type PropType, ref, toRefs, unref, watch } from "vue";
-
-import { FrontendComponent } from "@/component/FrontendComponent";
-import { getOptionalMetadataProfiles } from "@common/data/entities/project/ProjectUtils.ts";
-import { useMetadataStore } from "@/data/stores/MetadataStore";
-import { useResourcesStore } from "@/data/stores/ResourcesStore.ts";
-import { useUserStore } from "@/data/stores/UserStore.ts";
-import { UpdateProjectFeaturesAction } from "@/ui/actions/project/UpdateProjectFeaturesAction";
-import { useResourceTools } from "@/ui/tools/resource/ResourceTools.ts";
-
-import MetadataProfilesSelector from "@/ui/components/metadata/MetadataProfilesSelector.vue";
-import ProjectExportersBar from "@/ui/components/project/ProjectExportersBar.vue";
-import ResourcesPreview from "@/ui/snapins/resourcesmetadata/ResourcesPreview.vue";
-
-import { MetadataProfileContainerRole } from "@common/data/entities/metadata/MetadataProfileContainer";
-import { filterContainers, isContainerSelected } from "@common/data/entities/metadata/MetadataProfileContainerUtils";
-import { ResourcesMetadata, ResourcesMetadataFeature, type ResourcesMetadataKey } from "@common/data/entities/project/features/ResourcesMetadataFeature";
-import { Project } from "@common/data/entities/project/Project";
-import { Resource } from "@common/data/entities/resource/Resource";
-import { adjustResourcesTreeNodesLeafStates, resourcesListToTreeNodes } from "@common/data/entities/resource/ResourceUtils";
-import { type ProfileID } from "@common/ui/components/propertyeditor/PropertyProfile.ts";
-import { PropertyProfileStore } from "@common/ui/components/propertyeditor/PropertyProfileStore";
-import { makeDebounce } from "@common/ui/components/propertyeditor/utils/PropertyEditorUtils";
-import { deepClone } from "@common/utils/ObjectUtils";
-
-import PropertyEditor from "@common/ui/components/propertyeditor/PropertyEditor.vue";
-import ResourcesTreeTable from "@common/ui/components/resource/ResourcesTreeTable.vue";
 
 const comp = FrontendComponent.inject();
 const resourcesStore = useResourcesStore();
@@ -107,12 +106,10 @@ function saveProject(): void {
     });
 }
 
-function retrieveDataPath(path: string): void {
-    resourcesError.value = "";
-
-    const root = unref(project).resources_path;
-    retrieveResourcesList(root, path, false)
-        .then(() => {
+function retrieveDataPath(path: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        const root = unref(project).resources_path;
+        const refreshResources = () => {
             const resources = unref(resourcesListCache).root(root).resources;
             if (!!resources) {
                 const nodes = resourcesListToTreeNodes(resources);
@@ -122,10 +119,28 @@ function retrieveDataPath(path: string): void {
             } else {
                 resourcesNodes.value = [];
             }
-        })
-        .catch((reason: string) => {
-            resourcesError.value = reason;
-        });
+        };
+
+        resourcesError.value = "";
+
+        retrieveResourcesList(root, path, false)
+            .then(() => {
+                refreshResources();
+                resolve();
+            })
+            .catch((reason: string) => {
+                if (path != root) {
+                    unref(resourcesListCache).root(root).removePath(path);
+                    if (unref(selectedNodes).hasOwnProperty(path)) {
+                        delete unref(selectedNodes)[path];
+                    }
+                    refreshResources();
+                } else {
+                    resourcesError.value = reason;
+                }
+                reject(reason);
+            });
+    });
 }
 
 function onDataPathNodeExpand(path: string): void {
@@ -161,9 +176,19 @@ watch(
 );
 
 watch(selectedNodes, (nodes: Record<string, boolean>) => {
+    const root = unref(project).resources_path;
+    const resources = unref(resourcesListCache).root(root).resources;
+
     blockResourcesUpdate = true;
 
     const selectedPaths = Object.keys(nodes);
+    for (const path of selectedPaths) {
+        const pathResource = resourcesListFindPath(resources!, path);
+        if (!!pathResource && pathResource.resource.type == ResourceType.Folder) {
+            retrieveDataPath(path);
+        }
+    }
+
     const metadata = unref(project).features.resources_metadata.metadata;
 
     resourcesData.value = metadata[selectedPaths[0]!] || [];

@@ -160,3 +160,30 @@ export function resourcesListFindPath(resources: ResourcesList, path: string): R
 export function resourcesListContainsPath(resources: ResourcesList, path: string): boolean {
     return !!resourcesListFindPath(resources, path);
 }
+
+/**
+ * Removes a path from a resources list.
+ *
+ * @param resources - The resources list to search in.
+ * @param path - The path to search for.
+ *
+ * @returns - Whether the path was removed.
+ */
+export function resourcesListRemovePath(resources: ResourcesList, path: string): boolean {
+    for (let i = 0; i < resources.folders.length; i++) {
+        const folder = resources.folders[i]!;
+        if (folder.resource.filename == path) {
+            resources.folders.splice(i, 1);
+            return true;
+        }
+    }
+
+    for (const folder of resources.folders) {
+        const removed = resourcesListRemovePath(folder, path);
+        if (removed) {
+            return true;
+        }
+    }
+
+    return false;
+}

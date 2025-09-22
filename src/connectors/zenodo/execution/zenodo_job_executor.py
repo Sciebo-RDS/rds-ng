@@ -131,16 +131,16 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
 
     def _query_external_project_state_done(
         self,
-        project: ZenodoProjectObject,
+        zenodo_project: ZenodoProjectObject,
         state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
         from .zenodo_utils import process_external_project_state
 
         external_state = ProjectExternalState(
-            external_id=project.project_id,
+            external_id=zenodo_project.project_id,
             external_state=ProjectExternalState.State.UNKNOWN,
         )
-        process_external_project_state(project, external_state)
+        process_external_project_state(zenodo_project, external_state)
 
         state_callbacks.invoke_done_callbacks(external_state)
 

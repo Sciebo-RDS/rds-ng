@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
+from .....utils import RedirectionTarget
+
 
 @dataclass_json
 @dataclass(frozen=True, kw_only=True)
@@ -23,6 +25,7 @@ class OAuth2StrategyPublicConfiguration:
     class Client:
         client_id: str = ""
         redirect_url: str = ""
+        redirect_target: int = RedirectionTarget.CURRENT
 
     server: Server = field(default_factory=Server)
     client: Client = field(default_factory=Client)

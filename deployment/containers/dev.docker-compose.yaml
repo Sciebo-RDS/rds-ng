@@ -89,6 +89,26 @@ services:
         env_file:
             - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-zenodo.env
 
+    # Connector: datasafe
+    connector-datasafe:
+        image: rds-ng/connector-datasafe:develop
+        volumes:
+            -   type: bind
+                source: ../../.data
+                target: /data
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/dev.Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/inveniordm"
+                COMPONENT_ADDITIONAL_LOCATION: "connectors/datasafe"
+            additional_contexts:
+                py_base: "service:py_base"
+        ports:
+            - "4500:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-datasafe.env
+
     # Connector: Stub
     connector-stub:
         image: rds-ng/connector-stub:develop

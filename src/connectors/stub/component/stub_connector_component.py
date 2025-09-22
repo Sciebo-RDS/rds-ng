@@ -1,6 +1,5 @@
 import typing
 
-from ..execution import StubRequestsHandler
 from ...base.component import ConnectorComponent
 
 
@@ -10,7 +9,7 @@ class StubConnectorComponent(ConnectorComponent):
     """
 
     def __init__(self):
-        from ..execution import StubJobExecutor
+        from ..execution import StubJobExecutor, StubRequestsHandler
 
         super().__init__(
             executor_type=StubJobExecutor,

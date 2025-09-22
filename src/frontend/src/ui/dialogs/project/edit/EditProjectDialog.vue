@@ -109,11 +109,9 @@ const nextName = computed(() => {
     }
 });
 
-function retrieveDataPath(path: string): void {
-    resourcesError.value = "";
-
-    retrieveResourcesList("/", path, false)
-        .then(() => {
+function retrieveDataPath(path: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const refreshResources = () => {
             const resources = unref(resourcesListCache).root("/").resources;
             if (!!resources) {
                 const nodes = resourcesListToTreeNodes(resources, true, false);
@@ -126,10 +124,25 @@ function retrieveDataPath(path: string): void {
             } else {
                 resourcesNodes.value = [];
             }
-        })
-        .catch((reason: string) => {
-            resourcesError.value = `Unable to load resources: ${reason}`;
-        });
+        };
+
+        resourcesError.value = "";
+
+        retrieveResourcesList("/", path, false)
+            .then(() => {
+                refreshResources();
+                resolve();
+            })
+            .catch((reason: string) => {
+                if (path != "/" && path != "") {
+                    unref(resourcesListCache).root("/").removePath(path);
+                    refreshResources();
+                } else {
+                    resourcesError.value = `Unable to load resources: ${reason}`;
+                }
+                reject(reason);
+            });
+    });
 }
 
 function onClickStep(event: Event, callback: (event: Event) => void): void {
@@ -174,7 +187,13 @@ function onNextStep(): void {
 }
 
 function onDataPathSelected(path: string): void {
-    validator.refresh();
+    retrieveDataPath(path)
+        .then(() => {
+            validator.refresh();
+        })
+        .catch(() => {
+            dialogData.userData.datapath = "";
+        });
 }
 
 function onDataPathNodeExpand(path: string): void {

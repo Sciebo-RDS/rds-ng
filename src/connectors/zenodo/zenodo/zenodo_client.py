@@ -11,7 +11,7 @@ from common.py.data.entities.project import Project
 from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
-from . import ZenodoUpdateProjectCallbacks
+
 from .zenodo_callbacks import (
     ZenodoCreateProjectCallbacks,
     ZenodoDeleteAllFilesCallbacks,
@@ -19,11 +19,12 @@ from .zenodo_callbacks import (
     ZenodoDeleteProjectCallbacks,
     ZenodoGetFileListCallbacks,
     ZenodoGetProjectCallbacks,
+    ZenodoUpdateProjectCallbacks,
     ZenodoUploadFileCallbacks,
 )
 from .zenodo_request_data import (
-    ZenodoFileObject,
     ZenodoFileListObject,
+    ZenodoFileObject,
     ZenodoProjectObject,
     ZenodoRequestData,
 )

@@ -1,0 +1,14 @@
+{
+    "id": "datasafe",
+    "name": "datasafe",
+    "description": "With datasafe, you can archive your research data non-publicly for ten years free of charge on university servers.",
+    "category": "repository",
+    "options": {
+        "upload_once": false
+    },
+    "logos": {
+        "default": "/component/connectors/datasafe/.assets/logo.png",
+        "horizontal": "/component/connectors/datasafe/.assets/logo.png"
+    },
+    "metadata_profiles": "/component/connectors/datasafe/.assets/profiles"
+}

@@ -50,3 +50,16 @@ src/common/py/data/entities/properties/test_properties_profile.py
 src/common/py/data/metadata/metadata_parser_test.py
 src/connectors/zenodo/metadata/zenodo_metadata_test.py
 src/server/.config/config.toml
+
+# generated docs
+docs/docs/reference
+src/package.json
+src/package-lock.json
+
+# test data
+src/common/assets/profiles/dmp/optional/optional1.json
+src/common/assets/profiles/dmp/optional/optional2.json
+src/common/assets/profiles/project_metadata/optional/optional1.json
+src/common/assets/profiles/project_metadata/optional/optional2.json
+src/common/assets/profiles/resources_metadata/optional/optional1.json
+src/common/assets/profiles/resources_metadata/optional/optional2.json
