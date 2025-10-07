@@ -4,6 +4,7 @@
 
 ### New
 
+- Support for multiple hosts
 - Basic authentication (username/password) support for connectors
 - More debugging capabilities
 
