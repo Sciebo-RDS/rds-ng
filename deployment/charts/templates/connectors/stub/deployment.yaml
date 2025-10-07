@@ -4,7 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "{{ .Values.appName }}-{{ .Values.connectors.stub.componentName }}"
-  namespace: {{ .Values.nameSpace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: {{ .Values.appName }}
     component: {{ .Values.connectors.stub.componentName }}

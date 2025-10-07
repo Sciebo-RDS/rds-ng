@@ -2,21 +2,30 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: frontend-config-file
+  namespace: {{ .Values.namespace }}
 data:
   config.toml: |
     [network.client]
     server_address = "{{ .Values.server.address }}"
 
-    [integration]
+    {{- range $k, $v := .Values.hosts }}
+    [{{ $k }}.integration]
     scheme = "host"
 
-    [integration.host]
-    url = "{{ .Values.frontend.integration.hostUrl }}"
+    [{{ $k }}.integration.host]
+    url = "{{ $v.url }}"
 
-    [integration.host.endpoints]
-    entrypoint = "{{ .Values.frontend.integration.endpoints.entrypoint }}"
-    api = "{{ .Values.frontend.integration.endpoints.api }}"
+    [{{ $k }}.integration.host.endpoints]
+    {{- if $v.endpoints.entrypoint }}
+    entrypoint = "{{ $v.endpoints.entrypoint }}"
+    {{- end }}
+    {{- if $v.endpoints.api }}
+    api = "{{ $v.endpoints.api }}"
+    {{- end }}
 
-    [authorization.oauth2.client]
-    id = "{{ .Values.frontend.integration.clientId }}"
-    redirect_url = "{{ .Values.server.oauth2.clientRedirectUrl }}"
+    [{{ $k }}.authorization.oauth2.client]
+    {{- if $v.oauth2.clientId }}
+    id = "{{ $v.oauth2.clientId }}"
+    {{- end }}
+    redirect_url = "{{ $.Values.server.oauth2.clientRedirectUrl }}"
+    {{- end}}

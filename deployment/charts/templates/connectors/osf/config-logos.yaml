@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "{{ .Values.connectors.osf.componentName }}-logos-config"
-  namespace: {{ .Values.nameSpace }}
+  namespace: {{ .Values.namespace }}
 
 binaryData:
 {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "default") }}

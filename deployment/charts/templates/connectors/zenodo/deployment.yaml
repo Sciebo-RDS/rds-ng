@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "{{ .Values.appName }}-{{ .Values.connectors.zenodo.componentName }}"
-  namespace: {{ .Values.nameSpace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: {{ .Values.appName }}
     component: {{ .Values.connectors.zenodo.componentName }}
@@ -30,8 +30,8 @@ spec:
               name: "{{ .Values.connectors.zenodo.componentName }}-config"
           - secretRef:
               name: network-api-secret
-      
-          
+
+
 
 ---
 apiVersion: v1

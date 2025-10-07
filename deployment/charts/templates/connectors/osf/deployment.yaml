@@ -4,7 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "{{ .Values.appName }}-{{ .Values.connectors.osf.componentName }}"
-  namespace: {{ .Values.nameSpace }}
+  namespace: {{ .Values.namespace }}
   labels:
     app: {{ .Values.appName }}
     component: {{ .Values.connectors.osf.componentName }}
@@ -40,12 +40,12 @@ spec:
             {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "default") (.Files.Get .Values.connectors.osf.logos.default) }}
             - name: osf-logo-volume
               mountPath: /component/connectors/osf/.assets/logo.png
-              subPath: logo.png 
+              subPath: logo.png
             {{ end }}
             {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "horizontal") (.Files.Get .Values.connectors.osf.logos.horizontal) }}
             - name: osf-logo-volume
               mountPath: /component/connectors/osf/.assets/horizontal.png
-              subPath: horizontal.png 
+              subPath: horizontal.png
             {{ end }}
 
 

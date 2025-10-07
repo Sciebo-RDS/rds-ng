@@ -5,12 +5,14 @@ import { AuthorizationRequest } from "@common/integration/authorization/Authoriz
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
 import { OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
 import { type OAuth2StrategyConfiguration } from "@common/integration/authorization/strategies/oauth2/OAuth2Types";
+import { makeHostSettingID } from "@common/utils/config/SettingIDUtils.ts";
 import { RedirectionTarget } from "@common/utils/HTMLUtils";
 import { combinePaths } from "@common/utils/Paths.ts";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { Authorizer } from "@/integration/authorization/Authorizer";
 import { OAuth2AuthorizationSettingIDs } from "@/settings/AuthorizationSettingIDs";
+import { DefaultDynamicSettings } from "@/settings/DefaultDynamicSettings.ts";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs";
 
 /**
@@ -38,8 +40,11 @@ export class HostAuthorizer extends Authorizer {
                 AuthorizationTokenType.Host,
                 AuthorizationTokenType.Host,
                 combinePaths(
-                    this._component.data.config.value<string>(HostIntegrationSettingIDs.URL),
-                    this._component.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
+                    this._component.data.config.valueWithDefault<string>(makeHostSettingID(HostIntegrationSettingIDs.URL), DefaultDynamicSettings.HostURL),
+                    this._component.data.config.valueWithDefault<string>(
+                        makeHostSettingID(HostIntegrationSettingIDs.EntrypointEndpoint),
+                        DefaultDynamicSettings.HostEntrypointEndpoint
+                    )
                 ),
                 AuthorizationTokenType.Host,
                 fingerprint
@@ -71,8 +76,8 @@ export class HostAuthorizer extends Authorizer {
                         scope: this._hostAuth.config.scope || ""
                     },
                     client: {
-                        client_id: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.ClientID),
-                        redirect_url: this._component.data.config.value<string>(OAuth2AuthorizationSettingIDs.RedirectURL),
+                        client_id: this._component.data.config.valueWithDefault<string>(makeHostSettingID(OAuth2AuthorizationSettingIDs.ClientID), ""),
+                        redirect_url: this._component.data.config.valueWithDefault<string>(makeHostSettingID(OAuth2AuthorizationSettingIDs.RedirectURL), ""),
                         redirect_target: RedirectionTarget.Current
                     }
                 } as OAuth2StrategyConfiguration;

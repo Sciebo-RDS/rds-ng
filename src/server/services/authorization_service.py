@@ -112,9 +112,15 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                     ),
                 )
                 auth_token = strategy.request_authorization(
-                    ctx.user.user_id,
-                    msg.request_payload,
-                    msg.data,
+                    user_id=ctx.user.user_id,
+                    host_id=(
+                        ctx.user.host_id
+                        if msg.request_payload.auth_type
+                        == AuthorizationToken.TokenType.HOST
+                        else None
+                    ),  # The host ID is only relevant for host tokens
+                    payload=msg.request_payload,
+                    request_data=msg.data,
                 )
                 AuthorizationTokenVerifier(auth_token).verify_create()
 
@@ -254,6 +260,12 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                     try:
                         AuthorizationTokenVerifier(auth_token).verify_update()
 
+                        user = (
+                            ctx.storage_pool.user_storage.get(auth_token.user_id)
+                            if auth_token.auth_type == AuthorizationToken.TokenType.HOST
+                            else None
+                        )  # The host ID (fetched from the corresponding user account) is only relevant for host tokens
+
                         strategy = _create_auth_strategy(
                             ctx,
                             auth_token.strategy,
@@ -265,7 +277,10 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                                 auth_token.auth_bearer
                             ),
                         )
-                        strategy.refresh_authorization(auth_token)
+                        strategy.refresh_authorization(
+                            auth_token,
+                            host_id=user.host_id if user is not None else None,
+                        )
 
                         logging.debug(
                             "Refreshed authorization token",

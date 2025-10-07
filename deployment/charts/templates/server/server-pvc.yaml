@@ -4,6 +4,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: rds-server-pvc
+  namespace: {{ .Values.namespace }}
 spec:
   accessModes:
     - ReadWriteOnce

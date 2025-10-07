@@ -7,7 +7,7 @@ from .. import AuthorizationRequestPayload
 from ... import IntegrationHandler
 from ....component import BackendComponent
 from ....data.entities.authorization import AuthorizationSettings, AuthorizationToken
-from ....data.entities.user import UserID, UserToken
+from ....data.entities.user import HostID, UserID, UserToken
 from ....services import Service
 
 ConfigType = typing.TypeVar("ConfigType")  # pylint: disable=invalid-name
@@ -68,13 +68,17 @@ class AuthorizationStrategy(IntegrationHandler):
     @abc.abstractmethod
     def request_authorization(
         self,
+        *,
         user_id: UserID,
+        host_id: HostID | None,
         payload: AuthorizationRequestPayload,
         request_data: typing.Any,
     ) -> AuthorizationToken: ...
 
     @abc.abstractmethod
-    def refresh_authorization(self, token: AuthorizationToken) -> None: ...
+    def refresh_authorization(
+        self, token: AuthorizationToken, *, host_id: HostID | None = None
+    ) -> None: ...
 
     def provides_token_content(self, content: ContentType) -> bool:
         """
@@ -124,10 +128,15 @@ class AuthorizationStrategy(IntegrationHandler):
         self, token: AuthorizationToken, content: ContentType
     ) -> typing.Any: ...
 
-    def _get_config_value(self, key: str, default: typing.Any) -> typing.Any:
+    def _get_config_value(
+        self, key: str, default: typing.Any, *, host_id: HostID | None = None
+    ) -> typing.Any:
         from ....utils.config import SettingID
 
-        setting_id = SettingID(f"authorization.{self._strategy}", key)
+        setting_id = SettingID(
+            f"{host_id + '.' if host_id is not None else ''}authorization.{self._strategy}",
+            key,
+        )
         return self._component.data.config.value_with_default(setting_id, default)
 
     def _get_public_configuration(self, cls: type[ConfigType]) -> ConfigType:

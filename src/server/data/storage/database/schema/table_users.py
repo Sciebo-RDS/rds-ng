@@ -30,6 +30,7 @@ def register_users_tables(metadata: MetaData, reg: registry) -> UsersTables:
         metadata,
         # Main
         Column("user_id", String(256), primary_key=True),
+        Column("host_id", Text),
         Column("name", Text),
         # Settings
         Column(

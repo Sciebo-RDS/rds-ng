@@ -1,7 +1,10 @@
 ---
 appName: "rds"
+namespace: "rds"
 
+###
 ### General settings
+###
 tag: "latest" # The release tag to be deployed
 debugLog: "false" # Enable debug logging
 debugTrace: "false" # Enable debug tracing
@@ -19,8 +22,11 @@ ingress:
     annotations: {}
     class: "public"
 
-createSecrets: true                                                                 # If to create server-secret and network-api-secret. It should preferably be created with sealedsecrets or some other secure method, and all plain text ouath2 secrets should be left out of this file
+createSecrets: true # If to create server-secret and network-api-secret. It should preferably be created with sealedsecrets or some other secure method, and all plain text ouath2 secrets should be left out of this file
+
+###
 ### Server
+###
 server:
     componentName: "server"
     address: "https://api.your.domain" # The rds server domain name
@@ -30,9 +36,8 @@ server:
     allowedOrigins: "'*'"
     sqliteFile: "/data/rds.db" # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
     oauth2:
-        clientId: "CHANGEME" # The client Id registered in Nexcloud for the frontend
-        clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/main" # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host integration (e.g., http://localhost:8080/apps/rdsng/main for a local Nextcloud setup).
-        hostSecret: "CHANGEME" # The host secret registered in Nexcloud for the frontend
+        clientId: "CHANGEME" # The client id registered in Nexcloud for the frontend
+        clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/api/v1/authorize/oauth2" # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host authorization API endpoint.
     networkApiKey: "CHANGEME" # An arbitrary API key to access protected resources; this must be the same value on all components.
     pvc:
         storageClassName: "rdb"
@@ -61,18 +66,11 @@ server:
             user: "" # The database username.
             password: "" # The password for the database user.
 
-
+###
 ### Frontend
+###
 frontend:
     componentName: "frontend"
-    integration:
-        scheme: "host"
-        hostUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The full URL where the host.
-        endpoints:
-            entrypoint: /main # The relative entrypoint of the host integration application.
-            api: /api/v1 # The relative path of the host integration API.
-        clientId: "" # The client Id registered in Nexcloud for the frontend
-
     image:
         name: "ghcr.io/sciebo-rds/rds-ng-frontend"
         pullPolicy: "Always"
@@ -89,6 +87,20 @@ frontend:
         class: "public"
 
 ###
+### Hosts
+###
+hosts:
+    # Each host used with a bridgit deployment must be configured individually
+    default: # Each host must be listed using its assigned identifier
+        url: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The full URL of the host
+        endpoints:
+            entrypoint: "" # The relative entrypoint of the host integration application (leave empty to use the default one)
+            api: "" # The relative path of the host integration API (leave empty to use the default one)
+        oauth2:
+            hostSecret: "CHANGEME" # The host secret registered in Nexcloud for the frontend
+            clientId: "CHANGEME" # The client id registered in Nexcloud for the frontend
+
+###
 ### Connectors
 ###
 connectors:
@@ -96,10 +108,12 @@ connectors:
     osf:
         enabled: true
         componentName: "connector-osf"
+        targetUrl: "https://api.osf.io/v2/"
         image:
             name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
             pullPolicy: "Always"
         oauth2:
+            serverHost: "https://accounts.osf.io"
             clientId: "CHANGEME" # The clientId of your osf oauth application
             clientSecret: "CHANGEME" # The secret of your osf oauth application
 
@@ -107,12 +121,16 @@ connectors:
     zenodo:
         enabled: true
         componentName: "connector-zenodo"
+        targetUrl: "https://zenodo.org/api/"
         image:
             name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
             pullPolicy: "Always"
         oauth2:
+            serverHost: "https://zenodo.org"
             clientId: "CHANGEME" # The clientid of your zenodo oauth application
             clientSecret: "CHANGEME" # The secret of your zenodo oauth application
+
+    ### Stub
     stub:
         enabled: false
         componentName: "connector-stub"

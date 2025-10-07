@@ -5,10 +5,12 @@ import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entiti
 import { connectorInstanceIsAuthorized, createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
+import { makeHostSettingID } from "@common/utils/config/SettingIDUtils.ts";
 import { combinePaths } from "@common/utils/Paths.ts";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { DefaultDynamicSettings } from "@/settings/DefaultDynamicSettings.ts";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs.ts";
 import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUserAuthorizationsAction";
 import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
@@ -66,8 +68,11 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             AuthorizationTokenType.Connector,
             instance.instance_id,
             combinePaths(
-                comp.data.config.value<string>(HostIntegrationSettingIDs.URL),
-                comp.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
+                comp.data.config.valueWithDefault<string>(makeHostSettingID(HostIntegrationSettingIDs.URL), DefaultDynamicSettings.HostURL),
+                comp.data.config.valueWithDefault<string>(
+                    makeHostSettingID(HostIntegrationSettingIDs.EntrypointEndpoint),
+                    DefaultDynamicSettings.HostEntrypointEndpoint
+                )
             ),
             connector.connector_id,
             userFingerprint

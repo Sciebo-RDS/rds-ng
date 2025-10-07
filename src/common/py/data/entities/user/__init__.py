@@ -1,3 +1,3 @@
-from .user import User, UserID
+from .user import User, UserID, HostID
 
 from .user_token import UserToken

@@ -2,19 +2,19 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
     name: server-config
+    namespace: {{ .Values.namespace }}
 data:
     RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
     RDS_GENERAL_DEBUG_TRACE: {{ .Values.debugTrace | quote }}
     RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}
-    RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout  | quote }}
     RDS_STORAGE_DATABASE_ENGINE: {{ default "memory" .Values.server.storage.engine | quote }}
     RDS_STORAGE_DRIVER: {{ default "" .Values.server.storage.driver | quote }}
 
-  {{- if eq .Values.server.storage.databaseEngine "sqlite" }}
+  {{- if eq .Values.server.storage.engine "sqlite" }}
     RDS_STORAGE_DATABASE_SQLITE_FILE: {{ default "" .Values.server.storage.sqlite.sqliteFile | quote }}
   {{- end}}
 
-  {{- if eq .Values.server.storage.databaseEngine "postgresql" }}
+  {{- if eq .Values.server.storage.engine "postgresql" }}
     RDS_STORAGE_DATABASE_POSTGRESQL_HOST: {{ default "" .Values.server.storage.postgresql.host | quote }}
     RDS_STORAGE_DATABASE_POSTGRESQL_PORT: {{ default "" .Values.server.storage.postgresql.port | quote }}
     RDS_STORAGE_DATABASE_POSTGRESQL_DATABASE: {{ default "" .Values.server.storage.postgresql.database | quote }}
@@ -24,7 +24,7 @@ data:
   {{- end }}
   {{- end }}
 
-  {{- if eq .Values.server.storage.databaseEngine "mysql" }}
+  {{- if eq .Values.server.storage.engine "mysql" }}
     RDS_STORAGE_DATABASE_MYSQL_HOST: {{ default "" .Values.server.storage.mysql.host | quote }}
     RDS_STORAGE_DATABASE_MYSQL_PORT: {{ default "" .Values.server.storage.mysql.port | quote }}
     RDS_STORAGE_DATABASE_MYSQL_DATABASE: {{ default "" .Values.server.storage.mysql.database | quote }}

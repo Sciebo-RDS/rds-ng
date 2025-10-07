@@ -1,15 +1,13 @@
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "{{ .Values.connectors.osf.componentName }}-config"
-  namespace: {{ .Values.nameSpace }}
+  namespace: {{ .Values.namespace }}
 data:
 {{- if .Values.createSecrets }}
   RDS_NETWORK_API_KEY: {{ .Values.server.networkApiKey }}
 {{- end }}
   RDS_CONNECTOR_TARGET: {{ .Values.connectors.osf.targetUrl }}
-  RDS_NETWORK_EXTERNAL_REQUESTS_TIMEOUT: {{ default "" .Values.server.externalRequestsTimeout  | quote }}
   RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}
   RDS_AUTHORIZATION_OAUTH2_SERVER_HOST: {{ .Values.connectors.osf.oauth2.serverHost }}
   RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL: {{ .Values.server.oauth2.clientRedirectUrl }}

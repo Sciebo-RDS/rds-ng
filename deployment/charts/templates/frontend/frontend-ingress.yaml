@@ -4,6 +4,7 @@ kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
   name: {{ .Values.appName }}-frontend-ingress
+  namespace: {{ .Values.namespace }}
   annotations:
 {{- range $key, $value := .Values.frontend.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
@@ -15,7 +16,7 @@ spec:
     host: {{ .Values.frontend.ingress.hostname }}
     {{- end }}
     http:
-      paths: 
+      paths:
       - path: "/"
         pathType: Prefix
         backend:
