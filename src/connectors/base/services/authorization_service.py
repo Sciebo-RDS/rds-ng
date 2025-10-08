@@ -13,13 +13,24 @@ def create_authorization_service(comp: BackendComponent) -> Service:
         The newly created service.
     """
 
-    from common.py.api import RevokeAuthorizationCommand, RevokeAuthorizationReply
+    from common.py.api import (
+        RevokeAuthorizationCommand,
+        RevokeAuthorizationReply,
+        GetAuthorizationTokenReply,
+    )
 
     from .connector_service_context import ConnectorServiceContext
 
     svc = comp.create_service(
         "Authorization service", context_type=ConnectorServiceContext
     )
+
+    @svc.message_handler(GetAuthorizationTokenReply)
+    def get_authorization_token_reply(
+        msg: GetAuthorizationTokenReply, ctx: ConnectorServiceContext
+    ):
+        # Suppress warnings about this message not being handled
+        pass
 
     @svc.message_handler(RevokeAuthorizationCommand)
     def revoke_authorization(

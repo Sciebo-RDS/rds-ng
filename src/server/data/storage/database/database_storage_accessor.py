@@ -14,18 +14,32 @@ class DatabaseStorageAccessor(typing.Generic[EntityType, EntityKeyType]):
     A storage-like helper class to access database objects.
     """
 
-    def __init__(self, entity_type: typing.Type, session: Session, lock: RLock):
+    def __init__(
+        self,
+        entity_type: typing.Type,
+        session: Session,
+        lock: RLock,
+        *,
+        autoflush: bool = True
+    ):
         self._entity_type = entity_type
         self._session = session
         self._lock = lock
+        self._autoflush = autoflush
 
     def add(self, entity: EntityType) -> None:
         with self._lock:
             self._session.add(entity)
 
+            if self._autoflush:
+                self._session.flush()
+
     def remove(self, entity: EntityType) -> None:
         with self._lock:
             self._session.delete(entity)
+
+            if self._autoflush:
+                self._session.flush()
 
     def get(self, key: EntityKeyType) -> EntityType | None:
         with self._lock:

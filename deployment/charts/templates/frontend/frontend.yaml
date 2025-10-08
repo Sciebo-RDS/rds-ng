@@ -29,9 +29,6 @@ spec:
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           ports:
             - containerPort: 6969
-          envFrom:
-          - configMapRef:
-              name: frontend-config
           volumeMounts:
             - mountPath: /app/config
               name: frontend-config-volume

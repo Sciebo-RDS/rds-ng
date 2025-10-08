@@ -12,6 +12,7 @@ data:
   RDS_AUTHORIZATION_OAUTH2_SERVER_HOST: {{ .Values.connectors.osf.oauth2.serverHost }}
   RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL: {{ .Values.server.oauth2.clientRedirectUrl }}
   RDS_AUTHORIZATION_OAUTH2_CLIENT_ID: {{ .Values.connectors.osf.oauth2.clientId }}
+  RDS_AUTHORIZATION_OAUTH2_CLIENT_SECRET: {{ .Values.connectors.osf.oauth2.clientSecret }}
   RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address }}
   RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
   RDS_GENERAL_DEBUG_TRACE: {{ .Values.debugTrace | quote }}

@@ -34,6 +34,11 @@ class StoragePool(abc.ABC):
         Called initially when a new pool instance is being used.
         """
 
+    def flush(self) -> None:
+        """
+        Called to flush pending operations.
+        """
+
     def close(self, save_changes: bool = True) -> None:
         """
         Closes a single pool instance.
