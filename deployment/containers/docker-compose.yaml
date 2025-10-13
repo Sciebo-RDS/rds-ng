@@ -100,7 +100,7 @@ services:
 
     # Domo
     domo:
-        image: rds-ng/domo:develop
+        image: rds-ng/domo:latest
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/Dockerfile
