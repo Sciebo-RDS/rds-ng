@@ -22,6 +22,7 @@ jobs:
                 run: |
                     components=(
                         server
+                        domo
                         connector-osf
                         connector-zenodo
                         connector-stub
