@@ -6,3 +6,4 @@ metadata:
 data:
     RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
     RDS_GENERAL_DEBUG_TRACE: {{ .Values.debugTrace | quote }}
+    RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address | quote }}

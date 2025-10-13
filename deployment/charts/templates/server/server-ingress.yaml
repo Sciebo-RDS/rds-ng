@@ -1,30 +1,30 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.server.ingress.enabled -}}
 kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
   name: {{ .Values.appName }}-ingress
   namespace: {{ .Values.namespace }}
   annotations:
-  {{- range $key, $value := .Values.ingress.annotations }}
+  {{- range $key, $value := .Values.server.ingress.annotations }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.class }}
+  ingressClassName: {{ .Values.server.ingress.class }}
   rules:
-    - {{- if .Values.ingress.hostname }}
-      host: {{ .Values.ingress.hostname }}
+    - {{- if .Values.server.ingress.hostname }}
+      host: {{ .Values.server.ingress.hostname }}
       {{- end }}
       http:
         paths:
-          - path: "/"
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: server-service
                 port:
                   number: 4200
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.server.ingress.tls }}
   tls:
-    {{ toYaml .Values.ingress.tls | nindent 4 }}
+    {{ toYaml .Values.server.ingress.tls | nindent 4 }}
   {{- end }}
   {{- end -}}

@@ -1,31 +1,30 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.domo.ingress.enabled -}}
 kind: Ingress
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: domo-ingress
+  name: {{ .Values.appName }}-domo-ingress
   namespace: {{ .Values.namespace }}
   annotations:
-    ingress.kubernetes.io/rewrite-target: /
-  {{- range $key, $value := .Values.ingress.annotations }}
-  {{ $key }}: {{ $value | quote }}
-  {{- end }}
+    {{- range $key, $value := .Values.domo.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.class }}
+  ingressClassName: {{ .Values.domo.ingress.class }}
   rules:
-    - {{- if .Values.ingress.hostname}}
-      host: {{.Values.ingress.hostname}}
-      {{- end}}
+    - {{- if .Values.domo.ingress.hostname }}
+      host: {{ .Values.domo.ingress.hostname }}
+      {{- end }}
       http:
         paths:
-          - path: "/domo"
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: domo-service
                 port:
                   number: 5500
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.domo.ingress.tls }}
   tls:
-    {{ toYaml .Values.ingress.tls | nindent 4 }}
+    {{ toYaml .Values.domo.ingress.tls | nindent 4 }}
   {{- end }}
   {{- end -}}

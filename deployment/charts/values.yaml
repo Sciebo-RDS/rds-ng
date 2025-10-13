@@ -10,18 +10,6 @@ debugLog: "false" # Enable debug logging
 debugTrace: "false" # Enable debug tracing
 supportEmail: "" # The user support email address that will be displayed in the frontend
 
-ingress:
-    enabled: true
-    hostname: "api.your.domain" # The rds server domain name
-    path: /
-    tls:
-        -   hosts:
-                - "api.your.domain" # The rds server domain name
-            secretName: "sciebords-api-tls" # The name of the secret that holds your rds server domain certificate
-
-    annotations: {}
-    class: "public"
-
 createSecrets: true # If to create server-secret and network-api-secret. It should preferably be created with sealedsecrets or some other secure method, and all plain text ouath2 secrets should be left out of this file
 
 ###
@@ -64,6 +52,16 @@ server:
             database: "" # The name of the database to use. Default: "rds_ng"
             user: "" # The database username.
             password: "" # The password for the database user.
+    ingress:
+        enabled: true
+        hostname: "api.your.domain" # The rds server domain name
+        path: /
+        tls:
+            -   hosts:
+                    - "api.your.domain" # The rds server domain name
+                secretName: "sciebords-api-tls" # The name of the secret that holds your rds server domain certificate
+        annotations: {}
+        class: "public"
 
 ###
 ### Domo
@@ -73,6 +71,16 @@ domo:
     image:
         name: "ghcr.io/sciebo-rds/rds-ng-domo"
         pullPolicy: "Always"
+    ingress:
+        enabled: true
+        hostname: "domo.your.domain" # The rds domo domain name
+        path: /
+        tls:
+            -   hosts:
+                    - "api.your.domain" # The rds server domain name
+                secretName: "sciebords-api-tls" # The name of the secret that holds your rds server domain certificate
+        annotations: {}
+        class: "public"
 
 ###
 ### Frontend
