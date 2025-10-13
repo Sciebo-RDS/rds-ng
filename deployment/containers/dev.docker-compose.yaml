@@ -131,6 +131,28 @@ services:
         env_file:
             - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-stub.env
 
+    # Domo
+    domo:
+        image: rds-ng/domo:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ../../.data
+                target: /data
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/dev.Dockerfile
+            args:
+                COMPONENT_NAME: "domo"
+            additional_contexts:
+                py_base: "service:py_base"
+        ports:
+            - "5500:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}domo.env
+
     # Web frontend
     frontend:
         image: rds-ng/frontend:develop

@@ -13,6 +13,8 @@ export interface AuthorizationRequestPayload {
     auth_issuer: string;
     /** The URL used for authorization. */
     auth_issuer_url: string;
+    /** The host identifier of the issuer. */
+    auth_issuer_host: string;
     /** The entity that will be authorized against. */
     auth_bearer: string;
     /** The user's fingerprint. */
@@ -32,6 +34,7 @@ export class AuthorizationRequest {
             auth_type: AuthorizationTokenType.Invalid,
             auth_issuer: "",
             auth_issuer_url: "",
+            auth_issuer_host: "",
             auth_bearer: "",
             fingerprint: ""
         } as AuthorizationRequestPayload;
@@ -46,6 +49,7 @@ export class AuthorizationRequest {
      * @param authType - The authorization type.
      * @param authIssuer - The issuer of the authorization.
      * @param authIssuerURL - The URL of the issuer of the authorization.
+     * @param authIssuerHost - The host identifier of the issuer.
      * @param authBearer - The bearer of the authorization.
      * @param fingerprint - The user's fingerprint.
      * @param extendedData - Arbitrary additional data.
@@ -55,6 +59,7 @@ export class AuthorizationRequest {
         authType: AuthorizationTokenType,
         authIssuer: string,
         authIssuerURL: string,
+        authIssuerHost: string,
         authBearer: string,
         fingerprint: string,
         extendedData: any = undefined
@@ -65,6 +70,7 @@ export class AuthorizationRequest {
             auth_type: authType,
             auth_issuer: authIssuer,
             auth_issuer_url: authIssuerURL,
+            auth_issuer_host: authIssuerHost,
             auth_bearer: authBearer,
             fingerprint: fingerprint
         } as AuthorizationRequestPayload;
@@ -111,6 +117,7 @@ export class AuthorizationRequest {
         checkPayload("type", this.payload.auth_type, other.payload.auth_type);
         checkPayload("issuer", this.payload.auth_issuer, other.payload.auth_issuer);
         checkPayload("issuer_url", this.payload.auth_issuer_url, other.payload.auth_issuer_url);
+        checkPayload("issuer_host", this.payload.auth_issuer_host, other.payload.auth_issuer_host);
         checkPayload("bearer", this.payload.auth_bearer, other.payload.auth_bearer);
     }
 

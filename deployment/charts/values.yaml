@@ -36,7 +36,7 @@ server:
     allowedOrigins: "'*'"
     sqliteFile: "/data/rds.db" # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
     oauth2:
-        clientRedirectUrl: "https://NEXTCLOUD_DOMAIN/apps/rdsng/api/v1/authorize/oauth2" # The URL OAUTH2 will redirect to; this needs to be set to the full URL of the host authorization API endpoint.
+        domoRedirectUrl: "https://NEXTCLOUD_DOMAIN/domo/authorize/oauth2" # The URL Domo will use for OAUTH2 redirection (used by connectors).
     networkApiKey: "CHANGEME" # An arbitrary API key to access protected resources; this must be the same value on all components.
     pvc:
         storageClassName: "rdb"
@@ -66,6 +66,15 @@ server:
             password: "" # The password for the database user.
 
 ###
+### Domo
+###
+domo:
+    componentName: "domo"
+    image:
+        name: "ghcr.io/sciebo-rds/rds-ng-domo"
+        pullPolicy: "Always"
+
+###
 ### Frontend
 ###
 frontend:
@@ -91,7 +100,7 @@ frontend:
 hosts:
     # Each host used with a bridgit deployment must be configured individually
     default: # Each host must be listed using its assigned identifier
-        url: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The full URL of the host
+        url: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The full URL of the host (including its full path)
         endpoints:
             entrypoint: "" # The relative entrypoint of the host integration application (leave empty to use the default one)
             api: "" # The relative path of the host integration API (leave empty to use the default one)

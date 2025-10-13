@@ -16,6 +16,7 @@ class AuthorizationRequestPayload:
         auth_type: The authorization type.
         auth_issuer: The entity that requires the authorization.
         auth_issuer_url: The URL of above entity.
+        auth_issuer_host: The host identifier of the issuer.
         auth_bearer: The entity that will be authorized against.
 
         fingerprint: The user's fingerprint.
@@ -25,6 +26,7 @@ class AuthorizationRequestPayload:
     auth_type: AuthorizationToken.TokenType = AuthorizationToken.TokenType.INVALID
     auth_issuer: str = ""
     auth_issuer_url: str = ""
+    auth_issuer_host: str = ""
     auth_bearer: str = ""
 
     fingerprint: str = ""

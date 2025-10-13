@@ -1,6 +1,7 @@
 import { type AuthorizationSettings } from "@common/data/entities/authorization/AuthorizationSettings";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { AuthorizationTokenType } from "@common/data/entities/authorization/AuthorizationToken";
+import { useComponentStore } from "@common/data/stores/ComponentStore.ts";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 import { createAuthorizationStrategy } from "@common/integration/authorization/strategies/AuthorizationStrategies";
 import { OAuth2Strategy } from "@common/integration/authorization/strategies/oauth2/OAuth2Strategy";
@@ -28,6 +29,8 @@ export class HostAuthorizer extends Authorizer {
     }
 
     public authorize(authState: AuthorizationState, fingerprint: string): void {
+        const compStore = useComponentStore();
+
         try {
             const strategy = createAuthorizationStrategy(
                 this._component,
@@ -46,9 +49,11 @@ export class HostAuthorizer extends Authorizer {
                         DefaultDynamicSettings.HostEntrypointEndpoint
                     )
                 ),
+                compStore.getHostInstanceID(),
                 AuthorizationTokenType.Host,
                 fingerprint
             ); // (yes, we need that AuthorizationTokenType.Host 4 times)
+
             strategy
                 .requestAuthorization(authState, authRequest)
                 .then((authState: AuthorizationState) => {

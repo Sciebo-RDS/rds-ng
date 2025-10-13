@@ -27,5 +27,5 @@ data:
     {{- if $v.oauth2.clientId }}
     id = "{{ $v.oauth2.clientId }}"
     {{- end }}
-    redirect_url = "{{ $.Values.server.oauth2.clientRedirectUrl }}"
+    redirect_url = "{{ $v.url }}"
     {{- end}}

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rds-domo
+  labels:
+    app: {{ .Values.appName }}
+    component: domo
+    namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      component: domo
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        component: domo
+    spec:
+      containers:
+        - name: rds-domo
+          image: "{{ .Values.domo.image.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.domo.image.pullPolicy }}
+          ports:
+            - containerPort: 6969
+          envFrom:
+            - configMapRef:
+                name: domo-config
+            - secretRef:
+                name: network-api-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: domo-service
+spec:
+  selector:
+    app: {{ .Values.appName }}
+    component: domo
+  ports:
+    - protocol: TCP
+      port: 5500
+      targetPort: 6969

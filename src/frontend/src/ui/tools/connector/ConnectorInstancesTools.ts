@@ -4,6 +4,7 @@ import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { connectorInstanceIsAuthorized, createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { useComponentStore } from "@common/data/stores/ComponentStore.ts";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
 import { makeHostSettingID } from "@common/utils/config/SettingIDUtils.ts";
 import { combinePaths } from "@common/utils/Paths.ts";
@@ -20,6 +21,8 @@ import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/Edi
  * Tools for working with connector instances.
  */
 export function useConnectorInstancesTools(comp: FrontendComponent) {
+    const compStore = useComponentStore();
+
     async function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, undefined, connector).then((data) => {
             const instance = new ConnectorInstance(crypto.randomUUID() as ConnectorInstanceID, connector.connector_id, data.name, data.description);
@@ -74,6 +77,7 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
                     DefaultDynamicSettings.HostEntrypointEndpoint
                 )
             ),
+            compStore.getHostInstanceID(),
             connector.connector_id,
             userFingerprint
         );
