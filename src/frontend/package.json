@@ -10,8 +10,8 @@
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
     },
     "dependencies": {
-        "@primevue/forms": "^4.4.0",
-        "@primevue/themes": "^4.4.0",
+        "@primevue/forms": "^4.4.1",
+        "@primevue/themes": "^4.4.1",
         "@types/file-saver": "^2.0.7",
         "@vueuse/core": "^12.8.2",
         "@vueuse/integrations": "^12.8.2",
@@ -24,19 +24,19 @@
         "material-icons": "^1.13.14",
         "pinia": "^2.3.1",
         "postcss": "^8.5.6",
-        "primevue": "^4.4.0",
+        "primevue": "^4.4.1",
         "sanitize-filename": "^1.6.3",
         "tailwindcss": "^3.4.18",
         "tailwindcss-primeui": "^0.6.1",
         "vue": "^3.5.22",
-        "vue-router": "^4.5.1",
+        "vue-router": "^4.6.3",
         "wildcard-match": "^5.1.4",
         "yup": "^1.7.1"
     },
     "devDependencies": {
-        "@rushstack/eslint-patch": "^1.13.0",
+        "@rushstack/eslint-patch": "^1.14.0",
         "@tsconfig/node18": "^18.2.4",
-        "@types/node": "^22.18.8",
+        "@types/node": "^22.18.11",
         "@vitejs/plugin-vue": "^4.6.2",
         "@vue/eslint-config-typescript": "^13.0.0",
         "@vue/tsconfig": "^0.8.1",
@@ -44,7 +44,7 @@
         "eslint-plugin-vue": "^9.33.0",
         "npm-run-all": "^4.1.5",
         "prettier": "^3.6.2",
-        "typedoc": "^0.28.13",
+        "typedoc": "^0.28.14",
         "typescript": "~5.9.3",
         "vite": "^4.5.14",
         "vue-tsc": "^2.2.12"
