@@ -6,9 +6,10 @@ hide_table_of_contents: true
 
 # Meet _bridgit_ ! Your new data juggling assistant to share important research data.
 
-<div style={{textAlign: 'center', width: '20%', float: 'right', margin: '2%' }}>
+<div>
+<span style={{textAlign: 'center', width: '20%', float: 'right', margin: '2%' }}>
   <img class="bg-white"  src="/img/juggler.svg" />
-</div>
+</span>
 
 **Let us introduce you two.**
 
@@ -16,16 +17,14 @@ Think of _bridgit_ as your new, multitasking research partner. The app will supp
 
 _bridgit_ emerged from a DFG-funded project and is administrated by the University of Münster, with the University of Potsdam as its scientific consultant. The collaboration has been so successful that _bridgit_ was piloted in the sciebo Hochschulcloud at the University of Münster, where it proved its value in real-world academic settings and quickly began attracting the interest of other institutions.
 
-## Why share your research data at all?
-
-### We are working together - for the bigger picture.
-
-<!-- TODO add FAIR graphics
-<div style={{textAlign: 'center', width: '30%', float: 'right', margin: '2%' }}>
-  <img class="bg-white"  src="/img/octopi/hello.png" />
 </div>
--->
 
+<div>
+## Why share your research data at all?
+### We are working together - for the bigger picture.
+<span style={{textAlign: 'center', width: '30%', float: 'right', margin: '2%' }}>
+<img class="bg-white"  src="/img/fair.png" />
+</span>
 Open science drives transparency, collaboration, and innovation in research. By making data accessible, interoperable, and reusable, the FAIR (Findable, Accessible, Interoperable, Reusable) principles ensure that research outputs can be discovered, shared, and built upon by the entire research community¹.
 
 ## How does _bridgit_ work exactly?
@@ -62,3 +61,5 @@ We invite you to join the _bridgit_ beta test! As early adopters, you'll have th
 ::::info
 ¹ Wilkinson, M., Dumontier, M., Aalbersberg, I. *et al*. The FAIR Guiding Principles for scientific data management and stewardship. Sci Data 3
 ::::
+
+</div>
