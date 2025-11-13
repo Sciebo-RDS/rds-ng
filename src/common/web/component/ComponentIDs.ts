@@ -3,7 +3,7 @@
  */
 export const enum ComponentType {
     Infrastructure = "infra",
-    Web = "web",
+    Web = "web"
 }
 
 /**
@@ -13,7 +13,8 @@ export const enum ComponentUnit {
     // Infrastructure
     Server = "server",
     Connector = "connector",
+    Domo = "domo",
 
     // Web
-    Frontend = "frontend",
+    Frontend = "frontend"
 }

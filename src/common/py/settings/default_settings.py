@@ -30,12 +30,12 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
         NetworkSettingIDs.API_KEY: "",
         NetworkSettingIDs.VERIFY_SSL: True,
         NetworkSettingIDs.TRANSMISSION_CHUNK_SIZE: 1 * 1024 * 1024,
-        NetworkSettingIDs.REGULAR_COMMAND_TIMEOUT: 10,
-        NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT: 60,
+        NetworkSettingIDs.REGULAR_COMMAND_TIMEOUT: 90,
+        NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT: 90,
         NetworkServerSettingIDs.ALLOWED_ORIGINS: "",
         NetworkServerSettingIDs.IDLE_TIMEOUT: 60 * 60,
         NetworkClientSettingIDs.SERVER_ADDRESS: "",
-        NetworkClientSettingIDs.CONNECTION_TIMEOUT: 10,
+        NetworkClientSettingIDs.CONNECTION_TIMEOUT: 90,
         # Integration settings
         IntegrationSettingIDs.DEFAULT_ROOT_PATH: "/",
     }

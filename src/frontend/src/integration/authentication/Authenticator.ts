@@ -3,6 +3,7 @@ import { storeToRefs } from "pinia";
 import { AuthenticateUserCommand, AuthenticateUserReply } from "@common/api/user/UserCommands";
 import { AuthorizationState } from "@common/data/entities/authorization/AuthorizationState";
 import { isUserTokenValid, type UserToken } from "@common/data/entities/user/UserToken";
+import { useComponentStore } from "@common/data/stores/ComponentStore.ts";
 import { useNetworkStore } from "@common/data/stores/NetworkStore";
 import { ExecutionCallbacks } from "@common/utils/ExecutionCallbacks";
 
@@ -57,9 +58,10 @@ export abstract class Authenticator extends IntegrationHandler {
             throw new Error("Invalid user token used for authentication");
         }
 
+        const compStore = useComponentStore();
         const nwStore = useNetworkStore();
 
-        AuthenticateUserCommand.build(this._component.frontendService.messageBuilder, this._userToken)
+        AuthenticateUserCommand.build(this._component.frontendService.messageBuilder, this._userToken, compStore.getHostInstanceID())
             .done((reply: AuthenticateUserReply, success, msg) => {
                 if (success) {
                     const userStore = useUserStore();

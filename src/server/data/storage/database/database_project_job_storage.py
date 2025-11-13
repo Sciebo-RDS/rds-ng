@@ -25,7 +25,7 @@ class DatabaseProjectJobStorage(ProjectJobStorage):
         self._table = table
 
         self._accessor = DatabaseStorageAccessor[ProjectJob, ProjectJobID](
-            ProjectJob, self._session, self._lock
+            ProjectJob, self._session, self._lock, autoflush=False
         )
 
     def next_id(self) -> ProjectJobID:

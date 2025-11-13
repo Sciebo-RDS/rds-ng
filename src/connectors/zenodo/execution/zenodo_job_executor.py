@@ -79,18 +79,6 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
             user_token=self._job.user_token,
         )
 
-        self._zenodo_transmission_client = ZenodoClient(
-            comp,
-            svc,
-            connector_instance=job.connector_instance,
-            auth_channel=target_channel,
-            user_token=self._job.user_token,
-            max_attempts=comp.data.config.value(TransmissionSettingIDs.MAX_ATTEMPTS),
-            attempts_delay=comp.data.config.value(
-                TransmissionSettingIDs.ATTEMPTS_DELAY
-            ),
-        )
-
         self._zenodo_upload_client = ZenodoClient(
             comp,
             svc,

@@ -1,9 +1,10 @@
 # RDS-NG - Changelog
 
-## v1.2.0 - 2025-??-??
+## v1.2.0 - 2025-10-17
 
 ### New
 
+- Support for multiple hosts
 - Basic authentication (username/password) support for connectors
 - More debugging capabilities
 

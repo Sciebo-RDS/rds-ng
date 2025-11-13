@@ -76,7 +76,7 @@ export class Configuration {
     public addDefaults(defaults: Map<SettingID, any>): void {
         for (const [key, value] of defaults.entries()) {
             let values = {};
-            this.unfoldSettingsItem(key.split(), values, value);
+            this.unfoldSettingsItem(this.splitSettingID(key), values, value);
             deepMerge(this._defaults, values);
         }
     }
@@ -94,15 +94,33 @@ export class Configuration {
      * @throws Error - The setting identifier was not found in the defaults.
      */
     public value<ValType = any>(key: SettingID): ValType {
-        let defaultValue = this.traverseSettings(key.split(), this._defaults) as ValType;
+        let defaultValue = this.traverseSettings(this.splitSettingID(key), this._defaults) as ValType;
+        return this.getValue<ValType>(key, defaultValue);
+    }
 
+    /**
+     * Gets the value of a setting.
+     *
+     * The value is first looked up in the environment variables. If not found, the loaded settings are searched.
+     * If that also fails, the default value is returned.
+     *
+     * @param key - The identifier of the setting.
+     * @param defaultValue - The default value if the value couldn't be found.
+     *
+     * @returns - The value of the setting.
+     */
+    public valueWithDefault<ValType = any>(key: SettingID, defaultValue: ValType): ValType {
+        return this.getValue<ValType>(key, defaultValue);
+    }
+
+    private getValue<ValType = any>(key: SettingID, defaultValue: ValType): ValType {
         let envKey = key.envName(this._envPrefix);
         if (envKey in this._env) {
             return this.convertEnvType(this._env[envKey], typeof defaultValue) as ValType;
         }
 
         try {
-            return this.traverseSettings(key.split(), this._settings) as ValType;
+            return this.traverseSettings(this.splitSettingID(key), this._settings) as ValType;
         } catch {
             return defaultValue;
         }
@@ -140,5 +158,9 @@ export class Configuration {
         }
 
         return value;
+    }
+
+    private splitSettingID(key: SettingID): string[] {
+        return key.split();
     }
 }

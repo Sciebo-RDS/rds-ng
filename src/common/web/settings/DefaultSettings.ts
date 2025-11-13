@@ -19,9 +19,9 @@ export function getDefaultSettings(): Map<SettingID, any> {
     defaults.set(GeneralSettingIDs.NotificationTimeout, 3.0);
 
     // Network settings
-    defaults.set(NetworkSettingIDs.RegularCommandTimeout, 10.0);
+    defaults.set(NetworkSettingIDs.RegularCommandTimeout, 90.0);
     defaults.set(NetworkClientSettingIDs.ServerAddress, "");
-    defaults.set(NetworkClientSettingIDs.ConnectionTimeout, 10.0);
+    defaults.set(NetworkClientSettingIDs.ConnectionTimeout, 90.0);
 
     // Theme settings
     defaults.set(ThemeSettingIDs.PrimaryColor, ThemeSettings.primaryColor);

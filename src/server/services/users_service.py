@@ -33,6 +33,7 @@ def create_users_service(comp: ServerComponent) -> Service:
     )
 
     from .server_service_context import ServerServiceContext
+    from .tools import cleanup_user_host_id
 
     svc = comp.create_service("Users service", context_type=ServerServiceContext)
 
@@ -51,13 +52,15 @@ def create_users_service(comp: ServerComponent) -> Service:
             )
 
             user_id = msg.user_token.user_id
+            host_id = cleanup_user_host_id(msg.host_id)
             user_name = msg.user_token.user_name
 
             # Update or create the authenticated user in the storage
             if (user := ctx.storage_pool.user_storage.get(user_id)) is not None:
                 user.name = user_name
+                user.host_id = host_id
             else:
-                user = User(user_id=user_id, name=user_name)
+                user = User(user_id=user_id, host_id=host_id, name=user_name)
                 ctx.storage_pool.user_storage.add(user)
 
             # We don't check for a _valid_ token here, only if one exists for the host system

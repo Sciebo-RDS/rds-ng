@@ -83,18 +83,6 @@ class OSFJobExecutor(ConnectorJobExecutor):
             user_token=self._job.user_token,
         )
 
-        self._osf_transmission_client = OSFClient(
-            comp,
-            svc,
-            connector_instance=job.connector_instance,
-            auth_channel=target_channel,
-            user_token=self._job.user_token,
-            max_attempts=comp.data.config.value(TransmissionSettingIDs.MAX_ATTEMPTS),
-            attempts_delay=comp.data.config.value(
-                TransmissionSettingIDs.ATTEMPTS_DELAY
-            ),
-        )
-
         self._reuse_external_project = False
 
     def start(self, external_state: ProjectExternalState) -> None:

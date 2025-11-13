@@ -1,5 +1,6 @@
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.functions import session_user
 
 from common.py.data.storage import StoragePool
 from common.py.utils.config import Configuration
@@ -32,7 +33,7 @@ class DatabaseStoragePool(StoragePool):
     def __init__(self):
         super().__init__("Database")
 
-        self._session = Session(DatabaseStoragePool._engine)
+        self._session = Session(DatabaseStoragePool._engine, autoflush=False)
 
         self._connector_storage = DatabaseConnectorStorage(
             self._session, DatabaseStoragePool._schema.connectors_table
@@ -50,9 +51,15 @@ class DatabaseStoragePool(StoragePool):
             self._session, DatabaseStoragePool._schema.authorization_tokens_table
         )
 
+    def flush(self) -> None:
+        self._session.commit()
+
     def close(self, save_changes: bool = True) -> None:
-        self._session.commit() if save_changes else self._session.rollback()
-        self._session.close()
+        def _close(session: Session) -> None:
+            session.commit() if save_changes else session.rollback()
+            session.close()
+
+        _close(self._session)
 
     @property
     def connector_storage(self) -> DatabaseConnectorStorage:

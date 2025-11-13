@@ -16,12 +16,18 @@ import { type UserToken } from "../../data/entities/user/UserToken";
 @Message.define("command/user/authenticate")
 export class AuthenticateUserCommand extends Command {
     public readonly user_token: UserToken = { user_id: "", user_name: "" } as UserToken;
+    public readonly host_id: string = "";
 
     /**
      * Helper function to easily build this message.
      */
-    public static build(messageBuilder: MessageBuilder, userToken: UserToken, chain: Message | null = null): CommandComposer<AuthenticateUserCommand> {
-        return messageBuilder.buildCommand(AuthenticateUserCommand, { user_token: userToken }, chain);
+    public static build(
+        messageBuilder: MessageBuilder,
+        userToken: UserToken,
+        hostID: string,
+        chain: Message | null = null
+    ): CommandComposer<AuthenticateUserCommand> {
+        return messageBuilder.buildCommand(AuthenticateUserCommand, { user_token: userToken, host_id: hostID }, chain);
     }
 }
 
@@ -45,7 +51,7 @@ export class AuthenticateUserReply extends CommandReply {
         authState: AuthorizationState,
         fingerprint: string = "",
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<AuthenticateUserReply> {
         return messageBuilder.buildCommandReply(AuthenticateUserReply, cmd, success, message, { authorization_state: authState, fingerprint: fingerprint });
     }
@@ -83,7 +89,7 @@ export class GetUserSettingsReply extends CommandReply {
         cmd: GetUserSettingsCommand,
         settings: UserSettings,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<GetUserSettingsReply> {
         return messageBuilder.buildCommandReply(GetUserSettingsReply, cmd, success, message, { settings: settings });
     }
@@ -127,7 +133,7 @@ export class SetUserSettingsReply extends CommandReply {
         cmd: SetUserSettingsCommand,
         settings: UserSettings,
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<SetUserSettingsReply> {
         return messageBuilder.buildCommandReply(SetUserSettingsReply, cmd, success, message, { settings: settings });
     }
@@ -165,7 +171,7 @@ export class ListUserAuthorizationsReply extends CommandReply {
         cmd: ListUserAuthorizationsCommand,
         authorizations: string[],
         success: boolean = true,
-        message: string = "",
+        message: string = ""
     ): CommandReplyComposer<ListUserAuthorizationsReply> {
         return messageBuilder.buildCommandReply(ListUserAuthorizationsReply, cmd, success, message, { authorizations: authorizations });
     }

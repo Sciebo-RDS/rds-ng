@@ -4,11 +4,14 @@ import { Connector } from "@common/data/entities/connector/Connector";
 import { ConnectorInstance, type ConnectorInstanceID } from "@common/data/entities/connector/ConnectorInstance";
 import { connectorInstanceIsAuthorized, createAuthorizationStrategyFromConnectorInstance } from "@common/data/entities/connector/ConnectorInstanceUtils";
 import { findConnectorByID } from "@common/data/entities/connector/ConnectorUtils";
+import { useComponentStore } from "@common/data/stores/ComponentStore.ts";
 import { AuthorizationRequest } from "@common/integration/authorization/AuthorizationRequest";
+import { makeHostSettingID } from "@common/utils/config/SettingIDUtils.ts";
 import { combinePaths } from "@common/utils/Paths.ts";
 
 import { FrontendComponent } from "@/component/FrontendComponent";
 import { useUserStore } from "@/data/stores/UserStore";
+import { DefaultDynamicSettings } from "@/settings/DefaultDynamicSettings.ts";
 import { HostIntegrationSettingIDs } from "@/settings/IntegrationSettingIDs.ts";
 import { ListUserAuthorizationsAction } from "@/ui/actions/authorization/ListUserAuthorizationsAction";
 import { RevokeAuthorizationAction } from "@/ui/actions/authorization/RevokeAuthorizationAction";
@@ -18,6 +21,8 @@ import { editConnectorInstanceDialog } from "@/ui/dialogs/connector/instance/Edi
  * Tools for working with connector instances.
  */
 export function useConnectorInstancesTools(comp: FrontendComponent) {
+    const compStore = useComponentStore();
+
     async function newInstance(instances: ConnectorInstance[], connector: Connector): Promise<ConnectorInstance> {
         return editConnectorInstanceDialog(comp, undefined, connector).then((data) => {
             const instance = new ConnectorInstance(crypto.randomUUID() as ConnectorInstanceID, connector.connector_id, data.name, data.description);
@@ -66,9 +71,13 @@ export function useConnectorInstancesTools(comp: FrontendComponent) {
             AuthorizationTokenType.Connector,
             instance.instance_id,
             combinePaths(
-                comp.data.config.value<string>(HostIntegrationSettingIDs.URL),
-                comp.data.config.value<string>(HostIntegrationSettingIDs.EntrypointEndpoint)
+                comp.data.config.valueWithDefault<string>(makeHostSettingID(HostIntegrationSettingIDs.URL), DefaultDynamicSettings.HostURL),
+                comp.data.config.valueWithDefault<string>(
+                    makeHostSettingID(HostIntegrationSettingIDs.EntrypointEndpoint),
+                    DefaultDynamicSettings.HostEntrypointEndpoint
+                )
             ),
+            compStore.getHostInstanceID(),
             connector.connector_id,
             userFingerprint
         );

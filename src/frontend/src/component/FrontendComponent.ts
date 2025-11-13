@@ -2,6 +2,7 @@ import { ComponentType, ComponentUnit } from "@common/component/ComponentIDs";
 import { WebComponent } from "@common/component/WebComponent";
 import { debug, error } from "@common/core/logging/Logging";
 import { Service } from "@common/services/Service";
+import { makeHostSettingID } from "@common/utils/config/SettingIDUtils.ts";
 import { UnitID } from "@common/utils/UnitID";
 
 import { registerConnectorCategories } from "@/data/entities/connector/categories/ConnectorCategories";
@@ -18,6 +19,7 @@ import createProjectJobsService from "@/services/ProjectJobsService";
 import createProjectExportersService from "@/services/ProjectExportersService";
 import createUserService from "@/services/UserService";
 
+import { DefaultDynamicSettings } from "@/settings/DefaultDynamicSettings.ts";
 import { getFrontendSettings } from "@/settings/FrontendSettings";
 import { IntegrationSettingIDS } from "@/settings/IntegrationSettingIDs";
 
@@ -74,7 +76,7 @@ export class FrontendComponent extends WebComponent<FrontendUserInterface> {
     }
 
     private mountIntegrationScheme(): void {
-        const scheme = this._data.config.value<string>(IntegrationSettingIDS.Scheme);
+        const scheme = this._data.config.valueWithDefault<string>(makeHostSettingID(IntegrationSettingIDS.Scheme), DefaultDynamicSettings.IntegrationScheme);
         if (!scheme) {
             error("No integration scheme has been configured");
             return;

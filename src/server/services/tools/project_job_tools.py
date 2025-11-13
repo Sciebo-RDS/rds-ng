@@ -29,6 +29,9 @@ def send_project_jobs_list(
     if ctx.user is None and (session or session.user_token) is None:
         raise RuntimeError("Sending project jobs list without an authenticated user")
 
+    # Since the project jobs list is not auto-flush, we need to do this manually here
+    ctx.storage_pool.flush()
+
     ProjectJobsListEvent.build(
         ctx.message_builder,
         jobs=ctx.storage_pool.project_job_storage.filter_by_user(

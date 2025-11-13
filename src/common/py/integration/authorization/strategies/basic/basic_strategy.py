@@ -1,3 +1,4 @@
+import dataclasses
 import time
 import typing
 
@@ -10,7 +11,7 @@ from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
 from .....data.entities.authorization import AuthorizationSettings, AuthorizationToken
-from .....data.entities.user import UserID, UserToken
+from .....data.entities.user import HostID, UserID, UserToken
 from .....services import Service
 
 
@@ -47,7 +48,9 @@ class BasicStrategy(AuthorizationStrategy):
 
     def request_authorization(
         self,
+        *,
         user_id: UserID,
+        host_id: HostID,
         payload: AuthorizationRequestPayload,
         request_data: typing.Any,
     ) -> AuthorizationToken:
@@ -63,13 +66,13 @@ class BasicStrategy(AuthorizationStrategy):
             expiration_timestamp=0,
             refresh_attempts=0,
             strategy=self.strategy,
-            token=typing.cast(
-                typing.Dict[any, str], self._create_basic_token(request_data)
-            ),
+            token=dataclasses.asdict(self._create_basic_token(request_data)),
             data={},
         )
 
-    def refresh_authorization(self, token: AuthorizationToken) -> None:
+    def refresh_authorization(
+        self, token: AuthorizationToken, *, host_id: HostID | None = None
+    ) -> None:
         # We simply reset the token so it continues to be valid
         super()._update_token_refresh_state(token, reset=True)
 

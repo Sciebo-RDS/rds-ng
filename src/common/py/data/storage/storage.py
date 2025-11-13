@@ -1,5 +1,4 @@
 import abc
-import threading
 import typing
 
 EntityType = typing.TypeVar("EntityType")  # pylint: disable=invalid-name

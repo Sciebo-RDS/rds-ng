@@ -1,11 +1,10 @@
+import dataclasses
 import time
 import typing
 import urllib.parse
-from dataclasses import dataclass, field
 from http import HTTPStatus
 
 import requests
-from dataclasses_json import dataclass_json
 
 from .oauth2_types import (
     OAuth2StrategyPrivateConfiguration,
@@ -19,7 +18,7 @@ from ... import AuthorizationRequestPayload
 from .....component import BackendComponent
 from .....data.entities import clone_entity
 from .....data.entities.authorization import AuthorizationSettings, AuthorizationToken
-from .....data.entities.user import UserID, UserToken
+from .....data.entities.user import HostID, UserID, UserToken
 from .....services import Service
 
 
@@ -59,12 +58,14 @@ class OAuth2Strategy(AuthorizationStrategy):
 
     def request_authorization(
         self,
+        *,
         user_id: UserID,
+        host_id: HostID | None,
         payload: AuthorizationRequestPayload,
         request_data: typing.Any,
     ) -> AuthorizationToken:
         oauth2_data = self._get_oauth2_request_data(request_data)
-        client_secret = self._get_client_secret(payload.auth_bearer)
+        client_secret = self._get_client_secret(payload.auth_bearer, host_id=host_id)
 
         response = requests.post(
             urllib.parse.urljoin(oauth2_data.token_host, oauth2_data.token_endpoint),
@@ -96,11 +97,8 @@ class OAuth2Strategy(AuthorizationStrategy):
                     expiration_timestamp=self._get_expiration_timestamp(resp_data),
                     refresh_attempts=0,
                     strategy=self.strategy,
-                    token=typing.cast(
-                        typing.Dict[any, str], self._create_oauth2_token(resp_data)
-                    ),
-                    data=typing.cast(
-                        typing.Dict[any, str],
+                    token=dataclasses.asdict(self._create_oauth2_token(resp_data)),
+                    data=dataclasses.asdict(
                         OAuth2TokenData(
                             token_host=oauth2_data.token_host,
                             token_endpoint=oauth2_data.token_endpoint,
@@ -116,11 +114,13 @@ class OAuth2Strategy(AuthorizationStrategy):
                 f"Unable to request access token: {format_oauth2_error_response(response)}"
             )
 
-    def refresh_authorization(self, token: AuthorizationToken) -> None:
+    def refresh_authorization(
+        self, token: AuthorizationToken, *, host_id: HostID | None = None
+    ) -> None:
         super()._update_token_refresh_state(token)
 
         oauth2_token, oauth2_data = self._get_oauth2_data_from_token(token)
-        client_secret = self._get_client_secret(token.auth_bearer)
+        client_secret = self._get_client_secret(token.auth_bearer, host_id=host_id)
 
         if oauth2_token.refresh_token is None:
             raise RuntimeError("Tried to refresh without a refresh token")
@@ -206,8 +206,10 @@ class OAuth2Strategy(AuthorizationStrategy):
         oauth2_data: OAuth2TokenData = OAuth2TokenData.from_dict(token.data)
         return oauth2_token, oauth2_data
 
-    def _get_client_secret(self, auth_bearer: str) -> str:
-        client_secret = self._get_config_value(f"secrets.{auth_bearer}", "")
+    def _get_client_secret(self, auth_bearer: str, *, host_id: HostID | None) -> str:
+        client_secret = self._get_config_value(
+            f"secrets.{auth_bearer}", "", host_id=host_id
+        )
 
         # If not set directly, look it up in the private settings if possible
         if client_secret == "":
@@ -220,7 +222,9 @@ class OAuth2Strategy(AuthorizationStrategy):
 
         # Verify the secret
         if client_secret == "":
-            raise RuntimeError(f"Missing OAuth2 client secret for {auth_bearer}")
+            raise RuntimeError(
+                f"Missing OAuth2 client secret for {auth_bearer} (host_id={host_id})"
+            )
 
         return client_secret
 
