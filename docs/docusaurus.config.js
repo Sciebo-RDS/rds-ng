@@ -1,6 +1,6 @@
 // @ts-ignore
-const lightCodeTheme = require('prism-react-renderer').themes.github;
-const darkCodeTheme = require('prism-react-renderer').themes.dracula;
+const lightCodeTheme = require("prism-react-renderer").themes.github;
+const darkCodeTheme = require("prism-react-renderer").themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -55,42 +55,26 @@ const config = {
         },
         items: [
           {
-            label: "About bridgit",
-            to: "about"
+            label: "For Researchers",
+            to: "for-researchers",
           },
           {
-            type: "dropdown",
-            label: "For Researchers",
-            items: [
-              {
-                label: "Why Bridgit",
-                to: "researchers_why_bridgit"
-              },
-              {
-                label: "User Guide",
-                to: "user_guide"
-              },
-            ],
+            label: "For FDM Teams",
+            to: "for-fdm-teams",
           },
           {
             label: "For Institutions",
-            to: "for_institutions"
-            
+            to: "for-institutions",
           },
           {
-            label: "For Administrators",
-            to: "for_administrators"
-            
-          },
-          {
-            label: "DFG",
-            to: "dfg"
+            label: "Contact",
+            to: "contact",
           },
           {
             label: "Changelog",
             to: "https://github.com/Sciebo-RDS/rds-ng/blob/release/CHANGELOG.md",
-            position: "right"
-        },
+            position: "right",
+          },
           {
             type: "dropdown",
             label: "Code Reference",
@@ -108,18 +92,20 @@ const config = {
               },
             ],
           },
-          {
-            label: "Contact",
-            to: "contact"
-        },
         ],
       },
       footer: {
+        logo: {
+          alt: "Funded by DFG",
+          src: "img/dfg-funded.gif",
+          href: "https://gepris.dfg.de/gepris/projekt/403637381",
+          width: 350,
+        },
         links: [
           {
-              label: "Imprint",
-              to: "imprint"
-            },
+            label: "Imprint",
+            to: "imprint",
+          },
         ],
         style: "dark",
         links: [],
