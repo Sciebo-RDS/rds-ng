@@ -1,6 +1,5 @@
 import typing
 
-from ..execution import ZenodoRequestsHandler
 from ...base.component import ConnectorComponent
 
 
@@ -10,7 +9,7 @@ class ZenodoConnectorComponent(ConnectorComponent):
     """
 
     def __init__(self):
-        from ..execution import ZenodoJobExecutor
+        from ..execution import ZenodoJobExecutor, ZenodoRequestsHandler
 
         super().__init__(
             executor_type=ZenodoJobExecutor,

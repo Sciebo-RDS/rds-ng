@@ -11,6 +11,7 @@ def get_oauth2_strategy_configuration(
         OAuth2StrategyPrivateConfiguration,
     )
 
+    from common.py.utils import RedirectionTarget
     from .....settings import OAuth2AuthorizationSettingIDs
 
     return AuthorizationStrategyConfiguration(
@@ -30,6 +31,7 @@ def get_oauth2_strategy_configuration(
                 redirect_url=config.value(
                     OAuth2AuthorizationSettingIDs.CLIENT_REDIRECT_URL
                 ),
+                redirect_target=RedirectionTarget.BLANK,
             ),
         ).to_dict(),
         private_config=OAuth2StrategyPrivateConfiguration(

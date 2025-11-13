@@ -1,0 +1,1 @@
+from .inveniordm_connector_component import InvenioRDMConnectorComponent

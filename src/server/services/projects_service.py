@@ -14,7 +14,7 @@ from .tools import send_project_external_states, send_projects_list
 from ..component import ServerComponent
 from ..networking.session import Session
 
-_RENEWAL_INTERVAL = 10.0 * 60  # Once every 10 minutes
+_RENEWAL_INTERVAL = 5.0 * 60  # Once every 5 minutes
 
 
 def create_projects_service(comp: ServerComponent) -> Service:

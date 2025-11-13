@@ -2,6 +2,7 @@ from .entry_guard import EntryGuard
 from .env import get_env_value
 from .extended_dictionary import ExtendedDictionary
 from .files import get_mime_type
+from .html import RedirectionTarget
 from .items_catalog import ItemsCatalog
 from .paths import relativize_path
 from .random import generate_random_string

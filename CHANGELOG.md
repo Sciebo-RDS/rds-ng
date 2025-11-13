@@ -9,6 +9,7 @@
 
 ### Improvements
 
+- Unaccessible resource paths are handled less pungent
 - Meta and connector information can be set via environment variables
 - Configurable support email address
 

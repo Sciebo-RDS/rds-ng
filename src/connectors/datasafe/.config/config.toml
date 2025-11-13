@@ -1,0 +1,12 @@
+[connector]
+target = "https://www.disney.de"
+
+[network.client]
+server_address = "http://rds-server-1:6969"
+
+[authorization]
+strategy = "basic"
+
+[transmission]
+max_attempts = 5
+attempts_delay = 15.0

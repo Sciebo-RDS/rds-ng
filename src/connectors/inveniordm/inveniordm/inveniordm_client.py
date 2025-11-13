@@ -12,30 +12,30 @@ from common.py.data.entities.user import UserToken
 from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 
-from .zenodo_callbacks import (
-    ZenodoCreateProjectCallbacks,
-    ZenodoDeleteAllFilesCallbacks,
-    ZenodoDeleteFileCallbacks,
-    ZenodoDeleteProjectCallbacks,
-    ZenodoGetFileListCallbacks,
-    ZenodoGetProjectCallbacks,
-    ZenodoUpdateProjectCallbacks,
-    ZenodoUploadFileCallbacks,
+from .inveniordm_callbacks import (
+    InvenioRDMCreateProjectCallbacks,
+    InvenioRDMDeleteAllFilesCallbacks,
+    InvenioRDMDeleteFileCallbacks,
+    InvenioRDMDeleteProjectCallbacks,
+    InvenioRDMGetFileListCallbacks,
+    InvenioRDMGetProjectCallbacks,
+    InvenioRDMUpdateProjectCallbacks,
+    InvenioRDMUploadFileCallbacks,
 )
-from .zenodo_request_data import (
-    ZenodoFileListObject,
-    ZenodoFileObject,
-    ZenodoProjectObject,
-    ZenodoRequestData,
+from .inveniordm_request_data import (
+    InvenioRDMFileListObject,
+    InvenioRDMFileObject,
+    InvenioRDMProjectObject,
+    InvenioRDMRequestData,
 )
-from ..metadata import ZenodoMetadataCreator
+from ..metadata import InvenioRDMMetadataCreator
 from ...base.integration.execution import RequestsExecutor
 from ...base.integration.execution.requests_executor import RequestsExecutorOptions
 
 
-class ZenodoClient(RequestsExecutor):
+class InvenioRDMClient(RequestsExecutor):
     """
-    Client to use the Zenodo API.
+    Client to use the InvenioRDM API.
     """
 
     def __init__(
@@ -81,7 +81,7 @@ class ZenodoClient(RequestsExecutor):
         self,
         project_id: str,
         *,
-        callbacks: ZenodoGetProjectCallbacks = ZenodoGetProjectCallbacks(),
+        callbacks: InvenioRDMGetProjectCallbacks = InvenioRDMGetProjectCallbacks(),
     ) -> None:
         """
         Gets information about an existing project.
@@ -91,12 +91,14 @@ class ZenodoClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> ZenodoProjectObject:
+        def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.get(
                 session,
                 ["deposit", "depositions", project_id],
             )
-            return ZenodoRequestData.data_from_response(ZenodoProjectObject, resp)
+            return InvenioRDMRequestData.data_from_response(
+                InvenioRDMProjectObject, resp
+            )
 
         self._execute(
             cb_exec=_execute,
@@ -108,23 +110,25 @@ class ZenodoClient(RequestsExecutor):
         self,
         project: Project,
         *,
-        callbacks: ZenodoCreateProjectCallbacks = ZenodoCreateProjectCallbacks(),
+        callbacks: InvenioRDMCreateProjectCallbacks = InvenioRDMCreateProjectCallbacks(),
     ) -> None:
         """
-        Creates a new Zenodo project.
+        Creates a new InvenioRDM project.
 
         Args:
             project: The originating project.
             callbacks: Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> ZenodoProjectObject:
+        def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.post(
                 session,
                 ["deposit", "depositions"],
                 json=self._get_project_metadata(project),
             )
-            return ZenodoRequestData.data_from_response(ZenodoProjectObject, resp)
+            return InvenioRDMRequestData.data_from_response(
+                InvenioRDMProjectObject, resp
+            )
 
         self._execute(
             cb_exec=_execute,
@@ -137,10 +141,10 @@ class ZenodoClient(RequestsExecutor):
         project_id: str,
         project: Project,
         *,
-        callbacks: ZenodoUpdateProjectCallbacks = ZenodoUpdateProjectCallbacks(),
+        callbacks: InvenioRDMUpdateProjectCallbacks = InvenioRDMUpdateProjectCallbacks(),
     ) -> None:
         """
-        Updates an existing Zenodo project.
+        Updates an existing InvenioRDM project.
 
         Args:
             project_id: The remote project ID.
@@ -148,13 +152,15 @@ class ZenodoClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> ZenodoProjectObject:
+        def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.put(
                 session,
                 ["deposit", "depositions", project_id],
                 json=self._get_project_metadata(project),
             )
-            return ZenodoRequestData.data_from_response(ZenodoProjectObject, resp)
+            return InvenioRDMRequestData.data_from_response(
+                InvenioRDMProjectObject, resp
+            )
 
         self._execute(
             cb_exec=_execute,
@@ -164,22 +170,22 @@ class ZenodoClient(RequestsExecutor):
 
     def delete_project(
         self,
-        zenodo_project: ZenodoProjectObject,
+        InvenioRDM_project: InvenioRDMProjectObject,
         *,
-        callbacks: ZenodoDeleteProjectCallbacks = ZenodoDeleteProjectCallbacks(),
+        callbacks: InvenioRDMDeleteProjectCallbacks = InvenioRDMDeleteProjectCallbacks(),
     ):
         """
-        Deletes an existing Zenodo project.
+        Deletes an existing InvenioRDM project.
 
         Args:
-            zenodo_project: The Zenodo project.
+            InvenioRDM_project: The InvenioRDM project.
             callbacks: Optional request callbacks.
         """
 
         def _execute(session: requests.Session) -> None:
             self.delete(
                 session,
-                ["deposit", "depositions", zenodo_project.project_id],
+                ["deposit", "depositions", InvenioRDM_project.project_id],
             )
 
         self._execute(
@@ -190,24 +196,26 @@ class ZenodoClient(RequestsExecutor):
 
     def get_file_list(
         self,
-        zenodo_project: ZenodoProjectObject,
+        InvenioRDM_project: InvenioRDMProjectObject,
         *,
-        callbacks: ZenodoGetFileListCallbacks = ZenodoGetFileListCallbacks(),
+        callbacks: InvenioRDMGetFileListCallbacks = InvenioRDMGetFileListCallbacks(),
     ) -> None:
         """
-        Retrieves the complete file list of a Zenodo project.
+        Retrieves the complete file list of a InvenioRDM project.
 
         Args:
-            zenodo_project: The Zenodo project.
+            InvenioRDM_project: The InvenioRDM project.
             callbacks:  Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> ZenodoFileListObject:
+        def _execute(session: requests.Session) -> InvenioRDMFileListObject:
             resp = self.get(
                 session,
-                ["deposit", "depositions", zenodo_project.project_id, "files"],
+                ["deposit", "depositions", InvenioRDM_project.project_id, "files"],
             )
-            return ZenodoRequestData.data_from_response(ZenodoFileListObject, resp)
+            return InvenioRDMRequestData.data_from_response(
+                InvenioRDMFileListObject, resp
+            )
 
         self._execute(
             cb_exec=_execute,
@@ -217,23 +225,23 @@ class ZenodoClient(RequestsExecutor):
 
     def upload_file(
         self,
-        zenodo_project: ZenodoProjectObject,
+        InvenioRDM_project: InvenioRDMProjectObject,
         *,
         path: str,
         file_data: ResourceBuffer,
-        callbacks: ZenodoUploadFileCallbacks = ZenodoUploadFileCallbacks(),
+        callbacks: InvenioRDMUploadFileCallbacks = InvenioRDMUploadFileCallbacks(),
     ) -> None:
         """
-        Uploads a file to a Zenodo project.
+        Uploads a file to a InvenioRDM project.
 
         Args:
-            zenodo_project: The Zenodo project.
+            InvenioRDM_project: The InvenioRDM project.
             path: The remote path of the file.
             file_data: The file data.
             callbacks: Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> ZenodoFileObject:
+        def _execute(session: requests.Session) -> InvenioRDMFileObject:
             file_path = pathlib.PurePosixPath(path)
 
             # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
@@ -242,12 +250,12 @@ class ZenodoClient(RequestsExecutor):
 
             resp = self.put(
                 session,
-                f"{zenodo_project.bucket_link}/{file_path.name}",
+                f"{InvenioRDM_project.bucket_link}/{file_path.name}",
                 data=BytesIO(file_data.readall()),
             )
-            return ZenodoRequestData.data_from_response(ZenodoFileObject, resp)
+            return InvenioRDMRequestData.data_from_response(InvenioRDMFileObject, resp)
 
-        def _upload_done(data: ZenodoFileObject) -> None:
+        def _upload_done(data: InvenioRDMFileObject) -> None:
             callbacks.invoke_done_callbacks(data)
             file_data.close()  # Free up the buffer to save memory
 
@@ -263,17 +271,17 @@ class ZenodoClient(RequestsExecutor):
 
     def delete_file(
         self,
-        zenodo_project: ZenodoProjectObject,
-        zenodo_file: ZenodoFileObject,
+        InvenioRDM_project: InvenioRDMProjectObject,
+        InvenioRDM_file: InvenioRDMFileObject,
         *,
-        callbacks: ZenodoDeleteFileCallbacks = ZenodoDeleteFileCallbacks(),
+        callbacks: InvenioRDMDeleteFileCallbacks = InvenioRDMDeleteFileCallbacks(),
     ):
         """
-        Deletes an existing Zenodo file.
+        Deletes an existing InvenioRDM file.
 
         Args:
-            zenodo_project: The Zenodo project.
-            zenodo_file: The Zenodo file.
+            InvenioRDM_project: The InvenioRDM project.
+            InvenioRDM_file: The InvenioRDM file.
             callbacks: Optional request callbacks.
         """
 
@@ -283,9 +291,9 @@ class ZenodoClient(RequestsExecutor):
                 [
                     "deposit",
                     "depositions",
-                    zenodo_project.project_id,
+                    InvenioRDM_project.project_id,
                     "files",
-                    zenodo_file.file_id,
+                    InvenioRDM_file.file_id,
                 ],
             )
 
@@ -297,19 +305,19 @@ class ZenodoClient(RequestsExecutor):
 
     def delete_all_files(
         self,
-        zenodo_project: ZenodoProjectObject,
+        InvenioRDM_project: InvenioRDMProjectObject,
         *,
-        callbacks: ZenodoDeleteAllFilesCallbacks = ZenodoDeleteAllFilesCallbacks(),
+        callbacks: InvenioRDMDeleteAllFilesCallbacks = InvenioRDMDeleteAllFilesCallbacks(),
     ):
         """
-        Deletes all files of a Zenodo project.
+        Deletes all files of a InvenioRDM project.
 
         Args:
-            zenodo_project: The Zenodo project.
+            InvenioRDM_project: The InvenioRDM project.
             callbacks: Optional request callbacks.
         """
 
-        def _get_file_list_done(files: ZenodoFileListObject):
+        def _get_file_list_done(files: InvenioRDMFileListObject):
             files_to_delete = len(files.files)
             if files_to_delete > 0:
 
@@ -321,14 +329,14 @@ class ZenodoClient(RequestsExecutor):
                         callbacks.invoke_done_callbacks()
 
                 for file in files.files:
-                    delete_file_callbacks = ZenodoDeleteFileCallbacks()
+                    delete_file_callbacks = InvenioRDMDeleteFileCallbacks()
                     delete_file_callbacks.done(_file_deleted)
                     delete_file_callbacks.failed(
                         lambda _: _file_deleted()
                     )  # We ignore errors here
 
                     self.delete_file(
-                        zenodo_project, file, callbacks=delete_file_callbacks
+                        InvenioRDM_project, file, callbacks=delete_file_callbacks
                     )
             else:
                 callbacks.invoke_done_callbacks()
@@ -336,14 +344,14 @@ class ZenodoClient(RequestsExecutor):
         def _get_file_list_failed(exc: Exception):
             callbacks.invoke_fail_callbacks(exc)
 
-        file_list_callbacks = ZenodoGetFileListCallbacks()
+        file_list_callbacks = InvenioRDMGetFileListCallbacks()
         file_list_callbacks.done(_get_file_list_done)
         file_list_callbacks.failed(_get_file_list_failed)
 
-        self.get_file_list(zenodo_project, callbacks=file_list_callbacks)
+        self.get_file_list(InvenioRDM_project, callbacks=file_list_callbacks)
 
     def _get_project_metadata(self, project: Project) -> typing.Any:
-        creator = ZenodoMetadataCreator()
+        creator = InvenioRDMMetadataCreator()
         metadata = creator.create(
             project.features.project_metadata.metadata,
             project.features.shared_objects,
