@@ -9,6 +9,7 @@
 ### Fixes
 
 - Optional metadata profiles were always checked for required fields, even if not selected
+- Update Python WebDAV library due to issues with file downloads
 
 ## v1.2.0 - 2025-10-17
 

@@ -4,12 +4,12 @@ import urllib.parse
 from dataclasses import dataclass
 from http import HTTPStatus
 
-import webdav3.client
 from dataclasses_json import dataclass_json
 
 from .webdav_utils import parse_webdav_resource
 from .. import ResourcesBroker, ResourcesBrokerTunnel
 from ....authorization.strategies import AuthorizationStrategy
+from ....._3rdparty.webdav3 import client as webdavclient
 from .....component import BackendComponent
 from .....core import logging
 from .....data.entities.authorization import AuthorizationToken
@@ -114,7 +114,7 @@ class WebdavBroker(ResourcesBroker):
     ) -> typing.Any:
         try:
             return cb()
-        except webdav3.client.ResponseErrorCode as exc:
+        except webdavclient.ResponseErrorCode as exc:
             # If the request throws a 401 (unauthorized), first try to refresh the auth token and re-do the call
             # If the second try fails, the auth token is marked as invalid
             if exc.code == HTTPStatus.UNAUTHORIZED:
@@ -206,7 +206,7 @@ class WebdavBroker(ResourcesBroker):
         with tunnel:
             self._client.download_from(tunnel, resource.filename)
 
-    def _create_webdav_client(self, comp: BackendComponent) -> webdav3.client.Client:
+    def _create_webdav_client(self, comp: BackendComponent) -> webdavclient.Client:
         if self._config.host == "" or self._config.endpoint == "":
             raise RuntimeError(
                 "No WebDAV host or endpoint provided for client creation"
@@ -245,7 +245,7 @@ class WebdavBroker(ResourcesBroker):
             )
             _add_option(AuthorizationStrategy.ContentType.AUTH_TOKEN, "webdav_token")
 
-        return webdav3.client.Client(options)
+        return webdavclient.Client(options)
 
 
 def create_webdav_broker(
