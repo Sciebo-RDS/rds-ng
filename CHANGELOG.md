@@ -1,5 +1,11 @@
 # RDS-NG - Changelog
 
+## v1.3.0 - xxxx-xx-xx
+
+### Improvements
+
+. Made connection and transfer attempts use exponential delays to make them more error tolerant
+
 ## v1.2.0 - 2025-10-17
 
 ### New
