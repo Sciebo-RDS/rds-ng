@@ -1,7 +1,8 @@
-import json
-
 from common.py.data.entities.connector import Connector
-from common.py.data.entities.metadata import filter_containers, MetadataProfileContainer
+from common.py.data.entities.metadata import (
+    filter_containers_ex,
+    MetadataProfileContainer,
+)
 from common.py.data.entities.project import Project, ProjectJob
 from common.py.data.entities.project.features import ProjectMetadataFeature
 from common.py.data.metadata import MetadataParser
@@ -41,14 +42,14 @@ class ProjectJobVerifier(Verifier):
         from ....component import ServerComponent
 
         # Verify all global metadata profiles
-        profiles = filter_containers(
+        profiles = filter_containers_ex(
             ServerComponent.instance().server_data.profile_containers,
             category=ProjectMetadataFeature.feature_id,
             roles=[
                 MetadataProfileContainer.Role.DEFAULT,
-                # TODO: Really make optional
                 MetadataProfileContainer.Role.OPTIONAL,
             ],
+            enabled_profiles=self._project.features.project_metadata.enabled_metadata_profiles,
         )
 
         for profile in profiles:

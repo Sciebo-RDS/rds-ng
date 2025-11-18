@@ -4,7 +4,11 @@
 
 ### Improvements
 
-. Made connection and transfer attempts use exponential delays to make them more error tolerant
+- Made connection and transfer attempts use exponential delays to make them more error tolerant
+
+### Fixes
+
+- Optional metadata profiles were always checked for required fields, even if not selected
 
 ## v1.2.0 - 2025-10-17
 
