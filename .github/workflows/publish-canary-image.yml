@@ -13,8 +13,8 @@ jobs:
         steps:
             -   name: Checkout repository
                 uses: actions/checkout@v4
-            # -   name: Build containers
-            #    run: cd deployment/containers && make build
+            -   name: Build containers
+                run: cd deployment/containers # && make build
             -   name: Log in to registry
                 run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             -   name: Push images
