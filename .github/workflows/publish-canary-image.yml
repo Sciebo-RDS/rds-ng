@@ -30,7 +30,7 @@ jobs:
                     
                     for comp in "${components[@]}"; do
                         IMAGE_ID=ghcr.io/sciebo-rds/rds-ng-$comp
-                        VERSION=${github.head_ref:-${github.head_ref#refs/heads/}}
+                        VERSION=${github.head_ref#"refs/heads/"}
                         VERSION=${VERSION:0:3}
                         VERSION=canary-${VERSION}
                     
