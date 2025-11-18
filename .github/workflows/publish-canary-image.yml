@@ -14,7 +14,7 @@ jobs:
             -   name: Checkout repository
                 uses: actions/checkout@v4
             -   name: Build containers
-                run: cd deployment/containers # && make build
+                run: cd deployment/containers && make build
             -   name: Log in to registry
                 run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             -   name: Push images
@@ -37,6 +37,6 @@ jobs:
                     
                         echo IMAGE_ID=$IMAGE_ID
                         echo VERSION=$VERSION
-                        # docker tag docker.io/rds-ng/$comp:latest $IMAGE_ID:$VERSION
-                        # docker push $IMAGE_ID:$VERSION
+                        docker tag docker.io/rds-ng/$comp:latest $IMAGE_ID:$VERSION
+                        docker push $IMAGE_ID:$VERSION
                     done
