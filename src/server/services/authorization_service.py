@@ -248,9 +248,9 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 return
 
             def _attempt_refresh(token: AuthorizationToken) -> bool:
-                return (
-                    token.refresh_attempts == 0
-                    or token.timestamp + refresh_attempts_delay <= time.time()
+                return (token.refresh_attempts == 0) or (
+                    time.time() - token.timestamp
+                    > (refresh_attempts_delay * (1.5 ** (token.refresh_attempts - 1)))
                 )
 
             for auth_token in ctx.storage_pool.authorization_token_storage.list():
@@ -280,7 +280,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                         strategy.refresh_authorization(
                             auth_token,
                             host_id=user.host_id if user is not None else None,
-                        )
+                        )  # This also updates the attempts timestamp and counter
 
                         logging.debug(
                             "Refreshed authorization token",

@@ -1,5 +1,16 @@
 # RDS-NG - Changelog
 
+## v1.3.0 - xxxx-xx-xx
+
+### Improvements
+
+- Made connection and transfer attempts use exponential delays to make them more error tolerant
+
+### Fixes
+
+- Optional metadata profiles were always checked for required fields, even if not selected
+- Update Python WebDAV library due to issues with file downloads
+
 ## v1.2.0 - 2025-10-17
 
 ### New
