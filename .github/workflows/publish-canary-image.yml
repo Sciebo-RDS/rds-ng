@@ -4,6 +4,8 @@ on:
         branches-ignore:
             - develop
             - release
+        tags-ignore:
+            - v*
 jobs:
     build-and-push-image:
         runs-on: ubuntu-latest
