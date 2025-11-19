@@ -1,5 +1,5 @@
 [connector]
-target = "https://www.disney.de"
+target = "https://datasafe-staging.uni-muenster.de/api/"
 
 [network.client]
 server_address = "http://rds-server-1:6969"
