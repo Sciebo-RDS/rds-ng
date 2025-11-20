@@ -17,14 +17,7 @@ class InvenioRDMRequestData(RequestData):
             return ""
 
         err_msg = self.data.value("message", "Unknown error")
-        errors: typing.List[str] = []
-        for error in self.data.value("errors", []):
-            field = self.data.value_from_data(error, "field", "")
-            message = self.data.value_from_data(error, "message", "Unknown error")
-            errors.append(f"{field}: {message}" if field != "" else message)
-        else:
-            errors.append(self._response.reason)
-        return f"{err_msg} [{'; '.join(errors)}]"
+        return err_msg
 
 
 class InvenioRDMProjectObject(ExtendedDictionary):
@@ -40,32 +33,18 @@ class InvenioRDMProjectObject(ExtendedDictionary):
         return str(self.value("id"))
 
     @property
-    def state(self) -> str:
+    def is_published(self) -> bool:
         """
-        The state of the project; can be *inprogress*, *done* or *error*.
+        Whether the project has been published.
         """
-        return str(self.value("state"))
-
-    @property
-    def is_submitted(self) -> bool:
-        """
-        Whether the project has been submitted.
-        """
-        return bool(self.value("submitted"))
+        return bool(self.value("is_published"))
 
     @property
     def project_link(self) -> str:
         """
         The link to the project.
         """
-        return str(self.value("links.html"))
-
-    @property
-    def bucket_link(self) -> str:
-        """
-        The link to the project.
-        """
-        return str(self.value("links.bucket"))
+        return str(self.value("links.self_html"))
 
 
 class InvenioRDMFileObject(ExtendedDictionary):

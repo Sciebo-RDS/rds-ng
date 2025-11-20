@@ -14,13 +14,9 @@ def process_external_project_state(
         project: The InvenioRDM project.
         external_state: The external project state to update.
     """
-    state = ProjectExternalState.State.UNKNOWN
+    state = ProjectExternalState.State.UPLOADED
 
-    if (
-        project.state == "inprogress" or project.state == "unsubmitted"
-    ) and not project.is_submitted:
-        state = ProjectExternalState.State.UPLOADED
-    elif project.state == "done" or project.is_submitted:
+    if project.is_published:
         state = ProjectExternalState.State.LOCKED
 
     external_state.external_state = state

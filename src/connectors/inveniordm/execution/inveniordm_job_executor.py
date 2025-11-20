@@ -79,18 +79,6 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
             user_token=self._job.user_token,
         )
 
-        self._invenio_transmission_client = InvenioRDMClient(
-            comp,
-            svc,
-            connector_instance=job.connector_instance,
-            auth_channel=target_channel,
-            user_token=self._job.user_token,
-            max_attempts=comp.data.config.value(TransmissionSettingIDs.MAX_ATTEMPTS),
-            attempts_delay=comp.data.config.value(
-                TransmissionSettingIDs.ATTEMPTS_DELAY
-            ),
-        )
-
         self._invenio_upload_client = InvenioRDMClient(
             comp,
             svc,
@@ -181,7 +169,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     def _project_create_done(self, invenio_project: InvenioRDMProjectObject) -> None:
         self.report_message(
-            f"Project created (InvenioRDM ID: {invenio_project.project_id})"
+            f"Project created (project ID: {invenio_project.project_id})"
         )
 
         self._transmitter_prepare(invenio_project)

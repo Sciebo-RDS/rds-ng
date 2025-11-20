@@ -84,26 +84,39 @@ class InvenioRDMClient(RequestsExecutor):
         callbacks: InvenioRDMGetProjectCallbacks = InvenioRDMGetProjectCallbacks(),
     ) -> None:
         """
-        Gets information about an existing project.
+        Gets information about an existing project. This checks first if there is a published version, otherwise, it checks if there is a draft one.
 
         Args:
             project_id: The project ID.
             callbacks: Optional request callbacks.
         """
 
-        def _execute(session: requests.Session) -> InvenioRDMProjectObject:
+        def _execute(
+            session: requests.Session, *, get_draft: bool
+        ) -> InvenioRDMProjectObject:
             resp = self.get(
                 session,
-                ["deposit", "depositions", project_id],
+                (
+                    ["records", project_id, "draft"]
+                    if get_draft
+                    else ["records", project_id]
+                ),
             )
             return InvenioRDMRequestData.data_from_response(
                 InvenioRDMProjectObject, resp
             )
 
+        def _try_draft() -> None:
+            self._execute(
+                cb_exec=lambda session: _execute(session, get_draft=True),
+                cb_done=lambda data: callbacks.invoke_done_callbacks(data),
+                cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
+            )
+
         self._execute(
-            cb_exec=_execute,
+            cb_exec=lambda session: _execute(session, get_draft=False),
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
-            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
+            cb_failed=lambda _: _try_draft(),
         )
 
     def create_project(
@@ -123,7 +136,7 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.post(
                 session,
-                ["deposit", "depositions"],
+                ["records"],
                 json=self._get_project_metadata(project),
             )
             return InvenioRDMRequestData.data_from_response(
@@ -135,6 +148,8 @@ class InvenioRDMClient(RequestsExecutor):
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
             cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
+
+    # TODO: ---
 
     def update_project(
         self,
@@ -351,6 +366,7 @@ class InvenioRDMClient(RequestsExecutor):
         self.get_file_list(InvenioRDM_project, callbacks=file_list_callbacks)
 
     def _get_project_metadata(self, project: Project) -> typing.Any:
+        # TODO: Add real metadata
         creator = InvenioRDMMetadataCreator()
         metadata = creator.create(
             project.features.project_metadata.metadata,
@@ -359,34 +375,37 @@ class InvenioRDMClient(RequestsExecutor):
         # creator.validate(metadata)
 
         return {
+            "access": {"record": "public", "files": "public"},
+            "files": {"enabled": True},
             "metadata": {
-                "publication_type": "other",
-                "access_right": "closed",
-                "license": "cc-by",
-                "image_type": "other",
                 "title": (
                     metadata.title
                     if metadata.title is not None
                     else "Uploaded via Sciebo RDS"
                 ),
-                "upload_type": (
-                    metadata.upload_type
-                    if metadata.upload_type is not None
-                    else "other"
-                ),
-                "creators": (
-                    metadata.creators if metadata.creators is not None else []
-                ),
-                "description": (
-                    metadata.description
-                    if metadata.description is not None
-                    else "No description provided"
-                ),
-                "contributors": (
-                    metadata.contributors if metadata.contributors is not None else []
-                ),
-                "version": (metadata.version if metadata.version is not None else ""),
-                "grants": (metadata.grants if metadata.grants is not None else []),
-                "dates": metadata.dates if metadata.dates is not None else [],
-            }
+                # TODO: Add real metadata
+                "creators": [
+                    {
+                        "person_or_org": {
+                            "family_name": "Brown",
+                            "given_name": "Troy",
+                            "type": "personal",
+                        }
+                    },
+                    {
+                        "person_or_org": {
+                            "family_name": "Collins",
+                            "given_name": "Thomas",
+                            "identifiers": [
+                                {"scheme": "orcid", "identifier": "0000-0002-1825-0097"}
+                            ],
+                            "name": "Collins, Thomas",
+                            "type": "personal",
+                        },
+                        "affiliations": [{"id": "01ggx4157", "name": "Entity One"}],
+                    },
+                ],
+                "publication_date": "2020-06-01",
+                "resource_type": {"id": "image-photo"},
+            },
         }
