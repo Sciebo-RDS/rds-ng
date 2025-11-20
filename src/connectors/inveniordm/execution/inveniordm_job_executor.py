@@ -71,7 +71,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
             tunnel_type=MemoryBrokerTunnel,
         )
 
-        self._InvenioRDM_client = InvenioRDMClient(
+        self._invenio_client = InvenioRDMClient(
             comp,
             svc,
             connector_instance=job.connector_instance,
@@ -79,7 +79,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
             user_token=self._job.user_token,
         )
 
-        self._InvenioRDM_transmission_client = InvenioRDMClient(
+        self._invenio_transmission_client = InvenioRDMClient(
             comp,
             svc,
             connector_instance=job.connector_instance,
@@ -91,7 +91,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
             ),
         )
 
-        self._InvenioRDM_upload_client = InvenioRDMClient(
+        self._invenio_upload_client = InvenioRDMClient(
             comp,
             svc,
             connector_instance=job.connector_instance,
@@ -127,22 +127,22 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
             lambda exc: self._query_external_project_state_failed(exc, state_callbacks)
         )
 
-        self._InvenioRDM_client.get_project(
+        self._invenio_client.get_project(
             external_state.external_id, callbacks=callbacks
         )
 
     def _query_external_project_state_done(
         self,
-        inveniordm_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
         from .inveniordm_utils import process_external_project_state
 
         external_state = ProjectExternalState(
-            external_id=inveniordm_project.project_id,
+            external_id=invenio_project.project_id,
             external_state=ProjectExternalState.State.UNKNOWN,
         )
-        process_external_project_state(inveniordm_project, external_state)
+        process_external_project_state(invenio_project, external_state)
 
         state_callbacks.invoke_done_callbacks(external_state)
 
@@ -177,14 +177,14 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
         callbacks.done(lambda data: self._project_create_done(data))
         callbacks.failed(lambda exc: self._project_create_failed(exc))
 
-        self._InvenioRDM_client.create_project(self._job.project, callbacks=callbacks)
+        self._invenio_client.create_project(self._job.project, callbacks=callbacks)
 
-    def _project_create_done(self, inveniordm_project: InvenioRDMProjectObject) -> None:
+    def _project_create_done(self, invenio_project: InvenioRDMProjectObject) -> None:
         self.report_message(
-            f"Project created (InvenioRDM ID: {inveniordm_project.project_id})"
+            f"Project created (InvenioRDM ID: {invenio_project.project_id})"
         )
 
-        self._transmitter_prepare(inveniordm_project)
+        self._transmitter_prepare(invenio_project)
 
     def _project_create_failed(self, exc: Exception) -> None:
         self.set_failed(f"Unable to create project: {str(exc)}")
@@ -198,60 +198,54 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
         callbacks.done(lambda data: self._project_update_done(data))
         callbacks.failed(lambda exc: self._project_update_failed(exc))
 
-        self._InvenioRDM_client.update_project(
+        self._invenio_client.update_project(
             external_state.external_id, self._job.project, callbacks=callbacks
         )
 
-    def _project_update_done(self, inveniordm_project: InvenioRDMProjectObject) -> None:
+    def _project_update_done(self, invenio_project: InvenioRDMProjectObject) -> None:
         self.report_message(
-            f"Project updated (InvenioRDM ID: {inveniordm_project.project_id})"
+            f"Project updated (InvenioRDM ID: {invenio_project.project_id})"
         )
 
-        self._project_update_cleanup(inveniordm_project)
+        self._project_update_cleanup(invenio_project)
 
     def _project_update_failed(self, exc: Exception) -> None:
         self.set_failed(f"Unable to update project: {str(exc)}")
 
-    def _project_update_cleanup(
-        self, inveniordm_project: InvenioRDMProjectObject
-    ) -> None:
+    def _project_update_cleanup(self, invenio_project: InvenioRDMProjectObject) -> None:
         self.report_message("Clearing previous project files...")
 
         callbacks = InvenioRDMDeleteAllFilesCallbacks()
-        callbacks.done(lambda: self._project_update_cleanup_done(inveniordm_project))
+        callbacks.done(lambda: self._project_update_cleanup_done(invenio_project))
         callbacks.failed(lambda exc: self._project_update_failed(exc))
 
-        self._InvenioRDM_client.delete_all_files(
-            inveniordm_project, callbacks=callbacks
-        )
+        self._invenio_client.delete_all_files(invenio_project, callbacks=callbacks)
 
     def _project_update_cleanup_done(
-        self, inveniordm_project: InvenioRDMProjectObject
+        self, invenio_project: InvenioRDMProjectObject
     ) -> None:
         self.report_message("Project cleaned up")
 
-        self._transmitter_prepare(inveniordm_project)
+        self._transmitter_prepare(invenio_project)
 
     def _project_update_cleanup_failed(self, exc: Exception) -> None:
         self.set_failed(f"Unable to cleanup project: {str(exc)}")
 
     # -- Transmitter preparation
 
-    def _transmitter_prepare(self, inveniordm_project: InvenioRDMProjectObject) -> None:
+    def _transmitter_prepare(self, invenio_project: InvenioRDMProjectObject) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()
         callbacks.done(
-            lambda res: self._transmitter_prepare_done(
-                inveniordm_project, resources=res
-            )
+            lambda res: self._transmitter_prepare_done(invenio_project, resources=res)
         )
         callbacks.failed(lambda exc: self._transmitter_prepare_failed(exc))
-        callbacks.failed(lambda _: self._delete_failed_project(inveniordm_project))
+        callbacks.failed(lambda _: self._delete_failed_project(invenio_project))
 
         self._transmitter.prepare(self._job.project, callbacks=callbacks)
 
     def _transmitter_prepare_done(
         self,
-        inveniordm_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         resources: ResourcesList,
     ) -> None:
@@ -262,11 +256,11 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
                 f"{len(files_list)} resources to transfer ({human_readable_file_size(resources.resource.size)})",
             )
 
-            self._download_files(inveniordm_project, files=files_list)
+            self._download_files(invenio_project, files=files_list)
         else:
             self.set_done(
-                inveniordm_project.project_id,
-                ext_data=self._get_job_ext_data(inveniordm_project),
+                invenio_project.project_id,
+                ext_data=self._get_job_ext_data(invenio_project),
             )
 
     def _transmitter_prepare_failed(self, exc: Exception) -> None:
@@ -276,7 +270,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     def _download_files(
         self,
-        inveniordm_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         files: typing.List[Resource],
     ) -> None:
@@ -287,14 +281,14 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
         callbacks.progress(_report_file)
         callbacks.done(
             lambda res, buffer: self._download_file_done(
-                inveniordm_project, resource=res, buffer=buffer
+                invenio_project, resource=res, buffer=buffer
             )
         )
         callbacks.failed(lambda res, exc: self._download_file_failed(res, exc))
-        callbacks.failed(lambda _, __: self._delete_failed_project(inveniordm_project))
+        callbacks.failed(lambda _, __: self._delete_failed_project(invenio_project))
         callbacks.all_done(
             lambda success: (
-                self._upload_additional_files(inveniordm_project) if success else None
+                self._upload_additional_files(invenio_project) if success else None
             )
         )
 
@@ -302,7 +296,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     def _download_file_done(
         self,
-        inveniordm_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         resource: Resource,
         buffer: ResourceBuffer,
@@ -312,10 +306,10 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
         callbacks = InvenioRDMUploadFileCallbacks()
         callbacks.done(lambda data: self._upload_file_done(resource, data))
         callbacks.failed(lambda exc: self._upload_file_failed(resource, exc))
-        callbacks.failed(lambda _: self._delete_failed_project(inveniordm_project))
+        callbacks.failed(lambda _: self._delete_failed_project(invenio_project))
 
-        self._InvenioRDM_upload_client.upload_file(
-            inveniordm_project,
+        self._invenio_upload_client.upload_file(
+            invenio_project,
             path=relativize_path(resource.filename, self._job.project.resources_path),
             file_data=buffer,
             callbacks=callbacks,
@@ -331,7 +325,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
         self.set_failed(f"Failed to upload {res.filename}: {str(exc)}")
 
     def _upload_additional_files(
-        self, inveniordm_project: InvenioRDMProjectObject
+        self, invenio_project: InvenioRDMProjectObject
     ) -> None:
         self.report_message(f"Uploading additional files...")
 
@@ -342,16 +336,16 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
             callbacks.done(lambda data: self._upload_additional_file_done(path, data))
             callbacks.failed(lambda exc: self._upload_additional_file_failed(path, exc))
 
-            self._InvenioRDM_upload_client.upload_file(
-                inveniordm_project,
+            self._invenio_upload_client.upload_file(
+                invenio_project,
                 path=path,
                 file_data=memory_broker_tunnel_from_data(path, file_data),
                 callbacks=callbacks,
             )
         else:
             self.set_done(
-                inveniordm_project.project_id,
-                ext_data=self._get_job_ext_data(inveniordm_project),
+                invenio_project.project_id,
+                ext_data=self._get_job_ext_data(invenio_project),
             )
 
     def _upload_additional_file_done(self, path: str, _: InvenioRDMFileObject) -> None:
@@ -362,16 +356,14 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     # Miscellaneous
 
-    def _delete_failed_project(
-        self, inveniordm_project: InvenioRDMProjectObject
-    ) -> None:
+    def _delete_failed_project(self, invenio_project: InvenioRDMProjectObject) -> None:
         if not self._reuse_external_project:
-            self._InvenioRDM_client.delete_project(inveniordm_project)
+            self._invenio_client.delete_project(invenio_project)
 
     def _get_job_ext_data(
-        self, inveniordm_project: InvenioRDMProjectObject
+        self, invenio_project: InvenioRDMProjectObject
     ) -> ProjectJobHistoryRecordExtData:
         return {
-            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: inveniordm_project.project_id,
-            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_LINK: inveniordm_project.project_link,
+            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: invenio_project.project_id,
+            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_LINK: invenio_project.project_link,
         }

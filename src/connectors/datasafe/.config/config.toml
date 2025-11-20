@@ -5,11 +5,8 @@ target = "https://datasafe-staging.uni-muenster.de/api/"
 server_address = "http://rds-server-1:6969"
 
 [authorization]
-strategy = "basic"
+strategy = "bearer"
 
-[authorization.basic]
-user_id_label = "Username"
-user_id_optional = true
-user_password_label = "API Token"
-user_password_optional = false
+[authorization.bearer]
+bearer_label = "API Token"
 help_link = "https://datasafe-staging.uni-muenster.de/faq"

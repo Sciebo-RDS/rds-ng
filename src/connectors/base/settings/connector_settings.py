@@ -16,6 +16,7 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         AuthorizationSettingIDs,
         OAuth2AuthorizationSettingIDs,
         BasicAuthorizationSettingIDs,
+        BearerAuthorizationSettingIDs,
     )
     from .connector_setting_ids import ConnectorSettingIDs
     from .transmission_setting_ids import TransmissionSettingIDs
@@ -39,6 +40,9 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         BasicAuthorizationSettingIDs.USER_PASSWORD_LABEL: "Password",
         BasicAuthorizationSettingIDs.USER_PASSWORD_OPTIONAL: False,
         BasicAuthorizationSettingIDs.HELP_LINK: "",
+        # Bearer auth settings
+        BearerAuthorizationSettingIDs.BEARER_LABEL: "Bearer token",
+        BearerAuthorizationSettingIDs.HELP_LINK: "",
         # Transmission settings
         TransmissionSettingIDs.MAX_ATTEMPTS: 3,
         TransmissionSettingIDs.ATTEMPTS_DELAY: 3.0,

@@ -2,6 +2,10 @@
 
 ## v1.3.0 - xxxx-xx-xx
 
+### New
+
+- New authorization strategy `bearer`
+
 ### Improvements
 
 - Made connection and transfer attempts use exponential delays to make them more error tolerant

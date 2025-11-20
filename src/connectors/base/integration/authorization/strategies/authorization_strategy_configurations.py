@@ -2,14 +2,15 @@ import typing
 
 from common.py.core import logging
 from common.py.integration.authorization.strategies.basic import BasicStrategy
+from common.py.integration.authorization.strategies.bearer import BearerStrategy
 from common.py.integration.authorization.strategies.oauth2 import OAuth2Strategy
 from common.py.utils.config import Configuration
-
 from .authorization_strategy_configuration import AuthorizationStrategyConfiguration
 from .authorization_strategy_configurations_catalog import (
     AuthorizationStrategyConfigurationsCatalog,
 )
 from .basic import get_basic_strategy_configuration
+from .bearer import get_bearer_strategy_configuration
 from .oauth2 import get_oauth2_strategy_configuration
 
 
@@ -26,6 +27,9 @@ def register_authorization_strategy_configurations() -> None:
     )
     AuthorizationStrategyConfigurationsCatalog.register_item(
         BasicStrategy.Strategy, get_basic_strategy_configuration
+    )
+    AuthorizationStrategyConfigurationsCatalog.register_item(
+        BearerStrategy.Strategy, get_bearer_strategy_configuration
     )
 
     # Print all available strategies for debugging purposes

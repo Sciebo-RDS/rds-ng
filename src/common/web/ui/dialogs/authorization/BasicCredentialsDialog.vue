@@ -65,7 +65,7 @@ function getValidatorShape(): any {
                 :class="{ 'mt-5': !dialogData.userData.config.user_id_optional }"
             >
                 <IftaLabel>
-                    <Password name="password" v-model="dialogData.userData.userPassword" :feedback="false" toggle-mask fluid autofocus />
+                    <Password name="password" v-model.trim="dialogData.userData.userPassword" :feedback="false" toggle-mask fluid autofocus />
                     <label>{{ dialogData.userData.config.user_password_label }} <MandatoryMark /></label>
                 </IftaLabel>
                 <small>The {{ dialogData.userData.config.user_password_label.toLowerCase() }} for the external service.</small>

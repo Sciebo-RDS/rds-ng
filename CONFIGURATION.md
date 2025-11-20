@@ -128,7 +128,7 @@ The server needs to store its data; this can either be in-memory (super volatile
 
 | Setting                                                         | Description                                                                                                                                                | Type    | Default value |
 |-----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|---------------|
-| <code>authorization.strategy</code>                             | The authorization strategy (type) the external service uses; currently, only **oauth2** is supported.                                                      | String  |               |
+| <code>authorization.strategy</code>                             | The authorization strategy (type) the external service uses; currently,  **oauth2**, **basic** and **bearer** are supported.                               | String  |               |
 | <code>authorization.oauth2.server.host</code>                   | The OAUTH2 host server, as provided by the external service.                                                                                               | String  |               |
 | <code>authorization.oauth2.server.authorization_endpoint</code> | The (relative) authorization endpoint; this is usually documented by the external service provider.                                                        | String  |               |
 | <code>authorization.oauth2.server.token_endpoint</code>         | The (relative) token endpoint; this is usually documented by the external service provider.                                                                | String  |               |
@@ -141,6 +141,8 @@ The server needs to store its data; this can either be in-memory (super volatile
 | <code>authorization.basic.user_password_label</code>            | The display label of the user password.                                                                                                                    | String  | Password      |
 | <code>authorization.basic.user_password_optional</code>         | Whether the user password is optional.                                                                                                                     | Boolean | false         |
 | <code>authorization.basic.help_link</code>                      | An external help link shown in the credentials dialog.                                                                                                     | String  |               |
+| <code>authorization.bearer.bearer_label</code>                  | The display label of the bearer token.                                                                                                                     | String  | Bearer token  |
+| <code>authorization.bearer.help_link</code>                     | An external help link shown in the bearer token dialog.                                                                                                    | String  |               |
 
 #### Connectors | Transmissions
 
