@@ -7,6 +7,9 @@ server_address = "http://rds-server-1:6969"
 [authorization]
 strategy = "basic"
 
-[transmission]
-max_attempts = 5
-attempts_delay = 15.0
+[authorization.basic]
+user_id_label = "Username"
+user_id_optional = true
+user_password_label = "API Token"
+user_password_optional = false
+help_link = "https://datasafe-staging.uni-muenster.de/faq"
