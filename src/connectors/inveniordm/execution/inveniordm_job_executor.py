@@ -99,6 +99,8 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     # -- External state
 
+    # TODO: Test
+
     def query_external_project_state(
         self,
         external_state: ProjectExternalState,
@@ -179,6 +181,8 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     # -- Project update
 
+    # TODO: After upload is done
+
     def _project_update(self, external_state: ProjectExternalState) -> None:
         self.report_message("Updating project...")
 
@@ -220,6 +224,8 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
         self.set_failed(f"Unable to cleanup project: {str(exc)}")
 
     # -- Transmitter preparation
+
+    # TODO: Next
 
     def _transmitter_prepare(self, invenio_project: InvenioRDMProjectObject) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()

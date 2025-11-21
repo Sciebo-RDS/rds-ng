@@ -185,7 +185,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def delete_project(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         callbacks: InvenioRDMDeleteProjectCallbacks = InvenioRDMDeleteProjectCallbacks(),
     ):
@@ -193,14 +193,14 @@ class InvenioRDMClient(RequestsExecutor):
         Deletes an existing InvenioRDM project.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             callbacks: Optional request callbacks.
         """
 
         def _execute(session: requests.Session) -> None:
             self.delete(
                 session,
-                ["deposit", "depositions", InvenioRDM_project.project_id],
+                ["deposit", "depositions", invenio_project.project_id],
             )
 
         self._execute(
@@ -211,7 +211,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def get_file_list(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         callbacks: InvenioRDMGetFileListCallbacks = InvenioRDMGetFileListCallbacks(),
     ) -> None:
@@ -219,14 +219,14 @@ class InvenioRDMClient(RequestsExecutor):
         Retrieves the complete file list of a InvenioRDM project.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             callbacks:  Optional request callbacks.
         """
 
         def _execute(session: requests.Session) -> InvenioRDMFileListObject:
             resp = self.get(
                 session,
-                ["deposit", "depositions", InvenioRDM_project.project_id, "files"],
+                ["deposit", "depositions", invenio_project.project_id, "files"],
             )
             return InvenioRDMRequestData.data_from_response(
                 InvenioRDMFileListObject, resp
@@ -240,7 +240,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def upload_file(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         path: str,
         file_data: ResourceBuffer,
@@ -250,7 +250,7 @@ class InvenioRDMClient(RequestsExecutor):
         Uploads a file to a InvenioRDM project.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             path: The remote path of the file.
             file_data: The file data.
             callbacks: Optional request callbacks.
@@ -265,7 +265,7 @@ class InvenioRDMClient(RequestsExecutor):
 
             resp = self.put(
                 session,
-                f"{InvenioRDM_project.bucket_link}/{file_path.name}",
+                f"{invenio_project.bucket_link}/{file_path.name}",
                 data=BytesIO(file_data.readall()),
             )
             return InvenioRDMRequestData.data_from_response(InvenioRDMFileObject, resp)
@@ -286,7 +286,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def delete_file(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         InvenioRDM_file: InvenioRDMFileObject,
         *,
         callbacks: InvenioRDMDeleteFileCallbacks = InvenioRDMDeleteFileCallbacks(),
@@ -295,7 +295,7 @@ class InvenioRDMClient(RequestsExecutor):
         Deletes an existing InvenioRDM file.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             InvenioRDM_file: The InvenioRDM file.
             callbacks: Optional request callbacks.
         """
@@ -306,7 +306,7 @@ class InvenioRDMClient(RequestsExecutor):
                 [
                     "deposit",
                     "depositions",
-                    InvenioRDM_project.project_id,
+                    invenio_project.project_id,
                     "files",
                     InvenioRDM_file.file_id,
                 ],
@@ -320,7 +320,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def delete_all_files(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         callbacks: InvenioRDMDeleteAllFilesCallbacks = InvenioRDMDeleteAllFilesCallbacks(),
     ):
@@ -328,7 +328,7 @@ class InvenioRDMClient(RequestsExecutor):
         Deletes all files of a InvenioRDM project.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             callbacks: Optional request callbacks.
         """
 
@@ -351,7 +351,7 @@ class InvenioRDMClient(RequestsExecutor):
                     )  # We ignore errors here
 
                     self.delete_file(
-                        InvenioRDM_project, file, callbacks=delete_file_callbacks
+                        invenio_project, file, callbacks=delete_file_callbacks
                     )
             else:
                 callbacks.invoke_done_callbacks()
@@ -363,7 +363,7 @@ class InvenioRDMClient(RequestsExecutor):
         file_list_callbacks.done(_get_file_list_done)
         file_list_callbacks.failed(_get_file_list_failed)
 
-        self.get_file_list(InvenioRDM_project, callbacks=file_list_callbacks)
+        self.get_file_list(invenio_project, callbacks=file_list_callbacks)
 
     def _get_project_metadata(self, project: Project) -> typing.Any:
         # TODO: Add real metadata
@@ -401,8 +401,7 @@ class InvenioRDMClient(RequestsExecutor):
                             ],
                             "name": "Collins, Thomas",
                             "type": "personal",
-                        },
-                        "affiliations": [{"id": "01ggx4157", "name": "Entity One"}],
+                        }
                     },
                 ],
                 "publication_date": "2020-06-01",
