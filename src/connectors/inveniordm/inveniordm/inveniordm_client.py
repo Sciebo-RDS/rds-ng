@@ -1,6 +1,6 @@
-import json
 import pathlib
 import typing
+from http import HTTPStatus
 from io import BytesIO
 
 import requests
@@ -92,32 +92,25 @@ class InvenioRDMClient(RequestsExecutor):
             callbacks: Optional request callbacks.
         """
 
-        def _execute(
-            session: requests.Session, *, get_draft: bool
-        ) -> InvenioRDMProjectObject:
+        def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.get(
                 session,
-                (
-                    ["records", project_id, "draft"]
-                    if get_draft
-                    else ["records", project_id]
-                ),
+                ["records", project_id],
             )
+            if resp.status_code != HTTPStatus.OK:
+                resp = self.get(
+                    session,
+                    ["records", project_id, "draft"],
+                )
+
             return InvenioRDMRequestData.data_from_response(
                 InvenioRDMProjectObject, resp
             )
 
-        def _try_draft() -> None:
-            self._execute(
-                cb_exec=lambda session: _execute(session, get_draft=True),
-                cb_done=lambda data: callbacks.invoke_done_callbacks(data),
-                cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
-            )
-
         self._execute(
-            cb_exec=lambda session: _execute(session, get_draft=False),
+            cb_exec=_execute,
             cb_done=lambda data: callbacks.invoke_done_callbacks(data),
-            cb_failed=lambda _: _try_draft(),
+            cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
     def create_project(
@@ -268,38 +261,50 @@ class InvenioRDMClient(RequestsExecutor):
                 ["records", invenio_project.project_id, "draft", "files"],
                 json=[{"key": file_path.name}],
             )
-            files = typing.cast(
-                InvenioRDMFileListObject,
-                InvenioRDMRequestData.data_from_response(
-                    InvenioRDMFileListObject, resp
-                ),
+            if resp.status_code == HTTPStatus.CREATED:
+                return InvenioRDMRequestData.data_from_response(
+                    InvenioRDMFileObject, resp
+                )
+                files = typing.cast(
+                    InvenioRDMFileListObject,
+                    InvenioRDMRequestData.data_from_response(
+                        InvenioRDMFileListObject, resp
+                    ),
+                )
+                file_obj = files.files[0]
+
+                print(file_obj, flush=True)
+
+                # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
+                if file_data.seekable():
+                    file_data.seek(0)
+
+                print("------CONTENT------", flush=True)
+                print(file_obj.content_link, flush=True)
+
+                resp = self.put(
+                    session,
+                    file_obj.content_link,
+                    data=BytesIO(file_data.readall()),
+                )
+                if resp.status_code == HTTPStatus.OK:
+                    print("------COMMIT------", flush=True)
+                    print(file_obj.commit_link, flush=True)
+                    resp = self.post(
+                        session,
+                        file_obj.commit_link,
+                    )
+                    print("------DONE------", flush=True)
+                    print(file_obj.key, flush=True)
+                    print("------------", flush=True)
+
+                    return InvenioRDMRequestData.data_from_response(
+                        InvenioRDMFileObject, resp
+                    )
+
+            raise Exception(
+                f"Error uploading {file_path.name}: {resp.content} ({resp.status_code})"
             )
-            file_obj = files.files[0]
-
-            print(file_obj, flush=True)
-
-            # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
-            if file_data.seekable():
-                file_data.seek(0)
-
-            print("------CONTENT------", flush=True)
-            print(file_obj.content_link, flush=True)
-
-            self.put(
-                session,
-                file_obj.content_link,
-                data=BytesIO(file_data.readall()),
-            )
-            print("------COMMIT------", flush=True)
-            print(file_obj.commit_link, flush=True)
-            resp = self.post(
-                session,
-                file_obj.commit_link,
-            )
-            print("------DONE------", flush=True)
-            print(file_obj.key, flush=True)
-            print("------------", flush=True)
-            return InvenioRDMRequestData.data_from_response(InvenioRDMFileObject, resp)
 
         def _upload_done(data: InvenioRDMFileObject) -> None:
             callbacks.invoke_done_callbacks(data)

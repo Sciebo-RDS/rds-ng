@@ -79,15 +79,6 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
             user_token=self._job.user_token,
         )
 
-        self._invenio_upload_client = InvenioRDMClient(
-            comp,
-            svc,
-            connector_instance=job.connector_instance,
-            auth_channel=target_channel,
-            user_token=self._job.user_token,
-            requests_options=RequestsExecutorOptions(content_type=None),
-        )
-
         self._reuse_external_project = False
 
     def start(self, external_state: ProjectExternalState) -> None:
@@ -300,7 +291,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
         callbacks.failed(lambda exc: self._upload_file_failed(resource, exc))
         callbacks.failed(lambda _: self._delete_failed_project(invenio_project))
 
-        self._invenio_upload_client.upload_file(
+        self._invenio_client.upload_file(
             invenio_project,
             path=relativize_path(resource.filename, self._job.project.resources_path),
             file_data=buffer,
@@ -328,7 +319,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
             callbacks.done(lambda data: self._upload_additional_file_done(path, data))
             callbacks.failed(lambda exc: self._upload_additional_file_failed(path, exc))
 
-            self._invenio_upload_client.upload_file(
+            self._invenio_client.upload_file(
                 invenio_project,
                 path=path,
                 file_data=memory_broker_tunnel_from_data(path, file_data),
