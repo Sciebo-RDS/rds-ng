@@ -225,8 +225,6 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     # -- Transmitter preparation
 
-    # TODO: Next
-
     def _transmitter_prepare(self, invenio_project: InvenioRDMProjectObject) -> None:
         callbacks = ResourcesTransmitterPrepareCallbacks()
         callbacks.done(
@@ -352,7 +350,8 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     def _delete_failed_project(self, invenio_project: InvenioRDMProjectObject) -> None:
         if not self._reuse_external_project:
-            self._invenio_client.delete_project(invenio_project)
+            pass
+            # self._invenio_client.delete_project(invenio_project)
 
     def _get_job_ext_data(
         self, invenio_project: InvenioRDMProjectObject

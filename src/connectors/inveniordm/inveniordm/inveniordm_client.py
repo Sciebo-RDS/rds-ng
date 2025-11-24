@@ -1,3 +1,4 @@
+import json
 import pathlib
 import typing
 from io import BytesIO
@@ -259,15 +260,45 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> InvenioRDMFileObject:
             file_path = pathlib.PurePosixPath(path)
 
+            print("------CREATE------", flush=True)
+            print(file_path.name, flush=True)
+
+            resp = self.post(
+                session,
+                ["records", invenio_project.project_id, "draft", "files"],
+                json=[{"key": file_path.name}],
+            )
+            files = typing.cast(
+                InvenioRDMFileListObject,
+                InvenioRDMRequestData.data_from_response(
+                    InvenioRDMFileListObject, resp
+                ),
+            )
+            file_obj = files.files[0]
+
+            print(file_obj, flush=True)
+
             # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
             if file_data.seekable():
                 file_data.seek(0)
 
-            resp = self.put(
+            print("------CONTENT------", flush=True)
+            print(file_obj.content_link, flush=True)
+
+            self.put(
                 session,
-                f"{invenio_project.bucket_link}/{file_path.name}",
+                file_obj.content_link,
                 data=BytesIO(file_data.readall()),
             )
+            print("------COMMIT------", flush=True)
+            print(file_obj.commit_link, flush=True)
+            resp = self.post(
+                session,
+                file_obj.commit_link,
+            )
+            print("------DONE------", flush=True)
+            print(file_obj.key, flush=True)
+            print("------------", flush=True)
             return InvenioRDMRequestData.data_from_response(InvenioRDMFileObject, resp)
 
         def _upload_done(data: InvenioRDMFileObject) -> None:
@@ -287,7 +318,7 @@ class InvenioRDMClient(RequestsExecutor):
     def delete_file(
         self,
         invenio_project: InvenioRDMProjectObject,
-        InvenioRDM_file: InvenioRDMFileObject,
+        invenio_file: InvenioRDMFileObject,
         *,
         callbacks: InvenioRDMDeleteFileCallbacks = InvenioRDMDeleteFileCallbacks(),
     ):
@@ -296,7 +327,7 @@ class InvenioRDMClient(RequestsExecutor):
 
         Args:
             invenio_project: The InvenioRDM project.
-            InvenioRDM_file: The InvenioRDM file.
+            invenio_file: The InvenioRDM file.
             callbacks: Optional request callbacks.
         """
 
@@ -308,7 +339,7 @@ class InvenioRDMClient(RequestsExecutor):
                     "depositions",
                     invenio_project.project_id,
                     "files",
-                    InvenioRDM_file.file_id,
+                    invenio_file.file_id,
                 ],
             )
 

@@ -53,11 +53,32 @@ class InvenioRDMFileObject(ExtendedDictionary):
     """
 
     @property
+    def key(self) -> str:
+        """
+        The key of the file.
+        """
+        return str(self.value("key"))
+
+    @property
     def file_id(self) -> str:
         """
         The ID of the file.
         """
-        return str(self.value("id"))
+        return str(self.value("file_id"))
+
+    @property
+    def content_link(self) -> str:
+        """
+        The content link of the file.
+        """
+        return str(self.value("links.content"))
+
+    @property
+    def commit_link(self) -> str:
+        """
+        The commit link of the file.
+        """
+        return str(self.value("links.commit"))
 
 
 class InvenioRDMFileListObject(ExtendedDictionary):
@@ -70,4 +91,4 @@ class InvenioRDMFileListObject(ExtendedDictionary):
         """
         The list of files.
         """
-        return [InvenioRDMFileObject(file_data) for file_data in self._data]
+        return [InvenioRDMFileObject(file_data) for file_data in self.value("entries")]
