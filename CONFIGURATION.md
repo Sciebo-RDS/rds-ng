@@ -122,7 +122,7 @@ The server needs to store its data; this can either be in-memory (super volatile
 | Setting                                        | Description                                                           | Type   | Default value |
 |------------------------------------------------|-----------------------------------------------------------------------|--------|---------------|
 | <code>network.client.server_address</code>     | The address of the server the client should automatically connect to. | String |               |
-| <code>network.client.connection_timeout</code> | The maximum time (in seconds) for connection attempts.                | Number | 90.0          |
+| <code>network.client.connection_timeout</code> | The maximum time (in seconds) for connection attempts.                | Number | 60.0          |
 
 #### Connectors | Authorization
 

@@ -35,7 +35,7 @@ def get_default_settings() -> typing.Dict[SettingID, typing.Any]:
         NetworkServerSettingIDs.ALLOWED_ORIGINS: "",
         NetworkServerSettingIDs.IDLE_TIMEOUT: 60 * 60,
         NetworkClientSettingIDs.SERVER_ADDRESS: "",
-        NetworkClientSettingIDs.CONNECTION_TIMEOUT: 90,
+        NetworkClientSettingIDs.CONNECTION_TIMEOUT: 60,
         # Integration settings
         IntegrationSettingIDs.DEFAULT_ROOT_PATH: "/",
     }

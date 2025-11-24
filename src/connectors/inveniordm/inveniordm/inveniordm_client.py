@@ -200,7 +200,7 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> None:
             self.delete(
                 session,
-                ["deposit", "depositions", invenio_project.project_id],
+                ["records", invenio_project.project_id, "draft"],
             )
 
         self._execute(
