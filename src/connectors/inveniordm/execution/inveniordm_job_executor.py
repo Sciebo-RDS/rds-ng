@@ -91,8 +91,6 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     # -- External state
 
-    # TODO: Test
-
     def query_external_project_state(
         self,
         external_state: ProjectExternalState,
