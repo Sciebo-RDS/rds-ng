@@ -143,8 +143,6 @@ class InvenioRDMClient(RequestsExecutor):
             cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
         )
 
-    # TODO: ---
-
     def update_project(
         self,
         project_id: str,
@@ -164,7 +162,7 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.put(
                 session,
-                ["deposit", "depositions", project_id],
+                ["records", project_id, "draft"],
                 json=self._get_project_metadata(project),
             )
             return InvenioRDMRequestData.data_from_response(
@@ -220,7 +218,7 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> InvenioRDMFileListObject:
             resp = self.get(
                 session,
-                ["deposit", "depositions", invenio_project.project_id, "files"],
+                ["records", invenio_project.project_id, "draft", "files"],
             )
             return InvenioRDMRequestData.data_from_response(
                 InvenioRDMFileListObject, resp
@@ -321,14 +319,14 @@ class InvenioRDMClient(RequestsExecutor):
         """
 
         def _execute(session: requests.Session) -> None:
-            self.delete(
+            resp = self.delete(
                 session,
                 [
-                    "deposit",
-                    "depositions",
+                    "records",
                     invenio_project.project_id,
+                    "draft",
                     "files",
-                    invenio_file.file_id,
+                    invenio_file.key,
                 ],
             )
 

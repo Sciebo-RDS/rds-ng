@@ -173,8 +173,6 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     # -- Project update
 
-    # TODO: After upload is done
-
     def _project_update(self, external_state: ProjectExternalState) -> None:
         self.report_message("Updating project...")
 

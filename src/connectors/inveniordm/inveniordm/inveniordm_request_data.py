@@ -60,13 +60,6 @@ class InvenioRDMFileObject(ExtendedDictionary):
         return str(self.value("key"))
 
     @property
-    def file_id(self) -> str:
-        """
-        The ID of the file.
-        """
-        return str(self.value("file_id"))
-
-    @property
     def content_link(self) -> str:
         """
         The content link of the file.
