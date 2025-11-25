@@ -86,6 +86,22 @@ class InvenioRDMFileListObject(ExtendedDictionary):
     InvenioRDM file list object.
     """
 
+    def find_file(self, key: str) -> InvenioRDMFileObject | None:
+        """
+        Finds the file with the given key.
+
+        Args:
+            key: The key of the file.
+
+        Returns:
+            The found file or **None** otherwise.
+        """
+        for file in self.files:
+            if file.key == key:
+                return file
+        else:
+            return None
+
     @property
     def files(self) -> typing.List[InvenioRDMFileObject]:
         """

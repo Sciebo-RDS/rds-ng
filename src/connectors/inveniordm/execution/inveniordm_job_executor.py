@@ -44,8 +44,9 @@ from ..inveniordm import (
 from ...base.data.entities.connector import ConnectorJob
 from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorJobExecutor
-from ...base.integration.execution.requests_executor import RequestsExecutorOptions
-from ...base.settings import TransmissionSettingIDs
+
+
+# TODO: Unterverzeichnisse besser handlen (Gefahr von Dupe Keys)
 
 
 class InvenioRDMJobExecutor(ConnectorJobExecutor):
@@ -341,8 +342,7 @@ class InvenioRDMJobExecutor(ConnectorJobExecutor):
 
     def _delete_failed_project(self, invenio_project: InvenioRDMProjectObject) -> None:
         if not self._reuse_external_project:
-            pass
-            # self._invenio_client.delete_project(invenio_project)
+            self._invenio_client.delete_project(invenio_project)
 
     def _get_job_ext_data(
         self, invenio_project: InvenioRDMProjectObject

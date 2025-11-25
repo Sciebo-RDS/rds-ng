@@ -253,51 +253,35 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> InvenioRDMFileObject:
             file_path = pathlib.PurePosixPath(path)
 
-            print("------CREATE------", flush=True)
-            print(file_path.name, flush=True)
-
             resp = self.post(
                 session,
                 ["records", invenio_project.project_id, "draft", "files"],
                 json=[{"key": file_path.name}],
             )
             if resp.status_code == HTTPStatus.CREATED:
-                return InvenioRDMRequestData.data_from_response(
-                    InvenioRDMFileObject, resp
-                )
                 files = typing.cast(
                     InvenioRDMFileListObject,
                     InvenioRDMRequestData.data_from_response(
                         InvenioRDMFileListObject, resp
                     ),
                 )
-                file_obj = files.files[0]
-
-                print(file_obj, flush=True)
+                file_obj = files.find_file(file_path.name)
 
                 # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
                 if file_data.seekable():
                     file_data.seek(0)
 
-                print("------CONTENT------", flush=True)
-                print(file_obj.content_link, flush=True)
-
                 resp = self.put(
                     session,
                     file_obj.content_link,
                     data=BytesIO(file_data.readall()),
+                    headers={"Content-Type": "application/octet-stream"},
                 )
                 if resp.status_code == HTTPStatus.OK:
-                    print("------COMMIT------", flush=True)
-                    print(file_obj.commit_link, flush=True)
                     resp = self.post(
                         session,
                         file_obj.commit_link,
                     )
-                    print("------DONE------", flush=True)
-                    print(file_obj.key, flush=True)
-                    print("------------", flush=True)
-
                     return InvenioRDMRequestData.data_from_response(
                         InvenioRDMFileObject, resp
                     )
