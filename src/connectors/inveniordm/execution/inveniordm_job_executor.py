@@ -46,9 +46,6 @@ from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorJobExecutor
 
 
-# TODO: Unterverzeichnisse besser handlen (Gefahr von Dupe Keys)
-
-
 class InvenioRDMJobExecutor(ConnectorJobExecutor):
     """
     Job executor for InvenioRDM.

@@ -249,12 +249,12 @@ class InvenioRDMClient(RequestsExecutor):
         """
 
         def _execute(session: requests.Session) -> InvenioRDMFileObject:
-            file_path = pathlib.PurePosixPath(path)
+            file_path = path.lstrip("/").replace("/", "__")
 
             resp = self.post(
                 session,
                 ["records", invenio_project.project_id, "draft", "files"],
-                json=[{"key": file_path.name}],
+                json=[{"key": file_path}],
             )
             if resp.status_code == HTTPStatus.CREATED:
                 files = typing.cast(
@@ -263,7 +263,7 @@ class InvenioRDMClient(RequestsExecutor):
                         InvenioRDMFileListObject, resp
                     ),
                 )
-                file_obj = files.find_file(file_path.name)
+                file_obj = files.find_file(file_path)
 
                 # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
                 if file_data.seekable():
@@ -285,7 +285,7 @@ class InvenioRDMClient(RequestsExecutor):
                     )
 
             raise Exception(
-                f"Error uploading {file_path.name}: {resp.content} ({resp.status_code})"
+                f"Error uploading {file_path}: {resp.content} ({resp.status_code})"
             )
 
         def _upload_done(data: InvenioRDMFileObject) -> None:
