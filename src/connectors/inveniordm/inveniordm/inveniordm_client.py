@@ -1,5 +1,5 @@
-import pathlib
 import typing
+from datetime import datetime
 from http import HTTPStatus
 from io import BytesIO
 
@@ -384,7 +384,6 @@ class InvenioRDMClient(RequestsExecutor):
         self.get_file_list(invenio_project, callbacks=file_list_callbacks)
 
     def _get_project_metadata(self, project: Project) -> typing.Any:
-        # TODO: Add real metadata
         creator = InvenioRDMMetadataCreator()
         metadata = creator.create(
             project.features.project_metadata.metadata,
@@ -392,37 +391,42 @@ class InvenioRDMClient(RequestsExecutor):
         )
         # creator.validate(metadata)
 
+        project_metadata = {
+            "title": (
+                metadata.title
+                if metadata.title is not None
+                else "Uploaded via Sciebo RDS"
+            ),
+            "creators": [  # TODO
+                {
+                    "person_or_org": {
+                        "family_name": "Brown",
+                        "given_name": "Troy",
+                        "type": "personal",
+                    }
+                },
+                {
+                    "person_or_org": {
+                        "family_name": "Collins",
+                        "given_name": "Thomas",
+                        "identifiers": [
+                            {"scheme": "orcid", "identifier": "0000-0002-1825-0097"}
+                        ],
+                        "name": "Collins, Thomas",
+                        "type": "personal",
+                    }
+                },
+            ],
+            "resource_type": {"id": "image-photo"},  # TODO
+            "publication_date": (
+                metadata.publication_date
+                if metadata.publication_date
+                else datetime.now().strftime("%Y-%m-%d")
+            ),
+        }
+
         return {
             "access": {"record": "public", "files": "public"},
             "files": {"enabled": True},
-            "metadata": {
-                "title": (
-                    metadata.title
-                    if metadata.title is not None
-                    else "Uploaded via Sciebo RDS"
-                ),
-                # TODO: Add real metadata
-                "creators": [
-                    {
-                        "person_or_org": {
-                            "family_name": "Brown",
-                            "given_name": "Troy",
-                            "type": "personal",
-                        }
-                    },
-                    {
-                        "person_or_org": {
-                            "family_name": "Collins",
-                            "given_name": "Thomas",
-                            "identifiers": [
-                                {"scheme": "orcid", "identifier": "0000-0002-1825-0097"}
-                            ],
-                            "name": "Collins, Thomas",
-                            "type": "personal",
-                        }
-                    },
-                ],
-                "publication_date": "2020-06-01",
-                "resource_type": {"id": "image-photo"},
-            },
+            "metadata": project_metadata,
         }

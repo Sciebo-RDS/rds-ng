@@ -8,11 +8,13 @@ from common.py.data.metadata import (
     MetadataParser,
     MetadataParserQuery,
 )
+from .utils import parse_date
 
 
 @dataclass
 class InvenioRDMMetadata(Metadata):
     title: str = ""
+    publication_date: str = ""
 
 
 class InvenioRDMMetadataCreator(MetadataCreator):
@@ -36,18 +38,20 @@ class InvenioRDMMetadataCreator(MetadataCreator):
             InvenioRDMMetadata: An instance of InvenioRDMMetadata populated with the parsed metadata.
         """
 
-        inveniordm_metadata = (
-            metadata  # = MetadataParser.filter_by_profile("InvenioRDM", metadata)
-        )
+        invenio_metadata = InvenioRDMMetadata()
 
-        product = InvenioRDMMetadata()
-
-        product.title = MetadataParser.getattr(
-            inveniordm_metadata,
+        invenio_metadata.title = MetadataParser.getattr(
+            metadata,
             MetadataParserQuery(
                 "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
                 "title",
             ),
         )
 
-        return product
+        publication_date = MetadataParser.getobj(
+            metadata,
+            "publication-date",
+        ).value.get("publication-date", "")
+        invenio_metadata.publication_date = parse_date(publication_date)
+
+        return invenio_metadata

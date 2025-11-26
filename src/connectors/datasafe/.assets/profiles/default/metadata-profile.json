@@ -2,10 +2,10 @@
     "metadata": {
         "id": [
             "datasafe",
-            "2024.09.17"
+            "2025.11.26"
         ],
         "displayLabel": "datasafe",
-        "description": "A Profile for the datasafe connector."
+        "description": "Metadata for datasafe."
     },
     "layout": [
         {
@@ -20,7 +20,21 @@
                 }
             ],
             "required": true,
-            "multiple": true
+            "multiple": false
+        },
+        {
+            "id": "publication-date",
+            "displayLabel": "Publication date",
+            "description": "The date when the resource was or will be made publicly available.",
+            "input": [
+                {
+                    "id": "publication-date",
+                    "label": "Publication date",
+                    "type": "date"
+                }
+            ],
+            "required": true,
+            "multiple": false
         }
     ]
 }
