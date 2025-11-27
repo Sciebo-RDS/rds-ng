@@ -13,7 +13,7 @@ const props = defineProps({
 const value = computed(() => {
     const values = props.propertyObjects.get(props.propertyObjectId)?.getValues();
     try {
-        if (!!values[props.inputId]) {
+        if (!!values && !!values[props.inputId]) {
             return new Date(values[props.inputId]);
         }
     } catch (e) {}
