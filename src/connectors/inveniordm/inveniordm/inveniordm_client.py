@@ -425,6 +425,9 @@ class InvenioRDMClient(RequestsExecutor):
             ),
         }
 
+        if metadata.description:
+            project_metadata["description"] = metadata.description
+
         return {
             "access": {"record": "public", "files": "public"},
             "files": {"enabled": True},

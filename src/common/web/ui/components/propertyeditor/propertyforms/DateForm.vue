@@ -13,10 +13,11 @@ const props = defineProps({
 const value = computed(() => {
     const values = props.propertyObjects.get(props.propertyObjectId)?.getValues();
     try {
-        return new Date(values[props.inputId]);
-    } catch (e) {
-        return undefined;
-    }
+        if (!!values[props.inputId]) {
+            return new Date(values[props.inputId]);
+        }
+    } catch (e) {}
+    return undefined;
 });
 </script>
 
