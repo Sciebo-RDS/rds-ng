@@ -23,6 +23,47 @@
             "multiple": false
         },
         {
+            "id": "resource-type",
+            "displayLabel": "Resource type",
+            "description": "The type of the resource described by the record.",
+            "input": [
+                {
+                    "id": "resource-type",
+                    "label": "Resource type",
+                    "type": "dropdown",
+                    "options": [
+                        "audio",
+                        "dataset",
+                        "event",
+                        "image",
+                        "image-diagram",
+                        "image-drawing",
+                        "image-figure",
+                        "image-other",
+                        "lesson",
+                        "model",
+                        "publication-annotationcollection",
+                        "publication-article",
+                        "publication-book",
+                        "publication-conferencepaper",
+                        "publication-conferenceproceeding",
+                        "publication-datamanagementplan",
+                        "publication-datapaper",
+                        "publication-dissertation",
+                        "publication-journal",
+                        "publication-patent",
+                        "publication-peerreview",
+                        "publication-section",
+                        "publication-other",
+                        "software-computationalnotebook",
+                        "other"
+                    ]
+                }
+            ],
+            "required": true,
+            "multiple": false
+        },
+        {
             "id": "publication-date",
             "displayLabel": "Publication date",
             "description": "The date when the resource was or will be made publicly available.",

@@ -14,6 +14,7 @@ from .utils import parse_date
 @dataclass
 class InvenioRDMMetadata(Metadata):
     title: str = ""
+    resource_type: str = ""
     publication_date: str = ""
     description: str = ""
 
@@ -46,6 +47,14 @@ class InvenioRDMMetadataCreator(MetadataCreator):
             MetadataParserQuery(
                 "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
                 "title",
+            ),
+        )
+
+        invenio_metadata.resource_type = MetadataParser.getattr(
+            metadata,
+            MetadataParserQuery(
+                "resource-type",
+                "resource-type",
             ),
         )
 

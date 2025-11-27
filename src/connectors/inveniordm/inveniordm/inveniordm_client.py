@@ -417,7 +417,9 @@ class InvenioRDMClient(RequestsExecutor):
                     }
                 },
             ],
-            "resource_type": {"id": "image-photo"},  # TODO
+            "resource_type": (
+                metadata.resource_type if metadata.resource_type else "other"
+            ),
             "publication_date": (
                 metadata.publication_date
                 if metadata.publication_date
