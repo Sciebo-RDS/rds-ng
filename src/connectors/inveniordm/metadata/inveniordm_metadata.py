@@ -1,5 +1,6 @@
+import dataclasses
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from common.py.data.entities.properties import PropertyObject
 from common.py.data.metadata import (
@@ -8,13 +9,14 @@ from common.py.data.metadata import (
     MetadataParser,
     MetadataParserQuery,
 )
-from .utils import parse_date
+from .utils import parse_creators, parse_date
 
 
 @dataclass
 class InvenioRDMMetadata(Metadata):
     title: str = ""
     resource_type: str = ""
+    creators: List[Dict[str, Any]] = dataclasses.field(default_factory=list)
     publication_date: str = ""
     description: str = ""
 
@@ -57,6 +59,12 @@ class InvenioRDMMetadataCreator(MetadataCreator):
                 "resource-type",
             ),
         )
+
+        creators = MetadataParser.getobj(
+            metadata,
+            "invenio-creator",
+        )
+        invenio_metadata.creators = parse_creators(creators, shared_objects)
 
         publication_date = MetadataParser.getobj(
             metadata,

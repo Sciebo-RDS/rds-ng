@@ -109,7 +109,7 @@
             "id": "invenio-creator",
             "displayLabel": "Creator",
             "description": "The creators field registers those persons or organisations that should be credited for the resource described by the record. The list of persons or organisations in the creators field is used for generating citations, while the persons or organisations listed in the contributors field are not included in the generated citations.",
-            "labelTemplate": "${name}",
+            "labelTemplate": "${family-name}, ${given-name}",
             "refs": [
                 {
                     "classId": "nameIdentifier",

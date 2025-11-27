@@ -397,26 +397,7 @@ class InvenioRDMClient(RequestsExecutor):
                 if metadata.title is not None
                 else "Uploaded via Sciebo RDS"
             ),
-            "creators": [  # TODO
-                {
-                    "person_or_org": {
-                        "family_name": "Brown",
-                        "given_name": "Troy",
-                        "type": "personal",
-                    }
-                },
-                {
-                    "person_or_org": {
-                        "family_name": "Collins",
-                        "given_name": "Thomas",
-                        "identifiers": [
-                            {"scheme": "orcid", "identifier": "0000-0002-1825-0097"}
-                        ],
-                        "name": "Collins, Thomas",
-                        "type": "personal",
-                    }
-                },
-            ],
+            "creators": metadata.creators if metadata.creators else [],
             "resource_type": (
                 metadata.resource_type if metadata.resource_type else "other"
             ),
