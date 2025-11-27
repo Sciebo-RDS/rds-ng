@@ -64,6 +64,18 @@
             "multiple": false
         },
         {
+            "id": "invenio-creator",
+            "displayLabel": "Creator",
+            "description": "The creators field registers those persons or organisations that should be credited for the resource described by the record. The list of persons or organisations in the creators field is used for generating citations, while the persons or organisations listed in the contributors field are not included in the generated citations.",
+            "refs": [
+                {
+                    "classId": "invenio-creator"
+                }
+            ],
+            "required": true,
+            "multiple": true
+        },
+        {
             "id": "publication-date",
             "displayLabel": "Publication date",
             "description": "The date when the resource was or will be made publicly available.",
@@ -91,5 +103,142 @@
             "required": false,
             "multiple": false
         }
-    ]
+    ],
+    "classes": {
+        "invenio-creator": {
+            "id": "invenio-creator",
+            "displayLabel": "Creator",
+            "description": "The creators field registers those persons or organisations that should be credited for the resource described by the record. The list of persons or organisations in the creators field is used for generating citations, while the persons or organisations listed in the contributors field are not included in the generated citations.",
+            "labelTemplate": "${name}",
+            "refs": [
+                {
+                    "classId": "nameIdentifier",
+                    "inline": true
+                },
+                {
+                    "classId": "affiliation",
+                    "inline": true
+                }
+            ],
+            "input": [
+                {
+                    "id": "given-name",
+                    "label": "Given name",
+                    "type": "string",
+                    "description": "Given name(s).",
+                    "required": true
+                },
+                {
+                    "id": "family-name",
+                    "label": "Family name",
+                    "type": "string",
+                    "description": "Family name.",
+                    "required": true
+                }
+            ]
+        },
+        "nameIdentifier": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#nameidentifier",
+            "displayLabel": "Name Identifier",
+            "description": "Uniquely identifies an individual or legal entity, according to various schemes.",
+            "example": "Jane Doe",
+            "labelTemplate": "${nameIdentifier} (${nameIdentifierScheme})",
+            "input": [
+                {
+                    "id": "nameIdentifierScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": [
+                        "ORCID",
+                        "GND",
+                        "ISNI",
+                        "ROR",
+                        "other"
+                    ],
+                    "description": "",
+                    "hints": {
+                        "ORCID": {
+                            "text": "Open Researcher and Contributor ID.",
+                            "link": {
+                                "label": "ORCID Search",
+                                "url": "https://orcid.org/orcid-search/search"
+                            }
+                        },
+                        "GND": {
+                            "text": "Gemeinsame Normdatei Identifier.",
+                            "link": {
+                                "label": "GND Search",
+                                "url": "https://explore.gnd.network/"
+                            }
+                        },
+                        "ISNI": {
+                            "text": "International Standard Name Identifier.",
+                            "link": {
+                                "label": "ISNI Search",
+                                "url": "https://isni.org/page/search-database/"
+                            }
+                        },
+                        "ROR": {
+                            "text": "Research Organization Registry Identifier.",
+                            "link": {
+                                "label": "ROR Search",
+                                "url": "https://ror.org/search"
+                            }
+                        }
+                    }
+                },
+                {
+                    "id": "nameIdentifier",
+                    "label": "Name identifier",
+                    "type": "string"
+                }
+            ]
+        },
+        "affiliation": {
+            "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#affiliation",
+            "displayLabel": "Affiliation",
+            "labelTemplate": "${affiliation}",
+            "input": [
+                {
+                    "id": "affiliationIdentifierScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": [
+                        "ISNI",
+                        "ROR",
+                        "other"
+                    ],
+                    "description": "",
+                    "hints": {
+                        "ISNI": {
+                            "text": "International Standard Name Identifier.",
+                            "link": {
+                                "label": "ISNI Search",
+                                "url": "https://isni.org/page/search-database/"
+                            }
+                        },
+                        "ROR": {
+                            "text": "Research Organization Registry Identifier.",
+                            "link": {
+                                "label": "ROR Search",
+                                "url": "https://ror.org/search"
+                            }
+                        }
+                    }
+                },
+                {
+                    "id": "affiliation",
+                    "label": "Affiliation",
+                    "type": "string",
+                    "description": "The organizational or institutional affiliation of the creator."
+                },
+                {
+                    "id": "affiliationIdentifier",
+                    "label": "Affiliation identifier",
+                    "type": "string",
+                    "description": "Uniquely identifies the organizational affiliation of the creator."
+                }
+            ]
+        }
+    }
 }
