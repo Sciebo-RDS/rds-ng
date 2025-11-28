@@ -139,7 +139,7 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
     ) -> None:
         if (
             isinstance(exc, requests.exceptions.RequestException)
-            and exc.response
+            and exc.response is not None
             and (
                 exc.response.status_code == HTTPStatus.NOT_FOUND
                 or exc.response.status_code == HTTPStatus.GONE
