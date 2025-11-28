@@ -55,3 +55,16 @@ class BasicAuthorizationSettingIDs:
     USER_PASSWORD_LABEL = SettingID("authorization.basic", "user_password_label")
     USER_PASSWORD_OPTIONAL = SettingID("authorization.basic", "user_password_optional")
     HELP_LINK = SettingID("authorization.basic", "help_link")
+
+
+class BearerAuthorizationSettingIDs:
+    # pylint: disable=too-few-public-methods
+    """
+    Identifiers for Bearer authorization settings.
+
+    Attributes:
+        BEARER_LABEL: The display label of the bearer token.
+        HELP_LINK: An external help link.
+    """
+    BEARER_LABEL = SettingID("authorization.bearer", "bearer_label")
+    HELP_LINK = SettingID("authorization.bearer", "help_link")

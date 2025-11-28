@@ -2,10 +2,10 @@ import dataclasses
 import time
 import typing
 
-from .basic_types import (
-    BasicAuthorizationRequestData,
-    BasicStrategyConfiguration,
-    BasicToken,
+from .bearer_types import (
+    BearerAuthorizationRequestData,
+    BearerStrategyConfiguration,
+    BearerToken,
 )
 from ..authorization_strategy import AuthorizationStrategy
 from ... import AuthorizationRequestPayload
@@ -15,12 +15,12 @@ from .....data.entities.user import HostID, UserID, UserToken
 from .....services import Service
 
 
-class BasicStrategy(AuthorizationStrategy):
+class BearerStrategy(AuthorizationStrategy):
     """
-    Basic authorization strategy.
+    Bearer authorization strategy.
     """
 
-    Strategy: str = "basic"
+    Strategy: str = "bearer"
 
     def __init__(
         self,
@@ -35,11 +35,8 @@ class BasicStrategy(AuthorizationStrategy):
         super().__init__(
             comp,
             svc,
-            BasicStrategy.Strategy,
-            contents=(
-                AuthorizationStrategy.ContentType.AUTH_LOGIN
-                | AuthorizationStrategy.ContentType.AUTH_PASSWORD
-            ),
+            BearerStrategy.Strategy,
+            contents=AuthorizationStrategy.ContentType.AUTH_TOKEN,
             user_token=user_token,
             auth_token=auth_token,
             auth_public=auth_public,
@@ -66,7 +63,7 @@ class BasicStrategy(AuthorizationStrategy):
             expiration_timestamp=0,
             refresh_attempts=0,
             strategy=self.strategy,
-            token=dataclasses.asdict(self._create_basic_token(request_data)),
+            token=dataclasses.asdict(self._create_bearer_token(request_data)),
             data={},
         )
 
@@ -79,36 +76,27 @@ class BasicStrategy(AuthorizationStrategy):
     def _get_token_content(
         self, token: AuthorizationToken, content: AuthorizationStrategy.ContentType
     ) -> typing.Any:
-        basic_token = self._get_basic_data_from_token(token)
+        # We only support a single content type, so no need to distinguish
+        bearer_token = self._get_bearer_data_from_token(token)
+        return bearer_token.bearer_token
 
-        if content == AuthorizationStrategy.ContentType.AUTH_LOGIN:
-            return basic_token.user_id
-        elif content == AuthorizationStrategy.ContentType.AUTH_PASSWORD:
-            return basic_token.user_password
+    def _create_bearer_token(self, request_data: typing.Any) -> BearerToken:
+        config = self._get_public_configuration(BearerStrategyConfiguration)
 
-        return None
-
-    def _create_basic_token(self, request_data: typing.Any) -> BasicToken:
-        config = self._get_public_configuration(BasicStrategyConfiguration)
-
-        basic_data: BasicAuthorizationRequestData = (
-            BasicAuthorizationRequestData.from_dict(request_data)
+        bearer_data: BearerAuthorizationRequestData = (
+            BearerAuthorizationRequestData.from_dict(request_data)
         )
 
-        if not config.user_id_optional and basic_data.user_id == "":
-            raise RuntimeError("Missing user ID")
-        if not config.user_password_optional and basic_data.user_password == "":
-            raise RuntimeError("Missing user password")
+        if bearer_data.bearer_token == "":
+            raise RuntimeError("Missing bearer token")
 
-        return BasicToken(
-            user_id=basic_data.user_id, user_password=basic_data.user_password
-        )
+        return BearerToken(bearer_token=bearer_data.bearer_token)
 
-    def _get_basic_data_from_token(self, token: AuthorizationToken) -> BasicToken:
-        return BasicToken.from_dict(token.token)
+    def _get_bearer_data_from_token(self, token: AuthorizationToken) -> BearerToken:
+        return BearerToken.from_dict(token.token)
 
 
-def create_basic_strategy(
+def create_bearer_strategy(
     comp: BackendComponent,
     svc: Service,
     *,
@@ -118,7 +106,7 @@ def create_basic_strategy(
     auth_private: AuthorizationSettings | None = None,
 ) -> AuthorizationStrategy:
     """
-    Creates a new Basic strategy instance.
+    Creates a new Bearer strategy instance.
 
     Args:
         comp: The main component.
@@ -131,7 +119,7 @@ def create_basic_strategy(
     Returns:
         The newly created strategy.
     """
-    return BasicStrategy(
+    return BearerStrategy(
         comp,
         svc,
         user_token=user_token,

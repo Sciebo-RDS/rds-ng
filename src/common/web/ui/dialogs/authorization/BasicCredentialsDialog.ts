@@ -15,7 +15,7 @@ export interface BasicCredentialsDialogData {
 }
 
 /**
- * Shows the edit dialog for a connector instance.
+ * Shows the edit dialog for entering basic credentials.
  *
  * @param comp - The global component.
  * @param config - A basic strategy configuration.

@@ -1,4 +1,5 @@
-from dataclasses import dataclass, field
+import dataclasses
+from dataclasses import dataclass
 from typing import Any, Dict, List
 
 from common.py.data.entities.properties import PropertyObject
@@ -8,21 +9,16 @@ from common.py.data.metadata import (
     MetadataParser,
     MetadataParserQuery,
 )
-
-from .utils import parse_contributors, parse_creators, parse_dates, parse_grants
+from .utils import parse_creators, parse_date
 
 
 @dataclass
 class InvenioRDMMetadata(Metadata):
     title: str = ""
-    upload_type: str = ""
+    resource_type: str = ""
+    creators: List[Dict[str, Any]] = dataclasses.field(default_factory=list)
+    publication_date: str = ""
     description: str = ""
-    version: str = ""
-    creators: List[Dict[str, Any]] = field(default_factory=list)
-    contributors: List[Dict[str, Any]] = field(default_factory=list)
-    subjects: List[Dict[str, Any]] = field(default_factory=list)
-    grants: List[Dict[str, Any]] = field(default_factory=list)
-    dates: List[Dict[str, Any]] = field(default_factory=list)
 
 
 class InvenioRDMMetadataCreator(MetadataCreator):
@@ -46,79 +42,42 @@ class InvenioRDMMetadataCreator(MetadataCreator):
             InvenioRDMMetadata: An instance of InvenioRDMMetadata populated with the parsed metadata.
         """
 
-        inveniordm_metadata = (
-            metadata  # = MetadataParser.filter_by_profile("InvenioRDM", metadata)
-        )
+        invenio_metadata = InvenioRDMMetadata()
 
-        product = InvenioRDMMetadata()
-
-        product.title = MetadataParser.getattr(
-            inveniordm_metadata,
+        invenio_metadata.title = MetadataParser.getattr(
+            metadata,
             MetadataParserQuery(
                 "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/",
                 "title",
             ),
         )
-        product.upload_type = MetadataParser.getattr(
-            inveniordm_metadata,
-            MetadataParserQuery("InvenioRDMUploadType", "InvenioRDMUploadType"),
+
+        invenio_metadata.resource_type = MetadataParser.getattr(
+            metadata,
+            MetadataParserQuery(
+                "resource-type",
+                "resource-type",
+            ),
         )
-        product.description = MetadataParser.getattr(
-            inveniordm_metadata,
+
+        creators = MetadataParser.getobj(
+            metadata,
+            "invenio-creator",
+        )
+        invenio_metadata.creators = parse_creators(creators, shared_objects)
+
+        publication_date = MetadataParser.getobj(
+            metadata,
+            "publication-date",
+        ).value.get("publication-date", "")
+        invenio_metadata.publication_date = parse_date(publication_date)
+
+        invenio_metadata.description = MetadataParser.getattr(
+            metadata,
             MetadataParserQuery(
                 "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/description/",
                 "abstract",
             ),
         )
 
-        product.version = MetadataParser.getattr(
-            inveniordm_metadata,
-            MetadataParserQuery(
-                "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/version/",
-                "version",
-            ),
-        )
-
-        creators_raw = MetadataParser.getobj(
-            inveniordm_metadata,
-            "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
-        )
-
-        product.creators = (
-            parse_creators(creators_raw, shared_objects) if creators_raw else []
-        )
-
-        contributors_raw = MetadataParser.getobj(
-            inveniordm_metadata,
-            "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/",
-        )
-
-        product.contributors = (
-            parse_contributors(contributors_raw, shared_objects)
-            if contributors_raw
-            else []
-        )
-
-        # subjects_raw = MetadataParser.getobj(
-        #    InvenioRDM_metadata,
-        #        "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/"
-
-        # )
-
-        # product.subjects = parse_subjects(subjects_raw, shared_objects) if subjects_raw else []
-
-        grants_raw = MetadataParser.getobj(
-            inveniordm_metadata,
-            "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/",
-        )
-
-        product.grants = parse_grants(grants_raw, shared_objects) if grants_raw else []
-
-        dates_raw = MetadataParser.getobj(
-            inveniordm_metadata,
-            "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/",
-        )
-
-        product.dates = parse_dates(dates_raw, shared_objects) if dates_raw else []
-
-        return product
+        return invenio_metadata

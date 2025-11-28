@@ -17,14 +17,7 @@ class InvenioRDMRequestData(RequestData):
             return ""
 
         err_msg = self.data.value("message", "Unknown error")
-        errors: typing.List[str] = []
-        for error in self.data.value("errors", []):
-            field = self.data.value_from_data(error, "field", "")
-            message = self.data.value_from_data(error, "message", "Unknown error")
-            errors.append(f"{field}: {message}" if field != "" else message)
-        else:
-            errors.append(self._response.reason)
-        return f"{err_msg} [{'; '.join(errors)}]"
+        return err_msg
 
 
 class InvenioRDMProjectObject(ExtendedDictionary):
@@ -40,32 +33,18 @@ class InvenioRDMProjectObject(ExtendedDictionary):
         return str(self.value("id"))
 
     @property
-    def state(self) -> str:
+    def is_published(self) -> bool:
         """
-        The state of the project; can be *inprogress*, *done* or *error*.
+        Whether the project has been published.
         """
-        return str(self.value("state"))
-
-    @property
-    def is_submitted(self) -> bool:
-        """
-        Whether the project has been submitted.
-        """
-        return bool(self.value("submitted"))
+        return bool(self.value("is_published"))
 
     @property
     def project_link(self) -> str:
         """
         The link to the project.
         """
-        return str(self.value("links.html"))
-
-    @property
-    def bucket_link(self) -> str:
-        """
-        The link to the project.
-        """
-        return str(self.value("links.bucket"))
+        return str(self.value("links.self_html"))
 
 
 class InvenioRDMFileObject(ExtendedDictionary):
@@ -74,11 +53,25 @@ class InvenioRDMFileObject(ExtendedDictionary):
     """
 
     @property
-    def file_id(self) -> str:
+    def key(self) -> str:
         """
-        The ID of the file.
+        The key of the file.
         """
-        return str(self.value("id"))
+        return str(self.value("key"))
+
+    @property
+    def content_link(self) -> str:
+        """
+        The content link of the file.
+        """
+        return str(self.value("links.content"))
+
+    @property
+    def commit_link(self) -> str:
+        """
+        The commit link of the file.
+        """
+        return str(self.value("links.commit"))
 
 
 class InvenioRDMFileListObject(ExtendedDictionary):
@@ -86,9 +79,25 @@ class InvenioRDMFileListObject(ExtendedDictionary):
     InvenioRDM file list object.
     """
 
+    def find_file(self, key: str) -> InvenioRDMFileObject | None:
+        """
+        Finds the file with the given key.
+
+        Args:
+            key: The key of the file.
+
+        Returns:
+            The found file or **None** otherwise.
+        """
+        for file in self.files:
+            if file.key == key:
+                return file
+        else:
+            return None
+
     @property
     def files(self) -> typing.List[InvenioRDMFileObject]:
         """
         The list of files.
         """
-        return [InvenioRDMFileObject(file_data) for file_data in self._data]
+        return [InvenioRDMFileObject(file_data) for file_data in self.value("entries")]
