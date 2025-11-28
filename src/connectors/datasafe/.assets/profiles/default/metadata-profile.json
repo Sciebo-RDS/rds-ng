@@ -231,12 +231,6 @@
                     "label": "Affiliation",
                     "type": "string",
                     "description": "The organizational or institutional affiliation of the creator."
-                },
-                {
-                    "id": "affiliationIdentifier",
-                    "label": "Affiliation identifier",
-                    "type": "string",
-                    "description": "Uniquely identifies the organizational affiliation of the creator."
                 }
             ]
         }

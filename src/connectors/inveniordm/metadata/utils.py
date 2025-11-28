@@ -48,8 +48,7 @@ def parse_creators(
                 identifiers.append({"scheme": scheme, "identifier": identifier})
             elif obj.type == "affiliation":
                 name = obj.value.get("affiliation", "")
-                identifier = obj.value.get("affiliationIdentifier", "")
-                creator_affiliations.append({"id": identifier, "name": name})
+                creator_affiliations.append({"name": name})
 
         creator_person["identifiers"] = identifiers
 
