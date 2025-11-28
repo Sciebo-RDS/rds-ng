@@ -4,7 +4,8 @@
 
 ### New
 
-- New authorization strategy `bearer`
+- **datasafe** connector
+- Authorization strategy `bearer`
 
 ### Improvements
 
