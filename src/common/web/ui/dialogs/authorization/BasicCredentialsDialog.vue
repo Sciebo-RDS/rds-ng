@@ -22,12 +22,8 @@ const initialFormValues = ref({
 });
 
 function getValidatorShape(): any {
-    const name = dialogData.userData.config.user_id_optional
-        ? yup.string().trim().notRequired().label(dialogData.userData.config.user_id_label)
-        : yup.string().trim().required().label(dialogData.userData.config.user_id_label);
-    const password = dialogData.userData.config.user_password_optional
-        ? yup.string().notRequired().label(dialogData.userData.config.user_password_label)
-        : yup.string().required().label(dialogData.userData.config.user_password_label);
+    const name = yup.string().trim().required().label(dialogData.userData.config.user_id_label);
+    const password = yup.string().required().label(dialogData.userData.config.user_password_label);
 
     return { name: name, password: password };
 }
@@ -51,7 +47,7 @@ function getValidatorShape(): any {
         </div>
 
         <Fieldset legend="Credentials" class="r-form-fieldset">
-            <span v-if="!dialogData.userData.config.user_id_optional" class="r-form-field">
+            <span class="r-form-field">
                 <IftaLabel>
                     <InputText name="name" v-model.trim="dialogData.userData.userName" fluid autofocus />
                     <label>{{ dialogData.userData.config.user_id_label }} <MandatoryMark /></label>
@@ -59,11 +55,7 @@ function getValidatorShape(): any {
                 <small>The {{ dialogData.userData.config.user_id_label.toLowerCase() }} for the external service.</small>
             </span>
 
-            <span
-                v-if="!dialogData.userData.config.user_password_optional"
-                class="r-form-field"
-                :class="{ 'mt-5': !dialogData.userData.config.user_id_optional }"
-            >
+            <span class="r-form-field mt-5">
                 <IftaLabel>
                     <Password name="password" v-model.trim="dialogData.userData.userPassword" :feedback="false" toggle-mask fluid autofocus />
                     <label>{{ dialogData.userData.config.user_password_label }} <MandatoryMark /></label>
