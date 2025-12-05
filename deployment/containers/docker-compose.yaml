@@ -83,6 +83,21 @@ services:
         env_file:
             - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-datasafe.env
 
+    # Connector: Dataverse
+    connector-dataverse:
+        image: rds-ng/connector-dataverse:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/dataverse"
+            additional_contexts:
+                py_base: "service:py_base"
+        ports:
+            - "4600:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-dataverse.env
+
     # Connector: Stub
     connector-stub:
         image: rds-ng/connector-stub:latest

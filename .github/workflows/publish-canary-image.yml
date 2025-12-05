@@ -26,6 +26,8 @@ jobs:
                         domo
                         connector-osf
                         connector-zenodo
+                        connector-datasafe
+                        connector-dataverse
                         connector-stub
                         frontend
                     )
