@@ -253,20 +253,20 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         self,
         dataverse_user_collection: DataverseCollectionObject,
     ) -> None:
-        self.report_message("Creating project...")
+        self.report_message("Creating dataset...")
 
         callbacks = DataverseCreateDatasetCallbacks()
         callbacks.done(lambda data: self._dataset_create_done(data))
         callbacks.failed(lambda exc: self._dataset_create_failed(exc))
 
         self._dataverse_client.create_dataset(
-            self.user_collection_alias, self._job.project, callbacks=callbacks
+            dataverse_user_collection.alias, self._job.project, callbacks=callbacks
         )
 
     def _dataset_create_done(
         self, dataverse_dataset: DataverseCreateDatasetObject
     ) -> None:
-        self.report_message(f"Dataset created (Dataset ID: {dataverse_dataset.id})")
+        self.report_message(f"Dataset created (Dataverse ID: {dataverse_dataset.id})")
 
         self._dataset_get_after_create(dataverse_dataset)
 
@@ -274,7 +274,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         self.set_failed(f"Unable to create dataset: {str(exc)}")
 
     def _dataset_get_after_create(
-        self, dataverse_dataset_version: DataverseCreateDatasetObject
+        self, dataverse_dataset: DataverseCreateDatasetObject
     ) -> None:
         self.report_message("Getting created dataset...")
 
@@ -283,16 +283,12 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         callbacks.failed(lambda exc: self._dataset_get_after_create_failed(exc))
 
         self._dataverse_client.get_dataset(
-            external_state_id=dataverse_dataset_version.id, callbacks=callbacks
+            dataset_id=dataverse_dataset.id, callbacks=callbacks
         )
 
     def _dataset_get_after_create_done(
         self, dataverse_dataset: DataverseDatasetObject
     ) -> None:
-        self.report_message(
-            f"Retrieved created dataset (Dataverse ID: {dataverse_dataset.id})"
-        )
-
         self._transmitter_prepare(dataverse_dataset)
 
     def _dataset_get_after_create_failed(self, exc: Exception) -> None:
@@ -307,7 +303,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         self.report_message("Updating dataset...")
 
         callbacks = DataverseUpdateDatasetCallbacks()
-        callbacks.done(lambda data: self._dataset_update_done(data))  # only
+        callbacks.done(lambda data: self._dataset_update_done(data))
         callbacks.failed(lambda exc: self._dataset_update_failed(exc))
 
         self._dataverse_client.update_dataset(
@@ -330,15 +326,13 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         self.report_message("Clearing previous dataset files...")
 
         callbacks = DataverseDeleteAllFilesCallbacks()
-        callbacks.done(
-            lambda data, **kwargs: self._dataset_update_cleanup_done(data, **kwargs)
-        )
+        callbacks.done(lambda _: self._dataset_update_cleanup_done(dataverse_dataset))
         callbacks.failed(lambda exc: self._dataset_update_cleanup_failed(exc))
 
         self._dataverse_client.delete_all_files(dataverse_dataset, callbacks=callbacks)
 
     def _dataset_update_cleanup_done(
-        self, data, dataverse_dataset: DataverseDatasetVersionObject
+        self, dataverse_dataset: DataverseDatasetVersionObject
     ) -> None:
         self.report_message("Dataset cleaned up")
 
@@ -357,7 +351,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         callbacks.failed(lambda exc: self._dataset_get_after_update_failed(exc))
 
         self._dataverse_client.get_dataset(
-            external_state_id=dataverse_dataset_version.datasetId, callbacks=callbacks
+            dataset_id=dataverse_dataset_version.dataset_id, callbacks=callbacks
         )
 
     def _dataset_get_after_update_done(
