@@ -289,6 +289,8 @@ class DataverseJobExecutor(ConnectorJobExecutor):
     def _dataset_get_after_create_done(
         self, dataverse_dataset: DataverseDatasetObject
     ) -> None:
+        self.report_message("Getting updated dataset...")
+
         self._transmitter_prepare(dataverse_dataset)
 
     def _dataset_get_after_create_failed(self, exc: Exception) -> None:
@@ -497,7 +499,11 @@ class DataverseJobExecutor(ConnectorJobExecutor):
     def _get_job_ext_data(
         self, dataverse_dataset: DataverseDatasetObject
     ) -> ProjectJobHistoryRecordExtData:
+        # Dataverse doesn't provide a direct link itself, so we have to put it together manually
+        url = self._dataverse_client.base_url.replace("/api", "").rstrip("/")
+        url += f"/dataset.xhtml?persistentId=doi:{dataverse_dataset.authority}/{dataverse_dataset.identifier}&version=DRAFT"
+
         return {
             ProjectJobHistoryRecordExtDataIDs.EXTERNAL_ID: dataverse_dataset.id,
-            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_LINK: f"https://demo.dataverse.org/dataset.xhtml?persistentId=doi:{dataverse_dataset.authority}/{dataverse_dataset.identifier}&version=DRAFT",  # TODO replace hardcoded Domain
+            ProjectJobHistoryRecordExtDataIDs.EXTERNAL_LINK: url,
         }

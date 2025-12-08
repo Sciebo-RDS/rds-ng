@@ -1,5 +1,6 @@
 import dataclasses
 import json
+import pathlib
 from pathlib import PurePosixPath
 
 import requests
@@ -17,7 +18,6 @@ from common.py.integration.resources.transmitters import ResourceBuffer
 from common.py.services import Service
 from connectors.base.integration.execution.requests_executor import (
     RequestsExecutor,
-    RequestsExecutorOptions,
 )
 from connectors.dataverse.dataverse.dataverse_callbacks import (
     DataverseCreateCollectionCallbacks,
@@ -562,15 +562,10 @@ class DataverseClient(RequestsExecutor):
             }
         }
 
-    # TODO add from file metadata
     def _get_file_metadata(self, path: str) -> dict:
-
         return dict(
-            description="My description.",
-            directoryLabel="/",  # TODO add from file metadata
-            categories=[
-                "Data"
-            ],  # can be: ["Data", "Documentation", "Code"] (multi) # TODO add to file metadata
-            restrict=False,  # TODO add to file metadata?
+            directoryLabel=pathlib.PurePosixPath(path).parent.name,
+            categories=["Data"],
+            restrict=False,
             tabIngest=False,
         )

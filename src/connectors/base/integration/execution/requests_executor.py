@@ -333,3 +333,10 @@ class RequestsExecutor(AuthorizedExecutor):
         auth_token: AuthorizationToken | None,
     ):
         pass
+
+    @property
+    def base_url(self) -> str:
+        """
+        Gets the base target URL.
+        """
+        return self._base_url
