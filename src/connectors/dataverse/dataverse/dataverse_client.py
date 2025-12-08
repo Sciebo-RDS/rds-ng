@@ -137,7 +137,6 @@ class DataverseClient(RequestsExecutor):
 
     def create_collection(
         self,
-        collection_parent: str,
         collection_name: str,
         collection_id: str,
         collection_contact: str,
@@ -159,7 +158,7 @@ class DataverseClient(RequestsExecutor):
         def _execute(session: requests.Session) -> DataverseCollectionObject:
             resp = self.post(
                 session,
-                ["dataverses", collection_parent],
+                ["dataverses"],
                 json={
                     "name": collection_name,  # e.g. Display name of user
                     "alias": collection_id,  # e.g. id of user

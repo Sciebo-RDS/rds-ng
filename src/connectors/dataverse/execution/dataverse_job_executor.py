@@ -237,7 +237,6 @@ class DataverseJobExecutor(ConnectorJobExecutor):
 
         collection_id = dataverse_user.user_identifier.lstrip("@")
         self._dataverse_client.create_collection(
-            "demo",  # TODO parent collection: is there a way to get the root collection of a dataverse instance?
             collection_name=dataverse_user.user_display_name,
             collection_id=collection_id,
             collection_contact=dataverse_user.user_email,
