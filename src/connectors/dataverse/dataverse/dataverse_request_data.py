@@ -259,7 +259,3 @@ class DataverseFileListObject(DataverseObject):
         """
 
         return [file["dataFile"]["id"] for file in self.value("data")]
-
-
-class DataverseDeleteAllFilesData(DataverseObject):
-    pass

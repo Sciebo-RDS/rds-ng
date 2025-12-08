@@ -314,7 +314,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
     def _dataset_update_done(
         self, dataverse_dataset: DataverseDatasetVersionObject
     ) -> None:
-        self.report_message(f"Dataset updated (Dataverse ID: {dataverse_dataset})")
+        self.report_message(f"Dataset updated (Dataverse ID: {dataverse_dataset.id})")
 
         self._dataset_update_cleanup(dataverse_dataset)
 
@@ -327,7 +327,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         self.report_message("Clearing previous dataset files...")
 
         callbacks = DataverseDeleteAllFilesCallbacks()
-        callbacks.done(lambda _: self._dataset_update_cleanup_done(dataverse_dataset))
+        callbacks.done(lambda: self._dataset_update_cleanup_done(dataverse_dataset))
         callbacks.failed(lambda exc: self._dataset_update_cleanup_failed(exc))
 
         self._dataverse_client.delete_all_files(dataverse_dataset, callbacks=callbacks)

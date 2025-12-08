@@ -36,7 +36,6 @@ from connectors.dataverse.dataverse.dataverse_request_data import (
     DataverseCreateDatasetObject,
     DataverseDatasetObject,
     DataverseDatasetVersionObject,
-    DataverseDeleteAllFilesData,
     DataverseFileListObject,
     DataverseFileObject,
     DataverseRequestData,
@@ -286,8 +285,7 @@ class DataverseClient(RequestsExecutor):
 
         def _get_file_list_done(files: DataverseFileListObject):
 
-            def _execute(session: requests.Session) -> DataverseDeleteAllFilesData:
-
+            def _execute(session: requests.Session) -> None:
                 if files.ids:
                     resp = self.put(
                         session,
@@ -295,19 +293,11 @@ class DataverseClient(RequestsExecutor):
                         json=files.ids,
                     )
 
-                    return DataverseRequestData.data_from_response(
-                        DataverseDeleteAllFilesData, resp
-                    )
-                else:
-                    return DataverseDeleteAllFilesData(
-                        data={"message": "No files to delete"}
-                    )
+                return None
 
             self._execute(
                 cb_exec=_execute,
-                cb_done=lambda data: callbacks.invoke_done_callbacks(
-                    data=data, dataverse_dataset=dataverse_dataset
-                ),
+                cb_done=lambda _: callbacks.invoke_done_callbacks(),
                 cb_failed=lambda exc: callbacks.invoke_fail_callbacks(exc),
             )
 

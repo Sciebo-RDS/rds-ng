@@ -15,5 +15,4 @@ def process_external_project_state(
         external_state: The external project state to update.
     """
     # Dataverse doesn't lock projects
-    # TODO: o rly?
     external_state.external_state = ProjectExternalState.State.UPLOADED

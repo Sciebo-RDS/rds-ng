@@ -1,13 +1,11 @@
 import typing
 
 from common.py.utils.func import ExecutionCallbacks
-
 from .dataverse_request_data import (
     DataverseCollectionObject,
     DataverseCreateDatasetObject,
     DataverseDatasetObject,
     DataverseDatasetVersionObject,
-    DataverseDeleteAllFilesData,
     DataverseFileListObject,
     DataverseFileObject,
     DataverseUserObject,
@@ -104,7 +102,7 @@ class DataverseUpdateDatasetCallbacks(
 
 class DataverseDeleteAllFilesCallbacks(
     ExecutionCallbacks[
-        typing.Callable[[DataverseDeleteAllFilesData], None],
+        typing.Callable[[], None],
         typing.Callable[[Exception], None],
     ]
 ):
