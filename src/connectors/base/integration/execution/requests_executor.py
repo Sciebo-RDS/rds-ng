@@ -278,10 +278,14 @@ class RequestsExecutor(AuthorizedExecutor):
                         "Authorization": f"Bearer {auth_strategy.get_token_content(auth_token, AuthorizationStrategy.ContentType.AUTH_TOKEN)}"
                     }
                 )
-            elif auth_strategy.provides_token_content(
-                AuthorizationStrategy.ContentType.AUTH_LOGIN
-            ) and auth_strategy.provides_token_content(
-                AuthorizationStrategy.ContentType.AUTH_PASSWORD
+            elif (
+                auth_strategy.provides_token_content(
+                    AuthorizationStrategy.ContentType.AUTH_LOGIN
+                )
+                and auth_strategy.provides_token_content(
+                    AuthorizationStrategy.ContentType.AUTH_PASSWORD
+                )
+                and auth_token is not None
             ):
                 session.auth = (
                     auth_strategy.get_token_content(
@@ -291,6 +295,10 @@ class RequestsExecutor(AuthorizedExecutor):
                         auth_token, AuthorizationStrategy.ContentType.AUTH_PASSWORD
                     ),
                 )
+
+        self._customize_session(
+            session, auth_strategy=auth_strategy, auth_token=auth_token
+        )
 
         return session
 
@@ -316,3 +324,12 @@ class RequestsExecutor(AuthorizedExecutor):
                 error=str(exc),
             )
             return None
+
+    def _customize_session(
+        self,
+        session: requests.Session,
+        *,
+        auth_strategy: AuthorizationStrategy | None,
+        auth_token: AuthorizationToken | None,
+    ):
+        pass

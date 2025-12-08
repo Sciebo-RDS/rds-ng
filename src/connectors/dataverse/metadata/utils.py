@@ -9,19 +9,23 @@ class DataverseAuthor:
     name: str
     affiliation: str | None = None
 
+
 @dataclass
 class DataversePointOfContact:
     email: str
     name: str | None = None
     affiliation: str | None = None
 
+
 @dataclass
 class DataverseRights:
     name: str = "CC0 1.0"
-    uri: str = "http://creativecommons.org/publicdomain/zero/1.0"
+    uri: str = "https://creativecommons.org/publicdomain/zero/1.0"
 
 
-def parse_authors(authors_raw: PropertyObject, shared_objects: List[PropertyObject]) -> List[DataverseAuthor]:
+def parse_authors(
+    authors_raw: PropertyObject, shared_objects: List[PropertyObject]
+) -> List[DataverseAuthor]:
     """
     Parses a list of datacite author data and shared objects to extract Zenodo author information.
     Args:
@@ -41,15 +45,18 @@ def parse_authors(authors_raw: PropertyObject, shared_objects: List[PropertyObje
 
         if not author_raw:
             continue
-        
+
         name = author_raw.value.get("name", "")
         affiliation = author_raw.value.get("affiliation", None)
-        
+
         authors.append(DataverseAuthor(name, affiliation))
 
     return authors
 
-def parse_pocs(pocs_raw: PropertyObject, shared_objects: List[PropertyObject]) -> List[DataversePointOfContact]:
+
+def parse_pocs(
+    pocs_raw: PropertyObject, shared_objects: List[PropertyObject]
+) -> List[DataversePointOfContact]:
     """
     Parses a list of datacite Point of Contact data and shared objects to extract Zenodo Point of Contact information.
     Args:
@@ -69,16 +76,19 @@ def parse_pocs(pocs_raw: PropertyObject, shared_objects: List[PropertyObject]) -
 
         if not poc_raw:
             continue
-        
+
         email = poc_raw.value.get("email", "")
         name = poc_raw.value.get("name", None)
         affiliation = poc_raw.value.get("affiliation", None)
-        
+
         pocs.append(DataversePointOfContact(email, name, affiliation))
 
     return pocs
 
-def parse_rights(rights_raw: PropertyObject, shared_objects: List[PropertyObject]) -> DataverseRights:
+
+def parse_rights(
+    rights_raw: PropertyObject, shared_objects: List[PropertyObject]
+) -> DataverseRights:
     """
     Parses datacite rights data and shared objects to extract Dataverse rights information.
     Args:
@@ -99,9 +109,8 @@ def parse_rights(rights_raw: PropertyObject, shared_objects: List[PropertyObject
 
     if not rights_obj:
         return rights
-    
+
     rights.name = rights_obj.value.get("rightsIdentifier", None) or rights.name
     rights.uri = rights_obj.value.get("schemeURI", None) or rights.uri
-        
 
     return rights

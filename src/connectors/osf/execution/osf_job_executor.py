@@ -64,8 +64,6 @@ class OSFJobExecutor(ConnectorJobExecutor):
         message_builder: MessageBuilder,
         target_channel: Channel,
     ):
-        from ...base.settings import TransmissionSettingIDs
-
         super().__init__(
             comp,
             svc,
