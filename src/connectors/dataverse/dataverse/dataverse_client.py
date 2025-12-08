@@ -58,7 +58,6 @@ class DataverseClient(RequestsExecutor):
         connector_instance: ConnectorInstanceID,
         auth_channel: Channel,
         user_token: UserToken,
-        requests_options: RequestsExecutorOptions = RequestsExecutorOptions(),
         max_attempts: int = 1,
         attempts_delay: float = 3.0,
     ):
@@ -69,7 +68,6 @@ class DataverseClient(RequestsExecutor):
             connector_instance (ConnectorInstanceID): The connector instance ID.
             auth_channel (Channel): Channel to fetch authorization tokens from.
             user_token (UserToken): The user token.
-            requests_options: Additional requests options.
             max_attempts (int, optional): The number of attempts for each operation; cannot be lass than 1. Defaults to 1.
             attempts_delay (float, optional): The delay (in seconds) between each attempt. Defaults to 3.0.
         """
@@ -82,9 +80,6 @@ class DataverseClient(RequestsExecutor):
             auth_channel=auth_channel,
             user_token=user_token,
             base_url=comp.data.config.value(ConnectorSettingIDs.TARGET),
-            requests_options=RequestsExecutorOptions(
-                content_type=requests_options.content_type, trailing_slashes=False
-            ),
             max_attempts=max_attempts,
             attempts_delay=attempts_delay,
         )
@@ -463,7 +458,7 @@ class DataverseClient(RequestsExecutor):
             session.headers.update(
                 {
                     "X-Dataverse-key": auth_strategy.get_token_content(
-                        auth_token, AuthorizationStrategy.ContentType.AUTH_PASSWORD
+                        auth_token, AuthorizationStrategy.ContentType.AUTH_TOKEN
                     )
                 }
             )

@@ -92,7 +92,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
 
     def start(self, external_state: ProjectExternalState) -> None:
         self._reuse_external_project = check_reuse_external_project(external_state)
-        self._get_user(external_state)
+        self._get_user(external_state=external_state)
 
     # -- External state
 
@@ -177,7 +177,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         self._get_collection(dataverse_user, external_state=external_state)
 
     def _get_user_failed(self, exc: Exception) -> None:
-        self.set_failed(f"Unable to find a user for the given API-Token")
+        self.set_failed(f"Unable to find a user for the given API-Token: {str(exc)}")
 
     # Collection handling
 
