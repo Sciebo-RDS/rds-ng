@@ -45,7 +45,6 @@ from ...base.data.entities.connector import ConnectorJob
 from ...base.data.types import ProjectExternalStateCallbacks
 from ...base.execution import ConnectorJobExecutor
 from ...base.integration.execution.requests_executor import RequestsExecutorOptions
-from ...base.settings import TransmissionSettingIDs
 
 
 class ZenodoJobExecutor(ConnectorJobExecutor):
@@ -137,9 +136,13 @@ class ZenodoJobExecutor(ConnectorJobExecutor):
         exc: Exception,
         state_callbacks: ProjectExternalStateCallbacks,
     ) -> None:
-        if isinstance(exc, requests.exceptions.RequestException) and (
-            exc.response.status_code == HTTPStatus.NOT_FOUND
-            or exc.response.status_code == HTTPStatus.GONE
+        if (
+            isinstance(exc, requests.exceptions.RequestException)
+            and exc.response is not None
+            and (
+                exc.response.status_code == HTTPStatus.NOT_FOUND
+                or exc.response.status_code == HTTPStatus.GONE
+            )
         ):
             self.report_message(
                 "The previous project no longer exists, a new one will be created"

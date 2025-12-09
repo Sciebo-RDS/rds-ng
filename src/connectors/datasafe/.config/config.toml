@@ -1,12 +1,12 @@
 [connector]
-target = "https://www.disney.de"
+target = "https://datasafe.uni-muenster.de/api/"
 
 [network.client]
 server_address = "http://rds-server-1:6969"
 
 [authorization]
-strategy = "basic"
+strategy = "bearer"
 
-[transmission]
-max_attempts = 5
-attempts_delay = 15.0
+[authorization.bearer]
+bearer_label = "API Token"
+help_link = "https://datasafe.uni-muenster.de/faq"

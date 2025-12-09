@@ -10,17 +10,25 @@ const props = defineProps({
     propertyObjects: { type: PropertyObjectStore, required: true }
 });
 
-const value = computed(() => props.propertyObjects.get(props.propertyObjectId)?.getValues() as Record<string, any>);
+const value = computed(() => {
+    const values = props.propertyObjects.get(props.propertyObjectId)?.getValues();
+    try {
+        if (!!values && !!values[props.inputId]) {
+            return new Date(values[props.inputId]);
+        }
+    } catch (e) {}
+    return undefined;
+});
 </script>
 
 <template>
     <div>
         <DatePicker
-            @date-select="(date: Date) => propertyObjects.update(inputId, propertyObjectId, date)"
-            update-model-type="string"
-            dateFormat="dd/mm/yy"
-            v-model="value[inputId]"
-            class="w-full"
+            v-model="value"
+            update-model-type="date"
+            date-format="yy-mm-dd"
+            @date-select="(date: Date) => propertyObjects.update(props.inputId, props.propertyObjectId, date)"
+            fluid
         />
     </div>
 </template>

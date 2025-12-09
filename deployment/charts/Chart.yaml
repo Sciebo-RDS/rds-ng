@@ -4,6 +4,6 @@ description: A Helm chart for bridgit (RDS-NG)
 
 type: application
 
-version: 0.5.0
+version: 0.5.1
 
 appVersion: "1.2.0"

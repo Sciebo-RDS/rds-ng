@@ -1,5 +1,6 @@
-import pathlib
 import typing
+from datetime import datetime
+from http import HTTPStatus
 from io import BytesIO
 
 import requests
@@ -84,7 +85,7 @@ class InvenioRDMClient(RequestsExecutor):
         callbacks: InvenioRDMGetProjectCallbacks = InvenioRDMGetProjectCallbacks(),
     ) -> None:
         """
-        Gets information about an existing project.
+        Gets information about an existing project. This checks first if there is a published version, otherwise, it checks if there is a draft one.
 
         Args:
             project_id: The project ID.
@@ -94,8 +95,14 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.get(
                 session,
-                ["deposit", "depositions", project_id],
+                ["records", project_id],
             )
+            if resp.status_code != HTTPStatus.OK:
+                resp = self.get(
+                    session,
+                    ["records", project_id, "draft"],
+                )
+
             return InvenioRDMRequestData.data_from_response(
                 InvenioRDMProjectObject, resp
             )
@@ -123,7 +130,7 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.post(
                 session,
-                ["deposit", "depositions"],
+                ["records"],
                 json=self._get_project_metadata(project),
             )
             return InvenioRDMRequestData.data_from_response(
@@ -155,7 +162,7 @@ class InvenioRDMClient(RequestsExecutor):
         def _execute(session: requests.Session) -> InvenioRDMProjectObject:
             resp = self.put(
                 session,
-                ["deposit", "depositions", project_id],
+                ["records", project_id, "draft"],
                 json=self._get_project_metadata(project),
             )
             return InvenioRDMRequestData.data_from_response(
@@ -170,7 +177,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def delete_project(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         callbacks: InvenioRDMDeleteProjectCallbacks = InvenioRDMDeleteProjectCallbacks(),
     ):
@@ -178,14 +185,14 @@ class InvenioRDMClient(RequestsExecutor):
         Deletes an existing InvenioRDM project.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             callbacks: Optional request callbacks.
         """
 
         def _execute(session: requests.Session) -> None:
             self.delete(
                 session,
-                ["deposit", "depositions", InvenioRDM_project.project_id],
+                ["records", invenio_project.project_id, "draft"],
             )
 
         self._execute(
@@ -196,7 +203,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def get_file_list(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         callbacks: InvenioRDMGetFileListCallbacks = InvenioRDMGetFileListCallbacks(),
     ) -> None:
@@ -204,14 +211,14 @@ class InvenioRDMClient(RequestsExecutor):
         Retrieves the complete file list of a InvenioRDM project.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             callbacks:  Optional request callbacks.
         """
 
         def _execute(session: requests.Session) -> InvenioRDMFileListObject:
             resp = self.get(
                 session,
-                ["deposit", "depositions", InvenioRDM_project.project_id, "files"],
+                ["records", invenio_project.project_id, "draft", "files"],
             )
             return InvenioRDMRequestData.data_from_response(
                 InvenioRDMFileListObject, resp
@@ -225,7 +232,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def upload_file(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         path: str,
         file_data: ResourceBuffer,
@@ -235,25 +242,51 @@ class InvenioRDMClient(RequestsExecutor):
         Uploads a file to a InvenioRDM project.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             path: The remote path of the file.
             file_data: The file data.
             callbacks: Optional request callbacks.
         """
 
         def _execute(session: requests.Session) -> InvenioRDMFileObject:
-            file_path = pathlib.PurePosixPath(path)
+            file_path = path.lstrip("/").replace("/", "__")
 
-            # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
-            if file_data.seekable():
-                file_data.seek(0)
-
-            resp = self.put(
+            resp = self.post(
                 session,
-                f"{InvenioRDM_project.bucket_link}/{file_path.name}",
-                data=BytesIO(file_data.readall()),
+                ["records", invenio_project.project_id, "draft", "files"],
+                json=[{"key": file_path}],
             )
-            return InvenioRDMRequestData.data_from_response(InvenioRDMFileObject, resp)
+            if resp.status_code == HTTPStatus.CREATED:
+                files = typing.cast(
+                    InvenioRDMFileListObject,
+                    InvenioRDMRequestData.data_from_response(
+                        InvenioRDMFileListObject, resp
+                    ),
+                )
+                file_obj = files.find_file(file_path)
+
+                # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
+                if file_data.seekable():
+                    file_data.seek(0)
+
+                resp = self.put(
+                    session,
+                    file_obj.content_link,
+                    data=BytesIO(file_data.readall()),
+                    headers={"Content-Type": "application/octet-stream"},
+                )
+                if resp.status_code == HTTPStatus.OK:
+                    resp = self.post(
+                        session,
+                        file_obj.commit_link,
+                    )
+                    return InvenioRDMRequestData.data_from_response(
+                        InvenioRDMFileObject, resp
+                    )
+
+            raise Exception(
+                f"Error uploading {file_path}: {resp.content} ({resp.status_code})"
+            )
 
         def _upload_done(data: InvenioRDMFileObject) -> None:
             callbacks.invoke_done_callbacks(data)
@@ -271,8 +304,8 @@ class InvenioRDMClient(RequestsExecutor):
 
     def delete_file(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
-        InvenioRDM_file: InvenioRDMFileObject,
+        invenio_project: InvenioRDMProjectObject,
+        invenio_file: InvenioRDMFileObject,
         *,
         callbacks: InvenioRDMDeleteFileCallbacks = InvenioRDMDeleteFileCallbacks(),
     ):
@@ -280,20 +313,20 @@ class InvenioRDMClient(RequestsExecutor):
         Deletes an existing InvenioRDM file.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
-            InvenioRDM_file: The InvenioRDM file.
+            invenio_project: The InvenioRDM project.
+            invenio_file: The InvenioRDM file.
             callbacks: Optional request callbacks.
         """
 
         def _execute(session: requests.Session) -> None:
-            self.delete(
+            resp = self.delete(
                 session,
                 [
-                    "deposit",
-                    "depositions",
-                    InvenioRDM_project.project_id,
+                    "records",
+                    invenio_project.project_id,
+                    "draft",
                     "files",
-                    InvenioRDM_file.file_id,
+                    invenio_file.key,
                 ],
             )
 
@@ -305,7 +338,7 @@ class InvenioRDMClient(RequestsExecutor):
 
     def delete_all_files(
         self,
-        InvenioRDM_project: InvenioRDMProjectObject,
+        invenio_project: InvenioRDMProjectObject,
         *,
         callbacks: InvenioRDMDeleteAllFilesCallbacks = InvenioRDMDeleteAllFilesCallbacks(),
     ):
@@ -313,7 +346,7 @@ class InvenioRDMClient(RequestsExecutor):
         Deletes all files of a InvenioRDM project.
 
         Args:
-            InvenioRDM_project: The InvenioRDM project.
+            invenio_project: The InvenioRDM project.
             callbacks: Optional request callbacks.
         """
 
@@ -336,7 +369,7 @@ class InvenioRDMClient(RequestsExecutor):
                     )  # We ignore errors here
 
                     self.delete_file(
-                        InvenioRDM_project, file, callbacks=delete_file_callbacks
+                        invenio_project, file, callbacks=delete_file_callbacks
                     )
             else:
                 callbacks.invoke_done_callbacks()
@@ -348,7 +381,7 @@ class InvenioRDMClient(RequestsExecutor):
         file_list_callbacks.done(_get_file_list_done)
         file_list_callbacks.failed(_get_file_list_failed)
 
-        self.get_file_list(InvenioRDM_project, callbacks=file_list_callbacks)
+        self.get_file_list(invenio_project, callbacks=file_list_callbacks)
 
     def _get_project_metadata(self, project: Project) -> typing.Any:
         creator = InvenioRDMMetadataCreator()
@@ -358,35 +391,28 @@ class InvenioRDMClient(RequestsExecutor):
         )
         # creator.validate(metadata)
 
+        project_metadata = {
+            "title": (
+                metadata.title
+                if metadata.title is not None
+                else "Uploaded via Sciebo RDS"
+            ),
+            "creators": metadata.creators if metadata.creators else [],
+            "resource_type": (
+                metadata.resource_type if metadata.resource_type else "other"
+            ),
+            "publication_date": (
+                metadata.publication_date
+                if metadata.publication_date
+                else datetime.now().strftime("%Y-%m-%d")
+            ),
+        }
+
+        if metadata.description:
+            project_metadata["description"] = metadata.description
+
         return {
-            "metadata": {
-                "publication_type": "other",
-                "access_right": "closed",
-                "license": "cc-by",
-                "image_type": "other",
-                "title": (
-                    metadata.title
-                    if metadata.title is not None
-                    else "Uploaded via Sciebo RDS"
-                ),
-                "upload_type": (
-                    metadata.upload_type
-                    if metadata.upload_type is not None
-                    else "other"
-                ),
-                "creators": (
-                    metadata.creators if metadata.creators is not None else []
-                ),
-                "description": (
-                    metadata.description
-                    if metadata.description is not None
-                    else "No description provided"
-                ),
-                "contributors": (
-                    metadata.contributors if metadata.contributors is not None else []
-                ),
-                "version": (metadata.version if metadata.version is not None else ""),
-                "grants": (metadata.grants if metadata.grants is not None else []),
-                "dates": metadata.dates if metadata.dates is not None else [],
-            }
+            "access": {"record": "public", "files": "public"},
+            "files": {"enabled": True},
+            "metadata": project_metadata,
         }

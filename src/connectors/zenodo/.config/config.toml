@@ -12,7 +12,3 @@ host = "https://sandbox.zenodo.org"
 authorization_endpoint = "/oauth/authorize"
 token_endpoint = "/oauth/token"
 scope = "deposit:write deposit:actions"
-
-[transmission]
-max_attempts = 5
-attempts_delay = 15.0

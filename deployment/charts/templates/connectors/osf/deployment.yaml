@@ -35,6 +35,8 @@ spec:
             - configMapRef:
                 name: "{{ .Values.connectors.osf.componentName }}-config"
             - secretRef:
+                name: "{{ .Values.connectors.osf.componentName }}-secret"
+            - secretRef:
                 name: network-api-secret
           volumeMounts:
             {{ if and (hasKey .Values.connectors.osf "logos") (hasKey .Values.connectors.osf.logos "default") (.Files.Get .Values.connectors.osf.logos.default) }}

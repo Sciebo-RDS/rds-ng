@@ -3,6 +3,7 @@ import typing
 from .authorization_strategies_catalog import AuthorizationStrategiesCatalog
 from .authorization_strategy import AuthorizationStrategy
 from .basic import BasicStrategy, create_basic_strategy
+from .bearer import BearerStrategy, create_bearer_strategy
 from .oauth2 import create_oauth2_strategy, OAuth2Strategy
 from ....component import BackendComponent
 from ....core import logging
@@ -24,6 +25,9 @@ def register_authorization_strategies() -> None:
     )
     AuthorizationStrategiesCatalog.register_item(
         BasicStrategy.Strategy, create_basic_strategy
+    )
+    AuthorizationStrategiesCatalog.register_item(
+        BearerStrategy.Strategy, create_bearer_strategy
     )
 
     # Print all available strategies for debugging purposes

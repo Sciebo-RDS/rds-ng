@@ -6,7 +6,7 @@ hide_table_of_contents: false
 
 # *bridgit* for Technical Administrators
 <div style={{textAlign: 'center', width: '35%', float: 'right' }}>
-  <img src="/img/octopi/developer.png" />
+  <img class="bg-white"  src="/img/octopi/developer.png" />
 </div>
 
 *bridgit* is an open-access research data management app developed in an academic setting to support researchers. The app was successfully piloted at the University of Münster in the Sciebo Hochschulcloud NRW, where it was seamlessly integrated into an existing Nextcloud environment.

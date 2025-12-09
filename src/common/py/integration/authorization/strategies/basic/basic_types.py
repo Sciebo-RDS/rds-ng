@@ -11,16 +11,12 @@ class BasicStrategyConfiguration:
 
     Attributes:
         user_id_label: The display label of the user ID.
-        user_id_optional: Whether the user ID is optional.
         user_password_label: The display label of the user password.
-        user_password_optional: Whether the password is optional.
         help_link: An optional link for external help.
     """
 
     user_id_label: str
-    user_id_optional: bool
     user_password_label: str
-    user_password_optional: bool
 
     help_link: str
 

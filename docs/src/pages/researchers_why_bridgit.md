@@ -7,7 +7,7 @@ hide_table_of_contents: false
 
 # *bridgit*  for Researchers: Manage, Annotate, and Share Your Data 
 <div style={{textAlign: 'center', width: '30%', float: 'right' }}>
-  <img src="/img/octopi/data.png" />
+  <img class="bg-white"  src="/img/octopi/data.png" />
 </div>
  
 If you are a researcher at an academic institution, *bridgit* is designed to streamline your research data lifecycle, from initial dataset preparation to secure sharing with the scientific community. With *bridgit*, you can annotate datasets, maintain data management plans, upload projects and metadata, and connect your setup directly to trusted repositories such as Zenodo or OSF.
@@ -21,7 +21,7 @@ By combining these capabilities in one platform, *bridgit* empowers researchers 
 
 ## What are the prerequisites to use *bridgit*?
 <div style={{textAlign: 'center', width: '35%', float: 'right', margin: '2%' }}>
-  <img src="/img/octopi/bridge.png" />
+  <img class="bg-white"  src="/img/octopi/bridge.png" />
 </div>
 
 *bridgit* is designed to be easy to use, with no technical knowledge required. To get started, all you need is a Sciebo account (the university cloud service) that already contains your datasets. This is where *bridgit* will access your research data.

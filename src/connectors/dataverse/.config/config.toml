@@ -1,0 +1,12 @@
+[connector]
+target = "https://demo.dataverse.org/api/"
+
+[network.client]
+server_address = "http://rds-server-1:6969"
+
+[authorization]
+strategy = "bearer"
+
+[authorization.bearer]
+bearer_label = "API Token"
+help_link = "https://guides.dataverse.org/en/latest/api/auth.html"

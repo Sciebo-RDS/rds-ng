@@ -95,9 +95,9 @@ class BasicStrategy(AuthorizationStrategy):
             BasicAuthorizationRequestData.from_dict(request_data)
         )
 
-        if not config.user_id_optional and basic_data.user_id == "":
+        if basic_data.user_id == "":
             raise RuntimeError("Missing user ID")
-        if not config.user_password_optional and basic_data.user_password == "":
+        if basic_data.user_password == "":
             raise RuntimeError("Missing user password")
 
         return BasicToken(
@@ -116,9 +116,9 @@ def create_basic_strategy(
     auth_token: AuthorizationToken | None = None,
     auth_public: AuthorizationSettings | None = None,
     auth_private: AuthorizationSettings | None = None,
-) -> BasicStrategy:
+) -> AuthorizationStrategy:
     """
-    Creates a new OAuth2 strategy instance.
+    Creates a new Basic strategy instance.
 
     Args:
         comp: The main component.

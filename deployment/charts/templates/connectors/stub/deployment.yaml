@@ -30,6 +30,8 @@ spec:
             - configMapRef:
                 name: "{{ .Values.connectors.stub.componentName }}-config"
             - secretRef:
+                name: "{{ .Values.connectors.stub.componentName }}-secret"
+            - secretRef:
                 name: network-api-secret
 ---
 apiVersion: v1

@@ -29,6 +29,8 @@ spec:
           - configMapRef:
               name: "{{ .Values.connectors.zenodo.componentName }}-config"
           - secretRef:
+              name: "{{ .Values.connectors.zenodo.componentName }}-secret"
+          - secretRef:
               name: network-api-secret
 
 

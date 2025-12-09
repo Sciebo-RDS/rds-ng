@@ -7,7 +7,7 @@ hide_table_of_contents: true
 #### For Institutional Administrators
 # Why install *bridgit* in your Nextcloud? 
 <div style={{textAlign: 'center', width: '20%', float: 'right' }}>
-  <img src="/img/octopi/computer.png" />
+  <img class="bg-white"  src="/img/octopi/computer.png" />
 </div>
 
 We know, managing research data across departments, faculties, and entire institutions is a complex challenge. By integrating *bridgit* into your Nextcloud environment, you can provide your researchers with a secure solution that covers the entire research data lifecycle.
@@ -17,7 +17,7 @@ For universities, libraries, central IT services, departments, and research data
 *bridgit* emerged from a <ins>DFG-funded project</ins> and is administered by the University of Münster in close collaboration with the University of Potsdam as the scientific consultant throughout the project. The pilot in the sciebo Hochschulcloud NRW has already demonstrated its practical value, and the project has attracted the interest of further institutions. The underlying philosophy is simple: just as research data should be shared openly to maximize its benefit for science, the app itself is shared openly so that any institution can adopt it and simplify research data sharing for its community. 
 
 <div style={{textAlign: 'center', width: '20%', float: 'right'}}>
-  <img src="/img/octopi/phone.png" />
+  <img class="bg-white"  src="/img/octopi/phone.png" />
 </div>
 
 ### Get in Touch

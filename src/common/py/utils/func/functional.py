@@ -10,7 +10,7 @@ def attempt(
     attempts: int = 1,
     delay: float = 3.0,
     **kwargs,
-) -> (bool, typing.Any):
+) -> typing.Tuple[bool, typing.Any]:
     """
     Attempts to execute a callback function up to a certain number of times. If no attempt succeeds either the `fail_callback` is called or the
     exception is re-raised.
@@ -33,7 +33,7 @@ def attempt(
             return True, result
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if i < attempts - 1:
-                time.sleep(delay)
+                time.sleep(delay * (1.5**i))
                 if callable(cb_retry):
                     cb_retry(*args, **kwargs)
             else:

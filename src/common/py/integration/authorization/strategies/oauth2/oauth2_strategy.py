@@ -254,7 +254,7 @@ def create_oauth2_strategy(
     auth_token: AuthorizationToken | None = None,
     auth_public: AuthorizationSettings | None = None,
     auth_private: AuthorizationSettings | None = None,
-) -> OAuth2Strategy:
+) -> AuthorizationStrategy:
     """
     Creates a new OAuth2 strategy instance.
 

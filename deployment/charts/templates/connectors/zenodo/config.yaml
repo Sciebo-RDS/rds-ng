@@ -4,15 +4,11 @@ metadata:
   name: "{{ .Values.connectors.zenodo.componentName }}-config"
   namespace: {{ .Values.namespace }}
 data:
-{{- if .Values.createSecrets }}
-  RDS_NETWORK_API_KEY: {{ .Values.server.networkApiKey }}
-{{- end }}
   RDS_CONNECTOR_TARGET: {{ .Values.connectors.zenodo.targetUrl }}
   RDS_NETWORK_SERVER_ALLOWED_ORIGINS: {{ .Values.server.allowedOrigins }}
   RDS_AUTHORIZATION_OAUTH2_SERVER_HOST: {{ .Values.connectors.zenodo.oauth2.serverHost }}
   RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL: {{ .Values.server.oauth2.domoRedirectUrl }}
   RDS_AUTHORIZATION_OAUTH2_CLIENT_ID: {{ .Values.connectors.zenodo.oauth2.clientId }}
-  RDS_AUTHORIZATION_OAUTH2_CLIENT_SECRET: {{ .Values.connectors.zenodo.oauth2.clientSecret }}
   RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address }}
   RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
   RDS_GENERAL_DEBUG_TRACE: {{ .Values.debugTrace | quote }}

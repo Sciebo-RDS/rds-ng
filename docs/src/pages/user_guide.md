@@ -6,7 +6,7 @@ hide_table_of_contents: false
 
 # Step by Step: Your Data Sharing Guide
 <div style={{textAlign: 'center', width: '35%', float: 'right', marginLeft: '30px' }}>
-  <img src="/img/octopi/arrow.png" />
+  <img class="bg-white"  src="/img/octopi/arrow.png" />
 </div>
 
 Follow this step-by-step guide to get started with bridgit and to see how easily you can manage, annotate, and share your research data from start to finish.   
@@ -134,7 +134,7 @@ The data management plan allows you to assess a Data Management Plan using a sim
 
 
 
-### Step 5: Uploading a projects
+### Step 5: Uploading a project
 
 Once you have completed the editing of your project, it is time to upload it to an external repository like Zenodo or OSF. To do so, click on the **Upload project** button in the top right corner of bridgit, which will bring up the following dialog:
 
@@ -145,6 +145,11 @@ Once you have completed the editing of your project, it is time to upload it to 
 
 
 To upload your project to a specific service, simply click on its corresponding **Upload** button. bridgit will now upload all data that belongs to your project, including its files and metadata, to the external repository:
+
+
+<div style={{textAlign: 'center', float: 'center', margin: '20px'}}>
+  <img src="/img/userguide/999999999.png" />
+</div>
 
 
 Don’t worry! This process runs in the background, so you are able to close this dialog while the upload is still running; you can even close bridgit, your project will still continue to upload.

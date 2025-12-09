@@ -234,7 +234,7 @@ class ZenodoClient(RequestsExecutor):
         """
 
         def _execute(session: requests.Session) -> ZenodoFileObject:
-            file_path = pathlib.PurePosixPath(path)
+            file_path = path.lstrip("/").replace("/", "__")
 
             # When uploading, always seek to the beginning of the buffer, as uploads might be retried multiple times
             if file_data.seekable():
