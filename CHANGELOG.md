@@ -1,15 +1,17 @@
 # RDS-NG - Changelog
 
-## v1.3.0 - xxxx-xx-xx
+## v1.3.0 - 2025-12-09
 
 ### New
 
 - **datasafe** connector
+- **Dataverse** connector
 - Authorization strategy `bearer`
 
 ### Improvements
 
 - Made connection and transfer attempts use exponential delays to make them more error tolerant
+- Use the cloud ID of Nextcloud as the main user ID
 
 ### Fixes
 
