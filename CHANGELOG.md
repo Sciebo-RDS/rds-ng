@@ -11,7 +11,7 @@
 ### Improvements
 
 - Made connection and transfer attempts use exponential delays to make them more error tolerant
-- Use the cloud ID of Nextcloud as the main user ID
+- Append the instance ID to user IDs to avoid clashes between instances
 
 ### Fixes
 
