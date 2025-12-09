@@ -36,9 +36,7 @@ def get_connector_settings() -> typing.Dict[SettingID, typing.Any]:
         OAuth2AuthorizationSettingIDs.CLIENT_REDIRECT_URL: "",
         # Basic auth settings
         BasicAuthorizationSettingIDs.USER_ID_LABEL: "User ID",
-        BasicAuthorizationSettingIDs.USER_ID_OPTIONAL: False,
         BasicAuthorizationSettingIDs.USER_PASSWORD_LABEL: "Password",
-        BasicAuthorizationSettingIDs.USER_PASSWORD_OPTIONAL: False,
         BasicAuthorizationSettingIDs.HELP_LINK: "",
         # Bearer auth settings
         BearerAuthorizationSettingIDs.BEARER_LABEL: "Bearer token",

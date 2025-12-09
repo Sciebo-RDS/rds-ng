@@ -1,15 +1,17 @@
 # RDS-NG - Changelog
 
-## v1.3.0 - xxxx-xx-xx
+## v1.3.0 - 2025-12-09
 
 ### New
 
 - **datasafe** connector
+- **Dataverse** connector
 - Authorization strategy `bearer`
 
 ### Improvements
 
 - Made connection and transfer attempts use exponential delays to make them more error tolerant
+- Append the instance ID to user IDs to avoid clashes between instances
 
 ### Fixes
 

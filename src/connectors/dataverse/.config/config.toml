@@ -1,5 +1,5 @@
 [connector]
-target = "https://datasafe.uni-muenster.de/api/"
+target = "https://demo.dataverse.org/api/"
 
 [network.client]
 server_address = "http://rds-server-1:6969"
@@ -9,4 +9,4 @@ strategy = "bearer"
 
 [authorization.bearer]
 bearer_label = "API Token"
-help_link = "https://datasafe.uni-muenster.de/faq"
+help_link = "https://guides.dataverse.org/en/latest/api/auth.html"

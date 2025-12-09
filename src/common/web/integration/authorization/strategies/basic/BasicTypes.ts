@@ -3,10 +3,7 @@
  */
 export interface BasicStrategyConfiguration {
     user_id_label: string;
-    user_id_optional: boolean;
-
     user_password_label: string;
-    user_password_optional: boolean;
 
     help_link: string;
 }
