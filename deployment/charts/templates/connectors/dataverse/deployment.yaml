@@ -1,0 +1,65 @@
+{{ if .Values.connectors.datasafe.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-{{ .Values.connectors.datasafe.componentName }}"
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.datasafe.componentName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      component: {{ .Values.connectors.datasafe.componentName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        component: {{ .Values.connectors.datasafe.componentName }}
+    spec:
+      volumes:
+        - name: datasafe-logo-volume
+          configMap:
+            name: connector-datasafe-logos-config
+
+      containers:
+        - name: "{{ .Values.appName }}-{{ .Values.connectors.datasafe.componentName }}"
+          image: "{{ .Values.connectors.datasafe.image.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.connectors.datasafe.image.pullPolicy }}
+          ports:
+            - containerPort: 6969
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.connectors.datasafe.componentName }}-config"
+            - secretRef:
+                name: network-api-secret
+          volumeMounts:
+            {{ if and (hasKey .Values.connectors.datasafe "logos") (hasKey .Values.connectors.datasafe.logos "default") (.Files.Get .Values.connectors.datasafe.logos.default) }}
+            - name: datasafe-logo-volume
+              mountPath: /component/connectors/datasafe/.assets/logo.png
+              subPath: logo.png
+            {{ end }}
+            {{ if and (hasKey .Values.connectors.datasafe "logos") (hasKey .Values.connectors.datasafe.logos "horizontal") (.Files.Get .Values.connectors.datasafe.logos.horizontal) }}
+            - name: datasafe-logo-volume
+              mountPath: /component/connectors/datasafe/.assets/horizontal.png
+              subPath: horizontal.png
+            {{ end }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.connectors.datasafe.componentName }}-service"
+spec:
+  selector:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.datasafe.componentName }}
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 6969
+{{- end -}}

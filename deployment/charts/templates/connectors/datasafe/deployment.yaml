@@ -1,0 +1,65 @@
+{{ if .Values.connectors.dataverse.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-{{ .Values.connectors.dataverse.componentName }}"
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.dataverse.componentName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      component: {{ .Values.connectors.dataverse.componentName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        component: {{ .Values.connectors.dataverse.componentName }}
+    spec:
+      volumes:
+        - name: dataverse-logo-volume
+          configMap:
+            name: connector-dataverse-logos-config
+
+      containers:
+        - name: "{{ .Values.appName }}-{{ .Values.connectors.dataverse.componentName }}"
+          image: "{{ .Values.connectors.dataverse.image.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.connectors.dataverse.image.pullPolicy }}
+          ports:
+            - containerPort: 6969
+          envFrom:
+            - configMapRef:
+                name: "{{ .Values.connectors.dataverse.componentName }}-config"
+            - secretRef:
+                name: network-api-secret
+          volumeMounts:
+            {{ if and (hasKey .Values.connectors.dataverse "logos") (hasKey .Values.connectors.dataverse.logos "default") (.Files.Get .Values.connectors.dataverse.logos.default) }}
+            - name: dataverse-logo-volume
+              mountPath: /component/connectors/dataverse/.assets/logo.png
+              subPath: logo.png
+            {{ end }}
+            {{ if and (hasKey .Values.connectors.dataverse "logos") (hasKey .Values.connectors.dataverse.logos "horizontal") (.Files.Get .Values.connectors.dataverse.logos.horizontal) }}
+            - name: dataverse-logo-volume
+              mountPath: /component/connectors/dataverse/.assets/horizontal.png
+              subPath: horizontal.png
+            {{ end }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.connectors.dataverse.componentName }}-service"
+spec:
+  selector:
+    app: {{ .Values.appName }}
+    component: {{ .Values.connectors.dataverse.componentName }}
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 6969
+{{- end -}}

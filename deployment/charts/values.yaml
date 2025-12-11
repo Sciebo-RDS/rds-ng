@@ -146,6 +146,24 @@ connectors:
             clientId: "CHANGEME" # The clientid of your zenodo oauth application
             clientSecret: "CHANGEME" # The secret of your zenodo oauth application
 
+    ### Datasafe
+    datasafe:
+        enabled: true
+        componentName: "connector-datasafe"
+        targetUrl: "https://datasafe.uni-muenster.de/api/"
+        image:
+            name: "ghcr.io/sciebo-rds/rds-ng-connector-datasafe"
+            pullPolicy: "Always"
+
+    ### Dataverse
+    dataverse:
+        enabled: true
+        componentName: "connector-dataverse"
+        targetUrl: "https://www.dataverse.org/api/"
+        image:
+            name: "ghcr.io/sciebo-rds/rds-ng-connector-dataverse"
+            pullPolicy: "Always"
+
     ### Stub
     stub:
         enabled: false
