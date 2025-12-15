@@ -147,3 +147,10 @@ class Configuration:
         The name of the currently loaded settings file.
         """
         return self._settings_file
+
+    @property
+    def settings(self) -> typing.Dict[str, typing.Any]:
+        """
+        The complete settings dictionary.
+        """
+        return self._settings

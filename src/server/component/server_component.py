@@ -11,6 +11,7 @@ from common.py.utils import UnitID
 
 from ..data.exporters import register_project_exporters
 from ..data.server import ServerData
+from ..tenants import Tenants
 
 # Make the entire API known
 from common.py.api import *
@@ -33,6 +34,8 @@ class ServerComponent(BackendComponent):
         self._prepare_storage_pool()
 
         self._server_data = ServerData()
+
+        self._tenants = self._create_tenants()
 
     def run(self) -> None:
         from ..services import (
@@ -99,12 +102,28 @@ class ServerComponent(BackendComponent):
 
             raise exc
 
+    def _create_tenants(self) -> Tenants:
+        try:
+            tenants = Tenants()
+            return tenants
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error(f"Unable to create tenants: {str(exc)}")
+
+            raise exc
+
     @property
     def server_data(self) -> ServerData:
         """
         The global server data.
         """
         return self._server_data
+
+    @property
+    def tenants(self) -> Tenants:
+        """
+        The global tenants.
+        """
+        return self._tenants
 
     @staticmethod
     def instance() -> "ServerComponent":
