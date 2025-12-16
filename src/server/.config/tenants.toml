@@ -1,0 +1,5 @@
+[default.integration]
+scheme = "host"
+
+[default.integration.host]
+url = "http://localhost:8080/apps/rdsng"
