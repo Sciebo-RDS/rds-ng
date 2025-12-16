@@ -76,7 +76,9 @@ def create_tenant_from_configuration(
         ),
         authorization=TenantPublicConfiguration.Authorization(
             oauth2=TenantPublicConfiguration.Authorization.OAuth2(
-                client_id=_get_config_value("authorization.client_id", default=""),
+                client_id=_get_config_value(
+                    "authorization.oauth2.client_id", default=""
+                ),
             )
         ),
     )
@@ -92,7 +94,7 @@ def create_tenant_from_configuration(
         authorization=TenantPrivateConfiguration.Authorization(
             oauth2=TenantPrivateConfiguration.Authorization.OAuth2(
                 client_secret=_get_config_value(
-                    "authorization.client_secret", default=""
+                    "authorization.oauth2.client_secret", default=""
                 ),
             )
         ),

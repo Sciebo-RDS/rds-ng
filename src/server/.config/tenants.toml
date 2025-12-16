@@ -3,3 +3,7 @@ scheme = "host"
 
 [default.integration.host]
 url = "http://localhost:8080/apps/rdsng"
+
+[default.authorization.oauth2]
+client_id = "BHqb23QAdFjHgABAcNmdPPu9zc31tbZHl9QzhTNGsfIU9gm87J4cRUfnJ5j7pTZ4"
+client_secret = "splToG2CPUdufezIMh3NYkcYnqc5BJG4c1q7XuwBzj5R51DHQm8ugORENzfGd9KV"
