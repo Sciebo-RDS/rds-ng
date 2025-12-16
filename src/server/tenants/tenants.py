@@ -3,8 +3,7 @@ import typing
 from common.py.core import logging
 from common.py.utils.config import Configuration
 
-from .tenant import Tenant
-from .tenant_configurations import TenantPrivateConfiguration, TenantPublicConfiguration
+from .tenant import create_tenant_from_configuration, Tenant, TenantID
 
 
 class Tenants:
@@ -21,15 +20,17 @@ class Tenants:
         Args:
             config_file: The configuration file to load.
         """
-        self._tenants: typing.Dict[str, Tenant] = self._load_tenants(config_file)
+        self._config = Configuration(env_prefix="RDS_TENANT")
+        self._config.load(config_file)
 
-    def _load_tenants(self, config_file: str) -> typing.Dict[str, Tenant]:
-        logging.debug(f"Loading tenants", config_file=config_file, scope="tenants")
+        self._tenants = self._create_tenants()
 
-        config = Configuration()
-        config.load(config_file)
+    def _create_tenants(self) -> typing.Dict[TenantID, Tenant]:
+        logging.debug(
+            f"Loading tenants", config_file=self._config.settings_file, scope="tenants"
+        )
 
-        tenants = self._parse_tenants(config)
+        tenants = self._parse_tenants()
 
         logging.info(
             f"Registered tenants: {'; '.join(tenants.keys())}", scope="tenants"
@@ -37,27 +38,18 @@ class Tenants:
 
         return tenants
 
-    def _parse_tenants(self, config: Configuration) -> typing.Dict[str, Tenant]:
-        tenants: typing.Dict[str, Tenant] = {}
+    def _parse_tenants(self) -> typing.Dict[TenantID, Tenant]:
+        tenants: typing.Dict[TenantID, Tenant] = {}
 
-        root_entries = config.settings.keys()
+        root_entries = self._config.settings.keys()
         for tenant_id in root_entries:
-            tenant = self._create_tenant(tenant_id, config)
+            tenant = create_tenant_from_configuration(self._config, tenant_id=tenant_id)
             tenants[tenant_id] = tenant
 
         return tenants
 
-    def _create_tenant(self, tenant_id: str, config: Configuration) -> Tenant:
-        # TODO
-        public_config = TenantPublicConfiguration(host_url="", host_scheme="oauth2")
-        private_config = TenantPrivateConfiguration()
-
-        return Tenant(
-            tenant_id, public_config=public_config, private_config=private_config
-        )
-
     @property
-    def tenants(self) -> typing.Dict[str, Tenant]:
+    def tenants(self) -> typing.Dict[TenantID, Tenant]:
         """
         All loaded tenants.
         """
