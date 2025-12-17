@@ -19,6 +19,7 @@ from common.py.utils.func import attempt
 from .tools import handle_authorization_token_changes
 from ..component import ServerComponent
 from ..settings import AuthorizationSettingIDs
+from ..tenants import authorization_settings_from_tenant
 
 
 def create_authorization_service(comp: ServerComponent) -> Service:
@@ -65,6 +66,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         ctx: ServerServiceContext,
         strategy: str,
         *,
+        auth_type: str,
         auth_token: AuthorizationToken | None = None,
         auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
@@ -77,6 +79,14 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 if ctx.user
                 else None
             )
+
+        if auth_type == AuthorizationToken.TokenType.HOST and auth_private is None:
+            # Get private authorization settings for the tenant
+            tenant = comp.tenants.get_tenant(ctx.user.host_id)
+            if tenant is None:
+                raise RuntimeError(f"Unknown tennant {ctx.user.host_id}")
+
+            auth_private = authorization_settings_from_tenant(strategy, tenant)
 
         return create_authorization_strategy(
             comp,
@@ -104,6 +114,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 strategy = _create_auth_strategy(
                     ctx,
                     msg.strategy,
+                    auth_type=msg.request_payload.auth_type,
                     auth_public=ctx.public_auth_settings.get_settings(
                         msg.request_payload.auth_bearer
                     ),
@@ -269,6 +280,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                         strategy = _create_auth_strategy(
                             ctx,
                             auth_token.strategy,
+                            auth_type=auth_token.auth_type,
                             auth_token=auth_token,
                             auth_public=ctx.public_auth_settings.get_settings(
                                 auth_token.auth_bearer

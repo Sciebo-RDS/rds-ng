@@ -25,6 +25,18 @@ class Tenants:
 
         self._tenants = self._create_tenants()
 
+    def get_tenant(self, tenant_id: TenantID) -> Tenant | None:
+        """
+        Gets the tenant with the given ID or None if not found.
+
+        Args:
+            tenant_id: The tenant ID to retrieve.
+
+        Returns:
+            The tenant with the given ID.
+        """
+        return self._tenants[tenant_id] if tenant_id in self._tenants else None
+
     def _create_tenants(self) -> typing.Dict[TenantID, Tenant]:
         logging.debug(
             f"Loading tenants", config_file=self._config.settings_file, scope="tenants"
