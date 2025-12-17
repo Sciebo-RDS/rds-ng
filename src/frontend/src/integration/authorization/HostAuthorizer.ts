@@ -50,7 +50,7 @@ export class HostAuthorizer extends Authorizer {
                     )
                 ),
                 compStore.getHostInstanceID(),
-                AuthorizationTokenType.Host,
+                compStore.getHostInstanceID(),
                 fingerprint
             ); // (yes, we need that AuthorizationTokenType.Host 4 times)
 

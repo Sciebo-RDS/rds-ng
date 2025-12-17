@@ -9,7 +9,6 @@ from common.py.component.roles import ServerRole
 from common.py.core.logging import error, info, debug
 from common.py.utils import UnitID
 
-from ..data.exporters import register_project_exporters
 from ..data.server import ServerData
 from ..tenants import Tenants
 
@@ -38,6 +37,10 @@ class ServerComponent(BackendComponent):
         self._tenants = self._create_tenants()
 
     def run(self) -> None:
+        from ..tenants.authorization import (
+            register_tenant_authorization_settings_creators,
+        )
+        from ..data.exporters import register_project_exporters
         from ..services import (
             create_authorization_service,
             create_connectors_service,
@@ -51,6 +54,7 @@ class ServerComponent(BackendComponent):
         )
 
         # Register additional global items
+        register_tenant_authorization_settings_creators()
         register_project_exporters()
 
         # Create all server services

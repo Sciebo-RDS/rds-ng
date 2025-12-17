@@ -13,13 +13,12 @@ from common.py.integration.authorization.strategies import (
     create_authorization_strategy,
 )
 from common.py.services import Service
-from common.py.utils import EntryGuard
+from common.py.utils import debug_print, EntryGuard
 from common.py.utils.func import attempt
 
 from .tools import handle_authorization_token_changes
 from ..component import ServerComponent
 from ..settings import AuthorizationSettingIDs
-from ..tenants import authorization_settings_from_tenant
 
 
 def create_authorization_service(comp: ServerComponent) -> Service:
@@ -70,6 +69,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         auth_token: AuthorizationToken | None = None,
         auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
+        host_id: str | None = None,
     ) -> AuthorizationStrategy:
         if auth_token is None:
             auth_token = (
@@ -80,13 +80,23 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 else None
             )
 
-        if auth_type == AuthorizationToken.TokenType.HOST and auth_private is None:
-            # Get private authorization settings for the tenant
-            tenant = comp.tenants.get_tenant(ctx.user.host_id)
-            if tenant is None:
-                raise RuntimeError(f"Unknown tennant {ctx.user.host_id}")
+        if auth_type == AuthorizationToken.TokenType.HOST and host_id is not None:
+            from server.tenants.authorization import (
+                create_tenant_authorization_settings,
+            )
 
-            auth_private = authorization_settings_from_tenant(strategy, tenant)
+            # Get authorization settings for the tenant
+            tenant = comp.tenants.get_tenant(host_id)
+            if tenant is None:
+                raise RuntimeError(f"Unknown tenant {host_id}")
+
+            auth_pub, auth_priv = create_tenant_authorization_settings(strategy, tenant)
+
+            if auth_public is None and auth_pub is not None:
+                auth_public = auth_pub
+
+            if auth_private is None and auth_priv is not None:
+                auth_private = auth_priv
 
         return create_authorization_strategy(
             comp,
@@ -121,6 +131,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                     auth_private=ctx.private_auth_settings.get_settings(
                         msg.request_payload.auth_bearer
                     ),
+                    host_id=msg.request_payload.auth_bearer,
                 )
                 auth_token = strategy.request_authorization(
                     user_id=ctx.user.user_id,
@@ -288,7 +299,9 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                             auth_private=ctx.private_auth_settings.get_settings(
                                 auth_token.auth_bearer
                             ),
+                            host_id=auth_token.auth_bearer,
                         )
+
                         strategy.refresh_authorization(
                             auth_token,
                             host_id=user.host_id if user is not None else None,

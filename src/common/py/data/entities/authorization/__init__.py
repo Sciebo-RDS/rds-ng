@@ -1,4 +1,4 @@
-from .authorization_settings import AuthorizationSettings
+from .authorization_settings import AuthorizationSettings, AuthorizationSettingsConfig
 from .authorization_state import AuthorizationState
 from .authorization_token import AuthorizationTokenID, AuthorizationToken
 
