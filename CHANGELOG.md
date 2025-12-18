@@ -1,5 +1,15 @@
 # RDS-NG - Changelog
 
+## v1.4.0 - xxxx-xx-xx
+
+### New
+
+- Connectors can be excluded on a per-tenant basis
+
+### Improvements
+
+- Extended tenant (host+frontend) support
+
 ## v1.3.0 - 2025-12-09
 
 ### New

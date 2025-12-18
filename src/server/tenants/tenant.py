@@ -98,6 +98,11 @@ def create_tenant_from_configuration(
                 ),
             )
         ),
+        connectors=TenantPrivateConfiguration.Connectors(
+            excluded_connectors=_get_config_value(
+                "connectors.excluded_connectors", default=[]
+            )
+        ),
     )
 
     return Tenant(tenant_id, public_config=public_config, private_config=private_config)

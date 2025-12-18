@@ -1,6 +1,9 @@
+import typing
 from dataclasses import dataclass
 
 from dataclasses_json import dataclass_json
+
+from common.py.data.entities.connector import ConnectorID
 
 
 @dataclass_json
@@ -88,4 +91,15 @@ class TenantPrivateConfiguration:
 
         oauth2: OAuth2
 
+    @dataclass_json
+    @dataclass(kw_only=True, frozen=True)
+    class Connectors:
+        """
+        Connector settings.
+        """
+
+        excluded_connectors: typing.List[ConnectorID]
+
     authorization: Authorization
+
+    connectors: Connectors
