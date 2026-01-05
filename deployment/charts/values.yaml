@@ -11,7 +11,7 @@ debug:
     enableTracing: false    # Whether to log function calls for extensive debugging
 
 network:
-    apiKey: ""  # An arbitrary API key to access protected resources; this must always be provided
+    apiKey: "xxx"  # An arbitrary API key to access protected resources; this must always be provided
 
 server:
     volume:
@@ -42,18 +42,35 @@ server:
                 user: ""                # The username; required if this engine is used
                 password: ""            # The user's password; required if this engine is used
     ingress:
-        hostname: ""        # The hostname (without any scheme); required
+        hostname: "x"        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
         pathType: ""        # The root path type
-        tlsSecret: ""       # If specified, enable TLS and use this secret
+        tlsSecret: ""       # If specified, enable TLS and use this secret (must be created manually upfront)
 
 domo:
     ingress:
-        hostname: ""        # The hostname (without any scheme); required
+        hostname: "y"        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
         pathType: ""        # The root path type
-        tlsSecret: ""       # If specified, enable TLS and use this secret
+        tlsSecret: ""       # If specified, enable TLS and use this secret (must be created manually upfront)
+
+frontend:
+    ingress:
+        hostname: "z"        # The hostname (without any scheme); required
+        annotations: {}     # A list of key-value pairs to pass as annotations
+        class: ""           # The ingress controller class
+        path: "/"           # The ingress root path
+        pathType: ""        # The root path type
+        tlsSecret: ""       # If specified, enable TLS and use this secret (must be created manually upfront)
+
+tenants:
+    # Each tenant (i.e., hosts running a frontend) must be configured individually by listing it using its assigned identifier
+    default:                    # The identifier as specified in the corresponding integration app
+        url: "xdg"                 # The full URL of the host (including its scheme and path)
+        oauth2:                 # Leave this block out if the host doesn't use OAuth2
+            clientId: "xxx"        # The OAuth2 client id
+            clientSecret: "xxx"    # The OAuth2 client secret

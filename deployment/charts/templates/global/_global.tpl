@@ -10,5 +10,5 @@ imagePullPolicy: {{ $top.Values.image.pullPolicy | default "always" }}
 {{- end }}
 
 {{- define "rds.serverAddress" }}
-{{ printf "https://%s" (required "No server address specified" .Values.server.ingress.hostname) | quote }}
+{{- printf "https://%s" (required "No server address specified" .Values.server.ingress.hostname) -}}
 {{- end }}

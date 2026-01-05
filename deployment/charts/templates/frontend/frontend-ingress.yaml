@@ -1,0 +1,1 @@
+{{ include "rds.ingress" (list . .Values.frontend.ingress "frontend-ingress" "frontend-service" 8000) }}

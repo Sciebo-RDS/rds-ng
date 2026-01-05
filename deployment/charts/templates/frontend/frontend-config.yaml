@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: frontend-config
+    namespace: {{ .Values.namespace }}
+data:
+    config.toml: |
+        [network.client]
+        server_address = {{ include "rds.serverAddress" . | quote }}
+
+        {{ range $k, $v := .Values.tenants -}}
+        [{{ $k }}.integration]
+        scheme = "host"
+
+        [{{ $k }}.integration.host]
+        url = {{ required (printf "Missing URL for tentant %s" $k) $v.url | quote }}
+
+        {{ if $v.oauth2 -}}
+        [{{ $k }}.authorization.oauth2.client]
+        id = {{ required (printf "Missing OAuth2 client ID for tentant %s" $k) $v.oauth2.clientId | quote }}
+        redirect_url = {{ required (printf "Missing URL for tentant %s" $k) $v.url | quote }}
+        {{- end }}
+        {{- end }}

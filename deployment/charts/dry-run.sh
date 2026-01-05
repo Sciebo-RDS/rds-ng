@@ -1,2 +1,2 @@
 #!/bin/bash
-helm install bridgit . --dry-run=client --debug
+helm template --debug . $@

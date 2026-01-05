@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ include "rds.fullname" . }}-frontend
+    namespace: {{ include "rds.namespace" . }}
+    labels: {{- include "rds.labels" (list . "frontend") | nindent 8 }}
+spec:
+    replicas: 1
+    selector:
+        matchLabels: {{- include "rds.selectorLabels" (list . "frontend") | nindent 12 }}
+    template:
+        metadata:
+            labels: {{- include "rds.selectorLabels" (list . "frontend") | nindent 16 }}
+        spec:
+            containers:
+                -   name: {{ include "rds.fullname" . }}-server
+                    {{- include "rds.image" (list . "rds-ng-frontend") | nindent 20 }}
+                    ports:
+                        -   containerPort: 6969
+                    volumeMounts:
+                        -   mountPath: /app/config
+                            name: {{ include "rds.fullname" . }}-frontend-config-volume
+                    envFrom:
+                        -   secretRef:
+                              name: {{ include "rds.fullname" . }}-network-api-secret
+                        -   configMapRef:
+                              name: {{ include "rds.fullname" . }}-server-config
+                        -   secretRef:
+                                name: {{ include "rds.fullname" . }}-server-config-secret
+            restartPolicy: Always
+            volumes:
+                -   name: {{ include "rds.fullname" . }}-frontend-config-volume
+                    configMap:
+                        name: {{ include "rds.fullname" . }}-frontend-config
