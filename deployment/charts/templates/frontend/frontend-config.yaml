@@ -18,6 +18,6 @@ data:
         {{ if $v.oauth2 -}}
         [{{ $k }}.authorization.oauth2.client]
         id = {{ required (printf "Missing OAuth2 client ID for tentant %s" $k) $v.oauth2.clientId | quote }}
-        redirect_url = {{ required (printf "Missing URL for tentant %s" $k) $v.url | quote }}
+        redirect_url = {{ $v.url | quote }}
         {{- end }}
         {{- end }}
