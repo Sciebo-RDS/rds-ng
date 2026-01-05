@@ -1,0 +1,1 @@
+{{ include "rds.ingress" (list . .Values.domo.ingress "domo-ingress" "domo-service" 5500) }}
