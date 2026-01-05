@@ -1,1 +1,1 @@
-bridgit has been successfully deployed!
+bridgit (RDS-NG) has been successfully deployed!

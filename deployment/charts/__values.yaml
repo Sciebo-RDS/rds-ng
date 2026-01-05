@@ -1,0 +1,174 @@
+---
+appName: "rds"
+namespace: "rds"
+
+###
+### General settings
+###
+tag: "latest" # The release tag to be deployed
+debugLog: "false" # Enable debug logging
+debugTrace: "false" # Enable debug tracing
+supportEmail: "" # The user support email address that will be displayed in the frontend
+
+createSecrets: true # If to create server-secret and network-api-secret. It should preferably be created with sealedsecrets or some other secure method, and all plain text ouath2 secrets should be left out of this file
+
+###
+### Server
+###
+server:
+    componentName: "server"
+    address: "https://api.your.domain" # The rds server domain name
+    image:
+        name: "ghcr.io/sciebo-rds/rds-ng-server"
+        pullPolicy: "Always"
+    allowedOrigins: "'*'"
+    sqliteFile: "/data/rds.db" # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
+    oauth2:
+        domoRedirectUrl: "https://NEXTCLOUD_DOMAIN/domo/authorize/oauth2" # The URL Domo will use for OAUTH2 redirection (used by connectors).
+    networkApiKey: "CHANGEME" # An arbitrary API key to access protected resources; this must be the same value on all components.
+    pvc:
+        storageClassName: "rdb"
+    storage:
+        driver: "database" # The driver to use for the storage; possible values are memory or database.
+        engine: "sqlite" # The database backend to use; can be sqlite, postgresql, mysql or mariadb. Database settings are configured in the next couple lines. Default: sqlite
+        # Only configure what is set in 'Engine' above.
+        sqlite:
+            sqliteFile: "/data/rds.db" # The (absolute) filename where SQLite stores its data; if not set, an in-memory database will be used.
+        postgresql: # postgresql
+            host: "" # The host of the database system.
+            port: # The port of the database system; if omitted, the default port will be used.
+            database: "" # The name of the database to use. Default: "rds_ng"
+            user: "" # The database username.
+            password: "" # The password for the database user.
+        mysql: # mysql
+            host: "" # The host of the database system.
+            port: # The port of the database system; if omitted, the default port will be used.
+            database: "" # The name of the database to use. Default: "rds_ng"
+            user: "" # The database username.
+            password: "" # The password for the database user.
+        mariadb: #mariadb
+            host: "" # The host of the database system.
+            port: "" # The port of the database system; if omitted, the default port will be used.
+            database: "" # The name of the database to use. Default: "rds_ng"
+            user: "" # The database username.
+            password: "" # The password for the database user.
+    ingress:
+        enabled: true
+        hostname: "api.your.domain" # The rds server domain name
+        path: /
+        tls:
+            -   hosts:
+                    - "api.your.domain" # The rds server domain name
+                secretName: "sciebords-api-tls" # The name of the secret that holds your rds server domain certificate
+        annotations: {}
+        class: "public"
+
+###
+### Domo
+###
+domo:
+    componentName: "domo"
+    image:
+        name: "ghcr.io/sciebo-rds/rds-ng-domo"
+        pullPolicy: "Always"
+    ingress:
+        enabled: true
+        hostname: "domo.your.domain" # The rds domo domain name
+        path: /
+        tls:
+            -   hosts:
+                    - "api.your.domain" # The rds server domain name
+                secretName: "sciebords-api-tls" # The name of the secret that holds your rds server domain certificate
+        annotations: {}
+        class: "public"
+
+###
+### Frontend
+###
+frontend:
+    componentName: "frontend"
+    image:
+        name: "ghcr.io/sciebo-rds/rds-ng-frontend"
+        pullPolicy: "Always"
+    ingress:
+        enabled: true
+        hostname: "frontend.your.domain" # The rds frontend domain name
+        path: /
+        tls:
+            -   hosts:
+                    - "frontend.your.domain" # The rds frontend domain name
+                secretName: "sciebords-frontend-tls" # The name of the secret that holds your rds frontend domain certificate
+
+        annotations: {}
+        class: "public"
+
+###
+### Hosts
+###
+hosts:
+    # Each host used with a bridgit deployment must be configured individually
+    default: # Each host must be listed using its assigned identifier
+        url: "https://NEXTCLOUD_DOMAIN/apps/rdsng" # The full URL of the host (including its full path)
+        endpoints:
+            entrypoint: "" # The relative entrypoint of the host integration application (leave empty to use the default one)
+            api: "" # The relative path of the host integration API (leave empty to use the default one)
+        oauth2:
+            hostSecret: "CHANGEME" # The host secret registered in Nexcloud for the frontend
+            clientId: "CHANGEME" # The client id registered in Nexcloud for the frontend
+
+###
+### Connectors
+###
+connectors:
+    ### OSF
+    osf:
+        enabled: true
+        componentName: "connector-osf"
+        targetUrl: "https://api.osf.io/v2/"
+        image:
+            name: "ghcr.io/sciebo-rds/rds-ng-connector-osf"
+            pullPolicy: "Always"
+        oauth2:
+            serverHost: "https://accounts.osf.io"
+            clientId: "CHANGEME" # The clientId of your osf oauth application
+            clientSecret: "CHANGEME" # The secret of your osf oauth application
+
+    ### Zenodo
+    zenodo:
+        enabled: true
+        componentName: "connector-zenodo"
+        targetUrl: "https://zenodo.org/api/"
+        image:
+            name: "ghcr.io/sciebo-rds/rds-ng-connector-zenodo"
+            pullPolicy: "Always"
+        oauth2:
+            serverHost: "https://zenodo.org"
+            clientId: "CHANGEME" # The clientid of your zenodo oauth application
+            clientSecret: "CHANGEME" # The secret of your zenodo oauth application
+
+    ### Datasafe
+    datasafe:
+        enabled: true
+        componentName: "connector-datasafe"
+        targetUrl: "https://datasafe.uni-muenster.de/api/"
+        image:
+            name: "ghcr.io/sciebo-rds/rds-ng-connector-datasafe"
+            pullPolicy: "Always"
+
+    ### Dataverse
+    dataverse:
+        enabled: true
+        componentName: "connector-dataverse"
+        targetUrl: "https://www.dataverse.org/api/"
+        image:
+            name: "ghcr.io/sciebo-rds/rds-ng-connector-dataverse"
+            pullPolicy: "Always"
+
+    ### Stub
+    stub:
+        enabled: false
+        componentName: "connector-stub"
+        oauth2:
+            serverHost: "CHANGEME"
+            clientId: "CHANGEME"
+            clientSecret: "CHANGEME"

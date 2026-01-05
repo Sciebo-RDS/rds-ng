@@ -47,3 +47,11 @@ server:
                 database: "rds-ng"      # The database name
                 user: ""                # The username; required if this engine is used
                 password: ""            # The user's password; required if this engine is used
+    ingress:
+        enabled: false      # Whether to enable ingress
+        hostname: ""        # The hostname; required if using an ingress
+        annotations: {}     # A list of key-value pairs to pass as annotations
+        class: ""           # The ingress controller class
+        path: "/"           # The ingress root path
+        pathType: ""        # The root path type
+        tlsSecret: ""       # If specified, enable TLS and use this secret

@@ -1,0 +1,1 @@
+{{ include "rds.ingress" (list .Values.server.ingress (include "rds.fullname" .) (include "rds.namespace" .) "server-ingress" "server-service" 4200) }}
