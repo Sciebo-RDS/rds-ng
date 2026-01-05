@@ -1,0 +1,15 @@
+{{- if eq .Values.server.storage.engine "sqlite" }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rds-server-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: {{ .Values.server.pvc.storageClassName }}
+{{- end }}
