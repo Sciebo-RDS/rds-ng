@@ -4,41 +4,38 @@ Ingress helpers
 
 {{- define "rds.ingress" }}
 {{- $top := index . 0 -}}
-{{- $fullname := index . 1 -}}
-{{- $namespace := index . 2 -}}
-{{- $name := index . 3 -}}
-{{- $service := index . 4 -}}
-{{- $port := index . 5 -}}
-{{- if $top.enabled -}}
+{{- $ingress := index . 1 -}}
+{{- $name := index . 2 -}}
+{{- $service := index . 3 -}}
+{{- $port := index . 4 -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    name: {{ $fullname }}-{{ $name }}
-    namespace: {{ $namespace }}
+    name: {{ include "rds.fullname" $top }}-{{ $name }}
+    namespace: {{ include "rds.namespace" $top }}
     annotations:
-        {{- range $key, $value := $top.annotations }}
+        {{- range $key, $value := $ingress.annotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
 spec:
-    {{- if $top.class }}
-    ingressClassName: {{ $top.class }}
+    {{- if $ingress.class }}
+    ingressClassName: {{ $ingress.class }}
     {{- end }}
     rules:
-        -   host: {{ required "No hostname specified" $top.hostname }}
+        -   host: {{ required "No hostname specified" $ingress.hostname | quote }}
             http:
                 paths:
-                    -   path: {{ default "/" $top.path | quote}}
-                        pathType: {{ default "Prefix" $top.pathPrefix | quote}}
+                    -   path: {{ default "/" $ingress.path | quote}}
+                        pathType: {{ default "Prefix" $ingress.pathPrefix | quote}}
                         backend:
                             service:
-                                name: {{ $fullname }}-{{ $service }}
+                                name: {{ include "rds.fullname" $top }}-{{ $service }}
                                 port:
                                     number: {{ $port }}
-    {{- if $top.tlsSecret }}
+    {{- if $ingress.tlsSecret }}
     tls:
         -   hosts:
-                -   {{ required "No hostname specified" $top.hostname }}
-            secretName: {{ $top.tlsSecret }}
+                -   {{ required "No hostname specified" $ingress.hostname | quote }}
+            secretName: {{ $ingress.tlsSecret }}
     {{- end }}
-{{- end -}}
 {{- end }}

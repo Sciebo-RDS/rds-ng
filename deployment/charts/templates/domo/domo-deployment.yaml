@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ include "rds.fullname" . }}-domo
+    namespace: {{ include "rds.namespace" . }}
+    labels: {{- include "rds.labels" (list . "domo") | nindent 8 }}
+spec:
+    replicas: 1
+    selector:
+        matchLabels: {{- include "rds.selectorLabels" (list . "domo") | nindent 12 }}
+    template:
+        metadata:
+            labels: {{- include "rds.selectorLabels" (list . "domo") | nindent 16 }}
+        spec:
+            containers:
+                -   name: {{ include "rds.fullname" . }}-domo
+                    {{- include "rds.image" (list . "rds-ng-domo") | nindent 20 }}
+                    ports:
+                        -   containerPort: 6969
+                    envFrom:
+                        -   secretRef:
+                              name: {{ include "rds.fullname" . }}-network-api-secret
+                        -   configMapRef:
+                              name: {{ include "rds.fullname" . }}-domo-config
+            restartPolicy: Always

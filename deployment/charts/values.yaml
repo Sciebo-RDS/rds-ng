@@ -1,25 +1,19 @@
-# Global application values
 nameOverride: ""    # Override the application name (defaults to "rds")
 namespace: ""       # Override the application namespace
 
-# Container image settings
 image:
     host: "ghcr.io/sciebo-rds"      # The image host; do not append a slash (e.g., ghcr.io/sciebo-rds instead of ghcr.io/sciebo-rds/)
     tag: "latest"                   # The image tag
     pullPolicy: "always"            # The image pull policy
 
-# Debugging
 debug:
     enabled: false          # Whether to run in debug mode, resulting in more textual output and fewer restrictions
     enableTracing: false    # Whether to log function calls for extensive debugging
 
-# Global network settings
 network:
-    apiKey: "some-key"  # An arbitrary API key to access protected resources; this must always be provided
+    apiKey: ""  # An arbitrary API key to access protected resources; this must always be provided
 
-# Server settings
 server:
-    # A single persistent volume is always created for the server
     volume:
         storageSize: "1Gi"              # The size to allocate for the main server volume
         storageClassName: "standard"    # The storage class for the main server volume
@@ -48,8 +42,16 @@ server:
                 user: ""                # The username; required if this engine is used
                 password: ""            # The user's password; required if this engine is used
     ingress:
-        enabled: false      # Whether to enable ingress
-        hostname: ""        # The hostname; required if using an ingress
+        hostname: ""        # The hostname (without any scheme); required
+        annotations: {}     # A list of key-value pairs to pass as annotations
+        class: ""           # The ingress controller class
+        path: "/"           # The ingress root path
+        pathType: ""        # The root path type
+        tlsSecret: ""       # If specified, enable TLS and use this secret
+
+domo:
+    ingress:
+        hostname: ""        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path

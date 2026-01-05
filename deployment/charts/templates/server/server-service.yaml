@@ -3,10 +3,10 @@ kind: Service
 metadata:
     name: {{ include "rds.fullname" . }}-server-service
     namespace: {{ include "rds.namespace" . }}
-    labels: {{- include "rds.labels" . | nindent 8 }}
+    labels: {{- include "rds.labels" (list . "server") | nindent 8 }}
 spec:
     selector:
-        {{- include "rds.selectorLabels" . | nindent 8 }}
+        {{- include "rds.selectorLabels" (list . "server") | nindent 8 }}
     ports:
         -   protocol: TCP
             port: 4200

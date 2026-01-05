@@ -19,15 +19,20 @@ Basic chart helpers
 {{- end}}
 
 {{- define "rds.labels" -}}
-helm.sh/chart: {{ include "rds.chart" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- $top := index . 0 -}}
+{{- $component := index . 1 -}}
+helm.sh/chart: {{ include "rds.chart" $top }}
+{{- if $top.Chart.AppVersion }}
+app.kubernetes.io/version: {{ $top.Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{ include "rds.selectorLabels" . }}
+app.kubernetes.io/managed-by: {{ $top.Release.Service }}
+{{ include "rds.selectorLabels" (list $top $component) }}
 {{- end }}
 
 {{- define "rds.selectorLabels" -}}
-app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/name: {{ include "rds.name" . }}
+{{- $top := index . 0 -}}
+{{- $component := index . 1 -}}
+app.kubernetes.io/instance: {{ $top.Release.Name }}
+app.kubernetes.io/name: {{ include "rds.name" $top }}
+component: {{ $component }}
 {{- end }}

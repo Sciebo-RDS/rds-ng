@@ -3,14 +3,14 @@ kind: Deployment
 metadata:
     name: {{ include "rds.fullname" . }}-server
     namespace: {{ include "rds.namespace" . }}
-    labels: {{- include "rds.labels" . | nindent 8 }}
+    labels: {{- include "rds.labels" (list . "server") | nindent 8 }}
 spec:
     replicas: 1
     selector:
-        matchLabels: {{- include "rds.selectorLabels" . | nindent 12 }}
+        matchLabels: {{- include "rds.selectorLabels" (list . "server") | nindent 12 }}
     template:
         metadata:
-            labels: {{- include "rds.selectorLabels" . | nindent 16 }}
+            labels: {{- include "rds.selectorLabels" (list . "server") | nindent 16 }}
         spec:
             containers:
                 -   name: {{ include "rds.fullname" . }}-server
