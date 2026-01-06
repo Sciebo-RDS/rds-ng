@@ -1,3 +1,20 @@
+# bridgit (RDS-NG) Helm values
+# ----------------------------
+#
+# The following values are mandatory and must be set properly:
+#  - network.apiKey
+#  - server.ingress.hostname
+#  - domo.ingress.hostname
+#  - frontend.ingress.hostname
+#
+# All tenants (i.e., hosts running an integrated frontend) must also be configured properly under the "tenants" section.
+# For each tenant, the following values must be set:
+#  - tenants.<tenantid>.scheme
+#  - tenants.<tenantid>.url
+#
+# Depending on your environment, you'll most likely need to set further values properly.
+#
+
 nameOverride: ""    # Override the application name (defaults to "rds")
 namespace: ""       # Override the application namespace
 
@@ -11,16 +28,16 @@ debug:
     enableTracing: false    # Whether to log function calls for extensive debugging
 
 network:
-    apiKey: "xxx"  # An arbitrary API key to access protected resources; this must always be provided
+    apiKey: ""  # An arbitrary API key to access protected resources; this must always be provided
 
 server:
     volume:
         storageSize: "1Gi"              # The size to allocate for the main server volume
         storageClassName: "standard"    # The storage class for the main server volume
     storage:
-        driver: "database"        # The storage driver to use; can either be "memory" for a volatile in-memory storage or "database" for persistency
-        database:               # Database-specific settings; only effective if driver is set to "database"
-            engine: "sqlite"    # The type of database to use; currently supported are: sqlite, postgresql, mysql or mariadb
+        driver: "memory"                # The storage driver to use; can either be "memory" for a volatile in-memory storage or "database" for persistency
+        database:                       # Database-specific settings; only effective if driver is set to "database"
+            engine: "sqlite"            # The type of database to use; currently supported are: sqlite, postgresql, mysql or mariadb
             sqlite:
                 file: "/data/rds.db"    # The file SQLite stores its data in
             postgresql:
@@ -42,7 +59,7 @@ server:
                 user: ""                # The username; required if this engine is used
                 password: ""            # The user's password; required if this engine is used
     ingress:
-        hostname: "x"        # The hostname (without any scheme); required
+        hostname: ""        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
@@ -51,7 +68,7 @@ server:
 
 domo:
     ingress:
-        hostname: "y"        # The hostname (without any scheme); required
+        hostname: ""        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
@@ -60,7 +77,7 @@ domo:
 
 frontend:
     ingress:
-        hostname: "z"        # The hostname (without any scheme); required
+        hostname: ""        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
@@ -68,9 +85,10 @@ frontend:
         tlsSecret: ""       # If specified, enable TLS and use this secret (must be created manually upfront)
 
 tenants:
-    # Each tenant (i.e., hosts running a frontend) must be configured individually by listing it using its assigned identifier
+    # All tenants (i.e., hosts running an integrated frontend) must be configured individually by listing each using its assigned identifier
     default:                    # The identifier as specified in the corresponding integration app
-        url: "xdg"                 # The full URL of the host (including its scheme and path)
+        scheme: "host"          # The integration scheme/type (only "host" is currently supported)
+        url: ""                 # The full URL of the host (including its scheme and path)
         oauth2:                 # Leave this block out if the host doesn't use OAuth2
-            clientId: "xxx"        # The OAuth2 client id
-            clientSecret: "xxx"    # The OAuth2 client secret
+            clientId: ""        # The OAuth2 client id
+            clientSecret: ""    # The OAuth2 client secret

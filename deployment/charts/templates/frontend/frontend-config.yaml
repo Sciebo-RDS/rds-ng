@@ -9,14 +9,16 @@ data:
         server_address = {{ include "rds.serverAddress" . | quote }}
 
         {{ range $k, $v := .Values.tenants -}}
-        [{{ $k }}.integration]
-        scheme = "host"
+        [{{ lower $k }}.integration]
+        scheme = {{ required (printf "Missing scheme for tentant %s" $k) $v.scheme | quote }}
 
-        [{{ $k }}.integration.host]
+        {{ if eq (lower $v.scheme) "host" -}}
+        [{{ lower $k }}.integration.host]
         url = {{ required (printf "Missing URL for tentant %s" $k) $v.url | quote }}
+        {{- end }}
 
         {{ if $v.oauth2 -}}
-        [{{ $k }}.authorization.oauth2.client]
+        [{{ lower $k }}.authorization.oauth2.client]
         id = {{ required (printf "Missing OAuth2 client ID for tentant %s" $k) $v.oauth2.clientId | quote }}
         redirect_url = {{ $v.url | quote }}
         {{- end }}
