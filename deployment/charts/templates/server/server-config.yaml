@@ -27,6 +27,9 @@ data:
     {{ if eq (lower $v.scheme) "host" -}}
     RDS_TENANT_{{- upper $k -}}_INTEGRATION_HOST_URL: {{ required (printf "Missing URL for tenant %s" $k) $v.url | quote }}
     {{- end }}
+    {{ if $v.excludedConnectors }}
+    RDS_TENANT_{{- upper $k -}}_CONNECTORS_EXCLUDED_CONNECTORS: {{ join ";" $v.excludedConnectors | quote }}
+    {{- end }}
     {{ if hasKey $v "oauth2" -}}
     RDS_TENANT_{{- upper $k -}}_AUTHORIZATION_OAUTH2_CLIENT_ID: {{ required (printf "Missing OAuth2 client ID for tenant %s" $k) $v.oauth2.clientId | quote }}
     {{- end }}

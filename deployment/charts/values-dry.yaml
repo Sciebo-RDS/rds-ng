@@ -111,6 +111,9 @@ tenants:
     default:                    # The identifier as specified in the corresponding integration app
         scheme: "host"          # The integration scheme/type (only "host" is currently supported)
         url: "w"                 # The full URL of the host (including its scheme and path); leaving this out will usually target a test system
+        excludedConnectors:
+            - osf
+            - zenodo
         oauth2:                 # Leave this block out if the host doesn't use OAuth2
             clientId: "x"        # The OAuth2 client id
             clientSecret: "x"    # The OAuth2 client secret

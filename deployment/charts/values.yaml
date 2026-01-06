@@ -111,6 +111,7 @@ tenants:
     default:                    # The identifier as specified in the corresponding integration app
         scheme: "host"          # The integration scheme/type (only "host" is currently supported)
         url: ""                 # The full URL of the host (including its scheme and path)
+        excludedConnectors: []  # An array of excluded connectors (using their IDs) for this tenant
         oauth2:                 # Leave this block out if the host doesn't use OAuth2
             clientId: ""        # The OAuth2 client id
             clientSecret: ""    # The OAuth2 client secret
