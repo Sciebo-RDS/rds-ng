@@ -1,12 +1,12 @@
-[default.integration]
-scheme = "host"
-
-[default.integration.host]
-url = "http://localhost:8080/apps/rdsng"
-
-[default.authorization.oauth2]
-# client_id = "..."
-# client_secret = "..."
-
-[default.connectors]
+# [default.integration]
+# scheme = "host"
+#
+# [default.integration.host]
+# url = "http://localhost:8080/apps/rdsng"
+#
+# [default.authorization.oauth2]
+# client_id = "something"
+# client_secret = "secret"
+#
+# [default.connectors]
 # excluded_connectors = ["stub", "osf"]
