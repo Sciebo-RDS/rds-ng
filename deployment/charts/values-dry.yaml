@@ -28,7 +28,7 @@ debug:
     enableTracing: false    # Whether to log function calls for extensive debugging
 
 network:
-    apiKey: ""  # An arbitrary API key to access protected resources; this must always be provided
+    apiKey: ""  # An arbitrary API key to access protected resources; if not specified, a random value will be generated
 
 server:
     volume:
@@ -59,7 +59,7 @@ server:
                 user: ""                # The username; required if this engine is used
                 password: ""            # The user's password; required if this engine is used
     ingress:
-        hostname: ""        # The hostname (without any scheme); required
+        hostname: "x"        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
@@ -68,7 +68,7 @@ server:
 
 domo:
     ingress:
-        hostname: ""        # The hostname (without any scheme); required
+        hostname: "domodomdo"        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
@@ -77,7 +77,7 @@ domo:
 
 frontend:
     ingress:
-        hostname: ""        # The hostname (without any scheme); required
+        hostname: "z"        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
@@ -87,30 +87,30 @@ frontend:
 connectors:
     osf:
         enabled: true                           # Whether this connector should be used
-        targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
-        oauth2:
-            host: ""                            # The OAuth2 host URL; if left empty, the default system for this connector will be used
-            clientId: ""                        # The OAuth2 client id
-            clientSecret: ""                    # The OAuth2 client secret
+        targetUrl: ""     # The main URL of the target system API
+        oauth2:                                 # Leave this block out if the connector doesn't use OAuth2
+            host: ""     # The OAuth2 host URL
+            clientId: "wet"                        # The OAuth2 client id
+            clientSecret: "wet"                    # The OAuth2 client secret
     zenodo:
         enabled: true                           # Whether this connector should be used
-        targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
-        oauth2:
-            host: ""                            # The OAuth2 host URL; if left empty, the default system for this connector will be used
-            clientId: ""                        # The OAuth2 client id
-            clientSecret: ""                    # The OAuth2 client secret
+        targetUrl: ""     # The main URL of the target system API
+        oauth2: # Leave this block out if the connector doesn't use OAuth2
+            host: ""     # The OAuth2 host URL
+            clientId: "wet"                        # The OAuth2 client id
+            clientSecret: "wet"                    # The OAuth2 client secret
     datasafe:
-        enabled: false                          # Whether this connector should be used
+        enabled: true                          # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
     dataverse:
-        enabled: false                          # Whether this connector should be used
-        targetUrl: ""                           # The main URL of the target system API; must be specified for dataverse
+        enabled: true                          # Whether this connector should be used
+        targetUrl: "test"                           # The main URL of the target system API; must be specified for dataverse
 
 tenants:
     # All tenants (i.e., hosts running an integrated frontend) must be configured individually by listing each using its assigned identifier
     default:                    # The identifier as specified in the corresponding integration app
         scheme: "host"          # The integration scheme/type (only "host" is currently supported)
-        url: ""                 # The full URL of the host (including its scheme and path)
+        url: "w"                 # The full URL of the host (including its scheme and path); leaving this out will usually target a test system
         oauth2:                 # Leave this block out if the host doesn't use OAuth2
-            clientId: ""        # The OAuth2 client id
-            clientSecret: ""    # The OAuth2 client secret
+            clientId: "x"        # The OAuth2 client id
+            clientSecret: "x"    # The OAuth2 client secret

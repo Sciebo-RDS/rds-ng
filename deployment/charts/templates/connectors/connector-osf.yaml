@@ -1,0 +1,1 @@
+{{ include "rds.connector" (list . .Values.connectors.osf "osf" "https://api.osf.io/v2/" "https://accounts.osf.io") }}

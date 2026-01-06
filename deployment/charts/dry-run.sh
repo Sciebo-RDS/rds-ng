@@ -1,2 +1,2 @@
 #!/bin/bash
-helm template --debug . $@
+helm template --debug . -f ./values-dry.yaml
