@@ -1,14 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: {{ include "rds.fullname" . }}-frontend-config
+    name: {{ include "rds.fullname" . }}-tenants-config
     namespace: {{ .Values.namespace }}
 data:
-    config.toml: |
-        [network.client]
-        server_address = {{ include "rds.serverAddress" . | quote }}
-
+    tenants.toml: |
         {{ range $k, $v := .Values.tenants -}}
+        [{{ lower $k }}]
         [{{ lower $k }}.integration]
         scheme = {{ required (printf "Missing scheme for tenant %s" $k) $v.scheme | quote }}
 
@@ -17,9 +15,13 @@ data:
         url = {{ required (printf "Missing URL for tenant %s" $k) $v.url | quote }}
         {{- end }}
 
+        {{ if $v.excludedConnectors }}
+        [{{ lower $k }}.connectors]
+        excluded_connectors = {{ toJson $v.excludedConnectors }}
+        {{- end }}
+
         {{ if $v.oauth2 -}}
-        [{{ lower $k }}.authorization.oauth2.client]
-        id = {{ required (printf "Missing OAuth2 client ID for tenant %s" $k) $v.oauth2.clientId | quote }}
-        redirect_url = {{ $v.url | quote }}
+        [{{ lower $k }}.authorization.oauth2]
+        client_id = {{ required (printf "Missing OAuth2 client ID for tenant %s" $k) $v.oauth2.clientId | quote }}
         {{- end }}
         {{- end }}

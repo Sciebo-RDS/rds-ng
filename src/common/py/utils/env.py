@@ -25,6 +25,9 @@ def get_env_value(key: str, target_type: type) -> typing.Any:
                 )
             if isinstance(value, int):
                 return value >= 1
+        elif target_type == list:
+            if isinstance(value, str):
+                return value.replace(",", ";").split(";")
         
         return target_type(value)
     

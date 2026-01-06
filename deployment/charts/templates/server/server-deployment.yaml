@@ -20,15 +20,22 @@ spec:
                     volumeMounts:
                         -   mountPath: /data
                             name: {{ include "rds.fullname" . }}-server-volume
+                        -   mountPath: /component/server/.config
+                            name: {{ include "rds.fullname" . }}-server-tenants-config-volume
                     envFrom:
                         -   secretRef:
-                              name: {{ include "rds.fullname" . }}-network-api-secret
+                                name: {{ include "rds.fullname" . }}-network-api-secret
                         -   configMapRef:
-                              name: {{ include "rds.fullname" . }}-server-config
+                                name: {{ include "rds.fullname" . }}-server-config
                         -   secretRef:
                                 name: {{ include "rds.fullname" . }}-server-config-secret
+                        -   secretRef:
+                                name: {{ include "rds.fullname" . }}-server-tenants-config-secret
             restartPolicy: Always
             volumes:
                 -   name: {{ include "rds.fullname" . }}-server-volume
                     persistentVolumeClaim:
                         claimName: {{ include "rds.fullname" . }}-server-pvc
+                -   name: {{ include "rds.fullname" . }}-server-tenants-config-volume
+                    configMap:
+                        name: {{ include "rds.fullname" . }}-server-tenants-config
