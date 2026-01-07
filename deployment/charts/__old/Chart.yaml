@@ -1,9 +1,0 @@
-apiVersion: v2
-name: rds-ng
-description: A Helm chart for bridgit (RDS-NG)
-
-type: application
-
-version: 0.6.0
-
-appVersion: "1.3.0"

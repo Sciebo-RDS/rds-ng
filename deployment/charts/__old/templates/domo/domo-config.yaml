@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-    name: domo-config
-    namespace: {{ .Values.namespace }}
-data:
-    RDS_GENERAL_DEBUG: {{ .Values.debugLog | quote }}
-    RDS_GENERAL_DEBUG_TRACE: {{ .Values.debugTrace | quote }}
-    RDS_NETWORK_CLIENT_SERVER_ADDRESS: {{ .Values.server.address | quote }}
