@@ -6,7 +6,7 @@ Database-specific helpers
 {{- $settings := index . 0 -}}
 {{- $name := index . 1 -}}
 RDS_STORAGE_DATABASE_{{- upper $name -}}_HOST: {{ required (printf "%s host is required" $name) $settings.host | quote }}
-RDS_STORAGE_DATABASE_{{- upper $name -}}_PORT: {{ required (printf "%s port is required" $name) $settings.port }}
+RDS_STORAGE_DATABASE_{{- upper $name -}}_PORT: {{ required (printf "%s port is required" $name) $settings.port | quote }}
 RDS_STORAGE_DATABASE_{{- upper $name -}}_DATABASE: {{ default "rds-ng" $settings.database | quote }}
 RDS_STORAGE_DATABASE_{{- upper $name -}}_USER: {{ required (printf "%s username is required" $name) $settings.user | quote }}
 {{- end }}
