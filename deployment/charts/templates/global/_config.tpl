@@ -3,8 +3,8 @@ Global configuration-specific chart helpers
 */}}
 
 {{- define "rds.generalSettings" }}
-RDS_GENERAL_DEBUG: {{ .Values.debug.enabled | default "false" }}
-RDS_GENERAL_DEBUG_TRACE: {{ .Values.debug.enableTracing | default "false" }}
+RDS_GENERAL_DEBUG: {{ default "false" .Values.debug.enabled | quote }}
+RDS_GENERAL_DEBUG_TRACE: {{ default "false" .Values.debug.enableTracing | quote }}
 RDS_NETWORK_SERVER_ALLOWED_ORIGINS: "*"
 {{- end }}
 

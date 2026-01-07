@@ -6,7 +6,7 @@ General chart helpers
 {{- $top := index . 0 -}}
 {{- $image := index . 1 -}}
 image: "{{ $top.Values.image.host | default "ghcr.io/sciebo-rds" }}/{{ $image }}:{{ $top.Values.image.tag | default "latest" }}"
-imagePullPolicy: {{ $top.Values.image.pullPolicy | default "always" }}
+imagePullPolicy: {{ $top.Values.image.pullPolicy | default "Always" }}
 {{- end }}
 
 {{- define "rds.serverAddress" }}
