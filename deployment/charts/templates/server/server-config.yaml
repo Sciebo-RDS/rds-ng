@@ -22,7 +22,7 @@ data:
 
     {{- end }}
 
-    {{ range $k, $v := .Values.tenants -}}
+    {{ range $k, $v := .Values.tenants }}
     RDS_TENANT_{{- upper $k -}}_INTEGRATION_SCHEME: {{ required (printf "Missing scheme for tenant %s" $k) $v.scheme | quote }}
     {{ if eq (lower $v.scheme) "host" -}}
     RDS_TENANT_{{- upper $k -}}_INTEGRATION_HOST_URL: {{ required (printf "Missing URL for tenant %s" $k) $v.url | quote }}
@@ -33,4 +33,4 @@ data:
     {{ if hasKey $v "oauth2" -}}
     RDS_TENANT_{{- upper $k -}}_AUTHORIZATION_OAUTH2_CLIENT_ID: {{ required (printf "Missing OAuth2 client ID for tenant %s" $k) $v.oauth2.clientId | quote }}
     {{- end }}
-    {{- end }}
+    {{ end }}

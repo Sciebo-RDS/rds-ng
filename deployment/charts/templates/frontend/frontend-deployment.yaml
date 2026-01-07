@@ -20,13 +20,6 @@ spec:
                     volumeMounts:
                         -   mountPath: /app/config
                             name: {{ include "rds.fullname" . }}-frontend-config-volume
-                    envFrom:
-                        -   secretRef:
-                              name: {{ include "rds.fullname" . }}-network-api-secret
-                        -   configMapRef:
-                              name: {{ include "rds.fullname" . }}-server-config
-                        -   secretRef:
-                                name: {{ include "rds.fullname" . }}-server-config-secret
             restartPolicy: Always
             volumes:
                 -   name: {{ include "rds.fullname" . }}-frontend-config-volume

@@ -8,7 +8,7 @@ data:
         [network.client]
         server_address = {{ include "rds.serverAddress" . | quote }}
 
-        {{ range $k, $v := .Values.tenants -}}
+        {{ range $k, $v := .Values.tenants }}
         [{{ lower $k }}.integration]
         scheme = {{ required (printf "Missing scheme for tenant %s" $k) $v.scheme | quote }}
 
@@ -22,4 +22,4 @@ data:
         id = {{ required (printf "Missing OAuth2 client ID for tenant %s" $k) $v.oauth2.clientId | quote }}
         redirect_url = {{ $v.url | quote }}
         {{- end }}
-        {{- end }}
+        {{ end }}

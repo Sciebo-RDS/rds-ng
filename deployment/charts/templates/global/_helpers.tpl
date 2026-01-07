@@ -34,5 +34,5 @@ app.kubernetes.io/managed-by: {{ $top.Release.Service }}
 {{- $component := index . 1 -}}
 app.kubernetes.io/instance: {{ $top.Release.Name }}
 app.kubernetes.io/name: {{ include "rds.name" $top }}
-component: {{ $component }}
+rds.component: {{ $component }}
 {{- end }}

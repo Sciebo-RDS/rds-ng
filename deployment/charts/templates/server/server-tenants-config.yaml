@@ -5,7 +5,7 @@ metadata:
     namespace: {{ .Values.namespace }}
 data:
     tenants.toml: |
-        {{ range $k, $v := .Values.tenants -}}
+        {{ range $k, $v := .Values.tenants }}
         [{{ lower $k }}]
         [{{ lower $k }}.integration]
         scheme = {{ required (printf "Missing scheme for tenant %s" $k) $v.scheme | quote }}
@@ -24,4 +24,4 @@ data:
         [{{ lower $k }}.authorization.oauth2]
         client_id = {{ required (printf "Missing OAuth2 client ID for tenant %s" $k) $v.oauth2.clientId | quote }}
         {{- end }}
-        {{- end }}
+        {{ end }}

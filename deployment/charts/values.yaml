@@ -36,7 +36,7 @@ server:
         storageClassName: "standard"    # The storage class for the main server volume
     storage:
         driver: "memory"                # The storage driver to use; can either be "memory" for a volatile in-memory storage or "database" for persistency
-        database:                       # Database-specific settings; only effective if driver is set to "database"
+        database:
             engine: "sqlite"            # The type of database to use; currently supported are: sqlite, postgresql, mysql or mariadb
             sqlite:
                 file: "/data/rds.db"    # The file SQLite stores its data in
@@ -106,12 +106,12 @@ connectors:
         enabled: false                          # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; must be specified for dataverse
 
-tenants:
-    # All tenants (i.e., hosts running an integrated frontend) must be configured individually by listing each using its assigned identifier
-    default:                    # The identifier as specified in the corresponding integration app
-        scheme: "host"          # The integration scheme/type (only "host" is currently supported)
-        url: ""                 # The full URL of the host (including its scheme and path)
-        excludedConnectors: []  # An array of excluded connectors (using their IDs) for this tenant
-        oauth2:                 # Leave this block out if the host doesn't use OAuth2
-            clientId: ""        # The OAuth2 client id
-            clientSecret: ""    # The OAuth2 client secret
+tenants: {}
+#   All tenants (i.e., hosts running an integrated frontend) must be configured individually by listing each using its assigned identifier
+#   default:                    # The identifier as specified in the corresponding integration app
+#       scheme: "host"          # The integration scheme/type (only "host" is currently supported)
+#       url: ""                 # The full URL of the host (including its scheme and path)
+#       excludedConnectors: []  # An array of excluded connectors (using their IDs) for this tenant
+#       oauth2:                 # Leave this block out if the host doesn't use OAuth2
+#           clientId: ""        # The OAuth2 client id
+#           clientSecret: ""    # The OAuth2 client secret
