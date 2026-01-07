@@ -8,6 +8,8 @@ import { useComponentStore } from "../data/stores/ComponentStore";
  * @returns - The parameter value, if any.
  */
 export function getURLQueryParam(paramName: string): string | undefined {
+    // Try to get the parameter from the actual URL, otherwise try the stored version
+    const queryParams = new URLSearchParams(window.location.search);
     const compStore = useComponentStore();
-    return compStore.queryParams.get(paramName) || undefined;
+    return queryParams.get(paramName) || compStore.queryParams.get(paramName) || undefined;
 }
