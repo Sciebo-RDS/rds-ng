@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: {{ include "rds.fullname" . }}-tenants-config
+    name: {{ include "rds.fullname" . }}-server-tenants-config
     namespace: {{ .Values.namespace }}
 data:
     tenants.toml: |
