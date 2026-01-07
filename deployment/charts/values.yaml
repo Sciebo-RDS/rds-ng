@@ -21,7 +21,7 @@ namespace: ""       # Override the application namespace
 image:
     host: "ghcr.io/sciebo-rds"      # The image host; do not append a slash (e.g., ghcr.io/sciebo-rds instead of ghcr.io/sciebo-rds/)
     tag: "latest"                   # The image tag
-    pullPolicy: "always"            # The image pull policy
+    pullPolicy: "Always"            # The image pull policy
 
 debug:
     enabled: false          # Whether to run in debug mode, resulting in more textual output and fewer restrictions
