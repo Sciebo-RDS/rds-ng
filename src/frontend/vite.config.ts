@@ -15,7 +15,7 @@ export default defineConfig({
         }
     },
     build: {
-        minify: false // Set to "esbuild" to enable minification
+        minify: "esbuild" // Set to "esbuild" to enable minification
     },
     server: {
         allowedHosts: true
