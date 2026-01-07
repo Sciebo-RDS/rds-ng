@@ -1,1 +1,1 @@
-bridgit (RDS-NG) has been successfully deployed!
+RDS-NG {{ .Chart.AppVersion }} has been successfully deployed!
