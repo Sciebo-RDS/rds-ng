@@ -10,8 +10,8 @@ const frontendStore = useFrontendStore();
 const props = defineProps({
     initializing: {
         type: Boolean,
-        required: true,
-    },
+        required: true
+    }
 });
 const { initializationMessage, initializationError } = storeToRefs(frontendStore);
 const { initializing } = toRefs(props);
@@ -19,8 +19,8 @@ const { initializing } = toRefs(props);
 
 <template>
     <BlockUI :blocked="initializing" full-screen />
-    <Message v-if="initializing" :severity="initializationError ? 'error' : 'info'" class="overlay-message" :closable="false"
-        >{{ initializationMessage }}
+    <Message v-if="initializing" :severity="initializationError ? 'error' : 'info'" class="overlay-message" :closable="false">
+        {{ initializationMessage }}
     </Message>
 </template>
 
