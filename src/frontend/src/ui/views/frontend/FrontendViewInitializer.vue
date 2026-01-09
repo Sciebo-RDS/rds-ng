@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import BlockUI from "primevue/blockui";
 import Message from "primevue/message";
-import { toRefs } from "vue";
+import { ref, toRefs, unref, watch } from "vue";
 
 import { useFrontendStore } from "@/data/stores/FrontendStore";
 
@@ -15,10 +15,26 @@ const props = defineProps({
 });
 const { initializationMessage, initializationError } = storeToRefs(frontendStore);
 const { initializing } = toRefs(props);
+
+const blockUi = ref(null);
+
+// Workaround for a PrimeVue bug BlockUI bug
+// TODO: Remove once PV has fixed this
+watch(initializing, (newValue) => {
+    if (!newValue) {
+        try {
+            // @ts-ignore
+            if (!!unref(blockUi)?.mask) {
+                // @ts-ignore
+                unref(blockUi)?.removeMask();
+            }
+        } catch (e) {}
+    }
+});
 </script>
 
 <template>
-    <BlockUI :blocked="initializing" full-screen />
+    <BlockUI ref="blockUi" :blocked="initializing" full-screen />
     <Message v-if="initializing" :severity="initializationError ? 'error' : 'info'" class="overlay-message" :closable="false">
         {{ initializationMessage }}
     </Message>
