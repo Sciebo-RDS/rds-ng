@@ -1,4 +1,8 @@
-from .version import API_PROTOCOL_VERSION
+from .version import (
+    API_PROTOCOL_VERSION,
+    check_protocol_compatibility,
+    ProtocolCompatibility,
+)
 
 from .authorization import *
 from .component import *

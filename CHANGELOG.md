@@ -1,6 +1,6 @@
 # RDS-NG - Changelog
 
-## v1.4.0 - 2026-01-09
+## v1.4.0 - 2026-01-12
 
 ### New
 
@@ -10,6 +10,7 @@
 
 - Extended tenant (host+frontend) support
 - Reworked Helm charts
+- API protocol versions are now compared, leading to notifications in case of mismatches
 
 ### Fixes
 
