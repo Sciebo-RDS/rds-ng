@@ -5,6 +5,11 @@ metadata:
     namespace: {{ .Values.namespace }}
 data:
     config.toml: |
+        [general]
+        {{ if .Values.frontend.supportEmail }}
+        support_email = {{ .Values.frontend.supportEmail | quote }}
+        {{- end }}
+
         [network.client]
         server_address = {{ include "rds.serverAddress" . | quote }}
 

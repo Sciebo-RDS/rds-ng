@@ -76,6 +76,7 @@ domo:
         tlsSecret: ""       # If specified, enable TLS and use this secret (must be created manually upfront)
 
 frontend:
+    supportEmail: ""       # Sets the support email address shown as contact information
     ingress:
         hostname: ""        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
