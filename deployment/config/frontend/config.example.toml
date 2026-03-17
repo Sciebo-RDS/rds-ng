@@ -1,12 +1,12 @@
 [network.client]
 server_address = "http://localhost:4200"
 
-[integration]
+[default.integration]
 scheme = "host"
 
-[integration.host]
-url = "http://localhost:8080/apps/rdsng/"
+[default.integration.host]
+url = "http://localhost:8080/apps/rdsng"
 
-[authorization.oauth2.client]
-id = "some_key"
-redirect_url = "http://localhost:8080/apps/rdsng/"
+[default.authorization.oauth2.client]
+id = "some_id"
+redirect_url = "http://localhost:8080/apps/rdsng"

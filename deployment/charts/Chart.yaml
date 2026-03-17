@@ -1,9 +1,14 @@
 apiVersion: v2
 name: rds-ng
 description: A Helm chart for bridgit (RDS-NG)
-
 type: application
 
-version: 0.6.0
+home: https://github.com/Sciebo-RDS
+sources:
+  - https://github.com/Sciebo-RDS
+maintainers:
+  - name: Daniel Mueller
+    email: daniel.mueller@uni-muenster.de
 
-appVersion: "1.3.0"
+version: 1.4.0
+appVersion: 1.4.0

@@ -1,5 +1,12 @@
 import sys
 import time
+import typing
+
+
+def debug_print(content: typing.Any, *, topic: str = "") -> None:
+    print(f"--- {topic} {'-' * (30 - 2 - len(topic))}" if topic != "" else "-" * 30, flush=True)
+    print(str(content), flush=True)
+    print("-" * 30, flush=True)
 
 
 def enable_tracing() -> None:

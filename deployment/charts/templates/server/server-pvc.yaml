@@ -1,15 +1,12 @@
-{{- if eq .Values.server.storage.engine "sqlite" }}
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: rds-server-pvc
-  namespace: {{ .Values.namespace }}
+    name: {{ include "rds.fullname" . }}-server-pvc
+    namespace: {{ include "rds.namespace" . }}
 spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
-  storageClassName: {{ .Values.server.pvc.storageClassName }}
-{{- end }}
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: {{ .Values.server.volume.storageSize | default "1Gi" }}
+    storageClassName: {{ .Values.server.volume.storageClassName | default "standard" }}

@@ -3,6 +3,8 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import dataclass_json
 
+AuthorizationSettingsConfig = typing.Dict[str, typing.Any]
+
 
 @dataclass_json
 @dataclass
@@ -16,4 +18,4 @@ class AuthorizationSettings:
     """
 
     strategy: str = ""
-    config: typing.Dict[str, typing.Any] = field(default_factory=dict)
+    config: AuthorizationSettingsConfig = field(default_factory=dict)

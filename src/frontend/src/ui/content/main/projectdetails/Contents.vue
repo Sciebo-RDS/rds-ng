@@ -48,15 +48,24 @@ const panels = computed(() => {
     });
 });
 
+let projectSwitched = false;
+watch(project, (newValue, oldValue) => {
+    if (newValue != oldValue) {
+        projectSwitched = true;
+    }
+});
+
 const sharedPropertyObjectStore = reactive(new PropertyObjectStore());
 const debounce = makeDebounce();
 watch(
     () => project!.value.features.shared_objects,
     (shared_objects) => {
         debounce(() => {
-            const action = new UpdateProjectFeaturesAction(comp);
+            const action = new UpdateProjectFeaturesAction(comp, projectSwitched);
             action.prepare(project!.value, [], shared_objects);
             action.execute();
+
+            projectSwitched = false;
         });
     },
     { deep: true }

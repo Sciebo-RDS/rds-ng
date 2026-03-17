@@ -1,0 +1,1 @@
+RDS-NG {{ .Chart.AppVersion }} has been successfully deployed!

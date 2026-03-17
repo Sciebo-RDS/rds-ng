@@ -1,0 +1,1 @@
+{{ include "rds.connector" (list . .Values.connectors.datasafe "datasafe" "https://datasafe.uni-muenster.de/api/" "") }}

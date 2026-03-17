@@ -1,17 +1,8 @@
 {
     "extends": "@tsconfig/node18/tsconfig.json",
-    "include": [
-        "vite.config.*",
-        "vitest.config.*",
-        "cypress.config.*",
-        "nightwatch.conf.*",
-        "playwright.config.*"
-    ],
+    "include": ["vite.config.*", "vitest.config.*", "cypress.config.*", "nightwatch.conf.*", "playwright.config.*"],
     "compilerOptions": {
-        "lib": [
-            "ES2021",
-            "DOM"
-        ],
+        "lib": ["ES2021", "DOM"],
         "target": "ES2021",
         "strict": true,
         "strictFunctionTypes": false,
@@ -19,8 +10,6 @@
         "composite": true,
         "module": "ESNext",
         "moduleResolution": "Bundler",
-        "types": [
-            "node"
-        ]
+        "types": ["node"]
     }
 }

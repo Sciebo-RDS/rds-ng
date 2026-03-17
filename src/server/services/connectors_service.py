@@ -123,10 +123,22 @@ def create_connectors_service(comp: ServerComponent) -> Service:
 
     @svc.message_handler(ListConnectorsCommand, is_async=True)
     def list_connectors(msg: ListConnectorsCommand, ctx: ServerServiceContext) -> None:
+        connectors = ctx.storage_pool.connector_storage.list()
+
+        if ctx.user is not None:
+            from ..tenants import exclude_connector_for_tenant
+
+            if (tenant := comp.tenants.get_tenant(ctx.user.host_id)) is not None:
+                connectors = [
+                    connector
+                    for connector in connectors
+                    if not exclude_connector_for_tenant(tenant, connector.connector_id)
+                ]
+
         ListConnectorsReply.build(
             ctx.message_builder,
             msg,
-            connectors=ctx.storage_pool.connector_storage.list(),
+            connectors=connectors,
         ).emit()
 
     return svc
