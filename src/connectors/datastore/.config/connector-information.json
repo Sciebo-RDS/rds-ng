@@ -1,0 +1,14 @@
+{
+    "id": "datastore",
+    "name": "datastore",
+    "description": "datastore is the research data repository of the University of Münster. In datastore you can publish your research data citable and visible worldwide following the FAIR principles.",
+    "category": "repository",
+    "options": {
+        "upload_once": false
+    },
+    "logos": {
+        "default": "/component/connectors/datastore/.assets/logo.png",
+        "horizontal": "/component/connectors/datastore/.assets/logo.png"
+    },
+    "metadata_profiles": "/component/connectors/datastore/.assets/profiles"
+}

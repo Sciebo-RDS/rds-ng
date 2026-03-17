@@ -103,6 +103,9 @@ connectors:
     datasafe:
         enabled: false                          # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
+    datastore:
+        enabled: false                          # Whether this connector should be used
+        targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
     dataverse:
         enabled: false                          # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; must be specified for dataverse
