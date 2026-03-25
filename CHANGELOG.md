@@ -1,10 +1,11 @@
 # RDS-NG - Changelog
 
-## v1.4.0 - 2026-01-12
+## v1.4.0 - 2026-xx-xx
 
 ### New
 
 - Connectors can be excluded on a per-tenant basis
+- **datastore** connector
 
 ### Improvements
 
