@@ -24,6 +24,7 @@ jobs:
                         connector-osf
                         connector-zenodo
                         connector-datasafe
+                        connector-datastore
                         connector-dataverse
                         connector-stub
                         frontend

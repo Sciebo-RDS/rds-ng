@@ -10,20 +10,20 @@ Debugging a running k8s deployment can be difficult, since live changes usually 
 
 - The frontend container will hot-reload all changes.
 - The backend containers will not be able to directly handle changes, but it is possible to restart the internal Python process without killing the entire pod:
-  1. Modify the files you want to change; this probably will lead to all sorts of Python errors, which can be ignored.
-  1. Take a look at all running processes by executing `ps aux`; the output will look something like this:
-      ```
-      USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-      root           1  0.0  0.0   2680  1124 ?        Ss   Sep03   0:00 /bin/sh -c gunicorn -k "geventwebsocket.gunicorn.workers.GeventWebSocketWorker" --workers 1 --threads $COMPONENT_THREADS --timeout 900 -b ":$COMPONENT_PORT" "$COMPONENT_FILE:$COMPONEN
-      root           7  0.0  0.0  40988 31320 ?        S    Sep03   0:06 /usr/local/bin/python3.12 /usr/local/bin/gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --workers 1 --threads 9 --timeout 900 -b :6969 main:app
-      root           8  0.1  0.0 154872 65200 ?        S    Sep03   2:00 /usr/local/bin/python3.12 /usr/local/bin/gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --workers 1 --threads 9 --timeout 900 -b :6969 main:app
-      root          13  0.0  0.0   4764  4108 pts/0    Ss   08:42   0:00 bash
-      root          19  0.0  0.0   6792  3876 pts/0    R+   08:42   0:00 ps aux
-      ```
+    1. Modify the files you want to change; this probably will lead to all sorts of Python errors, which can be ignored.
+    1. Take a look at all running processes by executing `ps aux`; the output will look something like this:
+        ```
+        USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+        root           1  0.0  0.0   2680  1124 ?        Ss   Sep03   0:00 /bin/sh -c gunicorn -k "geventwebsocket.gunicorn.workers.GeventWebSocketWorker" --workers 1 --threads $COMPONENT_THREADS --timeout 900 -b ":$COMPONENT_PORT" "$COMPONENT_FILE:$COMPONEN
+        root           7  0.0  0.0  40988 31320 ?        S    Sep03   0:06 /usr/local/bin/python3.12 /usr/local/bin/gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --workers 1 --threads 9 --timeout 900 -b :6969 main:app
+        root           8  0.1  0.0 154872 65200 ?        S    Sep03   2:00 /usr/local/bin/python3.12 /usr/local/bin/gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker --workers 1 --threads 9 --timeout 900 -b :6969 main:app
+        root          13  0.0  0.0   4764  4108 pts/0    Ss   08:42   0:00 bash
+        root          19  0.0  0.0   6792  3876 pts/0    R+   08:42   0:00 ps aux
+        ```
 
-      Take note of the Python process with the higher VSZ and RSS; this is the process you want to restart (in most cases, this will be PID **8**).
-  1. Kill the process you just identified by issueing `kill -1 8`; this will send a hangup/termination signal to the process and let it gracefully reload.
-  1. The Python process should be immediately restarted while the pod keeps running; all changes will now take effect.
+       Take note of the Python process with the higher VSZ and RSS; this is the process you want to restart (in most cases, this will be PID **8**).
+    1. Kill the process you just identified by issueing `kill -1 8`; this will send a hangup/termination signal to the process and let it gracefully reload.
+    1. The Python process should be immediately restarted while the pod keeps running; all changes will now take effect.
 
 # Local deployment
 
@@ -121,11 +121,11 @@ After fixing the permissions, you'll need to start the container anew by executi
 ## Step 4: Configure Nextcloud
 
 1. Browse to `localhost:8080` and login with `admin/admin`
-2. In the Nextcloud main menu, go to `Apps -> Disabled Apps`, enable `BridgIT` (the display name of RDS-NG)
+2. In the Nextcloud main menu, go to `Apps -> Disabled Apps`, enable `bridgit` (the display name of RDS-NG)
 3. Go to `Administration Settings -> Security`, add a new OAUTH2 client
     * Name: RDS-NG
-    * Redirect URL: `http://localhost:8080/apps/rdsng/main`
-4. Go to `Administration Settings -> BridgIT`, set the BridgIT URL to `http://localhost:8000`
+    * Redirect URL: `http://localhost:8080/apps/rdsng`
+4. Go to `Administration Settings -> bridgit`, set the bridgit URL to `http://localhost:8000`
 
 ## Step 5: Configure RDS-NG
 
@@ -154,7 +154,7 @@ make dev-run
 
 ## Step 6: Open the RDS-NG app
 
-Browse to `localhost:8080` to get to your Nextcloud instance; from there, simply launch the RDS-NG app by clicking its `BridgIT` icon in the top bar.
+Browse to `localhost:8080` to get to your Nextcloud instance; from there, simply launch the RDS-NG app by clicking its `bridgit` icon in the top bar.
 
 > **IMPORTANT!**
 > You *have* to use `localhost:8080`, your local IP won't work! Nextcloud tends to redirect you to your network IP; if that happens, you'll have to replace the IP with `localhost:8080`.
