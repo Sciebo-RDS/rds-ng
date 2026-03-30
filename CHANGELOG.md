@@ -16,6 +16,7 @@
 ### Fixes
 
 - Occasional UI freezes on load
+- Remove default integration scheme to prevent unattended logins
 
 ## v1.3.0 - 2025-12-09
 
