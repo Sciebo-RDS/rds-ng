@@ -83,6 +83,22 @@ services:
         env_file:
             - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-datasafe.env
 
+    # Connector: datastore
+    connector-datastore:
+        image: rds-ng/connector-datastore:latest
+        build:
+            context: ../../
+            dockerfile: deployment/containers/backend-component/Dockerfile
+            args:
+                COMPONENT_NAME: "connectors/inveniordm"
+                COMPONENT_ADDITIONAL_LOCATION: "connectors/datastore"
+            additional_contexts:
+                py_base: "service:py_base"
+        ports:
+            - "4550:6969"
+        env_file:
+            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-datastore.env
+
     # Connector: Dataverse
     connector-dataverse:
         image: rds-ng/connector-dataverse:latest

@@ -1,5 +1,23 @@
 # RDS-NG - Changelog
 
+## v1.4.0 - 2026-xx-xx
+
+### New
+
+- Connectors can be excluded on a per-tenant basis
+- **datastore** connector
+
+### Improvements
+
+- Extended tenant (host+frontend) support
+- Reworked Helm charts
+- API protocol versions are now compared, leading to notifications in case of mismatches
+
+### Fixes
+
+- Occasional UI freezes on load
+- Remove default integration scheme to prevent unattended logins
+
 ## v1.3.0 - 2025-12-09
 
 ### New

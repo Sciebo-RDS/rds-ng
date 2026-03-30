@@ -13,7 +13,7 @@ from common.py.integration.authorization.strategies import (
     create_authorization_strategy,
 )
 from common.py.services import Service
-from common.py.utils import EntryGuard
+from common.py.utils import debug_print, EntryGuard
 from common.py.utils.func import attempt
 
 from .tools import handle_authorization_token_changes
@@ -65,9 +65,11 @@ def create_authorization_service(comp: ServerComponent) -> Service:
         ctx: ServerServiceContext,
         strategy: str,
         *,
+        auth_type: str,
         auth_token: AuthorizationToken | None = None,
         auth_public: AuthorizationSettings | None = None,
         auth_private: AuthorizationSettings | None = None,
+        host_id: str | None = None,
     ) -> AuthorizationStrategy:
         if auth_token is None:
             auth_token = (
@@ -77,6 +79,24 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 if ctx.user
                 else None
             )
+
+        if auth_type == AuthorizationToken.TokenType.HOST and host_id is not None:
+            from server.tenants.authorization import (
+                create_tenant_authorization_settings,
+            )
+
+            # Get authorization settings for the tenant
+            tenant = comp.tenants.get_tenant(host_id)
+            if tenant is None:
+                raise RuntimeError(f"Unknown tenant {host_id}")
+
+            auth_pub, auth_priv = create_tenant_authorization_settings(strategy, tenant)
+
+            if auth_public is None and auth_pub is not None:
+                auth_public = auth_pub
+
+            if auth_private is None and auth_priv is not None:
+                auth_private = auth_priv
 
         return create_authorization_strategy(
             comp,
@@ -104,12 +124,14 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                 strategy = _create_auth_strategy(
                     ctx,
                     msg.strategy,
+                    auth_type=msg.request_payload.auth_type,
                     auth_public=ctx.public_auth_settings.get_settings(
                         msg.request_payload.auth_bearer
                     ),
                     auth_private=ctx.private_auth_settings.get_settings(
                         msg.request_payload.auth_bearer
                     ),
+                    host_id=msg.request_payload.auth_bearer,
                 )
                 auth_token = strategy.request_authorization(
                     user_id=ctx.user.user_id,
@@ -269,6 +291,7 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                         strategy = _create_auth_strategy(
                             ctx,
                             auth_token.strategy,
+                            auth_type=auth_token.auth_type,
                             auth_token=auth_token,
                             auth_public=ctx.public_auth_settings.get_settings(
                                 auth_token.auth_bearer
@@ -276,7 +299,9 @@ def create_authorization_service(comp: ServerComponent) -> Service:
                             auth_private=ctx.private_auth_settings.get_settings(
                                 auth_token.auth_bearer
                             ),
+                            host_id=auth_token.auth_bearer,
                         )
+
                         strategy.refresh_authorization(
                             auth_token,
                             host_id=user.host_id if user is not None else None,

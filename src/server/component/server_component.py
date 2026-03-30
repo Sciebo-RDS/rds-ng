@@ -9,8 +9,8 @@ from common.py.component.roles import ServerRole
 from common.py.core.logging import error, info, debug
 from common.py.utils import UnitID
 
-from ..data.exporters import register_project_exporters
 from ..data.server import ServerData
+from ..tenants import Tenants
 
 # Make the entire API known
 from common.py.api import *
@@ -34,7 +34,13 @@ class ServerComponent(BackendComponent):
 
         self._server_data = ServerData()
 
+        self._tenants = self._create_tenants()
+
     def run(self) -> None:
+        from ..tenants.authorization import (
+            register_tenant_authorization_settings_creators,
+        )
+        from ..data.exporters import register_project_exporters
         from ..services import (
             create_authorization_service,
             create_connectors_service,
@@ -48,6 +54,7 @@ class ServerComponent(BackendComponent):
         )
 
         # Register additional global items
+        register_tenant_authorization_settings_creators()
         register_project_exporters()
 
         # Create all server services
@@ -99,12 +106,28 @@ class ServerComponent(BackendComponent):
 
             raise exc
 
+    def _create_tenants(self) -> Tenants:
+        try:
+            tenants = Tenants()
+            return tenants
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error(f"Unable to create tenants: {str(exc)}")
+
+            raise exc
+
     @property
     def server_data(self) -> ServerData:
         """
         The global server data.
         """
         return self._server_data
+
+    @property
+    def tenants(self) -> Tenants:
+        """
+        The global tenants.
+        """
+        return self._tenants
 
     @staticmethod
     def instance() -> "ServerComponent":

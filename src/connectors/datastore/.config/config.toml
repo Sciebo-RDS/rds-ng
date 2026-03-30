@@ -1,0 +1,12 @@
+[connector]
+target = "https://datastore.uni-muenster.de/api/"
+
+[network.client]
+server_address = "http://rds-server-1:6969"
+
+[authorization]
+strategy = "bearer"
+
+[authorization.bearer]
+bearer_label = "API Token"
+help_link = "https://datastore.uni-muenster.de/faq"

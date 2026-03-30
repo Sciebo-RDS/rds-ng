@@ -1,0 +1,1 @@
+{{ include "rds.connector" (list . .Values.connectors.datastore "datastore" "https://datastore.uni-muenster.de/api/" "") }}

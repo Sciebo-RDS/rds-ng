@@ -1,0 +1,1 @@
+{{ include "rds.connector" (list . .Values.connectors.zenodo "zenodo" "https://zenodo.org/api/" "https://zenodo.org") }}

@@ -28,7 +28,7 @@ class Configuration:
         a default value must be added using ``add_defaults``.
     """
 
-    def __init__(self, env_prefix: str = "RDS"):
+    def __init__(self, *, env_prefix: str = "RDS"):
         """
         Args:
             env_prefix: The prefix to use when generating the environment variable name of a setting.
@@ -147,3 +147,10 @@ class Configuration:
         The name of the currently loaded settings file.
         """
         return self._settings_file
+
+    @property
+    def settings(self) -> typing.Dict[str, typing.Any]:
+        """
+        The complete settings dictionary.
+        """
+        return self._settings

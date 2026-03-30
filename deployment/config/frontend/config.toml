@@ -1,0 +1,12 @@
+[network.client]
+server_address = "http://localhost:4200"
+
+[default.integration]
+scheme = "host"
+
+[default.integration.host]
+url = "http://localhost:8080/apps/rdsng"
+
+[default.authorization.oauth2.client]
+id = "BHqb23QAdFjHgABAcNmdPPu9zc31tbZHl9QzhTNGsfIU9gm87J4cRUfnJ5j7pTZ4"
+redirect_url = "http://localhost:8080/apps/rdsng"
