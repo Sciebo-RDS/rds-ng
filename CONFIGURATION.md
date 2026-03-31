@@ -190,7 +190,7 @@ _(1)_ If the host uses OAUTH2 authorization.
 
 | Setting                                                      | Description                                                  | Type   | Default value |
 |--------------------------------------------------------------|--------------------------------------------------------------|--------|---------------|
-| <code><host_id>.integration.scheme</code>                    | The authorization scheme to use; can be `oauth2` or `basic`. | String | basic         |
+| <code><host_id>.integration.scheme</code>                    | The authorization scheme to use; can be `oauth2` or `basic`. | String |               |
 | <code><host_id>.integration.host.url</code>                  | The full URL of the host.                                    | String |               | 
 | <code><host_id>.integration.host.endpoints.entrypoint</code> | The relative entrypoint of the host integration application. | String | /             | 
 | <code><host_id>.integration.host.endpoints.api</code>        | The relative path of the host integration API.               | String | /api/v1       | 

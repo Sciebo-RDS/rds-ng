@@ -1,1 +1,4 @@
 RDS-NG {{ .Chart.AppVersion }} has been successfully deployed!
+
+The following network API key must be set for each host integration app as well:
+    {{ .Values.network.apiKey }}
