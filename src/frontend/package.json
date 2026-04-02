@@ -13,6 +13,7 @@
         "@primevue/forms": "^4.5.4",
         "@primevue/themes": "^4.5.4",
         "@types/file-saver": "^2.0.7",
+        "@unhead/vue": "^2.1.12",
         "@vueuse/core": "^12.8.2",
         "@vueuse/integrations": "^12.8.2",
         "autoprefixer": "^10.4.27",
