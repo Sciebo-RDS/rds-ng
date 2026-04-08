@@ -16,5 +16,6 @@ export const enum ComponentUnit {
     Domo = "domo",
 
     // Web
-    Frontend = "frontend"
+    Frontend = "frontend",
+    Integration = "integration"
 }
