@@ -11,7 +11,7 @@ def verify_request_api_header() -> None:
     comp = ServerComponent.instance()
 
     if api_key_header not in request.headers:
-        abort(400, "API key header missing")
+        abort(400, {"message": "API key header missing"})
     api_key = request.headers[api_key_header]
     if api_key != comp.data.config.value(NetworkSettingIDs.API_KEY):
-        abort(400, "API key mismatch")
+        abort(400, {"message": "API key mismatch"})
