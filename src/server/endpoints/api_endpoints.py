@@ -1,8 +1,9 @@
+import json
 import typing
 
 from flask import request
 
-from common.py.core.messaging import Channel
+from common.py.core.messaging import Channel, unpack_message
 from common.py.endpoints.endpoint import Endpoint
 
 from ..component import ServerComponent
@@ -13,19 +14,32 @@ def api_v1_ep() -> Endpoint:
     def _handler() -> typing.Any:
         from .utils import verify_request_api_header, abort_request
 
+        comp = ServerComponent.instance()
+
         # Using this EP always requires a valid API key passed via header, even if the message itself isn't protected
         verify_request_api_header()
 
-        request_data = request.get_json(silent=True)
+        if (request_data := request.get_json(silent=True)) is not None:
+            try:
+                # Always target the server to prevent unintended routing
+                request_data["target"] = json.loads(
+                    Channel.direct(comp.data.comp_id).to_json()
+                )
 
-        if request_data is not None:
-            comp = ServerComponent.instance()
+                # Unpack and dispatch the message
+                msg = unpack_message(
+                    request_data["name"],
+                    json.dumps(request_data),
+                    comp_id=comp.data.comp_id,
+                )
+                # TODO: Dispatch message
 
-            # Always target the server to prevent unintended routing
-            request_data["target"] = str(Channel.direct(comp.data.comp_id))
+                return {"message": "API call ok"}
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                abort_request(f"Invalid data: {exc}")
         else:
-            abort_request("Invalid data provided")
+            abort_request("Missing or invalid data provided")
 
-        return {"nanu": request_data}
+        return {"message": "Unknown error"}
 
     return Endpoint(name="api_v1", path="/api/v1", handler=_handler, methods=["POST"])
