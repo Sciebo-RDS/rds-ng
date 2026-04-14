@@ -1,1 +1,2 @@
 from .authorization_endpoints import authorization_redirect_ep
+from .user_endpoints import delete_user_ep

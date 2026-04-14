@@ -1,29 +1,37 @@
-from flask import abort, jsonify, make_response, request, Response
+import http
 
-from common.py.settings import NetworkSettingIDs
-
-from ..component import ServerComponent
+from flask import abort, jsonify, make_response, request
 
 
-def abort_request(message: str, code: int = 400) -> None:
+def abort_request(
+    message: str, *, error: str = "", code: int = http.HTTPStatus.BAD_REQUEST
+) -> None:
     """
     Aborts a Flask request with a specific message and status code.
 
     Args:
         message: The message to be displayed to the user.
+        error: The error message.
         code: The HTTP status code.
     """
 
-    abort(make_response(jsonify(message=message), code))
+    abort(
+        make_response(
+            jsonify(message=message, error=error if error != "" else message), code
+        )
+    )
 
 
 def verify_request_api_header() -> None:
     """
     Verifies that the API header is valid.
     """
+    from ..component import BackendComponent
+    from ..settings import NetworkSettingIDs
+
     api_key_header = "X-RDS-NG-API-Key"
 
-    comp = ServerComponent.instance()
+    comp = BackendComponent.instance()
 
     if api_key_header not in request.headers:
         abort_request("API key header missing")

@@ -83,13 +83,6 @@ class ServerComponent(BackendComponent):
         fltr = ServerNetworkFilter(self.data.comp_id)
         self._core.message_bus.network.install_filter(fltr)
 
-    def _add_custom_routes(self) -> None:
-        from ..endpoints import api_v1_ep
-
-        super()._add_custom_routes()
-
-        self.add_route_endpoint(api_v1_ep())
-
     def _prepare_storage_pool(self) -> None:
         from ..settings import StorageSettingIDs
 

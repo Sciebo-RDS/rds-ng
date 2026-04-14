@@ -25,9 +25,10 @@ class DomoComponent(BackendComponent):
         super().run()
 
     def _add_custom_routes(self) -> None:
-        from ..endpoints import authorization_redirect_ep
+        from ..endpoints import authorization_redirect_ep, delete_user_ep
 
         self.add_route_endpoint(authorization_redirect_ep())
+        self.add_route_endpoint(delete_user_ep())
 
     @staticmethod
     def instance() -> "DomoComponent":

@@ -3,10 +3,17 @@ import typing
 
 import flask
 
-from common.py.endpoints import Endpoint
+from common.py.endpoints import abort_request, Endpoint
 
 
 def authorization_redirect_ep() -> Endpoint:
+    """
+    Endpoint to perform an authorization redirect.
+
+    Returns:
+        The endpoint instance.
+    """
+
     def _handler(strategy: str) -> typing.Any:
         from ..integration.authorization import get_issuer_url
 
@@ -14,12 +21,9 @@ def authorization_redirect_ep() -> Endpoint:
             issuer_url = get_issuer_url(strategy)
             return flask.redirect(issuer_url, code=http.HTTPStatus.SEE_OTHER)
         except Exception as e:
-            return (
-                {
-                    "message": f"Invalid authorization information for strategy {strategy}",
-                    "error": str(e),
-                },
-                http.HTTPStatus.BAD_REQUEST,
+            abort_request(
+                "Invalid authorization information for strategy {strategy}",
+                error=str(e),
             )
 
     return Endpoint(
