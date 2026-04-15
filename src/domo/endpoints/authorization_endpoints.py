@@ -14,7 +14,7 @@ def authorization_redirect_ep() -> Endpoint:
         The endpoint instance.
     """
 
-    def _handler(strategy: str) -> typing.Any:
+    def _handler(*args, strategy: str, **kwargs) -> typing.Any:
         from ..integration.authorization import get_issuer_url
 
         try:

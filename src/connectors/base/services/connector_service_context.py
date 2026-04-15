@@ -66,8 +66,6 @@ class ConnectorServiceContext(ClientServiceContext):
         Raises:
             RuntimeError: If the requests handler hasn't been set.
         """
-        from ..component import ConnectorComponent
-
         if ConnectorServiceContext.set_requests_handler_type is None:
             raise RuntimeError(
                 "Tried to create a requests handler without an assigned type"

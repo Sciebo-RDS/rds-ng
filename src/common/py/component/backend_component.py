@@ -147,9 +147,7 @@ class BackendComponent:
         return svc
 
     def add_route_endpoint(self, ep: Endpoint) -> None:
-        from ..endpoints import register_endpoint
-
-        register_endpoint(self._core.flask, ep)
+        self._core.add_route_endpoint(ep)
 
     def _create_config(self, config_file: str) -> Configuration:
         from ..settings import get_default_settings

@@ -1,5 +1,6 @@
 import typing
 
+from common.py.core.messaging.composers import MessageBuilder
 from common.py.endpoints import abort_request, Endpoint, verify_request_api_header
 
 
@@ -11,10 +12,15 @@ def delete_user_ep() -> Endpoint:
         The endpoint instance.
     """
 
-    def _handler() -> typing.Any:
+    def _handler(msg_builder: MessageBuilder) -> typing.Any:
+        # from common.py.services import ClientServiceContext
+
         verify_request_api_header()
-        
-        abort_request("Unknown error")
+
+        # cmd = PingCommand.build(msg_builder)
+        # cmd.emit(ClientServiceContext.get_remote_channel())
+
+        abort_request("Emitted")
 
     return Endpoint(
         name="delete_user", path="/command/user", handler=_handler, methods=["DELETE"]
