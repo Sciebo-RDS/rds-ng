@@ -22,19 +22,22 @@ def abort_request(
     )
 
 
-def verify_request_api_header() -> None:
+def verify_request_api_header() -> str:
     """
     Verifies that the API header is valid.
     """
     from ..component import BackendComponent
     from ..settings import NetworkSettingIDs
 
-    api_key_header = "X-RDS-NG-API-Key"
-
     comp = BackendComponent.instance()
+
+    api_key_header = "X-RDS-NG-API-Key"
+    api_key_want = comp.data.config.value(NetworkSettingIDs.API_KEY)
 
     if api_key_header not in request.headers:
         abort_request("API key header missing")
     api_key = request.headers[api_key_header]
-    if api_key != comp.data.config.value(NetworkSettingIDs.API_KEY):
+    if api_key != api_key_want:
         abort_request(message="API key mismatch")
+
+    return api_key_want

@@ -21,6 +21,8 @@ def create_users_service(comp: ServerComponent) -> Service:
     from common.py.api.user import (
         AuthenticateUserCommand,
         AuthenticateUserReply,
+        DeleteUserCommand,
+        DeleteUserReply,
         GetUserSettingsCommand,
         GetUserSettingsReply,
         SetUserSettingsCommand,
@@ -159,6 +161,15 @@ def create_users_service(comp: ServerComponent) -> Service:
             ctx.message_builder,
             msg,
             authorizations=get_user_authorizations(ctx.user.user_id, ctx),
+        ).emit()
+
+    @svc.message_handler(DeleteUserCommand)
+    def delete_user(msg: DeleteUserCommand, ctx: ServerServiceContext) -> None:
+        # TODO: Delete user
+        DeleteUserReply.build(
+            ctx.message_builder,
+            msg,
+            api_key=ctx.api_key,
         ).emit()
 
     return svc

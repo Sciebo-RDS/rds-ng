@@ -2,8 +2,11 @@ import typing
 
 from flask import request
 
+from common.py.api import DeleteUserCommand
 from common.py.core.messaging.composers import MessageBuilder
 from common.py.endpoints import abort_request, Endpoint, verify_request_api_header
+
+from .utils import get_server_channel
 
 
 def delete_user_ep() -> Endpoint:
@@ -15,25 +18,26 @@ def delete_user_ep() -> Endpoint:
     """
 
     def _handler(msg_builder: MessageBuilder) -> typing.Any:
-        # from common.py.services import ClientServiceContext
-
-        verify_request_api_header()
-
-        # cmd = PingCommand.build(msg_builder)
-        # cmd.emit(ClientServiceContext.get_remote_channel())
+        api_key = verify_request_api_header()
 
         if (request_data := request.get_json(silent=True)) is not None:
             try:
                 user_id = request_data["user_id"]
                 if not user_id:
-                    raise ValueError("Invalid user id provided")
+                    raise ValueError("Invalid user ID provided")
 
-                instance_id = request_data["instance_id"]
-                if not instance_id:
-                    raise ValueError("Invalid instance id provided")
+                host_id = request_data["host_id"]
+                if not host_id:
+                    raise ValueError("Invalid host ID provided")
 
-                # TODO: Dispatch message
+                # Issue a command to the server, ignoring any replies
+                DeleteUserCommand.build(
+                    msg_builder, user_id=user_id, host_id=host_id, api_key=api_key
+                ).done(lambda _, __, ___: None).failed(lambda _, __: None).emit(
+                    get_server_channel()
+                )
 
+                # We can't send the actual result as a reply, so just send a generic success message
                 return {"message": "Delete user call ok"}
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 abort_request(f"Invalid data: {exc}")
