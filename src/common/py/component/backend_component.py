@@ -147,7 +147,7 @@ class BackendComponent:
         return svc
 
     def add_route_endpoint(self, ep: Endpoint) -> None:
-        self._core.flask.add_url_rule(ep.path, ep.name, view_func=ep.handler)
+        self._core.add_route_endpoint(ep)
 
     def _create_config(self, config_file: str) -> Configuration:
         from ..settings import get_default_settings
@@ -178,13 +178,6 @@ class BackendComponent:
 
         return comp_id
 
-    @property
-    def data(self) -> BackendComponentData:
-        """
-        A data helper object that stores useful component data and information.
-        """
-        return self._data
-
     def _add_default_routes(self) -> None:
         from ..endpoints import info_ep
 
@@ -192,6 +185,13 @@ class BackendComponent:
 
     def _add_custom_routes(self) -> None:
         pass
+
+    @property
+    def data(self) -> BackendComponentData:
+        """
+        A data helper object that stores useful component data and information.
+        """
+        return self._data
 
     @staticmethod
     def instance() -> "BackendComponent":

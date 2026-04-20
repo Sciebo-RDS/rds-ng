@@ -1,9 +1,12 @@
+import typing
+
 import flask
 
 from .logging import info, debug, set_level
 from .messaging import MessageBus
 from .messaging.handlers import MessageService
 from ..component import BackendComponentData
+from ..endpoints import Endpoint
 
 
 class Core:
@@ -84,6 +87,14 @@ class Core:
         else:
             debug("Service not registered", scope="core", service=svc)
             
+    def add_route_endpoint(self, ep: Endpoint) -> None:
+        def _call_ep(*args, **kwargs) -> typing.Any:
+            from ..core.messaging.composers import MessageBuilder
+            
+            return ep.handler(*args, msg_builder=MessageBuilder(self._comp_data.comp_id, self.message_bus), **kwargs)
+           
+        self._flask.add_url_rule(ep.path, ep.name, view_func=_call_ep, methods=ep.methods)
+        
     def run(self) -> None:
         """
         Starts periodic background tasks.

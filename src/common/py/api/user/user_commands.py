@@ -12,7 +12,7 @@ from ...core.messaging.composers import (
     CommandReplyComposer,
 )
 from ...data.entities.authorization import AuthorizationState
-from ...data.entities.user import HostID, User, UserToken
+from ...data.entities.user import HostID, User, UserID, UserToken
 
 
 @Message.define("command/user/authenticate")
@@ -244,4 +244,60 @@ class ListUserAuthorizationsReply(CommandReply):
             success,
             message,
             authorizations=authorizations,
+        )
+
+
+@Message.define("command/user/delete", is_protected=True)
+class DeleteUserCommand(Command):
+    """
+    Command to delete a user and all of its data.
+
+    Args:
+        user_id: The user ID.
+        host_id: The host ID.
+
+    Notes:
+        Requires a ``DeleteUserReply`` reply.
+    """
+
+    user_id: UserID = dataclasses.field(default_factory=UserID)
+    host_id: HostID = ""
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        *,
+        user_id: UserID,
+        host_id: HostID,
+        api_key: str,
+        chain: Message | None = None,
+    ) -> CommandComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command(
+            DeleteUserCommand, chain, user_id=user_id, host_id=host_id, api_key=api_key
+        )
+
+
+@Message.define("command/user/delete/reply", is_protected=True)
+class DeleteUserReply(CommandReply):
+    """
+    Reply to ``DeleteUserCommand``.
+    """
+
+    @staticmethod
+    def build(
+        message_builder: MessageBuilder,
+        cmd: DeleteUserCommand,
+        *,
+        api_key: str,
+        success: bool = True,
+        message: str = "",
+    ) -> CommandReplyComposer:
+        """
+        Helper function to easily build this message.
+        """
+        return message_builder.build_command_reply(
+            DeleteUserReply, cmd, success, message, api_key=api_key
         )

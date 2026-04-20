@@ -1,5 +1,15 @@
 # RDS-NG - Changelog
 
+## v1.5.0 - 2026-04-20
+
+### New
+
+- Deprovisioning of users (i.e., when the user is deleted in the host system)
+
+### Improvements
+
+- Dialog layout improvements
+
 ## v1.4.0 - 2026-03-31
 
 ### New

@@ -19,6 +19,13 @@ class ClientServiceContext(ServiceContext):
         """
         ClientServiceContext._remote_channel = channel
 
+    @staticmethod
+    def get_remote_channel() -> Channel | None:
+        """
+        Gets the remote channel.
+        """
+        return ClientServiceContext._remote_channel
+
     @property
     def remote_channel(self) -> Channel:
         """
