@@ -388,7 +388,7 @@ function onDataPathNodeExpand(path: string): void {
                                     <ConnectorInstancesSelect
                                         v-model="dialogData.userData.options.active_connector_instances"
                                         :disabled="dialogData.userData.options.use_all_connector_instances"
-                                        class="w-full h-[20rem]"
+                                        class="w-full h-[19rem]"
                                     />
                                 </div>
                             </div>
