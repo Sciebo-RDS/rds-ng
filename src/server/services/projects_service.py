@@ -1,5 +1,4 @@
 import time
-import typing
 
 from common.py.api import ProjectExternalStateRenewalEvent
 from common.py.core.messaging import Channel

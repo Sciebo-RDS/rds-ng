@@ -1,9 +1,10 @@
+from common.py.core import logging
 from common.py.data.entities import clone_entity
 from common.py.data.entities.authorization import AuthorizationState
 from common.py.data.entities.user import User
 from common.py.services import Service
 
-from .tools import send_projects_list, get_user_authorizations
+from .tools import get_user_authorizations, send_projects_list
 from ..component import ServerComponent
 
 
@@ -165,10 +166,60 @@ def create_users_service(comp: ServerComponent) -> Service:
 
     @svc.message_handler(DeleteUserCommand)
     def delete_user(msg: DeleteUserCommand, ctx: ServerServiceContext) -> None:
-        # TODO: Delete user
+        success = False
+        message = ""
+
+        if (user := ctx.storage_pool.user_storage.get(msg.user_id)) is not None:
+            # Delete all projects of the user
+            for project in ctx.storage_pool.project_storage.filter_by_user(msg.user_id):
+                try:
+                    for job in ctx.storage_pool.project_job_storage.filter_by_project(
+                        project.project_id
+                    ):
+                        ctx.storage_pool.project_job_storage.remove(job)
+
+                    ctx.storage_pool.project_storage.remove(project)
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    pass
+
+            # Delete authorization tokens
+            for token in ctx.storage_pool.authorization_token_storage.filter_by_user(
+                msg.user_id
+            ):
+                try:
+                    ctx.storage_pool.authorization_token_storage.remove(token)
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    pass
+
+            # Delete the user
+            try:
+                ctx.storage_pool.user_storage.remove(user)
+
+                logging.info(
+                    f"User deleted",
+                    scope="user",
+                    user_id=msg.user_id,
+                )
+
+                success = True
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                message = str(exc)
+        else:
+            message = f"A user with ID {msg.user_id} was not found"
+
+        if not success:
+            logging.warning(
+                f"Failed to delete user",
+                scope="user",
+                user_id=msg.user_id,
+                error=message,
+            )
+
         DeleteUserReply.build(
             ctx.message_builder,
             msg,
+            message=message,
+            success=success,
             api_key=ctx.api_key,
         ).emit()
 
