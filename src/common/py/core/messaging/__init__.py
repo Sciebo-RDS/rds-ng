@@ -12,3 +12,4 @@ from .event import Event, EventType
 from .message_bus_protocol import MessageBusProtocol
 from .message_bus import MessageBus
 from .message_types_catalog import MessageTypesCatalog
+from .message_utils import unpack_message

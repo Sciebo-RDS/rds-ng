@@ -22,3 +22,4 @@ class ComponentUnit(StrEnum):
 
     # Web
     FRONTEND = "frontend"
+    INTEGRATION = "integration"

@@ -10,6 +10,7 @@ import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
 import Tooltip from "primevue/tooltip";
 import { createApp, inject, type App, type Component as VueComp } from "vue";
+import { createHead } from "@unhead/vue/client";
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from "vue-router";
 
 import { Core } from "../core/Core";
@@ -138,6 +139,7 @@ export class WebComponent<UserInterfaceType extends UserInterface = UserInterfac
         app.directive("tooltip", Tooltip);
 
         // Register various plugins
+        app.use(createHead());
         app.use(createPinia());
         app.use(this._router);
         app.use(PrimeVue, {

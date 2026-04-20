@@ -1,10 +1,12 @@
 from .user_commands import (
     AuthenticateUserCommand,
     AuthenticateUserReply,
-    ListUserAuthorizationsCommand,
-    ListUserAuthorizationsReply,
+    DeleteUserCommand,
+    DeleteUserReply,
     GetUserSettingsCommand,
     GetUserSettingsReply,
+    ListUserAuthorizationsCommand,
+    ListUserAuthorizationsReply,
     SetUserSettingsCommand,
     SetUserSettingsReply,
 )

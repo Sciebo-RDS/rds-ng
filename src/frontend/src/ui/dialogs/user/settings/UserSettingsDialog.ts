@@ -42,7 +42,7 @@ export async function userSettingsDialog(
             header: "Settings",
             modal: true,
             dismissableMask: true,
-            contentClass: "w-[75rem] h-[45rem]"
+            contentClass: "w-[75rem] h-[40rem]"
         },
         {
             userSettings: userSettings,

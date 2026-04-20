@@ -192,20 +192,12 @@ class NetworkEngine:
                 )
 
     def _unpack_message(self, msg_name: str, data: str, payload: Payload) -> Message:
-        # Look up the actual message via its name
-        from .. import MessageTypesCatalog
+        from .. import unpack_message
 
-        msg_type = MessageTypesCatalog.find_item(msg_name)
-        if msg_type is None:
-            raise RuntimeError(f"The message type '{msg_name}' is unknown")
-
-        # Unpack the message into its actual type
-        msg = typing.cast(Message, msg_type.schema().loads(data))
+        msg = unpack_message(
+            msg_name, data, comp_id=self._comp_data.comp_id, payload=payload
+        )
         self._router.verify_message(NetworkRouter.Direction.IN, msg)
-
-        msg.hops.append(self._comp_data.comp_id)
-        msg.payload.decode(payload)
-
         return msg
 
     def _route_message(

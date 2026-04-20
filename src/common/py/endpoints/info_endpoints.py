@@ -5,7 +5,7 @@ from .endpoint import Endpoint
 
 def info_ep() -> Endpoint:
     # The main entry point (/) returns basic component info as a JSON string
-    def _handler() -> typing.Any:
+    def _handler(*args, **kwargs) -> typing.Any:
         from ..component import BackendComponent
 
         comp = BackendComponent.instance()
