@@ -55,13 +55,13 @@ function onCreateInstance(instance: ConnectorInstance): void {
         <div class="r-text-title">Connections</div>
         <div>
             To upload your project to an external service, you need to set up <em>connections</em> to these services. To add a new connection, use the drop-down
-            list at the bottom of the connections list.
+            list below.
         </div>
 
-        <ScrollPanel class="h-[29rem]">
+        <NewConnection :user-settings="userSettings" @create-instance="onCreateInstance" />
+        <ScrollPanel class="max-h-[29rem]">
             <ConnectionsList :user-settings="userSettings" :new-instance="newInstance" />
         </ScrollPanel>
-        <NewConnection :user-settings="userSettings" @create-instance="onCreateInstance" />
     </div>
 </template>
 

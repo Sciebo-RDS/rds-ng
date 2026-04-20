@@ -30,13 +30,13 @@ const groupedInstances = computed(() => groupConnectorInstances(unref(instances)
 <template>
     <Accordion :value="groupedInstances.map((inst) => inst.connectorID)" multiple :dt="{ 'content.padding': '0 1.125rem 1.125rem 0.75rem' }">
         <AccordionPanel v-for="group in groupedInstances" :key="group.connectorID" :value="group.connectorID" class="border-0">
-            <AccordionHeader class="r-shade-dark rounded-xl mb-4">
-                <ConnectorInstancesHeader :connector-id="group.connectorID" />
+            <AccordionHeader class="r-shade-dark rounded-xl mb-2">
+                <ConnectorInstancesHeader :connector-id="group.connectorID" class="!h-4" />
             </AccordionHeader>
             <AccordionContent>
-                <div v-for="[index, instance] of group.connectorInstances.entries()" class="cursor-pointer">
+                <div v-for="[index, instance] of group.connectorInstances.entries()" class="cursor-pointer h-min">
                     <slot name="instance" :instance="instance" />
-                    <Divider v-if="index < group.connectorInstances.length - 1" />
+                    <Divider v-if="index < group.connectorInstances.length - 1" class="my-2" />
                 </div>
             </AccordionContent>
         </AccordionPanel>
