@@ -8,5 +8,5 @@ scheme = "host"
 url = "http://localhost:8080/apps/rdsng"
 
 [default.authorization.oauth2.client]
-id = "BHqb23QAdFjHgABAcNmdPPu9zc31tbZHl9QzhTNGsfIU9gm87J4cRUfnJ5j7pTZ4"
+id = "ykyX7aWa19uL6Y3B0M5ajg8t0WGxVai1wOgJsYRmGDyFWjUgjVQs3tZDdeO4V1K4"
 redirect_url = "http://localhost:8080/apps/rdsng"
