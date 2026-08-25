@@ -27,6 +27,10 @@ Debugging a running k8s deployment can be difficult, since live changes usually 
 
 # Local deployment
 
+The directory `deployment/local` contains files to run a local deployment alongside a Nextcloud. The makefile located in the project root directory can be used to build and run this deployment. Before using this, though, read the instructions in [LOCAL_DEPLOYMENT.md](deployment/local/LOCAL_DEPLOYMENT.md) carefully, as it will not work out-of-the-box!
+
+## !OBSOLETE!
+
 The following guide will briefly show you how to run a local setup of RDS-NG within a Nextcloud instance.
 
 RDS-NG can be run either in `develop` or in `release` mode. We recommend to use the stable `release` setup; if you want to get all the latest changes immediately, use the `develop` setup instead.
