@@ -11,10 +11,10 @@ build:
 	cd ./deployment/containers && make dev-build
 
 	@echo "Building RDS NG Integration App..."
-	cd ../rds-ng-nextcloud && make build
+	cd ../rds-ng-nextcloud && rm -rf build && make build
 
 start:
-	RDS_NG_BRANCH_NAME=$(GIT_BRANCH) docker compose -f ./local/docker-compose.yml up --no-attach nextcloud --no-attach proxy
-	RDS_NG_BRANCH_NAME=$(GIT_BRANCH) docker compose -f ./local/docker-compose.yml down
+	RDS_NG_BRANCH_NAME=$(GIT_BRANCH) docker compose -f ./deployment/local/docker-compose.yml up --no-attach nextcloud --no-attach proxy
+	RDS_NG_BRANCH_NAME=$(GIT_BRANCH) docker compose -f ./deployment/local/docker-compose.yml down
 
 .PHONY: build start run

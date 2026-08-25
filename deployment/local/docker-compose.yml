@@ -1,54 +1,16 @@
-# Local Overleaf+Nextcloud deployment
+# Local RDS NG+Nextcloud deployment
 services:
-    sharelatex:
+    server:
         restart: always
-        image: sharelatex/sharelatex:${OVERLEAF_BRANCH_NAME}
-        container_name: sharelatex
-        depends_on:
-            mongo:
-                condition: service_healthy
-            redis:
-                condition: service_started
+        image: rds-ng/server:develop
+        container_name: rds-server
         ports:
-            - "8099:80"
-        stop_grace_period: 60s
+            - "4200:6969"
         volumes:
-            - ./.data/overleaf:/var/lib/overleaf
+            - ./.data/bridgit:/data
         env_file:
-          - ../server-ce/config/integration.env
-          - local.env
-        environment:
-            OVERLEAF_SITE_URL: 'http://sharelatex'
-
-            OVERLEAF_MONGO_URL: 'mongodb://mongo/sharelatex'
-
-            OVERLEAF_REDIS_HOST: 'redis'
-            REDIS_HOST: 'redis'
-
-    mongo:
-        restart: always
-        image: mongo:8.2
-        container_name: mongo
-        command: "--replSet overleaf"
-        volumes:
-            - mongo:/data/db
-            - ${PWD}/bin/shared/mongodb-init-replica-set.js:/docker-entrypoint-initdb.d/mongodb-init-replica-set.js
-        environment:
-            MONGO_INITDB_DATABASE: sharelatex
-        extra_hosts:
-            - mongo:127.0.0.1
-        healthcheck:
-            test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
-            interval: 10s
-            timeout: 10s
-            retries: 5
-
-    redis:
-        restart: always
-        image: redis:7.4
-        container_name: redis
-        volumes:
-            - redis:/data
+            - ./env/server.env
+            - ./local.env
 
     nextcloud:
         image: nextcloud:33
@@ -59,12 +21,10 @@ services:
 
             NEXTCLOUD_ADMIN_USER: 'admin'
             NEXTCLOUD_ADMIN_PASSWORD: 'admin'
-
-            OVERLEAF_INTERNAL_URL: 'http://sharelatex'
         volumes:
             - nextcloud:/var/www/html
             - ./.data/custom_apps:/var/www/html/custom_apps
-            - ../../overleaf-nextcloud:/var/www/html/custom_apps/overleafv6_nextcloud
+            - ../../../rds-ng-nextcloud:/var/www/html/custom_apps/rdsng
 
     proxy:
         image: nginx:alpine
@@ -75,13 +35,9 @@ services:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ./certs:/etc/nginx/certs:ro
         depends_on:
-            - sharelatex
+            - server
             - nextcloud
 
 volumes:
     nextcloud:
         name: nextcloud
-    mongo:
-        name: mongo
-    redis:
-        name: redis
