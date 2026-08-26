@@ -36,24 +36,6 @@ services:
             - ./env/dev.frontend.env
             - ./local.env
 
-#    domo:
-#        image: rds-ng/domo:develop
-#        container_name: rds-domo
-#        ports:
-#            - "5500:6969"
-#        volumes:
-#            -   type: bind
-#                source: ../../src
-#                target: /component
-#            -   type: bind
-#                source: ./.data/domo
-#                target: /data
-#        environment:
-#            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "http://localhost:4200"
-#        env_file:
-#            - ./env/dev.domo.env
-#            - ./local.env
-
     # Other services
     nextcloud:
         image: nextcloud:33
