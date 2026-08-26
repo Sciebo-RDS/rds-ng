@@ -1,11 +1,9 @@
 # Local RDS NG+Nextcloud deployment
 services:
-     # RDS NG services
+    # RDS NG services
     server:
         image: rds-ng/server:develop
         container_name: rds-server
-        ports:
-            - "4200:6969"
         volumes:
             - type: bind
               source: ../../src
@@ -17,11 +15,25 @@ services:
             - ./env/dev.server.env
             - ./local.env
 
+    domo:
+        image: rds-ng/domo:develop
+        container_name: rds-domo
+        volumes:
+            - type: bind
+              source: ../../src
+              target: /component
+            - type: bind
+              source: ./.data/domo
+              target: /data
+        environment:
+            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "http://rds-server:6969"
+        env_file:
+            - ./env/dev.domo.env
+            - ./local.env
+
     frontend:
         image: rds-ng/frontend:develop
         container_name: rds-frontend
-        ports:
-            - "8000:6969"
         volumes:
             -   type: bind
                 source: ../../src/frontend/src
@@ -31,7 +43,7 @@ services:
                 target: /app/common
             - /app/common/node_modules
         environment:
-            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "http://localhost:4200"
+            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "http://rds-server:6969"
         env_file:
             - ./env/dev.frontend.env
             - ./local.env
@@ -55,7 +67,9 @@ services:
         image: nginx:alpine
         container_name: proxy
         ports:
-            - "443:443"
+            - "443:443"     # Nextcloud
+            - "4200:4200"   # Server
+            - "5500:5500"   # Domo
         volumes:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ./certs:/etc/nginx/certs:ro
