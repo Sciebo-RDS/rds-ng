@@ -2,7 +2,6 @@
 services:
      # RDS NG services
     server:
-        restart: always
         image: rds-ng/server:develop
         container_name: rds-server
         ports:
@@ -12,11 +11,48 @@ services:
               source: ../../src
               target: /component
             - type: bind
-              source: ./.data/rdsng
+              source: ./.data/server
               target: /data
         env_file:
             - ./env/dev.server.env
             - ./local.env
+
+    frontend:
+        image: rds-ng/frontend:develop
+        container_name: rds-frontend
+        ports:
+            - "8000:6969"
+        volumes:
+            -   type: bind
+                source: ../../src/frontend/src
+                target: /app/frontend/src
+            -   type: bind
+                source: ../../src/common
+                target: /app/common
+            - /app/common/node_modules
+        environment:
+            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "http://localhost:4200"
+        env_file:
+            - ./env/dev.frontend.env
+            - ./local.env
+
+#    domo:
+#        image: rds-ng/domo:develop
+#        container_name: rds-domo
+#        ports:
+#            - "5500:6969"
+#        volumes:
+#            -   type: bind
+#                source: ../../src
+#                target: /component
+#            -   type: bind
+#                source: ./.data/domo
+#                target: /data
+#        environment:
+#            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "http://localhost:4200"
+#        env_file:
+#            - ./env/dev.domo.env
+#            - ./local.env
 
     # Other services
     nextcloud:
