@@ -140,7 +140,7 @@ cp deployment/env/examples/* deployment/env
 mkdir .data
 ```
 
-For the `release` setup, edit the `server.env` file and set `RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST` to the OAUTH2 secret created in step 4, and set `RDS_AUTHORIZATION_OAUTH2_CLIENT_ID` in  `frontend.env` to the corresponding client ID. If you want to use the `develop` setup, the `.env` files are prefixed with `dev.` (e.g., `server.env`).
+For the `release` setup, edit the `dev.server.env` file and set `RDS_AUTHORIZATION_OAUTH2_SECRETS_HOST` to the OAUTH2 secret created in step 4, and set `RDS_AUTHORIZATION_OAUTH2_CLIENT_ID` in  `dev.frontend.env` to the corresponding client ID. If you want to use the `develop` setup, the `.env` files are prefixed with `dev.` (e.g., `dev.server.env`).
 
 Client IDs and secrets for the various connectors are set in the same way; you'll need to register accounts at `test.osf.io` and `sandbox.zenodo.org` first in order to use them.
 

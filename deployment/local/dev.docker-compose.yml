@@ -1,5 +1,6 @@
 # Local RDS NG+Nextcloud deployment
 services:
+     # RDS NG services
     server:
         restart: always
         image: rds-ng/server:develop
@@ -7,20 +8,26 @@ services:
         ports:
             - "4200:6969"
         volumes:
-            - ./.data/bridgit:/data
+            - type: bind
+              source: ../../src
+              target: /component
+            - type: bind
+              source: ./.data/rdsng
+              target: /data
         env_file:
-            - ./env/server.env
+            - ./env/dev.server.env
             - ./local.env
 
+    # Other services
     nextcloud:
         image: nextcloud:33
         container_name: nextcloud
         environment:
-            OVERWRITEPROTOCOL: 'https'
-            OVERWRITEHOST: 'nextcloud.dev.local'
+            OVERWRITEPROTOCOL: "https"
+            OVERWRITEHOST: "nextcloud.dev.local"
 
-            NEXTCLOUD_ADMIN_USER: 'admin'
-            NEXTCLOUD_ADMIN_PASSWORD: 'admin'
+            NEXTCLOUD_ADMIN_USER: "admin"
+            NEXTCLOUD_ADMIN_PASSWORD: "admin"
         volumes:
             - nextcloud:/var/www/html
             - ./.data/custom_apps:/var/www/html/custom_apps

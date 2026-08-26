@@ -1,20 +1,20 @@
 # Simple makefile to easily work with a local deployment via Docker compose
 
-.DEFAULT_TARGET := run
+.DEFAULT_TARGET := dev-run
 
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
-run: build start
+dev-run: dev-build dev-start
 
-build:
-	@echo "Building RDS NG..."
+dev-build:
+	@echo "Building RDS NG (develop)..."
 	cd ./deployment/containers && make dev-build
 
 	@echo "Building RDS NG Integration App..."
 	cd ../rds-ng-nextcloud && rm -rf build && make build
 
-start:
-	RDS_NG_BRANCH_NAME=$(GIT_BRANCH) docker compose -f ./deployment/local/docker-compose.yml up --no-attach nextcloud --no-attach proxy
-	RDS_NG_BRANCH_NAME=$(GIT_BRANCH) docker compose -f ./deployment/local/docker-compose.yml down
+dev-start:
+	RDS_NG_BRANCH_NAME=$(GIT_BRANCH) docker compose -f ./deployment/local/dev.docker-compose.yml up --no-attach nextcloud --no-attach proxy
+	RDS_NG_BRANCH_NAME=$(GIT_BRANCH) docker compose -f ./deployment/local/dev.docker-compose.yml down
 
-.PHONY: build start run
+.PHONY: dev-build dev-start dev-run
