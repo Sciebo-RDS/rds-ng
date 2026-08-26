@@ -8,6 +8,7 @@ Ingress helpers
 {{- $name := index . 2 -}}
 {{- $service := index . 3 -}}
 {{- $port := index . 4 -}}
+{{- if $ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -38,4 +39,5 @@ spec:
                 -   {{ required "No hostname specified" $ingress.hostname | quote }}
             secretName: {{ $ingress.tlsSecret }}
     {{- end }}
+{{- end }}
 {{- end }}
