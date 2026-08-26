@@ -16,3 +16,14 @@ RDS_STORAGE_DATABASE_{{- upper $name -}}_USER: {{ required (printf "%s username 
 {{- $name := index . 1 -}}
 RDS_STORAGE_DATABASE_{{- upper $name -}}_PASSWORD: {{ required (printf "%s password is required" $name) $settings.password | quote }}
 {{- end }}
+
+{{/*
+Whether the server needs its persistent volume: only SQLite writes to the
+filesystem. Every other engine, and the in-memory driver, would get a volume
+nothing ever writes to. Returns a non-empty string when the volume is needed.
+*/}}
+{{- define "rds.server.needsVolume" -}}
+{{- if and (eq (lower .Values.server.storage.driver) "database") (eq (lower .Values.server.storage.database.engine) "sqlite") -}}
+true
+{{- end -}}
+{{- end }}
