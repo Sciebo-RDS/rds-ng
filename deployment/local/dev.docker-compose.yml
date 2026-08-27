@@ -11,6 +11,8 @@ services:
             - type: bind
               source: ./.data/server
               target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
             - ./env/00-oauth2.env
             - ./env/dev.server.env
@@ -26,6 +28,8 @@ services:
             - type: bind
               source: ./.data/domo
               target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         environment:
             RDS_NETWORK_CLIENT_SERVER_ADDRESS: "http://rds-server:6969"
         env_file:
