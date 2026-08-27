@@ -47,6 +47,8 @@ services:
               source: ../../src/common
               target: /app/common
             - /app/common/node_modules
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         environment:
             RDS_NETWORK_CLIENT_SERVER_ADDRESS: "https://nextcloud.dev.local:4200"
         env_file:
