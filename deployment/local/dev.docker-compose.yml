@@ -32,8 +32,6 @@ services:
         extra_hosts:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
-        environment:
-            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "https://bridgit.nextcloud.dev.local:4200"
         env_file:
             - ./env/dev.domo.env
             - ./local.env
@@ -52,8 +50,6 @@ services:
         extra_hosts:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
-        environment:
-            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "https://bridgit.nextcloud.dev.local:4200"
         env_file:
             - ./env/00-oauth2.env
             - ./env/dev.frontend.env
