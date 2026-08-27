@@ -29,7 +29,7 @@ Unfortunately, running a local instance of RDS NG+Nextcloud Integration is no ea
     -key-file local.key \
     nextcloud.dev.local bridgit.nextcloud.dev.local
    ```
-3. Copy the generated two files into `local/certs`.
+3. Copy the generated two files into `deployment/local/certs`.
 
 These steps will allow you to use the two local domains to work over *https*, which is necessary for RDS NG to work properly.
 
@@ -51,12 +51,19 @@ All these steps only need to be done once. **Note**: The Nextcloud setup needs t
 
 ## Configuration
 
-1. After logging in to Nextcloud as `admin`, go to the _Apps_ settings section. Under _Disabled apps_, locate _Overleaf Nextcloud Integration_ and enable it.
-2. Open the _Administration settings_ and go to the _Overleaf_ section. Enter the following settings:
-    - **Overleaf URL**: `https://overleaf.nextcloud.dev.local`
-    - **API key**: `F18KiFG6gStOav5UzdH9eIke7taCSqGx`
+1. After logging in to Nextcloud as `admin`, go to the _Apps_ settings section. Under _Disabled apps_, locate _bridgit_ and enable it.
+2. Open the _Administration settings_ and go to the _bridgit_ section. Enter the following settings:
+3.
+    - **Frontend:**
+        - **Frontend URL**: `https://bridgit.nextcloud.dev.local`
+        - **Instance ID**: `default`
+    - **Backend:**
+        - **Domo URL:**: `https://bridgit.nextcloud.dev.local:5500`
+        - **API key**: `V1ZXHYc4IOWtPCh5`
 
-It's advisable to make sure that the settings have been saved by reloading the page. You are now ready to use Overleaf in Nextcloud on a local deployment!
+It's advisable to make sure that the settings have been saved by reloading the page.
+
+## TODO: OAuth2 keys etc.
 
 ## Running a local deployment
 
