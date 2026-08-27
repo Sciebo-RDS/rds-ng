@@ -35,15 +35,15 @@ services:
         image: rds-ng/frontend:develop
         container_name: rds-frontend
         volumes:
-            -   type: bind
-                source: ../../src/frontend/src
-                target: /app/frontend/src
-            -   type: bind
-                source: ../../src/common
-                target: /app/common
+            - type: bind
+              source: ../../src/frontend/src
+              target: /app/frontend/src
+            - type: bind
+              source: ../../src/common
+              target: /app/common
             - /app/common/node_modules
         environment:
-            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "http://rds-server:6969"
+            RDS_NETWORK_CLIENT_SERVER_ADDRESS: "https://nextcloud.dev.local:4200"
         env_file:
             - ./env/dev.frontend.env
             - ./local.env
@@ -72,9 +72,12 @@ services:
             - "5500:5500"   # Domo
         volumes:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./nginx/location.snippet.conf:/etc/nginx/location.snippet.conf:ro
             - ./certs:/etc/nginx/certs:ro
         depends_on:
             - server
+            - domo
+            - frontend
             - nextcloud
 
 volumes:
