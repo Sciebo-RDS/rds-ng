@@ -247,9 +247,7 @@ class RequestsExecutor(AuthorizedExecutor):
     ) -> requests.Session:
         session = requests.Session()
 
-        if not self._component.data.config.value(NetworkSettingIDs.VERIFY_SSL):
-            session.verify = False
-
+        session.verify = self._component.data.config.value(NetworkSettingIDs.VERIFY_SSL)
         session.headers.update(
             {
                 "Accept": "*/*",
