@@ -12,6 +12,7 @@ services:
               source: ./.data/server
               target: /data
         env_file:
+            - ./env/00-oauth2.env
             - ./env/dev.server.env
             - ./local.env
 
@@ -45,6 +46,7 @@ services:
         environment:
             RDS_NETWORK_CLIENT_SERVER_ADDRESS: "https://nextcloud.dev.local:4200"
         env_file:
+            - ./env/00-oauth2.env
             - ./env/dev.frontend.env
             - ./local.env
 
