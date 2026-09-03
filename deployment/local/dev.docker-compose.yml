@@ -57,7 +57,7 @@ services:
 
     # Other services
     nextcloud:
-        image: nextcloud:33
+        image: nextcloud:34
         container_name: nextcloud
         environment:
             OVERWRITEPROTOCOL: "https"
