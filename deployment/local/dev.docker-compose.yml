@@ -1,0 +1,183 @@
+# Local RDS NG+Nextcloud deployment
+services:
+    # RDS NG main services
+    server:
+        image: rds-ng/server:develop
+        container_name: rds-server
+        volumes:
+            - type: bind
+              source: ../../src
+              target: /component
+            - type: bind
+              source: ./.data/server
+              target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/00-oauth2.env
+            - ./env/01-local.env
+            - ./env/dev.server.env
+
+    domo:
+        image: rds-ng/domo:develop
+        container_name: rds-domo
+        volumes:
+            - type: bind
+              source: ../../src
+              target: /component
+            - type: bind
+              source: ./.data/domo
+              target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/01-local.env
+            - ./env/dev.domo.env
+
+    frontend:
+        image: rds-ng/frontend:develop
+        container_name: rds-frontend
+        volumes:
+            - type: bind
+              source: ../../src/frontend/src
+              target: /app/frontend/src
+            - type: bind
+              source: ../../src/common
+              target: /app/common
+            - /app/common/node_modules
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/00-oauth2.env
+            - ./env/01-local.env
+            - ./env/dev.frontend.env
+
+    # RDS NG connectors
+    connector-osf:
+        image: rds-ng/connector-osf:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ./.data/connector-osf
+                target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/01-local.env
+            - ./env/dev.connector-osf.env
+
+    connector-zenodo:
+        image: rds-ng/connector-zenodo:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ./.data/connector-zenodo
+                target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/01-local.env
+            - ./env/dev.connector-zenodo.env
+
+    connector-datasafe:
+        image: rds-ng/connector-datasafe:develop
+        volumes:
+            -   type: bind
+                source: ./.data/connector-datasafe
+                target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/01-local.env
+            - ./env/dev.connector-datasafe.env
+
+    connector-datastore:
+        image: rds-ng/connector-datastore:develop
+        volumes:
+            -   type: bind
+                source: ./.data/connector-datastore
+                target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/01-local.env
+            - ./env/dev.connector-datastore.env
+
+    connector-dataverse:
+        image: rds-ng/connector-dataverse:develop
+        volumes:
+            -   type: bind
+                source: ../../src
+                target: /component
+            -   type: bind
+                source: ./.data/connector-dataverse
+                target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/01-local.env
+            - ./env/dev.connector-dataverse.env
+
+    connector-stub:
+        image: rds-ng/connector-stub:develop
+        volumes:
+            - type: bind
+              source: ../../src
+              target: /component
+            - type: bind
+              source: ./.data/connector-stub
+              target: /data
+        extra_hosts:
+            - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+            - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
+        env_file:
+            - ./env/01-local.env
+            - ./env/dev.connector-stub.env
+
+    # Other services
+    nextcloud:
+        image: nextcloud:34
+        container_name: nextcloud
+        environment:
+            OVERWRITEPROTOCOL: "https"
+            OVERWRITEHOST: "nextcloud.dev.local"
+
+            NEXTCLOUD_ADMIN_USER: "admin"
+            NEXTCLOUD_ADMIN_PASSWORD: "admin"
+        volumes:
+            - nextcloud:/var/www/html
+            - ./.data/custom_apps:/var/www/html/custom_apps
+            - ../../../rds-ng-nextcloud:/var/www/html/custom_apps/rdsng
+
+    proxy:
+        image: nginx:alpine
+        container_name: proxy
+        ports:
+            - "443:443"     # Nextcloud
+            - "4200:4200"   # Server
+            - "5500:5500"   # Domo
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./nginx/location.snippet.conf:/etc/nginx/location.snippet.conf:ro
+            - ./certs:/etc/nginx/certs:ro
+        depends_on:
+            - server
+            - domo
+            - frontend
+            - nextcloud
+
+volumes:
+    nextcloud:
+        name: nextcloud

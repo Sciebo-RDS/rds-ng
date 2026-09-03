@@ -1,9 +1,6 @@
 [connector]
 target = "https://datasafe.uni-muenster.de/api/"
 
-[network.client]
-server_address = "http://rds-server-1:6969"
-
 [authorization]
 strategy = "bearer"
 
