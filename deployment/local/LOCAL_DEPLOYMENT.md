@@ -78,7 +78,3 @@ It's advisable to make sure that the settings have been saved by reloading the p
 The provided `makefile` in the project root directory can be used to build local container images and boot up a local deployment; simply run `make` without any target. This will also start a Nextcloud instance, which runs on `https://nextcloud.dev.local`. The default administrator login is `admin/admin`.
 
 To stop the entire deployment, simply press `d` to detach in the console; this will automatically stop all containers.
-
-### Overleaf settings
-
-While this deployment of Overleaf is completely configured, a few settings can be changed within the `local.env` file.

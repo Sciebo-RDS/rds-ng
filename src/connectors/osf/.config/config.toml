@@ -1,9 +1,6 @@
 [connector]
 target = "https://api.test.osf.io/v2/"
 
-[network.client]
-server_address = "http://rds-server-1:6969"
-
 [authorization]
 strategy = "oauth2"
 
