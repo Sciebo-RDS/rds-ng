@@ -1,5 +1,19 @@
 # RDS-NG - Changelog
 
+## v1.5.1 - 2026-09-03
+
+### New
+
+- A new advanced local deployment has been added for easier development
+
+### Improvements
+
+- Made the Nextcloud integration app compatible with NC 34
+
+### Fixes
+
+- The memory storage driver didn't work properly
+
 ## v1.5.0 - 2026-04-20
 
 ### New
