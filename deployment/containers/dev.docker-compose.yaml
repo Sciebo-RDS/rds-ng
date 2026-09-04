@@ -28,9 +28,6 @@ services:
         image: rds-ng/server:develop
         volumes:
             -   type: bind
-                source: ../../src
-                target: /component
-            -   type: bind
                 source: ../../.data
                 target: /data
         build:
@@ -50,9 +47,6 @@ services:
         image: rds-ng/connector-osf:develop
         volumes:
             -   type: bind
-                source: ../../src
-                target: /component
-            -   type: bind
                 source: ../../.data
                 target: /data
         build:
@@ -71,9 +65,6 @@ services:
     connector-zenodo:
         image: rds-ng/connector-zenodo:develop
         volumes:
-            -   type: bind
-                source: ../../src
-                target: /component
             -   type: bind
                 source: ../../.data
                 target: /data
@@ -153,9 +144,6 @@ services:
         image: rds-ng/connector-stub:develop
         volumes:
             -   type: bind
-                source: ../../src
-                target: /component
-            -   type: bind
                 source: ../../.data
                 target: /data
         build:
@@ -174,9 +162,6 @@ services:
     domo:
         image: rds-ng/domo:develop
         volumes:
-            -   type: bind
-                source: ../../src
-                target: /component
             -   type: bind
                 source: ../../.data
                 target: /data
