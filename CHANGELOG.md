@@ -9,7 +9,7 @@
 ### Improvements
 
 - Made the Nextcloud integration app compatible with NC 34
-- Scope specific vendor libraries in the Nextcloud integration app to prevent clashes
+- Scope vendor libraries in the Nextcloud integration app to prevent clashes
 
 ### Fixes
 
