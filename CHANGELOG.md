@@ -1,6 +1,6 @@
 # RDS-NG - Changelog
 
-## v1.5.1 - 2026-09-03
+## v1.5.1 - 2026-09-07
 
 ### New
 
@@ -9,6 +9,7 @@
 ### Improvements
 
 - Made the Nextcloud integration app compatible with NC 34
+- Scope specific vendor libraries in the Nextcloud integration app to prevent clashes
 
 ### Fixes
 
