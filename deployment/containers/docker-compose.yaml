@@ -1,4 +1,4 @@
-# Docker compose file to build/run the entire components stack
+# Docker Compose file to build the entire components stack in Release mode
 services:
     # -- Base images --
     # Build-only Python base image
@@ -32,10 +32,6 @@ services:
                 COMPONENT_NAME: "server"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4200:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}server.env
 
     # Connector: OSF
     connector-osf:
@@ -47,10 +43,6 @@ services:
                 COMPONENT_NAME: "connectors/osf"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4300:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-osf.env
 
     # Connector: Zenodo
     connector-zenodo:
@@ -62,10 +54,6 @@ services:
                 COMPONENT_NAME: "connectors/zenodo"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4400:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-zenodo.env
 
     # Connector: datasafe
     connector-datasafe:
@@ -78,10 +66,6 @@ services:
                 COMPONENT_ADDITIONAL_LOCATION: "connectors/datasafe"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4500:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-datasafe.env
 
     # Connector: datastore
     connector-datastore:
@@ -94,10 +78,6 @@ services:
                 COMPONENT_ADDITIONAL_LOCATION: "connectors/datastore"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4550:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-datastore.env
 
     # Connector: Dataverse
     connector-dataverse:
@@ -109,10 +89,6 @@ services:
                 COMPONENT_NAME: "connectors/dataverse"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4600:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-dataverse.env
 
     # Connector: Stub
     connector-stub:
@@ -124,10 +100,6 @@ services:
                 COMPONENT_NAME: "connectors/stub"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4900:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}connector-stub.env
 
     # Domo
     domo:
@@ -139,18 +111,10 @@ services:
                 COMPONENT_NAME: "domo"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "5500:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}domo.env
 
     # Web frontend
     frontend:
         image: rds-ng/frontend:latest
-        volumes:
-            -   type: bind
-                source: ../config/frontend
-                target: /app/config
         build:
             context: ../../
             dockerfile: deployment/containers/web-component/Dockerfile
@@ -158,7 +122,3 @@ services:
                 COMPONENT_NAME: "frontend"
             additional_contexts:
                 node_base: "service:node_base"
-        ports:
-            - "8000:80"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-}frontend.env

@@ -12,9 +12,9 @@ services:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/00-oauth2.env
-            - ./env/01-local.env
-            - ./env/dev.server.env
+            - ./config/env/00-oauth2.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.server.env
 
     domo:
         image: rds-ng/domo:develop
@@ -27,27 +27,27 @@ services:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/01-local.env
-            - ./env/dev.domo.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.domo.env
 
     frontend:
         image: rds-ng/frontend:develop
         container_name: rds-frontend
         volumes:
+            - /app/common/node_modules
             - type: bind
               source: ../../src/frontend/src
               target: /app/frontend/src
             - type: bind
               source: ../../src/common
               target: /app/common
-            - /app/common/node_modules
         extra_hosts:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/00-oauth2.env
-            - ./env/01-local.env
-            - ./env/dev.frontend.env
+            - ./config/env/00-oauth2.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.frontend.env
 
     # RDS NG connectors
     connector-osf:
@@ -60,8 +60,10 @@ services:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/01-local.env
-            - ./env/dev.connector-osf.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.connector-osf.env
+        depends_on:
+            - server
 
     connector-zenodo:
         image: rds-ng/connector-zenodo:develop
@@ -73,8 +75,10 @@ services:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/01-local.env
-            - ./env/dev.connector-zenodo.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.connector-zenodo.env
+        depends_on:
+            - server
 
     connector-datasafe:
         image: rds-ng/connector-datasafe:develop
@@ -86,8 +90,10 @@ services:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/01-local.env
-            - ./env/dev.connector-datasafe.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.connector-datasafe.env
+        depends_on:
+            - server
 
     connector-datastore:
         image: rds-ng/connector-datastore:develop
@@ -99,8 +105,10 @@ services:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/01-local.env
-            - ./env/dev.connector-datastore.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.connector-datastore.env
+        depends_on:
+            - server
 
     connector-dataverse:
         image: rds-ng/connector-dataverse:develop
@@ -112,8 +120,10 @@ services:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/01-local.env
-            - ./env/dev.connector-dataverse.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.connector-dataverse.env
+        depends_on:
+            - server
 
     connector-stub:
         image: rds-ng/connector-stub:develop
@@ -125,8 +135,10 @@ services:
             - "nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
             - "bridgit.nextcloud.dev.local:${RDS_NG_LOCAL_IP}"
         env_file:
-            - ./env/01-local.env
-            - ./env/dev.connector-stub.env
+            - ./config/env/01-local.env
+            - ./config/env/dev.connector-stub.env
+        depends_on:
+            - server
 
     # Other services
     nextcloud:
@@ -151,8 +163,8 @@ services:
             - "4200:4200"   # Server
             - "5500:5500"   # Domo
         volumes:
-            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-            - ./nginx/location.snippet.conf:/etc/nginx/location.snippet.conf:ro
+            - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./config/nginx/location.snippet.conf:/etc/nginx/location.snippet.conf:ro
             - ./certs:/etc/nginx/certs:ro
         depends_on:
             - server

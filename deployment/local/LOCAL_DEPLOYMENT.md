@@ -50,7 +50,7 @@ Next, a few setup steps for Nextcloud need to be done:
        ```
        ./occ oauth2:add-client "rds-ng" "https://nextcloud.dev.local/apps/rdsng"
        ```
-       This will print out, among others, the client ID and secret. Open `env/00-oauth2.env` and copy the value of `clientId` to the environment variable `RDS_NG_OAUTH2_CLIENT_ID`, and the value of `clientSecret` to `RDS_NG_OAUTH2_CLIENT_SECRET`. Here is an example of how the final `00-oauth2.env` should look like (the shown values are, of course, only examples):
+       This will print out, among others, the client ID and secret. Open `config/env/00-oauth2.env` and copy the value of `clientId` to the environment variable `RDS_NG_OAUTH2_CLIENT_ID`, and the value of `clientSecret` to `RDS_NG_OAUTH2_CLIENT_SECRET`. Here is an example of how the final `00-oauth2.env` should look like (the shown values are, of course, only examples):
        ```
        RDS_NG_OAUTH2_CLIENT_ID=XxkqgCYAdMvBSrMukziVfwEhLKLPBrl5KmQLHblUgQQyCEbBSJqJF9uS1O1cC2Kl
        RDS_NG_OAUTH2_CLIENT_SECRET=7bXPn8hc4CLvszkap241QZfkXLwTtPWm1ZPpoFwyairJ3aG8gojrnf978yWj5QFA
