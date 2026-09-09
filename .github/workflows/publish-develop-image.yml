@@ -11,7 +11,7 @@ jobs:
             packages: write
         steps:
             -   name: Checkout repository
-                uses: actions/checkout@v4
+                uses: actions/checkout@v6
             -   name: Build containers
                 run: cd deployment/containers && make dev-build
             -   name: Log in to registry
