@@ -1,4 +1,31 @@
 RDS-NG {{ .Chart.AppVersion }} has been successfully deployed!
 
+{{ if .Values.secrets.create -}}
 The following network API key must be set for each host integration app as well:
     {{ .Values.network.apiKey }}
+{{- else -}}
+secrets.create is false, so this chart has not created any Secrets. You must
+provide the following Secrets yourself, using exactly these names:
+
+    {{ include "rds.fullname" . }}-network-api-secret
+        RDS_NETWORK_API_KEY
+    {{ include "rds.fullname" . }}-server-config-secret
+{{- if eq (lower .Values.server.storage.driver) "database" }}
+        RDS_STORAGE_DATABASE_{{ upper .Values.server.storage.database.engine }}_PASSWORD
+{{- end }}
+    {{ include "rds.fullname" . }}-server-tenants-config-secret
+{{- range $k, $v := .Values.tenants }}
+{{- if $v.oauth2 }}
+        RDS_TENANT_{{ upper $k }}_AUTHORIZATION_OAUTH2_CLIENT_SECRET
+{{- end }}
+{{- end }}
+{{- range $k, $v := .Values.connectors }}
+{{- if and $v.enabled $v.oauth2 }}
+    {{ include "rds.fullname" $ }}-connector-{{ $k }}-config-secret
+        RDS_AUTHORIZATION_OAUTH2_CLIENT_SECRET
+{{- end }}
+{{- end }}
+
+The network API key you place in {{ include "rds.fullname" . }}-network-api-secret
+must also be set for each host integration app.
+{{- end }}

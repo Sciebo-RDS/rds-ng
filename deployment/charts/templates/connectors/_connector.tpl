@@ -73,6 +73,7 @@ data:
     RDS_AUTHORIZATION_OAUTH2_CLIENT_REDIRECT_URL: {{ printf "https://%s/authorize/oauth2" (required "No Domo hostname specified" $top.Values.domo.ingress.hostname) | quote }}
     {{- end }}
 
+{{- if $top.Values.secrets.create }}
 ---
 apiVersion: v1
 kind: Secret
@@ -84,6 +85,7 @@ stringData:
     {{ if $connector.oauth2 -}}
     RDS_AUTHORIZATION_OAUTH2_CLIENT_SECRET: {{ required (printf "Missing OAuth2 client secret for connector %s" $name) $connector.oauth2.clientSecret | quote }}
     {{- end }}
+{{- end }}
 
 {{- end }}
 {{- end }}
