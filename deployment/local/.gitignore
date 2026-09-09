@@ -1,0 +1,6 @@
+.data/
+
+certs/local.crt
+certs/local.key
+
+config/env/00-oauth2.env
