@@ -1,5 +1,4 @@
-# Docker compose file to build/run the entire components stack in development mode
-# Note that the local source tree is mounted into the containers so that changes are applied automagically
+# Docker Compose file to build entire components stack in Development mode
 services:
     # -- Base images --
     # Build-only Python base image
@@ -26,13 +25,6 @@ services:
     # Server service
     server:
         image: rds-ng/server:develop
-        volumes:
-            -   type: bind
-                source: ../../src
-                target: /component
-            -   type: bind
-                source: ../../.data
-                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
@@ -40,21 +32,10 @@ services:
                 COMPONENT_NAME: "server"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4200:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}server.env
 
     # Connector: OSF
     connector-osf:
         image: rds-ng/connector-osf:develop
-        volumes:
-            -   type: bind
-                source: ../../src
-                target: /component
-            -   type: bind
-                source: ../../.data
-                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
@@ -62,21 +43,10 @@ services:
                 COMPONENT_NAME: "connectors/osf"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4300:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-osf.env
 
     # Connector: Zenodo
     connector-zenodo:
         image: rds-ng/connector-zenodo:develop
-        volumes:
-            -   type: bind
-                source: ../../src
-                target: /component
-            -   type: bind
-                source: ../../.data
-                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
@@ -84,18 +54,10 @@ services:
                 COMPONENT_NAME: "connectors/zenodo"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4400:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-zenodo.env
 
     # Connector: datasafe
     connector-datasafe:
         image: rds-ng/connector-datasafe:develop
-        volumes:
-            -   type: bind
-                source: ../../.data
-                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
@@ -104,18 +66,10 @@ services:
                 COMPONENT_ADDITIONAL_LOCATION: "connectors/datasafe"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4500:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-datasafe.env
 
     # Connector: datastore
     connector-datastore:
         image: rds-ng/connector-datastore:develop
-        volumes:
-            -   type: bind
-                source: ../../.data
-                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
@@ -124,18 +78,10 @@ services:
                 COMPONENT_ADDITIONAL_LOCATION: "connectors/datastore"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4550:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-datastore.env
 
     # Connector: Dataverse
     connector-dataverse:
         image: rds-ng/connector-dataverse:develop
-        volumes:
-            -   type: bind
-                source: ../../.data
-                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
@@ -143,21 +89,10 @@ services:
                 COMPONENT_NAME: "connectors/dataverse"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "4600:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-dataverse.env
 
     # Connector: Stub
     connector-stub:
         image: rds-ng/connector-stub:develop
-        volumes:
-            -   type: bind
-                source: ../../src
-                target: /component
-            -   type: bind
-                source: ../../.data
-                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
@@ -165,21 +100,10 @@ services:
                 COMPONENT_NAME: "connectors/stub"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "7900:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}connector-stub.env
 
     # Domo
     domo:
         image: rds-ng/domo:develop
-        volumes:
-            -   type: bind
-                source: ../../src
-                target: /component
-            -   type: bind
-                source: ../../.data
-                target: /data
         build:
             context: ../../
             dockerfile: deployment/containers/backend-component/dev.Dockerfile
@@ -187,25 +111,10 @@ services:
                 COMPONENT_NAME: "domo"
             additional_contexts:
                 py_base: "service:py_base"
-        ports:
-            - "5500:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}domo.env
 
     # Web frontend
     frontend:
         image: rds-ng/frontend:develop
-        volumes:
-            -   type: bind
-                source: ../../src/frontend/src
-                target: /app/frontend/src
-            -   type: bind
-                source: ../../src/common
-                target: /app/common
-            -   type: bind
-                source: ../config/frontend
-                target: /app/config
-            - /app/common/node_modules
         build:
             context: ../../
             dockerfile: deployment/containers/web-component/dev.Dockerfile
@@ -213,7 +122,3 @@ services:
                 COMPONENT_NAME: "frontend"
             additional_contexts:
                 node_base: "service:node_base"
-        ports:
-            - "8000:6969"
-        env_file:
-            - ../env/${RDS_NG_BUILD_ENVIRONMENT_PREFIX:-dev.}frontend.env

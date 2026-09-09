@@ -61,4 +61,4 @@ class MemoryAuthorizationTokenStorage(AuthorizationTokenStorage):
             )
 
     def _key_from_entity(self, entity: AuthorizationToken) -> AuthorizationTokenID:
-        return entity.user_id, entity.token_id
+        return entity.user_id, entity.auth_id

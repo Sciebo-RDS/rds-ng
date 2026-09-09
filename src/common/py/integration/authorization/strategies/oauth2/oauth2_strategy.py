@@ -55,6 +55,7 @@ class OAuth2Strategy(AuthorizationStrategy):
         self._request_timeout = comp.data.config.value(
             NetworkSettingIDs.EXTERNAL_REQUESTS_TIMEOUT
         )
+        self._verify_ssl = comp.data.config.value(NetworkSettingIDs.VERIFY_SSL)
 
     def request_authorization(
         self,
@@ -78,6 +79,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "redirect_uri": oauth2_data.redirect_url,
             },
             timeout=self._request_timeout,
+            verify=self._verify_ssl,
         )
 
         if response.status_code == HTTPStatus.OK:
@@ -136,6 +138,7 @@ class OAuth2Strategy(AuthorizationStrategy):
                 "refresh_token": oauth2_token.refresh_token,
             },
             timeout=self._request_timeout,
+            verify=self._verify_ssl,
         )
 
         if response.status_code == HTTPStatus.OK:
