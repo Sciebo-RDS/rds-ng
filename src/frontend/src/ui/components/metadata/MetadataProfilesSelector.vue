@@ -13,7 +13,7 @@ const props = defineProps({
     }
 });
 const { profiles } = toRefs(props);
-const selectedProfiles = defineModel<ProfileID[]>("selectedProfiles", { default: [] });
+const selectedProfiles = defineModel<ProfileID[]>("selectedProfiles", { default: () => [] });
 
 const colorsStore = useColorsStore();
 </script>
