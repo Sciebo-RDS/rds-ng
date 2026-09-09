@@ -21,6 +21,7 @@ from .....data.entities.resource import (
 )
 from .....data.entities.user import UserToken
 from .....services import Service
+from .....settings import NetworkSettingIDs
 from .....utils import ensure_starts_with
 
 
@@ -34,6 +35,7 @@ class WebdavBrokerConfiguration:
     host: str = ""
     endpoint: str = ""
     requires_auth: bool = False
+    verify_ssl: bool = False
 
 
 class WebdavBroker(ResourcesBroker):
@@ -69,6 +71,7 @@ class WebdavBroker(ResourcesBroker):
                 self._replace_user_token_placeholders(config.endpoint), "/"
             ),
             requires_auth=config.requires_auth,
+            verify_ssl=comp.data.config.value(NetworkSettingIDs.VERIFY_SSL),
         )
 
         self._client = self._create_webdav_client(comp)
@@ -245,7 +248,9 @@ class WebdavBroker(ResourcesBroker):
             )
             _add_option(AuthorizationStrategy.ContentType.AUTH_TOKEN, "webdav_token")
 
-        return webdavclient.Client(options)
+        client = webdavclient.Client(options)
+        client.verify = self._config.verify_ssl
+        return client
 
 
 def create_webdav_broker(

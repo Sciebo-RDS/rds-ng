@@ -32,8 +32,8 @@ const props = defineProps({
     }
 });
 const { data, dynamic, refreshable, expandFirstOnly } = toRefs(props);
-const selectedNodes = defineModel<Object>("selectedNodes", { default: {} });
-const selectedData = defineModel<Resource[]>("selectedData", { default: [] });
+const selectedNodes = defineModel<Object>("selectedNodes", { default: () => ({}) });
+const selectedData = defineModel<Resource[]>("selectedData", { default: () => [] });
 const emits = defineEmits<{
     (e: "refresh"): void;
     (e: "changed", selected: Resource[]): void;

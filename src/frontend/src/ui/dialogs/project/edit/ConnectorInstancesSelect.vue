@@ -33,7 +33,7 @@ const { userSettings } = storeToRefs(userStore);
 const { disabled } = toRefs(props);
 
 const groupedInstances = computed(() => groupConnectorInstances(userSettings.value.connector_instances, connectors.value));
-const model = defineModel({ default: [] });
+const model = defineModel({ default: () => [] });
 </script>
 
 <template>
