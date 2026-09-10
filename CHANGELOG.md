@@ -1,5 +1,11 @@
 # RDS-NG - Changelog
 
+## v1.6.0 - 2026-xx-xx
+
+### Fixes
+
+- ...
+
 ## v1.5.1 - 2026-09-07
 
 ### New
