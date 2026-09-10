@@ -4,7 +4,7 @@
 
 ### Fixes
 
-- ...
+- Properly format date values in metadata forms
 
 ## v1.5.1 - 2026-09-07
 
