@@ -1,9 +1,6 @@
 {
     "metadata": {
-        "id": [
-            "DataCite",
-            "4.5"
-        ],
+        "id": ["DataCite", "4.5"],
         "displayLabel": "DataCite",
         "description": "DataCite Metadata Profile",
         "context": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/"
@@ -325,11 +322,7 @@
                     "id": "nameIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": [
-                        "ORCID",
-                        "GND",
-                        "other"
-                    ],
+                    "options": ["ORCID", "GND", "other"],
                     "description": "",
                     "hints": {
                         "ORCID": {
@@ -364,12 +357,7 @@
                     "id": "affiliationIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": [
-                        "ORCID",
-                        "GND",
-                        "ROR",
-                        "other"
-                    ],
+                    "options": ["ORCID", "GND", "ROR", "other"],
                     "description": "",
                     "hints": {
                         "ORCID": {
@@ -424,12 +412,7 @@
                     "id": "titleType",
                     "label": "Title Type",
                     "type": "radiobuttons",
-                    "options": [
-                        "AlternativeTitle",
-                        "Subtitle",
-                        "TranslatedTitle",
-                        "other"
-                    ],
+                    "options": ["AlternativeTitle", "Subtitle", "TranslatedTitle", "other"],
                     "description": "The type of Title (other than the Main Title)."
                 }
             ]
@@ -518,10 +501,7 @@
                     "id": "nameType",
                     "label": "Name Type",
                     "type": "dropdown",
-                    "options": [
-                        "Organizational",
-                        "Personal"
-                    ],
+                    "options": ["Organizational", "Personal"],
                     "description": "The type of name."
                 },
                 {
@@ -558,7 +538,7 @@
         "date": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date",
             "displayLabel": "Date",
-            "description": "Different dates relevant to the work. Formats: YYYY, YYYY-MM-DD, YYYY- MM-DDThh:mm:ssTZD.",
+            "description": "Different dates relevant to the work. Formats: YYYY, YYYY-MM-DD, YYYY-MM-DDThh:mm:ssTZD.",
             "labelTemplate": "${dateType}: ${date}",
             "input": [
                 {
@@ -812,14 +792,7 @@
                     "id": "descriptionType",
                     "label": "Description Type",
                     "type": "dropdown",
-                    "options": [
-                        "Abstract",
-                        "Methods",
-                        "SeriesInformation",
-                        "TableOfContents",
-                        "TechnicalInfo",
-                        "Other"
-                    ],
+                    "options": ["Abstract", "Methods", "SeriesInformation", "TableOfContents", "TechnicalInfo", "Other"],
                     "description": "The type of description."
                 }
             ]
@@ -939,13 +912,7 @@
                     "label": "Funder Identifier Type",
                     "type": "dropdown",
                     "description": "The type of the funderIdentifier.",
-                    "options": [
-                        "Crossref Funder ID",
-                        "GRID",
-                        "ISNI",
-                        "ROR",
-                        "Other"
-                    ],
+                    "options": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"],
                     "hints": {
                         "ROR": {
                             "text": "Research Organization Registry Identifier.",

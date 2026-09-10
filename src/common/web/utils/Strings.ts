@@ -38,11 +38,16 @@ export function humanReadableFileSize(size: number): string {
  * Formats a UNIX timestamp to a string using the system locale.
  *
  * @param date - The timestamp.
+ * @param includeTime - Whether to print the time as well.
  *
  * @returns - The formatted string.
  */
-export function formatLocaleTimestamp(date: number): string {
-    return new Intl.DateTimeFormat(navigator.language, { dateStyle: "medium", timeStyle: "short" }).format(date * 1000);
+export function formatLocaleTimestamp(date: number, includeTime: boolean = true): string {
+    const options: Intl.DateTimeFormatOptions = { dateStyle: "medium" };
+    if (includeTime) {
+        options.timeStyle = "short";
+    }
+    return new Intl.DateTimeFormat(navigator.language, options).format(date * 1000);
 }
 
 /**

@@ -1,3 +1,4 @@
+import { formatLocaleTimestamp } from "../../../../utils/Strings";
 import { PropertyObject } from "../PropertyObjectStore";
 
 /**
@@ -9,6 +10,22 @@ import { PropertyObject } from "../PropertyObjectStore";
  * @returns The string with replaced placeholders.
  */
 export function injectTemplate(str: String, obj: PropertyObject) {
-    const label = str.replace(/\${(.*?)}/g, (x, g) => (obj["value"][g] ? obj["value"][g] : `\${${g}\}`));
-    return label === str ? `[${obj["id"].slice(0, 6)}]` : str.replace(/\${(.*?)}/g, (x, g) => (obj["value"][g] ? obj["value"][g] : `[${g}]`));
+    const formatValue = (value: string): string => {
+        try {
+            // @ts-ignore
+            switch (obj.type!) {
+                case "date":
+                    console.log(value);
+                    const dt = Date.parse(value);
+                    if (!isNaN(dt)) {
+                        return formatLocaleTimestamp(dt / 1000, false);
+                    }
+            }
+        } catch (e) {}
+
+        return value;
+    };
+
+    const label = str.replace(/\${(.*?)}/g, (x, g) => (obj["value"][g] ? formatValue(obj["value"][g]) : `\${${g}\}`));
+    return label === str ? `[${obj["id"].slice(0, 6)}]` : str.replace(/\${(.*?)}/g, (x, g) => (obj["value"][g] ? formatValue(obj["value"][g]) : `[${g}]`));
 }
