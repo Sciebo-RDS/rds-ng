@@ -145,13 +145,9 @@
                     "id": "affiliationIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": ["ORCID", "GND", "ROR", "other"],
+                    "options": ["GND", "ROR", "other"],
                     "description": "",
                     "hints": {
-                        "ORCID": {
-                            "text": "Open Researcher and Contributor ID.",
-                            "link": { "label": "ORCID Search", "url": "https://orcid.org/orcid-search/search" }
-                        },
                         "GND": { "text": "Gemeinsame Normdatei Identifier.", "link": { "label": "GND Search", "url": "https://explore.gnd.network/" } },
                         "ROR": {
                             "text": "Research Organization Registry Identifier.",
@@ -234,18 +230,39 @@
             "labelTemplate": "${subject}",
             "input": [
                 {
-                    "id": "subject",
-                    "label": "Subject",
-                    "type": "string",
-                    "required": true
+                    "id": "subjectScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": ["GND", "LOC", "other"],
+                    "description": "",
+                    "hints": {
+                        "GND": {
+                            "text": "Gemeinsame Normdatei Identifier.",
+                            "link": {
+                                "label": "GND Search",
+                                "url": "https://explore.gnd.network/"
+                            }
+                        },
+                        "LOC": {
+                            "text": "Library of Congress Subject Headings.",
+                            "link": {
+                                "label": "LOC Search",
+                                "url": "https://id.loc.gov/authorities/subjects.html"
+                            }
+                        }
+                    }
                 },
                 {
-                    "id": "valueURI",
-                    "label": "Value URI",
+                    "id": "subject",
+                    "label": "Subject",
+                    "type": "string"
+                },
+                {
+                    "id": "subjectIdentifier",
+                    "label": "Subject Identifier",
                     "type": "string",
-                    "description": "The URI of the subject term.",
-                    "example": "https://id.loc.gov/authorities/subjects/sh85035852.html",
-                    "required": true
+                    "description": "The identifier (URI) of the subject term.",
+                    "example": "https://id.loc.gov/authorities/subjects/sh85035852.html"
                 }
             ]
         },
@@ -263,32 +280,46 @@
                     "example": "Gordon and Betty Moore Foundation"
                 },
                 {
+                    "id": "funderIdentifierType",
+                    "label": "Funder Identifier Type",
+                    "type": "radiobuttons",
+                    "options": ["Crossref Funder ID", "ISNI", "ROR", "Other"],
+                    "description": "",
+                    "hints": {
+                        "Crossref Funder ID": {
+                            "text": "Open Funder Registry (OFR)",
+                            "link": {
+                                "label": "OFR Search",
+                                "url": "https://search.crossref.org/funding"
+                            }
+                        },
+                        "ISNI": {
+                            "text": "International Standard Name Identifier",
+                            "link": {
+                                "label": "ISNI Search",
+                                "url": "https://isni.org/page/search-database"
+                            }
+                        },
+                        "ROR": {
+                            "text": "Research Organization Registry Identifier.",
+                            "link": { "label": "ROR Search", "url": "https://ror.org/search" }
+                        },
+                        "LOC": {
+                            "text": "Library of Congress Subject Headings.",
+                            "link": {
+                                "label": "LOC Search",
+                                "url": "https://id.loc.gov/authorities/subjects.html"
+                            }
+                        }
+                    }
+                },
+                {
                     "id": "funderIdentifier",
                     "label": "Funder Identifier",
                     "type": "string",
                     "description": "Uniquely identifies the funder, according to various schemes.",
                     "example": "https://doi.org/10.13039/100000936",
                     "required": true
-                },
-                {
-                    "id": "funderIdentifierType",
-                    "label": "Funder Identifier Type",
-                    "type": "dropdown",
-                    "description": "The type of the funderIdentifier.",
-                    "options": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"],
-                    "hints": {
-                        "ROR": {
-                            "text": "Research Organization Registry Identifier.",
-                            "link": { "label": "ROR Search", "url": "https://ror.org/search" }
-                        }
-                    }
-                },
-                {
-                    "id": "schemeURI",
-                    "label": "Funder Scheme URI",
-                    "type": "string",
-                    "description": "The URI of the funder identifier scheme.",
-                    "example": "https://www.crossref.org/services/funder-registry/, https://ror.org/"
                 },
                 {
                     "id": "awardNumber",
