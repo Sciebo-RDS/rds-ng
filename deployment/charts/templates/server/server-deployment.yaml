@@ -18,8 +18,10 @@ spec:
                     ports:
                         -   containerPort: 6969
                     volumeMounts:
+                        {{- if include "rds.server.needsVolume" . }}
                         -   mountPath: /data
                             name: {{ include "rds.fullname" . }}-server-volume
+                        {{- end }}
                         -   mountPath: /component/server/.config
                             name: {{ include "rds.fullname" . }}-server-tenants-config-volume
                     envFrom:
@@ -33,9 +35,11 @@ spec:
                                 name: {{ include "rds.fullname" . }}-server-tenants-config-secret
             restartPolicy: Always
             volumes:
+                {{- if include "rds.server.needsVolume" . }}
                 -   name: {{ include "rds.fullname" . }}-server-volume
                     persistentVolumeClaim:
                         claimName: {{ include "rds.fullname" . }}-server-pvc
+                {{- end }}
                 -   name: {{ include "rds.fullname" . }}-server-tenants-config-volume
                     configMap:
                         name: {{ include "rds.fullname" . }}-server-tenants-config

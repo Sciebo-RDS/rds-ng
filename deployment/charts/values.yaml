@@ -27,8 +27,15 @@ debug:
     enabled: false          # Whether to run in debug mode, resulting in more textual output and fewer restrictions
     enableTracing: false    # Whether to log function calls for extensive debugging
 
+secrets:
+    create: true    # Whether the chart should create its Secret objects from the values below.
+                    # Set to false to provide them yourself (e.g. via SealedSecrets or the External
+                    # Secrets Operator), in which case every secret value below may be left empty.
+                    # The Secrets you provide must use the names the chart would have generated;
+                    # these are listed in the chart's installation notes.
+
 network:
-    apiKey: ""  # An arbitrary API key to access protected resources; this must always be provided
+    apiKey: ""  # An arbitrary API key to access protected resources; this must always be provided unless secrets.create is false
 
 server:
     volume:
@@ -59,7 +66,8 @@ server:
                 user: ""                # The username; required if this engine is used
                 password: ""            # The user's password; required if this engine is used
     ingress:
-        hostname: ""        # The hostname (without any scheme); required
+        enabled: true       # Whether to create an Ingress for this component; disable it if routing is handled outside the chart
+        hostname: ""        # The hostname (without any scheme); required even if "enabled" is false, as it also defines the server address
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
@@ -68,7 +76,8 @@ server:
 
 domo:
     ingress:
-        hostname: ""        # The hostname (without any scheme); required
+        enabled: true       # Whether to create an Ingress for this component; disable it if routing is handled outside the chart
+        hostname: ""        # The hostname (without any scheme); required even if "enabled" is false, as it also defines the OAuth2 redirect URL
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
         path: "/"           # The ingress root path
@@ -78,6 +87,7 @@ domo:
 frontend:
     supportEmail: ""       # Sets the support email address shown as contact information
     ingress:
+        enabled: true       # Whether to create an Ingress for this component; disable it if routing is handled outside the chart
         hostname: ""        # The hostname (without any scheme); required
         annotations: {}     # A list of key-value pairs to pass as annotations
         class: ""           # The ingress controller class
