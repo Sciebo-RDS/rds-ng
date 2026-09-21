@@ -398,9 +398,9 @@ class InvenioRDMClient(RequestsExecutor):
                 else "Uploaded via Sciebo RDS"
             ),
             "creators": metadata.creators if metadata.creators else [],
-            "resource_type": (
-                metadata.resource_type if metadata.resource_type else "other"
-            ),
+            "resource_type": {
+                "id": metadata.resource_type if metadata.resource_type else "other"
+            },
             "publication_date": (
                 metadata.publication_date
                 if metadata.publication_date
