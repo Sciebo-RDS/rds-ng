@@ -5,9 +5,11 @@
 ### Improvements
 
 - Updated various metadata fields
+- Minor UI improvements
 
 ### Fixes
 
+- Do not show disabled connectors in the _Upload Project_ form
 - Properly format date values in metadata forms
 - Fixed passing the resource type for InvenioRDM
 

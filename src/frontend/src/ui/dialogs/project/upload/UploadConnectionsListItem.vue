@@ -111,7 +111,7 @@ function onUploadInitDone(success: boolean, msg: string): void {
 
 <template>
     <div
-        class="grid grid-rows-auto gap-2.5 place-content-start group w-full min-h-20"
+        class="grid grid-rows-auto gap-2.5 place-content-start group w-full min-h-20 cursor-default"
         :class="activeJob ? 'grid-cols-[min-content_1fr_40%]' : 'grid-cols-[min-content_1fr_max-content]'"
     >
         <div :class="{ 'pt-1': instance!.description }">

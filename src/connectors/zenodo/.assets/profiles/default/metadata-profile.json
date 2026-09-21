@@ -283,14 +283,14 @@
                     "id": "funderIdentifierType",
                     "label": "Funder Identifier Type",
                     "type": "radiobuttons",
-                    "options": ["Crossref Funder ID", "ISNI", "ROR", "Other"],
+                    "options": ["GND", "ISNI", "ROR", "Other"],
                     "description": "",
                     "hints": {
-                        "Crossref Funder ID": {
-                            "text": "Open Funder Registry (OFR)",
+                        "GND": {
+                            "text": "Gemeinsame Normdatei Identifier.",
                             "link": {
-                                "label": "OFR Search",
-                                "url": "https://search.crossref.org/funding"
+                                "label": "GND Search",
+                                "url": "https://explore.gnd.network/"
                             }
                         },
                         "ISNI": {
