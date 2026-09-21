@@ -1,10 +1,17 @@
 # RDS-NG - Changelog
 
-## v1.6.0 - 2026-xx-xx
+## v1.6.0 - 2026-09-21
+
+### Improvements
+
+- Updated various metadata fields
+- Minor UI improvements
 
 ### Fixes
 
-- ...
+- Do not show disabled connectors in the _Upload Project_ form
+- Properly format date values in metadata forms
+- Fixed passing the resource type for InvenioRDM
 
 ## v1.5.1 - 2026-09-07
 
