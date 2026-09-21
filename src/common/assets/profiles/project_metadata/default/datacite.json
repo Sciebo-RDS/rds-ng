@@ -179,7 +179,7 @@
         },
         {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/relatedidentifier/",
-            "displayLabel": "Related Identifier",
+            "displayLabel": "Related Resource",
             "description": "Identifiers of related resources. These must be globally unique identifiers.",
             "refs": [
                 {
@@ -357,16 +357,9 @@
                     "id": "affiliationIdentifierScheme",
                     "label": "",
                     "type": "radiobuttons",
-                    "options": ["ORCID", "GND", "ROR", "other"],
+                    "options": ["GND", "ROR", "other"],
                     "description": "",
                     "hints": {
-                        "ORCID": {
-                            "text": "Open Researcher and Contributor ID.",
-                            "link": {
-                                "label": "ORCID Search",
-                                "url": "https://orcid.org/orcid-search/search"
-                            }
-                        },
                         "GND": {
                             "text": "Gemeinsame Normdatei Identifier.",
                             "link": {
@@ -425,30 +418,30 @@
             "example": "World Data Center for Climate (WDCC), GeoForschungsZentrum Potsdam (GFZ), Consejo Superior de Investigaciones Científicas, University of Tokyo, GitHub",
             "input": [
                 {
-                    "id": "publisher",
-                    "label": "Publisher",
-                    "type": "string"
+                    "id": "publisherScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": ["ROR", "GND", "other"],
+                    "description": "",
+                    "hints": {
+                        "ROR": {
+                            "text": "Research Organization Registry Identifier.",
+                            "link": { "label": "ROR Search", "url": "https://ror.org/search" }
+                        },
+                        "GND": {
+                            "text": "Gemeinsame Normdatei Identifier.",
+                            "link": {
+                                "label": "GND Search",
+                                "url": "https://explore.gnd.network/"
+                            }
+                        }
+                    }
                 },
                 {
                     "id": "publisherIdentifier",
                     "label": "Publisher Identifier",
                     "type": "string",
-                    "description": "Uniquely identifies the publisher, according to various schemes.",
-                    "example": "https://ror.org/04z8jg394, https://doi.org/10.17616/R3989R, https://viaf.org/viaf/151411898/, https://wikidata.org/wiki/Q7842"
-                },
-                {
-                    "id": "publisherIdentifierScheme",
-                    "label": "Publisher Identifier Scheme",
-                    "type": "string",
-                    "description": "The name of the publisher identifier scheme.",
-                    "example": "ROR, DOI, VIAF, Wikidata"
-                },
-                {
-                    "id": "schemeURI",
-                    "label": "Publisher Scheme URI",
-                    "type": "string",
-                    "description": "The URI of the publisher identifier scheme.",
-                    "example": "https://ror.org, https://doi.org, https://viaf.org, https://wikidata.org"
+                    "description": "Uniquely identifies the publisher, according to various schemes."
                 }
             ]
         },
@@ -459,18 +452,39 @@
             "labelTemplate": "${subject}",
             "input": [
                 {
-                    "id": "subject",
-                    "label": "Subject",
-                    "type": "string",
-                    "required": true
+                    "id": "subjectScheme",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": ["GND", "LOC", "other"],
+                    "description": "",
+                    "hints": {
+                        "GND": {
+                            "text": "Gemeinsame Normdatei Identifier.",
+                            "link": {
+                                "label": "GND Search",
+                                "url": "https://explore.gnd.network/"
+                            }
+                        },
+                        "LOC": {
+                            "text": "Library of Congress Subject Headings.",
+                            "link": {
+                                "label": "LOC Search",
+                                "url": "https://id.loc.gov/authorities/subjects.html"
+                            }
+                        }
+                    }
                 },
                 {
-                    "id": "valueURI",
-                    "label": "Value URI",
+                    "id": "subject",
+                    "label": "Subject",
+                    "type": "string"
+                },
+                {
+                    "id": "subjectIdentifier",
+                    "label": "Subject Identifier",
                     "type": "string",
-                    "description": "The URI of the subject term.",
-                    "example": "https://id.loc.gov/authorities/subjects/sh85035852.html",
-                    "required": true
+                    "description": "The identifier (URI) of the subject term.",
+                    "example": "https://id.loc.gov/authorities/subjects/sh85035852.html"
                 }
             ]
         },
@@ -581,33 +595,57 @@
             "example": "E-GEOD-34814",
             "input": [
                 {
+                    "id": "alternateIdentifierType",
+                    "label": "",
+                    "type": "radiobuttons",
+                    "options": ["DOI", "URN", "ePIC", "other"],
+                    "description": "",
+                    "hints": {
+                        "DOI": {
+                            "text": "Digital Object Identifier (DOI)",
+                            "link": {
+                                "label": "DOI Information",
+                                "url": "https://www.doi.org/"
+                            }
+                        },
+                        "URN": {
+                            "text": "Uniform Resource Name.",
+                            "link": {
+                                "label": "URN Information",
+                                "url": "https://www.dnb.de/DE/Professionell/Services/URN-Service/urn-service_node.html"
+                            }
+                        },
+                        "ePIC": {
+                            "text": "ePIC persistent identifier.",
+                            "link": {
+                                "label": "ePIC Information",
+                                "url": "https://www.pidconsortium.net/"
+                            }
+                        }
+                    }
+                },
+                {
                     "id": "alternateIdentifier",
                     "label": "Alternate Identifier",
                     "type": "string"
-                },
-                {
-                    "id": "alternateIdentifierType",
-                    "label": "Alternate Identifier Type",
-                    "type": "string",
-                    "description": "The type of the alternate identifier."
                 }
             ]
         },
         "relatedIdentifier": {
             "id": "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/relatedidentifier",
-            "displayLabel": "Related Identifier",
-            "description": "Identifiers of related resources. These must be globally unique identifiers.",
+            "displayLabel": "Related Resource",
+            "description": "Identifiers of the related resource. These must be globally unique identifiers.",
             "example": "10.21384/bar",
             "labelTemplate": "${relatedIdentifier}",
             "input": [
                 {
                     "id": "relatedIdentifier",
-                    "label": "Related Identifier",
+                    "label": "Related Resource",
                     "type": "string"
                 },
                 {
                     "id": "relatedIdentifierType",
-                    "label": "Related Identifier Type",
+                    "label": "Related Resource Type",
                     "type": "dropdown",
                     "options": [
                         "ARK",
@@ -630,7 +668,7 @@
                         "URN",
                         "w3id"
                     ],
-                    "description": "The type of the related identifier."
+                    "description": "The type of the related resource."
                 },
                 {
                     "id": "relationType",
@@ -900,35 +938,46 @@
                     "example": "Gordon and Betty Moore Foundation"
                 },
                 {
+                    "id": "funderIdentifierType",
+                    "label": "Funder Identifier Type",
+                    "type": "radiobuttons",
+                    "options": ["GND", "ISNI", "ROR", "Other"],
+                    "description": "",
+                    "hints": {
+                        "GND": {
+                            "text": "Gemeinsame Normdatei Identifier.",
+                            "link": {
+                                "label": "GND Search",
+                                "url": "https://explore.gnd.network/"
+                            }
+                        },
+                        "ISNI": {
+                            "text": "International Standard Name Identifier",
+                            "link": {
+                                "label": "ISNI Search",
+                                "url": "https://isni.org/page/search-database"
+                            }
+                        },
+                        "ROR": {
+                            "text": "Research Organization Registry Identifier.",
+                            "link": { "label": "ROR Search", "url": "https://ror.org/search" }
+                        },
+                        "LOC": {
+                            "text": "Library of Congress Subject Headings.",
+                            "link": {
+                                "label": "LOC Search",
+                                "url": "https://id.loc.gov/authorities/subjects.html"
+                            }
+                        }
+                    }
+                },
+                {
                     "id": "funderIdentifier",
                     "label": "Funder Identifier",
                     "type": "string",
                     "description": "Uniquely identifies the funder, according to various schemes.",
                     "example": "https://doi.org/10.13039/100000936",
                     "required": true
-                },
-                {
-                    "id": "funderIdentifierType",
-                    "label": "Funder Identifier Type",
-                    "type": "dropdown",
-                    "description": "The type of the funderIdentifier.",
-                    "options": ["Crossref Funder ID", "GRID", "ISNI", "ROR", "Other"],
-                    "hints": {
-                        "ROR": {
-                            "text": "Research Organization Registry Identifier.",
-                            "link": {
-                                "label": "ROR Search",
-                                "url": "https://ror.org/search"
-                            }
-                        }
-                    }
-                },
-                {
-                    "id": "schemeURI",
-                    "label": "Funder Scheme URI",
-                    "type": "string",
-                    "description": "The URI of the funder identifier scheme.",
-                    "example": "https://www.crossref.org/services/funder-registry/, https://ror.org/"
                 },
                 {
                     "id": "awardNumber",

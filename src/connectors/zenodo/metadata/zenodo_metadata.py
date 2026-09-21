@@ -2,18 +2,22 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
 from common.py.data.entities.properties import PropertyObject
-from common.py.data.metadata import (Metadata, MetadataCreator, MetadataParser,
-                                     MetadataParserQuery)
+from common.py.data.metadata import (
+    Metadata,
+    MetadataCreator,
+    MetadataParser,
+    MetadataParserQuery,
+)
 
 from . import parse_contributors, parse_creators, parse_dates, parse_grants
 
 
 @dataclass
 class ZenodoMetadata(Metadata):
-    title: str = ''
-    upload_type: str = ''
-    description: str = ''
-    version: str = ''
+    title: str = ""
+    upload_type: str = ""
+    description: str = ""
+    version: str = ""
     creators: List[Dict[str, Any]] = field(default_factory=list)
     contributors: List[Dict[str, Any]] = field(default_factory=list)
     subjects: List[Dict[str, Any]] = field(default_factory=list)
@@ -30,7 +34,9 @@ class ZenodoMetadataCreator(MetadataCreator):
         Creates a ZenodoMetadata object from the provided metadata and shared objects.
     """
 
-    def create(self, metadata: List[PropertyObject], shared_objects: List[PropertyObject] = []) -> ZenodoMetadata:
+    def create(
+        self, metadata: List[PropertyObject], shared_objects: List[PropertyObject] = []
+    ) -> ZenodoMetadata:
         """
         Create a ZenodoMetadata object from provided metadata and shared objects.
         Args:
@@ -40,7 +46,9 @@ class ZenodoMetadataCreator(MetadataCreator):
             ZenodoMetadata: An instance of ZenodoMetadata populated with the parsed metadata.
         """
 
-        zenodo_metadata = metadata # = MetadataParser.filter_by_profile("Zenodo", metadata)
+        zenodo_metadata = (
+            metadata  # = MetadataParser.filter_by_profile("Zenodo", metadata)
+        )
 
         product = ZenodoMetadata()
 
@@ -72,45 +80,45 @@ class ZenodoMetadataCreator(MetadataCreator):
 
         creators_raw = MetadataParser.getobj(
             zenodo_metadata,
-                "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/"
-            
+            "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/",
         )
 
-        product.creators = parse_creators(creators_raw, shared_objects) if creators_raw else []
+        product.creators = (
+            parse_creators(creators_raw, shared_objects) if creators_raw else []
+        )
 
         contributors_raw = MetadataParser.getobj(
             zenodo_metadata,
-                "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/"
-            
+            "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/",
         )
 
-        product.contributors = parse_contributors(contributors_raw, shared_objects) if contributors_raw else []
+        product.contributors = (
+            parse_contributors(contributors_raw, shared_objects)
+            if contributors_raw
+            else []
+        )
 
-        #subjects_raw = MetadataParser.getobj(
+        # subjects_raw = MetadataParser.getobj(
         #    zenodo_metadata,
         #        "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/subject/"
-            
-        #)
 
-        #product.subjects = parse_subjects(subjects_raw, shared_objects) if subjects_raw else []
+        # )
 
-        grants_raw = MetadataParser.getobj(
-            zenodo_metadata,
-                "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/"
-            
-        )
-        
-        product.grants = parse_grants(grants_raw, shared_objects) if grants_raw else []
+        # product.subjects = parse_subjects(subjects_raw, shared_objects) if subjects_raw else []
 
+        # grants_raw = MetadataParser.getobj(
+        #    zenodo_metadata,
+        #        "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/fundingreference/"
 
-        
+        # )
+
+        # product.grants = parse_grants(grants_raw, shared_objects) if grants_raw else []
 
         dates_raw = MetadataParser.getobj(
             zenodo_metadata,
-                "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/"
-            
+            "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/",
         )
-        
+
         product.dates = parse_dates(dates_raw, shared_objects) if dates_raw else []
 
         return product
