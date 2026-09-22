@@ -29,6 +29,7 @@ debug:
 
 network:
     apiKey: ""  # An arbitrary API key to access protected resources; this must always be provided
+    timeout: 90 # Timeout (in seconds) for network messages
 
 server:
     volume:

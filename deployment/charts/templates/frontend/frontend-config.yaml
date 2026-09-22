@@ -10,6 +10,9 @@ data:
         support_email = {{ .Values.frontend.supportEmail | quote }}
         {{- end }}
 
+        [network]
+        regular_command_timeout = {{ default 90 .Values.network.timeout }}
+
         [network.client]
         server_address = {{ include "rds.serverAddress" . | quote }}
 

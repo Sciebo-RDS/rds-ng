@@ -1,6 +1,10 @@
 # RDS-NG - Changelog
 
-## v1.6.0 - 2026-09-21
+## v1.6.0 - 2026-09-22
+
+### New
+
+- Network timeout can be set in the charts
 
 ### Improvements
 
