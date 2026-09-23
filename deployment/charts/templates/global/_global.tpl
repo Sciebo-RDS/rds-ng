@@ -12,3 +12,17 @@ imagePullPolicy: {{ $top.Values.image.pullPolicy | default "Always" }}
 {{- define "rds.serverAddress" }}
 {{- printf "https://%s" (required "No server address specified" .Values.server.ingress.hostname) -}}
 {{- end }}
+
+{{- define "rds.extraEnv" }}
+{{- $top := index . 0 -}}
+{{- $env := index . 1 -}}
+{{- range $env }}
+- name: {{ .name }}
+  {{- if hasKey . "value" }}
+  value: {{ .value | quote }}
+  {{- else if .valueFrom }}
+  valueFrom:
+    {{- toYaml .valueFrom | nindent 28 }}
+  {{- end }}
+{{- end }}
+{{- end }}

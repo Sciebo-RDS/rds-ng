@@ -32,9 +32,7 @@ spec:
                         -   secretRef:
                                 name: {{ include "rds.fullname" . }}-server-tenants-config-secret
                     env:
-                        {{- with .Values.server.extraEnv }}
-                        {{- toYaml . | nindent 24 }}
-                        {{- end }}
+                      {{- include "rds.extraEnv" .Values.server.extraEnv }}
             restartPolicy: Always
             volumes:
                 -   name: {{ include "rds.fullname" . }}-server-volume
