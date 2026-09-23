@@ -21,9 +21,7 @@ spec:
                         -   mountPath: /app/config
                             name: {{ include "rds.fullname" . }}-frontend-config-volume
                     env:
-                        {{- with .Values.frontend.extraEnv }}
-                        {{- toYaml . | nindent 24 }}
-                        {{- end }}
+                        {{- include "rds.extraEnv" .Values.frontend.extraEnv | nindent 24 }}
             restartPolicy: Always
             volumes:
                 -   name: {{ include "rds.fullname" . }}-frontend-config-volume

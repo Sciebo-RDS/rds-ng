@@ -23,7 +23,5 @@ spec:
                         -   configMapRef:
                               name: {{ include "rds.fullname" . }}-domo-config
                     env:
-                        {{- with .Values.domo.extraEnv }}
-                        {{- toYaml . | nindent 24 }}
-                        {{- end }}
+                        {{- include "rds.extraEnv" .Values.domo.extraEnv | nindent 24 }}
             restartPolicy: Always

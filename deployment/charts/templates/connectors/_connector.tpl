@@ -39,9 +39,7 @@ spec:
                         -   secretRef:
                                 name: {{ include "rds.fullname" $top }}-{{ $componentName }}-config-secret
                     env:
-                        {{- with $connector.extraEnv }}
-                        {{- toYaml . | nindent 24 }}
-                        {{- end }}
+                        {{- include "rds.extraEnv" $connector.extraEnv | nindent 24 }}
             restartPolicy: Always
 
 ---
