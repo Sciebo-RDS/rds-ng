@@ -5,6 +5,7 @@
 ### New
 
 - Network timeout can be set in the charts
+- Extra environment variables can be set in the charts
 
 ### Improvements
 
