@@ -14,8 +14,7 @@ imagePullPolicy: {{ $top.Values.image.pullPolicy | default "Always" }}
 {{- end }}
 
 {{- define "rds.extraEnv" }}
-{{- $env := index . 0 -}}
-{{- range $env }}
+{{- range . }}
 - name: {{ .name }}
   {{- if hasKey . "value" }}
   value: {{ .value | quote }}
