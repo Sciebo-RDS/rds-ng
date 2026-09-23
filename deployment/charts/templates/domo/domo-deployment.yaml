@@ -22,4 +22,6 @@ spec:
                               name: {{ include "rds.fullname" . }}-network-api-secret
                         -   configMapRef:
                               name: {{ include "rds.fullname" . }}-domo-config
+                    env:
+                        {{- include "rds.extraEnv" .Values.domo.extraEnv | nindent 24 }}
             restartPolicy: Always

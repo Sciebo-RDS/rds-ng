@@ -66,6 +66,7 @@ server:
         path: "/"           # The ingress root path
         pathType: ""        # The root path type
         tlsSecret: ""       # If specified, enable TLS and use this secret (must be created manually upfront)
+    extraEnv: []    # Additional environment variables passed as an array of name+value dictionaries
 
 domo:
     ingress:
@@ -75,6 +76,7 @@ domo:
         path: "/"           # The ingress root path
         pathType: ""        # The root path type
         tlsSecret: ""       # If specified, enable TLS and use this secret (must be created manually upfront)
+    extraEnv: []    # Additional environment variables passed as an array of name+value dictionaries
 
 frontend:
     supportEmail: ""       # Sets the support email address shown as contact information
@@ -85,15 +87,17 @@ frontend:
         path: "/"           # The ingress root path
         pathType: ""        # The root path type
         tlsSecret: ""       # If specified, enable TLS and use this secret (must be created manually upfront)
+    extraEnv: []    # Additional environment variables passed as an array of name+value dictionaries
 
 connectors:
     osf:
-        enabled: true                           # Whether this connector should be used
+        enabled: false                          # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
         oauth2:
             host: ""                            # The OAuth2 host URL; if left empty, the default system for this connector will be used
             clientId: ""                        # The OAuth2 client id
             clientSecret: ""                    # The OAuth2 client secret
+        extraEnv: []                            # Additional environment variables passed as an array of name+value dictionaries
     zenodo:
         enabled: true                           # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
@@ -101,15 +105,19 @@ connectors:
             host: ""                            # The OAuth2 host URL; if left empty, the default system for this connector will be used
             clientId: ""                        # The OAuth2 client id
             clientSecret: ""                    # The OAuth2 client secret
+        extraEnv: []                            # Additional environment variables passed as an array of name+value dictionaries
     datasafe:
         enabled: false                          # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
+        extraEnv: []                            # Additional environment variables passed as an array of name+value dictionaries
     datastore:
         enabled: false                          # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; if left empty, the default system for this connector will be used
+        extraEnv: []                            # Additional environment variables passed as an array of name+value dictionaries
     dataverse:
         enabled: false                          # Whether this connector should be used
         targetUrl: ""                           # The main URL of the target system API; must be specified for dataverse
+        extraEnv: []                            # Additional environment variables passed as an array of name+value dictionaries
 
 tenants: {}
 #   All tenants (i.e., hosts running an integrated frontend) must be configured individually by listing each using its assigned identifier

@@ -38,6 +38,8 @@ spec:
                                 name: {{ include "rds.fullname" $top }}-{{ $componentName }}-config
                         -   secretRef:
                                 name: {{ include "rds.fullname" $top }}-{{ $componentName }}-config-secret
+                    env:
+                        {{- include "rds.extraEnv" $connector.extraEnv | nindent 24 }}
             restartPolicy: Always
 
 ---

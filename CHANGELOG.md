@@ -1,10 +1,11 @@
 # RDS-NG - Changelog
 
-## v1.6.0 - 2026-09-22
+## v1.6.0 - 2026-09-23
 
 ### New
 
 - Network timeout can be set in the charts
+- Extra environment variables can be set in the charts
 
 ### Improvements
 
