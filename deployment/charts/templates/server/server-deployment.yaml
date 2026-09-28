@@ -20,7 +20,8 @@ spec:
                     volumeMounts:
                         -   mountPath: /data
                             name: {{ include "rds.fullname" . }}-server-volume
-                        -   mountPath: /component/server/.config
+                        -   mountPath: /component/server/.config/tenants.toml
+                            subPath: tenants.toml
                             name: {{ include "rds.fullname" . }}-server-tenants-config-volume
                     envFrom:
                         -   secretRef:
