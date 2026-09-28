@@ -76,6 +76,7 @@ data:
     {{- end }}
 
 ---
+{{- if $top.Values.secrets.create | default true }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -87,5 +88,6 @@ stringData:
     RDS_AUTHORIZATION_OAUTH2_CLIENT_SECRET: {{ required (printf "Missing OAuth2 client secret for connector %s" $name) $connector.oauth2.clientSecret | quote }}
     {{- end }}
 
+{{- end }}
 {{- end }}
 {{- end }}

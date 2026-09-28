@@ -11,6 +11,12 @@ RDS_STORAGE_DATABASE_{{- upper $name -}}_DATABASE: {{ default "rds-ng" $settings
 RDS_STORAGE_DATABASE_{{- upper $name -}}_USER: {{ required (printf "%s username is required" $name) $settings.user | quote }}
 {{- end }}
 
+{{- define "rds.database.needsVolume" -}}
+{{- if and (eq (lower .Values.server.storage.driver) "database") (eq (lower .Values.server.storage.database.engine) "sqlite") -}}
+true
+{{- end -}}
+{{- end }}
+
 {{- define "rds.database.secrets" }}
 {{- $settings := index . 0 -}}
 {{- $name := index . 1 -}}
