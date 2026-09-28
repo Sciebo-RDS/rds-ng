@@ -59,7 +59,7 @@ function onCreateInstance(instance: ConnectorInstance): void {
         </div>
 
         <NewConnection :user-settings="userSettings" @create-instance="onCreateInstance" />
-        <ScrollPanel class="max-h-[29rem]">
+        <ScrollPanel class="h-[29rem]">
             <ConnectionsList :user-settings="userSettings" :new-instance="newInstance" />
         </ScrollPanel>
     </div>
