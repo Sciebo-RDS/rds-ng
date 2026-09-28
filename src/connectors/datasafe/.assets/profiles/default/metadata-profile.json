@@ -151,8 +151,6 @@
                     "options": [
                         "ORCID",
                         "GND",
-                        "ISNI",
-                        "ROR",
                         "other"
                     ],
                     "description": "",
@@ -169,20 +167,6 @@
                             "link": {
                                 "label": "GND Search",
                                 "url": "https://explore.gnd.network/"
-                            }
-                        },
-                        "ISNI": {
-                            "text": "International Standard Name Identifier.",
-                            "link": {
-                                "label": "ISNI Search",
-                                "url": "https://isni.org/page/search-database/"
-                            }
-                        },
-                        "ROR": {
-                            "text": "Research Organization Registry Identifier.",
-                            "link": {
-                                "label": "ROR Search",
-                                "url": "https://ror.org/search"
                             }
                         }
                     }

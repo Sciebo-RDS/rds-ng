@@ -1,21 +1,45 @@
 <script setup lang="ts">
 import { Form } from "@primevue/forms";
+import { storeToRefs } from "pinia";
 import Fieldset from "primevue/fieldset";
 import IftaLabel from "primevue/iftalabel";
 import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
-import { ref } from "vue";
+import { ref, unref } from "vue";
 import * as yup from "yup";
 
 import { useExtendedDialogTools } from "@common/ui/dialogs/ExtendedDialogTools";
+import { ConnectorInstance } from "@common/data/entities/connector/ConnectorInstance.ts";
 
 import MandatoryMark from "@common/ui/components/misc/MandatoryMark.vue";
 
+import { useConnectorsStore } from "@/data/stores/ConnectorsStore.ts";
+import { useUserStore } from "@/data/stores/UserStore.ts";
+
+const consStore = useConnectorsStore();
+const { connectors } = storeToRefs(consStore);
+const userStore = useUserStore();
+const { userSettings } = storeToRefs(userStore);
+
 const { dialogData, acceptDialog, useValidator } = useExtendedDialogTools();
 
+const originalName = dialogData.userData.name;
 const form = ref();
 const validator = useValidator(form, {
-    name: yup.string().trim().required().label("Name"),
+    name: yup
+        .string()
+        .trim()
+        .required()
+        .test("connector-name-unique", "The name of the connection must be unique", (_, ctx) => {
+            const existingInstance = unref(userSettings).connector_instances.find(
+                (instance: ConnectorInstance) => instance.name.localeCompare(dialogData.userData.name) == 0
+            );
+            if (!!existingInstance && originalName != dialogData.userData.name) {
+                return ctx.createError({ path: "name" });
+            }
+            return true;
+        })
+        .label("Name"),
     description: yup.string().notRequired().label("Description")
 });
 const initialFormValues = ref({

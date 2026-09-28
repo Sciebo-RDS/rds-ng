@@ -55,6 +55,7 @@ function onSelectConnector(connector: Connector): void {
             placeholder="Add a new connection..."
             class="w-full"
             variant="filled"
+            scrollHeight="24rem"
             @change="(event) => onSelectConnector(event.value as Connector)"
         >
             <template #option="connectorItem">
