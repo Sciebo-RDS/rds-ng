@@ -6,6 +6,7 @@
 
 - Network timeout can be set in the charts
 - Extra environment variables can be set in the charts
+- Made the charts more flexible (thanks to Lars Delhage)
 
 ### Improvements
 

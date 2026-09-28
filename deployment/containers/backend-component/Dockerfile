@@ -14,8 +14,6 @@ ARG     COMPONENT_THREADS=9
 # Copy testing data
 WORKDIR /files
 
-COPY    /deployment/testing_data/ .
-
 # Copy the source code
 WORKDIR /component
 
