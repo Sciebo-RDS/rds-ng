@@ -1,5 +1,6 @@
 {
     "id": "dataverse",
+    "type": "dataverse",
     "name": "Dataverse",
     "description": "The Dataverse Project is an open source web application to share, preserve, cite, explore, and analyze research data. It facilitates making data available to others, and allows you to replicate others' work more easily. Researchers, journals, data authors, publishers, data distributors, and affiliated institutions all receive academic credit and web visibility.",
     "category": "repository",

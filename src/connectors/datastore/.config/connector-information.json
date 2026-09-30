@@ -1,5 +1,6 @@
 {
     "id": "datastore",
+    "type": "datastore",
     "name": "datastore",
     "description": "datastore is the research data repository of the University of Münster. In datastore you can publish your research data citable and visible worldwide following the FAIR principles.",
     "category": "repository",

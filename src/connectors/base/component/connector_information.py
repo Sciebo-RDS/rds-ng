@@ -31,19 +31,24 @@ class ConnectorInformation(InformationFile):
         """
         super().__init__(info_file=info_file, env_prefix=env_prefix)
 
-        self._connector_id, self._name, self._description, self._category = (
-            self._read_general_info()
-        )
+        (
+            self._connector_id,
+            self._connector_type,
+            self._name,
+            self._description,
+            self._category,
+        ) = self._read_general_info()
         self._options = self._read_options()
         self._logos = self._load_logos()
         self._metadata_profiles = self._load_metadata_profiles()
 
-    def _read_general_info(self) -> tuple[str, str, str, ConnectorCategoryID]:
+    def _read_general_info(self) -> tuple[str, str, str, str, ConnectorCategoryID]:
         con_id: str = self._value("id", "")
+        connector_type: str = self._value("type", con_id)
         name: str = self._value("name", "<invalid>")
         desc: str = self._value("description", "")
         category: ConnectorCategoryID = self._value("category", "<invalid>")
-        return con_id, name, desc, category
+        return con_id, connector_type, name, desc, category
 
     def _read_options(self) -> Connector.Options:
         options = Connector.Options.DEFAULT
@@ -83,6 +88,13 @@ class ConnectorInformation(InformationFile):
         The connector ID.
         """
         return self._connector_id
+
+    @property
+    def connector_type(self) -> str:
+        """
+        The type of the connector.
+        """
+        return self._connector_type
 
     @property
     def category(self) -> ConnectorCategoryID:

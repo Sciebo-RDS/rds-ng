@@ -1,5 +1,6 @@
 {
     "id": "datasafe",
+    "type": "datasafe",
     "name": "datasafe",
     "description": "With the help of datasafe, you can archive your research data non-publicly for ten years on university servers free of charge. After this period, the data is usually deleted automatically.",
     "category": "repository",
