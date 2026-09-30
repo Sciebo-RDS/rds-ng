@@ -1,6 +1,6 @@
 # RDS-NG - Changelog
 
-## v1.6.0 - 2026-09-28
+## v1.6.0 - 2026-09-30
 
 ### New
 
@@ -19,6 +19,7 @@
 - Enforce unique connection names
 - Properly format date values in metadata forms
 - Fixed passing the resource type for InvenioRDM
+- datasafe-specific fixes
 
 ## v1.5.1 - 2026-09-07
 
