@@ -23,47 +23,6 @@
             "multiple": false
         },
         {
-            "id": "resource-type",
-            "displayLabel": "Resource type",
-            "description": "The type of the resource described by the record.",
-            "input": [
-                {
-                    "id": "resource-type",
-                    "label": "Resource type",
-                    "type": "dropdown",
-                    "options": [
-                        "audio",
-                        "dataset",
-                        "event",
-                        "image",
-                        "image-diagram",
-                        "image-drawing",
-                        "image-figure",
-                        "image-other",
-                        "lesson",
-                        "model",
-                        "publication-annotationcollection",
-                        "publication-article",
-                        "publication-book",
-                        "publication-conferencepaper",
-                        "publication-conferenceproceeding",
-                        "publication-datamanagementplan",
-                        "publication-datapaper",
-                        "publication-dissertation",
-                        "publication-journal",
-                        "publication-patent",
-                        "publication-peerreview",
-                        "publication-section",
-                        "publication-other",
-                        "software-computationalnotebook",
-                        "other"
-                    ]
-                }
-            ],
-            "required": true,
-            "multiple": false
-        },
-        {
             "id": "invenio-creator",
             "displayLabel": "Creator",
             "description": "The creators field registers those persons or organisations that should be credited for the resource described by the record. The list of persons or organisations in the creators field is used for generating citations, while the persons or organisations listed in the contributors field are not included in the generated citations.",

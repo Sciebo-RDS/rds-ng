@@ -29,6 +29,7 @@ from .inveniordm_request_data import (
     InvenioRDMProjectObject,
     InvenioRDMRequestData,
 )
+from ..component import InvenioRDMConnectorComponent
 from ..metadata import InvenioRDMMetadataCreator
 from ...base.integration.execution import RequestsExecutor
 from ...base.integration.execution.requests_executor import RequestsExecutorOptions
@@ -384,6 +385,11 @@ class InvenioRDMClient(RequestsExecutor):
         self.get_file_list(invenio_project, callbacks=file_list_callbacks)
 
     def _get_project_metadata(self, project: Project) -> typing.Any:
+        is_restricted = (
+            InvenioRDMConnectorComponent.instance().connector_info.connector_type.lower()
+            == "datasafe"
+        )
+
         creator = InvenioRDMMetadataCreator()
         metadata = creator.create(
             project.features.project_metadata.metadata,
@@ -399,7 +405,11 @@ class InvenioRDMClient(RequestsExecutor):
             ),
             "creators": metadata.creators if metadata.creators else [],
             "resource_type": {
-                "id": metadata.resource_type if metadata.resource_type else "other"
+                "id": (
+                    "dataset"
+                    if is_restricted
+                    else (metadata.resource_type if metadata.resource_type else "other")
+                )
             },
             "publication_date": (
                 metadata.publication_date
@@ -412,7 +422,10 @@ class InvenioRDMClient(RequestsExecutor):
             project_metadata["description"] = metadata.description
 
         return {
-            "access": {"record": "public", "files": "public"},
+            "access": {
+                "record": "restricted" if is_restricted else "public",
+                "files": "restricted" if is_restricted else "public",
+            },
             "files": {"enabled": True},
             "metadata": project_metadata,
         }
