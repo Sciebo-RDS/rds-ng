@@ -27,6 +27,7 @@ class DataverseMetadata(Metadata):
     description: str
     subject: List[str]
     rights: DataverseRights
+    free_keyword: str
 
 
 class DataverseMetadataBuilder:
@@ -37,6 +38,7 @@ class DataverseMetadataBuilder:
         self._description: str | None = None
         self._subject: List[str] | None = None
         self._rights: DataverseRights | None = None
+        self._free_keyword: str | None = None
 
     def with_title(self, metadata: List[PropertyObject]) -> typing.Self:
         self._title = MetadataParser.getattr(
@@ -109,6 +111,16 @@ class DataverseMetadataBuilder:
 
         return self
 
+    def with_freekeyword(self, metadata: List[PropertyObject]) -> typing.Self:
+        self._free_keyword = MetadataParser.getattr(
+            metadata,
+            MetadataParserQuery(
+                "dataverseFreeKeyword",
+                "dFreeKeywordTerm",
+            ),
+        )
+        return self
+
     def build(self) -> DataverseMetadata:
         if not self._title:
             raise ValueError("Title is required")
@@ -122,6 +134,8 @@ class DataverseMetadataBuilder:
             raise ValueError("Subject is required")
         if not self._rights:
             raise ValueError("Rights are required")
+        if not self._free_keyword:
+            raise ValueError("FreeKeyword is required")
 
         return DataverseMetadata(
             title=self._title,
@@ -130,6 +144,7 @@ class DataverseMetadataBuilder:
             description=self._description,
             subject=self._subject,
             rights=self._rights,
+            free_keyword=self._free_keyword,
         )
 
 
@@ -167,5 +182,6 @@ class DataverseMetadataCreator(MetadataCreator):
             .with_description(metadata)
             .with_subject(metadata)
             .with_rights(metadata)
+            .with_freekeyword(metadata)
             .build()
         )

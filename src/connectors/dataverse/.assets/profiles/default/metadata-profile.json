@@ -93,6 +93,19 @@
             ],
             "required": false,
             "multiple": false
+        },
+        {
+            "id": "dataverseFreeKeyword",
+            "displayLabel": "FreeKeyword",
+            "input": [
+                {
+                    "id": "dFreeKeywordTerm",
+                    "label": "FreeKeywordTerm",
+                    "type": "string"
+                }
+            ],
+            "required": true,
+            "multiple": false
         }
     ],
     "classes": {

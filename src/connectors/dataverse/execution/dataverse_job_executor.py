@@ -31,6 +31,7 @@ from common.py.integration.resources.transmitters.resources_transmitter_callback
     ResourcesTransmitterPrepareCallbacks,
 )
 from common.py.services.service import Service
+from common.py.utils import debug_print
 from common.py.utils.paths import relativize_path
 from common.py.utils.strings import human_readable_file_size
 from connectors.base.data.entities.connector.connector_job import ConnectorJob
@@ -201,7 +202,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
             )
         )
 
-        collection_id = dataverse_user.user_identifier.lstrip("@")
+        collection_id = "dev-bridgit"  # TODO: Make dynamic
         self._dataverse_client.get_collection(
             collection_id=collection_id,
             callbacks=callbacks,
@@ -235,7 +236,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         )
         callbacks.failed(lambda exc: self._create_collection_failed(exc))
 
-        collection_id = dataverse_user.user_identifier.lstrip("@")
+        collection_id = "dev-bridgit"  # TODO: Make dynamic
         self._dataverse_client.create_collection(
             collection_name=dataverse_user.user_display_name,
             collection_id=collection_id,

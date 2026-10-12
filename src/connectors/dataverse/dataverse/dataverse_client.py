@@ -463,10 +463,12 @@ class DataverseClient(RequestsExecutor):
             .with_description(project_metadata)
             .with_subject(project_metadata)
             .with_rights(project_metadata)
+            .with_freekeyword(project_metadata)
             .build()
         )
 
         return {
+            "metadataLanguage": "en",
             "datasetVersion": {
                 "license": dataclasses.asdict(metadata.rights),
                 "metadataBlocks": {
@@ -543,11 +545,17 @@ class DataverseClient(RequestsExecutor):
                                 "multiple": True,
                                 "typeName": "subject",
                             },
+                            {
+                                "value": [metadata.free_keyword],
+                                "typeClass": "compound",
+                                "typeName": "freeKeyword",
+                                "multiple": True,
+                            },
                         ],
                         "displayName": "Citation Metadata",
                     }
                 },
-            }
+            },
         }
 
     def _get_file_metadata(self, path: str) -> dict:
