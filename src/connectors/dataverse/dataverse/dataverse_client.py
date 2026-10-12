@@ -147,7 +147,6 @@ class DataverseClient(RequestsExecutor):
         Uses https://guides.dataverse.org/en/latest/api/native-api.html#create-a-dataverse-collection
 
         Args:
-            collection_parent (str): The parent collection for the new collection. E.g. root.
             collection_name (str): The display name for the new collection.
             collection_id (str): The ID (also called alias) for the new collection.
             collection_contact: The contact email address for the new collection.

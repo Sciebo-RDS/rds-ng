@@ -1,5 +1,5 @@
 [connector]
-target = "https://demo.dataverse.org/api/"
+target = "https://datapublication-nrw-test.hrz.uni-bonn.de/api/"
 
 [authorization]
 strategy = "bearer"
