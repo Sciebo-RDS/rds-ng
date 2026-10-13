@@ -202,7 +202,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
             )
         )
 
-        collection_id = "dev-bridgit"  # TODO: Make dynamic
+        collection_id = "root"  # TODO: Make dynamic
         self._dataverse_client.get_collection(
             collection_id=collection_id,
             callbacks=callbacks,
@@ -236,7 +236,7 @@ class DataverseJobExecutor(ConnectorJobExecutor):
         )
         callbacks.failed(lambda exc: self._create_collection_failed(exc))
 
-        collection_id = "dev-bridgit"  # TODO: Make dynamic
+        collection_id = "root"  # TODO: Make dynamic
         self._dataverse_client.create_collection(
             collection_name=dataverse_user.user_display_name,
             collection_id=collection_id,
