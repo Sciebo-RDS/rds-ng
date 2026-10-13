@@ -546,7 +546,15 @@ class DataverseClient(RequestsExecutor):
                                 "typeName": "subject",
                             },
                             {
-                                "value": [metadata.free_keyword],
+                                "value": [
+                                    {
+                                        "freeKeywordValue": {
+                                            "value": metadata.free_keyword,
+                                            "multiple": False,
+                                            "typeClass": "primitive",
+                                        }
+                                    }
+                                ],
                                 "typeClass": "compound",
                                 "typeName": "freeKeyword",
                                 "multiple": True,
