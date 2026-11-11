@@ -242,7 +242,7 @@ class ZenodoClient(RequestsExecutor):
 
             resp = self.put(
                 session,
-                f"{zenodo_project.bucket_link}/{file_path.name}",
+                f"{zenodo_project.bucket_link}/{file_path}",
                 data=BytesIO(file_data.readall()),
             )
             return ZenodoRequestData.data_from_response(ZenodoFileObject, resp)
