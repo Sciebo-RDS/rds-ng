@@ -1,5 +1,17 @@
 # RDS-NG - Changelog
 
+## v1.7.1 - 2026-11-11
+
+### Fixes
+
+- Fix Zenodo uploads
+
+## v1.7.0 - 2026-10-27
+
+### Improvements
+
+- The Nextcloud integration app now uses Vue instead of jQuery
+
 ## v1.6.0 - 2026-09-30
 
 ### New
